@@ -579,3 +579,53 @@ class KeyPathTrans:
                     dd.update({field: default_val})
 
         return dd
+
+
+# from collections.abc import MutableMapping
+#
+#
+# class AttrStore(MutableMapping):
+#     def __getitem__(self, k):
+#         if not hasattr(self, k):
+#             setattr(self, k, AttrStore())
+#         return getattr(self, k)
+#
+#     def __setitem__(self, k, v):
+#         return setattr(self, k, v)
+#
+#     def __delitem__(self, k):
+#         return delattr(self, k)
+#
+#     def __iter__(self):
+#         return iter(self.__dict__)
+#
+#     def keys(self):
+#         return self.__dict__.keys()
+#
+#     def __contains__(self, k):
+#         return hasattr(self, k)
+#
+#     def __len__(self):
+#         return len(list(self))
+#
+#
+# d = AttrStore()
+# kp = KeyPathMap(d)
+# kp['a'] = '2a'
+# print(kp.store.a)
+# print(list(kp))
+# kp['c']['d'] = 3
+# print(list(kp))
+# kp['c', 'z'] = 'hi world'
+# print(list(kp.items()))
+
+## Not working yet:
+# d = AttrStore()
+# kp = StrKeyPath(d, sep='.')
+# kp['a'] = '2a'
+# print(kp.store.a)
+# print(list(kp))
+# kp['c']['d'] = 3
+# print(list(kp))
+# kp['c.z'] = 'hi world'
+# list(kp.items())
