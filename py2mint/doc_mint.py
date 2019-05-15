@@ -30,7 +30,7 @@ def _prefix_lines(s: str, prefix: str = '# ', even_if_empty: bool = False) -> st
     return '\n'.join(map(lambda x: prefix + x, s.split('\n')))
 
 
-def doctest_string(obj, output_prefix='# OUTPUT: ', recurse=True):
+def doctest_string(obj, output_prefix='# OUTPUT: ', include_attr_without_doctests=False, recurse=True):
     """
     Extract the doctests found in given object.
     :param obj: Object (module, class, function, etc.) you want to extract doctests from.
@@ -42,14 +42,18 @@ def doctest_string(obj, output_prefix='# OUTPUT: ', recurse=True):
     r = doctest_finder.find(obj)
     s = ''
     for rr in r:
-        ss = f'# {rr.name} '
-        ss += '#' * max(0, MAX_LINE_LENGTH - len(ss)) + '\n'
+        header = f'# {rr.name} '
+        header += '#' * max(0, MAX_LINE_LENGTH - len(header)) + '\n'
+        ss = ''
         for example in rr.examples:
             want = example.want
             if want.endswith('\n'):
                 want = want[:-1]
             ss += '\n' + example.source + _prefix_lines(want, prefix=output_prefix)
-        s += ss
+        if include_attr_without_doctests:
+            s += header + ss
+        elif len(ss) > 0:  # only append this attr if ss is non-empty
+            s += header + ss
     return s
 
 
