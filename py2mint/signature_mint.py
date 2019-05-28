@@ -1,0 +1,452 @@
+import inspect
+from inspect import signature
+from inspect import _empty as inspect_empty
+
+from py2mint.util import lazyprop, FrozenDict
+
+
+class NotFoundType:
+    def __bool__(self):
+        return False
+
+
+not_found = NotFoundType()
+no_name = type('NoName', (NotFoundType,), {})()
+inspect_is_empty = inspect._empty
+
+
+# Note, if the "empty" classes the are used to check if an object is empty are not singletons, could lead to bugs
+# TODO: Look into metaprogramming tricks for this.
+def is_not_empty(obj):
+    if obj is inspect_is_empty or isinstance(obj, NotFoundType):
+        return False
+    else:
+        return True
+
+
+def _is_property(attr_name, attr_val):
+    return not attr_name.startswith('_') and isinstance(attr_val, (property, lazyprop))
+
+
+def _property_names_of(obj):
+    if not isinstance(obj, type):
+        obj = type(obj)
+    for attr_name in dir(obj):
+        attr_val = getattr(obj, attr_name)
+        if _is_property(attr_name, attr_val):
+            yield attr_name
+
+
+def name_of_obj(o):
+    if hasattr(o, '__name__'):
+        return o.__name__
+    elif hasattr(o, '__class__'):
+        return name_of_obj(o.__class__)
+    else:
+        return no_name
+
+
+class AttrFromKey:
+    def __init__(self, d):
+        self._d = d
+
+    def __getattr__(self, k):
+        return self._d.__getitem__(k)
+
+    __getitem__ = __getattr__
+
+
+class KeyFromAttr:
+    def __init__(self, d):
+        self._d = d
+
+    def __getitem__(self, k):
+        return getattr(self._d, k)
+
+    __getattr__ = __getitem__
+
+
+class _ParameterMintLazy:  # Note: Experimental
+    _attrs = ['name', 'default', 'annotation']
+
+    #     find = DelegatedAttribute('_params', '__getattribute__')
+    #     __getattribute__ = DelegatedAttribute('_params', '__getattribute__')
+    def __init__(self, param, _attrs=None):
+        self._param = param
+        if _attrs is not None:
+            # usually used to get full attrs: ['name', 'kind', 'default', 'annotation']
+            self._attrs = _attrs
+
+    def items(self):
+        for k in self._attrs:
+            v = getattr(self._param, k)
+            if v is not inspect_empty:
+                yield k, v
+
+    def __getitem__(self, k):
+        return getattr(self._param, k)
+
+    def __getattr__(self, k):  # TODO: Use descriptor to make it faster
+        return getattr(self._param, k)
+
+    def __getstate__(self):
+        return {k: v for k, v in self.items()}
+
+
+class ParameterMint:
+    _attrs = ['name', 'kind', 'default', 'annotation']
+
+    def __init__(self, param, position=None):
+        if hasattr(param, '__getitem__'):
+            param = AttrFromKey(param)
+
+        for attr in self._attrs:
+            try:
+                val = getattr(param, attr, inspect_empty)
+            except KeyError:
+                val = inspect_empty
+            setattr(self, attr, val)
+        if position is not None:
+            self.position = position
+
+    def __getitem__(self, k):
+        return getattr(self, k)
+
+    def items(self):
+        for k in self._attrs:
+            v = getattr(self, k)
+            if v is not inspect_empty:
+                yield k, v
+        if hasattr(self, 'position'):
+            yield 'position', self.position
+
+    def __getstate__(self):
+        return {k: v for k, v in self.items()}
+
+    def __repr__(self):
+        d = dict()
+        for k, v in self.items():
+            if k == 'kind':
+                v = v.name
+            d[k] = v
+        return str(d)
+
+
+dflt_params = FrozenDict({})
+from collections.abc import Mapping
+
+
+class ParametersMint(Mapping):
+    """
+    Get mint of the parameters of a callable.
+
+    >>> import inspect
+    >>> from pprint import pprint
+    >>>
+    >>> def g(a, b: 'some_type', c=1, d: int = 1) -> float:
+    ...     return a * b * c * d
+    >>> mint = ParametersMint(inspect.signature(g).parameters)
+    >>> # mint is a mapping (like a read-only dict), so...
+    >>> list(mint)
+    ['a', 'b', 'c', 'd']
+    >>>
+    >>> for arg_spec in mint.values():
+    ...     print(arg_spec)
+    {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0}
+    {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_type', 'position': 1}
+    {'name': 'c', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2}
+    {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': <class 'int'>, 'position': 3}
+    >>> t = list(mint.items())
+    >>> t[0]
+    ('a', {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0})
+    >>> t[1]
+    ('b', {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_type', 'position': 1})
+    >>>
+    >>> mint = ParametersMint(inspect.signature(g).parameters)
+    >>> pprint(dict(mint))
+    {'a': {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},
+     'b': {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_type', 'position': 1},
+     'c': {'name': 'c', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2},
+     'd': {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': <class 'int'>, 'position': 3}}
+
+    >>>
+    >>> # and now, some cannibalistic fun...
+    >>> pprint(dict(ParametersMint(inspect.signature(ParametersMint).parameters)))
+    {'params': {'name': 'params', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': FrozenDict({}), 'position': 0}}
+    >>> pprint(dict(ParametersMint(inspect.signature(pprint).parameters)))
+    {'compact': {'name': 'compact', 'kind': 'KEYWORD_ONLY', 'default': False, 'position': 5},
+     'depth': {'name': 'depth', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': None, 'position': 4},
+     'indent': {'name': 'indent', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2},
+     'object': {'name': 'object', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},
+     'stream': {'name': 'stream', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': None, 'position': 1},
+     'width': {'name': 'width', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 80, 'position': 3}}
+    """
+
+    def __init__(self, params=dflt_params):
+        self._param_names = list()
+        for i, (k, v) in enumerate(params.items()):
+            self._param_names.append(k)
+            setattr(self, k, ParameterMint(v, position=i))
+
+    # def _init_with_inspect_parameters(self, params):
+    #     self._param_names = list()
+    #     for i, (k, v) in enumerate(params.items()):
+    #         self._param_names.append(k)
+    #         setattr(self, k, ParameterMint(v, position=i))
+    #
+    # def _init_with_items(self, params):
+    #     self._param_names = list()
+    #     for i, (k, v) in enumerate(params):
+    #         self._param_names.append(k)
+    #         setattr(self, k, ParameterMint(v, position=i))
+
+    def __getitem__(self, k):
+        return getattr(self, k)
+
+    def __iter__(self):
+        yield from self._param_names
+
+    def items(self):
+        for k in self._param_names:
+            yield k, getattr(self, k)
+
+    def __len__(self):
+        c = 0
+        for k in self.__iter__():
+            c += 1
+        return c
+
+    def __getstate__(self):
+        return {k: v.__getstate__() for k, v in self.items()}
+
+    def __setstate__(self, state):
+        return type(self)(state)
+
+    def to_dict(self):
+        return self.__getstate__()
+
+    def __repr__(self):
+        arg_repr = str({k: v.__repr__() for k, v in self.items()})
+        return f"{self.__class__.__name__}({arg_repr})"
+
+
+valid_types = [str, dict, list, float, int, bool]
+
+
+def parse_mint_doc(doc: str) -> dict:
+    if doc is None:
+        doc = ""
+    DESCRIPTION = 0
+    PARAMS = 1
+    RETURN = 2
+    split_doc = doc.split('\n')
+    summary = ''
+    description_lines = []
+    inputs = {}
+    return_value = {}
+    tags = []
+    reading = DESCRIPTION
+    cur_item_name = ''
+    for line in split_doc:
+        if line.startswith(':param'):
+            reading = PARAMS
+            split_line = line.split(':')
+            param_def = split_line[1]
+            split_param_def = param_def.split(' ')
+            param_name = ''
+            param_type = None
+            if len(split_param_def) >= 3:
+                param_type = split_param_def[1]
+                param_name = split_param_def[2]
+                try:
+                    assert len(param_type) <= 5
+                    param_type = eval(param_type)
+                    assert param_type in valid_types
+                except Exception:
+                    param_type = '{}'
+            elif len(split_param_def) == 2:
+                param_name = split_param_def[1]
+            if param_name:
+                cur_item_name = param_name
+                if param_type is not None:
+                    inputs[param_name] = {'type': param_type}
+                if param_name in inputs:
+                    inputs[param_name]['description'] = ':'.join(split_line[2:]) \
+                        if len(split_line) > 2 else ''
+        elif line.startswith(':return'):
+            reading = RETURN
+            split_line = line.split(':')
+            return_type = split_line[1]
+            try:
+                assert len(return_type) <= 5
+                return_type = eval(return_type)
+                assert return_type in valid_types
+            except Exception:
+                return_type = '{}'
+            return_value = {'type': return_type}
+            return_value['description'] = ':'.join(split_line[2:]) \
+                if len(split_line) > 2 else ''
+        elif line.startswith(':tags'):
+            split_line = line.split(':')
+            tags = split_line[1].replace(' ', '').split(',')
+        else:
+            if reading == DESCRIPTION:
+                if not summary:
+                    summary = line
+                else:
+                    description_lines.append(line)
+            elif reading == PARAMS:
+                inputs[cur_item_name]['description'] += ' ' + line
+            elif reading == RETURN:
+                return_value['description'] += ' ' + line
+    return {
+        'description': ' '.join(description_lines),
+        'inputs': inputs,
+        'return': return_value,
+        'summary': summary,
+        'tags': tags,
+    }
+
+
+# import pydoc
+
+class Mint(Mapping):
+    """
+    Get a Mint object of a python object.
+    A Mint will provide parameters that provide (meta-)information about the interface of the python object.
+
+    >>> from pprint import pprint
+    >>> def f(my_arg: int = 7) -> int:
+    ...     return my_arg + 10
+    >>> def g(a, b: 'some_string_id_of_a_custom_type', c=1, d: int = 1) -> float:
+    ...     return a * b * c * d
+    >>>
+    >>> mint = Mint(f)
+    >>> mint.type_name
+    'function'
+    >>> mint.module_name
+    'signature_mint'
+    >>> mint.parameters.my_arg
+    {'name': 'my_arg', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 7, 'annotation': <class 'int'>, 'position': 0}
+
+    >>>
+    """
+
+    def __init__(self, obj, attrs=None):
+        self._obj = obj
+        if attrs is None:
+            attrs = frozenset(_property_names_of(type(self)))
+        else:
+            self_type = type(self)
+            for attr in attrs:
+                if not _is_property(attr, getattr(self_type, attr, None)):
+                    raise AttributeError(f"{self.__class__} doesn't have attribute: {attr}")
+        self._attrs = attrs
+
+    def __len__(self):
+        return self._length
+
+    def __iter__(self):
+        yield from self._non_empty_attrs
+
+    def __getitem__(self, k):
+        if k in self._non_empty_attrs:
+            return getattr(self, k)
+        else:
+            raise KeyError("No such key: {k}")
+
+    def items(self):
+        for attr in self._non_empty_attrs:
+            yield attr, getattr(self, attr)
+
+    @lazyprop
+    def _non_empty_attrs(self):
+        non_empty_attrs = list()
+        for attr in self._attrs:
+            attr_val = getattr(self, attr)
+            if is_not_empty(attr_val):
+                non_empty_attrs.append(attr)
+        return non_empty_attrs
+
+    @lazyprop
+    def _length(self):
+        return len(self._non_empty_attrs)
+
+    @lazyprop
+    def obj_name(self):
+        return getattr(self._obj, '__name__', not_found)
+
+    @lazyprop
+    def type_name(self):
+        return getattr(type(self._obj), '__name__', not_found)
+
+    @lazyprop
+    def module(self):
+        return inspect.getmodule(self._obj)
+
+    @lazyprop
+    def module_name(self):
+        return self.module.__name__
+
+
+class MintOfCallableMixin:
+    @lazyprop
+    def _signature(self):
+        """ Here's some doc """
+        return signature(self._obj)
+
+    @lazyprop
+    def parameters(self):
+        return ParametersMint(self._signature.parameters)
+
+    @lazyprop
+    def return_annotation(self):
+        return self._signature.return_annotation or not_found
+
+    @lazyprop
+    def doc_string(self):
+        return inspect.getdoc(self._obj) or not_found
+
+    @lazyprop
+    def comments_preceeding_def(self):
+        return inspect.getcomments(self._obj) or not_found
+
+
+class MintOfDocMixin:
+    @lazyprop
+    def _parsed_doc(self):
+        return parse_mint_doc(self.doc_string)
+
+
+class MintOfCallable(Mint, MintOfCallableMixin, MintOfDocMixin):
+    """
+    Get a Mint object of a python object.
+    A Mint will provide parameters that provide (meta-)information about the interface of the python object.
+
+    >>> from pprint import pprint
+    >>> def f(my_arg: int = 7) -> int:
+    ...     return my_arg + 10
+    >>> f.__doc__ = 'some documentation'
+    >>>
+    >>> mint = MintOfCallable(f)
+    >>> mint.obj_name
+    'f'
+    >>> mint.type_name
+    'function'
+    >>> mint.module_name
+    'signature_mint'
+    >>> mint.parameters.my_arg
+    {'name': 'my_arg', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 7, 'annotation': <class 'int'>, 'position': 0}
+    >>> mint.doc_string
+    'some documentation'
+    >>> mint.return_annotation
+    <class 'int'>
+    >>> def g(a, b: 'some_string_id_of_a_custom_type', c=1, d: int = 1) -> float:
+    ...     return a * b * c * d
+    >>> pprint(dict(MintOfCallable(g).parameters))
+    {'a': {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},
+     'b': {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_string_id_of_a_custom_type', 'position': 1},
+     'c': {'name': 'c', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2},
+     'd': {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': <class 'int'>, 'position': 3}}
+    """
+    pass
