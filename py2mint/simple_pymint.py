@@ -1,5 +1,5 @@
 import inspect
-
+from collections import defaultdict
 
 class NoDefault(object):
     def __repr__(self):
@@ -42,12 +42,13 @@ def parse_mint_doc(doc: str) -> dict:
     split_doc = doc.split('\n')
     summary = ''
     description_lines = []
-    inputs = {}
+    inputs = defaultdict(dict)
     return_value = {}
     tags = []
     reading = DESCRIPTION
     cur_item_name = ''
     for line in split_doc:
+        line = line.strip()
         if line.startswith(':param'):
             reading = PARAMS
             split_line = line.split(':')
@@ -96,12 +97,14 @@ def parse_mint_doc(doc: str) -> dict:
                 else:
                     description_lines.append(line)
             elif reading == PARAMS:
+                if 'description' not in inputs[cur_item_name]:
+                    inputs[cur_item_name]['description'] = ''
                 inputs[cur_item_name]['description'] += ' ' + line
             elif reading == RETURN:
                 return_value['description'] += ' ' + line
     return {
         'description': ' '.join(description_lines),
-        'inputs': inputs,
+        'inputs': dict(inputs),
         'return': return_value,
         'summary': summary,
         'tags': tags,

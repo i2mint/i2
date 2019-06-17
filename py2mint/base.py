@@ -1,22 +1,25 @@
 import inspect
-from inspect import signature
-from inspect import _empty as inspect_empty
+from inspect import _empty as inspect_empty, signature
+from typing import Mapping
 
-from py2mint.util import lazyprop, FrozenDict
+from py2mint.util import lazyprop, FrozenDict, get_function_body
 
 
 class NotFoundType:
     def __bool__(self):
         return False
 
+    def __repr__(self):
+        return 'NotFound'
 
+
+# Note, if the "empty" classes the are used to check if an object is empty are not singletons, could lead to bugs
+# TODO: Look into metaprogramming tricks for this.
 not_found = NotFoundType()
 no_name = type('NoName', (NotFoundType,), {})()
 inspect_is_empty = inspect._empty
 
 
-# Note, if the "empty" classes the are used to check if an object is empty are not singletons, could lead to bugs
-# TODO: Look into metaprogramming tricks for this.
 def is_not_empty(obj):
     if obj is inspect_is_empty or isinstance(obj, NotFoundType):
         return False
@@ -86,6 +89,13 @@ class _ParameterMintLazy:  # Note: Experimental
     def __getitem__(self, k):
         return getattr(self._param, k)
 
+    def __contains__(self, k):
+        try:
+            _ = self[k]
+            return True
+        except Exception:
+            return False
+
     def __getattr__(self, k):  # TODO: Use descriptor to make it faster
         return getattr(self._param, k)
 
@@ -112,6 +122,13 @@ class ParameterMint:
     def __getitem__(self, k):
         return getattr(self, k)
 
+    def __contains__(self, k):
+        try:
+            _ = self[k]
+            return True
+        except Exception:
+            return False
+
     def items(self):
         for k in self._attrs:
             v = getattr(self, k)
@@ -133,7 +150,6 @@ class ParameterMint:
 
 
 dflt_params = FrozenDict({})
-from collections.abc import Mapping
 
 
 class ParametersMint(Mapping):
@@ -171,8 +187,6 @@ class ParametersMint(Mapping):
 
     >>>
     >>> # and now, some cannibalistic fun...
-    >>> pprint(dict(ParametersMint(inspect.signature(ParametersMint).parameters)))
-    {'params': {'name': 'params', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': FrozenDict({}), 'position': 0}}
     >>> pprint(dict(ParametersMint(inspect.signature(pprint).parameters)))
     {'compact': {'name': 'compact', 'kind': 'KEYWORD_ONLY', 'default': False, 'position': 5},
      'depth': {'name': 'depth', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': None, 'position': 4},
@@ -180,6 +194,16 @@ class ParametersMint(Mapping):
      'object': {'name': 'object', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},
      'stream': {'name': 'stream', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': None, 'position': 1},
      'width': {'name': 'width', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 80, 'position': 3}}
+    >>> pprint(dict(ParametersMint(inspect.signature(ParametersMint).parameters)))
+    {'args': {'name': 'args', 'kind': 'VAR_POSITIONAL', 'position': 0},
+     'kwds': {'name': 'kwds', 'kind': 'VAR_KEYWORD', 'position': 1}}
+    >>> pprint(dict(ParametersMint(inspect.signature(ParametersMint.__init__).parameters)))
+    {'params': {'name': 'params', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': FrozenDict({}), 'position': 1},
+     'self': {'name': 'self', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0}}
+    >>> pprint(dict(ParametersMint(inspect.signature(ParametersMint.__new__).parameters)))
+    {'args': {'name': 'args', 'kind': 'VAR_POSITIONAL', 'position': 1},
+     'cls': {'name': 'cls', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},
+     'kwds': {'name': 'kwds', 'kind': 'VAR_KEYWORD', 'position': 2}}
     """
 
     def __init__(self, params=dflt_params):
@@ -187,18 +211,6 @@ class ParametersMint(Mapping):
         for i, (k, v) in enumerate(params.items()):
             self._param_names.append(k)
             setattr(self, k, ParameterMint(v, position=i))
-
-    # def _init_with_inspect_parameters(self, params):
-    #     self._param_names = list()
-    #     for i, (k, v) in enumerate(params.items()):
-    #         self._param_names.append(k)
-    #         setattr(self, k, ParameterMint(v, position=i))
-    #
-    # def _init_with_items(self, params):
-    #     self._param_names = list()
-    #     for i, (k, v) in enumerate(params):
-    #         self._param_names.append(k)
-    #         setattr(self, k, ParameterMint(v, position=i))
 
     def __getitem__(self, k):
         return getattr(self, k)
@@ -230,106 +242,30 @@ class ParametersMint(Mapping):
         return f"{self.__class__.__name__}({arg_repr})"
 
 
-valid_types = [str, dict, list, float, int, bool]
-
-
-def parse_mint_doc(doc: str) -> dict:
-    if doc is None:
-        doc = ""
-    DESCRIPTION = 0
-    PARAMS = 1
-    RETURN = 2
-    split_doc = doc.split('\n')
-    summary = ''
-    description_lines = []
-    inputs = {}
-    return_value = {}
-    tags = []
-    reading = DESCRIPTION
-    cur_item_name = ''
-    for line in split_doc:
-        if line.startswith(':param'):
-            reading = PARAMS
-            split_line = line.split(':')
-            param_def = split_line[1]
-            split_param_def = param_def.split(' ')
-            param_name = ''
-            param_type = None
-            if len(split_param_def) >= 3:
-                param_type = split_param_def[1]
-                param_name = split_param_def[2]
-                try:
-                    assert len(param_type) <= 5
-                    param_type = eval(param_type)
-                    assert param_type in valid_types
-                except Exception:
-                    param_type = '{}'
-            elif len(split_param_def) == 2:
-                param_name = split_param_def[1]
-            if param_name:
-                cur_item_name = param_name
-                if param_type is not None:
-                    inputs[param_name] = {'type': param_type}
-                if param_name in inputs:
-                    inputs[param_name]['description'] = ':'.join(split_line[2:]) \
-                        if len(split_line) > 2 else ''
-        elif line.startswith(':return'):
-            reading = RETURN
-            split_line = line.split(':')
-            return_type = split_line[1]
-            try:
-                assert len(return_type) <= 5
-                return_type = eval(return_type)
-                assert return_type in valid_types
-            except Exception:
-                return_type = '{}'
-            return_value = {'type': return_type}
-            return_value['description'] = ':'.join(split_line[2:]) \
-                if len(split_line) > 2 else ''
-        elif line.startswith(':tags'):
-            split_line = line.split(':')
-            tags = split_line[1].replace(' ', '').split(',')
-        else:
-            if reading == DESCRIPTION:
-                if not summary:
-                    summary = line
-                else:
-                    description_lines.append(line)
-            elif reading == PARAMS:
-                inputs[cur_item_name]['description'] += ' ' + line
-            elif reading == RETURN:
-                return_value['description'] += ' ' + line
-    return {
-        'description': ' '.join(description_lines),
-        'inputs': inputs,
-        'return': return_value,
-        'summary': summary,
-        'tags': tags,
-    }
-
-
-# import pydoc
-
 class Mint(Mapping):
     """
     Get a Mint object of a python object.
     A Mint will provide parameters that provide (meta-)information about the interface of the python object.
 
     >>> from pprint import pprint
+    >>> # Mint of a function
     >>> def f(my_arg: int = 7) -> int:
     ...     return my_arg + 10
-    >>> def g(a, b: 'some_string_id_of_a_custom_type', c=1, d: int = 1) -> float:
-    ...     return a * b * c * d
-    >>>
     >>> mint = Mint(f)
-    >>> mint.type_name
-    'function'
-    >>> mint.module_name
-    'signature_mint'
-    >>> mint.parameters.my_arg
-    {'name': 'my_arg', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 7, 'annotation': <class 'int'>, 'position': 0}
-
-    >>>
+    >>> mint.obj_name, mint.type_name, mint.module_name, mint.obj_name
+    ('f', 'function', 'base', 'f')
+    >>> # Mint of a module
+    >>> import os as myos
+    >>> mint = Mint(myos)
+    >>> mint.obj_name, mint.type_name, mint.module_name, mint.obj_name
+    ('os', 'module', 'os', 'os')
+    >>> assert set(list(mint)) == {'module_name', 'module', 'type_name', 'obj_name'}
+    >>> # Mint of a variable
+    >>> v = 10
+    >>> mint = Mint(v)
+    >>> mint.obj_name, mint.type_name, mint.module_name, mint.obj_name
+    (NotFound, 'int', NotFound, NotFound)
+    >>> assert set(list(mint)) == {'type_name'}  # see that there's only one non-null attr!
     """
 
     def __init__(self, obj, attrs=None):
@@ -382,14 +318,15 @@ class Mint(Mapping):
 
     @lazyprop
     def module(self):
-        return inspect.getmodule(self._obj)
+        return inspect.getmodule(self._obj) or not_found
 
     @lazyprop
     def module_name(self):
-        return self.module.__name__
+        return getattr(self.module, '__name__', not_found)
 
 
 class MintOfCallableMixin:
+
     @lazyprop
     def _signature(self):
         """ Here's some doc """
@@ -411,11 +348,29 @@ class MintOfCallableMixin:
     def comments_preceeding_def(self):
         return inspect.getcomments(self._obj) or not_found
 
+    @lazyprop
+    def default_of(self):
+        d = dict()
+        for k, v in self.parameters.items():
+            if 'default' in v:
+                d[k] = v['default']
+        return d
+
+    @lazyprop
+    def annotation_of(self):
+        d = dict()
+        for k, v in self.parameters.items():
+            if 'annotation' in v:
+                d[k] = v['annotation']
+        return d
+
 
 class MintOfDocMixin:
     @lazyprop
     def _parsed_doc(self):
-        return parse_mint_doc(self.doc_string)
+        return 'Not yet implemented (correctly)'
+        from py2mint.scrap import parse_mint_doc
+        # return parse_mint_doc(self.doc_string)
 
 
 class MintOfCallable(Mint, MintOfCallableMixin, MintOfDocMixin):
@@ -434,7 +389,7 @@ class MintOfCallable(Mint, MintOfCallableMixin, MintOfDocMixin):
     >>> mint.type_name
     'function'
     >>> mint.module_name
-    'signature_mint'
+    'base'
     >>> mint.parameters.my_arg
     {'name': 'my_arg', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 7, 'annotation': <class 'int'>, 'position': 0}
     >>> mint.doc_string
@@ -450,3 +405,60 @@ class MintOfCallable(Mint, MintOfCallableMixin, MintOfDocMixin):
      'd': {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': <class 'int'>, 'position': 3}}
     """
     pass
+
+
+# class FunctionBuilderMint(Mint):
+#     name = lazyprop(Mint.obj_name)
+#     module = lazyprop(Mint.module_name)
+#     module.__doc__ = 'Name of the module from which this function was imported.'
+#     doc = lazyprop(MintOfCallableMixin.doc_string)
+#
+#     @lazyprop
+#     def _signature(self):
+#         """ Here's some doc """
+#         return signature(self._obj)
+#
+#     @lazyprop
+#     def body(self):
+#         """String version of the code representing the body
+#         of the function. Defaults to ``'pass'``, which will result
+#         in a function which does nothing and returns ``None``."""
+#         return get_function_body(self._obj)
+#
+#     @lazyprop
+#     def args(self):
+#         return [p['name'] for p in self._signature.parameters]
+#
+#     @lazyprop
+#     def varargs(self):
+#         return [p['name'] for p in self._signature.parameters]
+#
+# """    name (str): Name of the function.
+#     doc (str): `Docstring`_ for the function, defaults to empty.
+#     module (str): Name of the module from which this function was
+#         imported. Defaults to None.
+#     body (str): String version of the code representing the body
+#         of the function. Defaults to ``'pass'``, which will result
+#         in a function which does nothing and returns ``None``.
+#     args (list): List of argument names, defaults to empty list,
+#         denoting no arguments.
+#     varargs (str): Name of the catch-all variable for positional
+#         arguments. E.g., "args" if the resultant function is to have
+#         ``*args`` in the signature. Defaults to None.
+#     varkw (str): Name of the catch-all variable for keyword
+#         arguments. E.g., "kwargs" if the resultant function is to have
+#         ``**kwargs`` in the signature. Defaults to None.
+#     defaults (dict): A mapping of argument names to default values.
+#     kwonlyargs (list): Argument names which are only valid as
+#         keyword arguments. **Python 3 only.**
+#     kwonlydefaults (dict): A mapping, same as normal *defaults*,
+#         but only for the *kwonlyargs*. **Python 3 only.**
+#     annotations (dict): Mapping of type hints and so
+#         forth. **Python 3 only.**
+#     filename (str): The filename that will appear in
+#         tracebacks. Defaults to "boltons.funcutils.FunctionBuilder".
+#     indent (int): Number of spaces with which to indent the
+#         function *body*. Values less than 1 will result in an error.
+#     dict (dict): Any other attributes which should be added to the
+#         functions compiled with this FunctionBuilder."""
+
