@@ -223,6 +223,8 @@ class FunctionBuilder(object):
     creating new functions, either based on existing functions or from
     scratch.
 
+    Note: Based on https://boltons.readthedocs.io
+
     Values are passed in at construction or set as attributes on the
     instance. For creating a new function based of an existing one,
     see the :meth:`~FunctionBuilder.from_func` classmethod. At any
