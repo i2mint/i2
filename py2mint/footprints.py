@@ -2,28 +2,6 @@ import ast
 import inspect
 
 
-def func(obj):
-    return obj.a + obj.b
-
-
-class A:
-    e = 2
-
-    def __init__(self, a=1, b=0, c=1, d=10):
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
-
-    def target_method(self, x):
-        t = func(self)
-        tt = self.other_method(t)
-        return x * tt / self.e
-
-    def other_method(self, x=1):
-        return self.c * x
-
-
 def attrs_used_by_method(cls, method_name):
     """
     Extracts a list of cls attributes which are used by a method or method_name function
