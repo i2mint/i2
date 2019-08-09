@@ -1,5 +1,6 @@
 import ast
 import inspect
+from contextlib import contextmanager
 
 
 def attrs_used_by_method(cls, method_name):
@@ -49,9 +50,12 @@ class Tracker:
     Add this to __metaclass__ for any class that you need to track attributes for given a
     target method.
     """
-    attrs_to_ignore = []
-    attr_used = []
     start_track = False
+
+    def __init__(self, *args, **kwargs):
+        self.attr_used = []
+        self.attrs_to_ignore = []
+        super().__init__(*args, **kwargs)
 
     def __getattribute__(self, item):
         """
@@ -81,31 +85,57 @@ class Tracker:
             self.attr_used.append(key)
 
 
-def attrs_used_by_method_computation(cls, method_name, method_params=None):
+def get_class_that_defined_method(method):
+    """
+    Get class for unbound/bound method.
+    """
+    if inspect.ismethod(method):
+        for cls in inspect.getmro(method.__self__.__class__):
+            if cls.__dict__.get(method.__name__) is method:
+                return cls
+        method = method.__func__  # fallback to __qualname__ parsing
+    if inspect.isfunction(method):
+        cls = getattr(inspect.getmodule(method),
+                      method.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0])
+        if isinstance(cls, type):
+            return cls
+    return getattr(method, '__objclass__', None)
+
+
+@contextmanager
+def start_tracking(tracker_instance):
+    """
+    Ctx manager to gracefully start/stop tracking.
+    """
+    tracker_instance.start_track = True
+    yield tracker_instance
+    tracker_instance.start_track = False
+
+
+def attrs_used_by_method_computation(cls_method, init_kwargs=None, method_kwargs=None):
     """
     Tracks the access to attributes within an execution.
-    Args:
-        cls: class where method is defined
-        method_name: method name
-        method_params: kwargs dict to give to the method when run for analysis
-
-    Returns:
-         A list of attribute names (of the class or instance thereof) that are accessed in the code of the said method.
     """
+    if init_kwargs is None:
+        init_kwargs = {}
+    if method_kwargs is None:
+        method_kwargs = {}
 
-    # create meta class with the above tracker and `cls` from parameters.
-    if method_params is None:
-        method_params = {}
-    tracker = type('Tracker', (Tracker, cls), dict(cls.__dict__, **Tracker.__dict__))()
+    method_class = get_class_that_defined_method(cls_method)
+    method_name = cls_method.__name__
+    tracker = type(
+        'Tracker',
+        (Tracker, method_class),
+        dict(method_class.__dict__, **Tracker.__dict__)
+    )(**init_kwargs)
     tracker.attrs_to_ignore = [func for func in dir(tracker) if callable(getattr(tracker, func))]
     if hasattr(tracker, method_name):
         candidate_method = getattr(tracker, method_name)
         # Now, we want to track attributes.
-        tracker.start_track = True
-        candidate_method(**method_params)
-        attr_used = tracker.attr_used.copy()
-        tracker.attr_used = []
-        return attr_used
+        with start_tracking(tracker):
+            candidate_method(**method_kwargs)
+
+        return tracker.attr_used
     else:
         # Error class/obj do not have that method.
         return 1
