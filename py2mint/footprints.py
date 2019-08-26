@@ -5,6 +5,53 @@ from contextlib import contextmanager
 from functools import reduce
 from importlib import import_module
 
+import os
+import ast
+from collections import namedtuple
+from inspect import getsource, getsourcefile
+from types import ModuleType
+
+Import = namedtuple("Import", ["module", "name", "alias"])
+
+
+def _get_ast_root_from(o):
+    source_str = None
+    source_filepath = None
+    if isinstance(o, str) and os.path.isfile(o):
+        source_filepath = o
+        with open(source_filepath) as fh:
+            source_str = fh.read()
+    elif not isinstance(o, ast.AST):  # not an AST node...
+        source_filepath = getsourcefile(o)
+        source_str = getsource(o)
+        if not isinstance(source_filepath, str) and isinstance(source_str, str):
+            raise ValueError("Unrecognized object format")
+
+    return ast.parse(source=source_str, filename=source_filepath)
+
+
+def _get_imports_from_ast_root(ast_root, recursive=False):
+
+    for node in ast.iter_child_nodes(ast_root):
+        module = None
+        if isinstance(node, ast.Import):
+            module = []
+        elif isinstance(node, ast.ImportFrom):
+            module = node.module.split('.')
+
+        if module is not None:
+            for n in node.names:
+                yield Import(module, n.name.split('.'), n.asname)
+
+        if recursive:
+            yield from _get_imports_from_ast_root(node, recursive=recursive)
+
+
+def get_imports_from_obj(o, recursive=False):
+    """ Getting imports for an object (usually, module) """
+    root = _get_ast_root_from(o)
+    yield from _get_imports_from_ast_root(root, recursive)
+
 
 def _process_duplicates(a, remove_duplicates=True):
     if remove_duplicates:
