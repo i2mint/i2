@@ -4,12 +4,9 @@ import dis
 from contextlib import contextmanager
 from functools import reduce
 from importlib import import_module
-
 import os
-import ast
 from collections import namedtuple
 from inspect import getsource, getsourcefile
-from types import ModuleType
 
 Import = namedtuple("Import", ["module", "name", "alias"])
 
@@ -31,7 +28,6 @@ def _get_ast_root_from(o):
 
 
 def _get_imports_from_ast_root(ast_root, recursive=False):
-
     for node in ast.iter_child_nodes(ast_root):
         module = None
         if isinstance(node, ast.Import):
