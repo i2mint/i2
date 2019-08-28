@@ -5,6 +5,20 @@ from py2mint.base import MintOfCallable
 from functools import partial, wraps
 
 
+def inject_signature(sig, *, return_annotation=inspect._empty, __validate_parameters__=True):
+    if not isinstance(sig, inspect.Signature):
+        sig = mk_signature_from_dict_specs(sig,
+                                           return_annotation=return_annotation,
+                                           __validate_parameters__=__validate_parameters__)
+    assert isinstance(sig, inspect.Signature), "sig should be an inspect.Signature (or be resolved to one)"
+
+    def wrapper(func):
+        func.__signature__ = sig
+        return func
+
+    return wrapper
+
+
 def dict_only_with_specific_keys(d, keys):
     new_d = dict()
     for k in keys:
