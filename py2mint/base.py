@@ -1,3 +1,9 @@
+"""
+Tools to provide meta-interfaces of python objects.
+See also:
+    py2misc/py2store/tree_store.py
+    py2mint/py2mint/alternative_approaches.py
+"""
 import inspect
 from inspect import _empty as inspect_empty, signature
 from typing import Mapping
@@ -405,6 +411,7 @@ class MintOfCallable(Mint, MintOfCallableMixin, MintOfDocMixin):
      'd': {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': <class 'int'>, 'position': 3}}
     """
     pass
+
 
 
 # class FunctionBuilderMint(Mint):
