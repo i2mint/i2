@@ -1,4 +1,33 @@
-from inspect import Signature, Parameter, _empty, _ParameterKind
+from functools import reduce
+from inspect import Signature, Parameter, _empty, _ParameterKind, signature
+from glom import Spec
+
+mappingproxy = type(Signature().parameters)
+
+signature_to_dict = Spec({'parameters': 'parameters',
+                          'return_annotation': 'return_annotation'}).glom
+
+
+def update_signature_with_signatures_from_funcs(funcs):
+    """Make a decorator that will merge the signatures of given funcs to the signature of the wrapped func.
+    >>> def foo(a='a', b: int=0, c=None) -> int: ...
+    >>> def bar(b: float=0.0, d: str='hi') -> float: ...
+    >>> @update_signature_with_signatures_from_funcs([foo, bar])
+    ... def hello(x: str='hi', y=1) -> str:
+    ...     pass
+    >>> signature(hello)
+    <Signature (a='a', b: float = 0.0, c=None, d: str = 'hi', x: str = 'hi', y=1) -> str>
+    """
+    if callable(funcs):
+        funcs = [funcs]
+
+    def wrapper(func):
+        funcs.append(func)
+        func.__signature__ = _merged_signatures_of_func_list(funcs)
+        return func
+
+    return wrapper
+
 
 dflt_name_for_kind = {
     Parameter.VAR_POSITIONAL: 'args',
@@ -44,7 +73,7 @@ def mk_param(param, dflt_kind=Parameter.POSITIONAL_OR_KEYWORD):
     return param
 
 
-def mk_signature(signature, *, return_annotation=_empty, __validate_parameters__=True):
+def mk_signature(parameters, *, return_annotation=_empty, __validate_parameters__=True):
     """
     Make an inspect.Signature object with less boilerplate verbosity.
     Args:
@@ -67,17 +96,24 @@ def mk_signature(signature, *, return_annotation=_empty, __validate_parameters__
     >>> import inspect
     >>> mk_signature([inspect.Parameter(name='kws', kind=inspect.Parameter.VAR_KEYWORD)], return_annotation=str)
     <Signature (**kws) -> str>
+    >>>
+    >>> # Note that mk_signature is an inverse of signature_to_dict:
+    >>> def foo(a, b: int=0, c=None) -> int: ...
+    >>> sig_foo = signature(foo)
+    >>> assert mk_signature(**signature_to_dict(sig_foo)) == sig_foo
     """
-    if not isinstance(signature, Signature):
-        signature = Signature(parameters=list(map(mk_param, signature)),
-                              return_annotation=return_annotation,
-                              __validate_parameters__=__validate_parameters__)
+    if isinstance(parameters, Signature):
+        parameters = parameters.parameters.values()
+    elif isinstance(parameters, (mappingproxy, dict)):
+        parameters = parameters.values()
+    else:
+        parameters = list(map(mk_param, parameters))
 
-    assert isinstance(signature, Signature)
-    return signature
+    return Signature(parameters,
+                     return_annotation=return_annotation, __validate_parameters__=__validate_parameters__)
 
 
-def set_signature_of_func(func, signature, *, return_annotation=_empty, __validate_parameters__=True):
+def set_signature_of_func(func, parameters, *, return_annotation=_empty, __validate_parameters__=True):
     """
     Set the signature of a function, with sugar.
 
@@ -114,7 +150,64 @@ def set_signature_of_func(func, signature, *, return_annotation=_empty, __valida
     <Signature (**kws) -> str>
 
     """
-    func.__signature__ = mk_signature(signature,
+    func.__signature__ = mk_signature(parameters,
                                       return_annotation=return_annotation,
                                       __validate_parameters__=__validate_parameters__)
     # Not returning func so it's clear(er) that the function is transformed in place
+
+
+def _merge_sig_dicts(sig1_dict, sig2_dict):
+    """Merge two signature dicts. A in dict.update(sig1_dict, **sig2_dict), but specialized for signature dicts.
+    If sig1_dict and sig2_dict both define a parameter or return annotation, sig2_dict decides on what the output is.
+    """
+    return {
+        'parameters':
+            dict(sig1_dict['parameters'], **sig2_dict['parameters']),
+        'return_annotation':
+            sig2_dict['return_annotation'] or sig1_dict['return_annotation']
+    }
+
+
+def _merge_signatures(sig1, sig2):
+    """Get the merged signatures of two signatures (sig2 is the final decider of conflics)
+    >>> def foo(a='a', b: int=0, c=None) -> int: ...
+    >>> def bar(b: float=0.0, d: str='hi') -> float: ...
+    >>> foo_sig = signature(foo)
+    >>> bar_sig = signature(bar)
+    >>> foo_sig
+    <Signature (a='a', b: int = 0, c=None) -> int>
+    >>> bar_sig
+    <Signature (b: float = 0.0, d: str = 'hi') -> float>
+    >>> _merge_signatures(foo_sig, bar_sig)
+    <Signature (a='a', b: float = 0.0, c=None, d: str = 'hi') -> float>
+    >>> _merge_signatures(bar_sig, foo_sig)
+    <Signature (b: int = 0, d: str = 'hi', a='a', c=None) -> int>
+    """
+    return mk_signature(**_merge_sig_dicts(signature_to_dict(sig1), signature_to_dict(sig2)))
+
+
+def _merge_signatures_of_funcs(func1, func2):
+    """Get the merged signatures of two functions (func2 is the final decider of conflics)
+    >>> def foo(a='a', b: int=0, c=None) -> int: ...
+    >>> def bar(b: float=0.0, d: str='hi') -> float: ...
+    >>> _merge_signatures_of_funcs(foo, bar)
+    <Signature (a='a', b: float = 0.0, c=None, d: str = 'hi') -> float>
+    >>> _merge_signatures_of_funcs(bar, foo)
+    <Signature (b: int = 0, d: str = 'hi', a='a', c=None) -> int>
+    """
+    return _merge_signatures(signature(func1), signature(func2))
+
+
+def _merged_signatures_of_func_list(funcs):
+    """
+    >>> def foo(a='a', b: int=0, c=None) -> int: ...
+    >>> def bar(b: float=0.0, d: str='hi') -> float: ...
+    >>> def hello(x: str='hi', y=1) -> str: ...
+    >>> _merged_signatures_of_func_list([foo, bar, hello])
+    <Signature (a='a', b: float = 0.0, c=None, d: str = 'hi', x: str = 'hi', y=1) -> str>
+    >>> _merged_signatures_of_func_list([hello, foo, bar])
+    <Signature (x: str = 'hi', y=1, a='a', b: float = 0.0, c=None, d: str = 'hi') -> float>
+    >>> _merged_signatures_of_func_list([foo, bar, hello])
+    <Signature (a='a', b: float = 0.0, c=None, d: str = 'hi', x: str = 'hi', y=1) -> str>
+    """
+    return reduce(_merge_signatures, map(signature, funcs))
