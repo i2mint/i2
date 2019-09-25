@@ -131,6 +131,8 @@ class ChainMapTree(Mapping):
     'base3.a3.b2'
     >>> cm['a3']['b1']  # will get it from base1 (since no one else has it)
     'base1.a3.b1'
+
+    Based on: https://gist.github.com/Klortho/7d83975559bdcc47ac64fd7d877934f6
     """
     _max_repr_keys = 7  # Not used (anymore) at this point. Was to control __repr__ output length
 
@@ -142,7 +144,7 @@ class ChainMapTree(Mapping):
                         for key in m.keys() if is_mapping(m[key])])
 
         # This will be a dictionary of lists of mappings
-        kid_maps = {};
+        kid_maps = {}
         for key in kid_keys:
             # The list of child mappings for this key
             kmaps = [m[key] for m in maps if key in m]
@@ -182,6 +184,35 @@ class ChainMapTree(Mapping):
         if i >= self._max_repr_keys:
             keys_str += ', ...'
         return keys_str
+
+    def to_dict(self):
+        """Convert to dict
+
+        >>> a = {'a': {'x': 1, 'z': 3}, 'foo': "a's foo"}
+        >>> b = {'a': {'y': 222, 'z': 333}, 'foo': "b's foo"}
+        >>> cm = ChainMapTree(a, b)
+        >>> # It acts like a dict when you ask for items, but is not a dict. If you want a dict, do this:
+        >>> cm.to_dict()
+        {'a': {'x': 1, 'z': 3, 'y': 222}, 'foo': "a's foo"}
+        >>> # Compare to normal/flat/not-nested chaining:
+        >>> dict(a, **b)   # Note the precedence is the inverse of ChainMapTree!
+        {'a': {'y': 222, 'z': 333}, 'foo': "b's foo"}
+        >>>
+        >>> # See what you get if you specify b before a
+        >>> ChainMapTree(b, a).to_dict()
+        {'a': {'y': 222, 'z': 333, 'x': 1}, 'foo': "b's foo"}
+        >>> # Compare to normal/flat/not-nested chaining:
+        >>> dict(b, **a)  # Note the precedence is the inverse of ChainMapTree!
+        {'a': {'x': 1, 'z': 3}, 'foo': "a's foo"}
+        """
+        d = dict()
+        for k in self:
+            v = self[k]
+            if not isinstance(v, ChainMapTree):
+                d[k] = v
+            else:
+                d[k] = v.to_dict()
+        return d
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join((_map.__repr__() for _map in self._maps))})"
