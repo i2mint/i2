@@ -85,6 +85,17 @@ def assert_attrs(attrs):
     return _assert_attrs
 
 
+def preprocess_arguments(pre):
+    """Apply a function to args, kwargs and use the transformed in the decorated function"""
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            args, kwargs = pre(*args, **kwargs)
+            return func(*args, **kwargs)
+        return wraps(func)(wrapper)
+
+    return decorator
+
+
 def preprocess(pre):
     def decorator(func):
         if inspect.ismethod(func):
@@ -779,7 +790,7 @@ def _call_signature(func: Callable, args: Args, kwargs: Kwargs) -> str:
     args_signature = ", ".join(map(_special_str, args))
     kwargs_signature = ", ".join(("{}={}".format(k, _special_str(v)) for k, v in kwargs.items()))
     return "{func_name}({signature})".format(func_name=func.__name__,
-                                                        signature=", ".join([args_signature, kwargs_signature]))
+                                             signature=", ".join([args_signature, kwargs_signature]))
 
 
 def mk_call_logger(logger=print, what_to_log: WhatToLog = _call_signature, func_is_bounded=False):
