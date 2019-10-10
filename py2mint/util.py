@@ -1,3 +1,10 @@
+import inspect
+import re
+import itertools
+
+import types
+
+
 def dp_get(d, dot_path):
     """
     Get stuff from a dict, using dot_paths (i.e. 'foo.bar' instead of ['foo']['bar'])
@@ -124,9 +131,62 @@ class FrozenDict(dict):
     del _raise_frozen_typeerror
 
 
-import inspect
-import re
-import itertools
+########################################################################################################################
+
+
+function_type = type(lambda x: x)  # using this instead of callable() because classes are callable, for instance
+
+
+class NoDefault(object):
+    def __repr__(self):
+        return 'no_default'
+
+
+no_default = NoDefault()
+
+
+class imdict(dict):
+    def __hash__(self):
+        return id(self)
+
+    def _immutable(self, *args, **kws):
+        raise TypeError('object is immutable')
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    clear = _immutable
+    update = _immutable
+    setdefault = _immutable
+    pop = _immutable
+    popitem = _immutable
+
+
+def inject_method(self, method_function, method_name=None):
+    """
+    method_function could be:
+        * a function
+        * a {method_name: function, ...} dict (for multiple injections)
+        * a list of functions or (function, method_name) pairs
+    """
+    if isinstance(method_function, function_type):
+        if method_name is None:
+            method_name = method_function.__name__
+        setattr(self,
+                method_name,
+                types.MethodType(method_function, self))
+    else:
+        if isinstance(method_function, dict):
+            method_function = [(func, func_name) for func_name, func in method_function.items()]
+        for method in method_function:
+            if isinstance(method, tuple) and len(method) == 2:
+                self = inject_method(self, method[0], method[1])
+            else:
+                self = inject_method(self, method)
+
+    return self
+
+
+########################################################################################################################
 
 
 def get_function_body(func):
