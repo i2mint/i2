@@ -87,10 +87,12 @@ def assert_attrs(attrs):
 
 def preprocess_arguments(pre):
     """Apply a function to args, kwargs and use the transformed in the decorated function"""
+
     def decorator(func):
         def wrapper(*args, **kwargs):
             args, kwargs = pre(*args, **kwargs)
             return func(*args, **kwargs)
+
         return wraps(func)(wrapper)
 
     return decorator
@@ -246,7 +248,7 @@ def input_output_decorator(preprocess=None, postprocess=None):
     # return decorator
 
 
-def transform_args(**trans_func_for_arg):
+def transform_args(*dflt_trans_func, **trans_func_for_arg):
     """
     Make a decorator that transforms function arguments before calling the function.
     Works with plain functions and bounded methods.
@@ -294,8 +296,26 @@ def transform_args(**trans_func_for_arg):
     """
 
     def transform_args_decorator(func):
-        if len(trans_func_for_arg) == 0:  # if no transformations were specified...
+        if len(trans_func_for_arg) == 0 and len(dflt_trans_func) == 0:  # if no transformations were specified...
             return func  # just return the function itself
+        elif len(dflt_trans_func) > 0:
+            assert len(dflt_trans_func) == 1, "Two non-keyword args not supported (doesn't mean anything)"
+            _dflt_trans_func = dflt_trans_func[0]
+            assert callable(_dflt_trans_func), "The dflt_trans_func needs to be a callable"
+
+            @wraps(func)
+            def transform_args_wrapper(*args, **kwargs):
+                # transform all arguments with given trans_func_for_arg
+                if len(args) > 0:
+                    val_of_argname = inspect.signature(func).bind_partial(*args, **kwargs).arguments
+                else:
+                    val_of_argname = kwargs
+                val_of_argname = {argname: _dflt_trans_func(val) for argname, val in val_of_argname.items()}
+
+                # apply transform functions to argument values
+                return func(**val_of_argname)
+
+            return transform_args_wrapper
         else:
             @wraps(func)
             def transform_args_wrapper(*args, **kwargs):
@@ -307,7 +327,8 @@ def transform_args(**trans_func_for_arg):
                 else:
                     val_of_argname = kwargs
                 for argname, trans_func in trans_func_for_arg.items():
-                    val_of_argname[argname] = trans_func(val_of_argname[argname])
+                    if argname in val_of_argname:
+                        val_of_argname[argname] = trans_func(val_of_argname[argname])
                 # apply transform functions to argument values
                 return func(**val_of_argname)
 
