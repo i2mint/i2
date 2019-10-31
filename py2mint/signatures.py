@@ -29,6 +29,31 @@ def update_signature_with_signatures_from_funcs(funcs):
     return wrapper
 
 
+def common_and_diff_argnames(func1: callable, func2: callable) -> dict:
+    """Get list of argument names that are common to two functions, as well as the two lists of names that are different
+
+    Args:
+        func1: First function
+        func2: Second function
+
+    Returns: A dict with fields 'common', 'func1_not_func2', and 'func2_not_func1'
+
+    >>> def f(t, h, i, n, k): ...
+    >>> def g(t, w, i, c, e): ...
+    >>> common_and_diff_argnames(f, g)
+    {'common': ['t', 'i'], 'func1_not_func2': ['h', 'n', 'k'], 'func2_not_func1': ['w', 'c', 'e']}
+    >>> common_and_diff_argnames(g, f)
+    {'common': ['t', 'i'], 'func1_not_func2': ['w', 'c', 'e'], 'func2_not_func1': ['h', 'n', 'k']}
+    """
+    p1 = signature(func1).parameters
+    p2 = signature(func2).parameters
+    return {
+        'common': [x for x in p1 if x in p2],
+        'func1_not_func2': [x for x in p1 if x not in p2],
+        'func2_not_func1': [x for x in p2 if x not in p1],
+    }
+
+
 dflt_name_for_kind = {
     Parameter.VAR_POSITIONAL: 'args',
     Parameter.VAR_KEYWORD: 'kwargs',
@@ -38,8 +63,7 @@ arg_order_for_param_tuple = ('name', 'default', 'annotation', 'kind')
 
 
 def mk_param(param, dflt_kind=Parameter.POSITIONAL_OR_KEYWORD):
-    """
-    Make an inspect.Parameter object with less boilerplate verbosity.
+    """Make an inspect.Parameter object with less boilerplate verbosity.
     Args:
         param: Can be an inspect.Parameter itself, or something resolving to it:
             - a string: Will be considered to be the argument name
@@ -74,8 +98,7 @@ def mk_param(param, dflt_kind=Parameter.POSITIONAL_OR_KEYWORD):
 
 
 def mk_signature(parameters, *, return_annotation=_empty, __validate_parameters__=True):
-    """
-    Make an inspect.Signature object with less boilerplate verbosity.
+    """Make an inspect.Signature object with less boilerplate verbosity.
     Args:
         signature: A list of parameter specifications. This could be an inspect.Parameter object or anything that
             the mk_param function can resolve into an inspect.Parameter object.
@@ -114,8 +137,7 @@ def mk_signature(parameters, *, return_annotation=_empty, __validate_parameters_
 
 
 def set_signature_of_func(func, parameters, *, return_annotation=_empty, __validate_parameters__=True):
-    """
-    Set the signature of a function, with sugar.
+    """Set the signature of a function, with sugar.
 
     Args:
         func: Function whose signature you want to set
