@@ -2,6 +2,51 @@ from functools import reduce
 from inspect import Signature, Parameter, _empty, _ParameterKind, signature
 from typing import Any
 
+from inspect import Signature, Parameter, signature
+from collections import UserDict
+
+
+class Params(UserDict):
+    """
+
+    >>> def foo(a, b: int, c=None, d: str='hi') -> int: ...
+    >>> def bar(b: float, d='hi'): ...
+    >>> Params(foo)
+    {'a': <Parameter "a">, 'b': <Parameter "b: int">, 'c': <Parameter "c=None">, 'd': <Parameter "d: str = 'hi'">}
+    >>> p = Params(bar)
+    >>> Params(p['b'])
+    {'b': <Parameter "b: float">}
+    >>> Params()
+    {}
+    >>> Params([p['d'], p['b']])
+    {'d': <Parameter "d='hi'">, 'b': <Parameter "b: float">}
+    """
+
+    def __init__(self, obj=None, validate=True):
+        if obj is None:
+            params_dict = dict()
+        elif callable(obj):
+            params_dict = dict(signature(obj).parameters)
+        elif isinstance(obj, Parameter):
+            params_dict = {obj.name: obj}
+        else:
+            try:
+                params_dict = dict(obj)
+            except TypeError:
+                params_dict = {x.name: x for x in obj}
+
+        super().__init__(params_dict)
+
+        if validate:
+            self.validate()
+
+    def validate(self):
+        for k, v in self.items():
+            assert isinstance(k, str), f"isinstance({k}, str)"
+            assert isinstance(v, Parameter), f"isinstance({v}, Parameter)"
+        return True
+
+
 mappingproxy = type(Signature().parameters)
 
 
@@ -50,6 +95,40 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
         raise ValueError("priority should be 'last' or 'first'")
 
     return transform_signature
+
+
+from functools import partial
+
+
+def param_for_kind(name=None, kind='positional_or_keyword', with_default=False, annotation=Parameter.empty):
+    """Function to easily and flexibly make inspect.Parameter objects
+
+    >>> from py2mint.signatures import param_kinds
+    >>> list(map(param_for_kind, param_kinds))
+    [<Parameter "POSITIONAL_ONLY">, <Parameter "POSITIONAL_OR_KEYWORD">, <Parameter "VAR_POSITIONAL">, <Parameter "KEYWORD_ONLY">, <Parameter "VAR_KEYWORD">]
+    """
+    name = name or f"{kind}"
+    kind_obj = getattr(Parameter, str(kind).upper())
+    kind = str(kind_obj).lower()
+    default = f"dflt_{kind}" if with_default and kind not in {'var_positional', 'var_keyword'} else Parameter.empty
+    return Parameter(name=name,
+                     kind=kind_obj,
+                     default=default,
+                     annotation=annotation)
+
+
+param_kinds = list(filter(lambda x: x.upper() == x, Parameter.__dict__))
+
+for kind in param_kinds:
+    lower_kind = kind.lower()
+    setattr(param_for_kind, lower_kind,
+            partial(param_for_kind, kind=kind))
+    setattr(param_for_kind, 'with_default',
+            partial(param_for_kind, with_default=True))
+    setattr(getattr(param_for_kind, lower_kind), 'with_default',
+            partial(param_for_kind, kind=kind, with_default=True))
+    setattr(getattr(param_for_kind, 'with_default'), lower_kind,
+            partial(param_for_kind, kind=kind, with_default=True))
 
 
 def common_and_diff_argnames(func1: callable, func2: callable) -> dict:

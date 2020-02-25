@@ -56,7 +56,8 @@ def doctest_string(obj, output_prefix='# OUTPUT: ', include_attr_without_doctest
             s += header + ss
     return s
 
-import sphinx
+
+# import sphinx
 
 if __name__ == '__main__':
     print(doctest_string(_prefix_lines))
