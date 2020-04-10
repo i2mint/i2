@@ -11,6 +11,7 @@ def _prefix_lines(s: str, prefix: str = '# ', even_if_empty: bool = False) -> st
     :param prefix: Desired prefix string. Default is '# ', to have the effect of "commenting out" line
     :param even_if_empty: Whether to prefix empty strings or not.
     :return: A string whose lines have been prefixed.
+
     >>> _prefix_lines('something to comment out')
     '# something to comment out'
     >>> _prefix_lines('A line you want to prefix', prefix='PREFIX: ')
