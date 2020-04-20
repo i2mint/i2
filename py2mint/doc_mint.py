@@ -31,11 +31,92 @@ def _prefix_lines(s: str, prefix: str = '# ', even_if_empty: bool = False) -> st
     return '\n'.join(map(lambda x: prefix + x, s.split('\n')))
 
 
-def doctest_string(obj, output_prefix='# OUTPUT: ', include_attr_without_doctests=False, recurse=True):
+import doctest
+from typing import Callable
+
+
+def mk_example_wants_callback(source_want_func: Callable[[str, str], Callable]):
+    def example_wants_callback(example, *args, **kwargs):
+        want = example.want.strip()
+        if want:
+            source = example.source.strip()
+            return source_want_func(source, want, *args, **kwargs)
+        else:
+            return example.source
+
+    return example_wants_callback
+
+
+def _assert_wants(source, want, wrap_func_name=None):
+    is_a_multiline = len(source.split('\n')) > 1
+
+    if not is_a_multiline:
+        if wrap_func_name is None:
+            t = f'({source}) == {want}'
+            return f"assert {t}, '{t}'"
+        else:
+            t = f'{wrap_func_name}({source}) == {wrap_func_name}({want})'
+            return f"assert {t}, '{t}'"
+    else:
+        if wrap_func_name is None:
+            return f"actual = {source}\nexpected = {want}\nassert actual == expected"
+        else:
+            return f"actual = {wrap_func_name}({source})\nexpected = {wrap_func_name}({want})\n" \
+                "assert actual == expected"
+
+
+def _output_prefix(source, want, prefix='# OUTPUT: '):
+    return source + '\n' + prefix + want + '\n'
+
+
+output_prefix = mk_example_wants_callback(_output_prefix)
+assert_wants = mk_example_wants_callback(_assert_wants)
+
+
+def doctest_string_trans_lines(doctest_obj: doctest.DocTest, example_callback=assert_wants):
+    for example in doctest_obj.examples:
+        yield example_callback(example)
+
+
+def _doctest_string_gen(obj, example_callback, recurse=True):
+    doctest_finder = doctest.DocTestFinder(verbose=False, recurse=recurse)
+    doctest_objs = doctest_finder.find(obj)
+    for doctest_obj in doctest_objs:
+        yield from doctest_string_trans_lines(doctest_obj, example_callback)
+
+
+def doctest_string(obj, example_callback=assert_wants, recurse=True):
     """
     Extract the doctests found in given object.
     :param obj: Object (module, class, function, etc.) you want to extract doctests from.
     :params output_prefix:
+    :param recurse: Whether the process should find doctests in the attributes of the object, recursively.
+    :return: A string containing the doctests, with output lines prefixed by '# Output:'
+    """
+    return '\n'.join(_doctest_string_gen(obj, example_callback, recurse=recurse))
+
+
+from functools import partial
+
+doctest_string.for_output_prefix = partial(doctest_string, example_callback=output_prefix)
+doctest_string.for_assert_wants = partial(doctest_string, example_callback=assert_wants)
+
+
+def doctest_string_print(obj, example_callback=assert_wants, recurse=True):
+    """
+    Extract the doctests found in given object.
+    :param obj: Object (module, class, function, etc.) you want to extract doctests from.
+    :param recurse: Whether the process should find doctests in the attributes of the object, recursively.
+    :return: A string containing the doctests, with output lines prefixed by '# Output:'
+    """
+    return print(doctest_string(obj, example_callback, recurse=recurse))
+
+
+def old_doctest_string(obj, output_prefix='# OUTPUT: ', include_attr_without_doctests=False, recurse=True):
+    """
+    Extract the doctests found in given object.
+    :param obj: Object (module, class, function, etc.) you want to extract doctests from.
+    :param output_prefix:
     :param recurse: Whether the process should find doctests in the attributes of the object, recursively.
     :return: A string containing the doctests, with output lines prefixed by '# Output:'
     """
@@ -48,8 +129,7 @@ def doctest_string(obj, output_prefix='# OUTPUT: ', include_attr_without_doctest
         ss = ''
         for example in rr.examples:
             want = example.want
-            if want.endswith('\n'):
-                want = want[:-1]
+            want = want.strip()
             ss += '\n' + example.source + _prefix_lines(want, prefix=output_prefix)
         if include_attr_without_doctests:
             s += header + ss
