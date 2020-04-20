@@ -33,6 +33,14 @@ def _prefix_lines(s: str, prefix: str = '# ', even_if_empty: bool = False) -> st
 
 import doctest
 from typing import Callable
+import re
+
+comment_strip_p = re.compile(r'(?m)^ *#.*\n?')
+
+
+def strip_comments(code):
+    code = str(code)
+    return comment_strip_p.sub('', code)
 
 
 def mk_example_wants_callback(source_want_func: Callable[[str, str], Callable]):
@@ -47,22 +55,36 @@ def mk_example_wants_callback(source_want_func: Callable[[str, str], Callable]):
     return example_wants_callback
 
 
+def split_line_comments(s):
+    t = s.split('#')
+    if len(t) == 1:
+        comment = ''
+    else:
+        s, comment = t
+    return s, comment
+
+
 def _assert_wants(source, want, wrap_func_name=None):
     is_a_multiline = len(source.split('\n')) > 1
 
     if not is_a_multiline:
+        source, comment = split_line_comments(source)
         if wrap_func_name is None:
-            t = f'({source}) == {want}'
-            return f"assert {t}, '{t}'"
+            t = f'({source}) == {want} #{comment}'
         else:
-            t = f'{wrap_func_name}({source}) == {wrap_func_name}({want})'
-            return f"assert {t}, '{t}'"
+            t = f'{wrap_func_name}({source}) == {wrap_func_name}({want}) #{comment}'
+        if "'" in t and not '"' in t:
+            strchr = '"'
+            return "assert {t}, {strchr}{t}{strchr}".format(t=t, strchr=strchr)
+        elif '"' in t and not "'" in t:
+            strchr = "'"
+            return "assert {t}, {strchr}{t}{strchr}".format(t=t, strchr=strchr)
+    # else:  # if you didn't return before
+    if wrap_func_name is None:
+        return f"actual = {source}\nexpected = {want}\nassert actual == expected"
     else:
-        if wrap_func_name is None:
-            return f"actual = {source}\nexpected = {want}\nassert actual == expected"
-        else:
-            return f"actual = {wrap_func_name}({source})\nexpected = {wrap_func_name}({want})\n" \
-                "assert actual == expected"
+        return f"actual = {wrap_func_name}({source})\nexpected = {wrap_func_name}({want})\n" \
+            "assert actual == expected"
 
 
 def _output_prefix(source, want, prefix='# OUTPUT: '):
