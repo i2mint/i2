@@ -79,12 +79,14 @@ def _assert_wants(source, want, wrap_func_name=None):
         elif '"' in t and not "'" in t:
             strchr = "'"
             return "assert {t}, {strchr}{t}{strchr}".format(t=t, strchr=strchr)
-    # else:  # if you didn't return before
-    if wrap_func_name is None:
-        return f"actual = {source}\nexpected = {want}\nassert actual == expected"
-    else:
-        return f"actual = {wrap_func_name}({source})\nexpected = {wrap_func_name}({want})\n" \
-            "assert actual == expected"
+        else:
+            return "assert {t}".format(t=t)
+    else:  # if you didn't return before
+        if wrap_func_name is None:
+            return f"actual = {source}\nexpected = {want}\nassert actual == expected"
+        else:
+            return f"actual = {wrap_func_name}({source})\nexpected = {wrap_func_name}({want})\n" \
+                "assert actual == expected"
 
 
 def _output_prefix(source, want, prefix='# OUTPUT: '):
