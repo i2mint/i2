@@ -337,6 +337,9 @@ def _merge_sig_dicts(sig1_dict, sig2_dict):
     }
 
 
+var_kinds = {Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD}
+
+
 def _merge_signatures(sig1, sig2):
     """Get the merged signatures of two signatures (sig2 is the final decider of conflics)
     >>> def foo(a='a', b: int=0, c=None) -> int: ...
@@ -352,7 +355,10 @@ def _merge_signatures(sig1, sig2):
     >>> _merge_signatures(bar_sig, foo_sig)
     <Signature (b: int = 0, d: str = 'hi', a='a', c=None) -> int>
     """
-    return mk_signature(**_merge_sig_dicts(signature_to_dict(sig1), signature_to_dict(sig2)))
+    sig1_dict = signature_to_dict(sig1)
+    # remove variadic kinds from sig1
+    sig1_dict['parameters'] = {k: v for k, v in sig1_dict['parameters'].items() if v.kind not in var_kinds}
+    return mk_signature(**_merge_sig_dicts(sig1_dict, signature_to_dict(sig2)))
 
 
 def _merge_signatures_of_funcs(func1, func2):
