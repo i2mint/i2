@@ -6,23 +6,17 @@ from itertools import chain
 is_mapping = lambda x: isinstance(x, Mapping)
 not_mapping = lambda x: not (is_mapping(x))
 
+from collections.abc import Iterable
 
-def is_iterable(obj):
+
+def is_iterable(x):
     """Similar in nature to :func:`callable`, ``is_iterable`` returns
     ``True`` if an object is `iterable`_, ``False`` if not.
-
     >>> is_iterable([])
     True
-    >>> is_iterable(object())
-    False
-
-    .. _iterable: https://docs.python.org/2/glossary.html#term-iterable
-    """
-    try:
-        iter(obj)
-    except TypeError:
-        return False
-    return True
+    >>> is_iterable(1)
+    False"""
+    return isinstance(x, Iterable)
 
 
 def unique_iter(src, key=None):
