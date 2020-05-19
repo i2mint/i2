@@ -1,4 +1,5 @@
-from collections import ChainMap, Mapping
+from collections import ChainMap
+from collections.abc import Mapping
 import operator
 import inspect
 
