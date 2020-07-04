@@ -168,13 +168,24 @@ class TestObj():
         return methodarg2 + ' test ' + self.constarg
 
 
-from numpy import array, ndarray, matrix
-from pandas import DataFrame, Series
+class ModuleNotFoundIgnore:
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is ModuleNotFoundError:
+            pass
+        return True
 
 
-def a_func_with_df_in_and_sr_out(df: DataFrame) -> Series:
-    return df.sum()
+with ModuleNotFoundIgnore():
+    from numpy import ndarray, matrix
+    from pandas import DataFrame, Series
 
 
-def a_func_with_np_and_df(df: DataFrame, sr: Series, arr: ndarray, mat: matrix) -> matrix:
-    return (df.sum().sum() + sr.sum() + arr.sum()) * mat
+    def a_func_with_df_in_and_sr_out(df: DataFrame) -> Series:
+        return df.sum()
+
+
+    def a_func_with_np_and_df(df: DataFrame, sr: Series, arr: ndarray, mat: matrix) -> matrix:
+        return (df.sum().sum() + sr.sum() + arr.sum()) * mat

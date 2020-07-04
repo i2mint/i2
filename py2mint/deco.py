@@ -1,7 +1,119 @@
-from functools import wraps
+from functools import wraps, update_wrapper
 import inspect
+from inspect import Signature, signature, Parameter
 from collections import defaultdict
+from collections.abc import Mapping
+from types import FunctionType
+from typing import Callable, Iterable, Union
 from itertools import chain
+
+HasParams = Union[Iterable[Parameter], Mapping[str, Parameter], Signature, Callable]
+
+# short hands for Parameter kinds
+PK = Parameter.POSITIONAL_OR_KEYWORD
+VP, VK = Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD
+PO, KO = Parameter.POSITIONAL_ONLY, Parameter.KEYWORD_ONLY
+var_param_types = {VP, VK}
+
+
+def copy_func(f):
+    """Copy a function (not sure it works with all types of callables)"""
+    g = FunctionType(f.__code__, f.__globals__, name=f.__name__,
+                     argdefs=f.__defaults__, closure=f.__closure__)
+    g = update_wrapper(g, f)
+    g.__kwdefaults__ = f.__kwdefaults__
+    if hasattr(f, '__signature__'):
+        g.__signature__ = f.__signature__
+    return g
+
+
+def transparently_wrapped(func):
+    @wraps(func)
+    def transparently_wrapped_func(*args, **kwargs):
+        return func(args, **kwargs)
+
+    return transparently_wrapped_func
+
+
+def params_of(obj: HasParams):
+    if isinstance(obj, Signature):
+        obj = list(obj.parameters.values())
+    elif isinstance(obj, Mapping):
+        obj = list(obj.values())
+    elif callable(obj):
+        obj = list(signature(obj).parameters.values())
+    assert all(isinstance(p, Parameter) for p in obj), "obj needs to be a Iterable[Parameter] at this point"
+    return obj  # as is
+
+
+def tuple_the_args(func):
+    """A decorator that will change a VAR_POSITIONAL (*args) argument to a tuple (args)
+    argument of the same name.
+    """
+    params = params_of(func)
+    is_vp = list(p.kind == VP for p in params)
+    if any(is_vp):
+        index_of_vp = is_vp.index(True)  # there's can be only one
+
+        @wraps(func)
+        def vpless_func(*args, **kwargs):
+            # extract the element of args that needs to be unraveled
+            a, _vp_args_, aa = args[:index_of_vp], args[index_of_vp], args[(index_of_vp + 1):]
+            # call the original function with the unravelled args
+            return func(*a, *_vp_args_, *aa, **kwargs)
+
+        try:  # TODO: Avoid this try catch. Look in advance for default ordering
+            params[index_of_vp] = params[index_of_vp].replace(kind=PK, default=())
+            vpless_func.__signature__ = Signature(params,
+                                                  return_annotation=signature(func).return_annotation)
+        except ValueError:
+            params[index_of_vp] = params[index_of_vp].replace(kind=PK)
+            vpless_func.__signature__ = Signature(params,
+                                                  return_annotation=signature(func).return_annotation)
+        return vpless_func
+    else:
+        return copy_func(func)  # don't change anything (or should we wrap anyway, to be consistent?)
+
+
+def ch_signature_to_all_pk(sig):
+    def changed_params():
+        for p in sig.parameters.values():
+            if p.kind not in var_param_types:
+                yield p.replace(kind=PK)
+            else:
+                yield p
+
+    return Signature(list(changed_params()), return_annotation=sig.return_annotation)
+
+
+def ch_func_to_all_pk(func):
+    """Returns a copy of the function where all arguments are of the PK kind.
+    (PK: Positional_or_keyword)
+
+    :param func: A callable
+    :return:
+
+    >>> from py2http.decorators import signature, ch_func_to_all_pk
+    >>>
+    >>> def f(a, /, b, *, c=None, **kwargs): ...
+    ...
+    >>> print(signature(f))
+    (a, /, b, *, c=None, **kwargs)
+    >>> ff = ch_func_to_all_pk(f)
+    >>> print(signature(ff))
+    (a, b, c=None, **kwargs)
+    >>> def g(x, y=1, *args, **kwargs): ...
+    ...
+    >>> print(signature(g))
+    (x, y=1, *args, **kwargs)
+    >>> gg = ch_func_to_all_pk(g)
+    >>> print(signature(gg))
+    (x, y=1, args=(), **kwargs)
+    """
+    func = tuple_the_args(func)
+    sig = signature(func)
+    func.__signature__ = ch_signature_to_all_pk(sig)
+    return func
 
 
 def mk_args_kwargs_merger(func):
@@ -296,6 +408,8 @@ def transform_args(*dflt_trans_func, **trans_func_for_arg):
     """
 
     def transform_args_decorator(func):
+        get_kwargs = mk_args_kwargs_merger(func)
+
         if len(trans_func_for_arg) == 0 and len(dflt_trans_func) == 0:  # if no transformations were specified...
             return func  # just return the function itself
         elif len(dflt_trans_func) > 0:
@@ -305,11 +419,7 @@ def transform_args(*dflt_trans_func, **trans_func_for_arg):
 
             @wraps(func)
             def transform_args_wrapper(*args, **kwargs):
-                # transform all arguments with given trans_func_for_arg
-                if len(args) > 0:
-                    val_of_argname = inspect.signature(func).bind_partial(*args, **kwargs).arguments
-                else:
-                    val_of_argname = kwargs
+                val_of_argname = get_kwargs(args, kwargs)
                 val_of_argname = {argname: _dflt_trans_func(val) for argname, val in val_of_argname.items()}
 
                 # apply transform functions to argument values
@@ -322,10 +432,9 @@ def transform_args(*dflt_trans_func, **trans_func_for_arg):
                 # get a {argname: argval, ...} dict from *args and **kwargs
                 # Note: Didn't really need an if/else here but I am assuming that...
                 # Note: ... getcallargs gives us an overhead that can be avoided if there's only keyword args.
-                if len(args) > 0:
-                    val_of_argname = inspect.signature(func).bind_partial(*args, **kwargs).arguments
-                else:
-                    val_of_argname = kwargs
+
+                val_of_argname = get_kwargs(args, kwargs)
+
                 for argname, trans_func in trans_func_for_arg.items():
                     if argname in val_of_argname:
                         val_of_argname[argname] = trans_func(val_of_argname[argname])
