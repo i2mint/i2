@@ -317,6 +317,9 @@ def input_output_decorator(preprocess=None, postprocess=None):
 
         return wraps(func)(func_wrapper)
 
+    decorator.preprocess = preprocess
+    decorator.postprocess = postprocess
+
     return decorator
 
 
@@ -400,6 +403,9 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
                 return func(**val_of_argname)
 
             return transform_args_wrapper
+
+    transform_args_decorator.dflt_trans_func = dflt_trans_func
+    transform_args_decorator.trans_func_for_arg = trans_func_for_arg
 
     return transform_args_decorator
 
