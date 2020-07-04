@@ -5,9 +5,10 @@ from collections import defaultdict
 from collections.abc import Mapping
 from types import FunctionType
 from typing import Callable, Iterable, Union
+from typing import Mapping as MappingType
 from itertools import chain
 
-HasParams = Union[Iterable[Parameter], Mapping[str, Parameter], Signature, Callable]
+HasParams = Union[Iterable[Parameter], MappingType[str, Parameter], Signature, Callable]
 
 # short hands for Parameter kinds
 PK = Parameter.POSITIONAL_OR_KEYWORD
@@ -318,49 +319,8 @@ def input_output_decorator(preprocess=None, postprocess=None):
 
     return decorator
 
-    # TODO: Replaced with above, but not sure yet if I need to process methods separately...
-    # def decorator(func):
-    #     if inspect.ismethod(func):
-    #         if preprocess is not None:
-    #             if postprocess is not None:  # both pre and post processes
-    #                 @wraps(func)
-    #                 def func_wrapper(self, *args, **kwargs):
-    #                     return postprocess(func(self, preprocess(*args, **kwargs)))
-    #             else:  # a preprocess but no postprocess
-    #                 @wraps(func)
-    #                 def func_wrapper(self, *args, **kwargs):
-    #                     return func(self, preprocess(*args, **kwargs))
-    #         else:  # no preprocess
-    #             if postprocess is not None:  # no preprocess, but a postprocess
-    #                 @wraps(func)
-    #                 def func_wrapper(self, *args, **kwargs):
-    #                     return postprocess(func(*args, **kwargs))
-    #             else:  # no pre or post process at all
-    #                 func_wrapper = func
-    #         return func_wrapper
-    #     else:
-    #         if preprocess is not None:
-    #             if postprocess is not None:  # both pre and post processes
-    #                 @wraps(func)
-    #                 def func_wrapper(*args, **kwargs):
-    #                     return postprocess(func(preprocess(*args, **kwargs)))
-    #             else:  # a preprocess but no postprocess
-    #                 @wraps(func)
-    #                 def func_wrapper(*args, **kwargs):
-    #                     return func(preprocess(*args, **kwargs))
-    #         else:  # no preprocess
-    #             if postprocess is not None:  # no preprocess, but a postprocess
-    #                 @wraps(func)
-    #                 def func_wrapper(*args, **kwargs):
-    #                     return postprocess(func(*args, **kwargs))
-    #             else:  # no pre or post process at all
-    #                 func_wrapper = func
-    #         return func_wrapper
-    #
-    # return decorator
 
-
-def transform_args(*dflt_trans_func, **trans_func_for_arg):
+def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
     """
     Make a decorator that transforms function arguments before calling the function.
     Works with plain functions and bounded methods.
@@ -410,17 +370,15 @@ def transform_args(*dflt_trans_func, **trans_func_for_arg):
     def transform_args_decorator(func):
         get_kwargs = mk_args_kwargs_merger(func)
 
-        if len(trans_func_for_arg) == 0 and len(dflt_trans_func) == 0:  # if no transformations were specified...
+        if len(trans_func_for_arg) == 0 and not dflt_trans_func:  # if no transformations were specified...
             return func  # just return the function itself
-        elif len(dflt_trans_func) > 0:
-            assert len(dflt_trans_func) == 1, "Two non-keyword args not supported (doesn't mean anything)"
-            _dflt_trans_func = dflt_trans_func[0]
-            assert callable(_dflt_trans_func), "The dflt_trans_func needs to be a callable"
+        elif dflt_trans_func is not None:
+            assert callable(dflt_trans_func), "The dflt_trans_func needs to be a callable"
 
             @wraps(func)
             def transform_args_wrapper(*args, **kwargs):
                 val_of_argname = get_kwargs(args, kwargs)
-                val_of_argname = {argname: _dflt_trans_func(val) for argname, val in val_of_argname.items()}
+                val_of_argname = {argname: dflt_trans_func(val) for argname, val in val_of_argname.items()}
 
                 # apply transform functions to argument values
                 return func(**val_of_argname)
@@ -508,16 +466,16 @@ def wrap_class_methods(_return_a_copy_of_the_class=True,
     ...
     >>> AA = wrap_class_methods(**{k: log_calls for k in ['add', 'multiply']})(A)
     >>> a = AA()
-    >>> a.add(x=2)
+    >>> a.add(x=3)
     Calling add with
       args=()
-      kwargs={'x': 2}
-    12
-    >>> a.multiply(2)
+      kwargs={'x': 3}
+    13
+    >>> a.multiply(3)
     Calling multiply with
-      args=(2,)
+      args=(3,)
       kwargs={}
-    20
+    30
     """
 
     def class_wrapper(cls):
@@ -529,13 +487,9 @@ def wrap_class_methods(_return_a_copy_of_the_class=True,
             _cls = cls
         for method, wrapper in wrapper_for_method.items():
             if hasattr(_cls, method):
-                setattr(cls, method, wrapper(getattr(cls, method)))
+                setattr(_cls, method, wrapper(getattr(_cls, method)))
             elif _raise_error_if_non_existent_method:
-                if hasattr(cls, '__name__'):
-                    class_name = cls.__name__
-                else:
-                    class_name = str(cls)
-                raise ValueError("{} has no '{}' method!".format(class_name, method))
+                raise ValueError(f"{getattr(_cls, '__name__', str(cls))} has no '{method}' method!")
         return _cls
 
     return class_wrapper
@@ -587,18 +541,18 @@ def wrap_class_methods_input_and_output(_return_a_copy_of_the_class=True,
         * mk_method_trans_spec_from_methods_specs_dict: a utility to make method_trans_spec more easily
         * transform_class_method_input_and_output: The function that is called for every method we wrap.
 
-    >>> # In the following, we will show two examples.
-    >>> # The first is a toy example to demonstrate the basic functionality.
-    >>> # The second demonstrates a more involved case, but is still a silly example.
-    >>> # The third demonstrates more the type of application we'd use wrap_class_methods_input_and_output for in real life.
-    >>>
+    In the following, we will show two examples.
+    - The first is a toy example to demonstrate the basic functionality.
+    - The second demonstrates a more involved case, but is still a silly example.
+    - The third demonstrates more the type of application we'd use wrap_class_methods_input_and_output for in real life.
+
+    # FIRST EXAMPLE
+    We make an Ops class that wraps Counter, allowing one to add items and show the counts of items added.
+
     >>> from collections import UserDict
     >>> import re
     >>> from collections import Counter
     >>>
-    >>> ############################################################################################################
-    >>> # FIRST EXAMPLE
-    >>> # We make an Ops class that wraps Counter, allowing one to add items and show the counts of items added.
     >>> class Ops:
     ...     def __init__(self):
     ...         self.counter = Counter()
@@ -630,7 +584,7 @@ def wrap_class_methods_input_and_output(_return_a_copy_of_the_class=True,
     {'th': 4, 'is': 2, 'an': 1}
     >>> # See that we specified _return_a_copy_of_the_class=False?
     >>> # Now look at what happens if we try to use Ops, the original class, again. It behaves like NewOps.
-    >>> # That's usually not the behavior we want, so becareful!
+    >>> # That's usually not the behavior we want, so be careful!
     >>> ops = Ops()
     >>> for item in ['this', 'is', 'that', 'and', 'that', 'is', 'this']:
     ...     ops.add_item(item)
@@ -639,10 +593,12 @@ def wrap_class_methods_input_and_output(_return_a_copy_of_the_class=True,
     {'th': 4, 'is': 2, 'an': 1}
     >>>
     >>>
-    >>> ############################################################################################################
-    >>> # SECOND EXAMPLE
-    >>> # Wrap a dict (or rather, the safer collections.UserDict), doing weird things to the input and output
-    >>> # keys and values
+
+    # SECOND EXAMPLE
+
+    Wrap a dict (or rather, the safer collections.UserDict), doing weird things to the input and output
+    keys and values
+
     >>> val_in_trans = lambda x: 'hello {}'.format(x)  # prepend "hello " to incoming values
     >>> val_out_trans = lambda x: re.sub('hello', 'hi', x)  # replace "hello" by "hi" in output values
     >>> key_in_trans = lambda x: '__' + x  # prepend incoming keys with double underscore
@@ -684,15 +640,16 @@ def wrap_class_methods_input_and_output(_return_a_copy_of_the_class=True,
     >>> assert str(aa) == "{'__star': 'hello wars'}"  # it worked!
     >>>
     >>>
-    >>> ############################################################################################################
-    >>> # THIRD EXAMPLE
-    >>> # Here again, we'll wrap UserDict. But instead of being silly, we'll pretend we need to store waveforms
-    >>> # in binary format (so input values will have to be wrapped), but still retrieving these waveforms as lists
-    >>> # (so output values will have to be wrapped).
-    >>> # Additionally, we'll pretend we're working with wav files within some root directory, but don't
-    >>> # want the root dir or the '.wav' extension to appear in our keys. So we'll have to wrap input and output keys.
-    >>> # Of course, this is just pretend. Don't use this with real waveforms. It won't work.
-    >>>
+
+    # THIRD EXAMPLE
+
+    Here again, we'll wrap UserDict. But instead of being silly, we'll pretend we need to store waveforms
+    in binary format (so input values will have to be wrapped), but still retrieving these waveforms as lists
+    (so output values will have to be wrapped).
+    Additionally, we'll pretend we're working with wav files within some root directory, but don't
+    want the root dir or the '.wav' extension to appear in our keys. So we'll have to wrap input and output keys.
+    Of course, this is just pretend. Don't use this with real waveforms. It won't work.
+
     >>> root = '/ROOT/DIR/'
     >>> abs_path_of_rel_path = lambda rel_path: root + rel_path + '.wav'  # transform a relative path to an absolute one
     >>> rel_path_of_abs_path = lambda x: x.replace(root, '').replace('.wav', '')  # transform an absolute path to a relative one
@@ -741,7 +698,7 @@ def wrap_class_methods_input_and_output(_return_a_copy_of_the_class=True,
 
     wrapper_for_method = {method: mk_input_and_output_method_wrapper(**method_trans)
                           for method, method_trans in method_trans_spec.items()}
-    return wrap_class_methods(_return_a_copy_of_the_class=True,
+    return wrap_class_methods(_return_a_copy_of_the_class=_return_a_copy_of_the_class,
                               _raise_error_if_non_existent_method=True, **wrapper_for_method)
 
     # def class_wrapper(cls):
@@ -939,7 +896,7 @@ def mk_call_logger(logger=print, what_to_log: WhatToLog = _call_signature, func_
     ...     return z * (x + y)
     ...
     >>> useless_computation(3, y=1, z='ha')
-    Executing: useless_computation(3, y=1, z='ha')
+    useless_computation(3, y=1, z='ha')
     'hahahaha'
     >>>
     >>> # Example of use on class method, with a different what_to_log function.
