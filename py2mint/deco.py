@@ -4,17 +4,9 @@ from inspect import Signature, signature, Parameter
 from collections import defaultdict
 from collections.abc import Mapping
 from types import FunctionType
-from typing import Callable, Iterable, Union
-from typing import Mapping as MappingType
 from itertools import chain
 
-HasParams = Union[Iterable[Parameter], MappingType[str, Parameter], Signature, Callable]
-
-# short hands for Parameter kinds
-PK = Parameter.POSITIONAL_OR_KEYWORD
-VP, VK = Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD
-PO, KO = Parameter.POSITIONAL_ONLY, Parameter.KEYWORD_ONLY
-var_param_types = {VP, VK}
+from py2mint.signatures import ch_signature_to_all_pk, HasParams, VP, PK
 
 
 def copy_func(f):
@@ -74,47 +66,6 @@ def tuple_the_args(func):
         return vpless_func
     else:
         return copy_func(func)  # don't change anything (or should we wrap anyway, to be consistent?)
-
-
-def ch_signature_to_all_pk(sig):
-    def changed_params():
-        for p in sig.parameters.values():
-            if p.kind not in var_param_types:
-                yield p.replace(kind=PK)
-            else:
-                yield p
-
-    return Signature(list(changed_params()), return_annotation=sig.return_annotation)
-
-
-def ch_func_to_all_pk(func):
-    """Returns a copy of the function where all arguments are of the PK kind.
-    (PK: Positional_or_keyword)
-
-    :param func: A callable
-    :return:
-
-    >>> from py2http.decorators import signature, ch_func_to_all_pk
-    >>>
-    >>> def f(a, /, b, *, c=None, **kwargs): ...
-    ...
-    >>> print(signature(f))
-    (a, /, b, *, c=None, **kwargs)
-    >>> ff = ch_func_to_all_pk(f)
-    >>> print(signature(ff))
-    (a, b, c=None, **kwargs)
-    >>> def g(x, y=1, *args, **kwargs): ...
-    ...
-    >>> print(signature(g))
-    (x, y=1, *args, **kwargs)
-    >>> gg = ch_func_to_all_pk(g)
-    >>> print(signature(gg))
-    (x, y=1, args=(), **kwargs)
-    """
-    func = tuple_the_args(func)
-    sig = signature(func)
-    func.__signature__ = ch_signature_to_all_pk(sig)
-    return func
 
 
 def mk_args_kwargs_merger(func):
@@ -954,3 +905,33 @@ def mk_call_logger(logger=print, what_to_log: WhatToLog = _call_signature, func_
             return _func
 
     return log_calls
+
+
+def ch_func_to_all_pk(func):
+    """Returns a copy of the function where all arguments are of the PK kind.
+    (PK: Positional_or_keyword)
+
+    :param func: A callable
+    :return:
+
+    >>> from py2http.decorators import signature, ch_func_to_all_pk
+    >>>
+    >>> def f(a, /, b, *, c=None, **kwargs): ...
+    ...
+    >>> print(signature(f))
+    (a, /, b, *, c=None, **kwargs)
+    >>> ff = ch_func_to_all_pk(f)
+    >>> print(signature(ff))
+    (a, b, c=None, **kwargs)
+    >>> def g(x, y=1, *args, **kwargs): ...
+    ...
+    >>> print(signature(g))
+    (x, y=1, *args, **kwargs)
+    >>> gg = ch_func_to_all_pk(g)
+    >>> print(signature(gg))
+    (x, y=1, args=(), **kwargs)
+    """
+    func = tuple_the_args(func)
+    sig = signature(func)
+    func.__signature__ = ch_signature_to_all_pk(sig)
+    return func
