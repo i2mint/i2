@@ -5,5 +5,5 @@ setup(name='i2',
       description='Creating, manipulating, and applying mint (Meta-INTerface)',
       url='https://github.com/i2mint/py2mint',
       author='OtoSense',
-      license='MIT',
+      license='Apache',
       packages=find_packages())
