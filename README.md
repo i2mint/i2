@@ -1,6 +1,6 @@
-# py2mint
+# i2
 
-Python tools for mint creation, manipulation, and application.
+Core tools for minting code.
 
 ## What's mint?
 
