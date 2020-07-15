@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from types import FunctionType
 from itertools import chain
 
-from py2mint.signatures import ch_signature_to_all_pk, HasParams, VP, PK
+from i2.signatures import ch_signature_to_all_pk, HasParams, VP, PK
 
 
 def copy_func(f):

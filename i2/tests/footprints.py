@@ -80,7 +80,7 @@ def convert_output():
 
 
 def test_attrs_used_by_method():
-    from py2mint.footprints import attrs_used_by_method
+    from i2.footprints import attrs_used_by_method
 
     assert attrs_used_by_method(A.target_method) == {'a', 'b', 'c', 'e'}
     assert attrs_used_by_method(A.other_method) == {'c', 'e'}
@@ -94,7 +94,7 @@ def test_attrs_used_by_method():
 
 
 def test_attrs_used_by_method_computation():
-    from py2mint.footprints import attrs_used_by_method_computation
+    from i2.footprints import attrs_used_by_method_computation
 
     assert attrs_used_by_method_computation(A.target_method, {}, {'x': 3}) == {'a', 'b', 'c', 'e'}
     assert attrs_used_by_method_computation(A.other_method, {}) == {'c', 'e'}

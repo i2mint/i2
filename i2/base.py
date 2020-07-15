@@ -8,7 +8,7 @@ import inspect
 from inspect import _empty as inspect_empty, signature
 from typing import Mapping
 
-from py2mint.util import lazyprop, FrozenDict, get_function_body
+from i2.util import lazyprop, FrozenDict, get_function_body
 
 
 class NotFoundType:
@@ -375,7 +375,7 @@ class MintOfDocMixin:
     @lazyprop
     def _parsed_doc(self):
         return 'Not yet implemented (correctly)'
-        from py2mint.scrap import parse_mint_doc
+        from i2.scrap import parse_mint_doc
         # return parse_mint_doc(self.doc_string)
 
 

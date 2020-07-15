@@ -1,7 +1,7 @@
 import inspect
 from inspect import Signature, Parameter
 
-from py2mint.base import MintOfCallable
+from i2.base import MintOfCallable
 from functools import partial, wraps
 
 
