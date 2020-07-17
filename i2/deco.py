@@ -4,9 +4,10 @@ from inspect import Signature, signature, Parameter
 from collections import defaultdict
 from collections.abc import Mapping
 from types import FunctionType
+from typing import Iterable
 from itertools import chain
 
-from i2.signatures import ch_signature_to_all_pk, HasParams, VP, PK
+from i2.signatures import ch_signature_to_all_pk, HasParams, VP, PK, Sig
 
 
 def copy_func(f):
@@ -101,6 +102,55 @@ def mk_args_kwargs_merger(func):
             return kwargs
 
     return merge_args_and_kwargs
+
+
+def ensure_iterable_of_callables(x):
+    if isinstance(x, Iterable):
+        all(callable(xx) for xx in x)
+        return x
+    else:
+        assert callable(x)
+        return (x,)
+
+
+# TODO: Test the handling var positional and var keyword
+class MultiFunc:
+    """
+    >>> from i2.tests.objects_for_testing import formula1, sum_of_args, mult, add
+    >>> def named_key(d):  # just a util for this doctest
+    ...     return {k.__name__: v for k, v in d.items()}
+    >>> mf1 = MultiFunc(funcs=(formula1, mult, add))
+    >>> named_key(mf1(w=1, x=2, z=3, a=4, b=5)) # doctest: +NORMALIZE_WHITESPACE
+    {'formula1': {'w': 1, 'x': 2, 'z': 3},
+    'mult': {'x': 2},
+    'add': {'a': 4, 'b': 5}}
+
+    TODO: Make it not have an error here:
+    >>> mf2 = MultiFunc(funcs=(formula1, mult, add, sum_of_args))
+    Traceback (most recent call last):
+    ...
+    ValueError: wrong parameter order: variadic keyword parameter before positional or keyword parameter
+    >>> # mf2(w=1, x=2, z=3, a=4, b=5, args=(7,8), kwargs={'a': 42}, extra_stuff='ignore')
+
+    """
+    def normalize_func(self, func):
+        return ch_func_to_all_pk(tuple_the_args(func))
+
+    def __init__(self, funcs=()):
+        self.funcs = ensure_iterable_of_callables(funcs)
+        self.sigs = {func: Sig(func) for func in self.funcs}
+        self.normalized_funcs = {func: self.normalize_func(func) for func in self.funcs}
+        self.multi_func_sig = Sig.from_objs(*self.normalized_funcs.values())
+
+    # TODO: Give it a signature (needs to be done in __init__)
+    # TODO: Validation of inputs
+    def __call__(self, **kwargs):
+        def gen():
+            for func in self.funcs:
+                func_kwargs = {argname: kwargs[argname] for argname in self.sigs[func] if argname in kwargs}
+                yield func, func_kwargs
+
+        return dict(gen())
 
 
 def assert_attrs(attrs):
