@@ -704,6 +704,8 @@ class Sig(Signature, Mapping):
                                               _self, _sig, self_names),
             *self._yield_params_from_two_sigs(_self.with_defaults, _sig.with_defaults,
                                               _self, _sig, self_names)]
+        params.sort(key=lambda x: x.kind)
+                                
         return self.__class__(params)
 
     def __add__(self, sig: ParamsAble):
