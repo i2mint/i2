@@ -105,7 +105,9 @@ def ensure_params(obj: ParamsAble):
         else:
             return [ensure_param(p) for p in obj]
     else:
-        if isinstance(obj, Callable):
+        if isinstance(obj, Parameter):
+            obj = Signature([obj])
+        elif isinstance(obj, Callable):
             obj = Signature.from_callable(obj)
         elif obj is None:
             obj = {}
@@ -484,6 +486,7 @@ class ParamsDict(dict):
 
 WRAPPER_UPDATES = ('__dict__',)
 
+from functools import wraps
 
 # TODO: See other signature operating functions below in this module:
 #   Do we need them now that we have Sig?
@@ -571,7 +574,7 @@ class Sig(Signature, Mapping):
                          return_annotation=return_annotation,
                          __validate_parameters__=__validate_parameters__)
 
-    def __call__(self, func: Callable):
+    def wrap(self, func: Callable):
         """Gives the input function the signature.
         This is similar to the `functools.wraps` function, but parametrized by a signature
         (not a callable). Also, where as both write to the input func's `__signature__`
@@ -599,7 +602,7 @@ class Sig(Signature, Mapping):
         >>> def g(w, x: int, y=2, z: int = 10):
         ...     return w + x * y ** z
         >>> s = Sig(g)
-        >>> f = s(f)
+        >>> f = s.wrap(f)
         >>> import inspect
         >>> inspect.signature(f)  # see that
         <Signature (w, x: int, y=2, z: int = 10)>
@@ -622,7 +625,7 @@ class Sig(Signature, Mapping):
         >>> def g(w, x: int, y=2, *, z: int = 10):
         ...     return w + x * y ** z
         >>> s = Sig(g)
-        >>> f = s(f)
+        >>> f = s.wrap(f)
         >>> f.__defaults__
         (2,)
         >>> f.__kwdefaults__
@@ -640,6 +643,12 @@ class Sig(Signature, Mapping):
         func.__defaults__ = tuple(dflts[name] for name in dflts if name not in ko_names)
         func.__kwdefaults__ = {name: dflts[name] for name in dflts if name in ko_names}
         return func
+
+    def __call__(self, func: Callable):
+        """Gives the input function the signature.
+        Just calls Sig.wrap so see docs of Sig.wrap (which contains examples and doctests).
+        """
+        return self.wrap(func)
 
     @classmethod
     def from_objs(cls, *objs):
@@ -781,6 +790,9 @@ class Sig(Signature, Mapping):
     @property
     def with_defaults(self):
         return self.__class__(p for p in self.values() if p.default != Parameter.empty)
+
+    def extract_kwargs(self, kwargs):
+        return {name: kwargs[name] for name in self if name in kwargs}
 
 
 def mk_sig(obj: Union[Signature, Callable, Mapping, None] = None, return_annotations=_empty, **annotations):

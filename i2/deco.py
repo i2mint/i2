@@ -113,6 +113,24 @@ def ensure_iterable_of_callables(x):
         return (x,)
 
 
+def kwargs_for_func(*funcs, **kwargs):
+    """
+    :param funcs:
+    :param kwargs:
+    :return:
+
+    >>> from i2.tests.objects_for_testing import formula1, sum_of_args, mult, add
+    >>> def named_key(d):  # just a util for this doctest
+    ...     return {k.__name__: v for k, v in d.items()}
+    >>> named_key(kwargs_for_func(formula1, mult, add,
+    ...                           w=1, x=2, z=3, a=4, b=5)) # doctest: +NORMALIZE_WHITESPACE
+    {'formula1': {'w': 1, 'x': 2, 'z': 3},
+    'mult': {'x': 2},
+    'add': {'a': 4, 'b': 5}}
+    """
+    return dict((func, Sig(func).extract_kwargs(kwargs)) for func in funcs)
+
+
 # TODO: Test the handling var positional and var keyword
 class MultiFunc:
     """
@@ -120,37 +138,50 @@ class MultiFunc:
     >>> def named_key(d):  # just a util for this doctest
     ...     return {k.__name__: v for k, v in d.items()}
     >>> mf1 = MultiFunc(funcs=(formula1, mult, add))
-    >>> named_key(mf1(w=1, x=2, z=3, a=4, b=5)) # doctest: +NORMALIZE_WHITESPACE
+    Don't use MultiFunc yet: In transition to something else
+    >>> named_key(mf1.kwargs_for_func(w=1, x=2, z=3, a=4, b=5)) # doctest: +NORMALIZE_WHITESPACE
     {'formula1': {'w': 1, 'x': 2, 'z': 3},
     'mult': {'x': 2},
     'add': {'a': 4, 'b': 5}}
+
+
+    # TODO: Finish attempt to add **all_other_kwargs_ignored to the signature
+    Oh, and you can actually see the signature of kwargs_for_func:
+    >>> from inspect import signature
+    >>> signature(mf1)
+    <Signature (w, x: float, a, y=1, z: int = 1, b: float = 0.0)>
 
     TODO: Make it not have an error here:
     >>> mf2 = MultiFunc(funcs=(formula1, mult, add, sum_of_args))
     Traceback (most recent call last):
     ...
     ValueError: wrong parameter order: variadic keyword parameter before positional or keyword parameter
-    >>> # mf2(w=1, x=2, z=3, a=4, b=5, args=(7,8), kwargs={'a': 42}, extra_stuff='ignore')
-
+    >>> # mf2.kwargs_for_func(w=1, x=2, z=3, a=4, b=5, args=(7,8), kwargs={'a': 42}, extra_stuff='ignore')
     """
+
     def normalize_func(self, func):
         return ch_func_to_all_pk(tuple_the_args(func))
 
     def __init__(self, funcs=()):
+        print("Don't use MultiFunc yet: In transition to something else")
         self.funcs = ensure_iterable_of_callables(funcs)
         self.sigs = {func: Sig(func) for func in self.funcs}
         self.normalized_funcs = {func: self.normalize_func(func) for func in self.funcs}
-        self.multi_func_sig = Sig.from_objs(*self.normalized_funcs.values())
+        multi_func_sig = Sig.from_objs(*self.normalized_funcs.values())
+        # TODO: Finish attempt to add **all_other_kwargs_ignored to the signature
+        # multi_func_sig = (Sig.from_objs(
+        #     *self.normalized_funcs.values(),
+        #     Parameter(name='all_other_kwargs_ignored', kind=Parameter.VAR_KEYWORD)))
+        multi_func_sig.wrap(self)
+        # multi_func_sig.wrap(self.kwargs_for_func)
+
+    def kwargs_for_func(self, **kwargs):
+        return dict((func, self.sigs[func].extract_kwargs(kwargs)) for func in self.funcs)
 
     # TODO: Give it a signature (needs to be done in __init__)
     # TODO: Validation of inputs
     def __call__(self, **kwargs):
-        def gen():
-            for func in self.funcs:
-                func_kwargs = {argname: kwargs[argname] for argname in self.sigs[func] if argname in kwargs}
-                yield func, func_kwargs
-
-        return dict(gen())
+        return dict((func, self.sigs[func].extract_kwargs(kwargs)) for func in self.funcs)
 
 
 def assert_attrs(attrs):
