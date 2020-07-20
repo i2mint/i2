@@ -1,8 +1,18 @@
 class DataError(Exception):
-	pass
+    pass
+
 
 class DuplicateRecordError(Exception):
-	pass
+    pass
+
 
 class NotFoundError(DataError):
-	pass
+    pass
+
+
+class AuthorizationError(Exception):
+    pass
+
+
+class ForbiddenError(AuthorizationError):
+    pass
