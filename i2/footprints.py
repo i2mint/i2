@@ -138,28 +138,6 @@ def _attrs_used_by_method(cls, method_name, remove_duplicates=True):
     return _process_duplicates(attrs + attr_list(root, method_name), remove_duplicates=True)
 
 
-def _func_for_testing(obj):
-    return obj.a + obj.b
-
-
-class _ClsForTesting:
-    e = 2
-
-    def __init__(self, a=0, b=0, c=1, d=10):
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
-
-    def target_func(self, x=3):
-        t = _func_for_testing(self)
-        tt = self.other_method(t)
-        return x * tt / self.e
-
-    def other_method(self, x=1):
-        return self.c * x
-
-
 def attrs_used_by_method(method, remove_duplicates=True):
     """
     Extracts a list of cls attributes which are used by a method or method_name function
