@@ -11,6 +11,8 @@ from inspect import getsource, getsourcefile
 Import = namedtuple("Import", ["module", "name", "alias"])
 
 
+# TODO: Generalize attrs_used_by_method to attrs_used_by_func.
+
 def _get_ast_root_from(o):
     source_str = None
     source_filepath = None
@@ -136,6 +138,28 @@ def _attrs_used_by_method(cls, method_name, remove_duplicates=True):
     return _process_duplicates(attrs + attr_list(root, method_name), remove_duplicates=True)
 
 
+def _func_for_testing(obj):
+    return obj.a + obj.b
+
+
+class _ClsForTesting:
+    e = 2
+
+    def __init__(self, a=0, b=0, c=1, d=10):
+        self.a = a
+        self.b = b
+        self.c = c
+        self.d = d
+
+    def target_func(self, x=3):
+        t = _func_for_testing(self)
+        tt = self.other_method(t)
+        return x * tt / self.e
+
+    def other_method(self, x=1):
+        return self.c * x
+
+
 def attrs_used_by_method(method, remove_duplicates=True):
     """
     Extracts a list of cls attributes which are used by a method or method_name function
@@ -145,30 +169,47 @@ def attrs_used_by_method(method, remove_duplicates=True):
     Returns:
         A list of attribute names (of the class or instance thereof) that are accessed in the code of the said method.
 
-    >>> def func(obj):
-    ...     return obj.a + obj.b
-    >>>
-    >>> class A:
-    ...     e = 2
-    ...     def __init__(self, a, b=0, c=1, d=10):
-    ...         self.a = a
-    ...         self.b = b
-    ...         self.c = c
-    ...         self.d = d
-    ...     def target_method(self, x):
-    ...         t = func(self)
-    ...         tt = self.other_method(t)
-    ...         return x * tt / self.e
-    ...     def other_method(self, x=1):
-    ...         return self.c * x
-    ...
-    >>> attrs_used_by_method(A.target_method)
-    ['a', 'b', 'c', 'e']
+    Example:
+        
+    Consider the method `A.target_method` coming from the following code in `i2.tests.footprints`:
+    ```python
+    def func(obj):
+        \"\"\"Accesses attributes 'a' and 'b' of obj\"\"\"
+        return obj.a + obj.b
+
+    class A:
+        e = 2
+    
+        def __init__(self, a=1, b=0, c=1, d=10):
+            self.a = a
+            self.b = b
+            self.c = c
+            self.d = d
+    
+        def target_method(self, x):
+            \"\"\"Accesses ['a', 'b', 'c', 'e']\"\"\"
+            t = func(self)  # and this function will access some attributes!
+            tt = self.other_method(t)
+            return x * tt / self.e
+    
+        def other_method(self, x=1):
+            \"\"\"Accesses ['c', 'e']\"\"\"
+            w = self.c * 2  # c is accessed first
+            return self.e + self.c * x - w  # and c is accessed again
+    
+        @classmethod
+        def a_class_method(cls, y):
+            \"\"\"Accesses ['e']\"\"\"
+            return cls.e + y
+    ```
+    
+    >>> from i2.tests.footprints import A
+    >>> assert attrs_used_by_method(A.target_method) == {'a', 'b', 'c', 'e'}
     """
     return _attrs_used_by_method(*cls_and_method_name_of_method(method), remove_duplicates=remove_duplicates)
 
 
-########## Dyanamic version #############################
+########## Dyanamic version #################################################################
 class Tracker:
     """
     Tracks the attribute access right after `start_track` is set to True.
@@ -248,3 +289,33 @@ def attrs_used_by_method_computation(cls_method, init_kwargs=None, method_kwargs
     else:
         # Error class/obj do not have that method.
         return 1
+
+
+if __name__ == '__main__':
+    def func(obj):
+        return obj.a + obj.b
+
+
+    class A:
+        e = 2
+
+        def __init__(self, a=0, b=0, c=1, d=10):
+            self.a = a
+            self.b = b
+            self.c = c
+            self.d = d
+
+        def target_func(self, x=3):
+            t = func(self)
+            tt = self.other_method(t)
+            return x * tt / self.e
+
+        target_method = target_func
+
+        def other_method(self, x=1):
+            return self.c * x
+
+
+    from py2json.util import attrs_used_by_method
+
+    print(attrs_used_by_method(A.target_func))
