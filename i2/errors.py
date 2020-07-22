@@ -18,9 +18,5 @@ class ForbiddenError(AuthorizationError):
     pass
 
 
-class BusinessRuleError(Exception):
-    pass
-
-
 class InputError(Exception):
     pass
