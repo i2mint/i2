@@ -738,6 +738,7 @@ class Sig(Signature, Mapping):
 
         params = list(self._chain_params_of_signatures(
             _self.without_defaults, _sig.without_defaults, _self.with_defaults, _sig.with_defaults))
+        sorted(params, key=lambda p: p.kind)
         return self.__class__(params)
 
     def __add__(self, sig: ParamsAble):
