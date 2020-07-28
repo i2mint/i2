@@ -14,7 +14,8 @@ HasParams = Union[Iterable[Parameter], MappingType[str, Parameter], Signature, C
 PK = Parameter.POSITIONAL_OR_KEYWORD
 VP, VK = Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD
 PO, KO = Parameter.POSITIONAL_ONLY, Parameter.KEYWORD_ONLY
-var_param_types = {VP, VK}
+var_param_kinds = {VP, VK}
+var_param_types = var_param_kinds  # Deprecate: for back-compatibility. Delete in 2021
 
 
 # TODO: Couldn't make this work. See https://www.python.org/dev/peps/pep-0562/
@@ -484,9 +485,14 @@ class ParamsDict(dict):
         return True
 
 
+def param_has_default_or_is_var_kind(p: Parameter):
+    return p.default != Parameter.empty or p.kind in var_param_kinds
+
+
 WRAPPER_UPDATES = ('__dict__',)
 
 from functools import wraps
+
 
 # TODO: See other signature operating functions below in this module:
 #   Do we need them now that we have Sig?
@@ -668,22 +674,35 @@ class Sig(Signature, Mapping):
         return cls(params)
 
     @property
+    def params(self):
+        """Just list(self.parameters.values()), because that's often what we want.
+        Why a Sig.params property when we already have a Sig.parameters property?
+
+        Well, as much as is boggles my mind, it so happens that the Signature.parameters
+        is a name->Parameter mapping, but the Signature argument `parameters`, though baring the same name,
+        is expected to be a list of Parameter instances.
+
+        So Sig.params is there to restore semantic consistence sanity.
+        """
+        return list(self.parameters.values())
+
+    @property
     def kinds(self):
-        return {p.name: p.kind for p in self.parameters.values()}
+        return {p.name: p.kind for p in self.values()}
 
     @property
     def defaults(self):
-        return {p.name: p.default for p in self.parameters.values() if p.default != Parameter.empty}
+        return {p.name: p.default for p in self.values() if p.default != Parameter.empty}
 
     @property
     def annotations(self):
         """{arg_name: annotation, ...} dict of annotations of the signature.
         What `func.__annotations__` would give you.
         """
-        return {p.name: p.annotation for p in self.parameters.values() if p.annotation != Parameter.empty}
+        return {p.name: p.annotation for p in self.values() if p.annotation != Parameter.empty}
 
     def names_for_kind(self, kind):
-        return tuple(p.name for p in self.parameters.values() if p.kind == kind)
+        return tuple(p.name for p in self.values() if p.kind == kind)
 
     def __iter__(self):
         return iter(self.parameters)
@@ -694,18 +713,31 @@ class Sig(Signature, Mapping):
     def __getitem__(self, k):
         return self.parameters[k]
 
+    def has_var_kinds(self):
+        return any(p.kind in var_param_kinds for p in set(self.values()))
+
+    def has_var_positional(self):
+        return any(p.kind == VP for p in set(self.values()))
+
+    def has_var_keyword(self):
+        return any(p.kind == VK for p in set(self.values()))
+
     def merge_with_sig(self, sig: ParamsAble):
         _self = Sig(ch_signature_to_all_pk(self))
-        self_names = set(_self)
         _sig = Sig(ch_signature_to_all_pk(ensure_signature(sig)))
 
-        params = [
-            *self._yield_params_from_two_sigs(_self.without_defaults, _sig.without_defaults,
-                                              _self, _sig, self_names),
-            *self._yield_params_from_two_sigs(_self.with_defaults, _sig.with_defaults,
-                                              _self, _sig, self_names)]
-        params.sort(key=lambda x: x.kind)
-                                
+        _msg = f"\nHappened during an attempt to merge {self} and {sig}"
+
+        assert not _self.has_var_keyword() or not _sig.has_var_keyword(), \
+            f"Can't merge two signatures if they both have a VAR_POSITIONAL parameter:{_msg}"
+        assert not _self.has_var_keyword() or not _sig.has_var_keyword(), \
+            "Can't merge two signatures if they both have a VAR_KEYWORD parameter:{_msg}"
+        assert all((_self[name].kind, _self[name].default) == (_sig[name].kind, _sig[name].default)
+                   for name in _self.keys() & _sig.keys()), \
+            f"During a signature merge, if two names are the same, they must have the same kind and default:{_msg}"
+
+        params = list(self._chain_params_of_signatures(
+            _self.without_defaults, _sig.without_defaults, _self.with_defaults, _sig.with_defaults))
         return self.__class__(params)
 
     def __add__(self, sig: ParamsAble):
@@ -745,17 +777,17 @@ class Sig(Signature, Mapping):
         >>> Sig(f) + Sig(ff)
         Traceback (most recent call last):
         ...
-        AssertionError: The parameter x for the two signatures you tried to add
-        should also have the same default and annotations:
-        (w, x: float = 1, y=1, z: int = 1) vs (w, x: float, y=1, z: int = 1)
+        AssertionError: During a signature merge, if two names are the same, they must have the same kind and default:
+        Happened during an attempt to merge (w, /, x: float = 1, y=1, *, z: int = 1) and (w, /, x: float, y=1, *, z: int = 1)
+
 
         >>> def hh(i, j, w=1): ...  # like h, but w has a default
         >>> Sig(h) + Sig(hh)
         Traceback (most recent call last):
         ...
-        AssertionError: The parameter w for the two signatures you tried to add
-        should also have the same default and annotations:
-        (i, j, w) vs (i, j, w=1)
+        AssertionError: During a signature merge, if two names are the same, they must have the same kind and default:
+        Happened during an attempt to merge (i, j, w) and (i, j, w=1)
+
 
         >>> Sig(f) + ['w', ('y', 1), ('d', 1.0, float),
         ...                dict(name='special', kind=Parameter.KEYWORD_ONLY, default=0)]
@@ -773,25 +805,36 @@ class Sig(Signature, Mapping):
         return self.remove_names(sig)
 
     @staticmethod
-    def _yield_params_from_two_sigs(params1, params2, sig1, sig2, self_names):
-        for p in params1.values():
-            yield p
-        for p in params2.values():
-            if p.name not in self_names:
-                yield p
-            else:
-                assert sig1[p.name] == sig2[p.name], (
-                    f"The parameter {p.name} for the two signatures you tried to add\n"
-                    "should also have the same default and annotations:\n"
-                    f"{sig1} vs {sig2}")
+    def _chain_params_of_signatures(*sigs):
+        """Yields Parameter instances taken from sigs without repeating the same name twice.
+        >>> str(list(Sig._chain_params_of_signatures(Sig(lambda x, *args, y=1: ...),
+        ...     Sig(lambda x, y, z, **kwargs: ...))))
+        '[<Parameter "x">, <Parameter "*args">, <Parameter "y=1">, <Parameter "z">, <Parameter "**kwargs">]'
+        """
+        already_merged_names = set()
+        for s in sigs:
+            for p in s.parameters.values():
+                if p.name not in already_merged_names:
+                    yield p
+                already_merged_names.add(p.name)
 
     @property
     def without_defaults(self):
-        return self.__class__(p for p in self.values() if p.default == Parameter.empty)
+        """
+        >>> from i2.signatures import Sig
+        >>> list(Sig(lambda *args, a, b, x=1, y=1, **kwargs: ...).without_defaults)
+        ['a', 'b']
+        """
+        return self.__class__(p for p in self.values() if not param_has_default_or_is_var_kind(p))
 
     @property
     def with_defaults(self):
-        return self.__class__(p for p in self.values() if p.default != Parameter.empty)
+        """
+        >>> from i2.signatures import Sig
+        >>> list(Sig(lambda *args, a, b, x=1, y=1, **kwargs: ...).with_defaults)
+        ['args', 'x', 'y', 'kwargs']
+        """
+        return self.__class__(p for p in self.values() if param_has_default_or_is_var_kind(p))
 
     def extract_kwargs(self, kwargs):
         return {name: kwargs[name] for name in self if name in kwargs}
@@ -1084,9 +1127,6 @@ def _merge_sig_dicts(sig1_dict, sig2_dict):
     }
 
 
-var_kinds = {Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD}
-
-
 def _merge_signatures(sig1, sig2):
     """Get the merged signatures of two signatures (sig2 is the final decider of conflics)
     >>> def foo(a='a', b: int=0, c=None) -> int: ...
@@ -1104,7 +1144,7 @@ def _merge_signatures(sig1, sig2):
     """
     sig1_dict = signature_to_dict(sig1)
     # remove variadic kinds from sig1
-    sig1_dict['parameters'] = {k: v for k, v in sig1_dict['parameters'].items() if v.kind not in var_kinds}
+    sig1_dict['parameters'] = {k: v for k, v in sig1_dict['parameters'].items() if v.kind not in var_param_kinds}
     return mk_signature(**_merge_sig_dicts(sig1_dict, signature_to_dict(sig2)))
 
 
@@ -1200,7 +1240,7 @@ for kind in param_kinds:
 def ch_signature_to_all_pk(sig):
     def changed_params():
         for p in sig.parameters.values():
-            if p.kind not in var_param_types:
+            if p.kind not in var_param_kinds:
                 yield p.replace(kind=PK)
             else:
                 yield p
