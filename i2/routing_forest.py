@@ -1,7 +1,7 @@
-
 ##########################################################################################################
-import attr
 from itertools import chain
+from dataclasses import dataclass
+from typing import Any, Iterable, Callable, Mapping
 
 
 class RoutingNode:
@@ -9,10 +9,10 @@ class RoutingNode:
         raise NotImplementedError("You should implement this.")
 
 
-@attr.s
+@dataclass
 class CondNode(RoutingNode):
-    cond = attr.ib()
-    then = attr.ib()
+    cond: Any
+    then: Any
 
     def __call__(self, obj):
         if self.cond(obj):
@@ -22,9 +22,9 @@ class CondNode(RoutingNode):
         yield from self.then
 
 
-@attr.s
+@dataclass
 class FinalNode(RoutingNode):
-    val = attr.ib()
+    val: Any
 
     def __call__(self, obj=None):
         yield self.val
@@ -36,7 +36,7 @@ class FinalNode(RoutingNode):
     #     return {'val': self.val}
 
 
-@attr.s
+@dataclass
 class RoutingForest(RoutingNode):
     """
 
@@ -55,22 +55,23 @@ class RoutingForest(RoutingNode):
     >>> assert list(rf(10)) == ['More than a digit', 'could be seen as a float']
     >>> assert list(rf(11)) == ['More than a digit', "That's odd!", 'could be seen as a float']
     """
-    cond_nodes = attr.ib()
+    cond_nodes: Iterable
 
     def __call__(self, obj):
         yield from chain(*(cond_node(obj) for cond_node in self.cond_nodes))
         # for cond_node in self.cond_nodes:
         #     yield from cond_node(obj)
 
-
     def __iter__(self):
         yield from chain(*self.cond_nodes)
 
 
-@attr.s
+@dataclass
 class FeatCondNode(RoutingNode):
-    feat = attr.ib()
-    feat_cond_thens = attr.ib()
+    """A RoutingNode that yields multiple routes, one for each of several conditions met,
+    where the condition is computed implements computes a feature of the obj and according to a """
+    feat: Callable
+    feat_cond_thens: Iterable
 
     def __call__(self, obj):
         feature = self.feat(obj)
@@ -83,13 +84,12 @@ class FeatCondNode(RoutingNode):
 
 
 NoDefault = type('NoDefault', (object,), {})
-no_default = NoDefault()
+NO_DFLT = NoDefault()
 
 
-@attr.s
+@dataclass
 class SwitchCaseNode(RoutingNode):
-    """
-    A RoutingNode that implements the switch/case/else logic.
+    """A RoutingNode that implements the switch/case/else logic.
     It's just a specialization (enhanced with a "default" option) of the FeatCondNode class to a situation
     where the cond function of feat_cond_thens is equality, therefore the routing can be
     implemented with a {value_to_compare_to_feature: then_node} map.
@@ -112,13 +112,13 @@ class SwitchCaseNode(RoutingNode):
     >>> assert(list(rf(8)) == ['default_mod_5', 'even'])
     >>> assert(list(rf(10)) == ['zero_mod_5', 'even'])
     """
-    switch = attr.ib()
-    cases = attr.ib()
-    default = attr.ib(default=no_default)
+    switch: Callable
+    cases: Mapping
+    default: Any = NO_DFLT
 
     def __call__(self, obj):
         feature = self.switch(obj)
-        if self.default is no_default:
+        if self.default is NO_DFLT:
             yield from self.cases.get(feature)(obj)
         else:
             yield from self.cases.get(feature, self.default)(obj)

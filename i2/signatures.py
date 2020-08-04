@@ -139,6 +139,7 @@ class MissingArgValFor(object):
 # TODO: Look into the handling of the Parameter.VAR_KEYWORD kind in params
 def extract_arguments(params: ParamsAble,
                       *,
+                      what_to_do_with_remainding='return',
                       include_all_when_var_keywords_in_params=False,
                       assert_no_missing_position_only_args=False,
                       **kwargs
@@ -154,18 +155,13 @@ def extract_arguments(params: ParamsAble,
     but you have a kwargs dict of arguments in your hand. You can't just to `func(**kwargs)`.
     But you can (now) do
     ```
-    args, kwargs, remaining = kwargs_to_args_kwargs(kwargs, func)  # extract from kwargs what you need for func
+    args, kwargs, remaining = extract_arguments(kwargs, func)  # extract from kwargs what you need for func
     # ... check if remaing is empty (or not, depending on your paranoia), and then call the func:
     func(*args, **kwargs)
     ```
     (And if you doing that a lot: Do put it in a decorator!)
 
-    See Also: kwargs_to_args_kwargs.without_remainding
-
-    :param params: Specifies what PO arguments should be extracted.
-        Could be a callable, Signature, iterable of Parameters...
-    :param kwargs: The kwargs to extract the args from
-    :return: A (param_args, param_kwargs, remaining_kwargs) tuple.
+    See Also: extract_arguments.without_remainding
 
     The most frequent case you'll encounter is when there's no POSITION_ONLY args, your param_args will be empty
     and you param_kwargs will contain all the arguments that match params, in the order of these params.
@@ -212,6 +208,20 @@ def extract_arguments(params: ParamsAble,
     ...                     include_all_when_var_keywords_in_params=True)
     ((1, 2, 3), {'d': 4, 'extra': 'stuff'}, {})
 
+    If you're expecting no remainder you might want to just get the args and kwargs (not this third
+    expected-to-be-empty remainder). You have two ways to do that, specifying:
+        `what_to_do_with_remainding='ignore'`, which will just return the (args, kwargs) pair
+        `what_to_do_with_remainding='assert_empty'`, which will do the same, but first assert the remainder is empty
+    We suggest to use `functools.partial` to configure the `argument_argument` you need.
+
+    >>> from functools import partial
+    >>> arg_extractor = partial(extract_arguments,
+    ...     what_to_do_with_remainding='assert_empty',
+    ...     include_all_when_var_keywords_in_params=True)
+    >>> def f(a, b, c=None, /, d=0, **kws): ...
+    >>> arg_extractor(f, b=2, a=1, c=3, d=4, extra='stuff')
+    ((1, 2, 3), {'d': 4, 'extra': 'stuff'})
+
     And what happens if the kwargs doesn't contain all the POSITION_ONLY arguments?
 
     >>> def f(a, b, c=None, /, d=0): ...
@@ -237,7 +247,22 @@ def extract_arguments(params: ParamsAble,
     No params specified? No problem. You'll just get empty args and kwargs. Everything in the remainder
     >>> extract_arguments(params=(), b=2, a=1, c=3, d=0)
     ((), {}, {'b': 2, 'a': 1, 'c': 3, 'd': 0})
+
+    :param params: Specifies what PO arguments should be extracted.
+        Could be a callable, Signature, iterable of Parameters...
+    :param what_to_do_with_remainding:
+        'return' (default): function will return `param_args`, `param_kwargs`, `remaining_kwargs`
+        'ignore': function will return `param_args`, `param_kwargs`
+        'assert_empty': function will assert that `remaining_kwargs` is empty and then return `param_args`, `param_kwargs`
+    :param include_all_when_var_keywords_in_params=False,
+    :param assert_no_missing_position_only_args=False,
+    :param kwargs: The kwargs to extract the args from
+    :return: A (param_args, param_kwargs, remaining_kwargs) tuple.
     """
+
+    assert what_to_do_with_remainding in {'return', 'ignore', 'assert_empty'}
+    assert isinstance(include_all_when_var_keywords_in_params, bool)
+    assert isinstance(assert_no_missing_position_only_args, bool)
 
     params = ensure_params(params)
     if not params:
@@ -261,15 +286,21 @@ def extract_arguments(params: ParamsAble,
         missing_argnames = tuple(x.argname for x in param_args if isinstance(x, MissingArgValFor))
         assert not missing_argnames, f"There were some missing positional only argnames: {missing_argnames}"
 
-    return param_args, param_kwargs, remaining_kwargs
+    if what_to_do_with_remainding == 'return':
+        return param_args, param_kwargs, remaining_kwargs
+    elif what_to_do_with_remainding == 'ignore':
+        return param_args, param_kwargs
+    elif what_to_do_with_remainding == 'assert_empty':
+        assert len(remaining_kwargs) == 0, f"remaining_kwargs not empty: remaining_kwargs={remaining_kwargs}"
+        return param_args, param_kwargs
 
 
-def _extract_arguments_without_remaining(params, **kwargs):
-    param_args, param_kwargs, _ = extract_arguments(params, **kwargs)
-    return param_args, param_kwargs
+from functools import partial
 
-
-extract_arguments.without_remaining = _extract_arguments_without_remaining
+extract_arguments_ignoring_remainder = partial(extract_arguments,
+                                               what_to_do_with_remainding='ignore')
+extract_arguments_asserting_no_remainder = partial(extract_arguments,
+                                                   what_to_do_with_remainding='assert_empty')
 
 from collections.abc import Mapping
 from typing import Optional, Iterable
@@ -299,6 +330,7 @@ class Command:
 
 def extract_commands(funcs, *,
                      mk_command: Callable[[Callable, tuple, dict], Any] = Command,
+                     what_to_do_with_remainding='ignore',
                      **kwargs):
     """
 
@@ -326,6 +358,7 @@ def extract_commands(funcs, *,
     13
     """
     extract = partial(extract_arguments,
+                      what_to_do_with_remainding=what_to_do_with_remainding,
                       include_all_when_var_keywords_in_params=False,
                       assert_no_missing_position_only_args=True)
 
@@ -333,12 +366,13 @@ def extract_commands(funcs, *,
         funcs = [funcs]
 
     for func in funcs:
-        func_args, func_kwargs, _ = extract(func, **kwargs)
+        func_args, func_kwargs = extract(func, **kwargs)
         yield mk_command(func, func_args, func_kwargs)
 
 
 def commands_dict(funcs, *,
                   mk_command: Callable[[Callable, tuple, dict], Any] = Command,
+                  what_to_do_with_remainding='ignore',
                   **kwargs):
     """
 
@@ -364,7 +398,8 @@ def commands_dict(funcs, *,
     """
     if callable(funcs):
         funcs = [funcs]
-    it = extract_commands(funcs, mk_command=mk_command, **kwargs)
+    it = extract_commands(funcs, what_to_do_with_remainding=what_to_do_with_remainding,
+                          mk_command=mk_command, **kwargs)
     return dict(zip(funcs, it))
 
 
@@ -411,78 +446,6 @@ class Params(tuple):
                 f"{self} and {params}")
 
         return Params(list(self) + [p for p in Params(params) if p not in existing_params])
-
-
-# TODO: Not really using this or Params competitor -- consider extending or deprecating
-class ParamsDict(dict):
-    """
-
-    >>> def foo(a, b: int, c=None, d: str='hi') -> int: ...
-    >>> def bar(b: float, d='hi'): ...
-    >>> ParamsDict(foo)
-    {'a': <Parameter "a">, 'b': <Parameter "b: int">, 'c': <Parameter "c=None">, 'd': <Parameter "d: str = 'hi'">}
-    >>> p = ParamsDict(bar)
-    >>> ParamsDict(p['b'])
-    {'b': <Parameter "b: float">}
-    >>> ParamsDict()
-    {}
-    >>> ParamsDict([p['d'], p['b']])
-    {'d': <Parameter "d='hi'">, 'b': <Parameter "b: float">}
-    """
-
-    def __init__(self, obj=None):
-        if obj is None:
-            params_dict = dict()
-
-        elif callable(obj):
-            params_dict = dict(signature(obj).parameters)
-        elif isinstance(obj, Parameter):
-            params_dict = {obj.name: obj}
-        else:
-            try:
-                params_dict = dict(obj)
-            except TypeError:
-                params_dict = {x.name: x for x in obj}
-
-        super().__init__(params_dict)
-
-    @classmethod
-    def from_signature(cls, sig):
-        """
-
-        :param sig:
-        :return:
-
-        >>> from inspect import signature, Signature
-        >>> def foo(a, b: int, c=None, d: str='hi') -> int: ...
-        >>> sig = signature(foo)
-        >>> assert isinstance(sig, Signature)
-        >>> params = ParamsDict.from_signature(sig)
-        >>> params
-        {'a': <Parameter "a">, 'b': <Parameter "b: int">, 'c': <Parameter "c=None">, 'd': <Parameter "d: str = 'hi'">}
-        """
-        return cls(sig.parameters.values())
-
-    @classmethod
-    def from_callable(cls, obj):
-        return cls.from_signature(signature(obj))
-
-    def __add__(self, params):
-        if isinstance(params, Parameter):
-            self.__class__([params])
-        elif isinstance(params, Signature):
-            self.__class__.from_signature(params)
-        else:
-            pass
-
-    def __setitem__(self, k, v):
-        pass
-
-    def validate(self):
-        for k, v in self.items():
-            assert isinstance(k, str), f"isinstance({k}, str)"
-            assert isinstance(v, Parameter), f"isinstance({v}, Parameter)"
-        return True
 
 
 def param_has_default_or_is_var_kind(p: Parameter):
@@ -839,6 +802,82 @@ class Sig(Signature, Mapping):
 
     def extract_kwargs(self, kwargs):
         return {name: kwargs[name] for name in self if name in kwargs}
+
+
+############################################################################################################
+# Below: Older stuff, in line to be deprecated at some point
+
+
+# TODO: Not really using this or Params competitor -- consider extending or deprecating
+class ParamsDict(dict):
+    """
+
+    >>> def foo(a, b: int, c=None, d: str='hi') -> int: ...
+    >>> def bar(b: float, d='hi'): ...
+    >>> ParamsDict(foo)
+    {'a': <Parameter "a">, 'b': <Parameter "b: int">, 'c': <Parameter "c=None">, 'd': <Parameter "d: str = 'hi'">}
+    >>> p = ParamsDict(bar)
+    >>> ParamsDict(p['b'])
+    {'b': <Parameter "b: float">}
+    >>> ParamsDict()
+    {}
+    >>> ParamsDict([p['d'], p['b']])
+    {'d': <Parameter "d='hi'">, 'b': <Parameter "b: float">}
+    """
+
+    def __init__(self, obj=None):
+        if obj is None:
+            params_dict = dict()
+
+        elif callable(obj):
+            params_dict = dict(signature(obj).parameters)
+        elif isinstance(obj, Parameter):
+            params_dict = {obj.name: obj}
+        else:
+            try:
+                params_dict = dict(obj)
+            except TypeError:
+                params_dict = {x.name: x for x in obj}
+
+        super().__init__(params_dict)
+
+    @classmethod
+    def from_signature(cls, sig):
+        """
+
+        :param sig:
+        :return:
+
+        >>> from inspect import signature, Signature
+        >>> def foo(a, b: int, c=None, d: str='hi') -> int: ...
+        >>> sig = signature(foo)
+        >>> assert isinstance(sig, Signature)
+        >>> params = ParamsDict.from_signature(sig)
+        >>> params
+        {'a': <Parameter "a">, 'b': <Parameter "b: int">, 'c': <Parameter "c=None">, 'd': <Parameter "d: str = 'hi'">}
+        """
+        return cls(sig.parameters.values())
+
+    @classmethod
+    def from_callable(cls, obj):
+        return cls.from_signature(signature(obj))
+
+    def __add__(self, params):
+        if isinstance(params, Parameter):
+            self.__class__([params])
+        elif isinstance(params, Signature):
+            self.__class__.from_signature(params)
+        else:
+            pass
+
+    def __setitem__(self, k, v):
+        pass
+
+    def validate(self):
+        for k, v in self.items():
+            assert isinstance(k, str), f"isinstance({k}, str)"
+            assert isinstance(v, Parameter), f"isinstance({v}, Parameter)"
+        return True
 
 
 def mk_sig(obj: Union[Signature, Callable, Mapping, None] = None, return_annotations=_empty, **annotations):
