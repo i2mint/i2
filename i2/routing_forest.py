@@ -1,29 +1,19 @@
 ##########################################################################################################
 from itertools import chain
 from dataclasses import dataclass
-from typing import Any, Iterable, Callable, Mapping
+from typing import Any, Iterable, Callable, Mapping, Tuple
 
 
 class RoutingNode:
+    """A RoutingNode instance needs to be callable on a single object, yielding an iterable or a final value"""
+
     def __call__(self, obj):
         raise NotImplementedError("You should implement this.")
 
 
 @dataclass
-class CondNode(RoutingNode):
-    cond: Any
-    then: Any
-
-    def __call__(self, obj):
-        if self.cond(obj):
-            yield from self.then(obj)
-
-    def __iter__(self):
-        yield from self.then
-
-
-@dataclass
 class FinalNode(RoutingNode):
+    """A RoutingNode that is final. It yields (both with call and iter) it's single `.val` attribute."""
     val: Any
 
     def __call__(self, obj=None):
@@ -34,6 +24,20 @@ class FinalNode(RoutingNode):
 
     # def __getstate__(self):
     #     return {'val': self.val}
+
+
+@dataclass
+class CondNode(RoutingNode):
+    """A RoutingNode that implements the if/then (no else) logic"""
+    cond: Callable[[Any], bool]
+    then: Any
+
+    def __call__(self, obj):
+        if self.cond(obj):
+            yield from self.then(obj)
+
+    def __iter__(self):
+        yield from self.then
 
 
 @dataclass
@@ -66,12 +70,15 @@ class RoutingForest(RoutingNode):
         yield from chain(*self.cond_nodes)
 
 
+FeatCondThens = Iterable[Tuple[Callable, Callable]]
+
+
 @dataclass
 class FeatCondNode(RoutingNode):
     """A RoutingNode that yields multiple routes, one for each of several conditions met,
     where the condition is computed implements computes a feature of the obj and according to a """
     feat: Callable
-    feat_cond_thens: Iterable
+    feat_cond_thens: FeatCondThens
 
     def __call__(self, obj):
         feature = self.feat(obj)
