@@ -6,8 +6,41 @@ from collections.abc import Mapping
 from types import FunctionType
 from typing import Iterable
 from itertools import chain
-
+from functools import wraps
 from i2.signatures import ch_signature_to_all_pk, HasParams, VP, PK, Sig
+
+
+def process_output_with(output_processor):
+    """Add some post-processing after a function
+    :param proc: The function to apply to the output
+
+    In many situations, but namely here because writing a generator is simpler than writing a function
+    that accumulates a list or a dict etc.
+    So here, you just write the generator and tag this decorator on top, to get the same effect.
+
+    >>> @process_output_with(list)
+    ... def foo(x):
+    ...     for i in range(x):
+    ...         yield i
+    >>> assert foo(3)
+    [0, 1, 2]
+    >>>
+    >>> @process_output_with(dict)
+    ... def bar(x):
+    ...     for i in range(x):
+    ...         yield str(i), i
+    >>> assert bar(3)
+    {'0': 0, '1': 1, '2': 2}
+    """
+
+    def apply_to_output(func_whose_output_we_want_to_process):
+        @wraps(func_whose_output_we_want_to_process)
+        def func_with_processed_output(*args, **kwargs):
+            return output_processor(func_whose_output_we_want_to_process(*args, **kwargs))
+
+        return func_with_processed_output
+
+    return apply_to_output
 
 
 def copy_func(f):
