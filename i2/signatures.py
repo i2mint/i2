@@ -903,7 +903,20 @@ class Sig(Signature, Mapping):
         return self._extract_kwargs(args, kwargs, strict=False, partial=True)
 
     def args_and_kwargs_from_kwargs(self, kwargs):
-        pass
+        """Get an (args, kwargs) tuple from the kwargs, where args contain the position only arguments.
+
+        >>> def foo(w, /, x: float, y=1, *, z: int = 1):
+        ...     return ((w + x) * y) ** z
+        >>> args, kwargs = Sig(foo).args_and_kwargs_from_kwargs(dict(w=4, x=3, y=2, z=1))
+        >>> args, kwargs
+        ((4,), {'x': 3, 'y': 2, 'z': 1})
+        >>> assert foo(*args, **kwargs) == foo(4, 3, 2, z=1) == 14
+
+        """
+        args_names = {p.name for p in self.parameters.values() if p.kind == PO}
+        args = tuple(kwargs[name] for name in args_names)
+        kwargs = {name: kwargs[name] for name in kwargs if name not in args_names}
+        return args, kwargs
 
 
 ############################################################################################################
