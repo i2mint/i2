@@ -50,8 +50,8 @@ def ensure_signature(obj: SignatureAble):
     elif isinstance(obj, Callable):
         return Signature.from_callable(obj)
     elif isinstance(obj, Iterable):
+        params = ensure_params(obj)
         try:
-            params = ensure_params(obj)
             return Signature(parameters=params)
         except TypeError:
             raise TypeError(f"Don't know how to make that object into a Signature: {obj}")
@@ -91,13 +91,15 @@ def ensure_params(obj: ParamsAble):
     [<Parameter "w">, <Parameter "x: float = 1">, <Parameter "y=1">, <Parameter "z: int = 1">]
 
     From an iterable of strings, dicts, or tuples
-    >>> ensure_params(['a',
+    >>> ensure_params(['xyz',
     ...     ('b', Parameter.empty, int), # if you want an annotation without a default use Parameter.empty
     ...     ('c', 2),  # if you just want a default, make it the second element of your tuple
     ...     dict(name='d', kind=Parameter.VAR_KEYWORD)])  # all kinds are by default PK: Use dict to specify otherwise.
-    [<Parameter "a">, <Parameter "b: int">, <Parameter "c=2">, <Parameter "**d">]
+    [<Parameter "xyz">, <Parameter "b: int">, <Parameter "c=2">, <Parameter "**d">]
     """
     if isinstance(obj, Iterable):
+        if isinstance(obj, str):
+            obj = {'name': obj}
         if isinstance(obj, Mapping):
             obj = obj.values()
         obj = list(obj)
@@ -620,7 +622,10 @@ class Sig(Signature, Mapping):
         return self.wrap(func)
 
     @classmethod
-    def from_objs(cls, *objs):
+    def from_objs(cls, *objs, **name_and_dflts):
+        objs = list(objs)
+        for name, default in name_and_dflts.items():
+            objs.append([{'name': name, 'kind': PK, 'default': default}])
         if len(objs) > 0:
             first_obj, *objs = objs
             sig = cls(ensure_params(first_obj))
@@ -680,10 +685,10 @@ class Sig(Signature, Mapping):
         return any(p.kind in var_param_kinds for p in set(self.values()))
 
     def has_var_positional(self):
-        return any(p.kind == VP for p in set(self.values()))
+        return any(p.kind == VP for p in list(self.values()))
 
     def has_var_keyword(self):
-        return any(p.kind == VK for p in set(self.values()))
+        return any(p.kind == VK for p in list(self.values()))
 
     def merge_with_sig(self, sig: ParamsAble):
         _self = Sig(ch_signature_to_all_pk(self))
@@ -800,8 +805,105 @@ class Sig(Signature, Mapping):
         """
         return self.__class__(p for p in self.values() if param_has_default_or_is_var_kind(p))
 
-    def extract_kwargs(self, kwargs):
-        return {name: kwargs[name] for name in self if name in kwargs}
+    def _extract_kwargs(self, args, kwargs, strict=True, partial=False):
+        """Extracts a dict of input argument values for target signature, from args and kwargs.
+
+        It's easier if you don't have to take care of less cases.
+
+        For example, needing to manage `args` and `kwargs` a function.
+
+        If you could rely on the the fact that only `kwargs` were given it would reduce the complexity of your code.
+        This is why we have the `ch_signature_to_all_pk` function in `signatures.py`.
+
+        We also need to have a means to make a `kwargs` only from the actual `(*args, **kwargs)` used at runtime.
+        We have `Signature.bind` (and `bind_partial`) for that.
+
+        But these methods will fail if there is extra stuff in the `kwargs`.
+        Yet sometimes we'd like to have a `dict` that services several functions that will extract their needs from it.
+
+        That's where  `Sig.extract_kwargs(*args, **kwargs)` is needed.
+        :param args: The args the function will be called with.
+        :param kwargs: The kwargs the function will be called with.
+        :param strict: (bool) If you want to allow extra kwargs items to be ignored.
+        :param partial: (bool) If you want to allow partial signature fulfillment.
+        :return:
+        """
+        binder = self.bind_partial if partial else self.bind
+        if strict:
+            return dict(binder(*args, **kwargs).arguments)
+        else:
+            sig_relevant_kwargs = {name: kwargs[name] for name in self if name in kwargs}  # take only what you need
+            if partial:
+                args_bound_arguments = binder(*args)
+            else:
+                args_bound_arguments = binder(*args)
+            # merge args and sig_relevant_kwargs contributions and return
+            return dict(args_bound_arguments.arguments, **sig_relevant_kwargs)
+
+    def extract_strict_kwargs(self, *args, **kwargs):
+        """Extract a the strict signature-defined {arg: val,...} dict from (args, kwargs).
+
+        Strict in the sense that the kwargs cannot contain any arguments that are not
+        valid argument names (as per the signature).
+
+        >>> def foo(w, /, x: float, y=1, *, z: int = 1): ...
+        >>> sig = Sig(foo)
+        >>> assert (
+        ...     sig.extract_strict_kwargs(1, 2, 3, z=4)
+        ...     == sig.extract_strict_kwargs(1, 2, y=3, z=4)
+        ...     == {'w': 1, 'x': 2, 'y': 3, 'z': 4})
+
+        But if position only and keyword only kinds need to be respected:
+
+        >>> sig.extract_strict_kwargs(1, 2, 3, 4)
+        Traceback (most recent call last):
+          ...
+        TypeError: too many positional arguments
+        >>> sig.extract_strict_kwargs(w=1, x=2, y=3, z=4)
+        Traceback (most recent call last):
+          ...
+        TypeError: 'w' parameter is positional only, but was passed as a keyword
+
+        What about var positional and var keywords?
+        >>> def bar(*args, **kwargs): ...
+        >>> Sig(bar).extract_strict_kwargs(1, 2, y=3, z=4)
+        {'args': (1, 2), 'kwargs': {'y': 3, 'z': 4}}
+
+        """
+        return self._extract_kwargs(args, kwargs, strict=True, partial=False)
+
+    def extract_strict_partial_kwargs(self, *args, **kwargs):
+        """Extract a the strict partial signature-defined {arg: val,...} dict from (args, kwargs).
+
+        Strict in the sense that the kwargs cannot contain any arguments that are not
+        valid argument names (as per the signature).
+
+        Partial in the sense that it allows the omission of some required arguments.
+
+        >>> def foo(w, /, x: float, y=1, *, z: int = 1): ...
+        >>> Sig(foo).extract_strict_partial_kwargs(1, 2)
+        {'w': 1, 'x': 2}
+        >>> Sig(foo).extract_strict_partial_kwargs(1, z='oo')
+        {'w': 1, 'z': 'oo'}
+        >>> Sig(foo).extract_strict_partial_kwargs(y='me')
+        {'y': 'me'}
+
+        But the fact that it's partial doesn't mean it's not strict!
+        >>> Sig(foo).extract_strict_partial_kwargs(w=1)
+        Traceback (most recent call last):
+          ...
+        TypeError: 'w' parameter is positional only, but was passed as a keyword
+        """
+        return self._extract_kwargs(args, kwargs, strict=True, partial=True)
+
+    def source_kwargs(self, *args, **kwargs):
+        return self._extract_kwargs(args, kwargs, strict=False, partial=False)
+
+    def source_partial_kwargs(self, *args, **kwargs):
+        return self._extract_kwargs(args, kwargs, strict=False, partial=True)
+
+    def args_and_kwargs_from_kwargs(self, kwargs):
+        pass
 
 
 ############################################################################################################
@@ -933,7 +1035,7 @@ def insert_annotations(s: Signature, *, return_annotation=_empty, **annotations)
     >>> from inspect import signature
     >>> s = signature(lambda a, b, c=1, d='bar': 0)
     >>> s
-    <Signature (a, b, c=1, d='bar')>
+z    <Signature (a, b, c=1, d='bar')>
     >>> ss = insert_annotations(s, b=int, d=str)
     >>> ss
     <Signature (a, b: int, c=1, d: str = 'bar')>
