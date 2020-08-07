@@ -287,18 +287,25 @@ def postprocess(post):
         that accumulates a list or a dict etc.
         So here, you just write the generator and tag this decorator on top, to get the same effect.
 
+    >>> from inspect import signature
     >>> @postprocess(dict)
     ... def bar(x):
     ...     for i in range(x):
     ...         yield str(i), i
     >>> bar(3)
     {'0': 0, '1': 1, '2': 2}
+    >>> signature(bar)
+    <Signature (x) -> bar>
+    >>>
     >>> @postprocess(list)
     ... def foo(x):
     ...     for i in range(x):
     ...         yield i
     >>> foo(3)
     [0, 1, 2]
+    >>> from inspect import signature
+    >>> signature(foo)
+    <Signature (x) -> list>
 
     - Triggering something (like logging, or forwarding) when a function returns
 
