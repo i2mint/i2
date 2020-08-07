@@ -1,46 +1,14 @@
-from functools import wraps, update_wrapper
 import inspect
-from inspect import Signature, signature, Parameter
 from collections import defaultdict
 from collections.abc import Mapping
+from functools import update_wrapper
+from functools import wraps
+from inspect import Signature, signature, Parameter
+from itertools import chain
 from types import FunctionType
 from typing import Iterable
-from itertools import chain
-from functools import wraps
+
 from i2.signatures import ch_signature_to_all_pk, HasParams, VP, PK, Sig
-
-
-def process_output_with(output_processor):
-    """Add some post-processing after a function
-    :param proc: The function to apply to the output
-
-    In many situations, but namely here because writing a generator is simpler than writing a function
-    that accumulates a list or a dict etc.
-    So here, you just write the generator and tag this decorator on top, to get the same effect.
-
-    >>> @process_output_with(list)
-    ... def foo(x):
-    ...     for i in range(x):
-    ...         yield i
-    >>> assert foo(3)
-    [0, 1, 2]
-    >>>
-    >>> @process_output_with(dict)
-    ... def bar(x):
-    ...     for i in range(x):
-    ...         yield str(i), i
-    >>> assert bar(3)
-    {'0': 0, '1': 1, '2': 2}
-    """
-
-    def apply_to_output(func_whose_output_we_want_to_process):
-        @wraps(func_whose_output_we_want_to_process)
-        def func_with_processed_output(*args, **kwargs):
-            return output_processor(func_whose_output_we_want_to_process(*args, **kwargs))
-
-        return func_with_processed_output
-
-    return apply_to_output
 
 
 def copy_func(f):
@@ -289,10 +257,72 @@ def preprocess(pre):
     return decorator
 
 
+def _return_annotation_of(func):
+    """Return annotation of callable (if type, will return type systematically)
+
+    >>> def foo() -> bool: ...
+    >>> assert _return_annotation_of(foo) == bool
+    >>> assert _return_annotation_of(zip) == zip
+    >>> assert _return_annotation_of(print) == Parameter.empty
+    """
+    if isinstance(func, type):  # TODO: Verify rule (are there commmon enough meta tricks that need to be handled?)
+        return func
+    else:
+        try:
+            return signature(func).return_annotation
+        except ValueError:  # some builtins don't have signatures
+            return Parameter.empty
+
+
 def postprocess(post):
+    """Add some post-processing after a function
+    :param post: The function to apply to the output
+
+    Note: The decorator also sticks the return annotation of the post function on the wrapped one.
+
+    Use cases:
+
+    - Changing a generator into a container returning function
+        In many situations, writing a generator is simpler than writing a function
+        that accumulates a list or a dict etc.
+        So here, you just write the generator and tag this decorator on top, to get the same effect.
+
+    >>> @postprocess(dict)
+    ... def bar(x):
+    ...     for i in range(x):
+    ...         yield str(i), i
+    >>> bar(3)
+    {'0': 0, '1': 1, '2': 2}
+    >>> @postprocess(list)
+    ... def foo(x):
+    ...     for i in range(x):
+    ...         yield i
+    >>> foo(3)
+    [0, 1, 2]
+
+    - Triggering something (like logging, or forwarding) when a function returns
+
+    >>> def log_this(x):
+    ...     print(f"Logging {x}")
+    ...     return x
+    >>> logged_foo = postprocess(log_this)(foo)
+    >>> t = logged_foo(2)
+    Logging [0, 1]
+    >>> assert t == [0, 1]
+
+    - Using a function that does a lot to make several functions that do less.
+        (e.g. Extracting/making a python object from a function returning a raw http response_
+
+    """
+
     def decorator(func):
+        @wraps(func)
         def wrapper(*args, **kwargs):
             return post(func(*args, **kwargs))
+
+        return_annot = _return_annotation_of(post)
+        sig = Signature(signature(wrapper).parameters.values(), return_annotation=return_annot)
+        wrapper.__signature__ = sig
 
         return wraps(func)(wrapper)
 
