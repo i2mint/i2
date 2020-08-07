@@ -273,8 +273,10 @@ def _return_annotation_of(func):
         except ValueError:  # some builtins don't have signatures
             return Parameter.empty
 
+class OutputPostProcessingError(RuntimeError): ...
 
-def postprocess(post):
+
+def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=False):
     """Add some post-processing after a function
     :param post: The function to apply to the output
 
@@ -325,7 +327,18 @@ def postprocess(post):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            return post(func(*args, **kwargs))
+            output = func(*args, **kwargs)
+            try:
+                return post(output)
+            except caught_post_errors as e:
+                msg = f"Error when postprocessing output with post func: {func}"
+                if verbose_error_message:
+                    msg += '\n' + f"  output={output}"
+                    if isinstance(verbose_error_message, int) and verbose_error_message > 1:
+                        msg += '\n' + "  which was obtained by func(*args, **kwargs) where:"
+                        msg += '\n' + f"    args: {args}" + '\n' + f"    kwargs: {kwargs}"
+                msg += '\n' + f"Error is: {e}"
+                raise OutputPostProcessingError(msg)
 
         return_annot = _return_annotation_of(post)
         sig = Signature(signature(wrapper).parameters.values(), return_annotation=return_annot)
