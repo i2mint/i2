@@ -1,10 +1,11 @@
 from functools import reduce
-from inspect import Signature, Parameter, _ParameterKind, signature
+from inspect import Signature, Parameter, signature, _ParameterKind  # TODO: Take care of _ParameterKind
 from typing import Any, Union, Callable, Iterable
 from typing import Mapping as MappingType
 
 _empty = Parameter.empty
 
+# _ParameterKind = type(Parameter(name='param_kind', kind=Parameter.POSITIONAL_OR_KEYWORD))
 ParamsType = Iterable[Parameter]
 ParamsAble = Union[ParamsType, MappingType[str, Parameter], Callable]
 SignatureAble = Union[Signature, Callable, ParamsType, MappingType[str, Parameter]]
@@ -609,10 +610,11 @@ class Sig(Signature, Mapping):
         func.__signature__ = Signature(self.parameters.values(),
                                        return_annotation=self.return_annotation)
         func.__annotations__ = self.annotations
-        ko_names = self.names_for_kind(kind=KO)
-        dflts = self.defaults
-        func.__defaults__ = tuple(dflts[name] for name in dflts if name not in ko_names)
-        func.__kwdefaults__ = {name: dflts[name] for name in dflts if name in ko_names}
+        # endow the function with __defaults__ and __kwdefaults__ (not the default of functools.wraps!)
+        func.__defaults__, func.__kwdefaults__ = self._dunder_defaults_and_kwdefaults()
+        # "copy" over all other non-dunder attributes (not the default of functools.wraps!)
+        for attr in filter(lambda x: not x.startswith('__'), dir(func)):
+            setattr(func, attr, getattr(func, attr))
         return func
 
     def __call__(self, func: Callable):
@@ -620,6 +622,24 @@ class Sig(Signature, Mapping):
         Just calls Sig.wrap so see docs of Sig.wrap (which contains examples and doctests).
         """
         return self.wrap(func)
+
+    def _dunder_defaults_and_kwdefaults(self):
+        """Get the __defaults__, __kwdefaults__ (i.e. what would be the dunders baring these names in a python callable)
+
+        >>> def foo(w, /, x: float, y=1, *, z: int = 1): ...
+        >>> __defaults__, __kwdefaults__ = Sig(foo)._dunder_defaults_and_kwdefaults()
+        >>> __defaults__
+        (1,)
+        >>> __kwdefaults__
+        {'z': 1}
+        """
+        ko_names = self.names_for_kind(kind=KO)
+        dflts = self.defaults
+        return (
+            tuple(dflts[name] for name in dflts if name not in ko_names),
+            # as known as __defaults__ in python callables
+            {name: dflts[name] for name in dflts if name in ko_names}  # as known as __kwdefaults__ in python callables
+        )
 
     @classmethod
     def from_objs(cls, *objs, **name_and_dflts):
@@ -805,12 +825,16 @@ class Sig(Signature, Mapping):
         """
         return self.__class__(p for p in self.values() if param_has_default_or_is_var_kind(p))
 
-    def _extract_kwargs(self, args, kwargs, strict=True, partial=False):
+    def kwargs_from_args_and_kwargs(self, args=(), kwargs=None, apply_defaults=True,
+                                    allow_partial=False, allow_excess=False):
         """Extracts a dict of input argument values for target signature, from args and kwargs.
 
-        It's easier if you don't have to take care of less cases.
+        When you need to manage how the arguments of a function are specified, you need to take care of
+        multiple cases depending on whether they were specified as positional arguments
+        (`args`) or keyword arguments (`kwargs`).
 
-        For example, needing to manage `args` and `kwargs` a function.
+        The `kwargs_from_args_and_kwargs` (and it's sorta-inverse inverse, `args_and_kwargs_from_kwargs`)
+        are there to help you manage this.
 
         If you could rely on the the fact that only `kwargs` were given it would reduce the complexity of your code.
         This is why we have the `ch_signature_to_all_pk` function in `signatures.py`.
@@ -824,83 +848,86 @@ class Sig(Signature, Mapping):
         That's where  `Sig.extract_kwargs(*args, **kwargs)` is needed.
         :param args: The args the function will be called with.
         :param kwargs: The kwargs the function will be called with.
-        :param strict: (bool) If you want to allow extra kwargs items to be ignored.
-        :param partial: (bool) If you want to allow partial signature fulfillment.
-        :return:
-        """
-        binder = self.bind_partial if partial else self.bind
-        if strict:
-            return dict(binder(*args, **kwargs).arguments)
-        else:
-            sig_relevant_kwargs = {name: kwargs[name] for name in self if name in kwargs}  # take only what you need
-            if partial:
-                args_bound_arguments = binder(*args)
-            else:
-                args_bound_arguments = binder(*args)
-            # merge args and sig_relevant_kwargs contributions and return
-            return dict(args_bound_arguments.arguments, **sig_relevant_kwargs)
+        :param apply_defaults: Whether to apply signature defaults to the non-specified argument names
+        :param allow_partial: (bool) True iff you want to allow partial signature fulfillment.
+        :param allow_excess: (bool) Set to True iff you want to allow extra kwargs items to be ignored.
+        :return: An {argname: argval, ...} dict
 
-    def extract_strict_kwargs(self, *args, **kwargs):
-        """Extract a the strict signature-defined {arg: val,...} dict from (args, kwargs).
+        See also the sorta-inverse of this function: args_and_kwargs_from_kwargs
 
-        Strict in the sense that the kwargs cannot contain any arguments that are not
-        valid argument names (as per the signature).
-
-        >>> def foo(w, /, x: float, y=1, *, z: int = 1): ...
+        >>> def foo(w, /, x: float, y='YY', *, z: str = 'ZZ'): ...
         >>> sig = Sig(foo)
         >>> assert (
-        ...     sig.extract_strict_kwargs(1, 2, 3, z=4)
-        ...     == sig.extract_strict_kwargs(1, 2, y=3, z=4)
-        ...     == {'w': 1, 'x': 2, 'y': 3, 'z': 4})
+        ...     sig.kwargs_from_args_and_kwargs((11, 22, 'you'), dict(z='zoo'))
+        ...     == sig.kwargs_from_args_and_kwargs((11, 22), dict(y='you', z='zoo'))
+        ...     == {'w': 11, 'x': 22, 'y': 'you', 'z': 'zoo'})
 
-        But if position only and keyword only kinds need to be respected:
+        By default, `apply_defaults=True`, which will lead to non-specified non-requeire arguments
+        being returned with their defaults.
+        >>> sig.kwargs_from_args_and_kwargs(args=(11,), kwargs={'x': 22})
+        {'w': 11, 'x': 22, 'y': 'YY', 'z': 'ZZ'}
 
-        >>> sig.extract_strict_kwargs(1, 2, 3, 4)
+        But if you specify `apply_defaults=False` you will only get those arguments you input:
+        >>> sig.kwargs_from_args_and_kwargs(args=(11,), kwargs={'x': 22}, apply_defaults=False)
+        {'w': 11, 'x': 22}
+
+        By default, `ignore_excess=False`, so specifying kwargs that are not in the signature will lead to an exception.
+        >>> sig.kwargs_from_args_and_kwargs(args=(11,), kwargs={'x': 22, 'not_in_sig': -1})
+        Traceback (most recent call last):
+            ...
+        TypeError: Got unexpected keyword arguments: not_in_sig
+
+        Specifying `allow_excess=True` will ignore such excess fields of kwargs.
+        This is useful when you want to source several functions from a same dict.
+        >>> sig.kwargs_from_args_and_kwargs(args=(11,), kwargs={'x': 22, 'not_in_sig': -1}, allow_excess=True)
+        {'w': 11, 'x': 22, 'y': 'YY', 'z': 'ZZ'}
+
+        On the other side of `ignore_excess` you have `allow_partial` that will allow you, if
+        set to `True`, to underspecify the params of a function (in view of being completed later).
+        >>> sig.kwargs_from_args_and_kwargs(kwargs={'x': 22})
+        Traceback (most recent call last):
+          ...
+        TypeError: missing a required argument: 'w'
+
+        But if you specify `allow_partial=True`...
+        >>> sig.kwargs_from_args_and_kwargs(kwargs={'x': 22}, allow_partial=True)
+        {'x': 22, 'y': 'YY', 'z': 'ZZ'}
+
+        That's a lot of control (eight combinations total), but not everything is controllable here:
+        Position only and keyword only kinds need to be respected:
+        >>> sig.kwargs_from_args_and_kwargs(args=(1, 2, 3, 4))
         Traceback (most recent call last):
           ...
         TypeError: too many positional arguments
-        >>> sig.extract_strict_kwargs(w=1, x=2, y=3, z=4)
+        >>> sig.kwargs_from_args_and_kwargs(kwargs=dict(w=1, x=2, y=3, z=4))
         Traceback (most recent call last):
           ...
         TypeError: 'w' parameter is positional only, but was passed as a keyword
 
-        What about var positional and var keywords?
-        >>> def bar(*args, **kwargs): ...
-        >>> Sig(bar).extract_strict_kwargs(1, 2, y=3, z=4)
-        {'args': (1, 2), 'kwargs': {'y': 3, 'z': 4}}
+        Functions like `ch_signature_to_all_pk` are there to help for that situation.
 
         """
-        return self._extract_kwargs(args, kwargs, strict=True, partial=False)
+        if kwargs is None:
+            kwargs = {}
 
-    def extract_strict_partial_kwargs(self, *args, **kwargs):
-        """Extract a the strict partial signature-defined {arg: val,...} dict from (args, kwargs).
+        any_var_kw = any(p.kind == VK for p in self.values())
+        if not any_var_kw:  # has no var keyword kinds
+            sig_relevant_kwargs = {name: kwargs[name] for name in self if name in kwargs}  # take only what you need
+        else:
+            sig_relevant_kwargs = kwargs  # take all the kwargs
 
-        Strict in the sense that the kwargs cannot contain any arguments that are not
-        valid argument names (as per the signature).
+        binder = self.bind_partial if allow_partial else self.bind
+        b = binder(*args, **sig_relevant_kwargs)
+        if apply_defaults:
+            b.apply_defaults()
 
-        Partial in the sense that it allows the omission of some required arguments.
+        if not any_var_kw and not allow_excess:  # don't ignore excess kwargs
+            excess = kwargs.keys() - b.arguments
+            if excess:
+                excess_str = ', '.join(excess)
+                raise TypeError(f"Got unexpected keyword arguments: {excess_str}")
 
-        >>> def foo(w, /, x: float, y=1, *, z: int = 1): ...
-        >>> Sig(foo).extract_strict_partial_kwargs(1, 2)
-        {'w': 1, 'x': 2}
-        >>> Sig(foo).extract_strict_partial_kwargs(1, z='oo')
-        {'w': 1, 'z': 'oo'}
-        >>> Sig(foo).extract_strict_partial_kwargs(y='me')
-        {'y': 'me'}
-
-        But the fact that it's partial doesn't mean it's not strict!
-        >>> Sig(foo).extract_strict_partial_kwargs(w=1)
-        Traceback (most recent call last):
-          ...
-        TypeError: 'w' parameter is positional only, but was passed as a keyword
-        """
-        return self._extract_kwargs(args, kwargs, strict=True, partial=True)
-
-    def source_kwargs(self, *args, **kwargs):
-        return self._extract_kwargs(args, kwargs, strict=False, partial=False)
-
-    def source_partial_kwargs(self, *args, **kwargs):
-        return self._extract_kwargs(args, kwargs, strict=False, partial=True)
+        return dict(b.arguments)
 
     def args_and_kwargs_from_kwargs(self, kwargs):
         """Get an (args, kwargs) tuple from the kwargs, where args contain the position only arguments.
@@ -917,6 +944,31 @@ class Sig(Signature, Mapping):
         args = tuple(kwargs[name] for name in args_names)
         kwargs = {name: kwargs[name] for name in kwargs if name not in args_names}
         return args, kwargs
+
+    def extract_kwargs(self, *args, **kwargs):
+        """Convenience method that calls kwargs_from_args_and_kwargs with defaults.
+
+        Strict in the sense that the kwargs cannot contain any arguments that are not
+        valid argument names (as per the signature).
+
+        >>> def foo(w, /, x: float, y='Y', *, z: str = 'Z'): ...
+        >>> sig = Sig(foo)
+        >>> assert (
+        ...     sig.extract_kwargs(1, 2, 3, z=4)
+        ...     == sig.extract_kwargs(1, 2, y=3, z=4)
+        ...     == {'w': 1, 'x': 2, 'y': 3, 'z': 4})
+
+        What about var positional and var keywords?
+        >>> def bar(*args, **kwargs): ...
+        >>> Sig(bar).extract_kwargs(1, 2, y=3, z=4)
+        {'args': (1, 2), 'kwargs': {'y': 3, 'z': 4}}
+
+        """
+        return self.kwargs_from_args_and_kwargs(args, kwargs)
+
+    def source_kwargs(self, *args, **kwargs):
+        return self.kwargs_from_args_and_kwargs(
+            args, kwargs, apply_defaults=True, allow_partial=False, allow_excess=True)
 
 
 ############################################################################################################
