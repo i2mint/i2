@@ -1,11 +1,11 @@
 from functools import reduce
-from inspect import Signature, Parameter, signature, _ParameterKind  # TODO: Take care of _ParameterKind
+from inspect import Signature, Parameter, signature
 from typing import Any, Union, Callable, Iterable
 from typing import Mapping as MappingType
 
 _empty = Parameter.empty
 
-# _ParameterKind = type(Parameter(name='param_kind', kind=Parameter.POSITIONAL_OR_KEYWORD))
+_ParameterKind = type(Parameter(name='param_kind', kind=Parameter.POSITIONAL_OR_KEYWORD))
 ParamsType = Iterable[Parameter]
 ParamsAble = Union[ParamsType, MappingType[str, Parameter], Callable]
 SignatureAble = Union[Signature, Callable, ParamsType, MappingType[str, Parameter]]
@@ -689,6 +689,12 @@ class Sig(Signature, Mapping):
         """
         return {p.name: p.annotation for p in self.values() if p.annotation != Parameter.empty}
 
+    # def substitute(self, **sub_for_name):
+    #     def gen():
+    #
+    #         for name, substitution in sub_for_name.items():
+    #
+
     def names_for_kind(self, kind):
         return tuple(p.name for p in self.values() if p.kind == kind)
 
@@ -951,7 +957,7 @@ class Sig(Signature, Mapping):
         Strict in the sense that the kwargs cannot contain any arguments that are not
         valid argument names (as per the signature).
 
-        >>> def foo(w, /, x: float, y='Y', *, z: str = 'Z'): ...
+        >>> def foo(w, /, x: float, y='YY', *, z: str = 'ZZ'): ...
         >>> sig = Sig(foo)
         >>> assert (
         ...     sig.extract_kwargs(1, 2, 3, z=4)
@@ -967,6 +973,12 @@ class Sig(Signature, Mapping):
         return self.kwargs_from_args_and_kwargs(args, kwargs)
 
     def source_kwargs(self, *args, **kwargs):
+        """Source the kwargs for the signature instance, ignoring excess arguments.
+
+        >>> def foo(w, /, x: float, y='YY', *, z: str = 'ZZ'): ...
+        >>> Sig(foo).source_kwargs(11, x=22, extra='keywords', are='ignored')
+        {'w': 11, 'x': 22, 'y': 'YY', 'z': 'ZZ'}
+        """
         return self.kwargs_from_args_and_kwargs(
             args, kwargs, apply_defaults=True, allow_partial=False, allow_excess=True)
 
