@@ -675,6 +675,10 @@ class Sig(Signature, Mapping):
         return list(self.parameters.values())
 
     @property
+    def names(self):
+        return list(self.keys())
+
+    @property
     def kinds(self):
         return {p.name: p.kind for p in self.values()}
 
@@ -831,8 +835,18 @@ class Sig(Signature, Mapping):
         """
         return self.__class__(p for p in self.values() if param_has_default_or_is_var_kind(p))
 
-    def kwargs_from_args_and_kwargs(self, args=(), kwargs=None, apply_defaults=True,
-                                    allow_partial=False, allow_excess=False):
+    def normalize_kind(self):
+        def changed_params():
+            for p in self.parameters.values():
+                if p.kind not in var_param_kinds:
+                    yield p.replace(kind=PK)
+                else:
+                    yield p
+
+        return self.__class__(list(changed_params()), return_annotation=self.return_annotation)
+
+    def kwargs_from_args_and_kwargs(self, args=(), kwargs=None,
+                                    apply_defaults=True, allow_partial=False, allow_excess=False, ignore_kind=False):
         """Extracts a dict of input argument values for target signature, from args and kwargs.
 
         When you need to manage how the arguments of a function are specified, you need to take care of
@@ -854,9 +868,12 @@ class Sig(Signature, Mapping):
         That's where  `Sig.extract_kwargs(*args, **kwargs)` is needed.
         :param args: The args the function will be called with.
         :param kwargs: The kwargs the function will be called with.
-        :param apply_defaults: Whether to apply signature defaults to the non-specified argument names
+        :param apply_defaults: (bool) Whether to apply signature defaults to the non-specified argument names
         :param allow_partial: (bool) True iff you want to allow partial signature fulfillment.
         :param allow_excess: (bool) Set to True iff you want to allow extra kwargs items to be ignored.
+        :param ignore_kind: (bool) Set to True iff you want to ignore the position and keyword only kinds,
+            in order to be able to accept args and kwargs in such a way that there can be cross-over
+            (args that are supposed to be keyword only, and kwargs that are supposed to be positional only)
         :return: An {argname: argval, ...} dict
 
         See also the sorta-inverse of this function: args_and_kwargs_from_kwargs
@@ -910,24 +927,32 @@ class Sig(Signature, Mapping):
           ...
         TypeError: 'w' parameter is positional only, but was passed as a keyword
 
-        Functions like `ch_signature_to_all_pk` are there to help for that situation.
-
+        But if you want to ignore the kind of parameter, just say so:
+        >>> sig.kwargs_from_args_and_kwargs(args=(1, 2, 3, 4), ignore_kind=True)
+        {'w': 1, 'x': 2, 'y': 3, 'z': 4}
+        >>> sig.kwargs_from_args_and_kwargs(kwargs=dict(w=1, x=2, y=3, z=4), ignore_kind=True)
+        {'w': 1, 'x': 2, 'y': 3, 'z': 4}
         """
         if kwargs is None:
             kwargs = {}
 
-        any_var_kw = any(p.kind == VK for p in self.values())
-        if not any_var_kw:  # has no var keyword kinds
-            sig_relevant_kwargs = {name: kwargs[name] for name in self if name in kwargs}  # take only what you need
+        if ignore_kind:
+            sig = self.normalize_kind()
+        else:
+            sig = self
+
+        no_var_kw = not sig.has_var_keyword()
+        if no_var_kw:  # has no var keyword kinds
+            sig_relevant_kwargs = {name: kwargs[name] for name in sig if name in kwargs}  # take only what you need
         else:
             sig_relevant_kwargs = kwargs  # take all the kwargs
 
-        binder = self.bind_partial if allow_partial else self.bind
+        binder = sig.bind_partial if allow_partial else sig.bind
         b = binder(*args, **sig_relevant_kwargs)
         if apply_defaults:
             b.apply_defaults()
 
-        if not any_var_kw and not allow_excess:  # don't ignore excess kwargs
+        if no_var_kw and not allow_excess:  # don't ignore excess kwargs
             excess = kwargs.keys() - b.arguments
             if excess:
                 excess_str = ', '.join(excess)
@@ -935,24 +960,31 @@ class Sig(Signature, Mapping):
 
         return dict(b.arguments)
 
-    def args_and_kwargs_from_kwargs(self, kwargs):
+    def args_and_kwargs_from_kwargs(self, kwargs,
+                                    apply_defaults=True, allow_partial=False, allow_excess=False, ignore_kind=False):
         """Get an (args, kwargs) tuple from the kwargs, where args contain the position only arguments.
 
         >>> def foo(w, /, x: float, y=1, *, z: int = 1):
         ...     return ((w + x) * y) ** z
         >>> args, kwargs = Sig(foo).args_and_kwargs_from_kwargs(dict(w=4, x=3, y=2, z=1))
-        >>> args, kwargs
-        ((4,), {'x': 3, 'y': 2, 'z': 1})
+        >>> assert (args, kwargs) == ((4,), {'x': 3, 'y': 2, 'z': 1})
         >>> assert foo(*args, **kwargs) == foo(4, 3, 2, z=1) == 14
 
+        See kwargs_from_args_and_kwargs (namely for the description of the arguments.
         """
-        args_names = {p.name for p in self.parameters.values() if p.kind == PO}
-        args = tuple(kwargs[name] for name in args_names)
-        kwargs = {name: kwargs[name] for name in kwargs if name not in args_names}
+        position_only_names = {p.name for p in self.parameters.values() if p.kind == PO}
+        args = tuple(kwargs[name] for name in position_only_names)
+        # kwargs = self.kwargs_from_args_and_kwargs(args, kwargs, apply_defaults, allow_partial, allow_excess)
+        kwargs = {name: kwargs[name] for name in kwargs.keys() - position_only_names}
+
+        kwargs = self.kwargs_from_args_and_kwargs(args, kwargs, apply_defaults, allow_partial, allow_excess,
+                                                  ignore_kind)
+        kwargs = {name: kwargs[name] for name in kwargs.keys() - position_only_names}
+
         return args, kwargs
 
-    def extract_kwargs(self, *args, **kwargs):
-        """Convenience method that calls kwargs_from_args_and_kwargs with defaults.
+    def extract_kwargs(self, *args, _ignore_kind=True, **kwargs):
+        """Convenience method that calls kwargs_from_args_and_kwargs with defaults, and ignore_kind=True.
 
         Strict in the sense that the kwargs cannot contain any arguments that are not
         valid argument names (as per the signature).
@@ -969,18 +1001,95 @@ class Sig(Signature, Mapping):
         >>> Sig(bar).extract_kwargs(1, 2, y=3, z=4)
         {'args': (1, 2), 'kwargs': {'y': 3, 'z': 4}}
 
-        """
-        return self.kwargs_from_args_and_kwargs(args, kwargs)
+        Note that though `w` is a position only argument, you can specify `w=11` as a keyword argument too (by default):
+        >>> Sig(foo).extract_kwargs(w=11, x=22)
+        {'w': 11, 'x': 22, 'y': 'YY', 'z': 'ZZ'}
 
-    def source_kwargs(self, *args, **kwargs):
+        If you don't want to allow that, you can say `_ignore_kind=False`
+        >>> Sig(foo).extract_kwargs(w=11, x=22, _ignore_kind=False)
+        Traceback (most recent call last):
+          ...
+        TypeError: 'w' parameter is positional only, but was passed as a keyword
+        """
+        return self.kwargs_from_args_and_kwargs(
+            args, kwargs, apply_defaults=True, allow_partial=False, allow_excess=False, ignore_kind=_ignore_kind)
+
+    def extract_args_and_kwargs(self, *args, _ignore_kind=True, **kwargs):
+        """Source the (args, kwargs) for the signature instance, ignoring excess arguments.
+
+        >>> def foo(w, /, x: float, y=2, *, z: int = 1):
+        ...     return w + x * y ** z
+        >>> args, kwargs = Sig(foo).extract_args_and_kwargs(4, x=3, y=2)
+        >>> assert (args, kwargs) == ((4,), {'x': 3, 'y': 2, 'z': 1})
+
+        The difference with extract_kwargs is that here the output is ready to be called by the
+        function whose signature we have, since the position-only arguments will be returned as
+        args.
+
+        >>> foo(*args, **kwargs)
+        10
+
+        Note that though `w` is a position only argument, you can specify `w=4` as a keyword argument too (by default):
+        >>> args, kwargs = Sig(foo).extract_args_and_kwargs(w=4, x=3, y=2)
+        >>> assert (args, kwargs) == ((4,), {'x': 3, 'y': 2, 'z': 1})
+
+        If you don't want to allow that, you can say `_ignore_kind=False`
+        >>> Sig(foo).extract_args_and_kwargs(w=4, x=3, y=2, _ignore_kind=False)
+        Traceback (most recent call last):
+          ...
+        TypeError: 'w' parameter is positional only, but was passed as a keyword
+        """
+        kwargs = self.extract_kwargs(*args, _ignore_kind=_ignore_kind, **kwargs)
+        return self.args_and_kwargs_from_kwargs(kwargs)
+
+    def source_kwargs(self, *args, _ignore_kind=True, **kwargs):
         """Source the kwargs for the signature instance, ignoring excess arguments.
 
         >>> def foo(w, /, x: float, y='YY', *, z: str = 'ZZ'): ...
         >>> Sig(foo).source_kwargs(11, x=22, extra='keywords', are='ignored')
         {'w': 11, 'x': 22, 'y': 'YY', 'z': 'ZZ'}
+
+        Note that though `w` is a position only argument, you can specify `w=11` as a keyword argument too (by default):
+        >>> Sig(foo).source_kwargs(w=11, x=22, extra='keywords', are='ignored')
+        {'w': 11, 'x': 22, 'y': 'YY', 'z': 'ZZ'}
+
+        If you don't want to allow that, you can say `_ignore_kind=False`
+        >>> Sig(foo).source_kwargs(w=11, x=22, extra='keywords', are='ignored', _ignore_kind=False)
+        Traceback (most recent call last):
+          ...
+        TypeError: 'w' parameter is positional only, but was passed as a keyword
         """
         return self.kwargs_from_args_and_kwargs(
-            args, kwargs, apply_defaults=True, allow_partial=False, allow_excess=True)
+            args, kwargs, apply_defaults=True, allow_partial=False, allow_excess=True, ignore_kind=_ignore_kind)
+
+    def source_args_and_kwargs(self, *args, _ignore_kind=True, **kwargs):
+        """Source the (args, kwargs) for the signature instance, ignoring excess arguments.
+
+        >>> def foo(w, /, x: float, y=2, *, z: int = 1):
+        ...     return w + x * y ** z
+        >>> args, kwargs = Sig(foo).source_args_and_kwargs(4, x=3, y=2, extra='keywords', are='ignored')
+        >>> assert (args, kwargs) == ((4,), {'x': 3, 'y': 2, 'z': 1})
+        >>>
+
+        The difference with source_kwargs is that here the output is ready to be called by the
+        function whose signature we have, since the position-only arguments will be returned as
+        args.
+
+        >>> foo(*args, **kwargs)
+        10
+
+        Note that though `w` is a position only argument, you can specify `w=4` as a keyword argument too (by default):
+        >>> args, kwargs = Sig(foo).source_args_and_kwargs(w=4, x=3, y=2, extra='keywords', are='ignored')
+        >>> assert (args, kwargs) == ((4,), {'x': 3, 'y': 2, 'z': 1})
+
+        If you don't want to allow that, you can say `_ignore_kind=False`
+        >>> Sig(foo).source_args_and_kwargs(w=4, x=3, y=2, extra='keywords', are='ignored', _ignore_kind=False)
+        Traceback (most recent call last):
+          ...
+        TypeError: 'w' parameter is positional only, but was passed as a keyword
+        """
+        kwargs = self.kwargs_from_args_and_kwargs(args, kwargs, allow_excess=True, ignore_kind=_ignore_kind)
+        return self.args_and_kwargs_from_kwargs(kwargs, allow_excess=True, ignore_kind=_ignore_kind)
 
 
 ############################################################################################################
