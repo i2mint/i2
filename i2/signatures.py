@@ -1221,7 +1221,7 @@ def insert_annotations(s: Signature, *, return_annotation=_empty, **annotations)
     >>> from inspect import signature
     >>> s = signature(lambda a, b, c=1, d='bar': 0)
     >>> s
-z    <Signature (a, b, c=1, d='bar')>
+    <Signature (a, b, c=1, d='bar')>
     >>> ss = insert_annotations(s, b=int, d=str)
     >>> ss
     <Signature (a, b: int, c=1, d: str = 'bar')>
