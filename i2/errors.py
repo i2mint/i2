@@ -2,7 +2,7 @@ class DataError(Exception):
     pass
 
 
-class DuplicateRecordError(Exception):
+class DuplicateRecordError(DataError):
     pass
 
 
