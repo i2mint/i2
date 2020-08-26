@@ -819,7 +819,7 @@ class Sig(Signature, Mapping):
         It's up to the user to decorate their input functions to express the default they actually desire.
 
         >>> def ff(w, /, x: float, y=1, *, z: int = 1): ...  # just like f, but without the default for x
-        >>> Sig(f) + Sig(ff)
+        >>> Sig(f) + Sig(ff)  # doctest: +IGNORE_EXCEPTION_DETAIL
         Traceback (most recent call last):
         ...
         AssertionError: During a signature merge, if two names are the same, they must have the same kind and default:
@@ -827,7 +827,7 @@ class Sig(Signature, Mapping):
 
 
         >>> def hh(i, j, w=1): ...  # like h, but w has a default
-        >>> Sig(h) + Sig(hh)
+        >>> Sig(h) + Sig(hh)  # doctest: +IGNORE_EXCEPTION_DETAIL
         Traceback (most recent call last):
         ...
         AssertionError: During a signature merge, if two names are the same, they must have the same kind and default:
@@ -1285,7 +1285,7 @@ def insert_annotations(s: Signature, *, return_annotation=empty, **annotations):
     >>> ss = insert_annotations(s, b=int, d=str)
     >>> ss
     <Signature (a, b: int, c=1, d: str = 'bar')>
-    >>> insert_annotations(s, b=int, d=str, e=list)
+    >>> insert_annotations(s, b=int, d=str, e=list)  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
     ...
     AssertionError: These argument names weren't found in the signature: {'e'}
