@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-p = dict(version="0.0.3",
+p = dict(version="0.0.4",
          root_url='https://github.com/i2mint',
          name='i2'
          )
@@ -21,7 +21,8 @@ extras = dict(
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 3.7',
     ],
-    install_requires=[  # to get list, can use imports_for.third_party (py2store.ext.module_imports)
+    # to get install_requires you can use imports_for.third_party (py2store.ext.module_imports)
+    install_requires=[
     ]
 )
 
