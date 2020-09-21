@@ -179,14 +179,7 @@ class TestObj():
         return methodarg2 + ' test ' + self.constarg
 
 
-class ModuleNotFoundIgnore:
-    def __enter__(self):
-        pass
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is ModuleNotFoundError:
-            pass
-        return True
+from i2.errors import ModuleNotFoundIgnore
 
 
 with ModuleNotFoundIgnore():
