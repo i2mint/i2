@@ -151,6 +151,70 @@ def pickle_out_trans(self, argval, func):
 
 PickleFallbackTypedBasedOutIoTrans = functools.partial(TypedBasedOutIoTrans, dflt_trans_func=dumps)
 
+import json
+import os
+
+
+def cast_to_jdict(value):
+    """Tries to cast
+    >>> cast_to_jdict('3')
+    [3]
+    >>> cast_to_jdict("[3]")
+    [3]
+    >>> cast_to_jdict("[4,2]")
+    [4, 2]
+    >>> cast_to_jdict('[4, "string", ["another", "list"], {"nested": 10.2}]')
+    [4, 'string', ['another', 'list'], {'nested': 10.2}]
+    >>> cast_to_jdict('{"here": "is", "a": {"nested": "json"}, "with": [null, true, false, 1, 2.3]}')
+    {'here': 'is', 'a': {'nested': 'json'}, 'with': [None, True, False, 1, 2.3]}
+
+    And csvs too:
+
+    >>> cast_to_jdict('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')
+    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]
+    """
+    if isinstance(value, str):
+        value = value.strip()
+        if value:
+            first_char = value[0]
+            if first_char in {'[', '{'}:
+                return json.loads(value)
+            elif os.path.isfile(value):
+                return json.load(value)
+            else:
+                return json.loads('[' + value + ']')  # wrap in brackets and call json.loads
+        else:
+            return ""
+    else:
+        return value
+
+
+def cast_to_list(value):
+    """
+    >>> cast_to_list('3')
+    [3]
+    >>> cast_to_list("[3]")
+    [3]
+    >>> cast_to_list("[4,2]")
+    [4, 2]
+    >>> cast_to_list('[4, "string", ["another", "list"], {"nested": 10.2}]')
+    [4, 'string', ['another', 'list'], {'nested': 10.2}]
+
+    And csvs too:
+
+    >>> cast_to_list('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')
+    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]
+    """
+    if isinstance(value, str):
+        value = cast_to_json(value)
+        assert isinstance(value, list)
+        return value
+    elif hasattr(value, 'tolist'):  # meant for numpy arrays
+        # what other potential attributes to check for?
+        return value.tolist()
+    else:
+        return list(value)  # will work with set, tuple, and other iterables (not recursively though: just level 0)
+
 # @dataclass
 # class PickleFallbackTypedBasedOutIoTrans(TypedBasedOutIoTrans):
 #     dflt_trans_func = pickle_out_trans
