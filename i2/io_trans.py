@@ -156,7 +156,7 @@ import os
 
 
 def cast_to_jdict(value):
-    """Tries to cast
+    """Tries to cast to a json-friendly dictionary.
     >>> cast_to_jdict('3')
     [3]
     >>> cast_to_jdict("[3]")
@@ -190,7 +190,7 @@ def cast_to_jdict(value):
 
 
 def cast_to_list(value):
-    """
+    """Tries to case to a list (with json friendly elements)
     >>> cast_to_list('3')
     [3]
     >>> cast_to_list("[3]")
@@ -206,7 +206,7 @@ def cast_to_list(value):
     [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]
     """
     if isinstance(value, str):
-        value = cast_to_json(value)
+        value = cast_to_jdict(value)
         assert isinstance(value, list)
         return value
     elif hasattr(value, 'tolist'):  # meant for numpy arrays
