@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Mapping, Callable, Optional, Union, Iterable
+from typing import Mapping, Callable, Optional, Union, Iterable, _TypedDictMeta
 from inspect import signature, Parameter
 from pickle import dumps
 
@@ -101,6 +101,34 @@ class AnnotAndDfltIoTrans(IoTrans):
         return super().in_val_trans(argval, argname, func)
 
 
+
+@dataclass
+class JSONAnnotAndDfltIoTrans(AnnotAndDfltIoTrans):
+    """Transforms argument values using annotations and default type,
+    including lists, iterables, dicts, and booleans
+    >>> def foo(a: dict, b=['dflt'], c=False):
+    ...     return dict({}, a=a, b=b, c=c)
+    >>>
+    >>> input_trans = JSONAnnotAndDfltIoTrans()
+    >>> foo4 = input_trans(foo)
+    >>> assert foo4('{}') == {'a': {}, 'b': ['dflt'], 'c': False}
+    >>> assert foo4({'d': 'e'}, '["some_value"]', 'true') == {'a': {'d': 'e'}, 'b': ['some_value'], 'c': True}
+    >>> complex_types_result = foo4('{"None": null, "True": true, "False": false}', '[null, true, false]', 'false')
+    >>> assert complex_types_result == {'a': {'None': None, 'True': True, 'False': False}, 'b': [None, True, False], 'c': False}
+    >>> assert signature(foo) == signature(foo4)
+    """
+    def in_val_trans(self, argval, argname, func):
+        param = signature(func).parameters[argname]
+        if param.annotation != str and not isinstance(param.default, str):
+            if param.annotation == dict or isinstance(param.annotation, _TypedDictMeta) \
+                or isinstance(param.default, dict) or isinstance(type(param.default), _TypedDictMeta)\
+                or param.annotation == bool or isinstance(param.default, bool):
+                return cast_to_jdict(argval)
+            if hasattr(param.annotation, '__iter__') or hasattr(param.default, '__iter__'):
+                return cast_to_list(argval)
+        return super().in_val_trans(argval, argname, func)
+
+
 @dataclass
 class TypedBasedOutIoTrans(IoTrans):
     """Transform output according to it's type.
@@ -178,6 +206,8 @@ def cast_to_jdict(value):
         if value:
             first_char = value[0]
             if first_char in {'[', '{'}:
+                return json.loads(value)
+            elif value in ['true', 'false', 'null']:
                 return json.loads(value)
             elif os.path.isfile(value):
                 return json.load(value)
