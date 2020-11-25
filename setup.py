@@ -22,7 +22,7 @@ configs = read_configs(config_file, section='metadata')
 # parse out name and root_url
 name = configs['name']
 root_url = configs['root_url']
-version = configs.get('version', None)
+version = '0.0.6'
 
 # Note: if version is not in config, version will be None,
 #  resulting in bumping the version or making it be 0.0.1 if the package is not found (i.e. first deploy)
@@ -38,18 +38,18 @@ setup_kwargs = dict(
 # import os
 # name = os.path.split(os.path.dirname(__file__))[-1]
 
-if version is None:
-    try:
-        from pack import next_version_for_package
+# if version is None:
+#     try:
+#         from pack import next_version_for_package
 
-        version = next_version_for_package(name)  # when you want to make a new package
-    except Exception as e:
-        print(f"Got an error trying to get the new version of {name} so will try to get the version from setup.cfg...")
-        print(f"{e}")
-        version = configs.get('version', None)
-        if version is None:
-            raise ValueError(f"Couldn't fetch the next version from PyPi (no API token?), "
-                             f"nor did I find a version in setup.cfg (metadata section).")
+#         version = next_version_for_package(name)  # when you want to make a new package
+#     except Exception as e:
+#         print(f"Got an error trying to get the new version of {name} so will try to get the version from setup.cfg...")
+#         print(f"{e}")
+#         version = configs.get('version', None)
+#         if version is None:
+#             raise ValueError(f"Couldn't fetch the next version from PyPi (no API token?), "
+#                              f"nor did I find a version in setup.cfg (metadata section).")
 
 
 def text_of_readme_md_file():
