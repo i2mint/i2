@@ -29,11 +29,11 @@ jobs:
       - name: Format source code
         run: black --line-length=79 .
 
-      # - name: Validate docstrings
-      #   run: pylint ./$PROJECT_NAME --ignore=tests --disable=all --enable=C0114,C0115,C0116
+      - name: Validate docstrings
+        run: pylint ./$PROJECT_NAME --ignore=tests --disable=all --enable=C0114,C0115,C0116
 
-      # - name: Test
-      #   run: pytest --doctest-modules -v
+      - name: Test
+        run: pytest --doctest-modules -v
   publish:
     name: Publish
     if: "!contains(github.event.head_commit.message, '[skip ci]') && github.ref == 'refs/heads/master'"
@@ -88,11 +88,11 @@ jobs:
       - name: Publish
         run: |
           python setup.py sdist
-#          twine upload dist/$PROJECT_NAME-$VERSION.tar.gz -u ${{ secrets.PYPI_USERNAME }} -p ${{ secrets.PYPI_PASSWORD }} --non-interactive  --skip-existing --disable-progress-bar
+          twine upload dist/$PROJECT_NAME-$VERSION.tar.gz -u ${{ secrets.PYPI_USERNAME }} -p ${{ secrets.PYPI_PASSWORD }} --non-interactive  --skip-existing --disable-progress-bar
 
       - name: Update & Tag Repository
         run: |
           git commit -a -m "**CI** Formatted code & Updated version number. [skip ci]"
-#          git push
-#          git tag $VERSION
-#          git push origin $VERSION
+          git push
+          git tag $VERSION
+          git push origin $VERSION
