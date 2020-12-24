@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>i2.chain_map &#8212; i2 0.0.8 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for i2.chain_map</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">ChainMap</span>
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+
+<span class="n">is_mapping</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">)</span>
+<span class="n">not_mapping</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="p">(</span><span class="n">is_mapping</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
+
+
+<div class="viewcode-block" id="is_iterable"><a class="viewcode-back" href="../../module_docs/i2/chain_map.html#i2.chain_map.is_iterable">[docs]</a><span class="k">def</span> <span class="nf">is_iterable</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Similar in nature to :func:`callable`, ``is_iterable`` returns</span>
+<span class="sd">    ``True`` if an object is `iterable`_, ``False`` if not.</span>
+<span class="sd">    &gt;&gt;&gt; is_iterable([])</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; is_iterable(1)</span>
+<span class="sd">    False&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="unique_iter"><a class="viewcode-back" href="../../module_docs/i2/chain_map.html#i2.chain_map.unique_iter">[docs]</a><span class="k">def</span> <span class="nf">unique_iter</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Yield unique elements from the iterable, *src*, based on *key*,</span>
+<span class="sd">    in the order in which they first appeared in *src*.</span>
+
+<span class="sd">    &gt;&gt;&gt; repetitious = [1, 2, 3] * 10</span>
+<span class="sd">    &gt;&gt;&gt; list(unique_iter(repetitious))</span>
+<span class="sd">    [1, 2, 3]</span>
+
+<span class="sd">    By default, *key* is the object itself, but *key* can either be a</span>
+<span class="sd">    callable or, for convenience, a string name of the attribute on</span>
+<span class="sd">    which to uniqueify objects, falling back on identity when the</span>
+<span class="sd">    attribute is not present.</span>
+
+<span class="sd">    &gt;&gt;&gt; pleasantries = [&#39;hi&#39;, &#39;hello&#39;, &#39;ok&#39;, &#39;bye&#39;, &#39;yes&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; list(unique_iter(pleasantries, key=lambda x: len(x)))</span>
+<span class="sd">    [&#39;hi&#39;, &#39;hello&#39;, &#39;bye&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_iterable</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;expected an iterable, not </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">src</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">key_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+    <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+        <span class="n">key_func</span> <span class="o">=</span> <span class="n">key</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">key_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;key&quot; expected a string or callable, not </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">key_func</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">i</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="ChainMapTree"><a class="viewcode-back" href="../../module_docs/i2/chain_map.html#i2.chain_map.ChainMapTree">[docs]</a><span class="k">class</span> <span class="nc">ChainMapTree</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Combine/overlay multiple hierarchical mappings. This efficiently merges</span>
+<span class="sd">    multiple hierarchical (could be several layers deep) dictionaries, producing</span>
+<span class="sd">    a new view into them that acts exactly like a merged dictionary, but without</span>
+<span class="sd">    doing any copying.</span>
+<span class="sd">    Because it doesn&#39;t actually copy the data, it is intended to be used only</span>
+<span class="sd">    with immutable mappings. It is safe to change *leaf* data values,</span>
+<span class="sd">    and the results will be reflected here, but changing the structure of any</span>
+<span class="sd">    of the trees will not work.</span>
+
+<span class="sd">    &gt;&gt;&gt; base1 = {</span>
+<span class="sd">    ...     &#39;a1&#39;: &#39;base1.a1&#39;,</span>
+<span class="sd">    ...     &#39;a2&#39;: &#39;base1.a2&#39;,</span>
+<span class="sd">    ...     &#39;a3&#39;: {</span>
+<span class="sd">    ...         &#39;b1&#39;: &#39;base1.a3.b1&#39;,</span>
+<span class="sd">    ...         &#39;b2&#39;: &#39;base1.a3.b2&#39;,</span>
+<span class="sd">    ...     },</span>
+<span class="sd">    ... }</span>
+<span class="sd">    &gt;&gt;&gt; base2 = {</span>
+<span class="sd">    ...     &#39;a2&#39;: &#39;base2.a2&#39;,</span>
+<span class="sd">    ...     &#39;a3&#39;: {</span>
+<span class="sd">    ...         &#39;b2&#39;: &#39;base2.a3.b2&#39;,</span>
+<span class="sd">    ...         &#39;b4&#39;: &#39;base2.a3.b4&#39;,</span>
+<span class="sd">    ...     },</span>
+<span class="sd">    ...     &#39;a4&#39;: &#39;base2.a4&#39;,</span>
+<span class="sd">    ... }</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; cm = ChainMapTree(base1, base2)</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a1&#39;]</span>
+<span class="sd">    &#39;base1.a1&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a2&#39;]</span>
+<span class="sd">    &#39;base1.a2&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a4&#39;]</span>
+<span class="sd">    &#39;base2.a4&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a3&#39;]</span>
+<span class="sd">    ChainMapTree({&#39;b1&#39;: &#39;base1.a3.b1&#39;, &#39;b2&#39;: &#39;base1.a3.b2&#39;}, {&#39;b2&#39;: &#39;base2.a3.b2&#39;, &#39;b4&#39;: &#39;base2.a3.b4&#39;})</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a3&#39;][&#39;b1&#39;]</span>
+<span class="sd">    &#39;base1.a3.b1&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a3&#39;][&#39;b4&#39;]</span>
+<span class="sd">    &#39;base2.a3.b4&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cm = ChainMapTree(base2, base1)</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a1&#39;]</span>
+<span class="sd">    &#39;base1.a1&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a2&#39;]</span>
+<span class="sd">    &#39;base2.a2&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a4&#39;]</span>
+<span class="sd">    &#39;base2.a4&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a3&#39;]</span>
+<span class="sd">    ChainMapTree({&#39;b2&#39;: &#39;base2.a3.b2&#39;, &#39;b4&#39;: &#39;base2.a3.b4&#39;}, {&#39;b1&#39;: &#39;base1.a3.b1&#39;, &#39;b2&#39;: &#39;base1.a3.b2&#39;})</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a3&#39;][&#39;b2&#39;]</span>
+<span class="sd">    &#39;base2.a3.b2&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a3&#39;][&#39;b1&#39;]</span>
+<span class="sd">    &#39;base1.a3.b1&#39;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Let&#39;s do a ChainMapTree with THREE bases now!</span>
+<span class="sd">    &gt;&gt;&gt; base3 = {</span>
+<span class="sd">    ...     &#39;a2&#39;: &#39;base3.a2&#39;,</span>
+<span class="sd">    ...     &#39;a3&#39;: {</span>
+<span class="sd">    ...         &#39;b2&#39;: &#39;base3.a3.b2&#39;,</span>
+<span class="sd">    ...         &#39;b4&#39;: &#39;base3.a3.b4&#39;,</span>
+<span class="sd">    ...     },</span>
+<span class="sd">    ...     &#39;a4&#39;: &#39;base3.a4&#39;,</span>
+<span class="sd">    ... }</span>
+<span class="sd">    &gt;&gt;&gt; cm = ChainMapTree(base3, base2, base1)</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a2&#39;]  # will get it from base3</span>
+<span class="sd">    &#39;base3.a2&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a3&#39;][&#39;b2&#39;]  # will get it from base3 (not base2)</span>
+<span class="sd">    &#39;base3.a3.b2&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cm[&#39;a3&#39;][&#39;b1&#39;]  # will get it from base1 (since no one else has it)</span>
+<span class="sd">    &#39;base1.a3.b1&#39;</span>
+
+<span class="sd">    Based on: https://gist.github.com/Klortho/7d83975559bdcc47ac64fd7d877934f6</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_max_repr_keys</span> <span class="o">=</span> <span class="mi">7</span>  <span class="c1"># Not used (anymore) at this point. Was to control __repr__ output length</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">maps</span><span class="p">):</span>
+        <span class="n">_maps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">maps</span><span class="p">)</span>
+
+        <span class="c1"># All keys of kids that are mappings</span>
+        <span class="n">kid_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">maps</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">is_mapping</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="n">key</span><span class="p">])]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># This will be a dictionary of lists of mappings</span>
+        <span class="n">kid_maps</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kid_keys</span><span class="p">:</span>
+            <span class="c1"># The list of child mappings for this key</span>
+            <span class="n">kmaps</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">maps</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">m</span><span class="p">]</span>
+            <span class="c1"># Make sure they are *all* mappings</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">not_mapping</span><span class="p">,</span> <span class="n">kmaps</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="c1"># Recurse</span>
+            <span class="n">kid_maps</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ChainMapTree</span><span class="p">(</span><span class="o">*</span><span class="n">kmaps</span><span class="p">)</span>
+
+        <span class="c1"># If non-empty, prepend it to the existing list</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kid_maps</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_maps</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">kid_maps</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maps</span> <span class="o">=</span> <span class="n">_maps</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_map</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maps</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_map</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">unique_iter</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">_map</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span> <span class="k">for</span> <span class="n">_map</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maps</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()))</span>
+
+    <span class="k">def</span> <span class="nf">_mk_keys_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+        <span class="n">first_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_repr_keys</span><span class="p">:</span>
+                <span class="n">first_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="n">keys_str</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">first_keys</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_repr_keys</span><span class="p">:</span>
+            <span class="n">keys_str</span> <span class="o">+=</span> <span class="s1">&#39;, ...&#39;</span>
+        <span class="k">return</span> <span class="n">keys_str</span>
+
+<div class="viewcode-block" id="ChainMapTree.to_dict"><a class="viewcode-back" href="../../module_docs/i2/chain_map.html#i2.chain_map.ChainMapTree.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert to dict</span>
+
+<span class="sd">        &gt;&gt;&gt; a = {&#39;a&#39;: {&#39;x&#39;: 1, &#39;z&#39;: 3}, &#39;foo&#39;: &quot;a&#39;s foo&quot;}</span>
+<span class="sd">        &gt;&gt;&gt; b = {&#39;a&#39;: {&#39;y&#39;: 222, &#39;z&#39;: 333}, &#39;foo&#39;: &quot;b&#39;s foo&quot;}</span>
+<span class="sd">        &gt;&gt;&gt; cm = ChainMapTree(a, b)</span>
+<span class="sd">        &gt;&gt;&gt; # It acts like a dict when you ask for items, but is not a dict. If you want a dict, do this:</span>
+<span class="sd">        &gt;&gt;&gt; cm.to_dict()</span>
+<span class="sd">        {&#39;a&#39;: {&#39;x&#39;: 1, &#39;z&#39;: 3, &#39;y&#39;: 222}, &#39;foo&#39;: &quot;a&#39;s foo&quot;}</span>
+<span class="sd">        &gt;&gt;&gt; # Compare to normal/flat/not-nested chaining:</span>
+<span class="sd">        &gt;&gt;&gt; dict(a, **b)   # Note the precedence is the inverse of ChainMapTree!</span>
+<span class="sd">        {&#39;a&#39;: {&#39;y&#39;: 222, &#39;z&#39;: 333}, &#39;foo&#39;: &quot;b&#39;s foo&quot;}</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # See what you get if you specify b before a</span>
+<span class="sd">        &gt;&gt;&gt; ChainMapTree(b, a).to_dict()</span>
+<span class="sd">        {&#39;a&#39;: {&#39;y&#39;: 222, &#39;z&#39;: 333, &#39;x&#39;: 1}, &#39;foo&#39;: &quot;b&#39;s foo&quot;}</span>
+<span class="sd">        &gt;&gt;&gt; # Compare to normal/flat/not-nested chaining:</span>
+<span class="sd">        &gt;&gt;&gt; dict(b, **a)  # Note the precedence is the inverse of ChainMapTree!</span>
+<span class="sd">        {&#39;a&#39;: {&#39;x&#39;: 1, &#39;z&#39;: 3}, &#39;foo&#39;: &quot;a&#39;s foo&quot;}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ChainMapTree</span><span class="p">):</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">_map</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span> <span class="k">for</span> <span class="n">_map</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maps</span><span class="p">))</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+        <span class="c1">#         map_keys_strs = self._mk_keys_str(self.keys())</span>
+        <span class="c1">#         map_keys_strs = []</span>
+        <span class="c1">#         for _map in self._maps:</span>
+        <span class="c1">#             map_keys_strs.append(self._mk_keys_str(_map.keys()))</span>
+        <span class="c1">#         map_keys_strs = &#39;, &#39;.join(map(&#39;({})&#39;.format, map_keys_strs))</span>
+        <span class="c1"># return f&quot;{self.__class__.__name__}({map_keys_strs})&quot;</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">i2</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/alternative_approaches.html">i2.alternative_approaches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/footprints.html">i2.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/genu.html">i2.genu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/itypes.html">i2.itypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/key_path.html">i2.key_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/misc.html">i2.misc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/simple_pymint.html">i2.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/switch_case_tree.html">i2.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/footprints.html">i2.tests.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures.html">i2.tests.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/vend/funcutils.html">i2.vend.funcutils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;OtoSense 2020.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

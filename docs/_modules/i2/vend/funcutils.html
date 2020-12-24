@@ -1,0 +1,1308 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>i2.vend.funcutils &#8212; i2 0.0.8 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for i2.vend.funcutils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Python&#39;s built-in :mod:`functools` module builds several useful</span>
+<span class="sd">utilities on top of Python&#39;s first-class function</span>
+<span class="sd">support. ``funcutils`` generally stays in the same vein, adding to and</span>
+<span class="sd">correcting Python&#39;s standard metaprogramming facilities.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span><span class="p">,</span> <span class="n">FunctionType</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">xrange</span>
+    <span class="n">make_method</span> <span class="o">=</span> <span class="n">MethodType</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="c1"># Python 3</span>
+    <span class="n">make_method</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">desc</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">obj_type</span><span class="p">:</span> <span class="n">MethodType</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+    <span class="n">basestring</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>  <span class="c1"># Python 3 compat</span>
+    <span class="n">_IS_PY2</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">_IS_PY2</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_inspect_iscoroutinefunction</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">iscoroutinefunction</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+    <span class="c1"># Python 3.4</span>
+    <span class="n">_inspect_iscoroutinefunction</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">func</span><span class="p">:</span> <span class="kc">False</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">boltons.typeutils</span> <span class="kn">import</span> <span class="n">make_sentinel</span>
+
+    <span class="n">NO_DEFAULT</span> <span class="o">=</span> <span class="n">make_sentinel</span><span class="p">(</span><span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;NO_DEFAULT&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">NO_DEFAULT</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partialmethod</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">partialmethod</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">_IS_PY35</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">_IS_PY35</span><span class="p">:</span>
+    <span class="c1"># py35+ wants you to use signature instead, but</span>
+    <span class="c1"># inspect_formatargspec is way simpler for what it is. Copied the</span>
+    <span class="c1"># vendoring approach from alembic:</span>
+    <span class="c1"># https://github.com/sqlalchemy/alembic/blob/4cdad6aec32b4b5573a2009cc356cb4b144bd359/alembic/util/compat.py#L92</span>
+    <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">formatargspec</span> <span class="k">as</span> <span class="n">inspect_formatargspec</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">formatannotation</span>
+
+<div class="viewcode-block" id="inspect_formatargspec"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.inspect_formatargspec">[docs]</a>    <span class="k">def</span> <span class="nf">inspect_formatargspec</span><span class="p">(</span>
+        <span class="n">args</span><span class="p">,</span>
+        <span class="n">varargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">varkw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">defaults</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">kwonlyargs</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">kwonlydefaults</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">annotations</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">formatarg</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">formatvarargs</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;*&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span>
+        <span class="n">formatvarkw</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;**&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span>
+        <span class="n">formatvalue</span><span class="o">=</span><span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">),</span>
+        <span class="n">formatreturns</span><span class="o">=</span><span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="s1">&#39; -&gt; &#39;</span> <span class="o">+</span> <span class="n">text</span><span class="p">,</span>
+        <span class="n">formatannotation</span><span class="o">=</span><span class="n">formatannotation</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Copy formatargspec from python 3.7 standard library.</span>
+<span class="sd">        Python 3 has deprecated formatargspec and requested that Signature</span>
+<span class="sd">        be used instead, however this requires a full reimplementation</span>
+<span class="sd">        of formatargspec() in terms of creating Parameter objects and such.</span>
+<span class="sd">        Instead of introducing all the object-creation overhead and having</span>
+<span class="sd">        to reinvent from scratch, just copy their compatibility routine.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">formatargandannotation</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">formatarg</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">formatannotation</span><span class="p">(</span><span class="n">annotations</span><span class="p">[</span><span class="n">arg</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">specs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">defaults</span><span class="p">:</span>
+            <span class="n">firstdefault</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="n">formatargandannotation</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">defaults</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">firstdefault</span><span class="p">:</span>
+                <span class="n">spec</span> <span class="o">=</span> <span class="n">spec</span> <span class="o">+</span> <span class="n">formatvalue</span><span class="p">(</span><span class="n">defaults</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">firstdefault</span><span class="p">])</span>
+            <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">varargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">formatvarargs</span><span class="p">(</span><span class="n">formatargandannotation</span><span class="p">(</span><span class="n">varargs</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">kwonlyargs</span><span class="p">:</span>
+                <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwonlyargs</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">kwonlyarg</span> <span class="ow">in</span> <span class="n">kwonlyargs</span><span class="p">:</span>
+                <span class="n">spec</span> <span class="o">=</span> <span class="n">formatargandannotation</span><span class="p">(</span><span class="n">kwonlyarg</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">kwonlydefaults</span> <span class="ow">and</span> <span class="n">kwonlyarg</span> <span class="ow">in</span> <span class="n">kwonlydefaults</span><span class="p">:</span>
+                    <span class="n">spec</span> <span class="o">+=</span> <span class="n">formatvalue</span><span class="p">(</span><span class="n">kwonlydefaults</span><span class="p">[</span><span class="n">kwonlyarg</span><span class="p">])</span>
+                <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">varkw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">formatvarkw</span><span class="p">(</span><span class="n">formatargandannotation</span><span class="p">(</span><span class="n">varkw</span><span class="p">)))</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;return&#39;</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">formatreturns</span><span class="p">(</span><span class="n">formatannotation</span><span class="p">(</span><span class="n">annotations</span><span class="p">[</span><span class="s1">&#39;return&#39;</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="get_module_callables"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.get_module_callables">[docs]</a><span class="k">def</span> <span class="nf">get_module_callables</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns two maps of (*types*, *funcs*) from *mod*, optionally</span>
+<span class="sd">    ignoring based on the :class:`bool` return value of the *ignore*</span>
+<span class="sd">    callable. *mod* can be a string name of a module in</span>
+<span class="sd">    :data:`sys.modules` or the module instance itself.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">mod</span><span class="p">]</span>
+    <span class="n">types</span><span class="p">,</span> <span class="n">funcs</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ignore</span> <span class="ow">and</span> <span class="n">ignore</span><span class="p">(</span><span class="n">attr_name</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">attr_mod_name</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="vm">__module__</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">attr_mod_name</span> <span class="o">!=</span> <span class="n">mod</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="n">types</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+            <span class="n">funcs</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span>
+    <span class="k">return</span> <span class="n">types</span><span class="p">,</span> <span class="n">funcs</span></div>
+
+
+<div class="viewcode-block" id="mro_items"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.mro_items">[docs]</a><span class="k">def</span> <span class="nf">mro_items</span><span class="p">(</span><span class="n">type_obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes a type and returns an iterator over all class variables</span>
+<span class="sd">    throughout the type hierarchy (respecting the MRO).</span>
+
+<span class="sd">    &gt;&gt;&gt; sorted(set([k for k, v in mro_items(int) if not k.startswith(&#39;__&#39;) and &#39;bytes&#39; not in k and not callable(v)]))</span>
+<span class="sd">    [&#39;denominator&#39;, &#39;imag&#39;, &#39;numerator&#39;, &#39;real&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: handle slots?</span>
+    <span class="k">return</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span>
+        <span class="n">ct</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">type_obj</span><span class="o">.</span><span class="vm">__mro__</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dir_dict"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.dir_dict">[docs]</a><span class="k">def</span> <span class="nf">dir_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">raise_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a dictionary of attribute names to values for a given</span>
+<span class="sd">    object. Unlike ``obj.__dict__``, this function returns all</span>
+<span class="sd">    attributes on the object, including ones on parent classes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: separate function for handling descriptors on types?</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">raise_exc</span><span class="p">:</span>
+                <span class="k">raise</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="copy_function"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.copy_function">[docs]</a><span class="k">def</span> <span class="nf">copy_function</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">copy_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a shallow copy of the function, including code object,</span>
+<span class="sd">    globals, closure, etc.</span>
+
+<span class="sd">    &gt;&gt;&gt; func = lambda: func</span>
+<span class="sd">    &gt;&gt;&gt; func() is func</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; func_copy = copy_function(func)</span>
+<span class="sd">    &gt;&gt;&gt; func_copy() is func</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; func_copy is not func</span>
+<span class="sd">    True</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        orig (function): The function to be copied. Must be a</span>
+<span class="sd">            function, not just any method or callable.</span>
+<span class="sd">        copy_dict (bool): Also copy any attributes set on the function</span>
+<span class="sd">            instance. Defaults to ``True``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">FunctionType</span><span class="p">(</span>
+        <span class="n">orig</span><span class="o">.</span><span class="vm">__code__</span><span class="p">,</span>
+        <span class="n">orig</span><span class="o">.</span><span class="vm">__globals__</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">orig</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+        <span class="n">argdefs</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="s1">&#39;__defaults__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">closure</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="s1">&#39;__closure__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">copy_dict</span><span class="p">:</span>
+        <span class="n">ret</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">orig</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="partial_ordering"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.partial_ordering">[docs]</a><span class="k">def</span> <span class="nf">partial_ordering</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class decorator, similar to :func:`functools.total_ordering`,</span>
+<span class="sd">    except it is used to define `partial orderings`_ (i.e., it is</span>
+<span class="sd">    possible that *x* is neither greater than, equal to, or less than</span>
+<span class="sd">    *y*). It assumes the presence of the ``__le__()`` and ``__ge__()``</span>
+<span class="sd">    method, but nothing else. It will not override any existing</span>
+<span class="sd">    additional comparison methods.</span>
+
+<span class="sd">    .. _partial orderings: https://en.wikipedia.org/wiki/Partially_ordered_set</span>
+
+<span class="sd">    &gt;&gt;&gt; @partial_ordering</span>
+<span class="sd">    ... class MySet(set):</span>
+<span class="sd">    ...     def __le__(self, other):</span>
+<span class="sd">    ...         return self.issubset(other)</span>
+<span class="sd">    ...     def __ge__(self, other):</span>
+<span class="sd">    ...         return self.issuperset(other)</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; a = MySet([1,2,3])</span>
+<span class="sd">    &gt;&gt;&gt; b = MySet([1,2])</span>
+<span class="sd">    &gt;&gt;&gt; c = MySet([1,2,4])</span>
+<span class="sd">    &gt;&gt;&gt; b &lt; a</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; b &gt; a</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; b &lt; c</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; a &lt; c</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; c &gt; a</span>
+<span class="sd">    False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">&lt;=</span> <span class="n">other</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span> <span class="o">&gt;=</span> <span class="n">other</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">&gt;=</span> <span class="n">other</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span> <span class="o">&lt;=</span> <span class="n">other</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">&gt;=</span> <span class="n">other</span> <span class="ow">and</span> <span class="bp">self</span> <span class="o">&lt;=</span> <span class="n">other</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;__lt__&#39;</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="fm">__lt__</span> <span class="o">=</span> <span class="fm">__lt__</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;__gt__&#39;</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="fm">__gt__</span> <span class="o">=</span> <span class="fm">__gt__</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;__eq__&#39;</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="fm">__eq__</span> <span class="o">=</span> <span class="fm">__eq__</span>
+
+    <span class="k">return</span> <span class="bp">cls</span></div>
+
+
+<div class="viewcode-block" id="InstancePartial"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.InstancePartial">[docs]</a><span class="k">class</span> <span class="nc">InstancePartial</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;:class:`functools.partial` is a huge convenience for anyone</span>
+<span class="sd">    working with Python&#39;s great first-class functions. It allows</span>
+<span class="sd">    developers to curry arguments and incrementally create simpler</span>
+<span class="sd">    callables for a variety of use cases.</span>
+
+<span class="sd">    Unfortunately there&#39;s one big gap in its usefulness:</span>
+<span class="sd">    methods. Partials just don&#39;t get bound as methods and</span>
+<span class="sd">    automatically handed a reference to ``self``. The</span>
+<span class="sd">    ``InstancePartial`` type remedies this by inheriting from</span>
+<span class="sd">    :class:`functools.partial` and implementing the necessary</span>
+<span class="sd">    descriptor protocol. There are no other differences in</span>
+<span class="sd">    implementation or usage. :class:`CachedInstancePartial`, below,</span>
+<span class="sd">    has the same ability, but is slightly more efficient.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">partialmethod</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">):</span>  <span class="c1"># NB: See https://github.com/mahmoud/boltons/pull/244</span>
+
+        <span class="nd">@property</span>
+        <span class="k">def</span> <span class="nf">_partialmethod</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">partialmethod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">keywords</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">obj_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">make_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">obj_type</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CachedInstancePartial"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.CachedInstancePartial">[docs]</a><span class="k">class</span> <span class="nc">CachedInstancePartial</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The ``CachedInstancePartial`` is virtually the same as</span>
+<span class="sd">    :class:`InstancePartial`, adding support for method-usage to</span>
+<span class="sd">    :class:`functools.partial`, except that upon first access, it</span>
+<span class="sd">    caches the bound method on the associated object, speeding it up</span>
+<span class="sd">    for future accesses, and bringing the method call overhead to</span>
+<span class="sd">    about the same as non-``partial`` methods.</span>
+
+<span class="sd">    See the :class:`InstancePartial` docstring for more details.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">partialmethod</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">):</span>  <span class="c1"># NB: See https://github.com/mahmoud/boltons/pull/244</span>
+
+        <span class="nd">@property</span>
+        <span class="k">def</span> <span class="nf">_partialmethod</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">partialmethod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">keywords</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">obj_type</span><span class="p">):</span>
+        <span class="c1"># These assignments could&#39;ve been in __init__, but there was</span>
+        <span class="c1"># no simple way to do it without breaking one of PyPy or Py3.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__module__</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mro_items</span><span class="p">(</span><span class="n">obj_type</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">make_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">obj_type</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># since this is a data descriptor, this block</span>
+            <span class="c1"># is probably only hit once (per object)</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">make_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">obj_type</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<span class="n">partial</span> <span class="o">=</span> <span class="n">CachedInstancePartial</span>
+
+
+<div class="viewcode-block" id="format_invocation"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.format_invocation">[docs]</a><span class="k">def</span> <span class="nf">format_invocation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a name, positional arguments, and keyword arguments, format</span>
+<span class="sd">    a basic Python-style function call.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(format_invocation(&#39;func&#39;, args=(1, 2), kwargs={&#39;c&#39;: 3}))</span>
+<span class="sd">    func(1, 2, c=3)</span>
+<span class="sd">    &gt;&gt;&gt; print(format_invocation(&#39;a_func&#39;, args=(1,)))</span>
+<span class="sd">    a_func(1)</span>
+<span class="sd">    &gt;&gt;&gt; print(format_invocation(&#39;kw_func&#39;, kwargs=[(&#39;a&#39;, 1), (&#39;b&#39;, 2)]))</span>
+<span class="sd">    kw_func(a=1, b=2)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">a_text</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">kwarg_items</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">kwarg_items</span> <span class="o">=</span> <span class="n">kwargs</span>
+    <span class="n">kw_text</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwarg_items</span><span class="p">])</span>
+
+    <span class="n">all_args_text</span> <span class="o">=</span> <span class="n">a_text</span>
+    <span class="k">if</span> <span class="n">all_args_text</span> <span class="ow">and</span> <span class="n">kw_text</span><span class="p">:</span>
+        <span class="n">all_args_text</span> <span class="o">+=</span> <span class="s1">&#39;, &#39;</span>
+    <span class="n">all_args_text</span> <span class="o">+=</span> <span class="n">kw_text</span>
+
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">all_args_text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="format_exp_repr"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.format_exp_repr">[docs]</a><span class="k">def</span> <span class="nf">format_exp_repr</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">,</span> <span class="n">pos_names</span><span class="p">,</span> <span class="n">req_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opt_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opt_key</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Render an expression-style repr of an object, based on attribute</span>
+<span class="sd">    names, which are assumed to line up with arguments to an initializer.</span>
+
+<span class="sd">    &gt;&gt;&gt; class Flag(object):</span>
+<span class="sd">    ...    def __init__(self, length, width, depth=None):</span>
+<span class="sd">    ...        self.length = length</span>
+<span class="sd">    ...        self.width = width</span>
+<span class="sd">    ...        self.depth = depth</span>
+<span class="sd">    ...</span>
+
+<span class="sd">    That&#39;s our Flag object, here are some example reprs for it:</span>
+
+<span class="sd">    &gt;&gt;&gt; flag = Flag(5, 10)</span>
+<span class="sd">    &gt;&gt;&gt; print(format_exp_repr(flag, [&#39;length&#39;, &#39;width&#39;], [], [&#39;depth&#39;]))</span>
+<span class="sd">    Flag(5, 10)</span>
+<span class="sd">    &gt;&gt;&gt; flag2 = Flag(5, 15, 2)</span>
+<span class="sd">    &gt;&gt;&gt; print(format_exp_repr(flag2, [&#39;length&#39;], [&#39;width&#39;, &#39;depth&#39;]))</span>
+<span class="sd">    Flag(5, width=15, depth=2)</span>
+
+<span class="sd">    By picking the pos_names, req_names, opt_names, and opt_key, you</span>
+<span class="sd">    can fine-tune how you want the repr to look.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">       obj (object): The object whose type name will be used and</span>
+<span class="sd">          attributes will be checked</span>
+<span class="sd">       pos_names (list): Required list of attribute names which will be</span>
+<span class="sd">          rendered as positional arguments in the output repr.</span>
+<span class="sd">       req_names (list): List of attribute names which will always</span>
+<span class="sd">          appear in the keyword arguments in the output repr. Defaults to None.</span>
+<span class="sd">       opt_names (list): List of attribute names which may appear in</span>
+<span class="sd">          the keyword arguments in the output repr, provided they pass</span>
+<span class="sd">          the *opt_key* check. Defaults to None.</span>
+<span class="sd">       opt_key (callable): A function or callable which checks whether</span>
+<span class="sd">          an opt_name should be in the repr. Defaults to a</span>
+<span class="sd">          ``None``-check.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cn</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="n">req_names</span> <span class="o">=</span> <span class="n">req_names</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="n">opt_names</span> <span class="o">=</span> <span class="n">opt_names</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="n">uniq_names</span><span class="p">,</span> <span class="n">all_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">req_names</span> <span class="o">+</span> <span class="n">opt_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">uniq_names</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">uniq_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">all_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">opt_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">opt_key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">callable</span><span class="p">(</span><span class="n">opt_key</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">pos_names</span><span class="p">]</span>
+
+    <span class="n">kw_items</span> <span class="o">=</span> <span class="p">[(</span><span class="n">name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">all_names</span><span class="p">]</span>
+    <span class="n">kw_items</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kw_items</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="n">opt_names</span> <span class="ow">and</span> <span class="n">opt_key</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">format_invocation</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kw_items</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="format_nonexp_repr"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.format_nonexp_repr">[docs]</a><span class="k">def</span> <span class="nf">format_nonexp_repr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">req_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opt_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opt_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Format a non-expression-style repr</span>
+
+<span class="sd">    Some object reprs look like object instantiation, e.g., App(r=[], mw=[]).</span>
+
+<span class="sd">    This makes sense for smaller, lower-level objects whose state</span>
+<span class="sd">    roundtrips. But a lot of objects contain values that don&#39;t</span>
+<span class="sd">    roundtrip, like types and functions.</span>
+
+<span class="sd">    For those objects, there is the non-expression style repr, which</span>
+<span class="sd">    mimic&#39;s Python&#39;s default style to make a repr like so:</span>
+
+<span class="sd">    &gt;&gt;&gt; class Flag(object):</span>
+<span class="sd">    ...    def __init__(self, length, width, depth=None):</span>
+<span class="sd">    ...        self.length = length</span>
+<span class="sd">    ...        self.width = width</span>
+<span class="sd">    ...        self.depth = depth</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; flag = Flag(5, 10)</span>
+<span class="sd">    &gt;&gt;&gt; print(format_nonexp_repr(flag, [&#39;length&#39;, &#39;width&#39;], [&#39;depth&#39;]))</span>
+<span class="sd">    &lt;Flag length=5 width=10&gt;</span>
+
+<span class="sd">    If no attributes are specified or set, utilizes the id, not unlike Python&#39;s</span>
+<span class="sd">    built-in behavior.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(format_nonexp_repr(flag))</span>
+<span class="sd">    &lt;Flag id=...&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cn</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="n">req_names</span> <span class="o">=</span> <span class="n">req_names</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="n">opt_names</span> <span class="o">=</span> <span class="n">opt_names</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="n">uniq_names</span><span class="p">,</span> <span class="n">all_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">req_names</span> <span class="o">+</span> <span class="n">opt_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">uniq_names</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">uniq_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">all_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">opt_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">opt_key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">callable</span><span class="p">(</span><span class="n">opt_key</span><span class="p">)</span>
+
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[(</span><span class="n">name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">all_names</span><span class="p">]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">items</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="n">opt_names</span> <span class="ow">and</span> <span class="n">opt_key</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">labels</span><span class="p">:</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)]</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cn</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<span class="c1"># # #</span>
+<span class="c1"># # # Function builder</span>
+<span class="c1"># # #</span>
+
+
+<div class="viewcode-block" id="wraps"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.wraps">[docs]</a><span class="k">def</span> <span class="nf">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">injected</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">expected</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decorator factory to apply update_wrapper() to a wrapper function.</span>
+
+<span class="sd">    Modeled after built-in :func:`functools.wraps`. Returns a decorator</span>
+<span class="sd">    that invokes update_wrapper() with the decorated function as the wrapper</span>
+<span class="sd">    argument and the arguments to wraps() as the remaining arguments.</span>
+<span class="sd">    Default arguments are as for update_wrapper(). This is a convenience</span>
+<span class="sd">    function to simplify applying partial() to update_wrapper().</span>
+
+<span class="sd">    Same example as in update_wrapper&#39;s doc but with wraps:</span>
+
+<span class="sd">        &gt;&gt;&gt; from boltons.funcutils import wraps</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; def print_return(func):</span>
+<span class="sd">        ...     @wraps(func)</span>
+<span class="sd">        ...     def wrapper(*args, **kwargs):</span>
+<span class="sd">        ...         ret = func(*args, **kwargs)</span>
+<span class="sd">        ...         print(ret)</span>
+<span class="sd">        ...         return ret</span>
+<span class="sd">        ...     return wrapper</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; @print_return</span>
+<span class="sd">        ... def example():</span>
+<span class="sd">        ...     &#39;&#39;&#39;docstring&#39;&#39;&#39;</span>
+<span class="sd">        ...     return &#39;example return value&#39;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; val = example()</span>
+<span class="sd">        example return value</span>
+<span class="sd">        &gt;&gt;&gt; example.__name__</span>
+<span class="sd">        &#39;example&#39;</span>
+<span class="sd">        &gt;&gt;&gt; example.__doc__</span>
+<span class="sd">        &#39;docstring&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">partial</span><span class="p">(</span>
+        <span class="n">update_wrapper</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span>
+        <span class="n">build_from</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">injected</span><span class="o">=</span><span class="n">injected</span><span class="p">,</span>
+        <span class="n">expected</span><span class="o">=</span><span class="n">expected</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kw</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="update_wrapper"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.update_wrapper">[docs]</a><span class="k">def</span> <span class="nf">update_wrapper</span><span class="p">(</span>
+    <span class="n">wrapper</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">injected</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">expected</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">build_from</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Modeled after the built-in :func:`functools.update_wrapper`,</span>
+<span class="sd">    this function is used to make your wrapper function reflect the</span>
+<span class="sd">    wrapped function&#39;s:</span>
+
+<span class="sd">      * Name</span>
+<span class="sd">      * Documentation</span>
+<span class="sd">      * Module</span>
+<span class="sd">      * Signature</span>
+
+<span class="sd">    The built-in :func:`functools.update_wrapper` copies the first three, but</span>
+<span class="sd">    does not copy the signature. This version of ``update_wrapper`` can copy</span>
+<span class="sd">    the inner function&#39;s signature exactly, allowing seamless usage</span>
+<span class="sd">    and :mod:`introspection &lt;inspect&gt;`. Usage is identical to the</span>
+<span class="sd">    built-in version::</span>
+
+<span class="sd">        &gt;&gt;&gt; from boltons.funcutils import update_wrapper</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; def print_return(func):</span>
+<span class="sd">        ...     def wrapper(*args, **kwargs):</span>
+<span class="sd">        ...         ret = func(*args, **kwargs)</span>
+<span class="sd">        ...         print(ret)</span>
+<span class="sd">        ...         return ret</span>
+<span class="sd">        ...     return update_wrapper(wrapper, func)</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; @print_return</span>
+<span class="sd">        ... def example():</span>
+<span class="sd">        ...     &#39;&#39;&#39;docstring&#39;&#39;&#39;</span>
+<span class="sd">        ...     return &#39;example return value&#39;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; val = example()</span>
+<span class="sd">        example return value</span>
+<span class="sd">        &gt;&gt;&gt; example.__name__</span>
+<span class="sd">        &#39;example&#39;</span>
+<span class="sd">        &gt;&gt;&gt; example.__doc__</span>
+<span class="sd">        &#39;docstring&#39;</span>
+
+<span class="sd">    In addition, the boltons version of update_wrapper supports</span>
+<span class="sd">    modifying the outer signature. By passing a list of</span>
+<span class="sd">    *injected* argument names, those arguments will be removed from</span>
+<span class="sd">    the outer wrapper&#39;s signature, allowing your decorator to provide</span>
+<span class="sd">    arguments that aren&#39;t passed in.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">        wrapper (function) : The callable to which the attributes of</span>
+<span class="sd">            *func* are to be copied.</span>
+<span class="sd">        func (function): The callable whose attributes are to be copied.</span>
+<span class="sd">        injected (list): An optional list of argument names which</span>
+<span class="sd">            should not appear in the new wrapper&#39;s signature.</span>
+<span class="sd">        expected (list): An optional list of argument names (or (name,</span>
+<span class="sd">            default) pairs) representing new arguments introduced by</span>
+<span class="sd">            the wrapper (the opposite of *injected*). See</span>
+<span class="sd">            :meth:`FunctionBuilder.add_arg()` for more details.</span>
+<span class="sd">        build_from (function): The callable from which the new wrapper</span>
+<span class="sd">            is built. Defaults to *func*, unless *wrapper* is partial object</span>
+<span class="sd">            built from *func*, in which case it defaults to *wrapper*.</span>
+<span class="sd">            Useful in some specific cases where *wrapper* and *func* have the</span>
+<span class="sd">            same arguments but differ on which are keyword-only and positional-only.</span>
+<span class="sd">        update_dict (bool): Whether to copy other, non-standard</span>
+<span class="sd">            attributes of *func* over to the wrapper. Defaults to True.</span>
+<span class="sd">        inject_to_varkw (bool): Ignore missing arguments when a</span>
+<span class="sd">            ``**kwargs``-type catch-all is present. Defaults to True.</span>
+<span class="sd">        hide_wrapped (bool): Remove reference to the wrapped function(s)</span>
+<span class="sd">            in the updated function.</span>
+
+<span class="sd">    In opposition to the built-in :func:`functools.update_wrapper` bolton&#39;s</span>
+<span class="sd">    version returns a copy of the function and does not modifiy anything in place.</span>
+<span class="sd">    For more in-depth wrapping of functions, see the</span>
+<span class="sd">    :class:`FunctionBuilder` type, on which update_wrapper was built.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">injected</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">injected</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">injected</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="n">injected</span> <span class="o">=</span> <span class="p">[</span><span class="n">injected</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">injected</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">injected</span><span class="p">)</span>
+
+    <span class="n">expected_items</span> <span class="o">=</span> <span class="n">_parse_wraps_expected</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="p">(</span><span class="nb">classmethod</span><span class="p">,</span> <span class="nb">staticmethod</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s1">&#39;wraps does not support wrapping classmethods and&#39;</span>
+            <span class="s1">&#39; staticmethods, change the order of wrapping to&#39;</span>
+            <span class="s1">&#39; wrap the underlying function: </span><span class="si">%r</span><span class="s1">&#39;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__func__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),)</span>
+        <span class="p">)</span>
+
+    <span class="n">update_dict</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;update_dict&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">inject_to_varkw</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;inject_to_varkw&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">hide_wrapped</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;hide_wrapped&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kw</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;unexpected kwargs: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">kw</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">)</span> <span class="ow">and</span> <span class="n">func</span> <span class="ow">is</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">func</span><span class="p">:</span>
+        <span class="n">build_from</span> <span class="o">=</span> <span class="n">build_from</span> <span class="ow">or</span> <span class="n">wrapper</span>
+
+    <span class="n">fb</span> <span class="o">=</span> <span class="n">FunctionBuilder</span><span class="o">.</span><span class="n">from_func</span><span class="p">(</span><span class="n">build_from</span> <span class="ow">or</span> <span class="n">func</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">injected</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fb</span><span class="o">.</span><span class="n">remove_arg</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">MissingArgument</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">inject_to_varkw</span> <span class="ow">and</span> <span class="n">fb</span><span class="o">.</span><span class="n">varkw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># keyword arg will be caught by the varkw</span>
+            <span class="k">raise</span>
+
+    <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="n">expected_items</span><span class="p">:</span>
+        <span class="n">fb</span><span class="o">.</span><span class="n">add_arg</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>  <span class="c1"># may raise ExistingArgument</span>
+
+    <span class="k">if</span> <span class="n">fb</span><span class="o">.</span><span class="n">is_async</span><span class="p">:</span>
+        <span class="n">fb</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="s1">&#39;return await _call(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">fb</span><span class="o">.</span><span class="n">get_invocation_str</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fb</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="s1">&#39;return _call(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">fb</span><span class="o">.</span><span class="n">get_invocation_str</span><span class="p">()</span>
+
+    <span class="n">execdict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_call</span><span class="o">=</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">_func</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">fully_wrapped</span> <span class="o">=</span> <span class="n">fb</span><span class="o">.</span><span class="n">get_func</span><span class="p">(</span><span class="n">execdict</span><span class="p">,</span> <span class="n">with_dict</span><span class="o">=</span><span class="n">update_dict</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">hide_wrapped</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">fully_wrapped</span><span class="p">,</span> <span class="s1">&#39;__wrapped__&#39;</span><span class="p">):</span>
+        <span class="k">del</span> <span class="n">fully_wrapped</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;__wrapped__&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">hide_wrapped</span><span class="p">:</span>
+        <span class="n">fully_wrapped</span><span class="o">.</span><span class="n">__wrapped__</span> <span class="o">=</span> <span class="n">func</span>  <span class="c1"># ref to the original function (#115)</span>
+
+    <span class="k">return</span> <span class="n">fully_wrapped</span></div>
+
+
+<span class="k">def</span> <span class="nf">_parse_wraps_expected</span><span class="p">(</span><span class="n">expected</span><span class="p">):</span>
+    <span class="c1"># expected takes a pretty powerful argument, it&#39;s processed</span>
+    <span class="c1"># here. admittedly this would be less trouble if I relied on</span>
+    <span class="c1"># OrderedDict (there&#39;s an impl of that in the commit history if</span>
+    <span class="c1"># you look</span>
+    <span class="k">if</span> <span class="n">expected</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="p">[(</span><span class="n">expected</span><span class="p">,</span> <span class="n">NO_DEFAULT</span><span class="p">)]</span>
+
+    <span class="n">expected_items</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">expected_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;&quot;expected&quot; takes string name, sequence of string names,&#39;</span>
+            <span class="s1">&#39; iterable of (name, default) pairs, or a mapping of &#39;</span>
+            <span class="s1">&#39; {name: default}, not </span><span class="si">%r</span><span class="s1"> (got: </span><span class="si">%r</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">for</span> <span class="n">argname</span> <span class="ow">in</span> <span class="n">expected_iter</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">argname</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+            <span class="c1"># dict keys and bare strings</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="n">expected</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="n">NO_DEFAULT</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># pairs</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">argname</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">argname</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;&quot;expected&quot; takes string name, sequence of string names,&#39;</span>
+                    <span class="s1">&#39; iterable of (name, default) pairs, or a mapping of &#39;</span>
+                    <span class="s1">&#39; {name: default}, not </span><span class="si">%r</span><span class="s1">&#39;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">argname</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;all &quot;expected&quot; argnames must be strings, not </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">argname</span><span class="p">,)</span>
+            <span class="p">)</span>
+
+        <span class="n">expected_items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">argname</span><span class="p">,</span> <span class="n">default</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">expected_items</span>
+
+
+<div class="viewcode-block" id="FunctionBuilder"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.FunctionBuilder">[docs]</a><span class="k">class</span> <span class="nc">FunctionBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The FunctionBuilder type provides an interface for programmatically</span>
+<span class="sd">    creating new functions, either based on existing functions or from</span>
+<span class="sd">    scratch.</span>
+
+<span class="sd">    Values are passed in at construction or set as attributes on the</span>
+<span class="sd">    instance. For creating a new function based of an existing one,</span>
+<span class="sd">    see the :meth:`~FunctionBuilder.from_func` classmethod. At any</span>
+<span class="sd">    point, :meth:`~FunctionBuilder.get_func` can be called to get a</span>
+<span class="sd">    newly compiled function, based on the values configured.</span>
+
+<span class="sd">    &gt;&gt;&gt; fb = FunctionBuilder(&#39;return_five&#39;, doc=&#39;returns the integer 5&#39;,</span>
+<span class="sd">    ...                      body=&#39;return 5&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f = fb.get_func()</span>
+<span class="sd">    &gt;&gt;&gt; f()</span>
+<span class="sd">    5</span>
+<span class="sd">    &gt;&gt;&gt; fb.varkw = &#39;kw&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f_kw = fb.get_func()</span>
+<span class="sd">    &gt;&gt;&gt; f_kw(ignored_arg=&#39;ignored_val&#39;)</span>
+<span class="sd">    5</span>
+
+<span class="sd">    Note that function signatures themselves changed quite a bit in</span>
+<span class="sd">    Python 3, so several arguments are only applicable to</span>
+<span class="sd">    FunctionBuilder in Python 3. Except for *name*, all arguments to</span>
+<span class="sd">    the constructor are keyword arguments.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): Name of the function.</span>
+<span class="sd">        doc (str): `Docstring`_ for the function, defaults to empty.</span>
+<span class="sd">        module (str): Name of the module from which this function was</span>
+<span class="sd">            imported. Defaults to None.</span>
+<span class="sd">        body (str): String version of the code representing the body</span>
+<span class="sd">            of the function. Defaults to ``&#39;pass&#39;``, which will result</span>
+<span class="sd">            in a function which does nothing and returns ``None``.</span>
+<span class="sd">        args (list): List of argument names, defaults to empty list,</span>
+<span class="sd">            denoting no arguments.</span>
+<span class="sd">        varargs (str): Name of the catch-all variable for positional</span>
+<span class="sd">            arguments. E.g., &quot;args&quot; if the resultant function is to have</span>
+<span class="sd">            ``*args`` in the signature. Defaults to None.</span>
+<span class="sd">        varkw (str): Name of the catch-all variable for keyword</span>
+<span class="sd">            arguments. E.g., &quot;kwargs&quot; if the resultant function is to have</span>
+<span class="sd">            ``**kwargs`` in the signature. Defaults to None.</span>
+<span class="sd">        defaults (tuple): A tuple containing default argument values for</span>
+<span class="sd">            those arguments that have defaults.</span>
+<span class="sd">        kwonlyargs (list): Argument names which are only valid as</span>
+<span class="sd">            keyword arguments. **Python 3 only.**</span>
+<span class="sd">        kwonlydefaults (dict): A mapping, same as normal *defaults*,</span>
+<span class="sd">            but only for the *kwonlyargs*. **Python 3 only.**</span>
+<span class="sd">        annotations (dict): Mapping of type hints and so</span>
+<span class="sd">            forth. **Python 3 only.**</span>
+<span class="sd">        filename (str): The filename that will appear in</span>
+<span class="sd">            tracebacks. Defaults to &quot;boltons.funcutils.FunctionBuilder&quot;.</span>
+<span class="sd">        indent (int): Number of spaces with which to indent the</span>
+<span class="sd">            function *body*. Values less than 1 will result in an error.</span>
+<span class="sd">        dict (dict): Any other attributes which should be added to the</span>
+<span class="sd">            functions compiled with this FunctionBuilder.</span>
+
+<span class="sd">    All of these arguments are also made available as attributes which</span>
+<span class="sd">    can be mutated as necessary.</span>
+
+<span class="sd">    .. _Docstring: https://en.wikipedia.org/wiki/Docstring#Python</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">_IS_PY2</span><span class="p">:</span>
+        <span class="n">_argspec_defaults</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+            <span class="s1">&#39;varargs&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;varkw&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;defaults&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">_argspec_to_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+            <span class="n">args</span><span class="p">,</span> <span class="n">varargs</span><span class="p">,</span> <span class="n">varkw</span><span class="p">,</span> <span class="n">defaults</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="n">args</span><span class="p">,</span>
+                <span class="s1">&#39;varargs&#39;</span><span class="p">:</span> <span class="n">varargs</span><span class="p">,</span>
+                <span class="s1">&#39;varkw&#39;</span><span class="p">:</span> <span class="n">varkw</span><span class="p">,</span>
+                <span class="s1">&#39;defaults&#39;</span><span class="p">:</span> <span class="n">defaults</span><span class="p">,</span>
+            <span class="p">}</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_argspec_defaults</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+            <span class="s1">&#39;varargs&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;varkw&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;defaults&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;kwonlyargs&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+            <span class="s1">&#39;kwonlydefaults&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+            <span class="s1">&#39;annotations&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">_argspec_to_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+            <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">argspec</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_argspec_defaults</span>
+            <span class="p">)</span>
+
+    <span class="n">_defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;doc&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s1">&#39;dict&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="s1">&#39;is_async&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;body&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;indent&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s1">&#39;annotations&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="s1">&#39;boltons.funcutils.FunctionBuilder&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">_defaults</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_argspec_defaults</span><span class="p">)</span>
+
+    <span class="n">_compile_count</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">default_factory</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">default_factory</span><span class="p">()</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">kw</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;unexpected kwargs: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">kw</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span>
+
+    <span class="c1"># def get_argspec(self):  # TODO</span>
+
+    <span class="k">if</span> <span class="n">_IS_PY2</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">get_sig_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_annotations</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Return function signature as a string.</span>
+
+<span class="sd">            with_annotations is ignored on Python 2.  On Python 3 signature</span>
+<span class="sd">            will omit annotations if it is set to False.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="n">inspect_formatargspec</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">varargs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">varkw</span><span class="p">,</span> <span class="p">[]</span>
+            <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">get_invocation_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">inspect_formatargspec</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">varargs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">varkw</span><span class="p">,</span> <span class="p">[]</span>
+            <span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+<div class="viewcode-block" id="FunctionBuilder.get_sig_str"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.FunctionBuilder.get_sig_str">[docs]</a>        <span class="k">def</span> <span class="nf">get_sig_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_annotations</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Return function signature as a string.</span>
+
+<span class="sd">            with_annotations is ignored on Python 2.  On Python 3 signature</span>
+<span class="sd">            will omit annotations if it is set to False.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">with_annotations</span><span class="p">:</span>
+                <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">annotations</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">return</span> <span class="n">inspect_formatargspec</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">varargs</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">varkw</span><span class="p">,</span>
+                <span class="p">[],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="p">,</span>
+                <span class="p">{},</span>
+                <span class="n">annotations</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+        <span class="n">_KWONLY_MARKER</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        \*     # a star</span>
+<span class="sd">        \s*    # followed by any amount of whitespace</span>
+<span class="sd">        ,      # followed by a comma</span>
+<span class="sd">        \s*    # followed by any amount of whitespace</span>
+<span class="sd">        &#39;&#39;&#39;</span><span class="p">,</span>
+            <span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">get_invocation_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">kwonly_pairs</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">formatters</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="p">:</span>
+                <span class="n">kwonly_pairs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">arg</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="p">)</span>
+                <span class="n">formatters</span><span class="p">[</span><span class="s1">&#39;formatvalue&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="n">value</span>
+
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect_formatargspec</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">varargs</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">varkw</span><span class="p">,</span>
+                <span class="p">[],</span>
+                <span class="n">kwonly_pairs</span><span class="p">,</span>
+                <span class="n">kwonly_pairs</span><span class="p">,</span>
+                <span class="p">{},</span>
+                <span class="o">**</span><span class="n">formatters</span>
+            <span class="p">)</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KWONLY_MARKER</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">sig</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">sig</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FunctionBuilder.from_func"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.FunctionBuilder.from_func">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_func</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new FunctionBuilder instance based on an existing</span>
+<span class="sd">        function. The original function will not be stored or</span>
+<span class="sd">        modified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: copy_body? gonna need a good signature regex.</span>
+        <span class="c1"># TODO: might worry about __closure__?</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;expected callable object, not </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">func</span><span class="p">,))</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_IS_PY2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Cannot build FunctionBuilder instances from partials in python 2.&#39;</span>
+                <span class="p">)</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="s1">&#39;doc&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">,</span>
+                <span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span>
+                    <span class="n">func</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__module__&#39;</span><span class="p">,</span> <span class="kc">None</span>
+                <span class="p">),</span>  <span class="c1"># e.g., method_descriptor</span>
+                <span class="s1">&#39;annotations&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__annotations__&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+                <span class="s1">&#39;dict&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="s1">&#39;doc&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">,</span>
+                <span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span>
+                    <span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__module__&#39;</span><span class="p">,</span> <span class="kc">None</span>
+                <span class="p">),</span>  <span class="c1"># e.g., method_descriptor</span>
+                <span class="s1">&#39;annotations&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__annotations__&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+                <span class="s1">&#39;dict&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+            <span class="p">}</span>
+
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_argspec_to_dict</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">_inspect_iscoroutinefunction</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;is_async&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FunctionBuilder.get_func"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.FunctionBuilder.get_func">[docs]</a>    <span class="k">def</span> <span class="nf">get_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">execdict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_source</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compile and return a new function based on the current values of</span>
+<span class="sd">        the FunctionBuilder.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            execdict (dict): The dictionary representing the scope in</span>
+<span class="sd">                which the compilation should take place. Defaults to an empty</span>
+<span class="sd">                dict.</span>
+<span class="sd">            add_source (bool): Whether to add the source used to a</span>
+<span class="sd">                special ``__source__`` attribute on the resulting</span>
+<span class="sd">                function. Defaults to True.</span>
+<span class="sd">            with_dict (bool): Add any custom attributes, if</span>
+<span class="sd">                applicable. Defaults to True.</span>
+
+<span class="sd">        To see an example of usage, see the implementation of</span>
+<span class="sd">        :func:`~boltons.funcutils.wraps`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">execdict</span> <span class="o">=</span> <span class="n">execdict</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_body</span>
+
+        <span class="n">tmpl</span> <span class="o">=</span> <span class="s1">&#39;def </span><span class="si">{name}{sig_str}</span><span class="s1">:&#39;</span>
+        <span class="n">tmpl</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="si">{body}</span><span class="s1">&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_async</span><span class="p">:</span>
+            <span class="n">tmpl</span> <span class="o">=</span> <span class="s1">&#39;async &#39;</span> <span class="o">+</span> <span class="n">tmpl</span>
+
+        <span class="n">body</span> <span class="o">=</span> <span class="n">_indent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="p">)</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>  <span class="c1"># lambdas</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="n">tmpl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">sig_str</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_sig_str</span><span class="p">(</span><span class="n">with_annotations</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">doc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
+            <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compile</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">execdict</span><span class="p">)</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">execdict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc</span>
+        <span class="n">func</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_IS_PY2</span><span class="p">:</span>
+            <span class="n">func</span><span class="o">.</span><span class="vm">__kwdefaults__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwonlydefaults</span>
+            <span class="n">func</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span>
+
+        <span class="k">if</span> <span class="n">with_dict</span><span class="p">:</span>
+            <span class="n">func</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>
+        <span class="n">func</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span>
+        <span class="c1"># TODO: caller module fallback?</span>
+
+        <span class="k">if</span> <span class="n">add_source</span><span class="p">:</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">__source__</span> <span class="o">=</span> <span class="n">src</span>
+
+        <span class="k">return</span> <span class="n">func</span></div>
+
+<div class="viewcode-block" id="FunctionBuilder.get_defaults_dict"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.FunctionBuilder.get_defaults_dict">[docs]</a>    <span class="k">def</span> <span class="nf">get_defaults_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a dictionary of function arguments with defaults and the</span>
+<span class="sd">        respective values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">reversed</span><span class="p">(</span>
+                <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">),</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="ow">or</span> <span class="p">[])))</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">kwonlydefaults</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;kwonlydefaults&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwonlydefaults</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwonlydefaults</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+    <span class="k">def</span> <span class="nf">get_arg_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_required</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">arg_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;kwonlyargs&#39;</span><span class="p">,</span> <span class="p">()))</span>
+        <span class="k">if</span> <span class="n">only_required</span><span class="p">:</span>
+            <span class="n">defaults_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_defaults_dict</span><span class="p">()</span>
+            <span class="n">arg_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">an</span> <span class="k">for</span> <span class="n">an</span> <span class="ow">in</span> <span class="n">arg_names</span> <span class="k">if</span> <span class="n">an</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">defaults_dict</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">arg_names</span>
+
+    <span class="k">if</span> <span class="n">_IS_PY2</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">add_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">NO_DEFAULT</span><span class="p">):</span>
+            <span class="s1">&#39;Add an argument with optional *default* (defaults to ``funcutils.NO_DEFAULT``).&#39;</span>
+            <span class="k">if</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ExistingArgument</span><span class="p">(</span>
+                    <span class="s1">&#39;arg </span><span class="si">%r</span><span class="s1"> already in func </span><span class="si">%s</span><span class="s1"> arg list&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NO_DEFAULT</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="ow">or</span> <span class="p">())</span> <span class="o">+</span> <span class="p">(</span><span class="n">default</span><span class="p">,)</span>
+            <span class="k">return</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+<div class="viewcode-block" id="FunctionBuilder.add_arg"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.FunctionBuilder.add_arg">[docs]</a>        <span class="k">def</span> <span class="nf">add_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">NO_DEFAULT</span><span class="p">,</span> <span class="n">kwonly</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Add an argument with optional *default* (defaults to</span>
+<span class="sd">            ``funcutils.NO_DEFAULT``). Pass *kwonly=True* to add a</span>
+<span class="sd">            keyword-only argument</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ExistingArgument</span><span class="p">(</span>
+                    <span class="s1">&#39;arg </span><span class="si">%r</span><span class="s1"> already in func </span><span class="si">%s</span><span class="s1"> arg list&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ExistingArgument</span><span class="p">(</span>
+                    <span class="s1">&#39;arg </span><span class="si">%r</span><span class="s1"> already in func </span><span class="si">%s</span><span class="s1"> kwonly arg list&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">kwonly</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NO_DEFAULT</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="ow">or</span> <span class="p">())</span> <span class="o">+</span> <span class="p">(</span><span class="n">default</span><span class="p">,)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NO_DEFAULT</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">kwonlydefaults</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
+            <span class="k">return</span></div>
+
+<div class="viewcode-block" id="FunctionBuilder.remove_arg"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.FunctionBuilder.remove_arg">[docs]</a>    <span class="k">def</span> <span class="nf">remove_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove an argument from this FunctionBuilder&#39;s argument list. The</span>
+<span class="sd">        resulting function will have one less argument per call to</span>
+<span class="sd">        this function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            arg_name (str): The name of the argument to remove.</span>
+
+<span class="sd">        Raises a :exc:`ValueError` if the argument is not present.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span>
+        <span class="n">d_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_defaults_dict</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="c1"># py2, or py3 and missing from both</span>
+                <span class="n">exc</span> <span class="o">=</span> <span class="n">MissingArgument</span><span class="p">(</span>
+                    <span class="s1">&#39;arg </span><span class="si">%r</span><span class="s1"> not found in </span><span class="si">%s</span><span class="s1"> argument list:&#39;</span>
+                    <span class="s1">&#39; </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">exc</span><span class="o">.</span><span class="n">arg_name</span> <span class="o">=</span> <span class="n">arg_name</span>
+                <span class="k">raise</span> <span class="n">exc</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kwonlydefaults</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">d_dict</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">d_dict</span><span class="p">])</span>
+        <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">_compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">execdict</span><span class="p">):</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_compile_count</span><span class="p">),)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;single&#39;</span><span class="p">)</span>
+            <span class="n">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">execdict</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">return</span> <span class="n">execdict</span></div>
+
+
+<div class="viewcode-block" id="MissingArgument"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.MissingArgument">[docs]</a><span class="k">class</span> <span class="nc">MissingArgument</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ExistingArgument"><a class="viewcode-back" href="../../../module_docs/i2/vend/funcutils.html#i2.vend.funcutils.ExistingArgument">[docs]</a><span class="k">class</span> <span class="nc">ExistingArgument</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="k">def</span> <span class="nf">_indent</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">bool</span><span class="p">):</span>
+    <span class="s1">&#39;based on boltons.strutils.indent&#39;</span>
+    <span class="n">indented_lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">margin</span> <span class="o">+</span> <span class="n">line</span> <span class="k">if</span> <span class="n">key</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">else</span> <span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">newline</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">indented_lines</span><span class="p">)</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">total_ordering</span>  <span class="c1"># 2.7+</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="c1"># python 2.6</span>
+    <span class="k">def</span> <span class="nf">total_ordering</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Class decorator that fills in missing comparators/ordering</span>
+<span class="sd">        methods. Backport of :func:`functools.total_ordering` to work</span>
+<span class="sd">        with Python 2.6.</span>
+
+<span class="sd">        Code from http://code.activestate.com/recipes/576685/</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">convert</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;__lt__&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">(</span>
+                    <span class="s1">&#39;__gt__&#39;</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span> <span class="o">&lt;</span> <span class="n">other</span> <span class="ow">or</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="p">(</span><span class="s1">&#39;__le__&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="bp">self</span> <span class="o">&lt;</span> <span class="n">other</span> <span class="ow">or</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">),</span>
+                <span class="p">(</span><span class="s1">&#39;__ge__&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="ow">not</span> <span class="bp">self</span> <span class="o">&lt;</span> <span class="n">other</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="s1">&#39;__le__&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">(</span>
+                    <span class="s1">&#39;__ge__&#39;</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="ow">not</span> <span class="bp">self</span> <span class="o">&lt;=</span> <span class="n">other</span> <span class="ow">or</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="p">(</span>
+                    <span class="s1">&#39;__lt__&#39;</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="bp">self</span> <span class="o">&lt;=</span> <span class="n">other</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="p">(</span><span class="s1">&#39;__gt__&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="ow">not</span> <span class="bp">self</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="s1">&#39;__gt__&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">(</span>
+                    <span class="s1">&#39;__lt__&#39;</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span> <span class="o">&gt;</span> <span class="n">other</span> <span class="ow">or</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="p">(</span><span class="s1">&#39;__ge__&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="bp">self</span> <span class="o">&gt;</span> <span class="n">other</span> <span class="ow">or</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">),</span>
+                <span class="p">(</span><span class="s1">&#39;__le__&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="ow">not</span> <span class="bp">self</span> <span class="o">&gt;</span> <span class="n">other</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="s1">&#39;__ge__&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">(</span>
+                    <span class="s1">&#39;__le__&#39;</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="p">(</span>
+                    <span class="s1">&#39;__gt__&#39;</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="bp">self</span> <span class="o">&gt;=</span> <span class="n">other</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="p">(</span><span class="s1">&#39;__lt__&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="ow">not</span> <span class="bp">self</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="p">),</span>
+            <span class="p">],</span>
+        <span class="p">}</span>
+        <span class="n">roots</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">))</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">convert</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">roots</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;must define at least one ordering operation:&#39;</span> <span class="s1">&#39; &lt; &gt; &lt;= &gt;=&#39;</span>
+            <span class="p">)</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">roots</span><span class="p">)</span>  <span class="c1"># prefer __lt__ to __le__ to __gt__ to __ge__</span>
+        <span class="k">for</span> <span class="n">opname</span><span class="p">,</span> <span class="n">opfunc</span> <span class="ow">in</span> <span class="n">convert</span><span class="p">[</span><span class="n">root</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">opname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
+                <span class="n">opfunc</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">opname</span>
+                <span class="n">opfunc</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">opname</span><span class="p">)</span><span class="o">.</span><span class="vm">__doc__</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">opname</span><span class="p">,</span> <span class="n">opfunc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span>
+
+
+<span class="c1"># end funcutils.py</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">i2</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/alternative_approaches.html">i2.alternative_approaches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/footprints.html">i2.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/genu.html">i2.genu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/itypes.html">i2.itypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/key_path.html">i2.key_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/misc.html">i2.misc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/simple_pymint.html">i2.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/switch_case_tree.html">i2.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/footprints.html">i2.tests.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/signatures.html">i2.tests.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/vend/funcutils.html">i2.vend.funcutils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;OtoSense 2020.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

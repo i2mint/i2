@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>i2.genu &#8212; i2 0.0.8 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="i2.io_trans" href="io_trans.html" />
+    <link rel="prev" title="i2.footprints" href="footprints.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-i2.genu">
+<span id="i2-genu"></span><h1>i2.genu<a class="headerlink" href="#module-i2.genu" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="i2.genu.groupby">
+<code class="sig-prename descclassname">i2.genu.</code><code class="sig-name descname">groupby</code><span class="sig-paren">(</span><em class="sig-param">items: Iterable[Any], key: Callable[[Any], Hashable], val: Optional[Callable[[Any], Any]] = None, group_factory=&lt;class 'list'&gt;</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="../../_modules/i2/genu.html#groupby"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.genu.groupby" title="Permalink to this definition">¶</a></dt>
+<dd><p>Groups items according to group keys updated from those items through the given (<a href="#id1"><span class="problematic" id="id2">item_to_</span></a>)key function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items</strong> – iterable of items</p></li>
+<li><p><strong>key</strong> – The function that computes a key from an item. Needs to return a hashable.</p></li>
+<li><p><strong>val</strong> – An optional function that computes a val from an item. If not given, the item itself will be taken.</p></li>
+<li><p><strong>group_factory</strong> – The function to make new (empty) group objects and accumulate group items.
+group_items = group_collector() will be called to make a new empty group collection
+group_items.append(x) will be called to add x to that collection
+The default is <cite>list</cite></p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: A dict of {group_key: items_in_that_group, …}</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">groupby</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">{0: [0, 3, 6, 9], 1: [1, 4, 7, 10], 2: [2, 5, 8]}</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;the&#39;</span><span class="p">,</span> <span class="s1">&#39;fox&#39;</span><span class="p">,</span> <span class="s1">&#39;is&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;box&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">groupby</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="nb">len</span><span class="p">)</span>
+<span class="go">{3: [&#39;the&#39;, &#39;fox&#39;, &#39;box&#39;], 2: [&#39;is&#39;, &#39;in&#39;], 1: [&#39;a&#39;]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">key_map</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;two&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">groupby</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">key_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s1">&#39;more&#39;</span><span class="p">))</span>
+<span class="go">{&#39;more&#39;: [&#39;the&#39;, &#39;fox&#39;, &#39;box&#39;], &#39;two&#39;: [&#39;is&#39;, &#39;in&#39;], &#39;one&#39;: [&#39;a&#39;]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stopwords</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;the&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;on&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">groupby</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="p">)</span>
+<span class="go">{True: [&#39;the&#39;, &#39;in&#39;, &#39;a&#39;], False: [&#39;fox&#39;, &#39;is&#39;, &#39;box&#39;]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">groupby</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;words&#39;</span><span class="p">,</span> <span class="s1">&#39;stopwords&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">w</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="p">)])</span>
+<span class="go">{&#39;stopwords&#39;: [&#39;the&#39;, &#39;in&#39;, &#39;a&#39;], &#39;words&#39;: [&#39;fox&#39;, &#39;is&#39;, &#39;box&#39;]}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.genu.regroupby">
+<code class="sig-prename descclassname">i2.genu.</code><code class="sig-name descname">regroupby</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">key_funcs</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">named_key_funcs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/genu.html#regroupby"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.genu.regroupby" title="Permalink to this definition">¶</a></dt>
+<dd><p>REcursive groupby. Applies the groupby function recursively, using a sequence of key functions.</p>
+<dl class="simple">
+<dt>Note: The named_key_funcs argument names don’t have any external effect.</dt><dd><p>They just give a name to the key function, for code reading clarity purposes.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># group by how big the number is, then by it&#39;s mod 3 value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># note that named_key_funcs argument names doesn&#39;t have any external effect (but give a name to the function)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">regroupby</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;big&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="k">else</span> <span class="s1">&#39;small&#39;</span><span class="p">,</span> <span class="n">mod3</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">{&#39;small&#39;: {1: [1, 4], 2: [2, 5], 0: [3]}, &#39;big&#39;: {0: [6], 1: [7]}}</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;the&#39;</span><span class="p">,</span> <span class="s1">&#39;fox&#39;</span><span class="p">,</span> <span class="s1">&#39;is&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;box&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stopwords</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;the&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;on&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">word_category</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;stopwords&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">stopwords</span> <span class="k">else</span> <span class="s1">&#39;words&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">regroupby</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">word_category</span><span class="p">,</span> <span class="nb">len</span><span class="p">)</span>
+<span class="go">{&#39;stopwords&#39;: {3: [&#39;the&#39;], 2: [&#39;in&#39;], 1: [&#39;a&#39;]}, &#39;words&#39;: {3: [&#39;fox&#39;, &#39;box&#39;], 2: [&#39;is&#39;]}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">regroupby</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="nb">len</span><span class="p">,</span> <span class="n">word_category</span><span class="p">)</span>
+<span class="go">{3: {&#39;stopwords&#39;: [&#39;the&#39;], &#39;words&#39;: [&#39;fox&#39;, &#39;box&#39;]}, 2: {&#39;words&#39;: [&#39;is&#39;], &#39;stopwords&#39;: [&#39;in&#39;]}, 1: {&#39;stopwords&#39;: [&#39;a&#39;]}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">i2</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alternative_approaches.html">i2.alternative_approaches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="footprints.html">i2.footprints</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">i2.genu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="itypes.html">i2.itypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="key_path.html">i2.key_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">i2.misc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simple_pymint.html">i2.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch_case_tree.html">i2.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/footprints.html">i2.tests.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/signatures.html">i2.tests.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vend/funcutils.html">i2.vend.funcutils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="footprints.html" title="previous chapter">i2.footprints</a></li>
+      <li>Next: <a href="io_trans.html" title="next chapter">i2.io_trans</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;OtoSense 2020.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/module_docs/i2/genu.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

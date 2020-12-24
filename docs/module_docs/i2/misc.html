@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>i2.misc &#8212; i2 0.0.8 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="i2.routing_forest" href="routing_forest.html" />
+    <link rel="prev" title="i2.key_path" href="key_path.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-i2.misc">
+<span id="i2-misc"></span><h1>i2.misc<a class="headerlink" href="#module-i2.misc" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="i2.misc.mk_signature_from_dict_specs">
+<code class="sig-prename descclassname">i2.misc.</code><code class="sig-name descname">mk_signature_from_dict_specs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_name_default_annot</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">return_annotation</span></em>, <em class="sig-param"><span class="n">__validate_parameters__</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/misc.html#mk_signature_from_dict_specs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.misc.mk_signature_from_dict_specs" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg_name_default_annot</strong> – </p></li>
+<li><p><strong>return_annotation</strong> – </p></li>
+<li><p><strong>__validate_parameters__</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="n">d</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">mk_arg_name_dflt_annot_dict_list_from_func</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">mk_signature_from_dict_specs</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="go">(a, b: int, c=0, d: float = 1.0) -&gt; float</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">i2</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alternative_approaches.html">i2.alternative_approaches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="footprints.html">i2.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="genu.html">i2.genu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="itypes.html">i2.itypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="key_path.html">i2.key_path</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">i2.misc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simple_pymint.html">i2.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch_case_tree.html">i2.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/footprints.html">i2.tests.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/signatures.html">i2.tests.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vend/funcutils.html">i2.vend.funcutils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="key_path.html" title="previous chapter">i2.key_path</a></li>
+      <li>Next: <a href="routing_forest.html" title="next chapter">i2.routing_forest</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;OtoSense 2020.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/module_docs/i2/misc.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

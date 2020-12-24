@@ -66,7 +66,7 @@ def regroupby(items, *key_funcs, **named_key_funcs):
     {3: {'stopwords': ['the'], 'words': ['fox', 'box']}, 2: {'words': ['is'], 'stopwords': ['in']}, 1: {'stopwords': ['a']}}
     """
     key_funcs = list(key_funcs) + list(named_key_funcs.values())
-    assert len(key_funcs) > 0, "You need to have at least one key_func"
+    assert len(key_funcs) > 0, 'You need to have at least one key_func'
     if len(key_funcs) == 1:
         return groupby(items, key=key_funcs[0])
     else:
