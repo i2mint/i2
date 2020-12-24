@@ -13,7 +13,7 @@ def dp_get(d, dot_path):
     >>> assert dp_get(d, 'foo.bar') == 2
     >>> assert dp_get(d, 'foo.alice') == 'bob'
     """
-    components = dot_path.split('.')
+    components = dot_path.split(".")
     dd = d.get(components[0])
     for comp in components[1:]:
         dd = dd.get(comp)
@@ -80,7 +80,8 @@ class FrozenDict(dict):
     works everywhere a dict would, including JSON serialization.
 
     """
-    __slots__ = ('_hash',)
+
+    __slots__ = ("_hash",)
 
     def updated(self, *a, **kw):
         """Make a copy and add items from a dictionary or iterable (and/or
@@ -98,7 +99,7 @@ class FrozenDict(dict):
 
     def __repr__(self):
         cn = self.__class__.__name__
-        return '%s(%s)' % (cn, dict.__repr__(self))
+        return "%s(%s)" % (cn, dict.__repr__(self))
 
     def __reduce_ex__(self, protocol):
         return type(self), (dict(self),)
@@ -123,7 +124,7 @@ class FrozenDict(dict):
     # block everything else
     def _raise_frozen_typeerror(self, *a, **kw):
         "raises a TypeError, because FrozenDicts are immutable"
-        raise TypeError('%s object is immutable' % self.__class__.__name__)
+        raise TypeError("%s object is immutable" % self.__class__.__name__)
 
     __setitem__ = __delitem__ = update = _raise_frozen_typeerror
     setdefault = pop = popitem = clear = _raise_frozen_typeerror
@@ -134,12 +135,14 @@ class FrozenDict(dict):
 ########################################################################################################################
 
 
-function_type = type(lambda x: x)  # using this instead of callable() because classes are callable, for instance
+function_type = type(
+    lambda x: x
+)  # using this instead of callable() because classes are callable, for instance
 
 
 class NoDefault(object):
     def __repr__(self):
-        return 'no_default'
+        return "no_default"
 
 
 no_default = NoDefault()
@@ -150,7 +153,7 @@ class imdict(dict):
         return id(self)
 
     def _immutable(self, *args, **kws):
-        raise TypeError('object is immutable')
+        raise TypeError("object is immutable")
 
     __setitem__ = _immutable
     __delitem__ = _immutable
@@ -171,12 +174,13 @@ def inject_method(self, method_function, method_name=None):
     if isinstance(method_function, function_type):
         if method_name is None:
             method_name = method_function.__name__
-        setattr(self,
-                method_name,
-                types.MethodType(method_function, self))
+        setattr(self, method_name, types.MethodType(method_function, self))
     else:
         if isinstance(method_function, dict):
-            method_function = [(func, func_name) for func_name, func in method_function.items()]
+            method_function = [
+                (func, func_name)
+                for func_name, func in method_function.items()
+            ]
         for method in method_function:
             if isinstance(method, tuple) and len(method) == 2:
                 self = inject_method(self, method[0], method[1])
@@ -191,20 +195,25 @@ def inject_method(self, method_function, method_name=None):
 
 def get_function_body(func):
     source_lines = inspect.getsourcelines(func)[0]
-    source_lines = itertools.dropwhile(lambda x: x.startswith('@'), source_lines)
+    source_lines = itertools.dropwhile(
+        lambda x: x.startswith("@"), source_lines
+    )
     line = next(source_lines).strip()
-    if not line.startswith('def ') and not line.startswith('class'):
-        return line.rsplit(':')[-1].strip()
-    elif not line.endswith(':'):
+    if not line.startswith("def ") and not line.startswith("class"):
+        return line.rsplit(":")[-1].strip()
+    elif not line.endswith(":"):
         for line in source_lines:
             line = line.strip()
-            if line.endswith(':'):
+            if line.endswith(":"):
                 break
     # Handle functions that are not one-liners
     first_line = next(source_lines)
     # Find the indentation of the first line
     indentation = len(first_line) - len(first_line.lstrip())
-    return ''.join([first_line[indentation:]] + [line[indentation:] for line in source_lines])
+    return "".join(
+        [first_line[indentation:]]
+        + [line[indentation:] for line in source_lines]
+    )
 
 
 class ExistingArgument(ValueError):
@@ -215,7 +224,7 @@ class MissingArgument(ValueError):
     pass
 
 
-def make_sentinel(name='_MISSING', var_name=None):
+def make_sentinel(name="_MISSING", var_name=None):
     """Creates and returns a new **instance** of a new class, suitable for
     usage as a "sentinel", a kind of singleton often used to indicate
     a value is missing when ``None`` is a valid input.
@@ -254,9 +263,10 @@ def make_sentinel(name='_MISSING', var_name=None):
         def __repr__(self):
             if self.var_name:
                 return self.var_name
-            return '%s(%r)' % (self.__class__.__name__, self.name)
+            return "%s(%r)" % (self.__class__.__name__, self.name)
 
         if var_name:
+
             def __reduce__(self):
                 return self.var_name
 
@@ -268,14 +278,15 @@ def make_sentinel(name='_MISSING', var_name=None):
     return Sentinel()
 
 
-def _indent(text, margin, newline='\n', key=bool):
+def _indent(text, margin, newline="\n", key=bool):
     "based on boltons.strutils.indent"
-    indented_lines = [(margin + line if key(line) else line)
-                      for line in text.splitlines()]
+    indented_lines = [
+        (margin + line if key(line) else line) for line in text.splitlines()
+    ]
     return newline.join(indented_lines)
 
 
-NO_DEFAULT = make_sentinel(var_name='NO_DEFAULT')
+NO_DEFAULT = make_sentinel(var_name="NO_DEFAULT")
 
 
 class FunctionBuilder(object):
@@ -343,28 +354,33 @@ class FunctionBuilder(object):
 
     """
 
-    _argspec_defaults = {'args': list,
-                         'varargs': lambda: None,
-                         'varkw': lambda: None,
-                         'defaults': lambda: None,
-                         'kwonlyargs': list,
-                         'kwonlydefaults': dict,
-                         'annotations': dict}
+    _argspec_defaults = {
+        "args": list,
+        "varargs": lambda: None,
+        "varkw": lambda: None,
+        "defaults": lambda: None,
+        "kwonlyargs": list,
+        "kwonlydefaults": dict,
+        "annotations": dict,
+    }
 
     @classmethod
     def _argspec_to_dict(cls, f):
         argspec = inspect.getfullargspec(f)
-        return dict((attr, getattr(argspec, attr))
-                    for attr in cls._argspec_defaults)
+        return dict(
+            (attr, getattr(argspec, attr)) for attr in cls._argspec_defaults
+        )
 
-    _defaults = {'doc': str,
-                 'dict': dict,
-                 'is_async': lambda: False,
-                 'module': lambda: None,
-                 'body': lambda: 'pass',
-                 'indent': lambda: 4,
-                 'annotations': dict,
-                 'filename': lambda: 'py2mint.utils.FunctionBuilder'}
+    _defaults = {
+        "doc": str,
+        "dict": dict,
+        "is_async": lambda: False,
+        "module": lambda: None,
+        "body": lambda: "pass",
+        "indent": lambda: 4,
+        "annotations": dict,
+        "filename": lambda: "py2mint.utils.FunctionBuilder",
+    }
 
     _defaults.update(_argspec_defaults)
 
@@ -379,7 +395,7 @@ class FunctionBuilder(object):
             setattr(self, a, val)
 
         if kw:
-            raise TypeError('unexpected kwargs: %r' % kw.keys())
+            raise TypeError("unexpected kwargs: %r" % kw.keys())
         return
 
     # def get_argspec(self):  # TODO
@@ -394,39 +410,45 @@ class FunctionBuilder(object):
             annotations = self.annotations
         else:
             annotations = {}
-        return inspect.formatargspec(self.args,
-                                     self.varargs,
-                                     self.varkw,
-                                     [],
-                                     self.kwonlyargs,
-                                     {},
-                                     annotations)
+        return inspect.formatargspec(
+            self.args,
+            self.varargs,
+            self.varkw,
+            [],
+            self.kwonlyargs,
+            {},
+            annotations,
+        )
 
-    _KWONLY_MARKER = re.compile(r"""
+    _KWONLY_MARKER = re.compile(
+        r"""
     \*     # a star
     \s*    # followed by any amount of whitespace
     ,      # followed by a comma
     \s*    # followed by any amount of whitespace
-    """, re.VERBOSE)
+    """,
+        re.VERBOSE,
+    )
 
     def get_invocation_str(self):
         kwonly_pairs = None
         formatters = {}
         if self.kwonlyargs:
-            kwonly_pairs = dict((arg, arg)
-                                for arg in self.kwonlyargs)
-            formatters['formatvalue'] = lambda value: '=' + value
+            kwonly_pairs = dict((arg, arg) for arg in self.kwonlyargs)
+            formatters["formatvalue"] = lambda value: "=" + value
 
         # TODO: Replace with inspect.signature
-        sig = inspect.formatargspec(self.args,
-                                    self.varargs,
-                                    self.varkw,
-                                    [],
-                                    kwonly_pairs,
-                                    kwonly_pairs,
-                                    {},
-                                    **formatters)
-        sig = self._KWONLY_MARKER.sub('', sig)
+        sig = inspect.formatargspec(
+            self.args,
+            self.varargs,
+            self.varkw,
+            [],
+            kwonly_pairs,
+            kwonly_pairs,
+            {},
+            **formatters
+        )
+        sig = self._KWONLY_MARKER.sub("", sig)
         return sig[1:-1]
 
     @classmethod
@@ -438,13 +460,15 @@ class FunctionBuilder(object):
         # TODO: copy_body? gonna need a good signature regex.
         # TODO: might worry about __closure__?
         if not callable(func):
-            raise TypeError('expected callable object, not %r' % (func,))
+            raise TypeError("expected callable object, not %r" % (func,))
 
-        kwargs = {'name': func.__name__,
-                  'doc': func.__doc__,
-                  'module': func.__module__,
-                  'annotations': getattr(func, "__annotations__", {}),
-                  'dict': getattr(func, '__dict__', {})}
+        kwargs = {
+            "name": func.__name__,
+            "doc": func.__doc__,
+            "module": func.__module__,
+            "annotations": getattr(func, "__annotations__", {}),
+            "dict": getattr(func, "__dict__", {}),
+        }
 
         kwargs.update(cls._argspec_to_dict(func))
 
@@ -475,17 +499,21 @@ class FunctionBuilder(object):
         execdict = execdict or {}
         body = self.body or self._default_body
 
-        tmpl = 'def {name}{sig_str}:'
-        tmpl += '\n{body}'
+        tmpl = "def {name}{sig_str}:"
+        tmpl += "\n{body}"
 
         if self.is_async:
-            tmpl = 'async ' + tmpl
+            tmpl = "async " + tmpl
 
-        body = _indent(self.body, ' ' * self.indent)
+        body = _indent(self.body, " " * self.indent)
 
-        name = self.name.replace('<', '_').replace('>', '_')  # lambdas
-        src = tmpl.format(name=name, sig_str=self.get_sig_str(with_annotations=False),
-                          doc=self.doc, body=body)
+        name = self.name.replace("<", "_").replace(">", "_")  # lambdas
+        src = tmpl.format(
+            name=name,
+            sig_str=self.get_sig_str(with_annotations=False),
+            doc=self.doc,
+            body=body,
+        )
         self._compile(src, execdict)
         func = execdict[name]
 
@@ -509,18 +537,23 @@ class FunctionBuilder(object):
         """Get a dictionary of function arguments with defaults and the
         respective values.
         """
-        ret = dict(reversed(list(zip(reversed(self.args),
-                                     reversed(self.defaults or [])))))
-        kwonlydefaults = getattr(self, 'kwonlydefaults', None)
+        ret = dict(
+            reversed(
+                list(zip(reversed(self.args), reversed(self.defaults or [])))
+            )
+        )
+        kwonlydefaults = getattr(self, "kwonlydefaults", None)
         if kwonlydefaults:
             ret.update(kwonlydefaults)
         return ret
 
     def get_arg_names(self, only_required=False):
-        arg_names = tuple(self.args) + tuple(getattr(self, 'kwonlyargs', ()))
+        arg_names = tuple(self.args) + tuple(getattr(self, "kwonlyargs", ()))
         if only_required:
             defaults_dict = self.get_defaults_dict()
-            arg_names = tuple([an for an in arg_names if an not in defaults_dict])
+            arg_names = tuple(
+                [an for an in arg_names if an not in defaults_dict]
+            )
         return arg_names
 
     def add_arg(self, arg_name, default=NO_DEFAULT, kwonly=False):
@@ -529,9 +562,14 @@ class FunctionBuilder(object):
         keyword-only argument
         """
         if arg_name in self.args:
-            raise ExistingArgument('arg %r already in func %s arg list' % (arg_name, self.name))
+            raise ExistingArgument(
+                "arg %r already in func %s arg list" % (arg_name, self.name)
+            )
         if arg_name in self.kwonlyargs:
-            raise ExistingArgument('arg %r already in func %s kwonly arg list' % (arg_name, self.name))
+            raise ExistingArgument(
+                "arg %r already in func %s kwonly arg list"
+                % (arg_name, self.name)
+            )
         if not kwonly:
             self.args.append(arg_name)
             if default is not NO_DEFAULT:
@@ -562,8 +600,10 @@ class FunctionBuilder(object):
                 self.kwonlyargs.remove(arg_name)
             except (AttributeError, ValueError):
                 # py2, or py3 and missing from both
-                exc = MissingArgument('arg %r not found in %s argument list:'
-                                      ' %r' % (arg_name, self.name, args))
+                exc = MissingArgument(
+                    "arg %r not found in %s argument list:"
+                    " %r" % (arg_name, self.name, args)
+                )
                 exc.arg_name = arg_name
                 raise exc
             else:
@@ -575,10 +615,12 @@ class FunctionBuilder(object):
 
     def _compile(self, src, execdict):
 
-        filename = ('<%s-%d>'
-                    % (self.filename, next(self._compile_count),))
+        filename = "<%s-%d>" % (
+            self.filename,
+            next(self._compile_count),
+        )
         try:
-            code = compile(src, filename, 'single')
+            code = compile(src, filename, "single")
             exec(code, execdict)
         except Exception:
             raise

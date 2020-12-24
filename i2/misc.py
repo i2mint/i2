@@ -5,12 +5,18 @@ from i2.base import MintOfCallable
 from functools import partial, wraps
 
 
-def inject_signature(sig, *, return_annotation=inspect._empty, __validate_parameters__=True):
+def inject_signature(
+    sig, *, return_annotation=inspect._empty, __validate_parameters__=True
+):
     if not isinstance(sig, inspect.Signature):
-        sig = mk_signature_from_dict_specs(sig,
-                                           return_annotation=return_annotation,
-                                           __validate_parameters__=__validate_parameters__)
-    assert isinstance(sig, inspect.Signature), "sig should be an inspect.Signature (or be resolved to one)"
+        sig = mk_signature_from_dict_specs(
+            sig,
+            return_annotation=return_annotation,
+            __validate_parameters__=__validate_parameters__,
+        )
+    assert isinstance(
+        sig, inspect.Signature
+    ), "sig should be an inspect.Signature (or be resolved to one)"
 
     def wrapper(func):
         func.__signature__ = sig
@@ -39,7 +45,7 @@ def filter_by_value(d, valfunc):
 #     arg_name_default_annot = list(map(val_filt, arg_name_default_annot))
 #     return arg_name_default_annot
 
-parameter_props = ['name', 'kind', 'default', 'annotation']
+parameter_props = ["name", "kind", "default", "annotation"]
 
 
 def mk_arg_name_dflt_annot_dict_list_from_func(func):
@@ -55,11 +61,19 @@ def mk_arg_name_dflt_annot_dict_list_from_func(func):
     return params_dict_list
 
 
-dflt_params = dict(kind=Parameter.POSITIONAL_OR_KEYWORD, default=Parameter.empty, annotation=Parameter.empty)
+dflt_params = dict(
+    kind=Parameter.POSITIONAL_OR_KEYWORD,
+    default=Parameter.empty,
+    annotation=Parameter.empty,
+)
 
 
-def mk_signature_from_dict_specs(arg_name_default_annot=(), *,
-                                 return_annotation=inspect._empty, __validate_parameters__=True):
+def mk_signature_from_dict_specs(
+    arg_name_default_annot=(),
+    *,
+    return_annotation=inspect._empty,
+    __validate_parameters__=True
+):
     """
 
     :param arg_name_default_annot:
@@ -77,30 +91,52 @@ def mk_signature_from_dict_specs(arg_name_default_annot=(), *,
     for d in arg_name_default_annot:
         d = dict(dflt_params, **d)
         parameters.append(Parameter(**d))
-    return Signature(parameters=parameters,
-                     return_annotation=return_annotation, __validate_parameters__=__validate_parameters__)
+    return Signature(
+        parameters=parameters,
+        return_annotation=return_annotation,
+        __validate_parameters__=__validate_parameters__,
+    )
 
 
 class SignatureFactory:
-    dflt_params = dict(kind=Parameter.POSITIONAL_OR_KEYWORD, default=Parameter.empty, annotation=Parameter.empty)
+    dflt_params = dict(
+        kind=Parameter.POSITIONAL_OR_KEYWORD,
+        default=Parameter.empty,
+        annotation=Parameter.empty,
+    )
 
     def __init__(self, **dflt_arg_specs):
         self.dflt_arg_specs = dflt_arg_specs
 
-    def __call__(self, params, *, return_annotation=inspect._empty, __validate_parameters__=True):
+    def __call__(
+        self,
+        params,
+        *,
+        return_annotation=inspect._empty,
+        __validate_parameters__=True
+    ):
         parameters = list()
         for param in params:
             if not isinstance(param, Parameter):
-                if isinstance(param, str):  # then assume param is the name of an argument
+                if isinstance(
+                    param, str
+                ):  # then assume param is the name of an argument
                     name = param
-                    param_dict = dict(self.dflt_params, **self.dflt_arg_specs.get(name, {}))
-                    if 'name' not in param_dict:
-                        param_dict['name'] = name
+                    param_dict = dict(
+                        self.dflt_params, **self.dflt_arg_specs.get(name, {})
+                    )
+                    if "name" not in param_dict:
+                        param_dict["name"] = name
                 elif isinstance(param, dict):
-                    param_dict = dict(self.dflt_params, **dict(self.dflt_arg_specs, **param))
+                    param_dict = dict(
+                        self.dflt_params, **dict(self.dflt_arg_specs, **param)
+                    )
                 else:
                     raise ValueError()
                 param = Parameter(**param_dict)
             parameters.append(param)
-        return Signature(parameters=parameters, return_annotation=return_annotation,
-                         __validate_parameters__=__validate_parameters__)
+        return Signature(
+            parameters=parameters,
+            return_annotation=return_annotation,
+            __validate_parameters__=__validate_parameters__,
+        )

@@ -3,7 +3,9 @@ try:
 except ImportError as err:
     import warnings
 
-    warnings.warn("You don't seem to have pytest, so I can't use it to test. Shame. pytest is nice.")
+    warnings.warn(
+        "You don't seem to have pytest, so I can't use it to test. Shame. pytest is nice."
+    )
     warnings.warn(f"Error was: {err}")
 
 
@@ -40,17 +42,19 @@ class A:
 class B:
     x = 1
     y = 2
-    b = 'i am b'
-    c = 'i am not b'
+    b = "i am b"
+    c = "i am not b"
 
-    def __init__(self, a, greeting='hello', y=3):
+    def __init__(self, a, greeting="hello", y=3):
         self.a = a
         self.greeting = greeting
         self.y = y  # instance y overwrites class y
 
-    def greet(self, person='world'):
+    def greet(self, person="world"):
         """Accesses a, x, and y"""
-        return str(self.a) + ' ' + person + '! ' + 'x+y=' + str(self.x + self.y)
+        return (
+            str(self.a) + " " + person + "! " + "x+y=" + str(self.x + self.y)
+        )
 
     @property
     def z(self):
@@ -82,32 +86,51 @@ def convert_output():
 def test_attrs_used_by_method():
     from i2.footprints import attrs_used_by_method
 
-    assert attrs_used_by_method(A.target_method) == {'a', 'b', 'c', 'e'}
-    assert attrs_used_by_method(A.other_method) == {'c', 'e'}
-    assert attrs_used_by_method(A.a_class_method) == {'e'}
+    assert attrs_used_by_method(A.target_method) == {"a", "b", "c", "e"}
+    assert attrs_used_by_method(A.other_method) == {"c", "e"}
+    assert attrs_used_by_method(A.a_class_method) == {"e"}
 
-    assert attrs_used_by_method(B.greet) == {'a', 'x', 'y'}
+    assert attrs_used_by_method(B.greet) == {"a", "x", "y"}
     # assert attrs_used_by_method(B.z) == {'x', 'y'}
     # assert attrs_used_by_method(B.accessing_property_method) == {'b', 'z', 'x', 'y'}  # perhaps z should not be here?
-    assert attrs_used_by_method(B.with_f_string) == {'greeting', 'x'}
+    assert attrs_used_by_method(B.with_f_string) == {"greeting", "x"}
     # assert attrs_used_by_method(B.writing_to_an_attribute) == {'x', 'a'}
 
 
 def test_attrs_used_by_method_computation():
     from i2.footprints import attrs_used_by_method_computation
 
-    assert attrs_used_by_method_computation(A.target_method, {}, {'x': 3}) == {'a', 'b', 'c', 'e'}
-    assert attrs_used_by_method_computation(A.other_method, {}) == {'c', 'e'}
+    assert attrs_used_by_method_computation(A.target_method, {}, {"x": 3}) == {
+        "a",
+        "b",
+        "c",
+        "e",
+    }
+    assert attrs_used_by_method_computation(A.other_method, {}) == {"c", "e"}
     # assert attrs_used_by_method_computation(A.a_class_method, {}, {'y': 3}) == {'e'}  # fails (returns {})
 
     init_kws = dict(a=100)
-    assert attrs_used_by_method_computation(B.greet, init_kws) == {'a', 'x', 'y'}
+    assert attrs_used_by_method_computation(B.greet, init_kws) == {
+        "a",
+        "x",
+        "y",
+    }
     # assert attrs_used_by_method_computation(B.z, init_kws) == {'x', 'y'}  # fails (property z has no __name__)
     assert attrs_used_by_method_computation(
-        B.accessing_property_method, init_kws) == {'b', 'z', 'x', 'y'}  # z or not z?
-    assert attrs_used_by_method_computation(B.with_f_string, init_kws) == {'greeting', 'x'}
+        B.accessing_property_method, init_kws
+    ) == {
+        "b",
+        "z",
+        "x",
+        "y",
+    }  # z or not z?
+    assert attrs_used_by_method_computation(B.with_f_string, init_kws) == {
+        "greeting",
+        "x",
+    }
     assert attrs_used_by_method_computation(
-        B.writing_to_an_attribute, init_kws, dict(x_val=0, a_val=1)) == {'x', 'a'}
+        B.writing_to_an_attribute, init_kws, dict(x_val=0, a_val=1)
+    ) == {"x", "a"}
 
 
 ## Order conserving

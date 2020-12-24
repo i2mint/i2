@@ -2,11 +2,12 @@ from typing import Iterable, Callable, Optional, Any, Hashable
 from collections import defaultdict
 
 
-def groupby(items: Iterable[Any],
-            key: Callable[[Any], Hashable],
-            val: Optional[Callable[[Any], Any]] = None,
-            group_factory=list
-            ) -> dict:
+def groupby(
+    items: Iterable[Any],
+    key: Callable[[Any], Hashable],
+    val: Optional[Callable[[Any], Any]] = None,
+    group_factory=list,
+) -> dict:
     """Groups items according to group keys updated from those items through the given (item_to_)key function.
 
     Args:
@@ -71,4 +72,7 @@ def regroupby(items, *key_funcs, **named_key_funcs):
     else:
         key_func, *key_funcs = key_funcs
         groups = groupby(items, key=key_func)
-        return {group_key: regroupby(group_items, *key_funcs) for group_key, group_items in groups.items()}
+        return {
+            group_key: regroupby(group_items, *key_funcs)
+            for group_key, group_items in groups.items()
+        }

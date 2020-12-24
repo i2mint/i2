@@ -13,11 +13,16 @@ from i2.signatures import ch_signature_to_all_pk, HasParams, VP, PK, Sig
 
 def copy_func(f):
     """Copy a function (not sure it works with all types of callables)"""
-    g = FunctionType(f.__code__, f.__globals__, name=f.__name__,
-                     argdefs=f.__defaults__, closure=f.__closure__)
+    g = FunctionType(
+        f.__code__,
+        f.__globals__,
+        name=f.__name__,
+        argdefs=f.__defaults__,
+        closure=f.__closure__,
+    )
     g = update_wrapper(g, f)
     g.__kwdefaults__ = f.__kwdefaults__
-    if hasattr(f, '__signature__'):
+    if hasattr(f, "__signature__"):
         g.__signature__ = f.__signature__
     return g
 
@@ -37,7 +42,9 @@ def params_of(obj: HasParams):
         obj = list(obj.values())
     elif callable(obj):
         obj = list(signature(obj).parameters.values())
-    assert all(isinstance(p, Parameter) for p in obj), "obj needs to be a Iterable[Parameter] at this point"
+    assert all(
+        isinstance(p, Parameter) for p in obj
+    ), "obj needs to be a Iterable[Parameter] at this point"
     return obj  # as is
 
 
@@ -53,21 +60,31 @@ def tuple_the_args(func):
         @wraps(func)
         def vpless_func(*args, **kwargs):
             # extract the element of args that needs to be unraveled
-            a, _vp_args_, aa = args[:index_of_vp], args[index_of_vp], args[(index_of_vp + 1):]
+            a, _vp_args_, aa = (
+                args[:index_of_vp],
+                args[index_of_vp],
+                args[(index_of_vp + 1) :],
+            )
             # call the original function with the unravelled args
             return func(*a, *_vp_args_, *aa, **kwargs)
 
         try:  # TODO: Avoid this try catch. Look in advance for default ordering
-            params[index_of_vp] = params[index_of_vp].replace(kind=PK, default=())
-            vpless_func.__signature__ = Signature(params,
-                                                  return_annotation=signature(func).return_annotation)
+            params[index_of_vp] = params[index_of_vp].replace(
+                kind=PK, default=()
+            )
+            vpless_func.__signature__ = Signature(
+                params, return_annotation=signature(func).return_annotation
+            )
         except ValueError:
             params[index_of_vp] = params[index_of_vp].replace(kind=PK)
-            vpless_func.__signature__ = Signature(params,
-                                                  return_annotation=signature(func).return_annotation)
+            vpless_func.__signature__ = Signature(
+                params, return_annotation=signature(func).return_annotation
+            )
         return vpless_func
     else:
-        return copy_func(func)  # don't change anything (or should we wrap anyway, to be consistent?)
+        return copy_func(
+            func
+        )  # don't change anything (or should we wrap anyway, to be consistent?)
 
 
 def mk_args_kwargs_merger(func):
@@ -98,7 +115,9 @@ def mk_args_kwargs_merger(func):
 
     def merge_args_and_kwargs(args, kwargs):
         if len(args) > 0:
-            return inspect.signature(func).bind_partial(*args, **kwargs).arguments
+            return (
+                inspect.signature(func).bind_partial(*args, **kwargs).arguments
+            )
         else:
             return kwargs
 
@@ -121,53 +140,85 @@ def kwargs_for_func(*funcs, **kwargs):
     :return:
 
     >>> from i2.tests.objects_for_testing import formula1, sum_of_args, mult, add
-    >>> def named_key(d):  # just a util for this doctest
-    ...     return {k.__name__: v for k, v in d.items()}
-    >>> named_key(kwargs_for_func(formula1, mult, add,
+    >>> def print_dict(d):  # just a util for this doctest
+    ...     from pprint import pprint
+    ...     pprint({k.__name__: d[k] for k in sorted(d, key=lambda x: x.__name__)})
+    >>> print_dict(kwargs_for_func(formula1, mult, add,
     ...                           w=1, x=2, z=3, a=4, b=5)) # doctest: +NORMALIZE_WHITESPACE
-    {'formula1': {'w': 1, 'x': 2, 'z': 3},
-    'mult': {'x': 2},
-    'add': {'a': 4, 'b': 5}}
+    {'add': {'a': 4, 'b': 5},
+     'formula1': {'w': 1, 'x': 2, 'z': 3},
+     'mult': {'x': 2}}
     """
-    return dict((func, Sig(func).extract_kwargs(kwargs)) for func in funcs)
+    return dict((func, Sig(func).source_kwargs(**kwargs)) for func in funcs)
 
 
+# TODO: Finish this!
 # TODO: Test the handling var positional and var keyword
 class MultiFunc:
     """
+    Call multiple functions, using a pool of arguments that they will draw from.
+
     >>> from i2.tests.objects_for_testing import formula1, sum_of_args, mult, add
-    >>> def named_key(d):  # just a util for this doctest
-    ...     return {k.__name__: v for k, v in d.items()}
     >>> mf1 = MultiFunc(funcs=(formula1, mult, add))
-    Don't use MultiFunc yet: In transition to something else
-    >>> named_key(mf1.kwargs_for_func(w=1, x=2, z=3, a=4, b=5)) # doctest: +NORMALIZE_WHITESPACE
-    {'formula1': {'w': 1, 'x': 2, 'z': 3},
-    'mult': {'x': 2},
-    'add': {'a': 4, 'b': 5}}
+    >>> kwargs_for_func = mf1.kwargs_for_func(w=1, x=2, z=3, a=4, b=5)
 
+    What's this for? Well, the raison d'etre of `MultiFunc` is to be able to do this:
 
-    # TODO: Finish attempt to add **all_other_kwargs_ignored to the signature
+    >>> assert add(a=4, b=5) == add(**kwargs_for_func[add])
+
+    This wouldn't work on all functions since some functions have position only arguments (e.g. ``formula1``).
+    Therefore ``MultiFunc`` holds a "normalized" form of the functions; namely one that handles such things as
+    postion only and varargs.
+
+    # TODO: Make this work!
+    #   Right now raises: TypeError: formula1() got some positional-only arguments passed as keyword arguments: 'w'
+    # >>> assert formula1(1, x=2, z=3) == mf1.normalized_funcs[formula1](**kwargs_for_func[formula1])
+
+    Note: In the following, it looks like ``MultiFunc`` instances return dicts whose keys are strings.
+    This is not the case.
+    The keys are functions: The same functions that were input.
+    The reason for not using functions is that when printed, they include their hash, which invalidates the doctests.
+
+    >>> def print_dict(d):  # just a util for this doctest
+    ...     from pprint import pprint
+    ...     pprint({k.__name__: d[k] for k in sorted(d, key=lambda x: x.__name__)})
+    >>> mf1 = MultiFunc(funcs=(formula1, mult, add))
+    >>> print_dict(mf1.kwargs_for_func(w=1, x=2, z=3, a=4, b=5)) # doctest: +NORMALIZE_WHITESPACE
+    {'add': {'a': 4, 'b': 5},
+     'formula1': {'w': 1, 'x': 2, 'z': 3},
+     'mult': {'x': 2}}
+
     Oh, and you can actually see the signature of kwargs_for_func:
     >>> from inspect import signature
     >>> signature(mf1)
     <Signature (w, x: float, a, y=1, z: int = 1, b: float = 0.0)>
 
-    TODO: Make it not have an error here:
     >>> mf2 = MultiFunc(funcs=(formula1, mult, add, sum_of_args))
-    Traceback (most recent call last):
-    ...
-    ValueError: wrong parameter order: variadic keyword parameter before positional or keyword parameter
-    >>> # mf2.kwargs_for_func(w=1, x=2, z=3, a=4, b=5, args=(7,8), kwargs={'a': 42}, extra_stuff='ignore')
+    >>> print_dict(mf2.kwargs_for_func(w=1, x=2, z=3, a=4, b=5, args=(7,8), kwargs={'a': 42}, extra_stuff='ignore'))
+    {'add': {'a': 4, 'b': 5},
+     'formula1': {'w': 1, 'x': 2, 'z': 3},
+     'mult': {'x': 2},
+     'sum_of_args': {'kwargs': {'a': 4,
+                                'args': (7, 8),
+                                'b': 5,
+                                'extra_stuff': 'ignore',
+                                'kwargs': {'a': 42},
+                                'w': 1,
+                                'x': 2,
+                                'z': 3}}}
+
     """
 
+    # FIXME: TODO: This does indeed change the signature, but not the functionality (position only still raise errors!)
     def normalize_func(self, func):
         return ch_func_to_all_pk(tuple_the_args(func))
 
     def __init__(self, funcs=()):
-        print("Don't use MultiFunc yet: In transition to something else")
         self.funcs = ensure_iterable_of_callables(funcs)
         self.sigs = {func: Sig(func) for func in self.funcs}
-        self.normalized_funcs = {func: self.normalize_func(func) for func in self.funcs}
+        self.normalized_funcs = {
+            func: self.normalize_func(func) for func in self.funcs
+        }
         multi_func_sig = Sig.from_objs(*self.normalized_funcs.values())
         # TODO: Finish attempt to add **all_other_kwargs_ignored to the signature
         # multi_func_sig = (Sig.from_objs(
@@ -176,13 +227,19 @@ class MultiFunc:
         multi_func_sig.wrap(self)
         # multi_func_sig.wrap(self.kwargs_for_func)
 
-    def kwargs_for_func(self, **kwargs):
-        return dict((func, self.sigs[func].extract_kwargs(kwargs)) for func in self.funcs)
+    def kwargs_for_func(self, *args, **kwargs):
+        return dict(
+            (func, self.sigs[func].source_kwargs(**kwargs))
+            for func in self.funcs
+        )
 
     # TODO: Give it a signature (needs to be done in __init__)
     # TODO: Validation of inputs
-    def __call__(self, **kwargs):
-        return dict((func, self.sigs[func].extract_kwargs(kwargs)) for func in self.funcs)
+    def __call__(self, *args, **kwargs):
+        return dict(
+            (func, self.sigs[func].source_kwargs(**kwargs))
+            for func in self.funcs
+        )
 
 
 def assert_attrs(attrs):
@@ -222,8 +279,11 @@ def assert_attrs(attrs):
         def get_instance(*args, **kw):
             for attr in attrs:
                 if not hasattr(klass, attr):
-                    raise AttributeError("class {} needs to have a {} attribute:".format(
-                        klass.__name__, attr))
+                    raise AttributeError(
+                        "class {} needs to have a {} attribute:".format(
+                            klass.__name__, attr
+                        )
+                    )
             return klass(*args, **kw)
 
         return get_instance
@@ -247,11 +307,15 @@ def preprocess_arguments(pre):
 def preprocess(pre):
     def decorator(func):
         if inspect.ismethod(func):
+
             def wrapper(self, *args, **kwargs):
                 return func(self, pre(*args, **kwargs))
+
         else:
+
             def wrapper(*args, **kwargs):
                 return func(pre(*args, **kwargs))
+
         return wraps(func)(wrapper)
 
     return decorator
@@ -265,7 +329,9 @@ def _return_annotation_of(func):
     >>> assert _return_annotation_of(zip) == zip
     >>> assert _return_annotation_of(print) == Parameter.empty
     """
-    if isinstance(func, type):  # TODO: Verify rule (are there commmon enough meta tricks that need to be handled?)
+    if isinstance(
+        func, type
+    ):  # TODO: Verify rule (are there commmon enough meta tricks that need to be handled?)
         return func
     else:
         try:
@@ -273,10 +339,14 @@ def _return_annotation_of(func):
         except ValueError:  # some builtins don't have signatures
             return Parameter.empty
 
-class OutputPostProcessingError(RuntimeError): ...
+
+class OutputPostProcessingError(RuntimeError):
+    ...
 
 
-def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=False):
+def postprocess(
+    post, caught_post_errors=(Exception,), verbose_error_message=False
+):
     """Add some post-processing after a function
     :param post: The function to apply to the output
 
@@ -297,7 +367,7 @@ def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=Fal
     >>> bar(3)
     {'0': 0, '1': 1, '2': 2}
     >>> signature(bar)
-    <Signature (x) -> bar>
+    <Signature (x) -> dict>
     >>>
     >>> @postprocess(list)
     ... def foo(x):
@@ -331,17 +401,33 @@ def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=Fal
             try:
                 return post(output)
             except caught_post_errors as e:
-                msg = f"Error when postprocessing output with post func: {func}"
+                msg = (
+                    f"Error when postprocessing output with post func: {func}"
+                )
                 if verbose_error_message:
-                    msg += '\n' + f"  output={output}"
-                    if isinstance(verbose_error_message, int) and verbose_error_message > 1:
-                        msg += '\n' + "  which was obtained by func(*args, **kwargs) where:"
-                        msg += '\n' + f"    args: {args}" + '\n' + f"    kwargs: {kwargs}"
-                msg += '\n' + f"Error is: {e}"
+                    msg += "\n" + f"  output={output}"
+                    if (
+                        isinstance(verbose_error_message, int)
+                        and verbose_error_message > 1
+                    ):
+                        msg += (
+                            "\n"
+                            + "  which was obtained by func(*args, **kwargs) where:"
+                        )
+                        msg += (
+                            "\n"
+                            + f"    args: {args}"
+                            + "\n"
+                            + f"    kwargs: {kwargs}"
+                        )
+                msg += "\n" + f"Error is: {e}"
                 raise OutputPostProcessingError(msg)
 
         return_annot = _return_annotation_of(post)
-        sig = Signature(signature(wrapper).parameters.values(), return_annotation=return_annot)
+        sig = Signature(
+            signature(wrapper).parameters.values(),
+            return_annotation=return_annot,
+        )
         wrapper.__signature__ = sig
 
         return wraps(func)(wrapper)
@@ -419,14 +505,20 @@ def input_output_decorator(preprocess=None, postprocess=None):
 
     def decorator(func):
         if preprocess and postprocess:
+
             def func_wrapper(*args, **kwargs):
                 return postprocess(func(preprocess(*args, **kwargs)))
+
         elif preprocess:  # a preprocess but no postprocess
+
             def func_wrapper(*args, **kwargs):
                 return func(preprocess(*args, **kwargs))
+
         elif postprocess:  # a postprocess but no preprocess
+
             def func_wrapper(*args, **kwargs):
                 return postprocess(func(*args, **kwargs))
+
         else:  # neither pre nor post processing, so leave func as is
             return func
 
@@ -488,21 +580,29 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
     def transform_args_decorator(func):
         get_kwargs = mk_args_kwargs_merger(func)
 
-        if len(trans_func_for_arg) == 0 and not dflt_trans_func:  # if no transformations were specified...
+        if (
+            len(trans_func_for_arg) == 0 and not dflt_trans_func
+        ):  # if no transformations were specified...
             return func  # just return the function itself
         elif dflt_trans_func is not None:
-            assert callable(dflt_trans_func), "The dflt_trans_func needs to be a callable"
+            assert callable(
+                dflt_trans_func
+            ), "The dflt_trans_func needs to be a callable"
 
             @wraps(func)
             def transform_args_wrapper(*args, **kwargs):
                 val_of_argname = get_kwargs(args, kwargs)
-                val_of_argname = {argname: dflt_trans_func(val) for argname, val in val_of_argname.items()}
+                val_of_argname = {
+                    argname: dflt_trans_func(val)
+                    for argname, val in val_of_argname.items()
+                }
 
                 # apply transform functions to argument values
                 return func(**val_of_argname)
 
             return transform_args_wrapper
         else:
+
             @wraps(func)
             def transform_args_wrapper(*args, **kwargs):
                 # get a {argname: argval, ...} dict from *args and **kwargs
@@ -513,7 +613,9 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
 
                 for argname, trans_func in trans_func_for_arg.items():
                     if argname in val_of_argname:
-                        val_of_argname[argname] = trans_func(val_of_argname[argname])
+                        val_of_argname[argname] = trans_func(
+                            val_of_argname[argname]
+                        )
                 # apply transform functions to argument values
                 return func(**val_of_argname)
 
@@ -536,9 +638,11 @@ def wrap_method_output(wrapper_func):
     return _wrap_output
 
 
-def wrap_class_methods(_return_a_copy_of_the_class=True,
-                       _raise_error_if_non_existent_method=True,
-                       **wrapper_for_method):
+def wrap_class_methods(
+    _return_a_copy_of_the_class=True,
+    _raise_error_if_non_existent_method=True,
+    **wrapper_for_method,
+):
     """
     Make a decorator that wraps specific methods.
 
@@ -601,7 +705,7 @@ def wrap_class_methods(_return_a_copy_of_the_class=True,
 
     def class_wrapper(cls):
         if _return_a_copy_of_the_class:
-            _cls = type('_' + cls.__name__, cls.__bases__, dict(cls.__dict__))
+            _cls = type("_" + cls.__name__, cls.__bases__, dict(cls.__dict__))
             # class _cls(cls):
             #     pass
         else:
@@ -610,7 +714,9 @@ def wrap_class_methods(_return_a_copy_of_the_class=True,
             if hasattr(_cls, method):
                 setattr(_cls, method, wrapper(getattr(_cls, method)))
             elif _raise_error_if_non_existent_method:
-                raise ValueError(f"{getattr(_cls, '__name__', str(cls))} has no '{method}' method!")
+                raise ValueError(
+                    f"{getattr(_cls, '__name__', str(cls))} has no '{method}' method!"
+                )
         return _cls
 
     return class_wrapper
@@ -627,17 +733,25 @@ def mk_input_and_output_method_wrapper(method_output_trans=None, **arg_trans):
     return wrap_method
 
 
-def transform_class_method_input_and_output(cls, method, method_output_trans=None, **arg_trans):
+def transform_class_method_input_and_output(
+    cls, method, method_output_trans=None, **arg_trans
+):
     wrapped_method = transform_args(**arg_trans)(getattr(cls, method))
     if method_output_trans is not None:
-        setattr(cls, method, wrap_method_output(method_output_trans)(wrapped_method))
+        setattr(
+            cls,
+            method,
+            wrap_method_output(method_output_trans)(wrapped_method),
+        )
     else:
         setattr(cls, method, wrapped_method)
 
 
-def wrap_class_methods_input_and_output(_return_a_copy_of_the_class=True,
-                                        _raise_error_if_non_existent_method=True,
-                                        **method_trans_spec):
+def wrap_class_methods_input_and_output(
+    _return_a_copy_of_the_class=True,
+    _raise_error_if_non_existent_method=True,
+    **method_trans_spec,
+):
     """
     Make a decorator that wraps specific methods, transforming specific argument values a nd output values.
 
@@ -817,10 +931,15 @@ def wrap_class_methods_input_and_output(_return_a_copy_of_the_class=True,
     [('down', [5, 4, 3, 2, 1])]
     """
 
-    wrapper_for_method = {method: mk_input_and_output_method_wrapper(**method_trans)
-                          for method, method_trans in method_trans_spec.items()}
-    return wrap_class_methods(_return_a_copy_of_the_class=_return_a_copy_of_the_class,
-                              _raise_error_if_non_existent_method=True, **wrapper_for_method)
+    wrapper_for_method = {
+        method: mk_input_and_output_method_wrapper(**method_trans)
+        for method, method_trans in method_trans_spec.items()
+    }
+    return wrap_class_methods(
+        _return_a_copy_of_the_class=_return_a_copy_of_the_class,
+        _raise_error_if_non_existent_method=True,
+        **wrapper_for_method,
+    )
 
     # def class_wrapper(cls):
     #     if _return_a_copy_of_the_class:
@@ -887,11 +1006,13 @@ def add_method(obj, method_func, method_name=None, class_name=None):
     bases_names = set(map(lambda x: x.__name__, bases))
     if class_name in bases_names:
         for i in range(6):
-            class_name += '_'
+            class_name += "_"
             if not class_name in bases_names:
                 break
         else:
-            raise ValueError("can't find a name for class that is not taken by bases. Consider using explicit name")
+            raise ValueError(
+                "can't find a name for class that is not taken by bases. Consider using explicit name"
+            )
 
     new_keys = set(dir(obj)) - set(chain(*[dir(b) for b in bases]))
 
@@ -901,30 +1022,43 @@ def add_method(obj, method_func, method_name=None, class_name=None):
     return type(class_name, bases, d)()
 
 
-def transform_instance_method_input_and_output(obj, method, method_output_trans=None, **arg_trans):
+def transform_instance_method_input_and_output(
+    obj, method, method_output_trans=None, **arg_trans
+):
     from warnings import warn
+
     warn("Not sure transform_instance_method_input_and_output works yet")
     wrapped_method = transform_args(**arg_trans)(getattr(type(obj), method))
     if method_output_trans is not None:
-        obj = add_method(obj, wrap_method_output(method_output_trans)(wrapped_method), method_name=method)
+        obj = add_method(
+            obj,
+            wrap_method_output(method_output_trans)(wrapped_method),
+            method_name=method,
+        )
     else:
         obj = add_method(obj, wrapped_method, method_name=method)
     return obj
 
 
-def wrap_instance_methods(_return_a_copy_of_the_class=True,
-                          _raise_error_if_non_existent_method=True,
-                          **method_trans_spec):
+def wrap_instance_methods(
+    _return_a_copy_of_the_class=True,
+    _raise_error_if_non_existent_method=True,
+    **method_trans_spec,
+):
     def obj_wrapper(obj):
         for method, method_trans in method_trans_spec.items():
             if hasattr(obj, method):
-                obj = transform_instance_method_input_and_output(obj, method, **method_trans)
+                obj = transform_instance_method_input_and_output(
+                    obj, method, **method_trans
+                )
             elif _raise_error_if_non_existent_method:
-                if hasattr(obj.__class__, '__name__'):
+                if hasattr(obj.__class__, "__name__"):
                     class_name = obj.__name__
                 else:
                     class_name = str(obj)
-                raise ValueError("{} has no '{}' method!".format(class_name, method))
+                raise ValueError(
+                    "{} has no '{}' method!".format(class_name, method)
+                )
         return obj
 
     return obj_wrapper
@@ -972,8 +1106,8 @@ def _special_str(x: Any, max_len=100) -> str:
     else:
         x_str = str(x)
         if len(x_str) > max_len:
-            type_str = getattr(type(x), '__name__', str(type(x)))
-            if hasattr(x, '__repr__'):
+            type_str = getattr(type(x), "__name__", str(type(x)))
+            if hasattr(x, "__repr__"):
                 value_str = x.__repr__()
             else:
                 value_str = x_str
@@ -996,12 +1130,20 @@ def _call_signature(func: Callable, args: Args, kwargs: Kwargs) -> str:
     _call_signature(2, 'sdf', list([0, 1, 2, 3, 4, 5, 6...), z='boo', zzz=10)
     """
     args_signature = ", ".join(map(_special_str, args))
-    kwargs_signature = ", ".join(("{}={}".format(k, _special_str(v)) for k, v in kwargs.items()))
-    return "{func_name}({signature})".format(func_name=func.__name__,
-                                             signature=", ".join([args_signature, kwargs_signature]))
+    kwargs_signature = ", ".join(
+        ("{}={}".format(k, _special_str(v)) for k, v in kwargs.items())
+    )
+    return "{func_name}({signature})".format(
+        func_name=func.__name__,
+        signature=", ".join([args_signature, kwargs_signature]),
+    )
 
 
-def mk_call_logger(logger=print, what_to_log: WhatToLog = _call_signature, func_is_bounded=False):
+def mk_call_logger(
+    logger=print,
+    what_to_log: WhatToLog = _call_signature,
+    func_is_bounded=False,
+):
     """
     Makes a decorator that logs each call to the wrapped function.
     :param logger: The actual function that logs stuff. Default is print. The "stuff" it logs is given by
@@ -1052,6 +1194,7 @@ def mk_call_logger(logger=print, what_to_log: WhatToLog = _call_signature, func_
     20
     """
     if not func_is_bounded:
+
         def log_calls(func):
             @wraps(func)
             def _func(*args, **kwargs):
@@ -1059,7 +1202,9 @@ def mk_call_logger(logger=print, what_to_log: WhatToLog = _call_signature, func_
                 return func(*args, **kwargs)
 
             return _func
+
     else:
+
         def log_calls(func):
             @wraps(func)
             def _func(self, *args, **kwargs):

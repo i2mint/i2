@@ -6,23 +6,29 @@ from pack import read_configs
 
 def my_setup(print_params=True, **setup_kwargs):
     from setuptools import setup
+
     if print_params:
         import json
-        print("Setup params -------------------------------------------------------")
+
+        print(
+            "Setup params -------------------------------------------------------"
+        )
         print(json.dumps(setup_kwargs, indent=2))
-        print("--------------------------------------------------------------------")
+        print(
+            "--------------------------------------------------------------------"
+        )
     setup(**setup_kwargs)
 
 
 # read the config file (get a dict with it's contents)
 root_dir = os.path.dirname(__file__)
-config_file = os.path.join(root_dir, 'setup.cfg')
-configs = read_configs(config_file, section='metadata')
+config_file = os.path.join(root_dir, "setup.cfg")
+configs = read_configs(config_file, section="metadata")
 
 # parse out name and root_url
-name = configs['name']
-root_url = configs['root_url']
-version = '0.0.6'
+name = configs["name"]
+root_url = configs["root_url"]
+version = "0.0.6"
 
 # Note: if version is not in config, version will be None,
 #  resulting in bumping the version or making it be 0.0.1 if the package is not found (i.e. first deploy)
@@ -54,24 +60,24 @@ setup_kwargs = dict(
 
 def text_of_readme_md_file():
     try:
-        with open('README.md') as f:
+        with open("README.md") as f:
             return f.read()
     except:
         return ""
 
 
-ujoin = lambda *args: '/'.join(args)
+ujoin = lambda *args: "/".join(args)
 
-if root_url.endswith('/'):
+if root_url.endswith("/"):
     root_url = root_url[:-1]
 
 dflt_kwargs = dict(
     name=f"{name}",
-    version=f'{version}',
+    version=f"{version}",
     url=f"{root_url}/{name}",
     packages=find_packages(),
     include_package_data=True,
-    platforms='any',
+    platforms="any",
     long_description=text_of_readme_md_file(),
     long_description_content_type="text/markdown",
 )
@@ -81,8 +87,10 @@ setup_kwargs = dict(dflt_kwargs, **setup_kwargs)
 ##########################################################################################
 # Diagnose setup_kwargs
 _, containing_folder_name = os.path.split(os.path.dirname(__file__))
-if setup_kwargs['name'] != containing_folder_name:
-    print(f"!!!! containing_folder_name={containing_folder_name} but setup name is {setup_kwargs['name']}")
+if setup_kwargs["name"] != containing_folder_name:
+    print(
+        f"!!!! containing_folder_name={containing_folder_name} but setup name is {setup_kwargs['name']}"
+    )
 
 ##########################################################################################
 # Okay... set it up alright!
