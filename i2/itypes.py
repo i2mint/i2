@@ -1,7 +1,13 @@
 from typing import NewType, Optional, Iterable
 
 
-def new_type(name, tp, doc: Optional[str] = None, aka: Optional[Iterable] = None, assign_to_globals=False):
+def new_type(
+    name,
+    tp,
+    doc: Optional[str] = None,
+    aka: Optional[Iterable] = None,
+    assign_to_globals=False,
+):
     """
     Make a new type with (optional) doc and (optional) aka, set of var names it often appears as
 
@@ -19,17 +25,19 @@ def new_type(name, tp, doc: Optional[str] = None, aka: Optional[Iterable] = None
     >>> type(MyType)
     <class 'function'>
     >>> Key = new_type('Key', Any, aka=['key', 'k'])
-    >>> Key._aka
-    {'key', 'k'}
+    >>> sorted(Key._aka)
+    ['k', 'key']
     >>> Val = new_type('Val', Union[int, float, List[Union[int, float]]], doc="A number or list of numbers.")
     >>> Val.__doc__
     'A number or list of numbers.'
     """
     new_tp = NewType(name, tp)
     if doc is not None:
-        setattr(new_tp, '__doc__', doc)
+        setattr(new_tp, "__doc__", doc)
     if aka is not None:
-        setattr(new_tp, '_aka', set(aka))
+        setattr(new_tp, "_aka", set(aka))
     if assign_to_globals:
-        globals()[name] = new_tp  # not sure how kosher this is... Should only use at top level of module, for sure!
+        globals()[
+            name
+        ] = new_tp  # not sure how kosher this is... Should only use at top level of module, for sure!
     return new_tp

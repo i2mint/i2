@@ -37,7 +37,7 @@ def unique_iter(src, key=None):
     ['hi', 'hello', 'bye']
     """
     if not is_iterable(src):
-        raise TypeError('expected an iterable, not %r' % type(src))
+        raise TypeError("expected an iterable, not %r" % type(src))
     if key is None:
         key_func = lambda x: x
     elif callable(key):
@@ -128,14 +128,16 @@ class ChainMapTree(Mapping):
 
     Based on: https://gist.github.com/Klortho/7d83975559bdcc47ac64fd7d877934f6
     """
+
     _max_repr_keys = 7  # Not used (anymore) at this point. Was to control __repr__ output length
 
     def __init__(self, *maps):
         _maps = list(maps)
 
         # All keys of kids that are mappings
-        kid_keys = set([key for m in maps
-                        for key in m.keys() if is_mapping(m[key])])
+        kid_keys = set(
+            [key for m in maps for key in m.keys() if is_mapping(m[key])]
+        )
 
         # This will be a dictionary of lists of mappings
         kid_maps = {}
@@ -143,12 +145,14 @@ class ChainMapTree(Mapping):
             # The list of child mappings for this key
             kmaps = [m[key] for m in maps if key in m]
             # Make sure they are *all* mappings
-            if any(map(not_mapping, kmaps)): raise KeyError(key)
+            if any(map(not_mapping, kmaps)):
+                raise KeyError(key)
             # Recurse
             kid_maps[key] = ChainMapTree(*kmaps)
 
         # If non-empty, prepend it to the existing list
-        if len(kid_maps.keys()) > 0: _maps.insert(0, kid_maps)
+        if len(kid_maps.keys()) > 0:
+            _maps.insert(0, kid_maps)
 
         self._maps = _maps
 
@@ -174,9 +178,9 @@ class ChainMapTree(Mapping):
                 first_keys.append(k)
             else:
                 break
-        keys_str = ', '.join(first_keys)
+        keys_str = ", ".join(first_keys)
         if i >= self._max_repr_keys:
-            keys_str += ', ...'
+            keys_str += ", ..."
         return keys_str
 
     def to_dict(self):

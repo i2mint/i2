@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 
 # from configparser import ConfigParser
@@ -112,3 +113,8 @@ if setup_kwargs['name'] != containing_folder_name:
 ##########################################################################################
 # Okay... set it up alright!
 my_setup(**setup_kwargs)
+=======
+from setuptools import setup
+
+setup()  # Note: Everything should be in the local setup.cfg
+>>>>>>> a5f38f23fbec67f94498ab7d5f3d14a40b220b80

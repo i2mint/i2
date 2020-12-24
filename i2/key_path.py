@@ -21,7 +21,7 @@ class NoDefault:
 NO_DFLT = NoDefault()
 
 
-def flatten_dict(d, sep=None, prefix=''):
+def flatten_dict(d, sep=None, prefix=""):
     """
     Computes a "flat" dict from a nested one. A flat dict's keys are the paths of the input dict.
     These paths will be expressed as tuples of the original keys by defaults.
@@ -52,7 +52,7 @@ def flatten_dict(d, sep=None, prefix=''):
     return kp.flat_dict()
 
 
-def rollout_dict(d, sep=None, prefix=''):
+def rollout_dict(d, sep=None, prefix=""):
     """
     Get the nested path of a flat (key path) dict. This is the inverse of flatten_dict.
 
@@ -140,7 +140,13 @@ class KeyPathMap(MutableMapping):
     {'a': {'b': {'c': 'hi world!'}}}
     """
 
-    def __init__(self, store=dict, key_type: type = None, node_type: type = None, auto_node_writes=False):
+    def __init__(
+        self,
+        store=dict,
+        key_type: type = None,
+        node_type: type = None,
+        auto_node_writes=False,
+    ):
         """
         Initialize a KeyPathMap.
         :param store: Your mapping, or the type of your mapping.
@@ -354,14 +360,26 @@ class StrKeyPath(KeyPathMap):
     >>>
     """
 
-    def __init__(self, store=dict, key_type: type = None, node_type: type = None, auto_node_writes=False,
-                 sep: str = '.', prefix: str = ''):
+    def __init__(
+        self,
+        store=dict,
+        key_type: type = None,
+        node_type: type = None,
+        auto_node_writes=False,
+        sep: str = ".",
+        prefix: str = "",
+    ):
         prefix_length = len(prefix)
         self.sep = sep
         self.prefix = prefix
         self._id_of_key = lambda k: tuple(k[prefix_length:].split(sep))
         self._key_of_id = lambda _id: prefix + sep.join(_id)
-        super().__init__(store=store, key_type=key_type, node_type=node_type, auto_node_writes=auto_node_writes)
+        super().__init__(
+            store=store,
+            key_type=key_type,
+            node_type=node_type,
+            auto_node_writes=auto_node_writes,
+        )
 
     def __getitem__(self, k):
         return super().__getitem__(self._id_of_key(k))
@@ -379,7 +397,9 @@ class StrKeyPath(KeyPathMap):
         yield from ((self._key_of_id(_id), v) for _id, v in super().items())
 
     def rollout(self, d):
-        target = self.__class__(sep=self.sep, prefix=self.prefix, auto_node_writes=True)
+        target = self.__class__(
+            sep=self.sep, prefix=self.prefix, auto_node_writes=True
+        )
         for k, v in d.items():
             target[k] = v
         return target.store
@@ -392,7 +412,9 @@ class KeyPathTrans:
     given to the method as input.
     """
 
-    def __init__(self, sep: str = '.', node_type: type = dict, mk_new_node=None):
+    def __init__(
+        self, sep: str = ".", node_type: type = dict, mk_new_node=None
+    ):
         """
 
         :param sep:
@@ -520,7 +542,14 @@ class KeyPathTrans:
                 d[first_key] = self.node_type()
                 self.setitem_recursive(d[first_key], key_path[1:], val)
 
-    def extract_key_paths(self, d, key_paths, field_naming='full', use_default=False, default_val=None):
+    def extract_key_paths(
+        self,
+        d,
+        key_paths,
+        field_naming="full",
+        use_default=False,
+        default_val=None,
+    ):
         """
         getting with a key list or "."-separated string
         :param d: dict-like
@@ -567,7 +596,7 @@ class KeyPathTrans:
             else:
                 field = self.sep.join(key_path)
 
-            if field_naming == 'leaf':
+            if field_naming == "leaf":
                 field = key_path[-1]
             else:
                 field = field

@@ -1,33 +1,34 @@
 import inspect
 from collections import defaultdict
 
+
 class NoDefault(object):
     def __repr__(self):
-        return 'no_default'
+        return "no_default"
 
 
 no_default = NoDefault()
 
-NO_NAME = '_no_name'
+NO_NAME = "_no_name"
 
 valid_types = [str, dict, list, float, int, bool]
 
 types_map = {
-    str: 'string',
-    dict: 'object',
-    list: 'array',
-    float: 'float',
-    int: 'int',
-    bool: 'boolean',
-    '{}': '{}',
-    None: '{}'
+    str: "string",
+    dict: "object",
+    list: "array",
+    float: "float",
+    int: "int",
+    bool: "boolean",
+    "{}": "{}",
+    None: "{}",
 }
 
 
 def name_of_obj(o):
-    if hasattr(o, '__name__'):
+    if hasattr(o, "__name__"):
         return o.__name__
-    elif hasattr(o, '__class__'):
+    elif hasattr(o, "__class__"):
         return name_of_obj(o.__class__)
     else:
         return NO_NAME
@@ -39,22 +40,22 @@ def parse_mint_doc(doc: str) -> dict:
     DESCRIPTION = 0
     PARAMS = 1
     RETURN = 2
-    split_doc = doc.split('\n')
-    summary = ''
+    split_doc = doc.split("\n")
+    summary = ""
     description_lines = []
     inputs = defaultdict(dict)
     return_value = {}
     tags = []
     reading = DESCRIPTION
-    cur_item_name = ''
+    cur_item_name = ""
     for line in split_doc:
         line = line.strip()
-        if line.startswith(':param'):
+        if line.startswith(":param"):
             reading = PARAMS
-            split_line = line.split(':')
+            split_line = line.split(":")
             param_def = split_line[1]
-            split_param_def = param_def.split(' ')
-            param_name = ''
+            split_param_def = param_def.split(" ")
+            param_name = ""
             param_type = None
             if len(split_param_def) >= 3:
                 param_type = split_param_def[1]
@@ -64,32 +65,34 @@ def parse_mint_doc(doc: str) -> dict:
                     param_type = eval(param_type)
                     assert param_type in valid_types
                 except Exception:
-                    param_type = '{}'
+                    param_type = "{}"
             elif len(split_param_def) == 2:
                 param_name = split_param_def[1]
             if param_name:
                 cur_item_name = param_name
                 if param_type is not None:
-                    inputs[param_name] = {'type': param_type}
+                    inputs[param_name] = {"type": param_type}
                 if param_name in inputs:
-                    inputs[param_name]['description'] = ':'.join(split_line[2:]) \
-                        if len(split_line) > 2 else ''
-        elif line.startswith(':return'):
+                    inputs[param_name]["description"] = (
+                        ":".join(split_line[2:]) if len(split_line) > 2 else ""
+                    )
+        elif line.startswith(":return"):
             reading = RETURN
-            split_line = line.split(':')
+            split_line = line.split(":")
             return_type = split_line[1]
             try:
                 assert len(return_type) <= 5
                 return_type = eval(return_type)
                 assert return_type in valid_types
             except Exception:
-                return_type = '{}'
-            return_value = {'type': return_type}
-            return_value['description'] = ':'.join(split_line[2:]) \
-                if len(split_line) > 2 else ''
-        elif line.startswith(':tags'):
-            split_line = line.split(':')
-            tags = split_line[1].replace(' ', '').split(',')
+                return_type = "{}"
+            return_value = {"type": return_type}
+            return_value["description"] = (
+                ":".join(split_line[2:]) if len(split_line) > 2 else ""
+            )
+        elif line.startswith(":tags"):
+            split_line = line.split(":")
+            tags = split_line[1].replace(" ", "").split(",")
         else:
             if reading == DESCRIPTION:
                 if not summary:
@@ -97,17 +100,17 @@ def parse_mint_doc(doc: str) -> dict:
                 else:
                     description_lines.append(line)
             elif reading == PARAMS:
-                if 'description' not in inputs[cur_item_name]:
-                    inputs[cur_item_name]['description'] = ''
-                inputs[cur_item_name]['description'] += ' ' + line
+                if "description" not in inputs[cur_item_name]:
+                    inputs[cur_item_name]["description"] = ""
+                inputs[cur_item_name]["description"] += " " + line
             elif reading == RETURN:
-                return_value['description'] += ' ' + line
+                return_value["description"] += " " + line
     return {
-        'description': ' '.join(description_lines),
-        'inputs': dict(inputs),
-        'return': return_value,
-        'summary': summary,
-        'tags': tags,
+        "description": " ".join(description_lines),
+        "inputs": dict(inputs),
+        "return": return_value,
+        "summary": summary,
+        "tags": tags,
     }
 
 
@@ -135,19 +138,30 @@ def mint_of_callable(f):
     {'arg1': {}, 'arg2': {'annot': <class 'int'>}}
     >>> mint['output']
     {'annot': <class 'str'>}
-    >>> mint
+    >>> assert mint.pop('module').endswith('simple_pymint')  # popping off because module is relative so not consistent
+    >>> from pprint import pprint
+    >>> pprint(mint)
+    {'description': '',
+     'doc': None,
+     'input': {'arg1': {}, 'arg2': {'annot': <class 'int'>}},
+     'name': 'test_callable',
+     'output': {'annot': <class 'str'>},
+     'summary': '',
+     'tags': []}
     """
     raw_doc = inspect.getdoc(f)
     parsed_doc = parse_mint_doc(raw_doc)
-    doc_inputs = parsed_doc['inputs']
-    doc_return = parsed_doc['return']
+    doc_inputs = parsed_doc["inputs"]
+    doc_return = parsed_doc["return"]
     mint = {
-        'name': name_of_obj(f),  # TODO: Better NO_NAME or just not the name field?
-        'module': f.__module__,
-        'doc': raw_doc,
-        'description': parsed_doc['description'] or '',
-        'summary': parsed_doc['summary'],
-        'tags': parsed_doc['tags']
+        "name": name_of_obj(
+            f
+        ),  # TODO: Better NO_NAME or just not the name field?
+        "module": f.__module__,
+        "doc": raw_doc,
+        "description": parsed_doc["description"] or "",
+        "summary": parsed_doc["summary"],
+        "tags": parsed_doc["tags"],
     }
 
     argspec = inspect.getfullargspec(f)
@@ -155,26 +169,28 @@ def mint_of_callable(f):
     input_specs = {}
     args = argspec.args or []
     defaults = argspec.defaults or []
-    for arg_name, dflt in zip(args, [no_default] * (len(args) - len(defaults)) + list(defaults)):
+    for arg_name, dflt in zip(
+        args, [no_default] * (len(args) - len(defaults)) + list(defaults)
+    ):
         input_specs[arg_name] = {}
         if dflt is not no_default:
-            input_specs[arg_name]['default'] = dflt
+            input_specs[arg_name]["default"] = dflt
         if arg_name in doc_inputs:
             doc_input_arg = doc_inputs[arg_name]
-            input_specs[arg_name]['doc_type'] = doc_input_arg['type']
-            input_specs[arg_name]['description'] = doc_input_arg['description']
+            input_specs[arg_name]["doc_type"] = doc_input_arg["type"]
+            input_specs[arg_name]["description"] = doc_input_arg["description"]
         if arg_name in annotations:
-            input_specs[arg_name]['annot'] = annotations[arg_name]
+            input_specs[arg_name]["annot"] = annotations[arg_name]
         # if input_specs[arg_name].get('type', None):  # NOTE: Note the pymint concern to convert to string
         #     input_specs[arg_name]['type'] = types_map.get(input_specs[arg_name]['type'], '{}')
 
-    mint['input'] = input_specs
+    mint["input"] = input_specs
 
-    mint['output'] = {}
+    mint["output"] = {}
     if doc_return:
-        mint['output'] = doc_return
-    if 'return' in annotations:
-        mint['output']['annot'] = annotations['return']
+        mint["output"] = doc_return
+    if "return" in annotations:
+        mint["output"]["annot"] = annotations["return"]
 
     return mint
 
@@ -186,9 +202,8 @@ def mint_of_callable(f):
         (eg argument a1 type is a dict with expected properties p1, p2, p3)
 """
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from pprint import pprint
-
 
     def _test_callable(arg1, arg2: int) -> str:
         """
@@ -196,11 +211,10 @@ if __name__ == '__main__':
         :param str arg1: A string
         :params float arg2: A number
         """
-        print('calling!')
+        print("calling!")
         print(arg1)
         print(arg2)
-        return 'returned'
-
+        return "returned"
 
     minted = mint_of_callable(_test_callable)
     print("mint of _test_callable")

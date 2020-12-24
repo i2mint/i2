@@ -14,6 +14,7 @@ class RoutingNode:
 @dataclass
 class FinalNode(RoutingNode):
     """A RoutingNode that is final. It yields (both with call and iter) it's single `.val` attribute."""
+
     val: Any
 
     def __call__(self, obj=None):
@@ -29,6 +30,7 @@ class FinalNode(RoutingNode):
 @dataclass
 class CondNode(RoutingNode):
     """A RoutingNode that implements the if/then (no else) logic"""
+
     cond: Callable[[Any], bool]
     then: Any
 
@@ -59,6 +61,7 @@ class RoutingForest(RoutingNode):
     >>> assert list(rf(10)) == ['More than a digit', 'could be seen as a float']
     >>> assert list(rf(11)) == ['More than a digit', "That's odd!", 'could be seen as a float']
     """
+
     cond_nodes: Iterable
 
     def __call__(self, obj):
@@ -76,7 +79,8 @@ FeatCondThens = Iterable[Tuple[Callable, Callable]]
 @dataclass
 class FeatCondNode(RoutingNode):
     """A RoutingNode that yields multiple routes, one for each of several conditions met,
-    where the condition is computed implements computes a feature of the obj and according to a """
+    where the condition is computed implements computes a feature of the obj and according to a"""
+
     feat: Callable
     feat_cond_thens: FeatCondThens
 
@@ -90,7 +94,7 @@ class FeatCondNode(RoutingNode):
         yield from chain(*self.feat_cond_thens.values())
 
 
-NoDefault = type('NoDefault', (object,), {})
+NoDefault = type("NoDefault", (object,), {})
 NO_DFLT = NoDefault()
 
 
@@ -119,6 +123,7 @@ class SwitchCaseNode(RoutingNode):
     >>> assert(list(rf(8)) == ['default_mod_5', 'even'])
     >>> assert(list(rf(10)) == ['zero_mod_5', 'even'])
     """
+
     switch: Callable
     cases: Mapping
     default: Any = NO_DFLT
@@ -144,12 +149,13 @@ def wrap_leafs_with_final_node(x):
             yield FinalNode(xx)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-    print("##########################################################################################################")
+    print(
+        "##########################################################################################################"
+    )
 
     import inspect
-
 
     def could_be_int(obj):
         if isinstance(obj, int):
@@ -164,7 +170,6 @@ if __name__ == '__main__':
             print(f"{inspect.currentframe().f_code.co_name}")
         return b
 
-
     def could_be_float(obj):
         if isinstance(obj, float):
             b = True
@@ -178,39 +183,73 @@ if __name__ == '__main__':
             print(f"{inspect.currentframe().f_code.co_name}")
         return b
 
+    print(
+        could_be_int(30),
+        could_be_int(30.3),
+        could_be_int("30.2"),
+        could_be_int("nope"),
+    )
+    print(
+        could_be_float(30),
+        could_be_float(30.3),
+        could_be_float("30.2"),
+        could_be_float("nope"),
+    )
+    assert could_be_int("30.2") is False
+    assert could_be_float("30.2") is True
 
-    print(could_be_int(30), could_be_int(30.3), could_be_int('30.2'), could_be_int('nope'))
-    print(could_be_float(30), could_be_float(30.3), could_be_float('30.2'), could_be_float('nope'))
-    assert could_be_int('30.2') is False
-    assert could_be_float('30.2') is True
+    st = RoutingForest(
+        [
+            CondNode(
+                cond=could_be_int,
+                then=RoutingForest(
+                    [
+                        CondNode(
+                            cond=lambda x: int(x) >= 10,
+                            then=FinalNode("More than a digit"),
+                        ),
+                        CondNode(
+                            cond=lambda x: (int(x) % 2) == 1,
+                            then=FinalNode("That's odd!"),
+                        ),
+                    ]
+                ),
+            ),
+            CondNode(
+                cond=could_be_float, then=FinalNode("could be seen as a float")
+            ),
+        ]
+    )
+    assert list(st("nothing I can do with that")) == []
+    assert list(st(8)) == ["could be seen as a float"]
+    assert list(st(9)) == ["That's odd!", "could be seen as a float"]
+    assert list(st(10)) == ["More than a digit", "could be seen as a float"]
+    assert list(st(11)) == [
+        "More than a digit",
+        "That's odd!",
+        "could be seen as a float",
+    ]
 
-    st = RoutingForest([
-        CondNode(cond=could_be_int,
-                 then=RoutingForest([
-                     CondNode(cond=lambda x: int(x) >= 10, then=FinalNode('More than a digit')),
-                     CondNode(cond=lambda x: (int(x) % 2) == 1, then=FinalNode("That's odd!"))])
-                 ),
-        CondNode(cond=could_be_float,
-                 then=FinalNode('could be seen as a float')),
-    ])
-    assert list(st('nothing I can do with that')) == []
-    assert list(st(8)) == ['could be seen as a float']
-    assert list(st(9)) == ["That's odd!", 'could be seen as a float']
-    assert list(st(10)) == ['More than a digit', 'could be seen as a float']
-    assert list(st(11)) == ['More than a digit', "That's odd!", 'could be seen as a float']
+    print(
+        "### RoutingForest ########################################################################################"
+    )
+    rf = RoutingForest(
+        [
+            SwitchCaseNode(
+                switch=lambda x: x % 5,
+                cases={0: FinalNode("zero_mod_5"), 1: FinalNode("one_mod_5")},
+                default=FinalNode("default_mod_5"),
+            ),
+            SwitchCaseNode(
+                switch=lambda x: x % 2,
+                cases={0: FinalNode("even"), 1: FinalNode("odd")},
+                default=FinalNode("that is not an int"),
+            ),
+        ]
+    )
 
-    print("### RoutingForest ########################################################################################")
-    rf = RoutingForest([
-        SwitchCaseNode(switch=lambda x: x % 5,
-                       cases={0: FinalNode('zero_mod_5'), 1: FinalNode('one_mod_5')},
-                       default=FinalNode('default_mod_5')),
-        SwitchCaseNode(switch=lambda x: x % 2,
-                       cases={0: FinalNode('even'), 1: FinalNode('odd')},
-                       default=FinalNode('that is not an int')),
-    ])
-
-    assert list(rf(5)) == ['zero_mod_5', 'odd']
-    assert list(rf(6)) == ['one_mod_5', 'even']
-    assert list(rf(7)) == ['default_mod_5', 'odd']
-    assert list(rf(8)) == ['default_mod_5', 'even']
-    assert list(rf(10)) == ['zero_mod_5', 'even']
+    assert list(rf(5)) == ["zero_mod_5", "odd"]
+    assert list(rf(6)) == ["one_mod_5", "even"]
+    assert list(rf(7)) == ["default_mod_5", "odd"]
+    assert list(rf(8)) == ["default_mod_5", "even"]
+    assert list(rf(10)) == ["zero_mod_5", "even"]

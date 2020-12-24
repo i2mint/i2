@@ -26,6 +26,7 @@ class ModuleNotFoundIgnore:
     """Context manager meant to ignore import errors.
     The use case in mind is when we want to condition some code on the existence of some package.
     """
+
     def __enter__(self):
         pass
 

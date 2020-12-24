@@ -59,13 +59,15 @@ def sum_of_args(*args, **kwargs):
     return {k: t + v for k, v in kwargs.items()}
 
 
-def test_func_1(any_var,
-                a_list: list,
-                a_dict: dict,
-                an_int: int,
-                a_float: float = 3.14,
-                a_bool=True,
-                a_str: str = None) -> str:
+def test_func_1(
+    any_var,
+    a_list: list,
+    a_dict: dict,
+    an_int: int,
+    a_float: float = 3.14,
+    a_bool=True,
+    a_str: str = None,
+) -> str:
     """
     This is the first line,
     continued on the next.
@@ -88,7 +90,7 @@ def test_func_1(any_var,
     'test_func_1 returned'
     """
     # This is the first comment
-    return 'test_func_1 returned'  # this is a comment on the same line as some code
+    return "test_func_1 returned"  # this is a comment on the same line as some code
 
 
 class SomeClass(object):
@@ -99,12 +101,14 @@ class SomeOtherClass(object):
     pass
 
 
-def test_func_2(any_var,
-                an_int: int,
-                a_float=0.1,
-                a_tuple: tuple = (),
-                an_obj: SomeClass = SomeClass(),
-                another_obj=SomeOtherClass()):
+def test_func_2(
+    any_var,
+    an_int: int,
+    a_float=0.1,
+    a_tuple: tuple = (),
+    an_obj: SomeClass = SomeClass(),
+    another_obj=SomeOtherClass(),
+):
     """
     This is the first line,
     continued on the next.
@@ -163,8 +167,8 @@ class AClass(object):
         return self.a * x + self.b
 
 
-class TestObj():
-    constarg: str = ''
+class TestObj:
+    constarg: str = ""
 
     def __init__(self, constarg: str):
         print(constarg)
@@ -174,9 +178,9 @@ class TestObj():
         print(methodarg1)
         return methodarg1 + 1
 
-    def methodstr(self, methodarg2: str = 'hi') -> str:
+    def methodstr(self, methodarg2: str = "hi") -> str:
         print(methodarg2)
-        return methodarg2 + ' test ' + self.constarg
+        return methodarg2 + " test " + self.constarg
 
 
 from i2.errors import ModuleNotFoundIgnore
@@ -186,10 +190,10 @@ with ModuleNotFoundIgnore():
     from numpy import ndarray, matrix
     from pandas import DataFrame, Series
 
-
     def a_func_with_df_in_and_sr_out(df: DataFrame) -> Series:
         return df.sum()
 
-
-    def a_func_with_np_and_df(df: DataFrame, sr: Series, arr: ndarray, mat: matrix) -> matrix:
+    def a_func_with_np_and_df(
+        df: DataFrame, sr: Series, arr: ndarray, mat: matrix
+    ) -> matrix:
         return (df.sum().sum() + sr.sum() + arr.sum()) * mat

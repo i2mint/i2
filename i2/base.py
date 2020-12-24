@@ -5,10 +5,12 @@ See also:
     py2mint/py2mint/alternative_approaches.py
 """
 import inspect
-from inspect import _empty as inspect_empty, signature
+from inspect import signature, Parameter
 from typing import Mapping
 
 from i2.util import lazyprop, FrozenDict, get_function_body
+
+inspect_empty = Parameter.empty
 
 
 class NotFoundType:
@@ -16,13 +18,13 @@ class NotFoundType:
         return False
 
     def __repr__(self):
-        return 'NotFound'
+        return "NotFound"
 
 
 # Note, if the "empty" classes the are used to check if an object is empty are not singletons, could lead to bugs
 # TODO: Look into metaprogramming tricks for this.
 not_found = NotFoundType()
-no_name = type('NoName', (NotFoundType,), {})()
+no_name = type("NoName", (NotFoundType,), {})()
 inspect_is_empty = inspect._empty
 
 
@@ -34,7 +36,9 @@ def is_not_empty(obj):
 
 
 def _is_property(attr_name, attr_val):
-    return not attr_name.startswith('_') and isinstance(attr_val, (property, lazyprop))
+    return not attr_name.startswith("_") and isinstance(
+        attr_val, (property, lazyprop)
+    )
 
 
 def _property_names_of(obj):
@@ -47,9 +51,9 @@ def _property_names_of(obj):
 
 
 def name_of_obj(o):
-    if hasattr(o, '__name__'):
+    if hasattr(o, "__name__"):
         return o.__name__
-    elif hasattr(o, '__class__'):
+    elif hasattr(o, "__class__"):
         return name_of_obj(o.__class__)
     else:
         return no_name
@@ -76,7 +80,7 @@ class KeyFromAttr:
 
 
 class _ParameterMintLazy:  # Note: Experimental
-    _attrs = ['name', 'default', 'annotation']
+    _attrs = ["name", "default", "annotation"]
 
     #     find = DelegatedAttribute('_params', '__getattribute__')
     #     __getattribute__ = DelegatedAttribute('_params', '__getattribute__')
@@ -110,10 +114,10 @@ class _ParameterMintLazy:  # Note: Experimental
 
 
 class ParameterMint:
-    _attrs = ['name', 'kind', 'default', 'annotation']
+    _attrs = ["name", "kind", "default", "annotation"]
 
     def __init__(self, param, position=None):
-        if hasattr(param, '__getitem__'):
+        if hasattr(param, "__getitem__"):
             param = AttrFromKey(param)
 
         for attr in self._attrs:
@@ -140,8 +144,8 @@ class ParameterMint:
             v = getattr(self, k)
             if v is not inspect_empty:
                 yield k, v
-        if hasattr(self, 'position'):
-            yield 'position', self.position
+        if hasattr(self, "position"):
+            yield "position", self.position
 
     def __getstate__(self):
         return {k: v for k, v in self.items()}
@@ -149,7 +153,7 @@ class ParameterMint:
     def __repr__(self):
         d = dict()
         for k, v in self.items():
-            if k == 'kind':
+            if k == "kind":
                 v = v.name
             d[k] = v
         return str(d)
@@ -198,6 +202,7 @@ class ParametersMint(Mapping):
      'depth': {'name': 'depth', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': None, 'position': 4},
      'indent': {'name': 'indent', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2},
      'object': {'name': 'object', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},
+     'sort_dicts': {'name': 'sort_dicts', 'kind': 'KEYWORD_ONLY', 'default': True, 'position': 6},
      'stream': {'name': 'stream', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': None, 'position': 1},
      'width': {'name': 'width', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 80, 'position': 3}}
     >>> pprint(dict(ParametersMint(inspect.signature(ParametersMint).parameters)))
@@ -259,7 +264,7 @@ class Mint(Mapping):
     ...     return my_arg + 10
     >>> mint = Mint(f)
     >>> mint.obj_name, mint.type_name, mint.module_name, mint.obj_name
-    ('f', 'function', 'base', 'f')
+    ('f', 'function', 'i2.base', 'f')
     >>> # Mint of a module
     >>> import os as myos
     >>> mint = Mint(myos)
@@ -282,7 +287,9 @@ class Mint(Mapping):
             self_type = type(self)
             for attr in attrs:
                 if not _is_property(attr, getattr(self_type, attr, None)):
-                    raise AttributeError(f"{self.__class__} doesn't have attribute: {attr}")
+                    raise AttributeError(
+                        f"{self.__class__} doesn't have attribute: {attr}"
+                    )
         self._attrs = attrs
 
     def __len__(self):
@@ -316,11 +323,11 @@ class Mint(Mapping):
 
     @lazyprop
     def obj_name(self):
-        return getattr(self._obj, '__name__', not_found)
+        return getattr(self._obj, "__name__", not_found)
 
     @lazyprop
     def type_name(self):
-        return getattr(type(self._obj), '__name__', not_found)
+        return getattr(type(self._obj), "__name__", not_found)
 
     @lazyprop
     def module(self):
@@ -328,11 +335,10 @@ class Mint(Mapping):
 
     @lazyprop
     def module_name(self):
-        return getattr(self.module, '__name__', not_found)
+        return getattr(self.module, "__name__", not_found)
 
 
 class MintOfCallableMixin:
-
     @lazyprop
     def _signature(self):
         """ Here's some doc """
@@ -358,24 +364,25 @@ class MintOfCallableMixin:
     def default_of(self):
         d = dict()
         for k, v in self.parameters.items():
-            if 'default' in v:
-                d[k] = v['default']
+            if "default" in v:
+                d[k] = v["default"]
         return d
 
     @lazyprop
     def annotation_of(self):
         d = dict()
         for k, v in self.parameters.items():
-            if 'annotation' in v:
-                d[k] = v['annotation']
+            if "annotation" in v:
+                d[k] = v["annotation"]
         return d
 
 
 class MintOfDocMixin:
     @lazyprop
     def _parsed_doc(self):
-        return 'Not yet implemented (correctly)'
+        return "Not yet implemented (correctly)"
         from i2.scrap import parse_mint_doc
+
         # return parse_mint_doc(self.doc_string)
 
 
@@ -395,7 +402,7 @@ class MintOfCallable(Mint, MintOfCallableMixin, MintOfDocMixin):
     >>> mint.type_name
     'function'
     >>> mint.module_name
-    'base'
+    'i2.base'
     >>> mint.parameters.my_arg
     {'name': 'my_arg', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 7, 'annotation': <class 'int'>, 'position': 0}
     >>> mint.doc_string
@@ -410,8 +417,8 @@ class MintOfCallable(Mint, MintOfCallableMixin, MintOfDocMixin):
      'c': {'name': 'c', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2},
      'd': {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': <class 'int'>, 'position': 3}}
     """
-    pass
 
+    pass
 
 
 # class FunctionBuilderMint(Mint):
@@ -468,4 +475,3 @@ class MintOfCallable(Mint, MintOfCallableMixin, MintOfDocMixin):
 #         function *body*. Values less than 1 will result in an error.
 #     dict (dict): Any other attributes which should be added to the
 #         functions compiled with this FunctionBuilder."""
-
