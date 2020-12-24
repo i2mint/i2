@@ -35,11 +35,7 @@ def postprocess_ini_section_items(
             v = splitter_re.split(v[1:])
             v = [vv.strip() for vv in v if vv.strip()]
             v = [
-<<<<<<< HEAD
-                vv for vv in v if not vv.startswith('#')
-=======
                 vv for vv in v if not vv.startswith("#")
->>>>>>> a5f38f23fbec67f94498ab7d5f3d14a40b220b80
             ]  # remove commented lines
         yield k, v
 
@@ -109,11 +105,7 @@ def increment_version(version_str):
 
 
 DLFT_PYPI_PACKAGE_JSON_URL_TEMPLATE = (
-<<<<<<< HEAD
-    'https://pypi.python.org/pypi/{package}/json'
-=======
     "https://pypi.python.org/pypi/{package}/json"
->>>>>>> a5f38f23fbec67f94498ab7d5f3d14a40b220b80
 )
 
 
@@ -141,11 +133,7 @@ def current_pypi_version(
             releases = t.get("releases", [])
             if releases:
                 return sorted(
-<<<<<<< HEAD
-                    releases, key=lambda r: tuple(map(int, r.split('.')))
-=======
                     releases, key=lambda r: tuple(map(int, r.split(".")))
->>>>>>> a5f38f23fbec67f94498ab7d5f3d14a40b220b80
                 )[-1]
         else:
             raise ValueError(f'response code was {r.code}')
@@ -158,11 +146,7 @@ def current_pypi_version(
 def next_version_for_package(
     package: str,
     url_template=DLFT_PYPI_PACKAGE_JSON_URL_TEMPLATE,
-<<<<<<< HEAD
-    version_if_current_version_none='0.0.1',
-=======
     version_if_current_version_none="0.0.1",
->>>>>>> a5f38f23fbec67f94498ab7d5f3d14a40b220b80
 ) -> str:
     current_version = current_pypi_version(package, url_template)
     if current_version is not None:
@@ -176,19 +160,11 @@ def my_setup(**setup_kwargs):
     import json
 
     print(
-<<<<<<< HEAD
-        'Setup params -------------------------------------------------------'
-    )
-    print(json.dumps(setup_kwargs, indent=2))
-    print(
-        '--------------------------------------------------------------------'
-=======
         "Setup params -------------------------------------------------------"
     )
     print(json.dumps(setup_kwargs, indent=2))
     print(
         "--------------------------------------------------------------------"
->>>>>>> a5f38f23fbec67f94498ab7d5f3d14a40b220b80
     )
     setup(**setup_kwargs)
 
@@ -214,19 +190,11 @@ def ujoin(*args):
     ''
     """
     if len(args) == 0 or len(args[0]) == 0:
-<<<<<<< HEAD
-        return ''
-    return (
-        (args[0][0] == '/') * '/'  # prepend slash if first arg starts with it
-        + '/'.join(x[(x[0] == '/') : (len(x) - (x[-1] == '/'))] for x in args)
-        + (args[-1][-1] == '/') * '/'
-=======
         return ""
     return (
         (args[0][0] == "/") * "/"  # prepend slash if first arg starts with it
         + "/".join(x[(x[0] == "/") : (len(x) - (x[-1] == "/"))] for x in args)
         + (args[-1][-1] == "/") * "/"
->>>>>>> a5f38f23fbec67f94498ab7d5f3d14a40b220b80
     )  # append slash if last arg ends with it
 
 
@@ -336,15 +304,9 @@ def format_str_vals_of_dict(d, *, max_formatting_loops=10, **kwargs):
             break
     else:
         raise ValueError(
-<<<<<<< HEAD
-            f'There are still some unformatted fields, '
-            f'but I reached my max {max_formatting_loops} allowed loops. '
-            + f'Those fields are: {set(_fields_to_format(d)) - (set(d) | set(kwargs))}'
-=======
             f"There are still some unformatted fields, "
             f"but I reached my max {max_formatting_loops} allowed loops. "
             + f"Those fields are: {set(_fields_to_format(d)) - (set(d) | set(kwargs))}"
->>>>>>> a5f38f23fbec67f94498ab7d5f3d14a40b220b80
         )
 
     return d
