@@ -96,8 +96,8 @@ def signature_to_dict(sig: Signature):
     # warn("Use Sig instead", DeprecationWarning)
     # return Sig(sig).to_simple_signature()
     return {
-        'parameters': sig.parameters,
-        'return_annotation': sig.return_annotation,
+        "parameters": sig.parameters,
+        "return_annotation": sig.return_annotation,
     }
 
 
@@ -106,9 +106,9 @@ def _merge_sig_dicts(sig1_dict, sig2_dict):
     If sig1_dict and sig2_dict both define a parameter or return annotation, sig2_dict decides on what the output is.
     """
     return {
-        'parameters': dict(sig1_dict['parameters'], **sig2_dict['parameters']),
-        'return_annotation': sig2_dict['return_annotation']
-        or sig1_dict['return_annotation'],
+        "parameters": dict(sig1_dict["parameters"], **sig2_dict["parameters"]),
+        "return_annotation": sig2_dict["return_annotation"]
+        or sig1_dict["return_annotation"],
     }
 
 
@@ -134,13 +134,13 @@ def _merge_signatures(sig1, sig2):
     # return Sig(**_merge_sig_dicts(sig1_dict, Sig(sig2).to_simple_dict()))
     sig1_dict = signature_to_dict(sig1)
     # remove variadic kinds from sig1
-    sig1_dict['parameters'] = {
+    sig1_dict["parameters"] = {
         k: v
-        for k, v in sig1_dict['parameters'].items()
+        for k, v in sig1_dict["parameters"].items()
         if v.kind not in var_param_kinds
     }
     kws = _merge_sig_dicts(sig1_dict, signature_to_dict(sig2))
-    kws['obj'] = kws.pop('parameters')
+    kws["obj"] = kws.pop("parameters")
     return Sig(**kws).to_simple_signature()
 
 
@@ -192,7 +192,7 @@ def _merged_signatures_of_func_list(funcs, return_annotation: Any = empty):
 
 # TODO: will we need more options for the priority argument? Like position?
 def update_signature_with_signatures_from_funcs(
-    *funcs, priority: str = 'last'
+    *funcs, priority: str = "last"
 ):
     """Make a decorator that will merge the signatures of given funcs to the signature of the wrapped func.
     By default, the funcs signatures will be placed last, but can be given priority by asking priority = 'first'
@@ -218,9 +218,9 @@ def update_signature_with_signatures_from_funcs(
     <Signature (b: int = 0, d: str = 'hi', a='a', c=None, y=10)>
     """
     if not isinstance(priority, str):
-        raise TypeError('priority should be a string')
+        raise TypeError("priority should be a string")
 
-    if priority == 'last':
+    if priority == "last":
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(func, *funcs).to_simple_signature()
@@ -229,7 +229,7 @@ def update_signature_with_signatures_from_funcs(
             )
             return func
 
-    elif priority == 'first':
+    elif priority == "first":
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(*funcs, func).to_simple_signature()

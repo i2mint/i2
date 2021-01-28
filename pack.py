@@ -7,8 +7,8 @@ from typing import Union, Mapping, Iterable, Generator
 from configparser import ConfigParser
 import os
 
-DFLT_CONFIG_FILE = 'setup.cfg'
-DFLT_CONFIG_SECTION = 'metadata'
+DFLT_CONFIG_FILE = "setup.cfg"
+DFLT_CONFIG_SECTION = "metadata"
 
 
 # TODO: postprocess_ini_section_items and preprocess_ini_section_items: Add comma separated possibility?
@@ -27,15 +27,15 @@ def postprocess_ini_section_items(
     {'name': 'epythet', 'keywords': ['documentation', 'packaging', 'publishing']}
 
     """
-    splitter_re = re.compile('[\n\r\t]+')
+    splitter_re = re.compile("[\n\r\t]+")
     if isinstance(items, Mapping):
         items = items.items()
     for k, v in items:
-        if v.startswith('\n'):
+        if v.startswith("\n"):
             v = splitter_re.split(v[1:])
             v = [vv.strip() for vv in v if vv.strip()]
             v = [
-                vv for vv in v if not vv.startswith('#')
+                vv for vv in v if not vv.startswith("#")
             ]  # remove commented lines
         yield k, v
 
@@ -59,7 +59,7 @@ def preprocess_ini_section_items(items: Union[Mapping, Iterable]) -> Generator:
         items = items.items()
     for k, v in items:
         if isinstance(v, list):
-            v = '\n\t' + '\n\t'.join(v)
+            v = "\n\t" + "\n\t".join(v)
         yield k, v
 
 
@@ -69,7 +69,7 @@ def read_configs(
     postproc=postprocess_ini_section_items,
 ):
     c = ConfigParser()
-    c.read_file(open(config_file, 'r'))
+    c.read_file(open(config_file, "r"))
     if section is None:
         d = dict(c)
         if postproc:
@@ -89,9 +89,9 @@ def write_configs(
 ):
     c = ConfigParser()
     if os.path.isfile(config_file):
-        c.read_file(open(config_file, 'r'))
+        c.read_file(open(config_file, "r"))
     c[section] = dict(preproc(configs))
-    with open(config_file, 'w') as fp:
+    with open(config_file, "w") as fp:
         c.write(fp)
 
 
@@ -99,13 +99,13 @@ dflt_formatter = Formatter()
 
 
 def increment_version(version_str):
-    version_nums = list(map(int, version_str.split('.')))
+    version_nums = list(map(int, version_str.split(".")))
     version_nums[-1] += 1
-    return '.'.join(map(str, version_nums))
+    return ".".join(map(str, version_nums))
 
 
 DLFT_PYPI_PACKAGE_JSON_URL_TEMPLATE = (
-    'https://pypi.python.org/pypi/{package}/json'
+    "https://pypi.python.org/pypi/{package}/json"
 )
 
 
@@ -130,13 +130,13 @@ def current_pypi_version(
         r = urllib.request.urlopen(req)
         if r.code == 200:
             t = json.loads(r.read())
-            releases = t.get('releases', [])
+            releases = t.get("releases", [])
             if releases:
                 return sorted(
-                    releases, key=lambda r: tuple(map(int, r.split('.')))
+                    releases, key=lambda r: tuple(map(int, r.split(".")))
                 )[-1]
         else:
-            raise ValueError(f'response code was {r.code}')
+            raise ValueError(f"response code was {r.code}")
     except HTTPError:
         return None  # to indicate (hopefully) that name doesn't exist
     except Exception:
@@ -146,7 +146,7 @@ def current_pypi_version(
 def next_version_for_package(
     package: str,
     url_template=DLFT_PYPI_PACKAGE_JSON_URL_TEMPLATE,
-    version_if_current_version_none='0.0.1',
+    version_if_current_version_none="0.0.1",
 ) -> str:
     current_version = current_pypi_version(package, url_template)
     if current_version is not None:
@@ -160,11 +160,11 @@ def my_setup(**setup_kwargs):
     import json
 
     print(
-        'Setup params -------------------------------------------------------'
+        "Setup params -------------------------------------------------------"
     )
     print(json.dumps(setup_kwargs, indent=2))
     print(
-        '--------------------------------------------------------------------'
+        "--------------------------------------------------------------------"
     )
     setup(**setup_kwargs)
 
@@ -190,11 +190,11 @@ def ujoin(*args):
     ''
     """
     if len(args) == 0 or len(args[0]) == 0:
-        return ''
+        return ""
     return (
-        (args[0][0] == '/') * '/'  # prepend slash if first arg starts with it
-        + '/'.join(x[(x[0] == '/') : (len(x) - (x[-1] == '/'))] for x in args)
-        + (args[-1][-1] == '/') * '/'
+        (args[0][0] == "/") * "/"  # prepend slash if first arg starts with it
+        + "/".join(x[(x[0] == "/") : (len(x) - (x[-1] == "/"))] for x in args)
+        + (args[-1][-1] == "/") * "/"
     )  # append slash if last arg ends with it
 
 
@@ -209,7 +209,7 @@ class PartialFormatter(Formatter):
         try:
             return super().get_value(key, args, kwargs)
         except KeyError:
-            return '{' + key + '}'
+            return "{" + key + "}"
 
     def format_fields_set(self, s):
         return {x[1] for x in self.parse(s) if x[1]}
@@ -304,9 +304,9 @@ def format_str_vals_of_dict(d, *, max_formatting_loops=10, **kwargs):
             break
     else:
         raise ValueError(
-            f'There are still some unformatted fields, '
-            f'but I reached my max {max_formatting_loops} allowed loops. '
-            + f'Those fields are: {set(_fields_to_format(d)) - (set(d) | set(kwargs))}'
+            f"There are still some unformatted fields, "
+            f"but I reached my max {max_formatting_loops} allowed loops. "
+            + f"Those fields are: {set(_fields_to_format(d)) - (set(d) | set(kwargs))}"
         )
 
     return d
