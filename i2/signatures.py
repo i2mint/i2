@@ -7,7 +7,7 @@ _empty = Parameter.empty
 empty = _empty
 
 _ParameterKind = type(
-    Parameter(name="param_kind", kind=Parameter.POSITIONAL_OR_KEYWORD)
+    Parameter(name='param_kind', kind=Parameter.POSITIONAL_OR_KEYWORD)
 )
 ParamsType = Iterable[Parameter]
 ParamsAble = Union[ParamsType, MappingType[str, Parameter], Callable]
@@ -88,7 +88,7 @@ def ensure_param(p):
         return Parameter(name=p, kind=PK)
     elif isinstance(p, Iterable):
         name, *r = p
-        dflt_and_annotation = dict(zip(["default", "annotation"], r))
+        dflt_and_annotation = dict(zip(['default', 'annotation'], r))
         return Parameter(name, PK, **dflt_and_annotation)
     else:
         raise TypeError(f"Don't know how to make {p} into a Parameter object")
@@ -125,7 +125,7 @@ def ensure_params(obj: ParamsAble = None):
         return []
     elif isinstance(obj, Iterable):
         if isinstance(obj, str):
-            obj = {"name": obj}
+            obj = {'name': obj}
         if isinstance(obj, Mapping):
             obj = obj.values()
         obj = list(obj)
@@ -169,7 +169,7 @@ class MissingArgValFor(object):
 def extract_arguments(
     params: ParamsAble,
     *,
-    what_to_do_with_remainding="return",
+    what_to_do_with_remainding='return',
     include_all_when_var_keywords_in_params=False,
     assert_no_missing_position_only_args=False,
     **kwargs,
@@ -290,7 +290,7 @@ def extract_arguments(
     :return: A (param_args, param_kwargs, remaining_kwargs) tuple.
     """
 
-    assert what_to_do_with_remainding in {"return", "ignore", "assert_empty"}
+    assert what_to_do_with_remainding in {'return', 'ignore', 'assert_empty'}
     assert isinstance(include_all_when_var_keywords_in_params, bool)
     assert isinstance(assert_no_missing_position_only_args, bool)
 
@@ -330,26 +330,26 @@ def extract_arguments(
         )
         assert (
             not missing_argnames
-        ), f"There were some missing positional only argnames: {missing_argnames}"
+        ), f'There were some missing positional only argnames: {missing_argnames}'
 
-    if what_to_do_with_remainding == "return":
+    if what_to_do_with_remainding == 'return':
         return param_args, param_kwargs, remaining_kwargs
-    elif what_to_do_with_remainding == "ignore":
+    elif what_to_do_with_remainding == 'ignore':
         return param_args, param_kwargs
-    elif what_to_do_with_remainding == "assert_empty":
+    elif what_to_do_with_remainding == 'assert_empty':
         assert (
             len(remaining_kwargs) == 0
-        ), f"remaining_kwargs not empty: remaining_kwargs={remaining_kwargs}"
+        ), f'remaining_kwargs not empty: remaining_kwargs={remaining_kwargs}'
         return param_args, param_kwargs
 
 
 from functools import partial
 
 extract_arguments_ignoring_remainder = partial(
-    extract_arguments, what_to_do_with_remainding="ignore"
+    extract_arguments, what_to_do_with_remainding='ignore'
 )
 extract_arguments_asserting_no_remainder = partial(
-    extract_arguments, what_to_do_with_remainding="assert_empty"
+    extract_arguments, what_to_do_with_remainding='assert_empty'
 )
 
 from collections.abc import Mapping
@@ -383,7 +383,7 @@ def extract_commands(
     funcs,
     *,
     mk_command: Callable[[Callable, tuple, dict], Any] = Command,
-    what_to_do_with_remainding="ignore",
+    what_to_do_with_remainding='ignore',
     **kwargs,
 ):
     """
@@ -430,7 +430,7 @@ def commands_dict(
     funcs,
     *,
     mk_command: Callable[[Callable, tuple, dict], Any] = Command,
-    what_to_do_with_remainding="ignore",
+    what_to_do_with_remainding='ignore',
     **kwargs,
 ):
     """
@@ -482,7 +482,7 @@ def param_has_default_or_is_var_kind(p: Parameter):
     return p.default != Parameter.empty or p.kind in var_param_kinds
 
 
-WRAPPER_UPDATES = ("__dict__",)
+WRAPPER_UPDATES = ('__dict__',)
 
 from functools import wraps
 
@@ -678,7 +678,7 @@ class Sig(Signature, Mapping):
             func.__kwdefaults__,
         ) = self._dunder_defaults_and_kwdefaults()
         # "copy" over all other non-dunder attributes (not the default of functools.wraps!)
-        for attr in filter(lambda x: not x.startswith("__"), dir(func)):
+        for attr in filter(lambda x: not x.startswith('__'), dir(func)):
             setattr(func, attr, getattr(func, attr))
         return func
 
@@ -756,8 +756,8 @@ class Sig(Signature, Mapping):
 
         """
         return {
-            "parameters": list(self.parameters.values()),
-            "return_annotation": self.return_annotation,
+            'parameters': list(self.parameters.values()),
+            'return_annotation': self.return_annotation,
         }
 
     def to_simple_signature(self):
@@ -774,7 +774,7 @@ class Sig(Signature, Mapping):
     def from_objs(cls, *objs, **name_and_dflts):
         objs = list(objs)
         for name, default in name_and_dflts.items():
-            objs.append([{"name": name, "kind": PK, "default": default}])
+            objs.append([{'name': name, 'kind': PK, 'default': default}])
         if len(objs) > 0:
             first_obj, *objs = objs
             sig = cls(ensure_params(first_obj))
@@ -904,7 +904,7 @@ class Sig(Signature, Mapping):
             _self = self
             _sig = Sig(sig)
 
-        _msg = f"\nHappened during an attempt to merge {self} and {sig}"
+        _msg = f'\nHappened during an attempt to merge {self} and {sig}'
 
         assert (
             not _self.has_var_keyword or not _sig.has_var_keyword
@@ -916,7 +916,7 @@ class Sig(Signature, Mapping):
             (_self[name].kind, _self[name].default)
             == (_sig[name].kind, _sig[name].default)
             for name in _self.keys() & _sig.keys()
-        ), f"During a signature merge, if two names are the same, they must have the same kind and default:{_msg}"
+        ), f'During a signature merge, if two names are the same, they must have the same kind and default:{_msg}'
 
         params = list(
             self._chain_params_of_signatures(
@@ -1204,9 +1204,9 @@ class Sig(Signature, Mapping):
         if no_var_kw and not allow_excess:  # don't ignore excess kwargs
             excess = kwargs.keys() - b.arguments
             if excess:
-                excess_str = ", ".join(excess)
+                excess_str = ', '.join(excess)
                 raise TypeError(
-                    f"Got unexpected keyword arguments: {excess_str}"
+                    f'Got unexpected keyword arguments: {excess_str}'
                 )
 
         return dict(b.arguments)
@@ -1525,7 +1525,7 @@ def mk_sig_from_args(*args_without_default, **args_with_defaults):
     """
     assert all(
         isinstance(x, str) for x in args_without_default
-    ), "all default-less arguments must be strings"
+    ), 'all default-less arguments must be strings'
     return Sig.from_objs(
         *args_without_default, **args_with_defaults
     ).to_simple_signature()
@@ -1597,18 +1597,18 @@ def common_and_diff_argnames(func1: callable, func2: callable) -> dict:
     p1 = signature(func1).parameters
     p2 = signature(func2).parameters
     return {
-        "common": [x for x in p1 if x in p2],
-        "func1_not_func2": [x for x in p1 if x not in p2],
-        "func2_not_func1": [x for x in p2 if x not in p1],
+        'common': [x for x in p1 if x in p2],
+        'func1_not_func2': [x for x in p1 if x not in p2],
+        'func2_not_func1': [x for x in p2 if x not in p1],
     }
 
 
 dflt_name_for_kind = {
-    Parameter.VAR_POSITIONAL: "args",
-    Parameter.VAR_KEYWORD: "kwargs",
+    Parameter.VAR_POSITIONAL: 'args',
+    Parameter.VAR_KEYWORD: 'kwargs',
 }
 
-arg_order_for_param_tuple = ("name", "default", "annotation", "kind")
+arg_order_for_param_tuple = ('name', 'default', 'annotation', 'kind')
 
 
 def set_signature_of_func(
@@ -1664,7 +1664,7 @@ from functools import partial
 
 def param_for_kind(
     name=None,
-    kind="positional_or_keyword",
+    kind='positional_or_keyword',
     with_default=False,
     annotation=Parameter.empty,
 ):
@@ -1685,12 +1685,12 @@ def param_for_kind(
     >>> param_for_kind.keyword_only('baz', with_default=True)
     <Parameter "baz='dflt_keyword_only'">
     """
-    name = name or f"{kind}"
+    name = name or f'{kind}'
     kind_obj = getattr(Parameter, str(kind).upper())
     kind = str(kind_obj).lower()
     default = (
-        f"dflt_{kind}"
-        if with_default and kind not in {"var_positional", "var_keyword"}
+        f'dflt_{kind}'
+        if with_default and kind not in {'var_positional', 'var_keyword'}
         else Parameter.empty
     )
     return Parameter(
@@ -1705,16 +1705,16 @@ for kind in param_kinds:
     setattr(param_for_kind, lower_kind, partial(param_for_kind, kind=kind))
     setattr(
         param_for_kind,
-        "with_default",
+        'with_default',
         partial(param_for_kind, with_default=True),
     )
     setattr(
         getattr(param_for_kind, lower_kind),
-        "with_default",
+        'with_default',
         partial(param_for_kind, kind=kind, with_default=True),
     )
     setattr(
-        getattr(param_for_kind, "with_default"),
+        getattr(param_for_kind, 'with_default'),
         lower_kind,
         partial(param_for_kind, kind=kind, with_default=True),
     )

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.deco &#8212; i2 0.0.9 documentation</title>
+    <title>i2.deco &#8212; i2 0.0.10 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -1177,6 +1177,7 @@
 <div class="viewcode-block" id="mk_call_logger"><a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.mk_call_logger">[docs]</a><span class="k">def</span> <span class="nf">mk_call_logger</span><span class="p">(</span>
     <span class="n">logger</span><span class="o">=</span><span class="nb">print</span><span class="p">,</span>
     <span class="n">what_to_log</span><span class="p">:</span> <span class="n">WhatToLog</span> <span class="o">=</span> <span class="n">_call_signature</span><span class="p">,</span>
+    <span class="n">log_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">func_is_bounded</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1193,9 +1194,20 @@
 <span class="sd">    ... def useless_computation(x, y=2, z=&#39;foo&#39;):</span>
 <span class="sd">    ...     return z * (x + y)</span>
 <span class="sd">    ...</span>
-<span class="sd">    &gt;&gt;&gt; useless_computation(3, y=1, z=&#39;ha&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; _ = useless_computation(3, y=1, z=&#39;ha&#39;)</span>
 <span class="sd">    useless_computation(3, y=1, z=&#39;ha&#39;)</span>
-<span class="sd">    &#39;hahahaha&#39;</span>
+
+<span class="sd">    The same example, but with output logging too</span>
+
+<span class="sd">    &gt;&gt;&gt; @mk_call_logger(log_output=True)</span>
+<span class="sd">    ... def useless_computation(x, y=2, z=&#39;foo&#39;):</span>
+<span class="sd">    ...     return z * (x + y)</span>
+<span class="sd">    &gt;&gt;&gt; _ = useless_computation(3, y=1, z=&#39;ha&#39;)</span>
+<span class="sd">    useless_computation(3, y=1, z=&#39;ha&#39;)</span>
+<span class="sd">    -&gt; hahahaha</span>
+
+<span class="sd">    And now a bit more involved...</span>
+
 <span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; # Example of use on class method, with a different what_to_log function.</span>
 <span class="sd">    &gt;&gt;&gt; class A:</span>
@@ -1228,13 +1240,19 @@
 <span class="sd">      kwargs={}</span>
 <span class="sd">    20</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">log_output</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">log_output</span> <span class="o">=</span> <span class="s1">&#39;-&gt; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span>
+    <span class="k">assert</span> <span class="n">log_output</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">or</span> <span class="n">callable</span><span class="p">(</span><span class="n">log_output</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="n">func_is_bounded</span><span class="p">:</span>
 
         <span class="k">def</span> <span class="nf">log_calls</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="n">logger</span><span class="p">(</span><span class="n">what_to_log</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">))</span>
-                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">log_output</span> <span class="ow">and</span> <span class="n">logger</span><span class="p">(</span><span class="n">log_output</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">out</span>
 
             <span class="k">return</span> <span class="n">_func</span>
 
@@ -1244,7 +1262,9 @@
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="n">logger</span><span class="p">(</span><span class="n">what_to_log</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">))</span>
-                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">log_output</span> <span class="ow">and</span> <span class="n">logger</span><span class="p">(</span><span class="n">log_output</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">out</span>
 
             <span class="k">return</span> <span class="n">_func</span>
 
