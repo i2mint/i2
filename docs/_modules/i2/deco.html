@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.deco &#8212; i2 0.0.10 documentation</title>
+    <title>i2.deco &#8212; i2 0.0.11 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -36,6 +36,7 @@
 <span></span><span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">update_wrapper</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Signature</span><span class="p">,</span> <span class="n">signature</span><span class="p">,</span> <span class="n">Parameter</span>
@@ -383,7 +384,15 @@
     <span class="n">post</span><span class="p">,</span> <span class="n">caught_post_errors</span><span class="o">=</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span> <span class="n">verbose_error_message</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Add some post-processing after a function</span>
+
 <span class="sd">    :param post: The function to apply to the output</span>
+
+<span class="sd">    &gt;&gt;&gt; list_range = postprocess(list)(range)</span>
+<span class="sd">    &gt;&gt;&gt; list_range(4)</span>
+<span class="sd">    [0, 1, 2, 3]</span>
+<span class="sd">    &gt;&gt;&gt; sum_range = postprocess(sum)(range)</span>
+<span class="sd">    &gt;&gt;&gt; sum_range(4)</span>
+<span class="sd">    6</span>
 
 <span class="sd">    Note: The decorator also sticks the return annotation of the post function on the wrapped one.</span>
 
@@ -459,11 +468,15 @@
                 <span class="k">raise</span> <span class="n">OutputPostProcessingError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="n">return_annot</span> <span class="o">=</span> <span class="n">_return_annotation_of</span><span class="p">(</span><span class="n">post</span><span class="p">)</span>
-        <span class="n">sig</span> <span class="o">=</span> <span class="n">Signature</span><span class="p">(</span>
-            <span class="n">signature</span><span class="p">(</span><span class="n">wrapper</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
-            <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annot</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">wrapper</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">sig</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span>
+            <span class="ne">ValueError</span>
+        <span class="p">):</span>  <span class="c1"># intended to catch cases where wrapper doesn&#39;t have a signature</span>
+            <span class="n">wrapper_signature</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">wrapper</span><span class="p">)</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">Signature</span><span class="p">(</span>
+                <span class="n">wrapper_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annot</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">wrapper</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">sig</span>
 
         <span class="k">return</span> <span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)(</span><span class="n">wrapper</span><span class="p">)</span>
 

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.deco &#8212; i2 0.0.10 documentation</title>
+    <title>i2.deco &#8212; i2 0.0.11 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -442,8 +442,20 @@ values are the trans_spec dicts that should be associated to those methods</p>
 <dl class="py function">
 <dt id="i2.deco.postprocess">
 <code class="sig-prename descclassname">i2.deco.</code><code class="sig-name descname">postprocess</code><span class="sig-paren">(</span><em class="sig-param">post</em>, <em class="sig-param">caught_post_errors=(&lt;class 'Exception'&gt;</em>, <em class="sig-param">)</em>, <em class="sig-param">verbose_error_message=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#postprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.deco.postprocess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add some post-processing after a function
-:param post: The function to apply to the output</p>
+<dd><p>Add some post-processing after a function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>post</strong> – The function to apply to the output</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">list_range</span> <span class="o">=</span> <span class="n">postprocess</span><span class="p">(</span><span class="nb">list</span><span class="p">)(</span><span class="nb">range</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">list_range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">[0, 1, 2, 3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sum_range</span> <span class="o">=</span> <span class="n">postprocess</span><span class="p">(</span><span class="nb">sum</span><span class="p">)(</span><span class="nb">range</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sum_range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">6</span>
+</pre></div>
+</div>
 <p>Note: The decorator also sticks the return annotation of the post function on the wrapped one.</p>
 <p>Use cases:</p>
 <ul class="simple">
