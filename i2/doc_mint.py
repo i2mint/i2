@@ -4,7 +4,7 @@ MAX_LINE_LENGTH = 72  # https://en.wikipedia.org/wiki/Characters_per_line
 
 
 def _prefix_lines(
-    s: str, prefix: str = '# ', even_if_empty: bool = False
+    s: str, prefix: str = "# ", even_if_empty: bool = False
 ) -> str:
     r"""
     Prefix every line of s with given prefix.
@@ -30,7 +30,7 @@ def _prefix_lines(
     if not even_if_empty:
         if len(s) == 0:
             return s
-    return '\n'.join(map(lambda x: prefix + x, s.split('\n')))
+    return "\n".join(map(lambda x: prefix + x, s.split("\n")))
 
 
 import doctest
@@ -38,10 +38,10 @@ from typing import Callable
 import re
 from inspect import getdoc
 
-comment_strip_p = re.compile(r'(?m)^ *#.*\n?')
+comment_strip_p = re.compile(r"(?m)^ *#.*\n?")
 
-doctest_line_p = re.compile('\s*>>>')
-empty_line = re.compile('\s*$')
+doctest_line_p = re.compile("\s*>>>")
+empty_line = re.compile("\s*$")
 
 
 def non_doctest_lines(doc):
@@ -82,7 +82,7 @@ def non_doctest_lines(doc):
 
 def strip_comments(code):
     code = str(code)
-    return comment_strip_p.sub('', code)
+    return comment_strip_p.sub("", code)
 
 
 def mk_example_wants_callback(
@@ -100,43 +100,43 @@ def mk_example_wants_callback(
 
 
 def split_line_comments(s):
-    t = s.split('#')
+    t = s.split("#")
     if len(t) == 1:
-        comment = ''
+        comment = ""
     else:
         s, comment = t
     return s, comment
 
 
 def _assert_wants(source, want, wrap_func_name=None):
-    is_a_multiline = len(source.split('\n')) > 1
+    is_a_multiline = len(source.split("\n")) > 1
 
     if not is_a_multiline:
         source, comment = split_line_comments(source)
         if wrap_func_name is None:
-            t = f'({source}) == {want} #{comment}'
+            t = f"({source}) == {want} #{comment}"
         else:
-            t = f'{wrap_func_name}({source}) == {wrap_func_name}({want}) #{comment}'
+            t = f"{wrap_func_name}({source}) == {wrap_func_name}({want}) #{comment}"
         if "'" in t and not '"' in t:
             strchr = '"'
-            return 'assert {t}, {strchr}{t}{strchr}'.format(t=t, strchr=strchr)
+            return "assert {t}, {strchr}{t}{strchr}".format(t=t, strchr=strchr)
         elif '"' in t and not "'" in t:
             strchr = "'"
-            return 'assert {t}, {strchr}{t}{strchr}'.format(t=t, strchr=strchr)
+            return "assert {t}, {strchr}{t}{strchr}".format(t=t, strchr=strchr)
         else:
-            return 'assert {t}'.format(t=t)
+            return "assert {t}".format(t=t)
     else:  # if you didn't return before
         if wrap_func_name is None:
-            return f'actual = {source}\nexpected = {want}\nassert actual == expected'
+            return f"actual = {source}\nexpected = {want}\nassert actual == expected"
         else:
             return (
-                f'actual = {wrap_func_name}({source})\nexpected = {wrap_func_name}({want})\n'
-                'assert actual == expected'
+                f"actual = {wrap_func_name}({source})\nexpected = {wrap_func_name}({want})\n"
+                "assert actual == expected"
             )
 
 
-def _output_prefix(source, want, prefix='# OUTPUT: '):
-    return source + '\n' + prefix + want + '\n'
+def _output_prefix(source, want, prefix="# OUTPUT: "):
+    return source + "\n" + prefix + want + "\n"
 
 
 output_prefix = mk_example_wants_callback(_output_prefix)
@@ -165,7 +165,7 @@ def doctest_string(obj, example_callback=assert_wants, recurse=True):
     :param recurse: Whether the process should find doctests in the attributes of the object, recursively.
     :return: A string containing the doctests, with output lines prefixed by '# Output:'
     """
-    return '\n'.join(
+    return "\n".join(
         _doctest_string_gen(obj, example_callback, recurse=recurse)
     )
 
@@ -192,7 +192,7 @@ def doctest_string_print(obj, example_callback=assert_wants, recurse=True):
 
 def old_doctest_string(
     obj,
-    output_prefix='# OUTPUT: ',
+    output_prefix="# OUTPUT: ",
     include_attr_without_doctests=False,
     recurse=True,
 ):
@@ -205,16 +205,16 @@ def old_doctest_string(
     """
     doctest_finder = doctest.DocTestFinder(verbose=False, recurse=recurse)
     r = doctest_finder.find(obj)
-    s = ''
+    s = ""
     for rr in r:
-        header = f'# {rr.name} '
-        header += '#' * max(0, MAX_LINE_LENGTH - len(header)) + '\n'
-        ss = ''
+        header = f"# {rr.name} "
+        header += "#" * max(0, MAX_LINE_LENGTH - len(header)) + "\n"
+        ss = ""
         for example in rr.examples:
             want = example.want
             want = want.strip()
             ss += (
-                '\n'
+                "\n"
                 + example.source
                 + _prefix_lines(want, prefix=output_prefix)
             )
@@ -227,7 +227,7 @@ def old_doctest_string(
 
 # import sphinx
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(doctest_string(_prefix_lines))
 # # _prefix_lines ########################################################
 #
