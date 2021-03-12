@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.deco &#8212; i2 0.0.11 documentation</title>
+    <title>i2.deco &#8212; i2 0.0.12 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -204,6 +204,45 @@ AttributeError, as expected, because missing the foo attribute
 <dt id="i2.deco.copy_func">
 <code class="sig-prename descclassname">i2.deco.</code><code class="sig-name descname">copy_func</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#copy_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.deco.copy_func" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copy a function (not sure it works with all types of callables)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.deco.double_up_as_factory">
+<code class="sig-prename descclassname">i2.deco.</code><code class="sig-name descname">double_up_as_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decorator_func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#double_up_as_factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.deco.double_up_as_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Repurpose a decorator both as it’s original form, and as a decorator factory.</p>
+<p>That is, from a decorator that is defined do <code class="docutils literal notranslate"><span class="pre">wrapped_func</span> <span class="pre">=</span> <span class="pre">decorator(func,</span> <span class="pre">**params)</span></code>,
+make it also be able to do <code class="docutils literal notranslate"><span class="pre">wrapped_func</span> <span class="pre">=</span> <span class="pre">decorator(**params)(func)</span></code>.</p>
+<p>Note: You’ll only be able to do this if all but the first argument are keyword-only,
+and the first argument (the function to decorate) has a default of <code class="docutils literal notranslate"><span class="pre">None</span></code> (this is for your own good).
+This is validated before making the “double up as factory” decorator.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@double_up_as_factory</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">multiplier</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">_func</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span> <span class="o">=</span> <span class="n">decorator</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">30</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">multiply_by_3</span> <span class="o">=</span> <span class="n">decorator</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span> <span class="o">=</span> <span class="n">multiply_by_3</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">9</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@decorator</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">9</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">

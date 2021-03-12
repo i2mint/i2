@@ -21,7 +21,7 @@ class NoDefault:
 NO_DFLT = NoDefault()
 
 
-def flatten_dict(d, sep=None, prefix=""):
+def flatten_dict(d, sep=None, prefix=''):
     """
     Computes a "flat" dict from a nested one. A flat dict's keys are the paths of the input dict.
     These paths will be expressed as tuples of the original keys by defaults.
@@ -52,7 +52,7 @@ def flatten_dict(d, sep=None, prefix=""):
     return kp.flat_dict()
 
 
-def rollout_dict(d, sep=None, prefix=""):
+def rollout_dict(d, sep=None, prefix=''):
     """
     Get the nested path of a flat (key path) dict. This is the inverse of flatten_dict.
 
@@ -366,8 +366,8 @@ class StrKeyPath(KeyPathMap):
         key_type: type = None,
         node_type: type = None,
         auto_node_writes=False,
-        sep: str = ".",
-        prefix: str = "",
+        sep: str = '.',
+        prefix: str = '',
     ):
         prefix_length = len(prefix)
         self.sep = sep
@@ -413,7 +413,7 @@ class KeyPathTrans:
     """
 
     def __init__(
-        self, sep: str = ".", node_type: type = dict, mk_new_node=None
+        self, sep: str = '.', node_type: type = dict, mk_new_node=None
     ):
         """
 
@@ -546,7 +546,7 @@ class KeyPathTrans:
         self,
         d,
         key_paths,
-        field_naming="full",
+        field_naming='full',
         use_default=False,
         default_val=None,
     ):
@@ -596,7 +596,7 @@ class KeyPathTrans:
             else:
                 field = self.sep.join(key_path)
 
-            if field_naming == "leaf":
+            if field_naming == 'leaf':
                 field = key_path[-1]
             else:
                 field = field
