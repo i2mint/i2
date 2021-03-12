@@ -90,7 +90,7 @@ def test_func_1(
     'test_func_1 returned'
     """
     # This is the first comment
-    return 'test_func_1 returned'  # this is a comment on the same line as some code
+    return "test_func_1 returned"  # this is a comment on the same line as some code
 
 
 class SomeClass(object):
@@ -168,7 +168,7 @@ class AClass(object):
 
 
 class TestObj:
-    constarg: str = ''
+    constarg: str = ""
 
     def __init__(self, constarg: str):
         print(constarg)
@@ -178,9 +178,9 @@ class TestObj:
         print(methodarg1)
         return methodarg1 + 1
 
-    def methodstr(self, methodarg2: str = 'hi') -> str:
+    def methodstr(self, methodarg2: str = "hi") -> str:
         print(methodarg2)
-        return methodarg2 + ' test ' + self.constarg
+        return methodarg2 + " test " + self.constarg
 
 
 from i2.errors import ModuleNotFoundIgnore

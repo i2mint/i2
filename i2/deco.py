@@ -2,14 +2,75 @@ import inspect
 from collections import defaultdict
 from collections.abc import Mapping
 from contextlib import suppress
-from functools import update_wrapper
-from functools import wraps
+from functools import wraps, partial, update_wrapper
 from inspect import Signature, signature, Parameter
 from itertools import chain
 from types import FunctionType
 from typing import Iterable
 
 from i2.signatures import ch_signature_to_all_pk, HasParams, VP, PK, Sig
+
+
+def double_up_as_factory(decorator_func):
+    """Repurpose a decorator both as it's original form, and as a decorator factory.
+
+    That is, from a decorator that is defined do ``wrapped_func = decorator(func, **params)``,
+    make it also be able to do ``wrapped_func = decorator(**params)(func)``.
+
+    Note: You'll only be able to do this if all but the first argument are keyword-only,
+    and the first argument (the function to decorate) has a default of ``None`` (this is for your own good).
+    This is validated before making the "double up as factory" decorator.
+
+    >>> @double_up_as_factory
+    ... def decorator(func=None, *, multiplier=2):
+    ...     def _func(x):
+    ...         return func(x) * multiplier
+    ...     return _func
+    ...
+    >>> def foo(x):
+    ...     return x + 1
+    ...
+    >>> foo(2)
+    3
+    >>> wrapped_foo = decorator(foo, multiplier=10)
+    >>> wrapped_foo(2)
+    30
+    >>>
+    >>> multiply_by_3 = decorator(multiplier=3)
+    >>> wrapped_foo = multiply_by_3(foo)
+    >>> wrapped_foo(2)
+    9
+    >>>
+    >>> @decorator(multiplier=3)
+    ... def foo(x):
+    ...     return x + 1
+    ...
+    >>> foo(2)
+    9
+    """
+
+    def validate_decorator_func(decorator_func):
+        first_param, *other_params = signature(
+            decorator_func
+        ).parameters.values()
+        assert (
+            first_param.default is None
+        ), f"First argument of the decorator function needs to default to None. Was {first_param.default}"
+        assert all(
+            p.kind == p.KEYWORD_ONLY for p in other_params
+        ), f"All arguments (besides the first) need to be keyword-only"
+        return True
+
+    validate_decorator_func(decorator_func)
+
+    @wraps(decorator_func)
+    def _double_up_as_factory(wrapped=None, **kwargs):
+        if wrapped is None:  # then we want a factory
+            return partial(decorator_func, **kwargs)
+        else:
+            return decorator_func(wrapped, **kwargs)
+
+    return _double_up_as_factory
 
 
 def copy_func(f):
@@ -23,7 +84,7 @@ def copy_func(f):
     )
     g = update_wrapper(g, f)
     g.__kwdefaults__ = f.__kwdefaults__
-    if hasattr(f, '__signature__'):
+    if hasattr(f, "__signature__"):
         g.__signature__ = f.__signature__
     return g
 
@@ -45,7 +106,7 @@ def params_of(obj: HasParams):
         obj = list(signature(obj).parameters.values())
     assert all(
         isinstance(p, Parameter) for p in obj
-    ), 'obj needs to be a Iterable[Parameter] at this point'
+    ), "obj needs to be a Iterable[Parameter] at this point"
     return obj  # as is
 
 
@@ -281,7 +342,7 @@ def assert_attrs(attrs):
             for attr in attrs:
                 if not hasattr(klass, attr):
                     raise AttributeError(
-                        'class {} needs to have a {} attribute:'.format(
+                        "class {} needs to have a {} attribute:".format(
                             klass.__name__, attr
                         )
                     )
@@ -411,25 +472,25 @@ def postprocess(
                 return post(output)
             except caught_post_errors as e:
                 msg = (
-                    f'Error when postprocessing output with post func: {func}'
+                    f"Error when postprocessing output with post func: {func}"
                 )
                 if verbose_error_message:
-                    msg += '\n' + f'  output={output}'
+                    msg += "\n" + f"  output={output}"
                     if (
                         isinstance(verbose_error_message, int)
                         and verbose_error_message > 1
                     ):
                         msg += (
-                            '\n'
-                            + '  which was obtained by func(*args, **kwargs) where:'
+                            "\n"
+                            + "  which was obtained by func(*args, **kwargs) where:"
                         )
                         msg += (
-                            '\n'
-                            + f'    args: {args}'
-                            + '\n'
-                            + f'    kwargs: {kwargs}'
+                            "\n"
+                            + f"    args: {args}"
+                            + "\n"
+                            + f"    kwargs: {kwargs}"
                         )
-                msg += '\n' + f'Error is: {e}'
+                msg += "\n" + f"Error is: {e}"
                 raise OutputPostProcessingError(msg)
 
         return_annot = _return_annotation_of(post)
@@ -600,7 +661,7 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
         elif dflt_trans_func is not None:
             assert callable(
                 dflt_trans_func
-            ), 'The dflt_trans_func needs to be a callable'
+            ), "The dflt_trans_func needs to be a callable"
 
             @wraps(func)
             def transform_args_wrapper(*args, **kwargs):
@@ -718,7 +779,7 @@ def wrap_class_methods(
 
     def class_wrapper(cls):
         if _return_a_copy_of_the_class:
-            _cls = type('_' + cls.__name__, cls.__bases__, dict(cls.__dict__))
+            _cls = type("_" + cls.__name__, cls.__bases__, dict(cls.__dict__))
             # class _cls(cls):
             #     pass
         else:
@@ -1019,7 +1080,7 @@ def add_method(obj, method_func, method_name=None, class_name=None):
     bases_names = set(map(lambda x: x.__name__, bases))
     if class_name in bases_names:
         for i in range(6):
-            class_name += '_'
+            class_name += "_"
             if not class_name in bases_names:
                 break
         else:
@@ -1040,7 +1101,7 @@ def transform_instance_method_input_and_output(
 ):
     from warnings import warn
 
-    warn('Not sure transform_instance_method_input_and_output works yet')
+    warn("Not sure transform_instance_method_input_and_output works yet")
     wrapped_method = transform_args(**arg_trans)(getattr(type(obj), method))
     if method_output_trans is not None:
         obj = add_method(
@@ -1065,7 +1126,7 @@ def wrap_instance_methods(
                     obj, method, **method_trans
                 )
             elif _raise_error_if_non_existent_method:
-                if hasattr(obj.__class__, '__name__'):
+                if hasattr(obj.__class__, "__name__"):
                     class_name = obj.__name__
                 else:
                     class_name = str(obj)
@@ -1119,12 +1180,12 @@ def _special_str(x: Any, max_len=100) -> str:
     else:
         x_str = str(x)
         if len(x_str) > max_len:
-            type_str = getattr(type(x), '__name__', str(type(x)))
-            if hasattr(x, '__repr__'):
+            type_str = getattr(type(x), "__name__", str(type(x)))
+            if hasattr(x, "__repr__"):
                 value_str = x.__repr__()
             else:
                 value_str = x_str
-            x_str = '{}({}...)'.format(type_str, value_str[:20])
+            x_str = "{}({}...)".format(type_str, value_str[:20])
         return x_str
 
 
@@ -1142,13 +1203,13 @@ def _call_signature(func: Callable, args: Args, kwargs: Kwargs) -> str:
     >>> print(_call_signature(_call_signature, args, kwargs))
     _call_signature(2, 'sdf', list([0, 1, 2, 3, 4, 5, 6...), z='boo', zzz=10)
     """
-    args_signature = ', '.join(map(_special_str, args))
-    kwargs_signature = ', '.join(
-        ('{}={}'.format(k, _special_str(v)) for k, v in kwargs.items())
+    args_signature = ", ".join(map(_special_str, args))
+    kwargs_signature = ", ".join(
+        ("{}={}".format(k, _special_str(v)) for k, v in kwargs.items())
     )
-    return '{func_name}({signature})'.format(
+    return "{func_name}({signature})".format(
         func_name=func.__name__,
-        signature=', '.join([args_signature, kwargs_signature]),
+        signature=", ".join([args_signature, kwargs_signature]),
     )
 
 
@@ -1219,7 +1280,7 @@ def mk_call_logger(
     20
     """
     if log_output is True:
-        log_output = '-> {}'.format
+        log_output = "-> {}".format
     assert log_output is False or callable(log_output)
 
     if not func_is_bounded:
