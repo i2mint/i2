@@ -1,5 +1,5 @@
-from py2store.utils.signatures import *
 from i2.signatures import _empty
+from i2.signatures import *
 
 empty = _empty
 
