@@ -868,7 +868,7 @@ class Sig(Signature, Mapping):
         :param ch_to_all_pk: Whether to change all kinds of both signatures to PK (POSITIONAL_OR_KEYWORD)
         :return:
 
-        >>> from py2store.utils.signatures import Sig, KO
+        >>> from py2store.signatures import Sig, KO
         >>>
         >>> def func(a=None, *, b=1, c=2): ...
         ...
