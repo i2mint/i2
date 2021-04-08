@@ -4,8 +4,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.tests.signatures &#8212; i2 0.0.12 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>i2.tests.signatures &#8212; i2 0.0.13 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -34,9 +35,96 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="i2-tests-signatures">
-<h1>i2.tests.signatures<a class="headerlink" href="#i2-tests-signatures" title="Permalink to this headline">¶</a></h1>
+  <section id="module-i2.tests.signatures">
+<span id="i2-tests-signatures"></span><h1>i2.tests.signatures<a class="headerlink" href="#module-i2.tests.signatures" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="i2.tests.signatures.mk_sig">
+<code class="sig-prename descclassname">i2.tests.signatures.</code><code class="sig-name descname">mk_sig</code><span class="sig-paren">(</span><em class="sig-param">obj: Optional[Union[inspect.Signature</em>, <em class="sig-param">Callable</em>, <em class="sig-param">collections.abc.Mapping]] = None</em>, <em class="sig-param">return_annotations</em>, <em class="sig-param">**annotations</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/signatures.html#mk_sig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.signatures.mk_sig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience function to make a signature or inject annotations to an existing one.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">mk_sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span>
+<span class="go">&lt;Signature (a, b: int, c=1, d: str = &#39;bar&#39;)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># showing that sig can take a signature input, and overwrite an existing annotation:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mk_sig</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># note the b=float</span>
+<span class="go">&lt;Signature (a: list, b: float, c=1, d: str = &#39;bar&#39;)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mk_sig</span><span class="p">()</span>
+<span class="go">&lt;Signature ()&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mk_sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># trying to annotate an argument that doesn&#39;t exist</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">AssertionError</span>: <span class="n">These argument names weren&#39;t found in the signature: {&#39;d&#39;}</span>
+</pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.tests.signatures.mk_signature">
+<code class="sig-prename descclassname">i2.tests.signatures.</code><code class="sig-name descname">mk_signature</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">return_annotation</span></em>, <em class="sig-param"><span class="n">__validate_parameters__</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/signatures.html#mk_signature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.signatures.mk_signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make an inspect.Signature object with less boilerplate verbosity.
+:param signature: A list of parameter specifications. This could be an inspect.Parameter object or anything that</p>
+<blockquote>
+<div><p>the mk_param function can resolve into an inspect.Parameter object.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>return_annotation</strong> – Passed on to inspect.Signature.</p></li>
+<li><p><strong>__validate_parameters__</strong> – Passed on to inspect.Signature.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An inspect.Signature object</p>
+</dd>
+</dl>
+<p># &gt;&gt;&gt; mk_signature([‘a’, ‘b’, ‘c’])
+# &lt;Signature (a, b, c)&gt;
+# &gt;&gt;&gt; mk_signature([‘a’, (‘b’, None), (‘c’, 42, int)])  # specifying defaults and annotations
+# &lt;Signature (a, b=None, c: int = 42)&gt;
+# &gt;&gt;&gt; import inspect
+# &gt;&gt;&gt; mk_signature([‘a’, (‘b’, inspect._empty, int)])  # specifying an annotation without a default
+# &lt;Signature (a, b: int)&gt;
+# &gt;&gt;&gt; mk_signature([‘a’, ‘b’, ‘c’], return_annotation=str)  # specifying return annotation
+# &lt;Signature (a, b, c) -&gt; str&gt;
+# &gt;&gt;&gt;
+# &gt;&gt;&gt; # But you can always specify parameters the “long” way
+# &gt;&gt;&gt; mk_signature([inspect.Parameter(name=’kws’, kind=inspect.Parameter.VAR_KEYWORD)], return_annotation=str)
+# &lt;Signature (<a href="#id1"><span class="problematic" id="id2">**</span></a>kws) -&gt; str&gt;
+# &gt;&gt;&gt;
+# &gt;&gt;&gt; # Note that mk_signature is an inverse of signature_to_dict:
+# &gt;&gt;&gt; def foo(a, b: int=0, c=None) -&gt; int: …
+# &gt;&gt;&gt; sig_foo = signature(foo)
+# &gt;&gt;&gt; assert mk_signature(<a href="#id3"><span class="problematic" id="id4">**</span></a>signature_to_dict(sig_foo)) == sig_foo</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.tests.signatures.update_signature_with_signatures_from_funcs">
+<code class="sig-prename descclassname">i2.tests.signatures.</code><code class="sig-name descname">update_signature_with_signatures_from_funcs</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">funcs</span></em>, <em class="sig-param"><span class="n">priority</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'last'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/signatures.html#update_signature_with_signatures_from_funcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.signatures.update_signature_with_signatures_from_funcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a decorator that will merge the signatures of given funcs to the signature of the wrapped func.
+By default, the funcs signatures will be placed last, but can be given priority by asking priority = ‘first’</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;hi&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span> <span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">something</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)):</span> <span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">another</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span> <span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@update_signature_with_signatures_from_funcs</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">bar</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;hi&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signature</span><span class="p">(</span><span class="n">hello</span><span class="p">)</span>
+<span class="go">&lt;Signature (x: str = &#39;hi&#39;, y=1, a=&#39;a&#39;, b: float = 0.0, c=None, d: str = &#39;hi&#39;)&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Try a different order and priority == &#39;first&#39;. Notice the b arg type and default!</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add_foobar_to_signature_first</span> <span class="o">=</span> <span class="n">update_signature_with_signatures_from_funcs</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span> <span class="n">foo</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bar_foo_something</span> <span class="o">=</span> <span class="n">add_foobar_to_signature_first</span><span class="p">(</span><span class="n">something</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signature</span><span class="p">(</span><span class="n">bar_foo_something</span><span class="p">)</span>
+<span class="go">&lt;Signature (b: int = 0, d: str = &#39;hi&#39;, a=&#39;a&#39;, c=None, y=(1, 2))&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># See how you can reuse the decorator several times</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bar_foo_another</span> <span class="o">=</span> <span class="n">add_foobar_to_signature_first</span><span class="p">(</span><span class="n">another</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signature</span><span class="p">(</span><span class="n">bar_foo_another</span><span class="p">)</span>
+<span class="go">&lt;Signature (b: int = 0, d: str = &#39;hi&#39;, a=&#39;a&#39;, c=None, y=10)&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 
 
           </div>
@@ -55,7 +143,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../i2.html">i2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../alternative_approaches.html">i2.alternative_approaches</a></li>
