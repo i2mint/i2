@@ -11,9 +11,9 @@ mappingproxy = type(Signature().parameters)
 
 
 def mk_sig(
-        obj: Union[Signature, Callable, Mapping, None] = None,
-        return_annotations=empty,
-        **annotations,
+    obj: Union[Signature, Callable, Mapping, None] = None,
+    return_annotations=empty,
+    **annotations,
 ):
     """Convenience function to make a signature or inject annotations to an existing one.
 
@@ -33,7 +33,9 @@ def mk_sig(
     if obj is None:
         return Signature()
     if callable(obj):
-        obj = Signature.from_callable(obj)  # get a signature object from a callable
+        obj = Signature.from_callable(
+            obj
+        )  # get a signature object from a callable
     if isinstance(obj, Signature):
         obj = obj.parameters  # get the parameters attribute from a signature
     params = dict(obj)  # get a writable copy of parameters
@@ -54,7 +56,9 @@ def mk_sig(
         return Signature(params.values(), return_annotation=return_annotations)
 
 
-def mk_signature(parameters, *, return_annotation=empty, __validate_parameters__=True):
+def mk_signature(
+    parameters, *, return_annotation=empty, __validate_parameters__=True
+):
     """Make an inspect.Signature object with less boilerplate verbosity.
     Args:
         signature: A list of parameter specifications. This could be an inspect.Parameter object or anything that
@@ -93,8 +97,8 @@ def signature_to_dict(sig: Signature):
     # warn("Use Sig instead", DeprecationWarning)
     # return Sig(sig).to_simple_signature()
     return {
-        "parameters": sig.parameters,
-        "return_annotation": sig.return_annotation,
+        'parameters': sig.parameters,
+        'return_annotation': sig.return_annotation,
     }
 
 
@@ -103,9 +107,9 @@ def _merge_sig_dicts(sig1_dict, sig2_dict):
     If sig1_dict and sig2_dict both define a parameter or return annotation, sig2_dict decides on what the output is.
     """
     return {
-        "parameters": dict(sig1_dict["parameters"], **sig2_dict["parameters"]),
-        "return_annotation": sig2_dict["return_annotation"]
-                             or sig1_dict["return_annotation"],
+        'parameters': dict(sig1_dict['parameters'], **sig2_dict['parameters']),
+        'return_annotation': sig2_dict['return_annotation']
+        or sig1_dict['return_annotation'],
     }
 
 
@@ -131,13 +135,13 @@ def _merge_signatures(sig1, sig2):
     # return Sig(**_merge_sig_dicts(sig1_dict, Sig(sig2).to_simple_dict()))
     sig1_dict = signature_to_dict(sig1)
     # remove variadic kinds from sig1
-    sig1_dict["parameters"] = {
+    sig1_dict['parameters'] = {
         k: v
-        for k, v in sig1_dict["parameters"].items()
+        for k, v in sig1_dict['parameters'].items()
         if v.kind not in var_param_kinds
     }
     kws = _merge_sig_dicts(sig1_dict, signature_to_dict(sig2))
-    kws["obj"] = kws.pop("parameters")
+    kws['obj'] = kws.pop('parameters')
     return Sig(**kws).to_simple_signature()
 
 
@@ -180,7 +184,7 @@ def _merged_signatures_of_func_list(funcs, return_annotation: Any = empty):
     # s = Sig.from_objs(*funcs).to_simple_signature()
 
     if (
-            return_annotation in funcs
+        return_annotation in funcs
     ):  # then you want the return annotation of a specific func of funcs
         return_annotation = signature(return_annotation).return_annotation
 
@@ -188,7 +192,9 @@ def _merged_signatures_of_func_list(funcs, return_annotation: Any = empty):
 
 
 # TODO: will we need more options for the priority argument? Like position?
-def update_signature_with_signatures_from_funcs(*funcs, priority: str = "last"):
+def update_signature_with_signatures_from_funcs(
+    *funcs, priority: str = 'last'
+):
     """Make a decorator that will merge the signatures of given funcs to the signature of the wrapped func.
     By default, the funcs signatures will be placed last, but can be given priority by asking priority = 'first'
 
@@ -213,20 +219,24 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = "last"):
     <Signature (b: int = 0, d: str = 'hi', a='a', c=None, y=10)>
     """
     if not isinstance(priority, str):
-        raise TypeError("priority should be a string")
+        raise TypeError('priority should be a string')
 
-    if priority == "last":
+    if priority == 'last':
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(func, *funcs).to_simple_signature()
-            func.__signature__ = _merged_signatures_of_func_list([func] + list(funcs))
+            func.__signature__ = _merged_signatures_of_func_list(
+                [func] + list(funcs)
+            )
             return func
 
-    elif priority == "first":
+    elif priority == 'first':
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(*funcs, func).to_simple_signature()
-            func.__signature__ = _merged_signatures_of_func_list(list(funcs) + [func])
+            func.__signature__ = _merged_signatures_of_func_list(
+                list(funcs) + [func]
+            )
             return func
 
     else:

@@ -35,11 +35,13 @@ class AttrMap(Mapping):
     @classmethod
     def _validate_key(cls, k):
         if not isinstance(k, str):
-            raise KeyError("key should be a string")
+            raise KeyError('key should be a string')
 
     def _validate_val(self, v):
         if not self._is_valid_val(v):
-            raise ValueError("key was valid and value found, but value wasn't valid")
+            raise ValueError(
+                "key was valid and value found, but value wasn't valid"
+            )
 
     def _getitem(self, k):
         return getattr(self._obj, k)
@@ -164,16 +166,16 @@ def mk_filt(obj, featurizer, comparison):
 #         return self.tree_of_dict(self.dict_of_obj(obj), root_name=root_name)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     from collections import Counter
 
     print(
-        "##########################################################################################################"
+        '##########################################################################################################'
     )
     special_featurizer = {
-        "len": len,
-        "cols": lambda df: df.columns,
-        "sum": lambda df: df.sum().sum(),
+        'len': len,
+        'cols': lambda df: df.columns,
+        'sum': lambda df: df.sum().sum(),
     }
 
     some_local_func = lambda x: list(map(str, x))
@@ -184,9 +186,9 @@ if __name__ == "__main__":
     )
 
     special_comparison = {
-        "alleq": lambda x, y: all(x == y),
-        "isin": lambda x, y: x in y,
-        "eq": operator.eq,
+        'alleq': lambda x, y: all(x == y),
+        'isin': lambda x, y: x in y,
+        'eq': operator.eq,
     }
 
     comparison = ChainMap(
@@ -194,32 +196,34 @@ if __name__ == "__main__":
         AttrMap(operator, is_valid_val=is_valid_comparision),
     )
 
-    assert comparison["contains"] == operator.contains
+    assert comparison['contains'] == operator.contains
 
     print(Counter(map(is_valid_featurizer, featurizer.values())))
     print(Counter(map(is_valid_comparision, featurizer.values())))
     print(Counter(map(is_valid_featurizer, comparison.values())))
     print(Counter(map(is_valid_comparision, comparison.values())))
 
-    print(f"featurizer: {featurizer}")
+    print(f'featurizer: {featurizer}')
 
     print(
-        "##########################################################################################################"
+        '##########################################################################################################'
     )
     import pandas as pd
     from collections import namedtuple
 
-    Condition = namedtuple("Condition", ["feat", "comp"])
+    Condition = namedtuple('Condition', ['feat', 'comp'])
     condition = {
-        feat + "_" + comp: Condition(featurizer[feat], comparison[comp])
+        feat + '_' + comp: Condition(featurizer[feat], comparison[comp])
         for feat, comp in [
-            ("len", "lt"),
-            ("cols", "isin"),
-            ("cols", "contains"),
+            ('len', 'lt'),
+            ('cols', 'isin'),
+            ('cols', 'contains'),
         ]
     }
-    assert all(is_valid_feat_and_comp(feat, comp) for feat, comp in condition.values())
+    assert all(
+        is_valid_feat_and_comp(feat, comp) for feat, comp in condition.values()
+    )
 
-    df = pd.DataFrame({"a": [1, 2, 3], "b": [10, 20, 30]})
-    filt = mk_filt(df, *condition["len_lt"])
+    df = pd.DataFrame({'a': [1, 2, 3], 'b': [10, 20, 30]})
+    filt = mk_filt(df, *condition['len_lt'])
     print(list(filter(filt, [2, 3, 4, 5])))

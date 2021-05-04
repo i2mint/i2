@@ -18,13 +18,13 @@ class NotFoundType:
         return False
 
     def __repr__(self):
-        return "NotFound"
+        return 'NotFound'
 
 
 # Note, if the "empty" classes the are used to check if an object is empty are not singletons, could lead to bugs
 # TODO: Look into metaprogramming tricks for this.
 not_found = NotFoundType()
-no_name = type("NoName", (NotFoundType,), {})()
+no_name = type('NoName', (NotFoundType,), {})()
 inspect_is_empty = inspect._empty
 
 
@@ -36,7 +36,9 @@ def is_not_empty(obj):
 
 
 def _is_property(attr_name, attr_val):
-    return not attr_name.startswith("_") and isinstance(attr_val, (property, lazyprop))
+    return not attr_name.startswith('_') and isinstance(
+        attr_val, (property, lazyprop)
+    )
 
 
 def _property_names_of(obj):
@@ -49,9 +51,9 @@ def _property_names_of(obj):
 
 
 def name_of_obj(o):
-    if hasattr(o, "__name__"):
+    if hasattr(o, '__name__'):
         return o.__name__
-    elif hasattr(o, "__class__"):
+    elif hasattr(o, '__class__'):
         return name_of_obj(o.__class__)
     else:
         return no_name
@@ -78,7 +80,7 @@ class KeyFromAttr:
 
 
 class _ParameterMintLazy:  # Note: Experimental
-    _attrs = ["name", "default", "annotation"]
+    _attrs = ['name', 'default', 'annotation']
 
     #     find = DelegatedAttribute('_params', '__getattribute__')
     #     __getattribute__ = DelegatedAttribute('_params', '__getattribute__')
@@ -112,10 +114,10 @@ class _ParameterMintLazy:  # Note: Experimental
 
 
 class ParameterMint:
-    _attrs = ["name", "kind", "default", "annotation"]
+    _attrs = ['name', 'kind', 'default', 'annotation']
 
     def __init__(self, param, position=None):
-        if hasattr(param, "__getitem__"):
+        if hasattr(param, '__getitem__'):
             param = AttrFromKey(param)
 
         for attr in self._attrs:
@@ -142,8 +144,8 @@ class ParameterMint:
             v = getattr(self, k)
             if v is not inspect_empty:
                 yield k, v
-        if hasattr(self, "position"):
-            yield "position", self.position
+        if hasattr(self, 'position'):
+            yield 'position', self.position
 
     def __getstate__(self):
         return {k: v for k, v in self.items()}
@@ -151,7 +153,7 @@ class ParameterMint:
     def __repr__(self):
         d = dict()
         for k, v in self.items():
-            if k == "kind":
+            if k == 'kind':
                 v = v.name
             d[k] = v
         return str(d)
@@ -248,7 +250,7 @@ class ParametersMint(Mapping):
 
     def __repr__(self):
         arg_repr = str({k: v.__repr__() for k, v in self.items()})
-        return f"{self.__class__.__name__}({arg_repr})"
+        return f'{self.__class__.__name__}({arg_repr})'
 
 
 class Mint(Mapping):
@@ -300,7 +302,7 @@ class Mint(Mapping):
         if k in self._non_empty_attrs:
             return getattr(self, k)
         else:
-            raise KeyError("No such key: {k}")
+            raise KeyError('No such key: {k}')
 
     def items(self):
         for attr in self._non_empty_attrs:
@@ -321,11 +323,11 @@ class Mint(Mapping):
 
     @lazyprop
     def obj_name(self):
-        return getattr(self._obj, "__name__", not_found)
+        return getattr(self._obj, '__name__', not_found)
 
     @lazyprop
     def type_name(self):
-        return getattr(type(self._obj), "__name__", not_found)
+        return getattr(type(self._obj), '__name__', not_found)
 
     @lazyprop
     def module(self):
@@ -333,7 +335,7 @@ class Mint(Mapping):
 
     @lazyprop
     def module_name(self):
-        return getattr(self.module, "__name__", not_found)
+        return getattr(self.module, '__name__', not_found)
 
 
 class MintOfCallableMixin:
@@ -362,23 +364,23 @@ class MintOfCallableMixin:
     def default_of(self):
         d = dict()
         for k, v in self.parameters.items():
-            if "default" in v:
-                d[k] = v["default"]
+            if 'default' in v:
+                d[k] = v['default']
         return d
 
     @lazyprop
     def annotation_of(self):
         d = dict()
         for k, v in self.parameters.items():
-            if "annotation" in v:
-                d[k] = v["annotation"]
+            if 'annotation' in v:
+                d[k] = v['annotation']
         return d
 
 
 class MintOfDocMixin:
     @lazyprop
     def _parsed_doc(self):
-        return "Not yet implemented (correctly)"
+        return 'Not yet implemented (correctly)'
         from i2.scrap import parse_mint_doc
 
         # return parse_mint_doc(self.doc_string)

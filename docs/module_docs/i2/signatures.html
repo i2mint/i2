@@ -4,9 +4,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.signatures &#8212; i2 0.0.13 documentation</title>
+    <title>i2.signatures &#8212; i2 0.0.14 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -37,6 +37,7 @@
             
   <section id="module-i2.signatures">
 <span id="i2-signatures"></span><h1>i2.signatures<a class="headerlink" href="#module-i2.signatures" title="Permalink to this headline">¶</a></h1>
+<p>Signature calculus</p>
 <dl class="py class">
 <dt id="i2.signatures.Command">
 <em class="property">class </em><code class="sig-prename descclassname">i2.signatures.</code><code class="sig-name descname">Command</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">caller</span><span class="p">:</span> <span class="n">callable</span></em>, <em class="sig-param"><span class="n">args</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/signatures.html#Command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.signatures.Command" title="Permalink to this definition">¶</a></dt>
@@ -364,9 +365,7 @@ Insofar as it can, given the kind precedence rules, the arguments of self will a
 <dd class="field-even"><p></p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">py2store.utils.signatures</span> <span class="kn">import</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">KO</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="o">...</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="o">...</span>
 <span class="gp">...</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
@@ -555,21 +554,29 @@ Yeah, I know. Don’t ask me, ask the authors of <cite>Signature</cite>!</p>
 <dl class="py method">
 <dt id="i2.signatures.Sig.with_defaults">
 <em class="property">property </em><code class="sig-name descname">with_defaults</code><a class="headerlink" href="#i2.signatures.Sig.with_defaults" title="Permalink to this definition">¶</a></dt>
-<dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">Sig</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="o">...</span><span class="p">)</span><span class="o">.</span><span class="n">with_defaults</span><span class="p">)</span>
-<span class="go">[&#39;args&#39;, &#39;x&#39;, &#39;y&#39;, &#39;kwargs&#39;]</span>
+<dd><p>…).with_defaults)
+[‘args’, ‘x’, ‘y’, ‘kwargs’]</p>
+<dl class="field-list">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 </pre></div>
 </div>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="i2.signatures.Sig.without_defaults">
 <em class="property">property </em><code class="sig-name descname">without_defaults</code><a class="headerlink" href="#i2.signatures.Sig.without_defaults" title="Permalink to this definition">¶</a></dt>
-<dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">Sig</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="o">...</span><span class="p">)</span><span class="o">.</span><span class="n">without_defaults</span><span class="p">)</span>
-<span class="go">[&#39;a&#39;, &#39;b&#39;]</span>
+<dd><p>…).without_defaults)
+[‘a’, ‘b’]</p>
+<dl class="field-list">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 </pre></div>
 </div>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1195,8 +1202,7 @@ AssertionError: These argument names weren’t found in the signature: {‘e’}
 <dd><p>Function to easily and flexibly make inspect.Parameter objects for testing.</p>
 <p>It’s annoying to have to compose parameters from scratch to testing things.
 This tool should help making it less annoying.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">param_kinds</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">param_for_kind</span><span class="p">,</span> <span class="n">param_kinds</span><span class="p">))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">param_for_kind</span><span class="p">,</span> <span class="n">param_kinds</span><span class="p">))</span>
 <span class="go">[&lt;Parameter &quot;POSITIONAL_ONLY&quot;&gt;, &lt;Parameter &quot;POSITIONAL_OR_KEYWORD&quot;&gt;, &lt;Parameter &quot;VAR_POSITIONAL&quot;&gt;, &lt;Parameter &quot;KEYWORD_ONLY&quot;&gt;, &lt;Parameter &quot;VAR_KEYWORD&quot;&gt;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">param_for_kind</span><span class="o">.</span><span class="n">positional_or_keyword</span><span class="p">()</span>
 <span class="go">&lt;Parameter &quot;POSITIONAL_OR_KEYWORD&quot;&gt;</span>

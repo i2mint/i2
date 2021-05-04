@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.signatures &#8212; i2 0.0.13 documentation</title>
+    <title>i2.signatures &#8212; i2 0.0.14 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -33,8 +33,9 @@
           <div class="body" role="main">
             
   <h1>Source code for i2.signatures</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Signature</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">signature</span>
+<span></span><span class="sd">&quot;&quot;&quot;Signature calculus&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Signature</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">signature</span><span class="p">,</span> <span class="n">unwrap</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span> <span class="k">as</span> <span class="n">MappingType</span>
 
@@ -156,6 +157,8 @@
 <span class="sd">    []</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># obj = inspect.unwrap(obj, stop=(lambda f: hasattr(f, &quot;__signature__&quot;)))</span>
+
     <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[]</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
@@ -177,10 +180,14 @@
             <span class="n">obj</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Signature</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-    <span class="c1"># if function didn&#39;t return at this point, it didn&#39;t find a match, so raise</span>
-    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Don&#39;t know how to make that object into an iterable of inspect.Parameter objects: </span><span class="si">{</span><span class="n">obj</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span></div>
+    <span class="c1"># if nothing above worked, perhaps you have a wrapped object? Try unwrapping until you find a signature...</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__wrapped__&#39;</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">unwrap</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;__signature__&#39;</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">ensure_params</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># if function didn&#39;t return at this point, it didn&#39;t find a match, so raise a TypeError</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Don&#39;t know how to make that object into an iterable of inspect.Parameter objects: </span><span class="si">{</span><span class="n">obj</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
 
 
 <span class="n">assure_params</span> <span class="o">=</span> <span class="n">ensure_params</span>  <span class="c1"># alias for backcompatibility</span>
@@ -903,8 +910,6 @@
 <span class="sd">        :param ch_to_all_pk: Whether to change all kinds of both signatures to PK (POSITIONAL_OR_KEYWORD)</span>
 <span class="sd">        :return:</span>
 
-<span class="sd">        &gt;&gt;&gt; from py2store.utils.signatures import Sig, KO</span>
-<span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; def func(a=None, *, b=1, c=2): ...</span>
 <span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt;</span>
@@ -1091,7 +1096,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">without_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        &gt;&gt;&gt; from i2.signatures import Sig</span>
 <span class="sd">        &gt;&gt;&gt; list(Sig(lambda *args, a, b, x=1, y=1, **kwargs: ...).without_defaults)</span>
 <span class="sd">        [&#39;a&#39;, &#39;b&#39;]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1102,7 +1106,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">with_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        &gt;&gt;&gt; from i2.signatures import Sig</span>
 <span class="sd">        &gt;&gt;&gt; list(Sig(lambda *args, a, b, x=1, y=1, **kwargs: ...).with_defaults)</span>
 <span class="sd">        [&#39;args&#39;, &#39;x&#39;, &#39;y&#39;, &#39;kwargs&#39;]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1708,7 +1711,6 @@
 <span class="sd">    It&#39;s annoying to have to compose parameters from scratch to testing things.</span>
 <span class="sd">    This tool should help making it less annoying.</span>
 
-<span class="sd">    &gt;&gt;&gt; from i2.signatures import param_kinds</span>
 <span class="sd">    &gt;&gt;&gt; list(map(param_for_kind, param_kinds))</span>
 <span class="sd">    [&lt;Parameter &quot;POSITIONAL_ONLY&quot;&gt;, &lt;Parameter &quot;POSITIONAL_OR_KEYWORD&quot;&gt;, &lt;Parameter &quot;VAR_POSITIONAL&quot;&gt;, &lt;Parameter &quot;KEYWORD_ONLY&quot;&gt;, &lt;Parameter &quot;VAR_KEYWORD&quot;&gt;]</span>
 <span class="sd">    &gt;&gt;&gt; param_for_kind.positional_or_keyword()</span>
