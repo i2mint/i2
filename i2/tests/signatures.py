@@ -1,3 +1,4 @@
+from functools import reduce
 from i2.signatures import _empty
 from i2.signatures import *
 
@@ -10,9 +11,9 @@ mappingproxy = type(Signature().parameters)
 
 
 def mk_sig(
-    obj: Union[Signature, Callable, Mapping, None] = None,
-    return_annotations=empty,
-    **annotations,
+        obj: Union[Signature, Callable, Mapping, None] = None,
+        return_annotations=empty,
+        **annotations,
 ):
     """Convenience function to make a signature or inject annotations to an existing one.
 
@@ -104,7 +105,7 @@ def _merge_sig_dicts(sig1_dict, sig2_dict):
     return {
         "parameters": dict(sig1_dict["parameters"], **sig2_dict["parameters"]),
         "return_annotation": sig2_dict["return_annotation"]
-        or sig1_dict["return_annotation"],
+                             or sig1_dict["return_annotation"],
     }
 
 
@@ -179,7 +180,7 @@ def _merged_signatures_of_func_list(funcs, return_annotation: Any = empty):
     # s = Sig.from_objs(*funcs).to_simple_signature()
 
     if (
-        return_annotation in funcs
+            return_annotation in funcs
     ):  # then you want the return annotation of a specific func of funcs
         return_annotation = signature(return_annotation).return_annotation
 
