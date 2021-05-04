@@ -24,10 +24,10 @@ from glom import glom, Spec, Path, T
 
 spec = Spec(
     {
-        'name': '__name__',
-        'doc': '__doc__',
-        'return_annotation': (inspect.signature, Path('return_annotation')),
-        'parameters': (inspect.signature, Path('parameters')),
+        "name": "__name__",
+        "doc": "__doc__",
+        "return_annotation": (inspect.signature, Path("return_annotation")),
+        "parameters": (inspect.signature, Path("parameters")),
     }
 )
 pprint(glom(func, spec))
