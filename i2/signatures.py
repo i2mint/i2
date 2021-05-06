@@ -500,8 +500,9 @@ def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
 
     >>> _robust_signature_of_callable(_robust_signature_of_callable)  # has a normal signature
     <Signature (callable_obj: Callable) -> inspect.Signature>
-    >>> _robust_signature_of_callable(print)  # has one that this module provides
-    <Signature (*value, sep=' ', end='\n', file=<_io.TextIOWrapper name='<stdout>' mode='w' encoding='utf-8'>, flush=False)>
+    >>> s = _robust_signature_of_callable(print)  # has one that this module provides
+    >>> assert isinstance(s, Signature)
+    >>> # Will be: <Signature (*value, sep=' ', end='\n', file=<_io.TextIOWrapper name='<stdout>' mode='w' encoding='utf-8'>, flush=False)>
     >>> _robust_signature_of_callable(zip)  # doesn't have one, so will return a blanket one
     <Signature (*no_sig_args, **no_sig_kwargs)>
 
