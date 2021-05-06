@@ -512,7 +512,9 @@ def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
     except ValueError:
         obj_name = callable_obj.__name__
         if obj_name in sigs_for_sigless_builtin_name:
-            return sigs_for_sigless_builtin_name[obj_name] or signature(lambda *no_sig_args, **no_sig_kwargs: ...)
+            return sigs_for_sigless_builtin_name[obj_name] or signature(
+                lambda *no_sig_args, **no_sig_kwargs: ...
+            )
         else:
             raise
 
@@ -630,7 +632,9 @@ class Sig(Signature, Mapping):
         <Sig ()>
         """
         if callable(obj) and return_annotation is empty:
-            return_annotation = _robust_signature_of_callable(obj).return_annotation
+            return_annotation = _robust_signature_of_callable(
+                obj
+            ).return_annotation
         super().__init__(
             ensure_params(obj),
             return_annotation=return_annotation,
@@ -1734,110 +1738,85 @@ import sys
 sigs_for_sigless_builtin_name = {
     '__build_class__': None,
     # __build_class__(func, name, /, *bases, [metaclass], **kwds) -> class
-
     '__import__': None,
     # __import__(name, globals=None, locals=None, fromlist=(), level=0) -> module
-
     'bool': None,
     # bool(x) -> bool
-
     'breakpoint': None,
     # breakpoint(*args, **kws)
-
     'bytearray': None,
     # bytearray(iterable_of_ints) -> bytearray
     # bytearray(string, encoding[, errors]) -> bytearray
     # bytearray(bytes_or_buffer) -> mutable copy of bytes_or_buffer
     # bytearray(int) -> bytes array of size given by the parameter initialized with null bytes
     # bytearray() -> empty bytes array
-
     'bytes': None,
     # bytes(iterable_of_ints) -> bytes
     # bytes(string, encoding[, errors]) -> bytes
     # bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer
     # bytes(int) -> bytes object of size given by the parameter initialized with null bytes
     # bytes() -> empty bytes object
-
     'classmethod': None,
     # classmethod(function) -> method
-
     'dict': None,
     # dict() -> new empty dictionary
     # dict(mapping) -> new dictionary initialized from a mapping object's
     # dict(iterable) -> new dictionary initialized as if via:
     # dict(**kwargs) -> new dictionary initialized with the name=value pairs
-
     'dir': None,
     # dir([object]) -> list of strings
-
     'filter': None,
     # filter(function or None, iterable) --> filter object
-
     'frozenset': None,
     # frozenset() -> empty frozenset object
     # frozenset(iterable) -> frozenset object
-
     'getattr': None,
     # getattr(object, name[, default]) -> value
-
     'int': None,
     # int([x]) -> integer
     # int(x, base=10) -> integer
-
     'iter': None,
     # iter(iterable) -> iterator
     # iter(callable, sentinel) -> iterator
-
     'map': None,
     # map(func, *iterables) --> map object
-
     'max': None,
     # max(iterable, *[, default=obj, key=func]) -> value
     # max(arg1, arg2, *args, *[, key=func]) -> value
-
     'min': None,
     # min(iterable, *[, default=obj, key=func]) -> value
     # min(arg1, arg2, *args, *[, key=func]) -> value
-
     'next': None,
     # next(iterator[, default])
-
-    'print': signature(lambda *value, sep=' ', end='\n', file=sys.stdout, flush=False: ...),
+    'print': signature(
+        lambda *value, sep=' ', end='\n', file=sys.stdout, flush=False: ...
+    ),
     # print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)
-
     'range': None,
     # range(stop) -> range object
     # range(start, stop[, step]) -> range object
-
     'set': None,
     # set() -> new empty set object
     # set(iterable) -> new set object
-
     'slice': None,
     # slice(stop)
     # slice(start, stop[, step])
-
     'staticmethod': None,
     # staticmethod(function) -> method
-
     'str': None,
     # str(object='') -> str
     # str(bytes_or_buffer[, encoding[, errors]]) -> str
-
     'super': None,
     # super() -> same as super(__class__, <first argument>)
     # super(type) -> unbound super object
     # super(type, obj) -> bound super object; requires isinstance(obj, type)
     # super(type, type2) -> bound super object; requires issubclass(type2, type)
-
     'type': None,
     # type(object_or_name, bases, dict)
     # type(object) -> the object's type
     # type(name, bases, dict) -> a new type
-
     'vars': None,
     # vars([object]) -> dictionary
-
     'zip': None,
     # zip(*iterables) --> A zip object yielding tuples until an input is exhausted.
 }
