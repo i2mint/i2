@@ -1,4 +1,4 @@
-from typing import NewType, Optional, Iterable
+from typing import NewType, Optional, Iterable, Protocol, Any
 
 
 def new_type(
@@ -80,11 +80,26 @@ class HasAttrs:
 
     """
 
-    def __class_getitem__(self, *attr_names):
-        if len(attr_names) == 1 and isinstance(attr_names[0], tuple):
-            attr_names = attr_names[0]
-        str_to_exec = f"class HasAttrs(Protocol):\n" + "\n".join(
-            f"\t{attr}: Any" for attr in attr_names
+    def __class_getitem__(self, attr_names):
+        if isinstance(attr_names, str):
+            attr_names = [attr_names]
+        assert all(map(str.isidentifier, attr_names)), (
+            f"The following are not valid python 'identifiers' "
+            f"{', '.join(a for a in attr_names if not a.isidentifier())}"
         )
-        exec(str_to_exec)
-        return locals()["HasAttrs"]
+
+        annotations = {attr: Any for attr in attr_names}
+
+        class HasAttrs(Protocol):
+            __annotations__ = annotations
+
+            # def __repr__(self):  # TODO: This is for the instance, need it for the class
+            #     return "HasAttrs[{', '.join(annotations)}]"
+
+        return HasAttrs
+
+        # return type(
+        #     "HasAttrs",
+        #     (Protocol,),
+        #     {"__annotations__": {attr: Any for attr in attr_names}},
+        # )
