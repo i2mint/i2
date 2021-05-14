@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.itypes &#8212; i2 0.0.17 documentation</title>
+    <title>i2.itypes &#8212; i2 0.0.18 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -37,6 +37,42 @@
             
   <section id="module-i2.itypes">
 <span id="i2-itypes"></span><h1>i2.itypes<a class="headerlink" href="#module-i2.itypes" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="i2.itypes.HasAttrs">
+<em class="property">class </em><code class="sig-prename descclassname">i2.itypes.</code><code class="sig-name descname">HasAttrs</code><a class="reference internal" href="../../_modules/i2/itypes.html#HasAttrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.itypes.HasAttrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a protocol to express the existence of specific attributes.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SizedAndAppendable</span> <span class="o">=</span> <span class="n">HasAttrs</span><span class="p">[</span><span class="s2">&quot;__len__&quot;</span><span class="p">,</span> <span class="s2">&quot;append&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">isinstance</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">SizedAndAppendable</span><span class="p">)</span>  <span class="c1"># lists have both a length and an append</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">SizedAndAppendable</span><span class="p">)</span>  <span class="c1"># tuples don&#39;t have an append</span>
+</pre></div>
+</div>
+<p>[Python Protocols](<a class="reference external" href="https://www.python.org/dev/peps/pep-0544/">https://www.python.org/dev/peps/pep-0544/</a>) are a way to be able to do
+“behavior typing” (my bad terminology).
+Basically, if you want your static analyzer
+(the swingles in your IDE, or linter validation process…)
+to check if you’re manipulating the expected types, except the types
+(classes, subclasses, ABCs, abstract classes…) are too restrictive (they are!),
+you can use Protocols to fill the gap.</p>
+<p>Except writing them can sometimes be verbose.</p>
+<p>With HasAttrs you can have the basic “does it have these attributes” cases covered.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">HasAttrs</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">list</span><span class="p">(),</span> <span class="n">HasAttrs</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">HasAttrs</span><span class="p">[</span><span class="s2">&quot;append&quot;</span><span class="p">])</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">prop</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">pass</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">HasAttrs</span><span class="p">[</span><span class="s2">&quot;method&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">HasAttrs</span><span class="p">[</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;prop&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">HasAttrs</span><span class="p">[</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;prop&quot;</span><span class="p">,</span> <span class="s2">&quot;this_attr_does_not_exist&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="py function">
 <dt id="i2.itypes.new_type">
 <code class="sig-prename descclassname">i2.itypes.</code><code class="sig-name descname">new_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">tp</span></em>, <em class="sig-param"><span class="n">doc</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">aka</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Iterable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">assign_to_globals</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/itypes.html#new_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.itypes.new_type" title="Permalink to this definition">¶</a></dt>

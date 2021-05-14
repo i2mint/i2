@@ -33,9 +33,9 @@ def new_type(
     """
     new_tp = NewType(name, tp)
     if doc is not None:
-        setattr(new_tp, "__doc__", doc)
+        setattr(new_tp, '__doc__', doc)
     if aka is not None:
-        setattr(new_tp, "_aka", set(aka))
+        setattr(new_tp, '_aka', set(aka))
     if assign_to_globals:
         globals()[
             name
