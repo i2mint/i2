@@ -9,6 +9,7 @@
    module_docs/i2/deco
    module_docs/i2/doc_mint
    module_docs/i2/errors
+   module_docs/i2/examples/signature_calculus
    module_docs/i2/footprints
    module_docs/i2/genu
    module_docs/i2/io_trans

@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.tests.footprints &#8212; i2 0.0.20 documentation</title>
+    <title>i2.examples.signature_calculus &#8212; i2 0.0.20 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -17,8 +17,8 @@
     <script src="../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="i2.tests.objects_for_testing" href="objects_for_testing.html" />
-    <link rel="prev" title="i2.tests" href="../tests.html" />
+    <link rel="next" title="i2.footprints" href="../footprints.html" />
+    <link rel="prev" title="i2.errors" href="../errors.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
   
@@ -35,8 +35,27 @@
 
           <div class="body" role="main">
             
-  <section id="module-i2.tests.footprints">
-<span id="i2-tests-footprints"></span><h1>i2.tests.footprints<a class="headerlink" href="#module-i2.tests.footprints" title="Permalink to this headline">¶</a></h1>
+  <section id="module-i2.examples.signature_calculus">
+<span id="i2-examples-signature-calculus"></span><h1>i2.examples.signature_calculus<a class="headerlink" href="#module-i2.examples.signature_calculus" title="Permalink to this headline">¶</a></h1>
+<p># Signature Calculus</p>
+<p><cite>Sig</cite> is an extension of the <cite>inspect.Signature</cite> object that puts more
+goodies at your fingertips.</p>
+<p>First of all, a <cite>Sig</cite> instance can be made from a variety of types</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">()</span>
+<span class="go">&lt;Sig ()&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">(</span><span class="s1">&#39;self&#39;</span><span class="p">)</span>
+<span class="go">&lt;Sig (self)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+<span class="go">&lt;Sig (a, b, c=0)&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">(</span><span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_ONLY</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="nb">int</span><span class="p">))</span>
+<span class="go">&lt;Sig (foo: int = &#39;foo&#39;, /)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;self&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">P</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">&lt;Sig (self, a, b, c=1)&gt;</span>
+</pre></div>
+</div>
 </section>
 
 
@@ -65,7 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../deco.html">i2.deco</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc_mint.html">i2.doc_mint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../errors.html">i2.errors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">i2.examples.signature_calculus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../footprints.html">i2.footprints</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../genu.html">i2.genu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../io_trans.html">i2.io_trans</a></li>
@@ -78,9 +97,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../simple_pymint.html">i2.simple_pymint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../switch_case_tree.html">i2.switch_case_tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tests.html">i2.tests</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">i2.tests.footprints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="objects_for_testing.html">i2.tests.objects_for_testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="signatures.html">i2.tests.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests/footprints.html">i2.tests.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests/signatures.html">i2.tests.signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../vend/funcutils.html">i2.vend.funcutils</a></li>
 </ul>
@@ -89,8 +108,8 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../tests.html" title="previous chapter">i2.tests</a></li>
-      <li>Next: <a href="objects_for_testing.html" title="next chapter">i2.tests.objects_for_testing</a></li>
+      <li>Previous: <a href="../errors.html" title="previous chapter">i2.errors</a></li>
+      <li>Next: <a href="../footprints.html" title="next chapter">i2.footprints</a></li>
   </ul></li>
 </ul>
 </div>
@@ -124,7 +143,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../../../_sources/module_docs/i2/tests/footprints.rst.txt"
+      <a href="../../../_sources/module_docs/i2/examples/signature_calculus.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
