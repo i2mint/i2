@@ -1319,13 +1319,16 @@ def ch_func_to_all_pk(func):
 
     >>> from py2http.decorators import signature, ch_func_to_all_pk
     >>>
-    >>> def f(a, /, b, *, c=None, **kwargs): ...
-    ...
+    >>> def f(a, /, b, *, c=None, **kwargs):
+    ...     return a + b * c
     >>> print(signature(f))
     (a, /, b, *, c=None, **kwargs)
     >>> ff = ch_func_to_all_pk(f)
     >>> print(signature(ff))
     (a, b, c=None, **kwargs)
+    >>> ff(1, 2, 3)
+    7
+    >>>
     >>> def g(x, y=1, *args, **kwargs): ...
     ...
     >>> print(signature(g))
@@ -1334,7 +1337,45 @@ def ch_func_to_all_pk(func):
     >>> print(signature(gg))
     (x, y=1, args=(), **kwargs)
     """
-    func = tuple_the_args(func)
-    sig = signature(func)
-    func.__signature__ = ch_signature_to_all_pk(sig)
-    return func
+
+    _func = tuple_the_args(func)
+    sig = Sig(_func)
+
+    @wraps(func)
+    def __func(*args, **kwargs):
+        args, kwargs = Sig(func).extract_args_and_kwargs(*args, **kwargs)
+        return _func(*args, **kwargs)
+
+    __func.__signature__ = ch_signature_to_all_pk(sig)
+    return __func
+
+
+## This one didn't actually handle position only correctly (just signature)
+# def old_ch_func_to_all_pk(func):
+#     """Returns a copy of the function where all arguments are of the PK kind.
+#     (PK: Positional_or_keyword)
+#
+#     :param func: A callable
+#     :return:
+#
+#     >>> from py2http.decorators import signature, ch_func_to_all_pk
+#     >>>
+#     >>> def f(a, /, b, *, c=None, **kwargs): ...
+#     ...
+#     >>> print(signature(f))
+#     (a, /, b, *, c=None, **kwargs)
+#     >>> ff = old_ch_func_to_all_pk(f)
+#     >>> print(signature(ff))
+#     (a, b, c=None, **kwargs)
+#     >>> def g(x, y=1, *args, **kwargs): ...
+#     ...
+#     >>> print(signature(g))
+#     (x, y=1, *args, **kwargs)
+#     >>> gg = old_ch_func_to_all_pk(g)
+#     >>> print(signature(gg))
+#     (x, y=1, args=(), **kwargs)
+#     """
+#     func = tuple_the_args(func)
+#     sig = signature(func)
+#     func.__signature__ = ch_signature_to_all_pk(sig)
+#     return func
