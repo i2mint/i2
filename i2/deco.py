@@ -50,9 +50,7 @@ def double_up_as_factory(decorator_func):
     """
 
     def validate_decorator_func(decorator_func):
-        first_param, *other_params = signature(
-            decorator_func
-        ).parameters.values()
+        first_param, *other_params = signature(decorator_func).parameters.values()
         assert (
             first_param.default is None
         ), f'First argument of the decorator function needs to default to None. Was {first_param.default}'
@@ -131,9 +129,7 @@ def tuple_the_args(func):
             return func(*a, *_vp_args_, *aa, **kwargs)
 
         try:  # TODO: Avoid this try catch. Look in advance for default ordering
-            params[index_of_vp] = params[index_of_vp].replace(
-                kind=PK, default=()
-            )
+            params[index_of_vp] = params[index_of_vp].replace(kind=PK, default=())
             vpless_func.__signature__ = Signature(
                 params, return_annotation=signature(func).return_annotation
             )
@@ -177,9 +173,7 @@ def mk_args_kwargs_merger(func):
 
     def merge_args_and_kwargs(args, kwargs):
         if len(args) > 0:
-            return (
-                inspect.signature(func).bind_partial(*args, **kwargs).arguments
-            )
+            return inspect.signature(func).bind_partial(*args, **kwargs).arguments
         else:
             return kwargs
 
@@ -278,9 +272,7 @@ class MultiFunc:
     def __init__(self, funcs=()):
         self.funcs = ensure_iterable_of_callables(funcs)
         self.sigs = {func: Sig(func) for func in self.funcs}
-        self.normalized_funcs = {
-            func: self.normalize_func(func) for func in self.funcs
-        }
+        self.normalized_funcs = {func: self.normalize_func(func) for func in self.funcs}
         multi_func_sig = Sig.from_objs(*self.normalized_funcs.values())
         # TODO: Finish attempt to add **all_other_kwargs_ignored to the signature
         # multi_func_sig = (Sig.from_objs(
@@ -291,16 +283,14 @@ class MultiFunc:
 
     def kwargs_for_func(self, *args, **kwargs):
         return dict(
-            (func, self.sigs[func].source_kwargs(**kwargs))
-            for func in self.funcs
+            (func, self.sigs[func].source_kwargs(**kwargs)) for func in self.funcs
         )
 
     # TODO: Give it a signature (needs to be done in __init__)
     # TODO: Validation of inputs
     def __call__(self, *args, **kwargs):
         return dict(
-            (func, self.sigs[func].source_kwargs(**kwargs))
-            for func in self.funcs
+            (func, self.sigs[func].source_kwargs(**kwargs)) for func in self.funcs
         )
 
 
@@ -406,9 +396,7 @@ class OutputPostProcessingError(RuntimeError):
     ...
 
 
-def postprocess(
-    post, caught_post_errors=(Exception,), verbose_error_message=False
-):
+def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=False):
     """Add some post-processing after a function
 
     :param post: The function to apply to the output
@@ -471,9 +459,7 @@ def postprocess(
             try:
                 return post(output)
             except caught_post_errors as e:
-                msg = (
-                    f'Error when postprocessing output with post func: {func}'
-                )
+                msg = f'Error when postprocessing output with post func: {func}'
                 if verbose_error_message:
                     msg += '\n' + f'  output={output}'
                     if (
@@ -485,10 +471,7 @@ def postprocess(
                             + '  which was obtained by func(*args, **kwargs) where:'
                         )
                         msg += (
-                            '\n'
-                            + f'    args: {args}'
-                            + '\n'
-                            + f'    kwargs: {kwargs}'
+                            '\n' + f'    args: {args}' + '\n' + f'    kwargs: {kwargs}'
                         )
                 msg += '\n' + f'Error is: {e}'
                 raise OutputPostProcessingError(msg)
@@ -499,8 +482,7 @@ def postprocess(
         ):  # intended to catch cases where wrapper doesn't have a signature
             wrapper_signature = signature(wrapper)
             sig = Signature(
-                wrapper_signature.parameters.values(),
-                return_annotation=return_annot,
+                wrapper_signature.parameters.values(), return_annotation=return_annot,
             )
             wrapper.__signature__ = sig
 
@@ -687,9 +669,7 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
 
                 for argname, trans_func in trans_func_for_arg.items():
                     if argname in val_of_argname:
-                        val_of_argname[argname] = trans_func(
-                            val_of_argname[argname]
-                        )
+                        val_of_argname[argname] = trans_func(val_of_argname[argname])
                 # apply transform functions to argument values
                 return func(**val_of_argname)
 
@@ -813,9 +793,7 @@ def transform_class_method_input_and_output(
     wrapped_method = transform_args(**arg_trans)(getattr(cls, method))
     if method_output_trans is not None:
         setattr(
-            cls,
-            method,
-            wrap_method_output(method_output_trans)(wrapped_method),
+            cls, method, wrap_method_output(method_output_trans)(wrapped_method),
         )
     else:
         setattr(cls, method, wrapped_method)
@@ -1130,9 +1108,7 @@ def wrap_instance_methods(
                     class_name = obj.__name__
                 else:
                     class_name = str(obj)
-                raise ValueError(
-                    "{} has no '{}' method!".format(class_name, method)
-                )
+                raise ValueError("{} has no '{}' method!".format(class_name, method))
         return obj
 
     return obj_wrapper

@@ -215,9 +215,7 @@ if __name__ == '__main__':
                     ]
                 ),
             ),
-            CondNode(
-                cond=could_be_float, then=FinalNode('could be seen as a float')
-            ),
+            CondNode(cond=could_be_float, then=FinalNode('could be seen as a float')),
         ]
     )
     assert list(st('nothing I can do with that')) == []

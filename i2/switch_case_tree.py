@@ -39,9 +39,7 @@ class AttrMap(Mapping):
 
     def _validate_val(self, v):
         if not self._is_valid_val(v):
-            raise ValueError(
-                "key was valid and value found, but value wasn't valid"
-            )
+            raise ValueError("key was valid and value found, but value wasn't valid")
 
     def _getitem(self, k):
         return getattr(self._obj, k)
@@ -192,8 +190,7 @@ if __name__ == '__main__':
     }
 
     comparison = ChainMap(
-        special_comparison,
-        AttrMap(operator, is_valid_val=is_valid_comparision),
+        special_comparison, AttrMap(operator, is_valid_val=is_valid_comparision),
     )
 
     assert comparison['contains'] == operator.contains
@@ -214,15 +211,9 @@ if __name__ == '__main__':
     Condition = namedtuple('Condition', ['feat', 'comp'])
     condition = {
         feat + '_' + comp: Condition(featurizer[feat], comparison[comp])
-        for feat, comp in [
-            ('len', 'lt'),
-            ('cols', 'isin'),
-            ('cols', 'contains'),
-        ]
+        for feat, comp in [('len', 'lt'), ('cols', 'isin'), ('cols', 'contains'),]
     }
-    assert all(
-        is_valid_feat_and_comp(feat, comp) for feat, comp in condition.values()
-    )
+    assert all(is_valid_feat_and_comp(feat, comp) for feat, comp in condition.values())
 
     df = pd.DataFrame({'a': [1, 2, 3], 'b': [10, 20, 30]})
     filt = mk_filt(df, *condition['len_lt'])

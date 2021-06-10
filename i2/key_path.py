@@ -397,9 +397,7 @@ class StrKeyPath(KeyPathMap):
         yield from ((self._key_of_id(_id), v) for _id, v in super().items())
 
     def rollout(self, d):
-        target = self.__class__(
-            sep=self.sep, prefix=self.prefix, auto_node_writes=True
-        )
+        target = self.__class__(sep=self.sep, prefix=self.prefix, auto_node_writes=True)
         for k, v in d.items():
             target[k] = v
         return target.store
@@ -412,9 +410,7 @@ class KeyPathTrans:
     given to the method as input.
     """
 
-    def __init__(
-        self, sep: str = '.', node_type: type = dict, mk_new_node=None
-    ):
+    def __init__(self, sep: str = '.', node_type: type = dict, mk_new_node=None):
         """
 
         :param sep:
@@ -543,12 +539,7 @@ class KeyPathTrans:
                 self.setitem_recursive(d[first_key], key_path[1:], val)
 
     def extract_key_paths(
-        self,
-        d,
-        key_paths,
-        field_naming='full',
-        use_default=False,
-        default_val=None,
+        self, d, key_paths, field_naming='full', use_default=False, default_val=None,
     ):
         """
         getting with a key list or "."-separated string

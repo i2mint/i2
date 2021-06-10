@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.deco &#8212; i2 0.0.21 documentation</title>
+    <title>i2.deco &#8212; i2 0.0.22 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -85,9 +85,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">validate_decorator_func</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">):</span>
-        <span class="n">first_param</span><span class="p">,</span> <span class="o">*</span><span class="n">other_params</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span>
-            <span class="n">decorator_func</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">first_param</span><span class="p">,</span> <span class="o">*</span><span class="n">other_params</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">first_param</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;First argument of the decorator function needs to default to None. Was </span><span class="si">{</span><span class="n">first_param</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s1">&#39;</span>
@@ -166,9 +164,7 @@
             <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">_vp_args_</span><span class="p">,</span> <span class="o">*</span><span class="n">aa</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>  <span class="c1"># TODO: Avoid this try catch. Look in advance for default ordering</span>
-            <span class="n">params</span><span class="p">[</span><span class="n">index_of_vp</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">index_of_vp</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">()</span>
-            <span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="n">index_of_vp</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">index_of_vp</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">())</span>
             <span class="n">vpless_func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">Signature</span><span class="p">(</span>
                 <span class="n">params</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">return_annotation</span>
             <span class="p">)</span>
@@ -212,9 +208,7 @@
 
     <span class="k">def</span> <span class="nf">merge_args_and_kwargs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">bind_partial</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">arguments</span>
-            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">bind_partial</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">arguments</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">kwargs</span>
 
@@ -313,9 +307,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">funcs</span><span class="o">=</span><span class="p">()):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">funcs</span> <span class="o">=</span> <span class="n">ensure_iterable_of_callables</span><span class="p">(</span><span class="n">funcs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sigs</span> <span class="o">=</span> <span class="p">{</span><span class="n">func</span><span class="p">:</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">funcs</span><span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">normalized_funcs</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">func</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_func</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">funcs</span>
-        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalized_funcs</span> <span class="o">=</span> <span class="p">{</span><span class="n">func</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_func</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">funcs</span><span class="p">}</span>
         <span class="n">multi_func_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="o">.</span><span class="n">from_objs</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">normalized_funcs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="c1"># TODO: Finish attempt to add **all_other_kwargs_ignored to the signature</span>
         <span class="c1"># multi_func_sig = (Sig.from_objs(</span>
@@ -326,16 +318,14 @@
 
     <span class="k">def</span> <span class="nf">kwargs_for_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigs</span><span class="p">[</span><span class="n">func</span><span class="p">]</span><span class="o">.</span><span class="n">source_kwargs</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">funcs</span>
+            <span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigs</span><span class="p">[</span><span class="n">func</span><span class="p">]</span><span class="o">.</span><span class="n">source_kwargs</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">funcs</span>
         <span class="p">)</span>
 
     <span class="c1"># TODO: Give it a signature (needs to be done in __init__)</span>
     <span class="c1"># TODO: Validation of inputs</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigs</span><span class="p">[</span><span class="n">func</span><span class="p">]</span><span class="o">.</span><span class="n">source_kwargs</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">funcs</span>
+            <span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigs</span><span class="p">[</span><span class="n">func</span><span class="p">]</span><span class="o">.</span><span class="n">source_kwargs</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">funcs</span>
         <span class="p">)</span></div>
 
 
@@ -441,9 +431,7 @@
     <span class="o">...</span></div>
 
 
-<div class="viewcode-block" id="postprocess"><a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.postprocess">[docs]</a><span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span>
-    <span class="n">post</span><span class="p">,</span> <span class="n">caught_post_errors</span><span class="o">=</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span> <span class="n">verbose_error_message</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">):</span>
+<div class="viewcode-block" id="postprocess"><a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.postprocess">[docs]</a><span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="n">post</span><span class="p">,</span> <span class="n">caught_post_errors</span><span class="o">=</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span> <span class="n">verbose_error_message</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Add some post-processing after a function</span>
 
 <span class="sd">    :param post: The function to apply to the output</span>
@@ -506,9 +494,7 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">post</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">caught_post_errors</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s1">&#39;Error when postprocessing output with post func: </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s1">&#39;</span>
-                <span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Error when postprocessing output with post func: </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s1">&#39;</span>
                 <span class="k">if</span> <span class="n">verbose_error_message</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;  output=</span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s1">&#39;</span>
                     <span class="k">if</span> <span class="p">(</span>
@@ -520,10 +506,7 @@
                             <span class="o">+</span> <span class="s1">&#39;  which was obtained by func(*args, **kwargs) where:&#39;</span>
                         <span class="p">)</span>
                         <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
-                            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-                            <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;    args: </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s1">&#39;</span>
-                            <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-                            <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;    kwargs: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s1">&#39;</span>
+                            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;    args: </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;    kwargs: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s1">&#39;</span>
                         <span class="p">)</span>
                 <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;Error is: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span>
                 <span class="k">raise</span> <span class="n">OutputPostProcessingError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -534,8 +517,7 @@
         <span class="p">):</span>  <span class="c1"># intended to catch cases where wrapper doesn&#39;t have a signature</span>
             <span class="n">wrapper_signature</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">wrapper</span><span class="p">)</span>
             <span class="n">sig</span> <span class="o">=</span> <span class="n">Signature</span><span class="p">(</span>
-                <span class="n">wrapper_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
-                <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annot</span><span class="p">,</span>
+                <span class="n">wrapper_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annot</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">wrapper</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">sig</span>
 
@@ -722,9 +704,7 @@
 
                 <span class="k">for</span> <span class="n">argname</span><span class="p">,</span> <span class="n">trans_func</span> <span class="ow">in</span> <span class="n">trans_func_for_arg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="k">if</span> <span class="n">argname</span> <span class="ow">in</span> <span class="n">val_of_argname</span><span class="p">:</span>
-                        <span class="n">val_of_argname</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span> <span class="o">=</span> <span class="n">trans_func</span><span class="p">(</span>
-                            <span class="n">val_of_argname</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span>
-                        <span class="p">)</span>
+                        <span class="n">val_of_argname</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span> <span class="o">=</span> <span class="n">trans_func</span><span class="p">(</span><span class="n">val_of_argname</span><span class="p">[</span><span class="n">argname</span><span class="p">])</span>
                 <span class="c1"># apply transform functions to argument values</span>
                 <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">val_of_argname</span><span class="p">)</span>
 
@@ -848,9 +828,7 @@
     <span class="n">wrapped_method</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="o">**</span><span class="n">arg_trans</span><span class="p">)(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">method_output_trans</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">setattr</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span>
-            <span class="n">method</span><span class="p">,</span>
-            <span class="n">wrap_method_output</span><span class="p">(</span><span class="n">method_output_trans</span><span class="p">)(</span><span class="n">wrapped_method</span><span class="p">),</span>
+            <span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">wrap_method_output</span><span class="p">(</span><span class="n">method_output_trans</span><span class="p">)(</span><span class="n">wrapped_method</span><span class="p">),</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">wrapped_method</span><span class="p">)</span>
@@ -1165,9 +1143,7 @@
                     <span class="n">class_name</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__name__</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">class_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> has no &#39;</span><span class="si">{}</span><span class="s2">&#39; method!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> has no &#39;</span><span class="si">{}</span><span class="s2">&#39; method!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">method</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">obj</span>
 
     <span class="k">return</span> <span class="n">obj_wrapper</span>

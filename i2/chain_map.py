@@ -129,15 +129,15 @@ class ChainMapTree(Mapping):
     Based on: https://gist.github.com/Klortho/7d83975559bdcc47ac64fd7d877934f6
     """
 
-    _max_repr_keys = 7  # Not used (anymore) at this point. Was to control __repr__ output length
+    _max_repr_keys = (
+        7  # Not used (anymore) at this point. Was to control __repr__ output length
+    )
 
     def __init__(self, *maps):
         _maps = list(maps)
 
         # All keys of kids that are mappings
-        kid_keys = set(
-            [key for m in maps for key in m.keys() if is_mapping(m[key])]
-        )
+        kid_keys = set([key for m in maps for key in m.keys() if is_mapping(m[key])])
 
         # This will be a dictionary of lists of mappings
         kid_maps = {}

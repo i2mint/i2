@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.util &#8212; i2 0.0.21 documentation</title>
+    <title>i2.util &#8212; i2 0.0.22 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -149,7 +149,8 @@ arguments. E.g., “args” if the resultant function is to have
 <li><p><strong>varkw</strong> (<em>str</em>) – Name of the catch-all variable for keyword
 arguments. E.g., “kwargs” if the resultant function is to have
 <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> in the signature. Defaults to None.</p></li>
-<li><p><strong>defaults</strong> (<em>dict</em>) – A mapping of argument names to default values.</p></li>
+<li><p><strong>defaults</strong> (<em>tuple</em>) – A tuple containing default argument values for
+those arguments that have defaults.</p></li>
 <li><p><strong>kwonlyargs</strong> (<em>list</em>) – Argument names which are only valid as
 keyword arguments. <strong>Python 3 only.</strong></p></li>
 <li><p><strong>kwonlydefaults</strong> (<em>dict</em>) – A mapping, same as normal <em>defaults</em>,
@@ -268,6 +269,17 @@ this function.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.util.inspect_formatargspec">
+<code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">inspect_formatargspec</code><span class="sig-paren">(</span><em class="sig-param">args</em>, <em class="sig-param">varargs=None</em>, <em class="sig-param">varkw=None</em>, <em class="sig-param">defaults=None</em>, <em class="sig-param">kwonlyargs=()</em>, <em class="sig-param">kwonlydefaults={}</em>, <em class="sig-param">annotations={}</em>, <em class="sig-param">formatarg=&lt;class 'str'&gt;</em>, <em class="sig-param">formatvarargs=&lt;function &lt;lambda&gt;&gt;</em>, <em class="sig-param">formatvarkw=&lt;function &lt;lambda&gt;&gt;</em>, <em class="sig-param">formatvalue=&lt;function &lt;lambda&gt;&gt;</em>, <em class="sig-param">formatreturns=&lt;function &lt;lambda&gt;&gt;</em>, <em class="sig-param">formatannotation=&lt;function formatannotation&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#inspect_formatargspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.inspect_formatargspec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy formatargspec from python 3.7 standard library.
+Python 3 has deprecated formatargspec and requested that Signature
+be used instead, however this requires a full reimplementation
+of formatargspec() in terms of creating Parameter objects and such.
+Instead of introducing all the object-creation overhead and having
+to reinvent from scratch, just copy their compatibility routine.</p>
 </dd></dl>
 
 <dl class="py class">
