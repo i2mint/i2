@@ -1,7 +1,7 @@
 import inspect
 import re
 import itertools
-
+import functools
 import types
 
 
@@ -178,8 +178,7 @@ def inject_method(self, method_function, method_name=None):
     else:
         if isinstance(method_function, dict):
             method_function = [
-                (func, func_name)
-                for func_name, func in method_function.items()
+                (func, func_name) for func_name, func in method_function.items()
             ]
         for method in method_function:
             if isinstance(method, tuple) and len(method) == 2:
@@ -195,9 +194,7 @@ def inject_method(self, method_function, method_name=None):
 
 def get_function_body(func):
     source_lines = inspect.getsourcelines(func)[0]
-    source_lines = itertools.dropwhile(
-        lambda x: x.startswith('@'), source_lines
-    )
+    source_lines = itertools.dropwhile(lambda x: x.startswith('@'), source_lines)
     line = next(source_lines).strip()
     if not line.startswith('def ') and not line.startswith('class'):
         return line.rsplit(':')[-1].strip()
@@ -211,8 +208,7 @@ def get_function_body(func):
     # Find the indentation of the first line
     indentation = len(first_line) - len(first_line.lstrip())
     return ''.join(
-        [first_line[indentation:]]
-        + [line[indentation:] for line in source_lines]
+        [first_line[indentation:]] + [line[indentation:] for line in source_lines]
     )
 
 
@@ -289,6 +285,65 @@ def _indent(text, margin, newline='\n', key=bool):
 NO_DEFAULT = make_sentinel(var_name='NO_DEFAULT')
 
 
+from inspect import formatannotation
+
+
+def inspect_formatargspec(
+    args,
+    varargs=None,
+    varkw=None,
+    defaults=None,
+    kwonlyargs=(),
+    kwonlydefaults={},
+    annotations={},
+    formatarg=str,
+    formatvarargs=lambda name: '*' + name,
+    formatvarkw=lambda name: '**' + name,
+    formatvalue=lambda value: '=' + repr(value),
+    formatreturns=lambda text: ' -> ' + text,
+    formatannotation=formatannotation,
+):
+    """Copy formatargspec from python 3.7 standard library.
+    Python 3 has deprecated formatargspec and requested that Signature
+    be used instead, however this requires a full reimplementation
+    of formatargspec() in terms of creating Parameter objects and such.
+    Instead of introducing all the object-creation overhead and having
+    to reinvent from scratch, just copy their compatibility routine.
+    """
+
+    def formatargandannotation(arg):
+        result = formatarg(arg)
+        if arg in annotations:
+            result += ': ' + formatannotation(annotations[arg])
+        return result
+
+    specs = []
+    if defaults:
+        firstdefault = len(args) - len(defaults)
+    for i, arg in enumerate(args):
+        spec = formatargandannotation(arg)
+        if defaults and i >= firstdefault:
+            spec = spec + formatvalue(defaults[i - firstdefault])
+        specs.append(spec)
+    if varargs is not None:
+        specs.append(formatvarargs(formatargandannotation(varargs)))
+    else:
+        if kwonlyargs:
+            specs.append('*')
+    if kwonlyargs:
+        for kwonlyarg in kwonlyargs:
+            spec = formatargandannotation(kwonlyarg)
+            if kwonlydefaults and kwonlyarg in kwonlydefaults:
+                spec += formatvalue(kwonlydefaults[kwonlyarg])
+            specs.append(spec)
+    if varkw is not None:
+        specs.append(formatvarkw(formatargandannotation(varkw)))
+    result = '(' + ', '.join(specs) + ')'
+    if 'return' in annotations:
+        result += formatreturns(formatannotation(annotations['return']))
+    return result
+
+
 class FunctionBuilder(object):
     """The FunctionBuilder type provides an interface for programmatically
     creating new functions, either based on existing functions or from
@@ -333,7 +388,8 @@ class FunctionBuilder(object):
         varkw (str): Name of the catch-all variable for keyword
             arguments. E.g., "kwargs" if the resultant function is to have
             ``**kwargs`` in the signature. Defaults to None.
-        defaults (dict): A mapping of argument names to default values.
+        defaults (tuple): A tuple containing default argument values for
+            those arguments that have defaults.
         kwonlyargs (list): Argument names which are only valid as
             keyword arguments. **Python 3 only.**
         kwonlydefaults (dict): A mapping, same as normal *defaults*,
@@ -367,9 +423,7 @@ class FunctionBuilder(object):
     @classmethod
     def _argspec_to_dict(cls, f):
         argspec = inspect.getfullargspec(f)
-        return dict(
-            (attr, getattr(argspec, attr)) for attr in cls._argspec_defaults
-        )
+        return dict((attr, getattr(argspec, attr)) for attr in cls._argspec_defaults)
 
     _defaults = {
         'doc': str,
@@ -379,7 +433,7 @@ class FunctionBuilder(object):
         'body': lambda: 'pass',
         'indent': lambda: 4,
         'annotations': dict,
-        'filename': lambda: 'py2mint.utils.FunctionBuilder',
+        'filename': lambda: 'boltons.funcutils.FunctionBuilder',
     }
 
     _defaults.update(_argspec_defaults)
@@ -410,14 +464,9 @@ class FunctionBuilder(object):
             annotations = self.annotations
         else:
             annotations = {}
-        return inspect.formatargspec(
-            self.args,
-            self.varargs,
-            self.varkw,
-            [],
-            self.kwonlyargs,
-            {},
-            annotations,
+
+        return inspect_formatargspec(
+            self.args, self.varargs, self.varkw, [], self.kwonlyargs, {}, annotations
         )
 
     _KWONLY_MARKER = re.compile(
@@ -437,8 +486,7 @@ class FunctionBuilder(object):
             kwonly_pairs = dict((arg, arg) for arg in self.kwonlyargs)
             formatters['formatvalue'] = lambda value: '=' + value
 
-        # TODO: Replace with inspect.signature
-        sig = inspect.formatargspec(
+        sig = inspect_formatargspec(
             self.args,
             self.varargs,
             self.varkw,
@@ -462,20 +510,19 @@ class FunctionBuilder(object):
         if not callable(func):
             raise TypeError('expected callable object, not %r' % (func,))
 
-        kwargs = {
-            'name': func.__name__,
-            'doc': func.__doc__,
-            'module': func.__module__,
-            'annotations': getattr(func, '__annotations__', {}),
-            'dict': getattr(func, '__dict__', {}),
-        }
+        if isinstance(func, functools.partial):
+            kwargs = {
+                'name': func.__name__,
+                'doc': func.__doc__,
+                'module': getattr(func, '__module__', None),  # e.g., method_descriptor
+                'annotations': getattr(func, '__annotations__', {}),
+                'dict': getattr(func, '__dict__', {}),
+            }
 
         kwargs.update(cls._argspec_to_dict(func))
 
-        # _inspect_iscoroutinefunction always False in Py3?
-        # _inspect_iscoroutinefunction = lambda func: False
-        # if _inspect_iscoroutinefunction(func):
-        #     kwargs['is_async'] = True
+        if inspect.iscoroutinefunction(func):
+            kwargs['is_async'] = True
 
         return cls(**kwargs)
 
@@ -538,9 +585,7 @@ class FunctionBuilder(object):
         respective values.
         """
         ret = dict(
-            reversed(
-                list(zip(reversed(self.args), reversed(self.defaults or [])))
-            )
+            reversed(list(zip(reversed(self.args), reversed(self.defaults or []))))
         )
         kwonlydefaults = getattr(self, 'kwonlydefaults', None)
         if kwonlydefaults:
@@ -551,9 +596,7 @@ class FunctionBuilder(object):
         arg_names = tuple(self.args) + tuple(getattr(self, 'kwonlyargs', ()))
         if only_required:
             defaults_dict = self.get_defaults_dict()
-            arg_names = tuple(
-                [an for an in arg_names if an not in defaults_dict]
-            )
+            arg_names = tuple([an for an in arg_names if an not in defaults_dict])
         return arg_names
 
     def add_arg(self, arg_name, default=NO_DEFAULT, kwonly=False):
@@ -567,8 +610,7 @@ class FunctionBuilder(object):
             )
         if arg_name in self.kwonlyargs:
             raise ExistingArgument(
-                'arg %r already in func %s kwonly arg list'
-                % (arg_name, self.name)
+                'arg %r already in func %s kwonly arg list' % (arg_name, self.name)
             )
         if not kwonly:
             self.args.append(arg_name)

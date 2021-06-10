@@ -36,9 +36,7 @@ def is_not_empty(obj):
 
 
 def _is_property(attr_name, attr_val):
-    return not attr_name.startswith('_') and isinstance(
-        attr_val, (property, lazyprop)
-    )
+    return not attr_name.startswith('_') and isinstance(attr_val, (property, lazyprop))
 
 
 def _property_names_of(obj):
@@ -51,10 +49,29 @@ def _property_names_of(obj):
 
 
 def name_of_obj(o):
+    """
+    Tries to find the (or "a") name for an object, even if `__name__` doesn't exist.
+
+    >>> name_of_obj(map)
+    'map'
+    >>> name_of_obj([1, 2, 3])
+    'list'
+    >>> name_of_obj(print)
+    'print'
+    >>> name_of_obj(lambda x: x)
+    '<lambda>'
+    >>> from functools import partial
+    >>> name_of_obj(partial(print, sep=','))
+    'print'
+    """
     if hasattr(o, '__name__'):
         return o.__name__
     elif hasattr(o, '__class__'):
-        return name_of_obj(o.__class__)
+        name = name_of_obj(o.__class__)
+        if name == 'partial':
+            if hasattr(o, 'func'):
+                return name_of_obj(o.func)
+        return name
     else:
         return no_name
 
