@@ -1840,9 +1840,11 @@ def tuple_the_args(func):
             )
         return vpless_func
     else:
-        return copy_func(
-            func
-        )  # don't change anything (or should we wrap anyway, to be consistent?)
+        return func
+        # Problems with copying (like when func is a partial) so removing!
+        # return copy_func(
+        #     func
+        # )  # don't change anything (or should we wrap anyway, to be consistent?)
 
 
 def copy_func(f):
