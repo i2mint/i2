@@ -3,9 +3,7 @@ import doctest
 MAX_LINE_LENGTH = 72  # https://en.wikipedia.org/wiki/Characters_per_line
 
 
-def _prefix_lines(
-    s: str, prefix: str = '# ', even_if_empty: bool = False
-) -> str:
+def _prefix_lines(s: str, prefix: str = '# ', even_if_empty: bool = False) -> str:
     r"""
     Prefix every line of s with given prefix.
 
@@ -85,9 +83,7 @@ def strip_comments(code):
     return comment_strip_p.sub('', code)
 
 
-def mk_example_wants_callback(
-    source_want_func: Callable[[str, str], Callable]
-):
+def mk_example_wants_callback(source_want_func: Callable[[str, str], Callable]):
     def example_wants_callback(example, *args, **kwargs):
         want = example.want.strip()
         if want:
@@ -165,9 +161,7 @@ def doctest_string(obj, example_callback=assert_wants, recurse=True):
     :param recurse: Whether the process should find doctests in the attributes of the object, recursively.
     :return: A string containing the doctests, with output lines prefixed by '# Output:'
     """
-    return '\n'.join(
-        _doctest_string_gen(obj, example_callback, recurse=recurse)
-    )
+    return '\n'.join(_doctest_string_gen(obj, example_callback, recurse=recurse))
 
 
 from functools import partial
@@ -175,9 +169,7 @@ from functools import partial
 doctest_string.for_output_prefix = partial(
     doctest_string, example_callback=output_prefix
 )
-doctest_string.for_assert_wants = partial(
-    doctest_string, example_callback=assert_wants
-)
+doctest_string.for_assert_wants = partial(doctest_string, example_callback=assert_wants)
 
 
 def doctest_string_print(obj, example_callback=assert_wants, recurse=True):
@@ -191,10 +183,7 @@ def doctest_string_print(obj, example_callback=assert_wants, recurse=True):
 
 
 def old_doctest_string(
-    obj,
-    output_prefix='# OUTPUT: ',
-    include_attr_without_doctests=False,
-    recurse=True,
+    obj, output_prefix='# OUTPUT: ', include_attr_without_doctests=False, recurse=True,
 ):
     """
     Extract the doctests found in given object.
@@ -213,11 +202,7 @@ def old_doctest_string(
         for example in rr.examples:
             want = example.want
             want = want.strip()
-            ss += (
-                '\n'
-                + example.source
-                + _prefix_lines(want, prefix=output_prefix)
-            )
+            ss += '\n' + example.source + _prefix_lines(want, prefix=output_prefix)
         if include_attr_without_doctests:
             s += header + ss
         elif len(ss) > 0:  # only append this attr if ss is non-empty

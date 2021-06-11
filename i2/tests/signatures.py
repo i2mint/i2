@@ -33,9 +33,7 @@ def mk_sig(
     if obj is None:
         return Signature()
     if callable(obj):
-        obj = Signature.from_callable(
-            obj
-        )  # get a signature object from a callable
+        obj = Signature.from_callable(obj)  # get a signature object from a callable
     if isinstance(obj, Signature):
         obj = obj.parameters  # get the parameters attribute from a signature
     params = dict(obj)  # get a writable copy of parameters
@@ -48,17 +46,12 @@ def mk_sig(
         for name, annotation in annotations.items():
             p = params[name]
             params[name] = Parameter(
-                name=name,
-                kind=p.kind,
-                default=p.default,
-                annotation=annotation,
+                name=name, kind=p.kind, default=p.default, annotation=annotation,
             )
         return Signature(params.values(), return_annotation=return_annotations)
 
 
-def mk_signature(
-    parameters, *, return_annotation=empty, __validate_parameters__=True
-):
+def mk_signature(parameters, *, return_annotation=empty, __validate_parameters__=True):
     """Make an inspect.Signature object with less boilerplate verbosity.
     Args:
         signature: A list of parameter specifications. This could be an inspect.Parameter object or anything that
@@ -192,9 +185,7 @@ def _merged_signatures_of_func_list(funcs, return_annotation: Any = empty):
 
 
 # TODO: will we need more options for the priority argument? Like position?
-def update_signature_with_signatures_from_funcs(
-    *funcs, priority: str = 'last'
-):
+def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
     """Make a decorator that will merge the signatures of given funcs to the signature of the wrapped func.
     By default, the funcs signatures will be placed last, but can be given priority by asking priority = 'first'
 
@@ -225,18 +216,14 @@ def update_signature_with_signatures_from_funcs(
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(func, *funcs).to_simple_signature()
-            func.__signature__ = _merged_signatures_of_func_list(
-                [func] + list(funcs)
-            )
+            func.__signature__ = _merged_signatures_of_func_list([func] + list(funcs))
             return func
 
     elif priority == 'first':
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(*funcs, func).to_simple_signature()
-            func.__signature__ = _merged_signatures_of_func_list(
-                list(funcs) + [func]
-            )
+            func.__signature__ = _merged_signatures_of_func_list(list(funcs) + [func])
             return func
 
     else:

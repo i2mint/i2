@@ -39,9 +39,7 @@ class AttrMap(Mapping):
 
     def _validate_val(self, v):
         if not self._is_valid_val(v):
-            raise ValueError(
-                "key was valid and value found, but value wasn't valid"
-            )
+            raise ValueError("key was valid and value found, but value wasn't valid")
 
     def _getitem(self, k):
         return getattr(self._obj, k)
@@ -192,8 +190,7 @@ if __name__ == '__main__':
     }
 
     comparison = ChainMap(
-        special_comparison,
-        AttrMap(operator, is_valid_val=is_valid_comparision),
+        special_comparison, AttrMap(operator, is_valid_val=is_valid_comparision),
     )
 
     assert comparison['contains'] == operator.contains

@@ -145,9 +145,7 @@ def mro_items(type_obj):
     ['denominator', 'imag', 'numerator', 'real']
     """
     # TODO: handle slots?
-    return itertools.chain.from_iterable(
-        ct.__dict__.items() for ct in type_obj.__mro__
-    )
+    return itertools.chain.from_iterable(ct.__dict__.items() for ct in type_obj.__mro__)
 
 
 def dir_dict(obj, raise_exc=False):
@@ -265,9 +263,7 @@ class InstancePartial(functools.partial):
 
     """
 
-    if (
-        partialmethod is not None
-    ):  # NB: See https://github.com/mahmoud/boltons/pull/244
+    if partialmethod is not None:  # NB: See https://github.com/mahmoud/boltons/pull/244
 
         @property
         def _partialmethod(self):
@@ -288,9 +284,7 @@ class CachedInstancePartial(functools.partial):
     See the :class:`InstancePartial` docstring for more details.
     """
 
-    if (
-        partialmethod is not None
-    ):  # NB: See https://github.com/mahmoud/boltons/pull/244
+    if partialmethod is not None:  # NB: See https://github.com/mahmoud/boltons/pull/244
 
         @property
         def _partialmethod(self):
@@ -350,9 +344,7 @@ def format_invocation(name='', args=(), kwargs=None):
     return '%s(%s)' % (name, all_args_text)
 
 
-def format_exp_repr(
-    obj, pos_names, req_names=None, opt_names=None, opt_key=None
-):
+def format_exp_repr(obj, pos_names, req_names=None, opt_names=None, opt_key=None):
     """Render an expression-style repr of an object, based on attribute
     names, which are assumed to line up with arguments to an initializer.
 
@@ -518,9 +510,7 @@ def wraps(func, injected=None, expected=None, **kw):
     )
 
 
-def update_wrapper(
-    wrapper, func, injected=None, expected=None, build_from=None, **kw
-):
+def update_wrapper(wrapper, func, injected=None, expected=None, build_from=None, **kw):
     """Modeled after the built-in :func:`functools.update_wrapper`,
     this function is used to make your wrapper function reflect the
     wrapped function's:
@@ -604,8 +594,7 @@ def update_wrapper(
         raise TypeError(
             'wraps does not support wrapping classmethods and'
             ' staticmethods, change the order of wrapping to'
-            ' wrap the underlying function: %r'
-            % (getattr(func, '__func__', None),)
+            ' wrap the underlying function: %r' % (getattr(func, '__func__', None),)
         )
 
     update_dict = kw.pop('update_dict', True)
@@ -789,8 +778,7 @@ class FunctionBuilder(object):
         def _argspec_to_dict(cls, f):
             argspec = inspect.getfullargspec(f)
             return dict(
-                (attr, getattr(argspec, attr))
-                for attr in cls._argspec_defaults
+                (attr, getattr(argspec, attr)) for attr in cls._argspec_defaults
             )
 
     _defaults = {
@@ -830,14 +818,10 @@ class FunctionBuilder(object):
             with_annotations is ignored on Python 2.  On Python 3 signature
             will omit annotations if it is set to False.
             """
-            return inspect_formatargspec(
-                self.args, self.varargs, self.varkw, []
-            )
+            return inspect_formatargspec(self.args, self.varargs, self.varkw, [])
 
         def get_invocation_str(self):
-            return inspect_formatargspec(
-                self.args, self.varargs, self.varkw, []
-            )[1:-1]
+            return inspect_formatargspec(self.args, self.varargs, self.varkw, [])[1:-1]
 
     else:
 
@@ -921,9 +905,7 @@ class FunctionBuilder(object):
             kwargs = {
                 'name': func.__name__,
                 'doc': func.__doc__,
-                'module': getattr(
-                    func, '__module__', None
-                ),  # e.g., method_descriptor
+                'module': getattr(func, '__module__', None),  # e.g., method_descriptor
                 'annotations': getattr(func, '__annotations__', {}),
                 'dict': getattr(func, '__dict__', {}),
             }
@@ -995,9 +977,7 @@ class FunctionBuilder(object):
         respective values.
         """
         ret = dict(
-            reversed(
-                list(zip(reversed(self.args), reversed(self.defaults or [])))
-            )
+            reversed(list(zip(reversed(self.args), reversed(self.defaults or []))))
         )
         kwonlydefaults = getattr(self, 'kwonlydefaults', None)
         if kwonlydefaults:
@@ -1008,9 +988,7 @@ class FunctionBuilder(object):
         arg_names = tuple(self.args) + tuple(getattr(self, 'kwonlyargs', ()))
         if only_required:
             defaults_dict = self.get_defaults_dict()
-            arg_names = tuple(
-                [an for an in arg_names if an not in defaults_dict]
-            )
+            arg_names = tuple([an for an in arg_names if an not in defaults_dict])
         return arg_names
 
     if _IS_PY2:
@@ -1019,8 +997,7 @@ class FunctionBuilder(object):
             'Add an argument with optional *default* (defaults to ``funcutils.NO_DEFAULT``).'
             if arg_name in self.args:
                 raise ExistingArgument(
-                    'arg %r already in func %s arg list'
-                    % (arg_name, self.name)
+                    'arg %r already in func %s arg list' % (arg_name, self.name)
                 )
             self.args.append(arg_name)
             if default is not NO_DEFAULT:
@@ -1036,13 +1013,11 @@ class FunctionBuilder(object):
             """
             if arg_name in self.args:
                 raise ExistingArgument(
-                    'arg %r already in func %s arg list'
-                    % (arg_name, self.name)
+                    'arg %r already in func %s arg list' % (arg_name, self.name)
                 )
             if arg_name in self.kwonlyargs:
                 raise ExistingArgument(
-                    'arg %r already in func %s kwonly arg list'
-                    % (arg_name, self.name)
+                    'arg %r already in func %s kwonly arg list' % (arg_name, self.name)
                 )
             if not kwonly:
                 self.args.append(arg_name)
@@ -1127,41 +1102,23 @@ except ImportError:
         """
         convert = {
             '__lt__': [
-                (
-                    '__gt__',
-                    lambda self, other: not (self < other or self == other),
-                ),
+                ('__gt__', lambda self, other: not (self < other or self == other),),
                 ('__le__', lambda self, other: self < other or self == other),
                 ('__ge__', lambda self, other: not self < other),
             ],
             '__le__': [
-                (
-                    '__ge__',
-                    lambda self, other: not self <= other or self == other,
-                ),
-                (
-                    '__lt__',
-                    lambda self, other: self <= other and not self == other,
-                ),
+                ('__ge__', lambda self, other: not self <= other or self == other,),
+                ('__lt__', lambda self, other: self <= other and not self == other,),
                 ('__gt__', lambda self, other: not self <= other),
             ],
             '__gt__': [
-                (
-                    '__lt__',
-                    lambda self, other: not (self > other or self == other),
-                ),
+                ('__lt__', lambda self, other: not (self > other or self == other),),
                 ('__ge__', lambda self, other: self > other or self == other),
                 ('__le__', lambda self, other: not self > other),
             ],
             '__ge__': [
-                (
-                    '__le__',
-                    lambda self, other: (not self >= other) or self == other,
-                ),
-                (
-                    '__gt__',
-                    lambda self, other: self >= other and not self == other,
-                ),
+                ('__le__', lambda self, other: (not self >= other) or self == other,),
+                ('__gt__', lambda self, other: self >= other and not self == other,),
                 ('__lt__', lambda self, other: not self >= other),
             ],
         }

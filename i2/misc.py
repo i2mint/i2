@@ -109,11 +109,7 @@ class SignatureFactory:
         self.dflt_arg_specs = dflt_arg_specs
 
     def __call__(
-        self,
-        params,
-        *,
-        return_annotation=inspect._empty,
-        __validate_parameters__=True
+        self, params, *, return_annotation=inspect._empty, __validate_parameters__=True
     ):
         parameters = list()
         for param in params:

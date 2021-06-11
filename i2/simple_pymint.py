@@ -154,9 +154,7 @@ def mint_of_callable(f):
     doc_inputs = parsed_doc['inputs']
     doc_return = parsed_doc['return']
     mint = {
-        'name': name_of_obj(
-            f
-        ),  # TODO: Better NO_NAME or just not the name field?
+        'name': name_of_obj(f),  # TODO: Better NO_NAME or just not the name field?
         'module': f.__module__,
         'doc': raw_doc,
         'description': parsed_doc['description'] or '',

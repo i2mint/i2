@@ -24,9 +24,7 @@ def _get_ast_root_from(o):
     elif not isinstance(o, ast.AST):  # not an AST node...
         source_filepath = getsourcefile(o)
         source_str = getsource(o)
-        if not isinstance(source_filepath, str) and isinstance(
-            source_str, str
-        ):
+        if not isinstance(source_filepath, str) and isinstance(source_str, str):
             raise ValueError('Unrecognized object format')
 
     return ast.parse(source=source_str, filename=source_filepath)
@@ -120,11 +118,7 @@ def attr_list(root, func_name):
     """
     atts = []
     functions = sorted(
-        {
-            node.name
-            for node in ast.walk(root)
-            if isinstance(node, ast.FunctionDef)
-        }
+        {node.name for node in ast.walk(root) if isinstance(node, ast.FunctionDef)}
     )
     for root in ast.walk(root):
         if isinstance(root, ast.FunctionDef) and root.name == func_name:
@@ -204,8 +198,7 @@ def attrs_used_by_method(method, remove_duplicates=True):
     >>> assert attrs_used_by_method(A.target_method) == {'a', 'b', 'c', 'e'}
     """
     return _attrs_used_by_method(
-        *cls_and_method_name_of_method(method),
-        remove_duplicates=remove_duplicates
+        *cls_and_method_name_of_method(method), remove_duplicates=remove_duplicates
     )
 
 

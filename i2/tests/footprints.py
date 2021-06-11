@@ -52,9 +52,7 @@ class B:
 
     def greet(self, person='world'):
         """Accesses a, x, and y"""
-        return (
-            str(self.a) + ' ' + person + '! ' + 'x+y=' + str(self.x + self.y)
-        )
+        return str(self.a) + ' ' + person + '! ' + 'x+y=' + str(self.x + self.y)
 
     @property
     def z(self):
@@ -116,9 +114,7 @@ def test_attrs_used_by_method_computation():
         'y',
     }
     # assert attrs_used_by_method_computation(B.z, init_kws) == {'x', 'y'}  # fails (property z has no __name__)
-    assert attrs_used_by_method_computation(
-        B.accessing_property_method, init_kws
-    ) == {
+    assert attrs_used_by_method_computation(B.accessing_property_method, init_kws) == {
         'b',
         'z',
         'x',

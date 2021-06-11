@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.util &#8212; i2 0.0.21 documentation</title>
+    <title>i2.util &#8212; i2 0.0.22 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -36,7 +36,7 @@
 <span></span><span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
-
+<span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">types</span>
 
 
@@ -213,8 +213,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method_function</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">method_function</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">method_function</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">method_function</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="p">]</span>
         <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">method_function</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -230,9 +229,7 @@
 
 <span class="k">def</span> <span class="nf">get_function_body</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
     <span class="n">source_lines</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsourcelines</span><span class="p">(</span><span class="n">func</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">source_lines</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">dropwhile</span><span class="p">(</span>
-        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">),</span> <span class="n">source_lines</span>
-    <span class="p">)</span>
+    <span class="n">source_lines</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">dropwhile</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">),</span> <span class="n">source_lines</span><span class="p">)</span>
     <span class="n">line</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">source_lines</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;def &#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">line</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -246,8 +243,7 @@
     <span class="c1"># Find the indentation of the first line</span>
     <span class="n">indentation</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_line</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">())</span>
     <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-        <span class="p">[</span><span class="n">first_line</span><span class="p">[</span><span class="n">indentation</span><span class="p">:]]</span>
-        <span class="o">+</span> <span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="n">indentation</span><span class="p">:]</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">source_lines</span><span class="p">]</span>
+        <span class="p">[</span><span class="n">first_line</span><span class="p">[</span><span class="n">indentation</span><span class="p">:]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="n">indentation</span><span class="p">:]</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">source_lines</span><span class="p">]</span>
     <span class="p">)</span>
 
 
@@ -324,6 +320,65 @@
 <span class="n">NO_DEFAULT</span> <span class="o">=</span> <span class="n">make_sentinel</span><span class="p">(</span><span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;NO_DEFAULT&#39;</span><span class="p">)</span>
 
 
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">formatannotation</span>
+
+
+<div class="viewcode-block" id="inspect_formatargspec"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.inspect_formatargspec">[docs]</a><span class="k">def</span> <span class="nf">inspect_formatargspec</span><span class="p">(</span>
+    <span class="n">args</span><span class="p">,</span>
+    <span class="n">varargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">varkw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">defaults</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">kwonlyargs</span><span class="o">=</span><span class="p">(),</span>
+    <span class="n">kwonlydefaults</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">annotations</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">formatarg</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+    <span class="n">formatvarargs</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;*&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span>
+    <span class="n">formatvarkw</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;**&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span>
+    <span class="n">formatvalue</span><span class="o">=</span><span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">),</span>
+    <span class="n">formatreturns</span><span class="o">=</span><span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="s1">&#39; -&gt; &#39;</span> <span class="o">+</span> <span class="n">text</span><span class="p">,</span>
+    <span class="n">formatannotation</span><span class="o">=</span><span class="n">formatannotation</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Copy formatargspec from python 3.7 standard library.</span>
+<span class="sd">    Python 3 has deprecated formatargspec and requested that Signature</span>
+<span class="sd">    be used instead, however this requires a full reimplementation</span>
+<span class="sd">    of formatargspec() in terms of creating Parameter objects and such.</span>
+<span class="sd">    Instead of introducing all the object-creation overhead and having</span>
+<span class="sd">    to reinvent from scratch, just copy their compatibility routine.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">formatargandannotation</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">formatarg</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">formatannotation</span><span class="p">(</span><span class="n">annotations</span><span class="p">[</span><span class="n">arg</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">specs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">defaults</span><span class="p">:</span>
+        <span class="n">firstdefault</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">formatargandannotation</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">defaults</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">firstdefault</span><span class="p">:</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="n">spec</span> <span class="o">+</span> <span class="n">formatvalue</span><span class="p">(</span><span class="n">defaults</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">firstdefault</span><span class="p">])</span>
+        <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">varargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">formatvarargs</span><span class="p">(</span><span class="n">formatargandannotation</span><span class="p">(</span><span class="n">varargs</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kwonlyargs</span><span class="p">:</span>
+            <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kwonlyargs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">kwonlyarg</span> <span class="ow">in</span> <span class="n">kwonlyargs</span><span class="p">:</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="n">formatargandannotation</span><span class="p">(</span><span class="n">kwonlyarg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">kwonlydefaults</span> <span class="ow">and</span> <span class="n">kwonlyarg</span> <span class="ow">in</span> <span class="n">kwonlydefaults</span><span class="p">:</span>
+                <span class="n">spec</span> <span class="o">+=</span> <span class="n">formatvalue</span><span class="p">(</span><span class="n">kwonlydefaults</span><span class="p">[</span><span class="n">kwonlyarg</span><span class="p">])</span>
+            <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">varkw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">formatvarkw</span><span class="p">(</span><span class="n">formatargandannotation</span><span class="p">(</span><span class="n">varkw</span><span class="p">)))</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;return&#39;</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">formatreturns</span><span class="p">(</span><span class="n">formatannotation</span><span class="p">(</span><span class="n">annotations</span><span class="p">[</span><span class="s1">&#39;return&#39;</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
 <div class="viewcode-block" id="FunctionBuilder"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FunctionBuilder">[docs]</a><span class="k">class</span> <span class="nc">FunctionBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The FunctionBuilder type provides an interface for programmatically</span>
 <span class="sd">    creating new functions, either based on existing functions or from</span>
@@ -368,7 +423,8 @@
 <span class="sd">        varkw (str): Name of the catch-all variable for keyword</span>
 <span class="sd">            arguments. E.g., &quot;kwargs&quot; if the resultant function is to have</span>
 <span class="sd">            ``**kwargs`` in the signature. Defaults to None.</span>
-<span class="sd">        defaults (dict): A mapping of argument names to default values.</span>
+<span class="sd">        defaults (tuple): A tuple containing default argument values for</span>
+<span class="sd">            those arguments that have defaults.</span>
 <span class="sd">        kwonlyargs (list): Argument names which are only valid as</span>
 <span class="sd">            keyword arguments. **Python 3 only.**</span>
 <span class="sd">        kwonlydefaults (dict): A mapping, same as normal *defaults*,</span>
@@ -402,9 +458,7 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_argspec_to_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
         <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">argspec</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_argspec_defaults</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">((</span><span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">argspec</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_argspec_defaults</span><span class="p">)</span>
 
     <span class="n">_defaults</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;doc&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -414,7 +468,7 @@
         <span class="s1">&#39;body&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="s1">&#39;pass&#39;</span><span class="p">,</span>
         <span class="s1">&#39;indent&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
         <span class="s1">&#39;annotations&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-        <span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="s1">&#39;py2mint.utils.FunctionBuilder&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="s1">&#39;boltons.funcutils.FunctionBuilder&#39;</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="n">_defaults</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_argspec_defaults</span><span class="p">)</span>
@@ -445,14 +499,9 @@
             <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">annotations</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">formatargspec</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">varargs</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">varkw</span><span class="p">,</span>
-            <span class="p">[],</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="p">,</span>
-            <span class="p">{},</span>
-            <span class="n">annotations</span><span class="p">,</span>
+
+        <span class="k">return</span> <span class="n">inspect_formatargspec</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">varargs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">varkw</span><span class="p">,</span> <span class="p">[],</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="p">,</span> <span class="p">{},</span> <span class="n">annotations</span>
         <span class="p">)</span></div>
 
     <span class="n">_KWONLY_MARKER</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
@@ -472,8 +521,7 @@
             <span class="n">kwonly_pairs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">arg</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="p">)</span>
             <span class="n">formatters</span><span class="p">[</span><span class="s1">&#39;formatvalue&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="n">value</span>
 
-        <span class="c1"># TODO: Replace with inspect.signature</span>
-        <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">formatargspec</span><span class="p">(</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect_formatargspec</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">varargs</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">varkw</span><span class="p">,</span>
@@ -497,20 +545,19 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;expected callable object, not </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">func</span><span class="p">,))</span>
 
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-            <span class="s1">&#39;doc&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">,</span>
-            <span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
-            <span class="s1">&#39;annotations&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__annotations__&#39;</span><span class="p">,</span> <span class="p">{}),</span>
-            <span class="s1">&#39;dict&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="p">{}),</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">):</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="s1">&#39;doc&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">,</span>
+                <span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__module__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>  <span class="c1"># e.g., method_descriptor</span>
+                <span class="s1">&#39;annotations&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__annotations__&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+                <span class="s1">&#39;dict&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+            <span class="p">}</span>
 
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_argspec_to_dict</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
 
-        <span class="c1"># _inspect_iscoroutinefunction always False in Py3?</span>
-        <span class="c1"># _inspect_iscoroutinefunction = lambda func: False</span>
-        <span class="c1"># if _inspect_iscoroutinefunction(func):</span>
-        <span class="c1">#     kwargs[&#39;is_async&#39;] = True</span>
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">iscoroutinefunction</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;is_async&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -573,9 +620,7 @@
 <span class="sd">        respective values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="nb">reversed</span><span class="p">(</span>
-                <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">),</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="ow">or</span> <span class="p">[])))</span>
-            <span class="p">)</span>
+            <span class="nb">reversed</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">),</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="ow">or</span> <span class="p">[]))))</span>
         <span class="p">)</span>
         <span class="n">kwonlydefaults</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;kwonlydefaults&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">kwonlydefaults</span><span class="p">:</span>
@@ -586,9 +631,7 @@
         <span class="n">arg_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;kwonlyargs&#39;</span><span class="p">,</span> <span class="p">()))</span>
         <span class="k">if</span> <span class="n">only_required</span><span class="p">:</span>
             <span class="n">defaults_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_defaults_dict</span><span class="p">()</span>
-            <span class="n">arg_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">an</span> <span class="k">for</span> <span class="n">an</span> <span class="ow">in</span> <span class="n">arg_names</span> <span class="k">if</span> <span class="n">an</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">defaults_dict</span><span class="p">]</span>
-            <span class="p">)</span>
+            <span class="n">arg_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">an</span> <span class="k">for</span> <span class="n">an</span> <span class="ow">in</span> <span class="n">arg_names</span> <span class="k">if</span> <span class="n">an</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">defaults_dict</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">arg_names</span>
 
 <div class="viewcode-block" id="FunctionBuilder.add_arg"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FunctionBuilder.add_arg">[docs]</a>    <span class="k">def</span> <span class="nf">add_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">NO_DEFAULT</span><span class="p">,</span> <span class="n">kwonly</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -602,8 +645,7 @@
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ExistingArgument</span><span class="p">(</span>
-                <span class="s1">&#39;arg </span><span class="si">%r</span><span class="s1"> already in func </span><span class="si">%s</span><span class="s1"> kwonly arg list&#39;</span>
-                <span class="o">%</span> <span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="s1">&#39;arg </span><span class="si">%r</span><span class="s1"> already in func </span><span class="si">%s</span><span class="s1"> kwonly arg list&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">kwonly</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
