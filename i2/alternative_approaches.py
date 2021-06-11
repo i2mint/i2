@@ -19,15 +19,15 @@ def func(a, b: int = 0, c=None) -> float:
     return (a + b) / c
 
 
-from glom import glom, Spec, Path, T
-
-
-spec = Spec(
-    {
-        'name': '__name__',
-        'doc': '__doc__',
-        'return_annotation': (inspect.signature, Path('return_annotation')),
-        'parameters': (inspect.signature, Path('parameters')),
-    }
-)
-pprint(glom(func, spec))
+# from glom import glom, Spec, Path, T
+#
+#
+# spec = Spec(
+#     {
+#         'name': '__name__',
+#         'doc': '__doc__',
+#         'return_annotation': (inspect.signature, Path('return_annotation')),
+#         'parameters': (inspect.signature, Path('parameters')),
+#     }
+# )
+# pprint(glom(func, spec))

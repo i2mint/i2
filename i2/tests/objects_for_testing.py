@@ -183,10 +183,9 @@ class TestObj:
         return methodarg2 + ' test ' + self.constarg
 
 
-from i2.errors import ModuleNotFoundIgnore
+from contextlib import suppress
 
-
-with ModuleNotFoundIgnore():
+with suppress(ModuleNotFoundError, ImportError):
     from numpy import ndarray, matrix
     from pandas import DataFrame, Series
 

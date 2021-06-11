@@ -1,15 +1,14 @@
 import inspect
 from collections import defaultdict
-from collections.abc import Mapping
+# from collections.abc import Mapping
 from contextlib import suppress
 from functools import wraps, partial, update_wrapper
 from inspect import Signature, signature, Parameter
 from itertools import chain
-from types import FunctionType
 from typing import Iterable
 
-from i2.signatures import ch_signature_to_all_pk, HasParams, VP, PK, Sig
-
+from i2.signatures import ch_signature_to_all_pk, params_of, Sig, tuple_the_args
+from i2.signatures import copy_func  # keep here because might be referenced
 
 def double_up_as_factory(decorator_func):
     """Repurpose a decorator both as it's original form, and as a decorator factory.
@@ -73,80 +72,12 @@ def double_up_as_factory(decorator_func):
     return _double_up_as_factory
 
 
-def copy_func(f):
-    """Copy a function (not sure it works with all types of callables)"""
-    g = FunctionType(
-        f.__code__,
-        f.__globals__,
-        name=f.__name__,
-        argdefs=f.__defaults__,
-        closure=f.__closure__,
-    )
-    g = update_wrapper(g, f)
-    g.__kwdefaults__ = f.__kwdefaults__
-    if hasattr(f, '__signature__'):
-        g.__signature__ = f.__signature__
-    return g
-
-
 def transparently_wrapped(func):
     @wraps(func)
     def transparently_wrapped_func(*args, **kwargs):
         return func(args, **kwargs)
 
     return transparently_wrapped_func
-
-
-def params_of(obj: HasParams):
-    if isinstance(obj, Signature):
-        obj = list(obj.parameters.values())
-    elif isinstance(obj, Mapping):
-        obj = list(obj.values())
-    elif callable(obj):
-        obj = list(signature(obj).parameters.values())
-    assert all(
-        isinstance(p, Parameter) for p in obj
-    ), 'obj needs to be a Iterable[Parameter] at this point'
-    return obj  # as is
-
-
-def tuple_the_args(func):
-    """A decorator that will change a VAR_POSITIONAL (*args) argument to a tuple (args)
-    argument of the same name.
-    """
-    params = params_of(func)
-    is_vp = list(p.kind == VP for p in params)
-    if any(is_vp):
-        index_of_vp = is_vp.index(True)  # there's can be only one
-
-        @wraps(func)
-        def vpless_func(*args, **kwargs):
-            # extract the element of args that needs to be unraveled
-            a, _vp_args_, aa = (
-                args[:index_of_vp],
-                args[index_of_vp],
-                args[(index_of_vp + 1) :],
-            )
-            # call the original function with the unravelled args
-            return func(*a, *_vp_args_, *aa, **kwargs)
-
-        try:  # TODO: Avoid this try catch. Look in advance for default ordering
-            params[index_of_vp] = params[index_of_vp].replace(
-                kind=PK, default=()
-            )
-            vpless_func.__signature__ = Signature(
-                params, return_annotation=signature(func).return_annotation
-            )
-        except ValueError:
-            params[index_of_vp] = params[index_of_vp].replace(kind=PK)
-            vpless_func.__signature__ = Signature(
-                params, return_annotation=signature(func).return_annotation
-            )
-        return vpless_func
-    else:
-        return copy_func(
-            func
-        )  # don't change anything (or should we wrap anyway, to be consistent?)
 
 
 def mk_args_kwargs_merger(func):

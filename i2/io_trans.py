@@ -163,33 +163,36 @@ class JSONAnnotAndDfltIoTrans(AnnotAndDfltIoTrans):
 class TypedBasedOutIoTrans(IoTrans):
     """Transform output according to it's type.
 
-    >>> import pandas as pd
-    >>> out_trans = TypedBasedOutIoTrans({
-    ...     (list, tuple, set): ', '.join,
-    ...     pd.DataFrame: pd.DataFrame.to_csv
-    ... })
-    >>>
-    >>>
-    >>> @out_trans
-    ... def repeat(a: int, b: list):
-    ...     return a * b
-    ...
-    >>> assert repeat(2, ['repeat', 'it']) == 'repeat, it, repeat, it'
-    >>>
-    >>> @out_trans
-    ... def transpose(df):
-    ...     return df.T
-    ...
-    >>> df = pd.DataFrame({'a': [1,2,3], 'b': [10, 20, 30]})
-    >>> print(df.to_csv())  # doctest: +NORMALIZE_WHITESPACE
-    ,a,b
-    0,1,10
-    1,2,20
-    2,3,30
-    >>> print(transpose(df))  # doctest: +NORMALIZE_WHITESPACE
-    ,0,1,2
-    a,1,2,3
-    b,10,20,30
+    # TODO: Move this doctest to tests suite that ignores the test if pandas not there!
+
+    # >>> import pandas as pd
+    # >>> out_trans = TypedBasedOutIoTrans({
+    # ...     (list, tuple, set): ', '.join,
+    # ...     pd.DataFrame: pd.DataFrame.to_csv
+    # ... })
+    # >>>
+    # >>>
+    # >>> @out_trans
+    # ... def repeat(a: int, b: list):
+    # ...     return a * b
+    # ...
+    # >>> assert repeat(2, ['repeat', 'it']) == 'repeat, it, repeat, it'
+    # >>>
+    # >>> @out_trans
+    # ... def transpose(df):
+    # ...     return df.T
+    # ...
+    # >>> df = pd.DataFrame({'a': [1,2,3], 'b': [10, 20, 30]})
+    # >>> print(df.to_csv())  # doctest: +NORMALIZE_WHITESPACE
+    # ,a,b
+    # 0,1,10
+    # 1,2,20
+    # 2,3,30
+    # >>> print(transpose(df))  # doctest: +NORMALIZE_WHITESPACE
+    # ,0,1,2
+    # a,1,2,3
+    # b,10,20,30
+
     """
 
     trans_func_for_type: Mapping = ()  # Todo: Want empty mapping as default (use frozendict or __post_init__?)
