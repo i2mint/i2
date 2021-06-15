@@ -7,8 +7,11 @@ from inspect import Signature, signature, Parameter
 from itertools import chain
 from typing import Iterable
 
-from i2.signatures import ch_signature_to_all_pk, params_of, Sig, tuple_the_args
-from i2.signatures import copy_func  # keep here because might be referenced
+from i2.signatures import ch_func_to_all_pk, Sig, tuple_the_args
+
+# keep the imports below here because might be referenced (or take care of refs)
+from i2.signatures import ch_signature_to_all_pk, params_of, copy_func
+
 
 def double_up_as_factory(decorator_func):
     """Repurpose a decorator both as it's original form, and as a decorator factory.
@@ -400,12 +403,9 @@ def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=Fal
                         and verbose_error_message > 1
                     ):
                         msg += (
-                            '\n'
-                            + '  which was obtained by func(*args, **kwargs) where:'
+                            '\n' + '  which was obtained by func(*args, **kwargs) where:'
                         )
-                        msg += (
-                            '\n' + f'    args: {args}' + '\n' + f'    kwargs: {kwargs}'
-                        )
+                        msg += '\n' + f'    args: {args}' + '\n' + f'    kwargs: {kwargs}'
                 msg += '\n' + f'Error is: {e}'
                 raise OutputPostProcessingError(msg)
 
@@ -574,9 +574,7 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
         ):  # if no transformations were specified...
             return func  # just return the function itself
         elif dflt_trans_func is not None:
-            assert callable(
-                dflt_trans_func
-            ), 'The dflt_trans_func needs to be a callable'
+            assert callable(dflt_trans_func), 'The dflt_trans_func needs to be a callable'
 
             @wraps(func)
             def transform_args_wrapper(*args, **kwargs):
@@ -1117,8 +1115,7 @@ def _call_signature(func: Callable, args: Args, kwargs: Kwargs) -> str:
         ('{}={}'.format(k, _special_str(v)) for k, v in kwargs.items())
     )
     return '{func_name}({signature})'.format(
-        func_name=func.__name__,
-        signature=', '.join([args_signature, kwargs_signature]),
+        func_name=func.__name__, signature=', '.join([args_signature, kwargs_signature]),
     )
 
 
@@ -1217,46 +1214,6 @@ def mk_call_logger(
             return _func
 
     return log_calls
-
-
-def ch_func_to_all_pk(func):
-    """Returns a copy of the function where all arguments are of the PK kind.
-    (PK: Positional_or_keyword)
-
-    :param func: A callable
-    :return:
-
-    >>> from py2http.decorators import signature, ch_func_to_all_pk
-    >>>
-    >>> def f(a, /, b, *, c=None, **kwargs):
-    ...     return a + b * c
-    >>> print(signature(f))
-    (a, /, b, *, c=None, **kwargs)
-    >>> ff = ch_func_to_all_pk(f)
-    >>> print(signature(ff))
-    (a, b, c=None, **kwargs)
-    >>> ff(1, 2, 3)
-    7
-    >>>
-    >>> def g(x, y=1, *args, **kwargs): ...
-    ...
-    >>> print(signature(g))
-    (x, y=1, *args, **kwargs)
-    >>> gg = ch_func_to_all_pk(g)
-    >>> print(signature(gg))
-    (x, y=1, args=(), **kwargs)
-    """
-
-    _func = tuple_the_args(func)
-    sig = Sig(_func)
-
-    @wraps(func)
-    def __func(*args, **kwargs):
-        args, kwargs = Sig(func).extract_args_and_kwargs(*args, **kwargs)
-        return _func(*args, **kwargs)
-
-    __func.__signature__ = ch_signature_to_all_pk(sig)
-    return __func
 
 
 ## This one didn't actually handle position only correctly (just signature)
