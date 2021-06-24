@@ -70,6 +70,7 @@ class IoTrans:
 @dataclass
 class ArgnameIoTrans(IoTrans):
     """Transforms argument values according to their names
+
     >>> def foo(a, b=1.0):
     ...     return a + b
     >>>
@@ -98,6 +99,7 @@ empty = Parameter.empty
 @dataclass
 class AnnotAndDfltIoTrans(IoTrans):
     """Transforms argument values using annotations and default type
+
     >>> def foo(a: int, b=1.0):
     ...     return a + b
     >>>
@@ -128,6 +130,7 @@ class AnnotAndDfltIoTrans(IoTrans):
 class JSONAnnotAndDfltIoTrans(AnnotAndDfltIoTrans):
     """Transforms argument values using annotations and default type,
     including lists, iterables, dicts, and booleans
+
     >>> def foo(a: dict, b=['dflt'], c=False):
     ...     return dict({}, a=a, b=b, c=c)
     >>>
@@ -222,6 +225,7 @@ import os
 
 def cast_to_jdict(value):
     """Tries to cast to a json-friendly dictionary.
+
     >>> cast_to_jdict('3')
     [3]
     >>> cast_to_jdict("[3]")
@@ -260,6 +264,7 @@ def cast_to_jdict(value):
 
 def cast_to_list(value):
     """Tries to case to a list (with json friendly elements)
+
     >>> cast_to_list('3')
     [3]
     >>> cast_to_list("[3]")

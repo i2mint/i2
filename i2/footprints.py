@@ -162,7 +162,8 @@ def attrs_used_by_method(method, remove_duplicates=True):
 
     Example:
 
-    Consider the method `A.target_method` coming from the following code in `i2.tests.footprints`:
+    Consider the method `A.target_method` coming from the following code in
+    `i2.tests.footprints_test`:
     ```python
     def func(obj):
         \"\"\"Accesses attributes 'a' and 'b' of obj\"\"\"
@@ -194,7 +195,7 @@ def attrs_used_by_method(method, remove_duplicates=True):
             return cls.e + y
     ```
 
-    >>> from i2.tests.footprints import A
+    >>> from i2.tests.footprints_test import A
     >>> assert attrs_used_by_method(A.target_method) == {'a', 'b', 'c', 'e'}
     """
     return _attrs_used_by_method(
