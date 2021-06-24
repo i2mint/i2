@@ -403,9 +403,12 @@ def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=Fal
                         and verbose_error_message > 1
                     ):
                         msg += (
-                            '\n' + '  which was obtained by func(*args, **kwargs) where:'
+                            '\n'
+                            + '  which was obtained by func(*args, **kwargs) where:'
                         )
-                        msg += '\n' + f'    args: {args}' + '\n' + f'    kwargs: {kwargs}'
+                        msg += (
+                            '\n' + f'    args: {args}' + '\n' + f'    kwargs: {kwargs}'
+                        )
                 msg += '\n' + f'Error is: {e}'
                 raise OutputPostProcessingError(msg)
 
@@ -574,7 +577,9 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
         ):  # if no transformations were specified...
             return func  # just return the function itself
         elif dflt_trans_func is not None:
-            assert callable(dflt_trans_func), 'The dflt_trans_func needs to be a callable'
+            assert callable(
+                dflt_trans_func
+            ), 'The dflt_trans_func needs to be a callable'
 
             @wraps(func)
             def transform_args_wrapper(*args, **kwargs):
@@ -1115,7 +1120,8 @@ def _call_signature(func: Callable, args: Args, kwargs: Kwargs) -> str:
         ('{}={}'.format(k, _special_str(v)) for k, v in kwargs.items())
     )
     return '{func_name}({signature})'.format(
-        func_name=func.__name__, signature=', '.join([args_signature, kwargs_signature]),
+        func_name=func.__name__,
+        signature=', '.join([args_signature, kwargs_signature]),
     )
 
 

@@ -207,19 +207,15 @@ if __name__ == '__main__':
     with suppress(ModuleNotFoundError, ImportError):
         import pandas as pd
         from collections import namedtuple
+
         print(
             '###########################################################################'
         )
 
-
         Condition = namedtuple('Condition', ['feat', 'comp'])
         condition = {
             feat + '_' + comp: Condition(featurizer[feat], comparison[comp])
-            for feat, comp in [
-                ('len', 'lt'),
-                ('cols', 'isin'),
-                ('cols', 'contains'),
-            ]
+            for feat, comp in [('len', 'lt'), ('cols', 'isin'), ('cols', 'contains'),]
         }
         assert all(
             is_valid_feat_and_comp(feat, comp) for feat, comp in condition.values()

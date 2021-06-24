@@ -22,8 +22,8 @@
    module_docs/i2/simple_pymint
    module_docs/i2/switch_case_tree
    module_docs/i2/tests
-   module_docs/i2/tests/footprints
+   module_docs/i2/tests/footprints_test
    module_docs/i2/tests/objects_for_testing
-   module_docs/i2/tests/signatures
+   module_docs/i2/tests/signatures_test
    module_docs/i2/util
    module_docs/i2/vend/funcutils

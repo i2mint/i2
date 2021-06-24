@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.deco &#8212; i2 0.0.22 documentation</title>
+    <title>i2.deco &#8212; i2 0.0.23 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -166,48 +166,6 @@ AttributeError, as expected, because missing the foo attribute
 … class C(A, B):
 …     pass
 &gt;&gt;&gt; c = C()</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="i2.deco.ch_func_to_all_pk">
-<code class="sig-prename descclassname">i2.deco.</code><code class="sig-name descname">ch_func_to_all_pk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#ch_func_to_all_pk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.deco.ch_func_to_all_pk" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a copy of the function where all arguments are of the PK kind.
-(PK: Positional_or_keyword)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>func</strong> – A callable</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">py2http.decorators</span> <span class="kn">import</span> <span class="n">signature</span><span class="p">,</span> <span class="n">ch_func_to_all_pk</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">c</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
-<span class="go">(a, /, b, *, c=None, **kwargs)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">ch_func_to_all_pk</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">ff</span><span class="p">))</span>
-<span class="go">(a, b, c=None, **kwargs)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="go">7</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="o">...</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
-<span class="go">(x, y=1, *args, **kwargs)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">gg</span> <span class="o">=</span> <span class="n">ch_func_to_all_pk</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">gg</span><span class="p">))</span>
-<span class="go">(x, y=1, args=(), **kwargs)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="i2.deco.copy_func">
-<code class="sig-prename descclassname">i2.deco.</code><code class="sig-name descname">copy_func</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#copy_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.deco.copy_func" title="Permalink to this definition">¶</a></dt>
-<dd><p>Copy a function (not sure it works with all types of callables)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -545,7 +503,7 @@ So here, you just write the generator and tag this decorator on top, to get the 
 </div>
 <ul class="simple">
 <li><dl class="simple">
-<dt>Using a function that does a lot to make several functions that do less.</dt><dd><p>(e.g. Extracting/making a python object from a function returning a raw http <a href="#id5"><span class="problematic" id="id6">response_</span></a></p>
+<dt>Using a function that does a lot to make several functions that do less.</dt><dd><p>(e.g. Extracting/making a python object from a function returning a raw http <a href="#id3"><span class="problematic" id="id4">response_</span></a></p>
 </dd>
 </dl>
 </li>
@@ -618,13 +576,6 @@ For example:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;a=ROOT/foo, b=ROOT/bar, c=default_c&#39;</span>  <span class="c1"># defaults still work</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="i2.deco.tuple_the_args">
-<code class="sig-prename descclassname">i2.deco.</code><code class="sig-name descname">tuple_the_args</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#tuple_the_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.deco.tuple_the_args" title="Permalink to this definition">¶</a></dt>
-<dd><p>A decorator that will change a VAR_POSITIONAL (<a href="#id3"><span class="problematic" id="id4">*</span></a>args) argument to a tuple (args)
-argument of the same name.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -929,9 +880,9 @@ Of course, this is just pretend. Don’t use this with real waveforms. It won’
 <li class="toctree-l1"><a class="reference internal" href="simple_pymint.html">i2.simple_pymint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="switch_case_tree.html">i2.switch_case_tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">i2.tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tests/footprints.html">i2.tests.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/footprints_test.html">i2.tests.footprints_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tests/signatures.html">i2.tests.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vend/funcutils.html">i2.vend.funcutils</a></li>
 </ul>

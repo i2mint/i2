@@ -43,18 +43,20 @@ def _to_params(params: ParamsAble_):
         for i, spec in enumerate(params):
             if isinstance(spec, int):
                 kind = spec
-                yield Parameter(f"a{kind}{i}", kind=kind)
+                yield Parameter(f'a{kind}{i}', kind=kind)
             elif isinstance(spec, Parameter):
                 param = spec
                 yield param
             elif isinstance(spec, str) and spec.isnumeric():
                 kind = int(spec)
-                yield Parameter(f"a{kind}{i}", kind=kind)
+                yield Parameter(f'a{kind}{i}', kind=kind)
             else:
                 try:
                     yield ensure_param(spec)
                 except Exception:
-                    raise TypeError(f"Don't know how to handle this type of obj: {spec}")
+                    raise TypeError(
+                        f"Don't know how to handle this type of obj: {spec}"
+                    )
 
 
 def _params_to_arg_name_and_val(params: ParamsAble_):
@@ -75,21 +77,21 @@ def _params_to_arg_name_and_val(params: ParamsAble_):
         if param.kind == Parameter.VAR_POSITIONAL:
             val = (i, -i)
         elif param.kind == Parameter.VAR_KEYWORD:
-            val = {param.name: i, param.name + "_": -i}
+            val = {param.name: i, param.name + '_': -i}
         else:
             val = i
         yield (param.name, val)
 
 
-assert dict(_params_to_arg_name_and_val(_to_params("00111234"))) == {
-    "a00": 0,
-    "a01": 1,
-    "a12": 2,
-    "a13": 3,
-    "a14": 4,
-    "a25": (5, -5),
-    "a36": 6,
-    "a47": {"a47": 7, "a47_": -7},
+assert dict(_params_to_arg_name_and_val(_to_params('00111234'))) == {
+    'a00': 0,
+    'a01': 1,
+    'a12': 2,
+    'a13': 3,
+    'a14': 4,
+    'a25': (5, -5),
+    'a36': 6,
+    'a47': {'a47': 7, 'a47_': -7},
 }
 
 
@@ -115,17 +117,17 @@ def inject_defaults(params: ParamsAble_, defaults: dict):
 
 
 assert (
-    str(Sig(inject_defaults(_to_params("00111234"), defaults={"a14": 40, "a36": 60})))
-    == "(a00, a01, /, a12, a13, a14=40, *a25, a36=60, **a47)"
+    str(Sig(inject_defaults(_to_params('00111234'), defaults={'a14': 40, 'a36': 60})))
+    == '(a00, a01, /, a12, a13, a14=40, *a25, a36=60, **a47)'
 )
 
 
 def _str_of_call_args(_call_kwargs: dict):
-    return ", ".join(f"{k}={v}" for k, v in _call_kwargs.items())
+    return ', '.join(f'{k}={v}' for k, v in _call_kwargs.items())
 
 
 def mk_func_from_params(
-    params: ParamsAble = "00111234",
+    params: ParamsAble = '00111234',
     *,
     defaults=None,
     name=None,
@@ -211,10 +213,12 @@ def mk_func_from_params(
 
     @sig
     def arg_str_func(*args, **kwargs):
-        _call_kwargs = sig.kwargs_from_args_and_kwargs(args, kwargs, apply_defaults=True)
+        _call_kwargs = sig.kwargs_from_args_and_kwargs(
+            args, kwargs, apply_defaults=True
+        )
         return callback(_call_kwargs)
 
-    arg_str_func.__name__ = name or "f" + "".join(str(p.kind) for p in params)
+    arg_str_func.__name__ = name or 'f' + ''.join(str(p.kind) for p in params)
 
     return arg_str_func
 
@@ -293,9 +297,9 @@ def trace_call(func, local_vars, name=None):
     if name is None:
         name = func.__name__
     return (
-        f"{name}("
-        + ", ".join(f"{argname}={local_vars[argname]}" for argname in Sig(func).names)
-        + ")"
+        f'{name}('
+        + ', '.join(f'{argname}={local_vars[argname]}' for argname in Sig(func).names)
+        + ')'
     )
 
 
@@ -327,20 +331,20 @@ def test_tuple_the_args():
     def func(a, *args, bar):
         return trace_call(func, locals())
 
-    assert func(1, 2, 3, bar=4) == "func(a=1, args=(2, 3), bar=4)"
+    assert func(1, 2, 3, bar=4) == 'func(a=1, args=(2, 3), bar=4)'
 
     wfunc = tuple_the_args(func)
 
     # here, not that (1) args is specified as one iterable ([2, 3] instead of 2,
     # 3) and (2) the function name is the same as the wrapped (func)
-    assert wfunc(1, [2, 3], bar=4) == "func(a=1, args=(2, 3), bar=4)"
+    assert wfunc(1, [2, 3], bar=4) == 'func(a=1, args=(2, 3), bar=4)'
 
     # See the func itself hasn't changed
-    assert func(1, 2, 3, bar=4) == "func(a=1, args=(2, 3), bar=4)"
+    assert func(1, 2, 3, bar=4) == 'func(a=1, args=(2, 3), bar=4)'
 
-    assert str(Sig(func)) == "(a, *args, bar)"
+    assert str(Sig(func)) == '(a, *args, bar)'
     # See that args is now a PK kind with a default of (). Also, bar became KO.
-    assert str(Sig(wfunc)) == "(a, args=(), *, bar)"
+    assert str(Sig(wfunc)) == '(a, args=(), *, bar)'
 
     # -----------------------------------------------------------------------------------
     # Let's see what happens when we give bar a default value
@@ -349,8 +353,8 @@ def test_tuple_the_args():
         return trace_call(func2, locals())
 
     wfunc = tuple_the_args(func2)
-    assert wfunc(1, [2, 3]) == "func2(a=1, args=(2, 3), bar=10)"
-    assert wfunc(1, [2, 3], bar=4) == "func2(a=1, args=(2, 3), bar=4)"
+    assert wfunc(1, [2, 3]) == 'func2(a=1, args=(2, 3), bar=10)'
+    assert wfunc(1, [2, 3], bar=4) == 'func2(a=1, args=(2, 3), bar=4)'
 
     # On the other hand, specifying bar as a positional won't work.
     # The reason is: args was a variadic, so everything after it should be KO or VK
@@ -359,8 +363,8 @@ def test_tuple_the_args():
     with pytest.raises(FuncCallNotMatchingSignature) as e_info:
         wfunc(1, [2, 3], 4)
         assert e_info.value == (
-            "There should be only keyword arguments after the Variadic args. "
-            "Function was called with (positional=(1, [2, 3], 4), keywords={})"
+            'There should be only keyword arguments after the Variadic args. '
+            'Function was called with (positional=(1, [2, 3], 4), keywords={})'
         )
 
     # pytest.raises()
@@ -370,7 +374,7 @@ def test_tuple_the_args():
 def test_normalize_func_simply(function_normalizer=normalized_func):
     # -----------------------------------------------------------------------------------
     def p0113(po1, /, pk1, pk2, *, ko1):
-        return f"{po1=}, {pk1=}, {pk2=}, {ko1=}"
+        return f'{po1=}, {pk1=}, {pk2=}, {ko1=}'
 
     func = p0113
     po1, pk1, pk2, ko1 = 1, 2, 3, 4
@@ -393,9 +397,9 @@ def test_normalize_func_simply(function_normalizer=normalized_func):
 
     # -----------------------------------------------------------------------------------
     def p1234(pka, *vpa, koa, **vka):
-        return f"{pka=}, {vpa=}, {koa=}, {vka=}"
+        return f'{pka=}, {vpa=}, {koa=}, {vka=}'
 
-    pka, vpa, koa, vka = 1, (2, 3), 4, {"a": "b", "c": "d"}
+    pka, vpa, koa, vka = 1, (2, 3), 4, {'a': 'b', 'c': 'd'}
 
     func = p1234
     norm_func = function_normalizer(func)
@@ -410,22 +414,22 @@ def test_normalize_func_simply(function_normalizer=normalized_func):
 
 
 def p1234(pka, *vpa, koa, **vka):
-    return f"{pka=}, {vpa=}, {koa=}, {vka=}"
+    return f'{pka=}, {vpa=}, {koa=}, {vka=}'
 
 
 @pytest.mark.xfail
 def test_normalize_func_combinatorially(function_normalizer=normalized_func):
     # -----------------------------------------------------------------------------------
     def p0113(po1, /, pk1, pk2, *, ko1):
-        return f"{po1=}, {pk1=}, {pk2=}, {ko1=}"
+        return f'{po1=}, {pk1=}, {pk2=}, {ko1=}'
 
     func = p0113
     po1, pk1, pk2, ko1 = 1, 2, 3, 4
 
     poa = [po1]
-    ppka, kpka = [pk1], {"pk2": pk2}
+    ppka, kpka = [pk1], {'pk2': pk2}
     vpa = []  # no VP argument
-    koa = {"ko1": ko1}
+    koa = {'ko1': ko1}
     vka = {}  # no VK argument
 
     norm_func = function_normalizer(func)
@@ -444,9 +448,9 @@ def test_normalize_func_combinatorially(function_normalizer=normalized_func):
 
     # -----------------------------------------------------------------------------------
     def p1234(pka, *vpa, koa, **vka):
-        return f"{pka=}, {vpa=}, {koa=}, {vka=}"
+        return f'{pka=}, {vpa=}, {koa=}, {vka=}'
 
-    pka, vpa, koa, vka = 1, (2, 3), 4, {"a": "b", "c": "d"}
+    pka, vpa, koa, vka = 1, (2, 3), 4, {'a': 'b', 'c': 'd'}
 
     func = p1234
     norm_func = function_normalizer(func)
@@ -502,10 +506,7 @@ def mk_sig(
         for name, annotation in annotations.items():
             p = params[name]
             params[name] = Parameter(
-                name=name,
-                kind=p.kind,
-                default=p.default,
-                annotation=annotation,
+                name=name, kind=p.kind, default=p.default, annotation=annotation,
             )
         return Signature(params.values(), return_annotation=return_annotations)
 
@@ -549,8 +550,8 @@ def signature_to_dict(sig: Signature):
     # warn("Use Sig instead", DeprecationWarning)
     # return Sig(sig).to_simple_signature()
     return {
-        "parameters": sig.parameters,
-        "return_annotation": sig.return_annotation,
+        'parameters': sig.parameters,
+        'return_annotation': sig.return_annotation,
     }
 
 
@@ -561,9 +562,9 @@ def _merge_sig_dicts(sig1_dict, sig2_dict):
     sig2_dict decides on what the output is.
     """
     return {
-        "parameters": dict(sig1_dict["parameters"], **sig2_dict["parameters"]),
-        "return_annotation": sig2_dict["return_annotation"]
-        or sig1_dict["return_annotation"],
+        'parameters': dict(sig1_dict['parameters'], **sig2_dict['parameters']),
+        'return_annotation': sig2_dict['return_annotation']
+        or sig1_dict['return_annotation'],
     }
 
 
@@ -589,11 +590,13 @@ def _merge_signatures(sig1, sig2):
     # return Sig(**_merge_sig_dicts(sig1_dict, Sig(sig2).to_simple_dict()))
     sig1_dict = signature_to_dict(sig1)
     # remove variadic kinds from sig1
-    sig1_dict["parameters"] = {
-        k: v for k, v in sig1_dict["parameters"].items() if v.kind not in var_param_kinds
+    sig1_dict['parameters'] = {
+        k: v
+        for k, v in sig1_dict['parameters'].items()
+        if v.kind not in var_param_kinds
     }
     kws = _merge_sig_dicts(sig1_dict, signature_to_dict(sig2))
-    kws["obj"] = kws.pop("parameters")
+    kws['obj'] = kws.pop('parameters')
     return Sig(**kws).to_simple_signature()
 
 
@@ -644,7 +647,7 @@ def _merged_signatures_of_func_list(funcs, return_annotation: Any = empty):
 
 
 # TODO: will we need more options for the priority argument? Like position?
-def update_signature_with_signatures_from_funcs(*funcs, priority: str = "last"):
+def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
     """Make a decorator that will merge the signatures of given funcs to the signature of the wrapped func.
     By default, the funcs signatures will be placed last, but can be given priority by asking priority = 'first'
 
@@ -671,16 +674,16 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = "last"):
     <Signature (b: int = 0, d: str = 'hi', a='a', c=None, y=10)>
     """
     if not isinstance(priority, str):
-        raise TypeError("priority should be a string")
+        raise TypeError('priority should be a string')
 
-    if priority == "last":
+    if priority == 'last':
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(func, *funcs).to_simple_signature()
             func.__signature__ = _merged_signatures_of_func_list([func] + list(funcs))
             return func
 
-    elif priority == "first":
+    elif priority == 'first':
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(*funcs, func).to_simple_signature()

@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.io_trans &#8212; i2 0.0.22 documentation</title>
+    <title>i2.io_trans &#8212; i2 0.0.23 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -40,33 +40,37 @@
 <dl class="py class">
 <dt id="i2.io_trans.AnnotAndDfltIoTrans">
 <em class="property">class </em><code class="sig-prename descclassname">i2.io_trans.</code><code class="sig-name descname">AnnotAndDfltIoTrans</code><a class="reference internal" href="../../_modules/i2/io_trans.html#AnnotAndDfltIoTrans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.io_trans.AnnotAndDfltIoTrans" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transforms argument values using annotations and default type
-&gt;&gt;&gt; def foo(a: int, b=1.0):
-…     return a + b
-&gt;&gt;&gt;
-&gt;&gt;&gt; input_trans = AnnotAndDfltIoTrans()
-&gt;&gt;&gt; foo3 = input_trans(foo)
-&gt;&gt;&gt; assert foo3(3) == 4.0
-&gt;&gt;&gt; assert foo3(-2, 2) == 0.0
-&gt;&gt;&gt; assert foo3(“3”) == 4.0
-&gt;&gt;&gt; assert foo3(“-2”, “2”) == 0.0
-&gt;&gt;&gt; assert signature(foo) == signature(foo3)</p>
+<dd><p>Transforms argument values using annotations and default type</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">input_trans</span> <span class="o">=</span> <span class="n">AnnotAndDfltIoTrans</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo3</span> <span class="o">=</span> <span class="n">input_trans</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">foo3</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mf">4.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">foo3</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mf">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">foo3</span><span class="p">(</span><span class="s2">&quot;3&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mf">4.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">foo3</span><span class="p">(</span><span class="s2">&quot;-2&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mf">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">signature</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span> <span class="o">==</span> <span class="n">signature</span><span class="p">(</span><span class="n">foo3</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py class">
 <dt id="i2.io_trans.ArgnameIoTrans">
 <em class="property">class </em><code class="sig-prename descclassname">i2.io_trans.</code><code class="sig-name descname">ArgnameIoTrans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">argname_2_trans_func</span><span class="p">:</span> <span class="n">Mapping</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/io_trans.html#ArgnameIoTrans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.io_trans.ArgnameIoTrans" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transforms argument values according to their names
-&gt;&gt;&gt; def foo(a, b=1.0):
-…     return a + b
-&gt;&gt;&gt;
-&gt;&gt;&gt; input_trans = ArgnameIoTrans({‘a’: int, ‘b’: float})
-&gt;&gt;&gt; foo2 = input_trans(foo)
-&gt;&gt;&gt; assert foo2(3) == 4.0
-&gt;&gt;&gt; assert foo2(-2, 2) == 0.0
-&gt;&gt;&gt; assert foo2(“3”) == 4.0
-&gt;&gt;&gt; assert foo2(“-2”, “2”) == 0.0
-&gt;&gt;&gt; assert signature(foo) == signature(foo2)</p>
+<dd><p>Transforms argument values according to their names</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">input_trans</span> <span class="o">=</span> <span class="n">ArgnameIoTrans</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo2</span> <span class="o">=</span> <span class="n">input_trans</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">foo2</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mf">4.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">foo2</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mf">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">foo2</span><span class="p">(</span><span class="s2">&quot;3&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mf">4.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">foo2</span><span class="p">(</span><span class="s2">&quot;-2&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mf">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">signature</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span> <span class="o">==</span> <span class="n">signature</span><span class="p">(</span><span class="n">foo2</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py class">
@@ -78,68 +82,71 @@
 <dt id="i2.io_trans.JSONAnnotAndDfltIoTrans">
 <em class="property">class </em><code class="sig-prename descclassname">i2.io_trans.</code><code class="sig-name descname">JSONAnnotAndDfltIoTrans</code><a class="reference internal" href="../../_modules/i2/io_trans.html#JSONAnnotAndDfltIoTrans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.io_trans.JSONAnnotAndDfltIoTrans" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transforms argument values using annotations and default type,
-including lists, iterables, dicts, and booleans
-&gt;&gt;&gt; def foo(a: dict, b=[‘dflt’], c=False):
-…     return dict({}, a=a, b=b, c=c)
-&gt;&gt;&gt;
-&gt;&gt;&gt; input_trans = JSONAnnotAndDfltIoTrans()
-&gt;&gt;&gt; foo4 = input_trans(foo)
-&gt;&gt;&gt; assert foo4(‘{}’) == {‘a’: {}, ‘b’: [‘dflt’], ‘c’: False}
-&gt;&gt;&gt; assert foo4({‘d’: ‘e’}, ‘[“some_value”]’, ‘true’) == {‘a’: {‘d’: ‘e’}, ‘b’: [‘some_value’], ‘c’: True}
-&gt;&gt;&gt; complex_types_result = foo4(‘{“None”: null, “True”: true, “False”: false}’, ‘[null, true, false]’, ‘false’)
-&gt;&gt;&gt; assert complex_types_result == {‘a’: {‘None’: None, ‘True’: True, ‘False’: False}, ‘b’: [None, True, False], ‘c’: False}
-&gt;&gt;&gt; assert signature(foo) == signature(foo4)</p>
+including lists, iterables, dicts, and booleans</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dflt&#39;</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="nb">dict</span><span class="p">({},</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">input_trans</span> <span class="o">=</span> <span class="n">JSONAnnotAndDfltIoTrans</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo4</span> <span class="o">=</span> <span class="n">input_trans</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">foo4</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;dflt&#39;</span><span class="p">],</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">foo4</span><span class="p">({</span><span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="s1">&#39;e&#39;</span><span class="p">},</span> <span class="s1">&#39;[&quot;some_value&quot;]&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="s1">&#39;e&#39;</span><span class="p">},</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;some_value&#39;</span><span class="p">],</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">complex_types_result</span> <span class="o">=</span> <span class="n">foo4</span><span class="p">(</span><span class="s1">&#39;{&quot;None&quot;: null, &quot;True&quot;: true, &quot;False&quot;: false}&#39;</span><span class="p">,</span> <span class="s1">&#39;[null, true, false]&#39;</span><span class="p">,</span> <span class="s1">&#39;false&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">complex_types_result</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;None&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;True&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;False&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">signature</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span> <span class="o">==</span> <span class="n">signature</span><span class="p">(</span><span class="n">foo4</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py class">
 <dt id="i2.io_trans.TypedBasedOutIoTrans">
 <em class="property">class </em><code class="sig-prename descclassname">i2.io_trans.</code><code class="sig-name descname">TypedBasedOutIoTrans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trans_func_for_type</span><span class="p">:</span> <span class="n">Mapping</span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">dflt_trans_func</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/io_trans.html#TypedBasedOutIoTrans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.io_trans.TypedBasedOutIoTrans" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform output according to it’s type.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out_trans</span> <span class="o">=</span> <span class="n">TypedBasedOutIoTrans</span><span class="p">({</span>
-<span class="gp">... </span>    <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">to_csv</span>
-<span class="gp">... </span><span class="p">})</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@out_trans</span>
-<span class="gp">... </span><span class="k">def</span> <span class="nf">repeat</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">repeat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;repeat&#39;</span><span class="p">,</span> <span class="s1">&#39;it&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="s1">&#39;repeat, it, repeat, it&#39;</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@out_trans</span>
-<span class="gp">... </span><span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">T</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">())</span>  
-<span class="go">,a,b</span>
-<span class="go">0,1,10</span>
-<span class="go">1,2,20</span>
-<span class="go">2,3,30</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">transpose</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>  
-<span class="go">,0,1,2</span>
-<span class="go">a,1,2,3</span>
-<span class="go">b,10,20,30</span>
-</pre></div>
-</div>
+<p># TODO: Move this doctest to tests suite that ignores the test if pandas not there!</p>
+<p># &gt;&gt;&gt; import pandas as pd
+# &gt;&gt;&gt; out_trans = TypedBasedOutIoTrans({
+# …     (list, tuple, set): ‘, ‘.join,
+# …     pd.DataFrame: pd.DataFrame.to_csv
+# … })
+# &gt;&gt;&gt;
+# &gt;&gt;&gt;
+# &gt;&gt;&gt; &#64;out_trans
+# … def repeat(a: int, b: list):
+# …     return a * b
+# …
+# &gt;&gt;&gt; assert repeat(2, [‘repeat’, ‘it’]) == ‘repeat, it, repeat, it’
+# &gt;&gt;&gt;
+# &gt;&gt;&gt; &#64;out_trans
+# … def transpose(df):
+# …     return df.T
+# …
+# &gt;&gt;&gt; df = pd.DataFrame({‘a’: [1,2,3], ‘b’: [10, 20, 30]})
+# &gt;&gt;&gt; print(df.to_csv())  # doctest: +NORMALIZE_WHITESPACE
+# ,a,b
+# 0,1,10
+# 1,2,20
+# 2,3,30
+# &gt;&gt;&gt; print(transpose(df))  # doctest: +NORMALIZE_WHITESPACE
+# ,0,1,2
+# a,1,2,3
+# b,10,20,30</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="i2.io_trans.cast_to_jdict">
 <code class="sig-prename descclassname">i2.io_trans.</code><code class="sig-name descname">cast_to_jdict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/io_trans.html#cast_to_jdict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.io_trans.cast_to_jdict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tries to cast to a json-friendly dictionary.
-&gt;&gt;&gt; cast_to_jdict(‘3’)
-[3]
-&gt;&gt;&gt; cast_to_jdict(“[3]”)
-[3]
-&gt;&gt;&gt; cast_to_jdict(“[4,2]”)
-[4, 2]
-&gt;&gt;&gt; cast_to_jdict(‘[4, “string”, [“another”, “list”], {“nested”: 10.2}]’)
-[4, ‘string’, [‘another’, ‘list’], {‘nested’: 10.2}]
-&gt;&gt;&gt; cast_to_jdict(‘{“here”: “is”, “a”: {“nested”: “json”}, “with”: [null, true, false, 1, 2.3]}’)
-{‘here’: ‘is’, ‘a’: {‘nested’: ‘json’}, ‘with’: [None, True, False, 1, 2.3]}</p>
+<dd><p>Tries to cast to a json-friendly dictionary.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cast_to_jdict</span><span class="p">(</span><span class="s1">&#39;3&#39;</span><span class="p">)</span>
+<span class="go">[3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cast_to_jdict</span><span class="p">(</span><span class="s2">&quot;[3]&quot;</span><span class="p">)</span>
+<span class="go">[3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cast_to_jdict</span><span class="p">(</span><span class="s2">&quot;[4,2]&quot;</span><span class="p">)</span>
+<span class="go">[4, 2]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cast_to_jdict</span><span class="p">(</span><span class="s1">&#39;[4, &quot;string&quot;, [&quot;another&quot;, &quot;list&quot;], {&quot;nested&quot;: 10.2}]&#39;</span><span class="p">)</span>
+<span class="go">[4, &#39;string&#39;, [&#39;another&#39;, &#39;list&#39;], {&#39;nested&#39;: 10.2}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cast_to_jdict</span><span class="p">(</span><span class="s1">&#39;{&quot;here&quot;: &quot;is&quot;, &quot;a&quot;: {&quot;nested&quot;: &quot;json&quot;}, &quot;with&quot;: [null, true, false, 1, 2.3]}&#39;</span><span class="p">)</span>
+<span class="go">{&#39;here&#39;: &#39;is&#39;, &#39;a&#39;: {&#39;nested&#39;: &#39;json&#39;}, &#39;with&#39;: [None, True, False, 1, 2.3]}</span>
+</pre></div>
+</div>
 <p>And csvs too:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cast_to_jdict</span><span class="p">(</span><span class="s1">&#39;1,2,3.4, &quot;string&quot; ,  null, true, false, [&quot;a&quot;, &quot;list&quot;]&#39;</span><span class="p">)</span>
 <span class="go">[1, 2, 3.4, &#39;string&#39;, None, True, False, [&#39;a&#39;, &#39;list&#39;]]</span>
@@ -150,15 +157,17 @@ including lists, iterables, dicts, and booleans
 <dl class="py function">
 <dt id="i2.io_trans.cast_to_list">
 <code class="sig-prename descclassname">i2.io_trans.</code><code class="sig-name descname">cast_to_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/io_trans.html#cast_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.io_trans.cast_to_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tries to case to a list (with json friendly elements)
-&gt;&gt;&gt; cast_to_list(‘3’)
-[3]
-&gt;&gt;&gt; cast_to_list(“[3]”)
-[3]
-&gt;&gt;&gt; cast_to_list(“[4,2]”)
-[4, 2]
-&gt;&gt;&gt; cast_to_list(‘[4, “string”, [“another”, “list”], {“nested”: 10.2}]’)
-[4, ‘string’, [‘another’, ‘list’], {‘nested’: 10.2}]</p>
+<dd><p>Tries to case to a list (with json friendly elements)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cast_to_list</span><span class="p">(</span><span class="s1">&#39;3&#39;</span><span class="p">)</span>
+<span class="go">[3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cast_to_list</span><span class="p">(</span><span class="s2">&quot;[3]&quot;</span><span class="p">)</span>
+<span class="go">[3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cast_to_list</span><span class="p">(</span><span class="s2">&quot;[4,2]&quot;</span><span class="p">)</span>
+<span class="go">[4, 2]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cast_to_list</span><span class="p">(</span><span class="s1">&#39;[4, &quot;string&quot;, [&quot;another&quot;, &quot;list&quot;], {&quot;nested&quot;: 10.2}]&#39;</span><span class="p">)</span>
+<span class="go">[4, &#39;string&#39;, [&#39;another&#39;, &#39;list&#39;], {&#39;nested&#39;: 10.2}]</span>
+</pre></div>
+</div>
 <p>And csvs too:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cast_to_list</span><span class="p">(</span><span class="s1">&#39;1,2,3.4, &quot;string&quot; ,  null, true, false, [&quot;a&quot;, &quot;list&quot;]&#39;</span><span class="p">)</span>
 <span class="go">[1, 2, 3.4, &#39;string&#39;, None, True, False, [&#39;a&#39;, &#39;list&#39;]]</span>
@@ -207,9 +216,9 @@ including lists, iterables, dicts, and booleans
 <li class="toctree-l1"><a class="reference internal" href="simple_pymint.html">i2.simple_pymint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="switch_case_tree.html">i2.switch_case_tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">i2.tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tests/footprints.html">i2.tests.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/footprints_test.html">i2.tests.footprints_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tests/signatures.html">i2.tests.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vend/funcutils.html">i2.vend.funcutils</a></li>
 </ul>
