@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.signatures &#8212; i2 0.0.23 documentation</title>
+    <title>i2.signatures &#8212; i2 0.0.24 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -400,6 +400,66 @@ can), specify this with <cite>allow_excess=True</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="i2.signatures.Sig.ch_param_attrs">
+<code class="sig-name descname">ch_param_attrs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param_attr</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">arg_new_vals</span></em>, <em class="sig-param"><span class="n">_allow_reordering</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs_new_vals</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/signatures.html#Sig.ch_param_attrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.signatures.Sig.ch_param_attrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change a specific attribute of the params, returning a modified signature.
+This is a convenience method for the modified method when we’re targetting
+a fixed param attribute: ‘name’, ‘kind’, ‘default’, or ‘annotation’</p>
+<p>Instead of having to do this</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">c</span><span class="p">):</span> <span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span><span class="o">.</span><span class="n">modified</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;A&#39;</span><span class="p">},</span> <span class="n">b</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;B&#39;</span><span class="p">},</span> <span class="n">c</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;C&#39;</span><span class="p">})</span>
+<span class="go">&lt;Sig (A, *B, **C)&gt;</span>
+</pre></div>
+</div>
+<p>We can simply do this</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span><span class="o">.</span><span class="n">ch_param_attrs</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+<span class="go">&lt;Sig (A, *B, **C)&gt;</span>
+</pre></div>
+</div>
+<p>One quite useful thing you can do with this is to set defaults, or set defaults
+where there are none. If you wrap your function with such a modified signature,
+you get a “curried” version of your function (called “partial” in python).
+(Note that the <cite>functools.wraps</cite> won’t deal with defaults “correctly”, but
+wrapping with <cite>Sig</cite> objects takes care of that oversight!)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">c</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">special_foo</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span><span class="o">.</span><span class="n">ch_param_attrs</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)(</span><span class="n">foo</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">(</span><span class="n">special_foo</span><span class="p">)</span>
+<span class="go">&lt;Sig (a, b=2, c=3)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">special_foo</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># should be 5 + 2 * 3 == 11</span>
+<span class="go">11</span>
+</pre></div>
+</div>
+<p># TODO: Would like to make this work:
+# Now, if you want to set a default for a but not b and c for example, you’ll
+# get complaints:
+#
+# <code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">#</span> <span class="pre">ValueError:</span> <span class="pre">non-default</span> <span class="pre">argument</span> <span class="pre">follows</span> <span class="pre">default</span> <span class="pre">argument</span>
+<span class="pre">#</span> <span class="pre">`</span></code>
+#
+# will tell you.
+#
+# It’s true. But if you’re fine with rearranging the argument order,
+# <cite>ch_param_attrs</cite> can take care of that for you.
+# You’ll have to tell it explicitly that you wish for this though, because
+# it’s conservative.
+#
+# &gt;&gt;&gt; # Note that for time being, Sig.wraps doesn’t make a copy of the function
+# &gt;&gt;&gt; #  so we need to redefine foo here&#64;
+# &gt;&gt;&gt; def foo(a, b, c):
+# …     return a + b * c
+# &gt;&gt;&gt; wrapper = Sig(foo).ch_param_attrs(
+# … ‘default’, a=10, _allow_reordering=True
+# … )
+# &gt;&gt;&gt; another_foo = wrapper(foo)
+# &gt;&gt;&gt; Sig(another_foo)
+# &lt;Sig (b, c, a=10)&gt;
+# &gt;&gt;&gt; another_foo(2, 3)  # should be 10 + (2 * 3) =
+# 16</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="i2.signatures.Sig.extract_args_and_kwargs">
 <code class="sig-name descname">extract_args_and_kwargs</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">_ignore_kind</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">_allow_partial</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">_apply_defaults</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">_args_limit</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/signatures.html#Sig.extract_args_and_kwargs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.signatures.Sig.extract_args_and_kwargs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Source the (args, kwargs) for the signature instance, ignoring excess arguments.</p>
@@ -723,7 +783,7 @@ according to whether they have defaults and what their kind is:</p>
 
 <dl class="py method">
 <dt id="i2.signatures.Sig.modified">
-<code class="sig-name descname">modified</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/signatures.html#Sig.modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.signatures.Sig.modified" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">modified</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_allow_reordering</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">changes_for_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/signatures.html#Sig.modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.signatures.Sig.modified" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a modified (new) signature object</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">pka</span><span class="p">,</span> <span class="o">*</span><span class="n">vpa</span><span class="p">,</span> <span class="n">koa</span><span class="p">,</span> <span class="o">**</span><span class="n">vka</span><span class="p">):</span> <span class="o">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
