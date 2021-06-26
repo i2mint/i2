@@ -121,6 +121,7 @@ def mint_of_callable(f):
     :param f: A callable (function, method, ...)
     :return: A dict containing information about the interface of f, that is, name, module, doc, and
     input and output information.
+
     >>> def test_callable(arg1, arg2: int) -> str:
     ...     __doc__ = "A testable callable\\n:param str arg1: A string\\n"
     ...     print('calling!')

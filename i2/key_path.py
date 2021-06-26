@@ -300,6 +300,7 @@ class StrKeyPath(KeyPathMap):
     """
     A KeyPathMap, but where the key paths are expressed as string with a separator.
     If sep = '.', then instead of using ('a', 'b', 'c') as a key, you can use 'a.b.c'.
+
     >>> d = {'a': {
     ...         'a': '2a',
     ...         'b': {'a': 'aba',
@@ -431,6 +432,7 @@ class KeyPathTrans:
         :param d: input store
         :param key_path_so_far: string to be prepended to all key paths (for use in recursion, not meant for direct use)
         :return: a (key_path, val) iterator
+
         >>> kp = KeyPathTrans()
         >>> input_dict = {
         ...     'a': {
@@ -502,6 +504,7 @@ class KeyPathTrans:
         :param key_path:
         :param val:
         :return:
+
         >>> kp = KeyPathTrans()
         >>> input_dict = {
         ...   "a": {
@@ -548,6 +551,7 @@ class KeyPathTrans:
         :param field_naming: 'full' (default) will use key_path strings as is, leaf will only use the last dot item
             (i.e. this.is.a.key.path will result in "path" being used)
         :return:
+
         >>> kp = KeyPathTrans()
         >>> d = {
         ...     'a': {

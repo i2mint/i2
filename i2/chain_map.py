@@ -12,6 +12,7 @@ from collections.abc import Iterable
 def is_iterable(x):
     """Similar in nature to :func:`callable`, ``is_iterable`` returns
     ``True`` if an object is `iterable`_, ``False`` if not.
+
     >>> is_iterable([])
     True
     >>> is_iterable(1)

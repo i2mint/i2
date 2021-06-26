@@ -108,6 +108,7 @@ class SwitchCaseNode(RoutingNode):
     :param cases: The mapping from feature to RoutingNode that should be yield for that feature.
         Often is a dict, but only requirement is that it implements the cases.get(val, default) method.
     :param default: Default RoutingNode to yield if no
+
     >>> rf = RoutingForest([
     ...     SwitchCaseNode(switch=lambda x: x % 5,
     ...                    cases={0: FinalNode('zero_mod_5'), 1: FinalNode('one_mod_5')},

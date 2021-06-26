@@ -80,6 +80,7 @@ def mk_signature_from_dict_specs(
     :param return_annotation:
     :param __validate_parameters__:
     :return:
+
     >>> def foo(a, b: int, c=0, d:float=1.0) -> float:
     ...     return a + (c * b) ** d
     >>> params = mk_arg_name_dflt_annot_dict_list_from_func(foo)

@@ -85,6 +85,7 @@ def test_func_1(
     line description
     :return str: Will just return the 'test_func_1 returned' string
     :tags foo, bar
+
     >>> # here are sometests
     >>> test_func_1('anything', [1, 2], {'this': 0, 'that': 'foo'}, 1, 1.1, a_bool=True, a_str='hello')
     'test_func_1 returned'
@@ -149,6 +150,7 @@ def test_func_2(
     :param a_dict: An example of a continued
     line description
     :return:
+
     >>> # here are sometests
     >>> test_func_1('anything', 1, 1.1, True, 'hello', [1, 2], {'this': 0, 'that': 'foo'})
     'returned'

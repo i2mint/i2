@@ -280,6 +280,7 @@ assure_params = ensure_params  # alias for backcompatibility
 
 class MissingArgValFor(object):
     """A simple class to wrap an argument name, indicating that it was missing somewhere.
+
     >>> MissingArgValFor("argname")
     MissingArgValFor("argname")
     """
@@ -333,6 +334,7 @@ def extract_arguments(
     But sometimes you do have POSITION_ONLY arguments.
     What extract_arguments will do for you is return the value of these as the first element of
     the triple.
+
     >>> def f(a, b, c=None, /, d=0):
     ...     ...
     ...
@@ -429,6 +431,7 @@ def extract_arguments(
 
     Edge case:
     No params specified? No problem. You'll just get empty args and kwargs. Everything in the remainder
+
     >>> extract_arguments(params=(), b=2, a=1, c=3, d=0)
     ((), {}, {'b': 2, 'a': 1, 'c': 3, 'd': 0})
 
@@ -881,6 +884,7 @@ class Sig(Signature, Mapping):
         <Sig (**kws) -> str>
 
         And note that:
+
         >>> Sig()
         <Sig ()>
         >>> Sig(None)
@@ -921,6 +925,7 @@ class Sig(Signature, Mapping):
         - w is not position-only
         - x annot is int instead of float, and doesn't have a default
         - z's default changes to 10
+
         >>> def g(w, x: int, y=2, z: int = 10):
         ...     return w + x * y ** z
         >>> s = Sig(g)
@@ -938,6 +943,7 @@ class Sig(Signature, Mapping):
 
         TODO: Something goes wrong when using keyword only arguments.
             Note that the same problem occurs with functools.wraps, and even boltons.funcutils.wraps.
+
         >>> def f(w, /, x: float = 1, y=2, *, z: int = 3):
         ...     return w + x * y ** z
         >>> f(0)  # 0 + 1 * 2 ** 3
@@ -1176,6 +1182,7 @@ class Sig(Signature, Mapping):
     @property
     def index_of_var_positional(self):
         """
+
         >>> assert Sig(lambda x, *y, z: 0).index_of_var_positional == 1
         >>> assert Sig(lambda x, /, y, **z: 0).index_of_var_positional == None
         """
@@ -1199,6 +1206,7 @@ class Sig(Signature, Mapping):
     @property
     def index_of_var_keyword(self):
         """
+
         >>> assert Sig(lambda **kwargs: 0).index_of_var_keyword == 0
         >>> assert Sig(lambda a, **kwargs: 0).index_of_var_keyword == 1
         >>> assert Sig(lambda a, *args, **kwargs: 0).index_of_var_keyword == 2
@@ -1533,6 +1541,7 @@ class Sig(Signature, Mapping):
         The order of the first signature will take precedence over the second,
         but default-less arguments have to come before arguments with defaults.
          first, and Note the difference of the orders.
+
         >>> Sig(f) + Sig(h)
         <Sig (w, i, j, x: float = 1, y=1, z: int = 1)>
         >>> Sig(h) + Sig(f)
@@ -1666,6 +1675,7 @@ class Sig(Signature, Mapping):
     @property
     def without_defaults(self):
         """
+
         >>> list(Sig(lambda *args, a, b, x=1, y=1, **kwargs: ...).without_defaults)
         ['a', 'b']
         """
@@ -1676,6 +1686,7 @@ class Sig(Signature, Mapping):
     @property
     def with_defaults(self):
         """
+
         >>> list(Sig(lambda *args, a, b, x=1, y=1, **kwargs: ...).with_defaults)
         ['args', 'x', 'y', 'kwargs']
         """
@@ -1772,17 +1783,20 @@ class Sig(Signature, Mapping):
         ... )
 
         By default, `apply_defaults=False`, which will lead to only get those arguments you input.
+
         >>> sig.kwargs_from_args_and_kwargs(args=(11,), kwargs={"x": 22})
         {'w': 11, 'x': 22}
 
         But if you specify `apply_defaults=True` non-specified non-require arguments
         will be returned with their defaults:
+
         >>> sig.kwargs_from_args_and_kwargs(
         ...     args=(11,), kwargs={"x": 22}, apply_defaults=True
         ... )
         {'w': 11, 'x': 22, 'y': 'YY', 'z': 'ZZ'}
 
         By default, `ignore_excess=False`, so specifying kwargs that are not in the signature will lead to an exception.
+
         >>> sig.kwargs_from_args_and_kwargs(
         ...     args=(11,), kwargs={"x": 22, "not_in_sig": -1}
         ... )
@@ -2053,6 +2067,7 @@ class Sig(Signature, Mapping):
         ... )
 
         What about var positional and var keywords?
+
         >>> def bar(*args, **kwargs):
         ...     ...
         ...
@@ -2132,11 +2147,13 @@ class Sig(Signature, Mapping):
         10
 
         Note that though `w` is a position only argument, you can specify `w=4` as a keyword argument too (by default):
+
         >>> args, kwargs = Sig(foo).extract_args_and_kwargs(w=4, x=3, y=2)
         >>> (args, kwargs) == ((4,), {"x": 3, "y": 2})
         True
 
         If you don't want to allow that, you can say `_ignore_kind=False`
+
         >>> Sig(foo).extract_args_and_kwargs(w=4, x=3, y=2, _ignore_kind=False)
         Traceback (most recent call last):
           ...
@@ -2144,12 +2161,14 @@ class Sig(Signature, Mapping):
 
         You can use `_allow_partial` that will allow you, if
         set to `True`, to underspecify the params of a function (in view of being completed later).
+
         >>> Sig(foo).extract_args_and_kwargs(x=3, y=2)
         Traceback (most recent call last):
           ...
         TypeError: missing a required argument: 'w'
 
         But if you specify `_allow_partial=True`...
+
         >>> args, kwargs = Sig(foo).extract_args_and_kwargs(
         ...     x=3, y=2, _allow_partial=True
         ... )
@@ -2157,12 +2176,14 @@ class Sig(Signature, Mapping):
         True
 
         By default, `_apply_defaults=False`, which will lead to only get those arguments you input.
+
         >>> args, kwargs = Sig(foo).extract_args_and_kwargs(4, x=3, y=2)
         >>> (args, kwargs) == ((4,), {"x": 3, "y": 2})
         True
 
         But if you specify `_apply_defaults=True` non-specified non-require arguments
         will be returned with their defaults:
+
         >>> args, kwargs = Sig(foo).extract_args_and_kwargs(
         ...     4, x=3, y=2, _apply_defaults=True
         ... )
@@ -2199,10 +2220,12 @@ class Sig(Signature, Mapping):
         {'w': 11, 'x': 22}
 
         Note that though `w` is a position only argument, you can specify `w=11` as a keyword argument too (by default):
+
         >>> Sig(foo).source_kwargs(w=11, x=22, extra="keywords", are="ignored")
         {'w': 11, 'x': 22}
 
         If you don't want to allow that, you can say `_ignore_kind=False`
+
         >>> Sig(foo).source_kwargs(
         ...     w=11, x=22, extra="keywords", are="ignored", _ignore_kind=False
         ... )
@@ -2212,23 +2235,27 @@ class Sig(Signature, Mapping):
 
         You can use `_allow_partial` that will allow you, if
         set to `True`, to underspecify the params of a function (in view of being completed later).
+
         >>> Sig(foo).source_kwargs(x=3, y=2, extra="keywords", are="ignored")
         Traceback (most recent call last):
           ...
         TypeError: missing a required argument: 'w'
 
         But if you specify `_allow_partial=True`...
+
         >>> Sig(foo).source_kwargs(
         ...     x=3, y=2, extra="keywords", are="ignored", _allow_partial=True
         ... )
         {'x': 3, 'y': 2}
 
         By default, `_apply_defaults=False`, which will lead to only get those arguments you input.
+
         >>> Sig(foo).source_kwargs(4, x=3, y=2, extra="keywords", are="ignored")
         {'w': 4, 'x': 3, 'y': 2}
 
         But if you specify `_apply_defaults=True` non-specified non-require arguments
         will be returned with their defaults:
+
         >>> Sig(foo).source_kwargs(
         ...     4, x=3, y=2, extra="keywords", are="ignored", _apply_defaults=True
         ... )
@@ -2269,12 +2296,14 @@ class Sig(Signature, Mapping):
         10
 
         Note that though `w` is a position only argument, you can specify `w=4` as a keyword argument too (by default):
+
         >>> args, kwargs = Sig(foo).source_args_and_kwargs(
         ...     w=4, x=3, y=2, extra="keywords", are="ignored"
         ... )
         >>> assert (args, kwargs) == ((4,), {"x": 3, "y": 2})
 
         If you don't want to allow that, you can say `_ignore_kind=False`
+
         >>> Sig(foo).source_args_and_kwargs(
         ...     w=4, x=3, y=2, extra="keywords", are="ignored", _ignore_kind=False
         ... )
@@ -2284,12 +2313,14 @@ class Sig(Signature, Mapping):
 
         You can use `_allow_partial` that will allow you, if
         set to `True`, to underspecify the params of a function (in view of being completed later).
+
         >>> Sig(foo).source_args_and_kwargs(x=3, y=2, extra="keywords", are="ignored")
         Traceback (most recent call last):
           ...
         TypeError: missing a required argument: 'w'
 
         But if you specify `_allow_partial=True`...
+
         >>> args, kwargs = Sig(foo).source_args_and_kwargs(
         ...     x=3, y=2, extra="keywords", are="ignored", _allow_partial=True
         ... )
@@ -2297,6 +2328,7 @@ class Sig(Signature, Mapping):
         True
 
         By default, `_apply_defaults=False`, which will lead to only get those arguments you input.
+
         >>> args, kwargs = Sig(foo).source_args_and_kwargs(
         ...     4, x=3, y=2, extra="keywords", are="ignored"
         ... )
@@ -2305,6 +2337,7 @@ class Sig(Signature, Mapping):
 
         But if you specify `_apply_defaults=True` non-specified non-require arguments
         will be returned with their defaults:
+
         >>> args, kwargs = Sig(foo).source_args_and_kwargs(
         ...     4, x=3, y=2, extra="keywords", are="ignored", _apply_defaults=True
         ... )
@@ -2334,6 +2367,7 @@ class Sig(Signature, Mapping):
 
 def mk_sig_from_args(*args_without_default, **args_with_defaults):
     """Make a Signature instance by specifying args_without_default and args_with_defaults.
+
     >>> mk_sig_from_args("a", "b", c=1, d="bar")
     <Signature (a, b, c=1, d='bar')>
     """
@@ -2901,6 +2935,7 @@ def params_of(obj: HasParams):
 def insert_annotations(s: Signature, *, return_annotation=empty, **annotations):
     """Insert annotations in a signature.
     (Note: not really insert but returns a copy of input signature)
+
     >>> from inspect import signature
     >>> s = signature(lambda a, b, c=1, d="bar": 0)
     >>> s

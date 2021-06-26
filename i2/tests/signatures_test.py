@@ -31,6 +31,7 @@ ParamsAble_ = Union[ParamsAble, str, List[int]]
 
 def _to_params(params: ParamsAble_):
     """
+
     >>> str(Sig(_to_params([0, 0, 1, 1, 1, 2, 3, 4])))
     '(a00, a01, /, a12, a13, a14, *a25, a36, **a47)'
 
@@ -61,6 +62,7 @@ def _to_params(params: ParamsAble_):
 
 def _params_to_arg_name_and_val(params: ParamsAble_):
     """
+
     >>> assert dict(_params_to_arg_name_and_val(_to_params("00111234"))) == {
     ...     "a00": 0,
     ...     "a01": 1,
@@ -570,6 +572,7 @@ def _merge_sig_dicts(sig1_dict, sig2_dict):
 
 def _merge_signatures(sig1, sig2):
     """Get the merged signatures of two signatures (sig2 is the final decider of conflics)
+
     >>> def foo(a='a', b: int=0, c=None) -> int: ...
     >>> def bar(b: float=0.0, d: str='hi') -> float: ...
     >>> foo_sig = signature(foo)
@@ -602,6 +605,7 @@ def _merge_signatures(sig1, sig2):
 
 def _merge_signatures_of_funcs(func1, func2):
     """Get the merged signatures of two functions (func2 is the final decider of conflics)
+
     >>> def foo(a='a', b: int=0, c=None) -> int: ...
     >>> def bar(b: float=0.0, d: str='hi') -> float: ...
     >>> _merge_signatures_of_funcs(foo, bar)
@@ -614,6 +618,7 @@ def _merge_signatures_of_funcs(func1, func2):
 
 def _merged_signatures_of_func_list(funcs, return_annotation: Any = empty):
     """
+
     >>> def foo(a='a', b: int=0, c=None) -> int: ...
     >>> def bar(b: float=0.0, d: str='hi') -> float: ...
     >>> def hello(x: str='hi', y=1) -> str: ...

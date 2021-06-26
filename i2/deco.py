@@ -181,6 +181,7 @@ class MultiFunc:
      'mult': {'x': 2}}
 
     Oh, and you can actually see the signature of kwargs_for_func:
+
     >>> from inspect import signature
     >>> signature(mf1)
     <Signature (w, x: float, a, y=1, z: int = 1, b: float = 0.0)>
@@ -235,6 +236,7 @@ def assert_attrs(attrs):
     Asserts, at construction time, that the class contains a specific set of attributes
     :param attrs: An attribute name (string) or a list of attribute names whose existence needs to be enforced.
     :return: A class decorator that will enforce the existence of the attrs when an instance is made
+
     >>> @assert_attrs('foo')
     ... class A:
     ...     bar = 10
@@ -530,6 +532,7 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
     :param rootdir: rootdir to be used for all name arguments of target function
     :param name_arg: the position (int) or argument name of the argument containing the name
     :return: a decorator
+
     >>> # Example with a plain function
     >>> def f(a, b, c='default_c'):
     ...     return "a={a}, b={b}, c={c}".format(a=a, b=b, c=c)
@@ -1055,6 +1058,7 @@ def mk_method_trans_spec_from_methods_specs_dict(methods_specs_dict):
         keys are method names (either a single string, or a tuple of strings)
         values are the trans_spec dicts that should be associated to those methods
     :return: A dict in the method_trans_spec (input of wrap_class_method) format.
+
     >>> methods_specs_dict = {}
     >>> methods_specs_dict['foo'] = {'x': str, 'y': int}
     >>> methods_specs_dict[('foo', 'bar')] = {'z': list, 'method_output_trans': float}
