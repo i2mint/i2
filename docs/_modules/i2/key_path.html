@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.key_path &#8212; i2 0.0.25 documentation</title>
+    <title>i2.key_path &#8212; i2 0.0.26 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -335,6 +335,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A KeyPathMap, but where the key paths are expressed as string with a separator.</span>
 <span class="sd">    If sep = &#39;.&#39;, then instead of using (&#39;a&#39;, &#39;b&#39;, &#39;c&#39;) as a key, you can use &#39;a.b.c&#39;.</span>
+
 <span class="sd">    &gt;&gt;&gt; d = {&#39;a&#39;: {</span>
 <span class="sd">    ...         &#39;a&#39;: &#39;2a&#39;,</span>
 <span class="sd">    ...         &#39;b&#39;: {&#39;a&#39;: &#39;aba&#39;,</span>
@@ -466,6 +467,7 @@
 <span class="sd">        :param d: input store</span>
 <span class="sd">        :param key_path_so_far: string to be prepended to all key paths (for use in recursion, not meant for direct use)</span>
 <span class="sd">        :return: a (key_path, val) iterator</span>
+
 <span class="sd">        &gt;&gt;&gt; kp = KeyPathTrans()</span>
 <span class="sd">        &gt;&gt;&gt; input_dict = {</span>
 <span class="sd">        ...     &#39;a&#39;: {</span>
@@ -537,6 +539,7 @@
 <span class="sd">        :param key_path:</span>
 <span class="sd">        :param val:</span>
 <span class="sd">        :return:</span>
+
 <span class="sd">        &gt;&gt;&gt; kp = KeyPathTrans()</span>
 <span class="sd">        &gt;&gt;&gt; input_dict = {</span>
 <span class="sd">        ...   &quot;a&quot;: {</span>
@@ -583,6 +586,7 @@
 <span class="sd">        :param field_naming: &#39;full&#39; (default) will use key_path strings as is, leaf will only use the last dot item</span>
 <span class="sd">            (i.e. this.is.a.key.path will result in &quot;path&quot; being used)</span>
 <span class="sd">        :return:</span>
+
 <span class="sd">        &gt;&gt;&gt; kp = KeyPathTrans()</span>
 <span class="sd">        &gt;&gt;&gt; d = {</span>
 <span class="sd">        ...     &#39;a&#39;: {</span>

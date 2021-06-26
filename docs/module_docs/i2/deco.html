@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.deco &#8212; i2 0.0.25 documentation</title>
+    <title>i2.deco &#8212; i2 0.0.26 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -70,10 +70,12 @@ The reason for not using functions is that when printed, they include their hash
 <span class="go"> &#39;mult&#39;: {&#39;x&#39;: 2}}</span>
 </pre></div>
 </div>
-<p>Oh, and you can actually see the signature of kwargs_for_func:
-&gt;&gt;&gt; from inspect import signature
-&gt;&gt;&gt; signature(mf1)
-&lt;Signature (w, x: float, a, y=1, z: int = 1, b: float = 0.0)&gt;</p>
+<p>Oh, and you can actually see the signature of kwargs_for_func:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signature</span><span class="p">(</span><span class="n">mf1</span><span class="p">)</span>
+<span class="go">&lt;Signature (w, x: float, a, y=1, z: int = 1, b: float = 0.0)&gt;</span>
+</pre></div>
+</div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mf2</span> <span class="o">=</span> <span class="n">MultiFunc</span><span class="p">(</span><span class="n">funcs</span><span class="o">=</span><span class="p">(</span><span class="n">formula1</span><span class="p">,</span> <span class="n">mult</span><span class="p">,</span> <span class="n">add</span><span class="p">,</span> <span class="n">sum_of_args</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">print_dict</span><span class="p">(</span><span class="n">mf2</span><span class="o">.</span><span class="n">kwargs_for_func</span><span class="p">(</span><span class="n">w</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">},</span> <span class="n">extra_stuff</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">))</span>
 <span class="go">{&#39;add&#39;: {&#39;a&#39;: 4, &#39;b&#39;: 5},</span>
@@ -142,30 +144,32 @@ The reason for not using functions is that when printed, they include their hash
 <code class="sig-prename descclassname">i2.deco.</code><code class="sig-name descname">assert_attrs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attrs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#assert_attrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.deco.assert_attrs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts, at construction time, that the class contains a specific set of attributes
 :param attrs: An attribute name (string) or a list of attribute names whose existence needs to be enforced.
-:return: A class decorator that will enforce the existence of the attrs when an instance is made
-&gt;&gt;&gt; &#64;assert_attrs(‘foo’)
-… class A:
-…     bar = 10
-…
-&gt;&gt;&gt; try:
-…     a = A()
-… except AttributeError:
-…     print(“AttributeError, as expected, because missing the foo attribute”)
-AttributeError, as expected, because missing the foo attribute
-&gt;&gt;&gt; &#64;assert_attrs(‘foo’)
-… class B:
-…     def foo(self): pass
-&gt;&gt;&gt; b = B()
-&gt;&gt;&gt;
-&gt;&gt;&gt; class A:
-…     bar = 10
-&gt;&gt;&gt; class B:
-…     def foo(self): pass
-&gt;&gt;&gt;
-&gt;&gt;&gt; &#64;assert_attrs([‘foo’, ‘bar’])
-… class C(A, B):
-…     pass
-&gt;&gt;&gt; c = C()</p>
+:return: A class decorator that will enforce the existence of the attrs when an instance is made</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@assert_attrs</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">bar</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="gp">... </span><span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;AttributeError, as expected, because missing the foo attribute&quot;</span><span class="p">)</span>
+<span class="go">AttributeError, as expected, because missing the foo attribute</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@assert_attrs</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">class</span> <span class="nc">B</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">bar</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">B</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@assert_attrs</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">])</span>
+<span class="gp">... </span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">

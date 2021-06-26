@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.util &#8212; i2 0.0.25 documentation</title>
+    <title>i2.util &#8212; i2 0.0.26 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -246,11 +246,13 @@ this function.</p>
 <dl class="py function">
 <dt id="i2.util.dp_get">
 <code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">dp_get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">dot_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#dp_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.dp_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get stuff from a dict, using dot_paths (i.e. ‘foo.bar’ instead of [‘foo’][‘bar’])
-&gt;&gt;&gt; d = {‘foo’: {‘bar’: 2, ‘alice’: ‘bob’}, 3: {‘pi’: 3.14}}
-&gt;&gt;&gt; assert dp_get(d, ‘foo’) == {‘bar’: 2, ‘alice’: ‘bob’}
-&gt;&gt;&gt; assert dp_get(d, ‘foo.bar’) == 2
-&gt;&gt;&gt; assert dp_get(d, ‘foo.alice’) == ‘bob’</p>
+<dd><p>Get stuff from a dict, using dot_paths (i.e. ‘foo.bar’ instead of [‘foo’][‘bar’])</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;bar&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;alice&#39;</span><span class="p">:</span> <span class="s1">&#39;bob&#39;</span><span class="p">},</span> <span class="mi">3</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;pi&#39;</span><span class="p">:</span> <span class="mf">3.14</span><span class="p">}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">dp_get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;bar&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;alice&#39;</span><span class="p">:</span> <span class="s1">&#39;bob&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">dp_get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;foo.bar&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">dp_get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;foo.alice&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;bob&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py class">
@@ -286,32 +288,34 @@ to reinvent from scratch, just copy their compatibility routine.</p>
 <dt id="i2.util.lazyprop">
 <em class="property">class </em><code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">lazyprop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#lazyprop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.lazyprop" title="Permalink to this definition">¶</a></dt>
 <dd><p>A descriptor implementation of lazyprop (cached property) from David Beazley’s “Python Cookbook” book.
-It’s
-&gt;&gt;&gt; class Test:
-…     def __init__(self, a):
-…         self.a = a
-…     &#64;lazyprop
-…     def len(self):
-…         print(‘generating “len”’)
-…         return len(self.a)
-&gt;&gt;&gt; t = Test([0, 1, 2, 3, 4])
-&gt;&gt;&gt; t.__dict__
-{‘a’: [0, 1, 2, 3, 4]}
-&gt;&gt;&gt; t.len
-generating “len”
-5
-&gt;&gt;&gt; t.__dict__
-{‘a’: [0, 1, 2, 3, 4], ‘len’: 5}
-&gt;&gt;&gt; t.len
-5
-&gt;&gt;&gt; # But careful when using lazyprop that no one will change the value of a without deleting the property first
-&gt;&gt;&gt; t.a = [0, 1, 2]  # if we change a…
-&gt;&gt;&gt; t.len  # … we still get the old cached value of len
-5
-&gt;&gt;&gt; del t.len  # if we delete the len prop
-&gt;&gt;&gt; t.len  # … then len being recomputed again
-generating “len”
-3</p>
+It’s</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Test</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
+<span class="gp">... </span>    <span class="nd">@lazyprop</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;generating &quot;len&quot;&#39;</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Test</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="vm">__dict__</span>
+<span class="go">{&#39;a&#39;: [0, 1, 2, 3, 4]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">len</span>
+<span class="go">generating &quot;len&quot;</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="vm">__dict__</span>
+<span class="go">{&#39;a&#39;: [0, 1, 2, 3, 4], &#39;len&#39;: 5}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">len</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># But careful when using lazyprop that no one will change the value of a without deleting the property first</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>  <span class="c1"># if we change a...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">len</span>  <span class="c1"># ... we still get the old cached value of len</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">t</span><span class="o">.</span><span class="n">len</span>  <span class="c1"># if we delete the len prop</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">len</span>  <span class="c1"># ... then len being recomputed again</span>
+<span class="go">generating &quot;len&quot;</span>
+<span class="go">3</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
