@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.deco &#8212; i2 0.0.24 documentation</title>
+    <title>i2.deco &#8212; i2 0.0.25 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -1121,7 +1121,7 @@
 
 
 <span class="k">def</span> <span class="nf">_special_str</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; A util function for _call_signature&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A util function for _call_signature&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1240,6 +1240,8 @@
                 <span class="n">log_output</span> <span class="ow">and</span> <span class="n">logger</span><span class="p">(</span><span class="n">log_output</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
                 <span class="k">return</span> <span class="n">out</span>
 
+            <span class="n">_func</span><span class="o">.</span><span class="n">_logged_with</span> <span class="o">=</span> <span class="n">logger</span>
+
             <span class="k">return</span> <span class="n">_func</span>
 
     <span class="k">else</span><span class="p">:</span>
@@ -1252,9 +1254,33 @@
                 <span class="n">log_output</span> <span class="ow">and</span> <span class="n">logger</span><span class="p">(</span><span class="n">log_output</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
                 <span class="k">return</span> <span class="n">out</span>
 
+            <span class="n">_func</span><span class="o">.</span><span class="n">_logged_with</span> <span class="o">=</span> <span class="n">logger</span>
+
             <span class="k">return</span> <span class="n">_func</span>
 
     <span class="k">return</span> <span class="n">log_calls</span></div>
+
+
+<div class="viewcode-block" id="get_callable_from_factory_if_no_arguments"><a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.get_callable_from_factory_if_no_arguments">[docs]</a><span class="k">def</span> <span class="nf">get_callable_from_factory_if_no_arguments</span><span class="p">(</span><span class="n">func_or_factory_thereof</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Will return the input itself if it&#39;s a callable with at least one argument.</span>
+<span class="sd">    If not, it will consider it to be a factory, call it to get the actual</span>
+<span class="sd">    callable object that the user presumably is seeking to get&quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">callable</span><span class="p">(</span>
+        <span class="n">func_or_factory_thereof</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">func_or_factory_thereof</span><span class="si">}</span><span class="s1"> needs to be callable&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">func_or_factory_thereof</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># if func_or_factory_thereof has no arguments, assume it&#39;s a factory</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">func_or_factory_thereof</span><span class="p">()</span>
+        <span class="c1"># and make sure that now we have arguments</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Your func_or_factory_thereof had no arguments, so I assumed it &#39;</span>
+                <span class="s2">&quot;was a factory, called it, but that didn&#39;t produce a &quot;</span>
+                <span class="s2">&quot;callable with at least one argument. So I don&#39;t know what to do.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">func_or_factory_thereof</span>
+    <span class="k">return</span> <span class="n">func</span></div>
 
 
 <span class="c1">## This one didn&#39;t actually handle position only correctly (just signature)</span>
