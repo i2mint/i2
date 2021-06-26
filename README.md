@@ -2,6 +2,8 @@
 
 Core tools for minting code.
 
+[Documentation here.](https://i2mint.github.io/i2/)
+
 ## What's mint?
 
 Mint stands for "Meta-INTerface".
