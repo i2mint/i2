@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.signatures &#8212; i2 0.0.28 documentation</title>
+    <title>i2.signatures &#8212; i2 0.0.29 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -80,6 +80,29 @@ KO = Parameter.KEYWORD_ONLY</p>
 <span class="go">hello, world</span>
 </pre></div>
 </div>
+<p>What happens (when a command is executed) if some of the arguments are commands
+themselves? Well, the sensible thing happens. These commands are executed.
+You can use this to define, declaratively, some pretty complex instructions, and
+only fetch the data you need and execute everything, once you’re ready.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Showing this: </span><span class="si">{</span><span class="n">a</span><span class="si">=}</span><span class="s2">, </span><span class="si">{</span><span class="n">b</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">take_five</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">double_val</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">val</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">show</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">Command</span><span class="p">(</span><span class="n">take_five</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">b</span><span class="o">=</span><span class="n">Command</span><span class="p">(</span><span class="n">double_val</span><span class="p">,</span> <span class="s1">&#39;hello&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">command</span>
+<span class="go">Command(show, Command(take_five), b=Command(double_val, &#39;hello&#39;))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">command</span><span class="p">()</span>
+<span class="go">Showing this: a=5, b=&#39;hellohello&#39;</span>
+</pre></div>
+</div>
+<p>Of course, as your use of Command gets more complex, you may want to subclass it
+and include some “validation” and “compilation” in the init.</p>
 <p>The usual way to call a function is to… erm… call it.
 But sometimes you want to do things differently.
 Like validate it, put it on a queue, etc.
@@ -113,7 +136,7 @@ That’s where specifying a different _caller will be useful.</p>
 <span class="go">&#39;hihihihi&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">foo_command</span><span class="p">(</span><span class="s1">&#39;hi&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span>
-<span class="go">Command(&#39;hi&#39;)</span>
+<span class="go">Command(foo, &#39;hi&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span><span class="p">()</span>
 <span class="go">&#39;hihi&#39;</span>
 </pre></div>
