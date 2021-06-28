@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.simple_pymint &#8212; i2 0.0.25 documentation</title>
+    <title>i2.simple_pymint &#8212; i2 0.0.27 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -43,36 +43,36 @@
 <dd><p>Get meta-data about a callable.
 :param f: A callable (function, method, …)
 :return: A dict containing information about the interface of f, that is, name, module, doc, and
-input and output information.
-&gt;&gt;&gt; def test_callable(arg1, arg2: int) -&gt; str:
-…     __doc__ = “A testable callablen:param str arg1: A stringn”
-…     print(‘calling!’)
-…     print(arg1)
-…     print(arg2)
-…     return ‘returned’
-…
-&gt;&gt;&gt; mint = mint_of_callable(test_callable)
-&gt;&gt;&gt; list(mint.keys())
-[‘name’, ‘module’, ‘doc’, ‘description’, ‘summary’, ‘tags’, ‘input’, ‘output’]
-&gt;&gt;&gt; mint[‘name’]
-‘test_callable’
-&gt;&gt;&gt; assert mint[‘module’] == test_callable.__module__, “mint[‘module’] == test_callable.__module__”
-&gt;&gt;&gt; mint[‘input’]
-{‘arg1’: {}, ‘arg2’: {‘annot’: &lt;class ‘int’&gt;}}
-&gt;&gt;&gt; mint[‘output’]
-{‘annot’: &lt;class ‘str’&gt;}
-&gt;&gt;&gt; assert mint.pop(‘module’).endswith(‘simple_pymint’)  # popping off because module is relative so not consistent
-&gt;&gt;&gt; from pprint import pprint
-&gt;&gt;&gt; pprint(mint)
-{‘description’: ‘’,</p>
-<blockquote>
-<div><p>‘doc’: None,
-‘input’: {‘arg1’: {}, ‘arg2’: {‘annot’: &lt;class ‘int’&gt;}},
-‘name’: ‘test_callable’,
-‘output’: {‘annot’: &lt;class ‘str’&gt;},
-‘summary’: ‘’,
-‘tags’: []}</p>
-</div></blockquote>
+input and output information.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">test_callable</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;A testable callable</span><span class="se">\n</span><span class="s2">:param str arg1: A string</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;calling!&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">arg2</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="s1">&#39;returned&#39;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mint</span> <span class="o">=</span> <span class="n">mint_of_callable</span><span class="p">(</span><span class="n">test_callable</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">mint</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="go">[&#39;name&#39;, &#39;module&#39;, &#39;doc&#39;, &#39;description&#39;, &#39;summary&#39;, &#39;tags&#39;, &#39;input&#39;, &#39;output&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mint</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+<span class="go">&#39;test_callable&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">mint</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">test_callable</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span> <span class="s2">&quot;mint[&#39;module&#39;] == test_callable.__module__&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mint</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span>
+<span class="go">{&#39;arg1&#39;: {}, &#39;arg2&#39;: {&#39;annot&#39;: &lt;class &#39;int&#39;&gt;}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mint</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span>
+<span class="go">{&#39;annot&#39;: &lt;class &#39;str&#39;&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">mint</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;module&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;simple_pymint&#39;</span><span class="p">)</span>  <span class="c1"># popping off because module is relative so not consistent</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">mint</span><span class="p">)</span>
+<span class="go">{&#39;description&#39;: &#39;&#39;,</span>
+<span class="go"> &#39;doc&#39;: None,</span>
+<span class="go"> &#39;input&#39;: {&#39;arg1&#39;: {}, &#39;arg2&#39;: {&#39;annot&#39;: &lt;class &#39;int&#39;&gt;}},</span>
+<span class="go"> &#39;name&#39;: &#39;test_callable&#39;,</span>
+<span class="go"> &#39;output&#39;: {&#39;annot&#39;: &lt;class &#39;str&#39;&gt;},</span>
+<span class="go"> &#39;summary&#39;: &#39;&#39;,</span>
+<span class="go"> &#39;tags&#39;: []}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>

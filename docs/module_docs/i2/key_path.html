@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.key_path &#8212; i2 0.0.25 documentation</title>
+    <title>i2.key_path &#8212; i2 0.0.27 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -167,21 +167,23 @@ That is, if a value is a store_type, it won’t generate a yield, but rather, wi
 recursively.
 :param d: input store
 :param key_path_so_far: string to be prepended to all key paths (for use in recursion, not meant for direct use)
-:return: a (key_path, val) iterator
-&gt;&gt;&gt; kp = KeyPathTrans()
-&gt;&gt;&gt; input_dict = {
-…     ‘a’: {
-…         ‘a’: ‘a.a’,
-…         ‘b’: ‘a.b’,
-…         ‘c’: {
-…             ‘a’: ‘a.c.a’
-…         }
-…     },
-…     ‘b’: ‘b’,
-…     ‘c’: 3
-… }
-&gt;&gt;&gt; list(kp.items(input_dict))
-[(‘a.a’, ‘a.a’), (‘a.b’, ‘a.b’), (‘a.c.a’, ‘a.c.a’), (‘b’, ‘b’), (‘c’, 3)]</p>
+:return: a (key_path, val) iterator</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">KeyPathTrans</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">input_dict</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;a.a&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;a.b&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>            <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;a.c.a&#39;</span>
+<span class="gp">... </span>        <span class="p">}</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span>    <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">3</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">input_dict</span><span class="p">))</span>
+<span class="go">[(&#39;a.a&#39;, &#39;a.a&#39;), (&#39;a.b&#39;, &#39;a.b&#39;), (&#39;a.c.a&#39;, &#39;a.c.a&#39;), (&#39;b&#39;, &#39;b&#39;), (&#39;c&#39;, 3)]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -242,65 +244,67 @@ recursively.
 <dt id="i2.key_path.StrKeyPath">
 <em class="property">class </em><code class="sig-prename descclassname">i2.key_path.</code><code class="sig-name descname">StrKeyPath</code><span class="sig-paren">(</span><em class="sig-param">store=&lt;class 'dict'&gt;</em>, <em class="sig-param">key_type: type = None</em>, <em class="sig-param">node_type: type = None</em>, <em class="sig-param">auto_node_writes=False</em>, <em class="sig-param">sep: str = '.'</em>, <em class="sig-param">prefix: str = ''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#StrKeyPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.StrKeyPath" title="Permalink to this definition">¶</a></dt>
 <dd><p>A KeyPathMap, but where the key paths are expressed as string with a separator.
-If sep = ‘.’, then instead of using (‘a’, ‘b’, ‘c’) as a key, you can use ‘a.b.c’.
-&gt;&gt;&gt; d = {‘a’: {
-…         ‘a’: ‘2a’,
-…         ‘b’: {‘a’: ‘aba’,
-…               ‘b’: 3}
-…         },
-…      ‘c’: 3.14
-…     }
-&gt;&gt;&gt; # Example with sep=’/’
-&gt;&gt;&gt; kp = StrKeyPath(d, sep=’/’)
-&gt;&gt;&gt; list(kp.items())
-[(‘a/a’, ‘2a’), (‘a/b/a’, ‘aba’), (‘a/b/b’, 3), (‘c’, 3.14)]
-&gt;&gt;&gt; # You can also add a prefix to the keys
-&gt;&gt;&gt; kp = StrKeyPath(d, sep=’/’, prefix=”<a class="reference external" href="http://">http://</a>”)
-&gt;&gt;&gt; list(kp.items())
-[(’<a class="reference external" href="http://a/a">http://a/a</a>’, ‘2a’), (’<a class="reference external" href="http://a/b/a">http://a/b/a</a>’, ‘aba’), (’<a class="reference external" href="http://a/b/b">http://a/b/b</a>’, 3), (’<a class="reference external" href="http://c">http://c</a>’, 3.14)]
-&gt;&gt;&gt;
-&gt;&gt;&gt; # Default sep is ‘.’, so we’ll work with that:
-&gt;&gt;&gt; kp = StrKeyPath(d)
-&gt;&gt;&gt; kp
-{‘a’: {‘a’: ‘2a’, ‘b’: {‘a’: ‘aba’, ‘b’: 3}}, ‘c’: 3.14}
-&gt;&gt;&gt; list(kp.items())
-[(‘a.a’, ‘2a’), (‘a.b.a’, ‘aba’), (‘a.b.b’, 3), (‘c’, 3.14)]
-&gt;&gt;&gt; list(kp)
-[‘a.a’, ‘a.b.a’, ‘a.b.b’, ‘c’]
-&gt;&gt;&gt; len(kp)
-4
-&gt;&gt;&gt; assert list(kp) == list(kp.keys())
-&gt;&gt;&gt; list(kp.values())
-[‘2a’, ‘aba’, 3, 3.14]
-&gt;&gt;&gt; kp[‘a’]
-{‘a’: ‘2a’, ‘b’: {‘a’: ‘aba’, ‘b’: 3}}
-&gt;&gt;&gt; kp[‘a.a’]
-‘2a’
-&gt;&gt;&gt; kp[‘a.b.b’]
-3
-&gt;&gt;&gt; (‘a.new_key’) in kp
-False
-&gt;&gt;&gt; kp[‘a.new_key’] = ‘new val’
-&gt;&gt;&gt; ‘a.new_key’ in kp
-True
-&gt;&gt;&gt; kp[‘a.new_key’]
-‘new val’
-&gt;&gt;&gt; len(kp)
-5
-&gt;&gt;&gt; del kp[‘a.b.a’]
-&gt;&gt;&gt; len(kp)
-4
-&gt;&gt;&gt; list(kp.items())
-[(‘a.a’, ‘2a’), (‘a.b.b’, 3), (‘a.new_key’, ‘new val’), (‘c’, 3.14)]
-&gt;&gt;&gt;
-&gt;&gt;&gt; # By default, you can only write on already created nodes. But if auto_node_writes=True, you can do this:
-&gt;&gt;&gt; kp = StrKeyPath(auto_node_writes=True)
-&gt;&gt;&gt; kp
-{}
-&gt;&gt;&gt; kp[‘a.b.c’] = ‘hi world!’
-&gt;&gt;&gt; kp
-{‘a’: {‘b’: {‘c’: ‘hi world!’}}}
-&gt;&gt;&gt;</p>
+If sep = ‘.’, then instead of using (‘a’, ‘b’, ‘c’) as a key, you can use ‘a.b.c’.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;2a&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;aba&#39;</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>     <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mf">3.14</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example with sep=&#39;/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">StrKeyPath</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;a/a&#39;, &#39;2a&#39;), (&#39;a/b/a&#39;, &#39;aba&#39;), (&#39;a/b/b&#39;, 3), (&#39;c&#39;, 3.14)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># You can also add a prefix to the keys</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">StrKeyPath</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;http://a/a&#39;, &#39;2a&#39;), (&#39;http://a/b/a&#39;, &#39;aba&#39;), (&#39;http://a/b/b&#39;, 3), (&#39;http://c&#39;, 3.14)]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Default sep is &#39;.&#39;, so we&#39;ll work with that:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">StrKeyPath</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
+<span class="go">{&#39;a&#39;: {&#39;a&#39;: &#39;2a&#39;, &#39;b&#39;: {&#39;a&#39;: &#39;aba&#39;, &#39;b&#39;: 3}}, &#39;c&#39;: 3.14}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;a.a&#39;, &#39;2a&#39;), (&#39;a.b.a&#39;, &#39;aba&#39;), (&#39;a.b.b&#39;, 3), (&#39;c&#39;, 3.14)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">[&#39;a.a&#39;, &#39;a.b.a&#39;, &#39;a.b.b&#39;, &#39;c&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="go">[&#39;2a&#39;, &#39;aba&#39;, 3, 3.14]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>
+<span class="go">{&#39;a&#39;: &#39;2a&#39;, &#39;b&#39;: {&#39;a&#39;: &#39;aba&#39;, &#39;b&#39;: 3}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.a&#39;</span><span class="p">]</span>
+<span class="go">&#39;2a&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.b.b&#39;</span><span class="p">]</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="s1">&#39;a.new_key&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kp</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.new_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;new val&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;a.new_key&#39;</span> <span class="ow">in</span> <span class="n">kp</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.new_key&#39;</span><span class="p">]</span>
+<span class="go">&#39;new val&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.b.a&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;a.a&#39;, &#39;2a&#39;), (&#39;a.b.b&#39;, 3), (&#39;a.new_key&#39;, &#39;new val&#39;), (&#39;c&#39;, 3.14)]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># By default, you can only write on already created nodes. But if auto_node_writes=True, you can do this:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">StrKeyPath</span><span class="p">(</span><span class="n">auto_node_writes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
+<span class="go">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.b.c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;hi world!&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
+<span class="go">{&#39;a&#39;: {&#39;b&#39;: {&#39;c&#39;: &#39;hi world!&#39;}}}</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt id="i2.key_path.StrKeyPath.items">
 <code class="sig-name descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; a set-like object providing a view on D’s items<a class="reference internal" href="../../_modules/i2/key_path.html#StrKeyPath.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.StrKeyPath.items" title="Permalink to this definition">¶</a></dt>
