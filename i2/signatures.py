@@ -519,6 +519,30 @@ class Command:
     >>> c()
     hello, world
 
+    What happens (when a command is executed) if some of the arguments are commands
+    themselves? Well, the sensible thing happens. These commands are executed.
+    You can use this to define, declaratively, some pretty complex instructions, and
+    only fetch the data you need and execute everything, once you're ready.
+
+    >>> def show(a, b):
+    ...     print(f"Showing this: {a=}, {b=}")
+    >>> def take_five():
+    ...     return 5
+    >>> def double_val(val):
+    ...     return val * 2
+    >>> command = Command(
+    ...     show,
+    ...     Command(take_five),
+    ...     b=Command(double_val, 'hello'),
+    ... )
+    >>> command
+    Command(show, Command(take_five), b=Command(double_val, 'hello'))
+    >>> command()
+    Showing this: a=5, b='hellohello'
+
+    Of course, as your use of Command gets more complex, you may want to subclass it
+    and include some "validation" and "compilation" in the init.
+
     The usual way to call a function is to... erm... call it.
     But sometimes you want to do things differently.
     Like validate it, put it on a queue, etc.
@@ -533,6 +557,8 @@ class Command:
     >>> c()
     hello, world
     Calling <built-in function print>(*('hello', 'world'), **{'sep': ', '}) with result: None
+
+
     """
 
     def __init__(self, func, *args, **kwargs):
@@ -558,7 +584,7 @@ class Command:
         'hihihihi'
         >>> ff = foo_command('hi')
         >>> ff
-        Command('hi')
+        Command(foo, 'hi')
         >>> ff()
         'hihi'
 
@@ -586,10 +612,33 @@ class Command:
         else:
             sep = ""
         args_kwargs_str = args_str + sep + kwargs_str
-        return f"{type(self).__name__}({args_kwargs_str})"
+
+        func_name = name_of_obj(self.func)
+        if args_kwargs_str:
+            return f"{type(self).__name__}({func_name}, {args_kwargs_str})"
+        else:
+            return f"{type(self).__name__}({func_name})"
 
     def _caller(self):
         return self.func(*self.args, **self.kwargs)
+
+    def _args_with_executed_commands(self):
+        for v in self.args:
+            if isinstance(v, Command):
+                v = v()  # if a command, execute it
+            yield v
+
+    def _kwargs_with_executed_commands(self):
+        for k, v in self.kwargs.items():
+            if isinstance(v, Command):
+                v = v()  # if a command, execute it
+            yield k, v
+
+    def _caller(self):
+        return self.func(
+            *self._args_with_executed_commands(),
+            **dict(self._kwargs_with_executed_commands()),
+        )
 
     def __call__(self):
         return self._caller()
