@@ -2,17 +2,17 @@
 
 How to:
 
-- get names, kinds, defaults, annotations
+    - get names, kinds, defaults, annotations
 
-- merge two or more signatures
+    - merge two or more signatures
 
-- give a function a specific signature (with a choice of validations)
+    - give a function a specific signature (with a choice of validations)
 
-- get an equivalent function with a different order of arguments
+    - get an equivalent function with a different order of arguments
 
-- get an equivalent function with a subset of arguments (like partial)
+    - get an equivalent function with a subset of arguments (like partial)
 
-- get an equivalent function but with variadic *args and/or **kwargs replaced with
+    - get an equivalent function but with variadic *args and/or **kwargs replaced with
     non-variadic args (tuple) and kwargs (dict)
 
 - make an f(a) function in to a f(a, b=None) function with b ignored
@@ -210,8 +210,7 @@ def ensure_params(obj: ParamsAble = None):
     >>> def f(w, /, x: float = 1, y=1, *, z: int = 1):
     ...     ...
     >>> ensure_params(f)
-    [<Parameter "w">, <Parameter "x: float = 1">, <Parameter "y=1">, <Parameter "z:
-    int = 1">]
+    [<Parameter "w">, <Parameter "x: float = 1">, <Parameter "y=1">, <Parameter "z: int = 1">]
 
     From an iterable of strings, dicts, or tuples
 
@@ -226,8 +225,7 @@ def ensure_params(obj: ParamsAble = None):
     ...         (
     ...             "c",
     ...             2,
-    ...         ),  # if you just want a default, make it the second element of your
-    tuple
+    ...         ),  # if you just want a default, make it the second element of your tup
     ...         dict(name="d", kind=Parameter.VAR_KEYWORD),
     ...     ]
     ... )  # all kinds are by default PK: Use dict to specify otherwise.
@@ -436,8 +434,8 @@ def extract_arguments(
     ...     ...
     ...
     >>> extract_arguments(f, b=2, d="is a kw arg", e="is not an arg at all")
-    ((MissingArgValFor("a"), 2, MissingArgValFor("c")), {'d': 'is a kw arg'},
-    {'e': 'is not an arg at all'})
+    ((MissingArgValFor("a"), 2, MissingArgValFor("c")), {'d': 'is a kw arg'}, {'e': 'is not an arg at all'})
+
 
     A few more examples...
 
@@ -593,9 +591,7 @@ class Command:
     >>> c = MyCommand(print, "hello", "world", sep=", ")
     >>> c()
     hello, world
-    Calling <built-in function print>(*('hello', 'world'), **{'sep': ', '}) with
-    result: None
-
+    Calling <built-in function print>(*('hello', 'world'), **{'sep': ', '}) with result: None
 
     """
 
@@ -1077,8 +1073,7 @@ class Sig(Signature, Mapping):
         <Signature (w, x: int, y=2, z: int = 10)>
         >>> # But (unlike with functools.wraps) here we get __defaults__ and
         __kwdefault__
-        >>> f.__defaults__  # see that x has no more default, and z's default changed
-        to 10
+        >>> f.__defaults__  # see that x has no more default & z's default is now 10
         (2, 10)
         >>> f(
         ...     0, 1
@@ -1844,16 +1839,15 @@ class Sig(Signature, Mapping):
         """Yields Parameter instances taken from sigs without repeating the same name
         twice.
 
-        >>> str(
-        ...     list(
-        ...         Sig._chain_params_of_signatures(
-        ...             Sig(lambda x, *args, y=1: ...),
-        ...             Sig(lambda x, y, z, **kwargs: ...),
-        ...         )
+        >>> str(list(
+        ...     Sig._chain_params_of_signatures(
+        ...         Sig(lambda x, *args, y=1: ...),
+        ...         Sig(lambda x, y, z, **kwargs: ...),
         ...     )
+        ...   )
         ... )
-        '[<Parameter "x">, <Parameter "*args">, <Parameter "y=1">, <Parameter "z">,
-        <Parameter "**kwargs">]'
+        '[<Parameter "x">, <Parameter "*args">, <Parameter "y=1">, <Parameter "z">, <Parameter "**kwargs">]'
+
         """
         already_merged_names = set()
         for s in sigs:
@@ -2612,8 +2606,7 @@ def call_forgivingly(func, *args, **kwargs):
     ...     foo,  # the function you want to call
     ...     "input for a",  # meant for a -- the first (and only) argument foo requires
     ...     c=42,  # skiping b and giving c a non-default value
-    ...     intruder="argument",  # but wait, this argument name doesn't exist! Oh no,
-    what's going to happen?
+    ...     intruder="argument",  # but wait, this argument name doesn't exist! Oh no!
     ... )  # well, as it happens, nothing bad -- the intruder argument is just ignored
     ('foo', ('input for a', 0, 42))
 
@@ -2622,7 +2615,9 @@ def call_forgivingly(func, *args, **kwargs):
     return func(*args, **kwargs)
 
 
-def call_somewhat_forgivingly(func, args, kwargs, enforce_sig=Optional[SignatureAble]):
+def call_somewhat_forgivingly(
+    func, args, kwargs, enforce_sig: Optional[SignatureAble] = None
+):
     """Call function on given args and kwargs, but with controllable argument leniency.
     By default, the function will only pick from args and kwargs what matches it's
     signature, ignoring anything else in args and kwargs.
@@ -2636,6 +2631,12 @@ def call_somewhat_forgivingly(func, args, kwargs, enforce_sig=Optional[Signature
     `call_somewhat_forgivingly` helps you do this kind of thing systematically.
 
     >>> f = lambda a: a * 11
+    >>> assert call_somewhat_forgivingly(f, (2,), {}) == f(2)
+
+    In the above, we have no `enforce_sig`. The real use of call_somewhat_forgivingly
+    is when we ask it to enforce a signature. Let's do this by specifying a function
+    (no need for it to do anything: Only the signature is used.
+
     >>> g = lambda a, b=None: ...
 
     Calling `f` on it's normal set of inputs (one input in this case) gives you the
@@ -3206,11 +3207,9 @@ def common_and_diff_argnames(func1: callable, func2: callable) -> dict:
     ...     ...
     ...
     >>> common_and_diff_argnames(f, g)
-    {'common': ['t', 'i'], 'func1_not_func2': ['h', 'n', 'k'], 'func2_not_func1': [
-    'w', 'c', 'e']}
+    {'common': ['t', 'i'], 'func1_not_func2': ['h', 'n', 'k'], 'func2_not_func1': ['w', 'c', 'e']}
     >>> common_and_diff_argnames(g, f)
-    {'common': ['t', 'i'], 'func1_not_func2': ['w', 'c', 'e'], 'func2_not_func1': [
-    'h', 'n', 'k']}
+    {'common': ['t', 'i'], 'func1_not_func2': ['w', 'c', 'e'], 'func2_not_func1': ['h', 'n', 'k']}
     """
     p1 = signature(func1).parameters
     p2 = signature(func2).parameters
@@ -3394,8 +3393,7 @@ def param_for_kind(
     This tool should help making it less annoying.
 
     >>> list(map(param_for_kind, param_kinds))
-    [<Parameter "POSITIONAL_ONLY">, <Parameter "POSITIONAL_OR_KEYWORD">, <Parameter
-    "VAR_POSITIONAL">, <Parameter "KEYWORD_ONLY">, <Parameter "VAR_KEYWORD">]
+    [<Parameter "POSITIONAL_ONLY">, <Parameter "POSITIONAL_OR_KEYWORD">, <Parameter "VAR_POSITIONAL">, <Parameter "KEYWORD_ONLY">, <Parameter "VAR_KEYWORD">]
     >>> param_for_kind.positional_or_keyword()
     <Parameter "POSITIONAL_OR_KEYWORD">
     >>> param_for_kind.positional_or_keyword("foo")
