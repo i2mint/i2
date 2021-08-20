@@ -1124,6 +1124,9 @@ class Sig(Signature, Mapping):
             wrapped_func.__defaults__,
             wrapped_func.__kwdefaults__,
         ) = self._dunder_defaults_and_kwdefaults()
+        # special case of functools.partial: need to tell .keywords about kwdefaults
+        if isinstance(wrapped_func, partial):
+            wrapped_func.keywords.update(wrapped_func.__kwdefaults__)
         # "copy" over all other non-dunder attributes (not the default of
         # functools.wraps!)
         for attr in filter(lambda x: not x.startswith('__'), dir(wrapped_func)):
@@ -1501,7 +1504,7 @@ class Sig(Signature, Mapping):
         11
 
 
-        # TODO: Would like to make this work:
+        # TODO: Would like to make this work (reordering)
         # Now, if you want to set a default for a but not b and c for example, you'll
         # get complaints:
         #
