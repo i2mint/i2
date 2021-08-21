@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.footprints &#8212; i2 0.0.33 documentation</title>
+    <title>i2.footprints &#8212; i2 0.0.34 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -82,7 +82,7 @@
 
 
 <div class="viewcode-block" id="get_imports_from_obj"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.get_imports_from_obj">[docs]</a><span class="k">def</span> <span class="nf">get_imports_from_obj</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Getting imports for an object (usually, module) &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Getting imports for an object (usually, module)&quot;&quot;&quot;</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">_get_ast_root_from</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
     <span class="k">yield from</span> <span class="n">_get_imports_from_ast_root</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">recursive</span><span class="p">)</span></div>
 
@@ -116,6 +116,8 @@
 
 
 <span class="k">def</span> <span class="nf">cls_and_method_name_of_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="o">.</span><span class="vm">__name__</span>
     <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="vm">__name__</span>
 
 
@@ -315,11 +317,16 @@
     <span class="n">tracker</span><span class="o">.</span><span class="n">attrs_to_ignore</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">func</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">tracker</span><span class="p">)</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">func</span><span class="p">))</span>
     <span class="p">]</span>
+
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
-        <span class="n">candidate_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
         <span class="c1"># Now, we want to track attributes.</span>
         <span class="k">with</span> <span class="n">start_tracking</span><span class="p">(</span><span class="n">tracker</span><span class="p">):</span>
-            <span class="n">candidate_method</span><span class="p">(</span><span class="o">**</span><span class="n">method_kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cls_method</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
+                <span class="n">candidate_method</span> <span class="o">=</span> <span class="n">cls_method</span><span class="o">.</span><span class="n">fget</span>
+                <span class="n">candidate_method</span><span class="p">(</span><span class="n">tracker</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">candidate_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
+                <span class="n">candidate_method</span><span class="p">(</span><span class="o">**</span><span class="n">method_kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">_process_duplicates</span><span class="p">(</span>
             <span class="n">tracker</span><span class="o">.</span><span class="n">attr_used</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="n">remove_duplicates</span>

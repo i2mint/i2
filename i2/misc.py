@@ -16,7 +16,7 @@ def inject_signature(
         )
     assert isinstance(
         sig, inspect.Signature
-    ), "sig should be an inspect.Signature (or be resolved to one)"
+    ), 'sig should be an inspect.Signature (or be resolved to one)'
 
     def wrapper(func):
         func.__signature__ = sig
@@ -45,7 +45,7 @@ def filter_by_value(d, valfunc):
 #     arg_name_default_annot = list(map(val_filt, arg_name_default_annot))
 #     return arg_name_default_annot
 
-parameter_props = ["name", "kind", "default", "annotation"]
+parameter_props = ['name', 'kind', 'default', 'annotation']
 
 
 def mk_arg_name_dflt_annot_dict_list_from_func(func):
@@ -122,8 +122,8 @@ class SignatureFactory:
                     param_dict = dict(
                         self.dflt_params, **self.dflt_arg_specs.get(name, {})
                     )
-                    if "name" not in param_dict:
-                        param_dict["name"] = name
+                    if 'name' not in param_dict:
+                        param_dict['name'] = name
                 elif isinstance(param, dict):
                     param_dict = dict(
                         self.dflt_params, **dict(self.dflt_arg_specs, **param)

@@ -8,7 +8,7 @@ import os
 from collections import namedtuple
 from inspect import getsource, getsourcefile
 
-Import = namedtuple("Import", ["module", "name", "alias"])
+Import = namedtuple('Import', ['module', 'name', 'alias'])
 
 
 # TODO: Generalize attrs_used_by_method to attrs_used_by_func.
@@ -25,7 +25,7 @@ def _get_ast_root_from(o):
         source_filepath = getsourcefile(o)
         source_str = getsource(o)
         if not isinstance(source_filepath, str) and isinstance(source_str, str):
-            raise ValueError("Unrecognized object format")
+            raise ValueError('Unrecognized object format')
 
     return ast.parse(source=source_str, filename=source_filepath)
 
@@ -36,11 +36,11 @@ def _get_imports_from_ast_root(ast_root, recursive=False):
         if isinstance(node, ast.Import):
             module = []
         elif isinstance(node, ast.ImportFrom):
-            module = node.module.split(".")
+            module = node.module.split('.')
 
         if module is not None:
             for n in node.names:
-                yield Import(module, n.name.split("."), n.asname)
+                yield Import(module, n.name.split('.'), n.asname)
 
         if recursive:
             yield from _get_imports_from_ast_root(node, recursive=recursive)
@@ -73,11 +73,11 @@ def get_class_that_defined_method(method):
     if inspect.isfunction(method):
         cls = getattr(
             inspect.getmodule(method),
-            method.__qualname__.split(".<locals>", 1)[0].rsplit(".", 1)[0],
+            method.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0],
         )
         if isinstance(cls, type):
             return cls
-    return getattr(method, "__objclass__", None)
+    return getattr(method, '__objclass__', None)
 
 
 def cls_and_method_name_of_method(method):
@@ -89,7 +89,7 @@ def cls_and_method_name_of_method(method):
 def _alt_cls_and_method_name_of_method(
     method,
 ):  # TODO: Delete when determined to be of no additional value
-    method_path = method.__qualname__.split(".")
+    method_path = method.__qualname__.split('.')
     name = method_path[-1]
     cls = reduce(getattr, method_path[:-1], import_module(method.__module__))
     return cls, name
@@ -105,7 +105,7 @@ def list_func_calls(fn):
     bytecode = dis.Bytecode(fn)
     instrs = list(reversed([instr for instr in bytecode]))
     for (ix, instr) in enumerate(instrs):
-        if instr.opname == "CALL_FUNCTION" or instr.opname == "CALL_METHOD":
+        if instr.opname == 'CALL_FUNCTION' or instr.opname == 'CALL_METHOD':
             load_func_instr = instrs[ix + instr.arg + 1]
             funcs.append(load_func_instr.argval)
     return [funcname for funcname in reversed(funcs)]
@@ -139,8 +139,8 @@ def _attrs_used_by_method(cls, method_name, remove_duplicates=True):
     """
     Util for attrs_used_by_method. Same output as attrs_used_by_method, but intput is (cls, method_name)
     """
-    f = open(inspect.getsourcefile(cls), "r")
-    if f.mode == "r":
+    f = open(inspect.getsourcefile(cls), 'r')
+    if f.mode == 'r':
         src = f.read()
     root = ast.parse(src)
     funcs = list_func_calls(getattr(cls, method_name))
@@ -225,7 +225,7 @@ class Tracker:
         """
         Inspect getter for tracking the attributes accessed.
         """
-        if item not in ["on_access"]:
+        if item not in ['on_access']:
             self.on_access(item)
         return super().__getattribute__(item)
 
@@ -244,7 +244,7 @@ class Tracker:
         core attribute or `attrs_to_ignore` set to class.
         """
         if (
-            key in ["start_track", "attr_used", "on_access", "attrs_to_ignore"]
+            key in ['start_track', 'attr_used', 'on_access', 'attrs_to_ignore']
             or key in self.attrs_to_ignore
         ):
             return
@@ -275,7 +275,7 @@ def attrs_used_by_method_computation(
 
     method_class, method_name = cls_and_method_name_of_method(cls_method)
     tracker = type(
-        "Tracker",
+        'Tracker',
         (Tracker, method_class),
         dict(method_class.__dict__, **Tracker.__dict__),
     )(**init_kwargs)
@@ -302,7 +302,7 @@ def attrs_used_by_method_computation(
         return 1
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     def func(obj):
         return obj.a + obj.b

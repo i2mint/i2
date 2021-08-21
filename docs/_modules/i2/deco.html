@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.deco &#8212; i2 0.0.33 documentation</title>
+    <title>i2.deco &#8212; i2 0.0.34 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -40,9 +40,9 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span><span class="p">,</span> <span class="n">partial</span><span class="p">,</span> <span class="n">update_wrapper</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Signature</span><span class="p">,</span> <span class="n">signature</span><span class="p">,</span> <span class="n">Parameter</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span>
 
-<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">ch_func_to_all_pk</span><span class="p">,</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">tuple_the_args</span>
+<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">ch_func_to_all_pk</span><span class="p">,</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">tuple_the_args</span><span class="p">,</span> <span class="n">kind_forgiving_func</span>
 
 <span class="c1"># keep the imports below here because might be referenced (or take care of refs)</span>
 <span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">ch_signature_to_all_pk</span><span class="p">,</span> <span class="n">params_of</span><span class="p">,</span> <span class="n">copy_func</span>
@@ -88,11 +88,12 @@
 
     <span class="k">def</span> <span class="nf">validate_decorator_func</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">):</span>
         <span class="n">first_param</span><span class="p">,</span> <span class="o">*</span><span class="n">other_params</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="n">first_param</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;First argument of the decorator function needs to default to None. Was </span><span class="si">{</span><span class="n">first_param</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">assert</span> <span class="n">first_param</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;First argument of the decorator function needs to default to None. &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Was </span><span class="si">{</span><span class="n">first_param</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
         <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
-            <span class="n">p</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">p</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">other_params</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">}</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">other_params</span>
         <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;All arguments (besides the first) need to be keyword-only&#39;</span>
         <span class="k">return</span> <span class="kc">True</span>
 
@@ -106,6 +107,71 @@
             <span class="k">return</span> <span class="n">decorator_func</span><span class="p">(</span><span class="n">wrapped</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_double_up_as_factory</span></div>
+
+
+<span class="c1"># TODO: Review, doc, and make public.</span>
+<span class="c1">#   Namely, it may be cleaner to have the `argname=argtrans, ...` interface</span>
+<span class="c1">#   and offer utils to make an argtrans be the combination of a condition and a trans!</span>
+<span class="nd">@double_up_as_factory</span>
+<span class="k">def</span> <span class="nf">_conditional_arg_trans</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">condition_and_trans_of_argname</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    See also: ensure_iterable_args, for a more complex example of how to use it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">kwargs_from_args_and_kwargs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">argname</span><span class="p">,</span> <span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">trans</span><span class="p">)</span> <span class="ow">in</span> <span class="n">condition_and_trans_of_argname</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">argname</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">condition</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">argname</span><span class="p">]):</span>
+                <span class="c1"># Note: Using tuple instead of list because quicker &amp; safer (non-mutable)</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span> <span class="o">=</span> <span class="n">trans</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">argname</span><span class="p">])</span>
+        <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_func</span>
+
+
+<span class="k">def</span> <span class="nf">_tuplize</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span>
+
+
+<span class="k">def</span> <span class="nf">_mk_type_condition</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;If condition is a type, make an isinstance function to check for that type&quot;&quot;&quot;</span>
+    <span class="n">curryable_isinstance</span> <span class="o">=</span> <span class="n">kind_forgiving_func</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">type_condition</span> <span class="o">=</span> <span class="n">condition</span>
+        <span class="n">condition</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">curryable_isinstance</span><span class="p">,</span> <span class="n">class_or_tuple</span><span class="o">=</span><span class="n">type_condition</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">condition</span>
+
+
+<div class="viewcode-block" id="ensure_iterable_args"><a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.ensure_iterable_args">[docs]</a><span class="k">def</span> <span class="nf">ensure_iterable_args</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">condition_of_argname</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Wrap a function so that specific arguments are assured to be iterable if</span>
+<span class="sd">    they meet specific conditions.</span>
+
+<span class="sd">    The condition, in the example below, is being a string.</span>
+<span class="sd">    Note that in general, the condition needs to be a boolean function.</span>
+<span class="sd">    The explicit form of our example would say `names=lambda x: isinstance(x, str)`,</span>
+<span class="sd">    but `ensure_iterable_args` allows the convenience of just specifying the type,</span>
+<span class="sd">    or a tuple of types, and the actually boolean function will be made for you.</span>
+
+<span class="sd">    &gt;&gt;&gt; @ensure_iterable_args(names=str)</span>
+<span class="sd">    ... def greet_people(names, greeting=&#39;Hello&#39;):</span>
+<span class="sd">    ...     for name in names:</span>
+<span class="sd">    ...         yield f&quot;{greeting} {name}!&quot;</span>
+<span class="sd">    &gt;&gt;&gt; assert list(greet_people([&#39;Alice&#39;, &#39;Bob&#39;])) == [&#39;Hello Alice!&#39;, &#39;Hello Bob!&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; assert list(greet_people(&#39;Alice&#39;)) == [&#39;Hello Alice!&#39;]</span>
+
+<span class="sd">    Note that to decorate a function, you can also use the form:</span>
+
+<span class="sd">    &gt;&gt;&gt; greet_people = ensure_iterable_args(greet_people, names=str)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">condition_and_trans_of_argname</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">argname</span><span class="p">:</span> <span class="p">(</span><span class="n">_mk_type_condition</span><span class="p">(</span><span class="n">condition</span><span class="p">),</span> <span class="n">_tuplize</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">argname</span><span class="p">,</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">condition_of_argname</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">_conditional_arg_trans</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">condition_and_trans_of_argname</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">transparently_wrapped</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>

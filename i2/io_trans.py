@@ -19,13 +19,13 @@ import functools
 
 # monkey patching WRAPPER_ASSIGNMENTS to get "proper" wrapping (adding defaults and kwdefaults
 wrapper_assignments = (
-    "__module__",
-    "__name__",
-    "__qualname__",
-    "__doc__",
-    "__annotations__",
-    "__defaults__",
-    "__kwdefaults__",
+    '__module__',
+    '__name__',
+    '__qualname__',
+    '__doc__',
+    '__annotations__',
+    '__defaults__',
+    '__kwdefaults__',
 )
 
 update_wrapper = functools.update_wrapper
@@ -155,8 +155,8 @@ class JSONAnnotAndDfltIoTrans(AnnotAndDfltIoTrans):
                 or isinstance(param.default, bool)
             ):
                 return cast_to_jdict(argval)
-            if hasattr(param.annotation, "__iter__") or hasattr(
-                param.default, "__iter__"
+            if hasattr(param.annotation, '__iter__') or hasattr(
+                param.default, '__iter__'
             ):
                 return cast_to_list(argval)
         return super().in_val_trans(argval, argname, func)
@@ -246,18 +246,18 @@ def cast_to_jdict(value):
         value = value.strip()
         if value:
             first_char = value[0]
-            if first_char in {"[", "{"}:
+            if first_char in {'[', '{'}:
                 return json.loads(value)
-            elif value in ["true", "false", "null"]:
+            elif value in ['true', 'false', 'null']:
                 return json.loads(value)
             elif os.path.isfile(value):
                 return json.load(value)
             else:
                 return json.loads(
-                    "[" + value + "]"
+                    '[' + value + ']'
                 )  # wrap in brackets and call json.loads
         else:
-            return ""
+            return ''
     else:
         return value
 
@@ -283,7 +283,7 @@ def cast_to_list(value):
         value = cast_to_jdict(value)
         assert isinstance(value, list)
         return value
-    elif hasattr(value, "tolist"):  # meant for numpy arrays
+    elif hasattr(value, 'tolist'):  # meant for numpy arrays
         # what other potential attributes to check for?
         return value.tolist()
     else:
