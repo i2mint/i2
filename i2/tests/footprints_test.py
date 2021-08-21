@@ -113,7 +113,7 @@ def test_attrs_used_by_method_computation():
         'x',
         'y',
     }
-    # assert attrs_used_by_method_computation(B.z, init_kws) == {'x', 'y'}  # fails (property z has no __name__)
+    assert attrs_used_by_method_computation(B.z, init_kws) == {'x', 'y'}
     assert attrs_used_by_method_computation(B.accessing_property_method, init_kws) == {
         'b',
         'z',
