@@ -1569,6 +1569,9 @@ class Sig(Signature, Mapping):
     def ch_kinds(self, **changes_for_name):
         return self.ch_param_attrs('kind', _allow_reordering=True, **changes_for_name)
 
+    def ch_kinds_to_position_or_keyword(self):
+        return all_pk_signature(self)
+
     def ch_defaults(self, **changes_for_name):
         return self.ch_param_attrs(
             'default', _allow_reordering=True, **changes_for_name
@@ -2840,7 +2843,7 @@ def number_of_required_arguments(obj):
 
 # TODO: Need to define and use this function more carefully.
 #   Is the goal to remove positional? Remove variadics? Normalize the signature?
-def all_pk_signature(callable_or_signature: Signature):
+def all_pk_signature(callable_or_signature: Union[Callable, Signature]):
     """Changes all (non-variadic) arguments to be of the PK (POSITION_OR_KEYWORD) kind.
 
     Wrapping a function with the resulting signature doesn't make that function callable
@@ -2879,8 +2882,6 @@ def all_pk_signature(callable_or_signature: Signature):
 
     if isinstance(callable_or_signature, Signature):
         sig = callable_or_signature
-
-        last_kind = -1
 
         def changed_params():
             for p in sig.parameters.values():
