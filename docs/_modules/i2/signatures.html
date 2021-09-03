@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.signatures &#8212; i2 0.0.34 documentation</title>
+    <title>i2.signatures &#8212; i2 0.0.35 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -1604,6 +1604,9 @@
     <span class="k">def</span> <span class="nf">ch_kinds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_param_attrs</span><span class="p">(</span><span class="s1">&#39;kind&#39;</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">ch_kinds_to_position_or_keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">all_pk_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">ch_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_param_attrs</span><span class="p">(</span>
             <span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span>
@@ -2875,7 +2878,7 @@
 
 <span class="c1"># TODO: Need to define and use this function more carefully.</span>
 <span class="c1">#   Is the goal to remove positional? Remove variadics? Normalize the signature?</span>
-<div class="viewcode-block" id="all_pk_signature"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.all_pk_signature">[docs]</a><span class="k">def</span> <span class="nf">all_pk_signature</span><span class="p">(</span><span class="n">callable_or_signature</span><span class="p">:</span> <span class="n">Signature</span><span class="p">):</span>
+<div class="viewcode-block" id="all_pk_signature"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.all_pk_signature">[docs]</a><span class="k">def</span> <span class="nf">all_pk_signature</span><span class="p">(</span><span class="n">callable_or_signature</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Signature</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;Changes all (non-variadic) arguments to be of the PK (POSITION_OR_KEYWORD) kind.</span>
 
 <span class="sd">    Wrapping a function with the resulting signature doesn&#39;t make that function callable</span>
@@ -2914,8 +2917,6 @@
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callable_or_signature</span><span class="p">,</span> <span class="n">Signature</span><span class="p">):</span>
         <span class="n">sig</span> <span class="o">=</span> <span class="n">callable_or_signature</span>
-
-        <span class="n">last_kind</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
         <span class="k">def</span> <span class="nf">changed_params</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
