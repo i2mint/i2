@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.simple_pymint &#8212; i2 0.0.37 documentation</title>
+    <title>i2.simple_pymint &#8212; i2 0.0.38 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -17,8 +17,6 @@
     <script src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="i2.switch_case_tree" href="switch_case_tree.html" />
-    <link rel="prev" title="i2.signatures" href="signatures.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -35,46 +33,8 @@
 
           <div class="body" role="main">
             
-  <section id="module-i2.simple_pymint">
-<span id="i2-simple-pymint"></span><h1>i2.simple_pymint<a class="headerlink" href="#module-i2.simple_pymint" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt id="i2.simple_pymint.mint_of_callable">
-<code class="sig-prename descclassname">i2.simple_pymint.</code><code class="sig-name descname">mint_of_callable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/simple_pymint.html#mint_of_callable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.simple_pymint.mint_of_callable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get meta-data about a callable.
-:param f: A callable (function, method, …)
-:return: A dict containing information about the interface of f, that is, name, module, doc, and
-input and output information.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">test_callable</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;A testable callable</span><span class="se">\n</span><span class="s2">:param str arg1: A string</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;calling!&#39;</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">arg2</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="s1">&#39;returned&#39;</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mint</span> <span class="o">=</span> <span class="n">mint_of_callable</span><span class="p">(</span><span class="n">test_callable</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">mint</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-<span class="go">[&#39;name&#39;, &#39;module&#39;, &#39;doc&#39;, &#39;description&#39;, &#39;summary&#39;, &#39;tags&#39;, &#39;input&#39;, &#39;output&#39;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mint</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
-<span class="go">&#39;test_callable&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">mint</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">test_callable</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span> <span class="s2">&quot;mint[&#39;module&#39;] == test_callable.__module__&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mint</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span>
-<span class="go">{&#39;arg1&#39;: {}, &#39;arg2&#39;: {&#39;annot&#39;: &lt;class &#39;int&#39;&gt;}}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mint</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span>
-<span class="go">{&#39;annot&#39;: &lt;class &#39;str&#39;&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">mint</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;module&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;simple_pymint&#39;</span><span class="p">)</span>  <span class="c1"># popping off because module is relative so not consistent</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">mint</span><span class="p">)</span>
-<span class="go">{&#39;description&#39;: &#39;&#39;,</span>
-<span class="go"> &#39;doc&#39;: None,</span>
-<span class="go"> &#39;input&#39;: {&#39;arg1&#39;: {}, &#39;arg2&#39;: {&#39;annot&#39;: &lt;class &#39;int&#39;&gt;}},</span>
-<span class="go"> &#39;name&#39;: &#39;test_callable&#39;,</span>
-<span class="go"> &#39;output&#39;: {&#39;annot&#39;: &lt;class &#39;str&#39;&gt;},</span>
-<span class="go"> &#39;summary&#39;: &#39;&#39;,</span>
-<span class="go"> &#39;tags&#39;: []}</span>
-</pre></div>
-</div>
-</dd></dl>
-
+  <section id="i2-simple-pymint">
+<h1>i2.simple_pymint<a class="headerlink" href="#i2-simple-pymint" title="Permalink to this headline">¶</a></h1>
 </section>
 
 
@@ -95,40 +55,36 @@ input and output information.</p>
 
 <h3>Navigation</h3>
 <p><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../i2.html">i2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="alternative_approaches.html">i2.alternative_approaches</a></li>
 <li class="toctree-l1"><a class="reference internal" href="base.html">i2.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chain_map.html">i2.chain_map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deco.html">i2.deco</a></li>
 <li class="toctree-l1"><a class="reference internal" href="doc_mint.html">i2.doc_mint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">i2.examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="footprints.html">i2.footprints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="genu.html">i2.genu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="io_trans.html">i2.io_trans</a></li>
 <li class="toctree-l1"><a class="reference internal" href="itypes.html">i2.itypes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="key_path.html">i2.key_path</a></li>
-<li class="toctree-l1"><a class="reference internal" href="misc.html">i2.misc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="routing_forest.html">i2.routing_forest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="signatures.html">i2.signatures</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">i2.simple_pymint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="switch_case_tree.html">i2.switch_case_tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">i2.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/footprints_test.html">i2.tests.footprints_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="util.html">i2.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vend/funcutils.html">i2.vend.funcutils</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="signatures.html" title="previous chapter">i2.signatures</a></li>
-      <li>Next: <a href="switch_case_tree.html" title="next chapter">i2.switch_case_tree</a></li>
   </ul></li>
 </ul>
 </div>
