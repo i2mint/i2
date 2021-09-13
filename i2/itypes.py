@@ -1,3 +1,5 @@
+"""Types"""
+
 from typing import NewType, Optional, Iterable, Protocol, Any
 
 

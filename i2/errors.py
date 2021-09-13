@@ -1,3 +1,6 @@
+"""Error objects"""
+
+
 class DataError(Exception):
     pass
 

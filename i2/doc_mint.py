@@ -1,3 +1,4 @@
+"""Meta-interfaces """
 import doctest
 
 MAX_LINE_LENGTH = 72  # https://en.wikipedia.org/wiki/Characters_per_line

@@ -1,3 +1,4 @@
+"""Simple explorations of doc mints"""
 import inspect
 from collections import defaultdict
 

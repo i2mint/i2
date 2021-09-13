@@ -2,7 +2,6 @@
 Tools to provide meta-interfaces of python objects.
 See also:
     py2misc/py2store/tree_store.py
-    py2mint/py2mint/alternative_approaches.py
 """
 import inspect
 from inspect import signature, Parameter

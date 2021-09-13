@@ -1,3 +1,5 @@
+"""Analyzing what attributes of an input object a function actually uses"""
+
 import ast
 import inspect
 import dis

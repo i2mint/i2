@@ -1,9 +1,17 @@
+"""
+Tools to make input and output transforming decorators.
+
+Input value transformers can be conditioned on argument value and name, as well as the
+wrapped function itself.
+
+Output value tranformers can be conditioned on argument value and the wrapped function.
+
+"""
 from dataclasses import dataclass
 from typing import (
     Mapping,
     Callable,
     Optional,
-    _TypedDictMeta,  # TODO: lint complains, but TypedDict doesn't do the trick (do _TypedDictMeta = TypedDict to see)
     TypedDict,
 )
 from inspect import signature, Parameter
@@ -13,9 +21,13 @@ from i2.signatures import Sig
 
 import functools
 
-# TODO: Get rid of _TypedDictMeta dependency
+# from typing import _TypedDictMeta
+# Note: When doing the above, lint complains, but TypedDict alone doesn't do the trick.
 # _TypedDictMeta = TypedDict  # to show that TypedDict doesn't work
 # Raises     TypeError: TypedDict does not support instance and class checks
+# So we do the following hack:
+_TypedDictMeta = type(TypedDict)
+
 
 # monkey patching WRAPPER_ASSIGNMENTS to get "proper" wrapping (adding defaults and kwdefaults
 wrapper_assignments = (

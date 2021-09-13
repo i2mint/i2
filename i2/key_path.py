@@ -1,3 +1,5 @@
+"""Flattening maps and manipulating key paths"""
+
 from functools import reduce, wraps, partial
 import operator
 from collections.abc import MutableMapping

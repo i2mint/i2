@@ -1,3 +1,4 @@
+"""Decorator tools"""
 import inspect
 from collections import defaultdict
 from collections.abc import Mapping

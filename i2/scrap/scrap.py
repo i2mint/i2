@@ -1,3 +1,4 @@
+"""Scrap"""
 valid_types = [str, dict, list, float, int, bool]
 
 

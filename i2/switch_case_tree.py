@@ -1,3 +1,79 @@
+"""
+Experimental Mapping the maps keys using a switch_case structure.
+
+Development paused while waiting for 3.10's pattern matching that may subsume this.
+
+
+>>> from i2.switch_case_tree import *
+>>> from collections import Counter
+>>>
+>>> special_featurizer = {
+...     'len': len,
+...     'cols': lambda df: df.columns,
+...     'sum': lambda df: df.sum().sum(),
+... }
+>>> special_comparison = {
+...     'alleq': lambda x, y: all(x == y),
+...     'isin': lambda x, y: x in y,
+...     'eq': operator.eq,
+... }
+>>> featurizer = ChainMap(
+...     special_featurizer,
+...     special_comparison,
+...     {'some_local_func': lambda x: list(map(str, x))}
+... )
+>>>
+>>>
+>>> comparison = ChainMap(
+...     special_comparison, AttrMap(operator, is_valid_val=is_valid_comparision),
+... )
+>>>
+>>> assert comparison['contains'] == operator.contains
+>>>
+
+Let's have a look at the "featurizers" (where we purposely injected 3 functions that
+were in fact not featurizers!
+
+>>> sorted(featurizer)  # doctest: +NORMALIZE_WHITESPACE
+['alleq', 'cols', 'eq', 'isin', 'len', 'some_local_func', 'sum']
+>>> Counter(map(is_valid_featurizer, featurizer.values()))
+Counter({True: 4, False: 3})
+>>> Counter(map(is_valid_comparision, featurizer.values()))
+Counter({False: 4, True: 3})
+
+Let's have a look at the comparison functions...
+
+>>> Counter(map(is_valid_comparision, comparison.values()))
+Counter({True: 81})
+>>> Counter(map(is_valid_featurizer, comparison.values()))
+Counter({False: 80, True: 1})
+
+What's that single comparison function that's also a featurizer?
+
+>>> next(filter(is_valid_featurizer, comparison.values())).__name__
+'length_hint'
+
+
+>>> from contextlib import suppress
+>>>
+>>> with suppress(ModuleNotFoundError, ImportError):
+...     import pandas as pd
+...     from collections import namedtuple
+...     Condition = namedtuple('Condition', ['feat', 'comp'])
+...     condition = {
+...         feat + '_' + comp: Condition(featurizer[feat], comparison[comp])
+...         for feat, comp in [('len', 'lt'), ('cols', 'isin'), ('cols', 'contains'),]
+...     }
+...     assert all(
+...         is_valid_feat_and_comp(feat, comp) for feat, comp in condition.values()
+...     )
+...
+...     df = pd.DataFrame({'a': [1, 2, 3], 'b': [10, 20, 30]})
+...     filt = mk_filt(df, *condition['len_lt'])
+...     result = list(filter(filt, [2, 3, 4, 5]))
+...     assert result == [4, 5]
+
+"""
 from collections import ChainMap
 from collections.abc import Mapping
 import operator
@@ -180,7 +256,11 @@ if __name__ == '__main__':
 
     featurizer = ChainMap(
         special_featurizer,
-        {k: v for k, v in locals().items() if is_valid_featurizer(v)},
+        {
+            k: v
+            for k, v in locals().items()
+            if is_valid_featurizer(v) and getattr(v, '__module__', '').startswith('i2.')
+        },
     )
 
     special_comparison = {
@@ -200,7 +280,8 @@ if __name__ == '__main__':
     print(Counter(map(is_valid_featurizer, comparison.values())))
     print(Counter(map(is_valid_comparision, comparison.values())))
 
-    print(f'featurizer: {featurizer}')
+    featurizer_kvs = {k: v.__name__ for k, v in featurizer.items()}
+    print(f'featurizer: {featurizer_kvs}')
 
     from contextlib import suppress
 

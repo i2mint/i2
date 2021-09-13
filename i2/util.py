@@ -1,3 +1,4 @@
+"""Misc util objects"""
 import inspect
 import re
 import itertools

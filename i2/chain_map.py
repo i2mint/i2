@@ -1,3 +1,5 @@
+"""Merge mappings"""
+
 from collections import ChainMap
 
 from collections.abc import Mapping
