@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>i2.routing_forest &#8212; i2 0.0.37 documentation</title>
+    <title>i2.routing_forest &#8212; i2 0.0.38 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="i2.scrap" href="scrap.html" />
-    <link rel="prev" title="i2.misc" href="misc.html" />
+    <link rel="prev" title="i2.key_path" href="key_path.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -37,6 +37,140 @@
             
   <section id="module-i2.routing_forest">
 <span id="i2-routing-forest"></span><h1>i2.routing_forest<a class="headerlink" href="#module-i2.routing_forest" title="Permalink to this headline">¶</a></h1>
+<p>Tools to specify functions through trees and forests.</p>
+<p>Whaaa?!?</p>
+<p>Well, you see, often – especially when writing transformers – you have a series of
+if/then conditions nested into eachother, in code, where it gets ugly and un-reusable.</p>
+<p>This module explores ways to objectivy this: That is, to give us the means to create
+such nested conditions in a way that we can define the parts as reusable operable
+components.</p>
+<p>Think of the relationship between the for loop (code) and the iterator (object), along
+with iterator tools (itertools).
+This is what we’re trying to explore, but for if/then conditions.</p>
+<p>I said explore. Some more work is needed here to make it easily usable.</p>
+<p>Let’s look at an example involving the three main actors of our play.
+Each of these are <code class="docutils literal notranslate"><span class="pre">Iterable</span></code> and <code class="docutils literal notranslate"><span class="pre">Callable</span></code> (<code class="docutils literal notranslate"><span class="pre">Generator</span></code> to be precise).</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CondNode</span></code>: implements the if/then (no else) logic</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FinalNode</span></code>: Final – yields (both with call and iter) it’s single <cite>.val</cite> attribute.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RoutingForest</span></code>: An Iterable of <code class="docutils literal notranslate"><span class="pre">CondNode</span></code></p></li>
+</ul>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">could_be_int</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">b</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="gp">... </span>            <span class="n">b</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="gp">... </span>        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="n">b</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">b</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">b</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">could_be_float</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">b</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="nb">float</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="gp">... </span>            <span class="n">b</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="gp">... </span>        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="n">b</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">b</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">b</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">could_be_int</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">could_be_int</span><span class="p">(</span><span class="mf">30.3</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">could_be_int</span><span class="p">(</span><span class="s1">&#39;30.2&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">could_be_int</span><span class="p">(</span><span class="s1">&#39;nope&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">could_be_int</span>
+<span class="go">could_be_int</span>
+<span class="go">True True False False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">could_be_float</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">could_be_float</span><span class="p">(</span><span class="mf">30.3</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">could_be_float</span><span class="p">(</span><span class="s1">&#39;30.2&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">could_be_float</span><span class="p">(</span><span class="s1">&#39;nope&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">could_be_float</span>
+<span class="go">could_be_float</span>
+<span class="go">could_be_float</span>
+<span class="go">True True True False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">could_be_int</span><span class="p">(</span><span class="s1">&#39;30.2&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">could_be_float</span><span class="p">(</span><span class="s1">&#39;30.2&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+<span class="go">could_be_float</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span> <span class="o">=</span> <span class="n">RoutingForest</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">[</span>
+<span class="gp">... </span>        <span class="n">CondNode</span><span class="p">(</span>
+<span class="gp">... </span>            <span class="n">cond</span><span class="o">=</span><span class="n">could_be_int</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="n">then</span><span class="o">=</span><span class="n">RoutingForest</span><span class="p">(</span>
+<span class="gp">... </span>                <span class="p">[</span>
+<span class="gp">... </span>                    <span class="n">CondNode</span><span class="p">(</span>
+<span class="gp">... </span>                        <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;More than a digit&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                    <span class="p">),</span>
+<span class="gp">... </span>                    <span class="n">CondNode</span><span class="p">(</span>
+<span class="gp">... </span>                        <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s2">&quot;That&#39;s odd!&quot;</span><span class="p">),</span>
+<span class="gp">... </span>                    <span class="p">),</span>
+<span class="gp">... </span>                <span class="p">]</span>
+<span class="gp">... </span>            <span class="p">),</span>
+<span class="gp">... </span>        <span class="p">),</span>
+<span class="gp">... </span>        <span class="n">CondNode</span><span class="p">(</span><span class="n">cond</span><span class="o">=</span><span class="n">could_be_float</span><span class="p">,</span> <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;could be seen as a float&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">st</span><span class="p">(</span><span class="s1">&#39;nothing I can do with that&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">st</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;could be seen as a float&#39;</span><span class="p">]</span>
+<span class="go">could_be_int</span>
+<span class="go">could_be_float</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">st</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;That&#39;s odd!&quot;</span><span class="p">,</span> <span class="s1">&#39;could be seen as a float&#39;</span><span class="p">]</span>
+<span class="go">could_be_int</span>
+<span class="go">could_be_float</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">st</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;More than a digit&#39;</span><span class="p">,</span> <span class="s1">&#39;could be seen as a float&#39;</span><span class="p">]</span>
+<span class="go">could_be_int</span>
+<span class="go">could_be_float</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">st</span><span class="p">(</span><span class="mi">11</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="s1">&#39;More than a digit&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;That&#39;s odd!&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;could be seen as a float&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="go">could_be_int</span>
+<span class="go">could_be_float</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s1">&#39;### RoutingForest ########################################################################################&#39;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">### RoutingForest ########################################################################################</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rf</span> <span class="o">=</span> <span class="n">RoutingForest</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">[</span>
+<span class="gp">... </span>        <span class="n">SwitchCaseNode</span><span class="p">(</span>
+<span class="gp">... </span>            <span class="n">switch</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">5</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="n">cases</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;one_mod_5&#39;</span><span class="p">)},</span>
+<span class="gp">... </span>            <span class="n">default</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;default_mod_5&#39;</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="p">),</span>
+<span class="gp">... </span>        <span class="n">SwitchCaseNode</span><span class="p">(</span>
+<span class="gp">... </span>            <span class="n">switch</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="n">cases</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;even&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;odd&#39;</span><span class="p">)},</span>
+<span class="gp">... </span>            <span class="n">default</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;that is not an int&#39;</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="p">),</span>
+<span class="gp">... </span>    <span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;odd&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;one_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;even&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;default_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;odd&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;default_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;even&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;even&#39;</span><span class="p">]</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt id="i2.routing_forest.CondNode">
 <em class="property">class </em><code class="sig-prename descclassname">i2.routing_forest.</code><code class="sig-name descname">CondNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cond</span><span class="p">:</span> <span class="n">Callable<span class="p">[</span><span class="p">[</span>Any<span class="p">]</span><span class="p">, </span>bool<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">then</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/routing_forest.html#CondNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.CondNode" title="Permalink to this definition">¶</a></dt>
@@ -53,7 +187,8 @@ where the condition is computed implements computes a feature of the obj and acc
 <dl class="py class">
 <dt id="i2.routing_forest.FinalNode">
 <em class="property">class </em><code class="sig-prename descclassname">i2.routing_forest.</code><code class="sig-name descname">FinalNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/routing_forest.html#FinalNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.FinalNode" title="Permalink to this definition">¶</a></dt>
-<dd><p>A RoutingNode that is final. It yields (both with call and iter) it’s single <cite>.val</cite> attribute.</p>
+<dd><p>A RoutingNode that is final.
+It yields (both with call and iter) it’s single <cite>.val</cite> attribute.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -140,37 +275,35 @@ implemented with a {value_to_compare_to_feature: then_node} map.
 <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../i2.html">i2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="alternative_approaches.html">i2.alternative_approaches</a></li>
 <li class="toctree-l1"><a class="reference internal" href="base.html">i2.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chain_map.html">i2.chain_map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deco.html">i2.deco</a></li>
 <li class="toctree-l1"><a class="reference internal" href="doc_mint.html">i2.doc_mint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">i2.examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="footprints.html">i2.footprints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="genu.html">i2.genu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="io_trans.html">i2.io_trans</a></li>
 <li class="toctree-l1"><a class="reference internal" href="itypes.html">i2.itypes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="key_path.html">i2.key_path</a></li>
-<li class="toctree-l1"><a class="reference internal" href="misc.html">i2.misc</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">i2.routing_forest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="signatures.html">i2.signatures</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simple_pymint.html">i2.simple_pymint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="switch_case_tree.html">i2.switch_case_tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">i2.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/footprints_test.html">i2.tests.footprints_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="util.html">i2.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vend/funcutils.html">i2.vend.funcutils</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="misc.html" title="previous chapter">i2.misc</a></li>
+      <li>Previous: <a href="key_path.html" title="previous chapter">i2.key_path</a></li>
       <li>Next: <a href="scrap.html" title="next chapter">i2.scrap</a></li>
   </ul></li>
 </ul>

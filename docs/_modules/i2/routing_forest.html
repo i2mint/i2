@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>i2.routing_forest &#8212; i2 0.0.37 documentation</title>
+    <title>i2.routing_forest &#8212; i2 0.0.38 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -33,7 +33,147 @@
           <div class="body" role="main">
             
   <h1>Source code for i2.routing_forest</h1><div class="highlight"><pre>
-<span></span><span class="c1">##########################################################################################################</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Tools to specify functions through trees and forests.</span>
+
+<span class="sd">Whaaa?!?</span>
+
+<span class="sd">Well, you see, often -- especially when writing transformers -- you have a series of</span>
+<span class="sd">if/then conditions nested into eachother, in code, where it gets ugly and un-reusable.</span>
+
+<span class="sd">This module explores ways to objectivy this: That is, to give us the means to create</span>
+<span class="sd">such nested conditions in a way that we can define the parts as reusable operable</span>
+<span class="sd">components.</span>
+
+<span class="sd">Think of the relationship between the for loop (code) and the iterator (object), along</span>
+<span class="sd">with iterator tools (itertools).</span>
+<span class="sd">This is what we&#39;re trying to explore, but for if/then conditions.</span>
+
+<span class="sd">I said explore. Some more work is needed here to make it easily usable.</span>
+
+<span class="sd">Let&#39;s look at an example involving the three main actors of our play.</span>
+<span class="sd">Each of these are ``Iterable`` and ``Callable`` (``Generator`` to be precise).</span>
+
+<span class="sd">- ``CondNode``: implements the if/then (no else) logic</span>
+<span class="sd">- ``FinalNode``: Final -- yields (both with call and iter) it&#39;s single `.val` attribute.</span>
+<span class="sd">- ``RoutingForest``: An Iterable of ``CondNode``</span>
+
+<span class="sd">&gt;&gt;&gt; import inspect</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; def could_be_int(obj):</span>
+<span class="sd">...     if isinstance(obj, int):</span>
+<span class="sd">...         b = True</span>
+<span class="sd">...     else:</span>
+<span class="sd">...         try:</span>
+<span class="sd">...             int(obj)</span>
+<span class="sd">...             b = True</span>
+<span class="sd">...         except ValueError:</span>
+<span class="sd">...             b = False</span>
+<span class="sd">...     if b:</span>
+<span class="sd">...         print(f&#39;{inspect.currentframe().f_code.co_name}&#39;)</span>
+<span class="sd">...     return b</span>
+<span class="sd">...</span>
+<span class="sd">&gt;&gt;&gt; def could_be_float(obj):</span>
+<span class="sd">...     if isinstance(obj, float):</span>
+<span class="sd">...         b = True</span>
+<span class="sd">...     else:</span>
+<span class="sd">...         try:</span>
+<span class="sd">...             float(obj)</span>
+<span class="sd">...             b = True</span>
+<span class="sd">...         except ValueError:</span>
+<span class="sd">...             b = False</span>
+<span class="sd">...     if b:</span>
+<span class="sd">...         print(f&#39;{inspect.currentframe().f_code.co_name}&#39;)</span>
+<span class="sd">...     return b</span>
+<span class="sd">...</span>
+<span class="sd">&gt;&gt;&gt; print(</span>
+<span class="sd">...     could_be_int(30),</span>
+<span class="sd">...     could_be_int(30.3),</span>
+<span class="sd">...     could_be_int(&#39;30.2&#39;),</span>
+<span class="sd">...     could_be_int(&#39;nope&#39;),</span>
+<span class="sd">... )</span>
+<span class="sd">could_be_int</span>
+<span class="sd">could_be_int</span>
+<span class="sd">True True False False</span>
+<span class="sd">&gt;&gt;&gt; print(</span>
+<span class="sd">...     could_be_float(30),</span>
+<span class="sd">...     could_be_float(30.3),</span>
+<span class="sd">...     could_be_float(&#39;30.2&#39;),</span>
+<span class="sd">...     could_be_float(&#39;nope&#39;),</span>
+<span class="sd">... )</span>
+<span class="sd">could_be_float</span>
+<span class="sd">could_be_float</span>
+<span class="sd">could_be_float</span>
+<span class="sd">True True True False</span>
+<span class="sd">&gt;&gt;&gt; assert could_be_int(&#39;30.2&#39;) is False</span>
+<span class="sd">&gt;&gt;&gt; assert could_be_float(&#39;30.2&#39;) is True</span>
+<span class="sd">could_be_float</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; st = RoutingForest(</span>
+<span class="sd">...     [</span>
+<span class="sd">...         CondNode(</span>
+<span class="sd">...             cond=could_be_int,</span>
+<span class="sd">...             then=RoutingForest(</span>
+<span class="sd">...                 [</span>
+<span class="sd">...                     CondNode(</span>
+<span class="sd">...                         cond=lambda x: int(x) &gt;= 10,</span>
+<span class="sd">...                         then=FinalNode(&#39;More than a digit&#39;),</span>
+<span class="sd">...                     ),</span>
+<span class="sd">...                     CondNode(</span>
+<span class="sd">...                         cond=lambda x: (int(x) % 2) == 1,</span>
+<span class="sd">...                         then=FinalNode(&quot;That&#39;s odd!&quot;),</span>
+<span class="sd">...                     ),</span>
+<span class="sd">...                 ]</span>
+<span class="sd">...             ),</span>
+<span class="sd">...         ),</span>
+<span class="sd">...         CondNode(cond=could_be_float, then=FinalNode(&#39;could be seen as a float&#39;)),</span>
+<span class="sd">...     ]</span>
+<span class="sd">... )</span>
+<span class="sd">&gt;&gt;&gt; assert list(st(&#39;nothing I can do with that&#39;)) == []</span>
+<span class="sd">&gt;&gt;&gt; assert list(st(8)) == [&#39;could be seen as a float&#39;]</span>
+<span class="sd">could_be_int</span>
+<span class="sd">could_be_float</span>
+<span class="sd">&gt;&gt;&gt; assert list(st(9)) == [&quot;That&#39;s odd!&quot;, &#39;could be seen as a float&#39;]</span>
+<span class="sd">could_be_int</span>
+<span class="sd">could_be_float</span>
+<span class="sd">&gt;&gt;&gt; assert list(st(10)) == [&#39;More than a digit&#39;, &#39;could be seen as a float&#39;]</span>
+<span class="sd">could_be_int</span>
+<span class="sd">could_be_float</span>
+<span class="sd">&gt;&gt;&gt; assert list(st(11)) == [</span>
+<span class="sd">...     &#39;More than a digit&#39;,</span>
+<span class="sd">...     &quot;That&#39;s odd!&quot;,</span>
+<span class="sd">...     &#39;could be seen as a float&#39;,</span>
+<span class="sd">... ]</span>
+<span class="sd">could_be_int</span>
+<span class="sd">could_be_float</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; print(</span>
+<span class="sd">...     &#39;### RoutingForest ########################################################################################&#39;</span>
+<span class="sd">... )</span>
+<span class="sd">### RoutingForest ########################################################################################</span>
+<span class="sd">&gt;&gt;&gt; rf = RoutingForest(</span>
+<span class="sd">...     [</span>
+<span class="sd">...         SwitchCaseNode(</span>
+<span class="sd">...             switch=lambda x: x % 5,</span>
+<span class="sd">...             cases={0: FinalNode(&#39;zero_mod_5&#39;), 1: FinalNode(&#39;one_mod_5&#39;)},</span>
+<span class="sd">...             default=FinalNode(&#39;default_mod_5&#39;),</span>
+<span class="sd">...         ),</span>
+<span class="sd">...         SwitchCaseNode(</span>
+<span class="sd">...             switch=lambda x: x % 2,</span>
+<span class="sd">...             cases={0: FinalNode(&#39;even&#39;), 1: FinalNode(&#39;odd&#39;)},</span>
+<span class="sd">...             default=FinalNode(&#39;that is not an int&#39;),</span>
+<span class="sd">...         ),</span>
+<span class="sd">...     ]</span>
+<span class="sd">... )</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; assert list(rf(5)) == [&#39;zero_mod_5&#39;, &#39;odd&#39;]</span>
+<span class="sd">&gt;&gt;&gt; assert list(rf(6)) == [&#39;one_mod_5&#39;, &#39;even&#39;]</span>
+<span class="sd">&gt;&gt;&gt; assert list(rf(7)) == [&#39;default_mod_5&#39;, &#39;odd&#39;]</span>
+<span class="sd">&gt;&gt;&gt; assert list(rf(8)) == [&#39;default_mod_5&#39;, &#39;even&#39;]</span>
+<span class="sd">&gt;&gt;&gt; assert list(rf(10)) == [&#39;zero_mod_5&#39;, &#39;even&#39;]</span>
+<span class="sd">&gt;&gt;&gt;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span>
@@ -48,7 +188,8 @@
 
 <div class="viewcode-block" id="FinalNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.FinalNode">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">FinalNode</span><span class="p">(</span><span class="n">RoutingNode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A RoutingNode that is final. It yields (both with call and iter) it&#39;s single `.val` attribute.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A RoutingNode that is final.</span>
+<span class="sd">    It yields (both with call and iter) it&#39;s single `.val` attribute.&quot;&quot;&quot;</span>
 
     <span class="n">val</span><span class="p">:</span> <span class="n">Any</span>
 
@@ -308,30 +449,28 @@
 <p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2.html">i2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/alternative_approaches.html">i2.alternative_approaches</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/base.html">i2.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/chain_map.html">i2.chain_map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/deco.html">i2.deco</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/doc_mint.html">i2.doc_mint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/examples.html">i2.examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/footprints.html">i2.footprints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/genu.html">i2.genu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/io_trans.html">i2.io_trans</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/itypes.html">i2.itypes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/key_path.html">i2.key_path</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/misc.html">i2.misc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/routing_forest.html">i2.routing_forest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/signatures.html">i2.signatures</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/simple_pymint.html">i2.simple_pymint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/switch_case_tree.html">i2.switch_case_tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests.html">i2.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/footprints_test.html">i2.tests.footprints_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/vend/funcutils.html">i2.vend.funcutils</a></li>
 </ul>
 
 <div class="relations">
