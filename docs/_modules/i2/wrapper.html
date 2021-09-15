@@ -1,0 +1,720 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>i2.wrapper &#8212; i2 0.0.39 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for i2.wrapper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;A wrapper object and tools to work with it&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">Signature</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">Sig</span>
+
+<span class="n">_empty</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
+
+
+<span class="k">def</span> <span class="nf">transparent_ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
+
+
+<span class="k">def</span> <span class="nf">transparent_egress</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">output</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    How Wrap works:</span>
+
+<span class="sd">    ```</span>
+<span class="sd">     *interface_args, **interface_kwargs</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">    ┌───────────────────────────────────┐</span>
+<span class="sd">    │              ingress              │</span>
+<span class="sd">    └───────────────────────────────────┘</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">          *func_args, **func_kwargs</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">    ┌───────────────────────────────────┐</span>
+<span class="sd">    │               func                │</span>
+<span class="sd">    └───────────────────────────────────┘</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">                 func_output</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">    ┌───────────────────────────────────┐</span>
+<span class="sd">    │              egress               │</span>
+<span class="sd">    └───────────────────────────────────┘</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">                final_output</span>
+<span class="sd">    ```</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Wrap"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Wrap">[docs]</a><span class="k">class</span> <span class="nc">Wrap</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A callable function wrapper with interface modifiers.</span>
+
+<span class="sd">    :param func: The wrapped function</span>
+<span class="sd">    :param ingress: The incoming data transformer. It determines the argument properties</span>
+<span class="sd">        (name, kind, default and annotation) as well as the actual input of the</span>
+<span class="sd">        wrapped function.</span>
+<span class="sd">    :param egress: The outgoing data transformer. It also takes precedence over the</span>
+<span class="sd">        wrapped function to determine the return annotation of the ``Wrap`` instance</span>
+<span class="sd">    :return: A callable instance wrapping ``func``</span>
+
+<span class="sd">    Some examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
+<span class="sd">    &gt;&gt;&gt; from i2 import Sig</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; def ingress(a, b: str, c=&quot;hi&quot;):</span>
+<span class="sd">    ...     return (a + len(b) % 2,), dict(string=f&quot;{c} {b}&quot;)</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; def func(times, string):</span>
+<span class="sd">    ...     return times * string</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; wrapped_func = wrap(func)  # no transformations</span>
+<span class="sd">    &gt;&gt;&gt; assert wrapped_func(2, &quot;co&quot;) == &quot;coco&quot; == func(2, &quot;co&quot;)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; wrapped_func = wrap(func, ingress)</span>
+<span class="sd">    &gt;&gt;&gt; assert wrapped_func(2, &quot;world! &quot;, &quot;Hi&quot;) == &quot;Hi world! Hi world! Hi world! &quot;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; wrapped_func = wrap(func, egress=len)</span>
+<span class="sd">    &gt;&gt;&gt; assert wrapped_func(2, &quot;co&quot;) == 4 == len(&quot;coco&quot;) == len(func(2, &quot;co&quot;))</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; wrapped_func = wrap(func, ingress, egress=len)</span>
+<span class="sd">    &gt;&gt;&gt; assert (</span>
+<span class="sd">    ...     wrapped_func(2, &quot;world! &quot;, &quot;Hi&quot;)</span>
+<span class="sd">    ...     == 30</span>
+<span class="sd">    ...     == len(&quot;Hi world! Hi world! Hi world! &quot;)</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        ``wrap`` function.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># TODO: should we really copy everything by default?</span>
+
+        <span class="c1"># remember the actual value of ingress and egress (for reduce to reproduce)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ingress</span> <span class="o">=</span> <span class="n">ingress</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_egress</span> <span class="o">=</span> <span class="n">egress</span>
+
+        <span class="n">return_annotation</span> <span class="o">=</span> <span class="n">_empty</span>
+        <span class="k">if</span> <span class="n">ingress</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span> <span class="o">=</span> <span class="n">ingress</span>
+            <span class="n">return_annotation</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">return_annotation</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span> <span class="o">=</span> <span class="n">transparent_ingress</span>
+
+        <span class="k">if</span> <span class="n">egress</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">egress</span> <span class="o">=</span> <span class="n">egress</span>
+            <span class="n">egress_return_annotation</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">egress</span><span class="p">)</span><span class="o">.</span><span class="n">return_annotation</span>
+            <span class="k">if</span> <span class="n">egress_return_annotation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">return_annotation</span> <span class="o">=</span> <span class="n">egress_return_annotation</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">egress</span> <span class="o">=</span> <span class="n">transparent_egress</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">ingress</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="c1"># TODO: Pros and cons analysis of pointing __wrapped__ to func. partial uses</span>
+        <span class="c1">#  .func, but wraps looks for __wrapped__</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
+        <span class="n">func_args</span><span class="p">,</span> <span class="n">func_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span><span class="p">(</span><span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">egress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">func_args</span><span class="p">,</span> <span class="o">**</span><span class="n">func_kwargs</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ingress</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_egress</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="wrap"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.wrap">[docs]</a><span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Wrap a function, optionally transforming interface, input and output.</span>
+
+<span class="sd">    :param func: The wrapped function</span>
+<span class="sd">    :param ingress: The incoming data transformer. It determines the argument properties</span>
+<span class="sd">        (name, kind, default and annotation) as well as the actual input of the</span>
+<span class="sd">        wrapped function.</span>
+<span class="sd">    :param egress: The outgoing data transformer. It also takes precedence over the</span>
+<span class="sd">        wrapped function to determine the return annotation of the ``Wrap`` instance</span>
+<span class="sd">    :return: A callable instance wrapping ``func``</span>
+
+<span class="sd">    Consider the following function.</span>
+
+<span class="sd">    &gt;&gt;&gt; def f(w, /, x: float = 1, y=2, *, z: int = 3):</span>
+<span class="sd">    ...     return w + x * y ** z</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; assert f(0) == 8</span>
+<span class="sd">    &gt;&gt;&gt; assert f(1,2) == 17 == 1 + 2 * 2 ** 3</span>
+
+<span class="sd">    See that ``f`` is restricted to use ``z`` as keyword only argument kind:</span>
+
+<span class="sd">    &gt;&gt;&gt; f(1, 2, 3, 4)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">      ...</span>
+<span class="sd">    TypeError: f() takes from 1 to 3 positional arguments but 4 were given</span>
+
+<span class="sd">    and ``w`` has position only argument kind:</span>
+
+<span class="sd">    &gt;&gt;&gt; f(w=1, x=2, y=3, z=4)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">      ...</span>
+<span class="sd">    TypeError: f() got some positional-only arguments passed as keyword arguments: &#39;w&#39;</span>
+
+<span class="sd">    Say we wanted a version of this function that didn&#39;t have the argument kind</span>
+<span class="sd">    restrinctions, where the annotation of ``x`` was ``int`` and where the default</span>
+<span class="sd">    of ``z`` was ``10`` instead of ``3``, and doesn&#39;t have an annotation.</span>
+<span class="sd">    We can do so using the following ingress function:</span>
+
+<span class="sd">    &gt;&gt;&gt; def ingress(w, x: int = 1, y: int=2, z = 10):</span>
+<span class="sd">    ...     return (w,), dict(x=x, y=y, z=z)</span>
+
+<span class="sd">    The ingress function serves two purposes:</span>
+
+<span class="sd">    - Redefining the signature (i.e. the argument names, kinds, defaults,</span>
+<span class="sd">    and annotations (not including the return annotation, which is taken care of by the</span>
+<span class="sd">    egress argument).</span>
+
+<span class="sd">    - Telling the wrapper how to get from that interface to the interface of the</span>
+<span class="sd">    wrapped function.</span>
+
+<span class="sd">    If we also wanted to add a return_annotation, we could do so via an ``egress``</span>
+<span class="sd">    function argument:</span>
+
+<span class="sd">    &gt;&gt;&gt; def egress(wrapped_func_output) -&gt; float:</span>
+<span class="sd">    ...     return wrapped_func_output  # because here we don&#39;t want to do anything extra</span>
+
+<span class="sd">    Now we can use these ingress and egress functions to get the version of ``f`` of</span>
+<span class="sd">    our dreams:</span>
+
+<span class="sd">    &gt;&gt;&gt; h = wrap(f, ingress, egress)</span>
+
+<span class="sd">    Let&#39;s see what the signature of our new function looks like:</span>
+
+<span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
+<span class="sd">    &gt;&gt;&gt; str(signature(h))</span>
+<span class="sd">    &#39;(w, x: int = 1, y: int = 2, z=10) -&gt; float&#39;</span>
+
+<span class="sd">    Now let&#39;s see that we can actually use this new function ``h``, without the</span>
+<span class="sd">    restrictions of argument kind, getting the same results as the wrapped ``f``,</span>
+<span class="sd">    but with default ``z=10``.</span>
+
+<span class="sd">    What we wanted (but couldn&#39;t) do with ``f``:</span>
+
+<span class="sd">    &gt;&gt;&gt; h(1, 2, 3, 4)  # == 1 + 2 * 3 ** 4</span>
+<span class="sd">    163</span>
+<span class="sd">    &gt;&gt;&gt; h(w=1, x=2, y=3, z=4)</span>
+<span class="sd">    163</span>
+
+<span class="sd">    &gt;&gt;&gt; assert h(0) == h(0, 1) == h(0, 1, 2) == 0 + 1 * 2 ** 10 == 2 ** 10 == 1024</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">Ingress</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">inner_sig</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">ch_names</span><span class="p">(</span><span class="o">**</span><span class="n">changes_for_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">conserve_kind</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="o">.</span><span class="n">ch_kinds_to_position_or_keyword</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changes_for_name</span> <span class="o">=</span> <span class="n">changes_for_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">old_name_for_new_name</span> <span class="o">=</span> <span class="n">invert_map</span><span class="p">(</span><span class="n">changes_for_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
+        <span class="n">func_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="o">.</span><span class="n">kwargs_from_args_and_kwargs</span><span class="p">(</span>
+            <span class="n">ingress_args</span><span class="p">,</span> <span class="n">ingress_kwargs</span>
+        <span class="p">)</span>
+        <span class="n">func_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">items_with_mapped_keys</span><span class="p">(</span><span class="n">func_kwargs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_name_for_new_name</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span><span class="n">func_kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">items_with_mapped_keys</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key_mapper</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># key_mapper.get(k, k) will give the new key name if present, else will use</span>
+        <span class="c1"># the old</span>
+        <span class="k">yield</span> <span class="n">key_mapper</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">),</span> <span class="n">v</span>
+
+
+<span class="k">def</span> <span class="nf">invert_map</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">new_d</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_d</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">new_d</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;There are duplicate keys so I can invert map: </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">parameter_to_dict</span>
+
+
+<span class="k">def</span> <span class="nf">parameters_to_dict</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">parameter_to_dict</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+
+<span class="k">class</span> <span class="nc">InnerMapIngress</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param inner_sig:</span>
+<span class="sd">        :param _allow_reordering:</span>
+<span class="sd">        :param changes_for_name:</span>
+
+<span class="sd">        Say we wanted a version of this function that didn&#39;t have the argument kind</span>
+<span class="sd">        restrinctions, where the annotation of ``x`` was ``int`` and where the default</span>
+<span class="sd">        of ``z`` was ``10`` instead of ``3``, and doesn&#39;t have an annotation.</span>
+
+<span class="sd">        Let&#39;s take the same function mentioned in the docs of ``wrap``</span>
+
+<span class="sd">        &gt;&gt;&gt; def f(w, /, x: float = 1, y=2, *, z: int = 3):</span>
+<span class="sd">        ...     return w + x * y ** z</span>
+
+<span class="sd">        In order to get a version of this function we wanted (more lenient kinds,</span>
+<span class="sd">        with some annotations and a default change), we used the ingress function:</span>
+
+<span class="sd">        &gt;&gt;&gt; def ingress_we_used(w, x: int = 1, y: int=2, z = 10):</span>
+<span class="sd">        ...     return (w,), dict(x=x, y=y, z=z)</span>
+
+<span class="sd">        Defining an ingress function this way is usually the simplest way to get a</span>
+<span class="sd">        a wrapped function. But in some cases we need to build the ingress function</span>
+<span class="sd">        using some predefined rule/protocol. For those cases, ``InnerMapIngress``</span>
+<span class="sd">        could come in handy.</span>
+
+<span class="sd">        You would build your ``ingress`` function like this, for example:</span>
+
+<span class="sd">        &gt;&gt;&gt; from inspect import Parameter, signature</span>
+<span class="sd">        &gt;&gt;&gt; PK = Parameter.POSITIONAL_OR_KEYWORD</span>
+<span class="sd">        &gt;&gt;&gt; not_specified = Parameter.empty</span>
+<span class="sd">        &gt;&gt;&gt; ingress = InnerMapIngress(</span>
+<span class="sd">        ...     f,</span>
+<span class="sd">        ...     w=dict(kind=PK),  # change kind to PK</span>
+<span class="sd">        ...     x=dict(annotation=int),  # change annotation from float to int</span>
+<span class="sd">        ...     y=dict(annotation=int),  # add annotation int</span>
+<span class="sd">        ...     # change kind to PK, default to 10, and remove annotation:</span>
+<span class="sd">        ...     z=dict(kind=PK, default=10, annotation=not_specified),</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; assert (</span>
+<span class="sd">        ...     str(signature(ingress))</span>
+<span class="sd">        ...     == str(signature(ingress_we_used))</span>
+<span class="sd">        ...     == &#39;(w, x: int = 1, y: int = 2, z=10)&#39;</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; assert (</span>
+<span class="sd">        ...     ingress(0,1,2,3)</span>
+<span class="sd">        ...     == ingress_we_used(0,1,2,3)</span>
+<span class="sd">        ...     == ((0,), {&#39;x&#39;: 1, &#39;y&#39;: 2, &#39;z&#39;: 3})</span>
+<span class="sd">        ... )</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">inner_sig</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">modified</span><span class="p">(</span>
+            <span class="n">_allow_reordering</span><span class="o">=</span><span class="n">_allow_reordering</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span>
+        <span class="p">)</span>
+
+        <span class="n">outer_name_for_inner_name</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">inner_name</span><span class="p">:</span> <span class="n">change</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">inner_name</span><span class="p">,</span> <span class="n">change</span> <span class="ow">in</span> <span class="n">changes_for_name</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">change</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_name_for_outer_name</span> <span class="o">=</span> <span class="n">invert_map</span><span class="p">(</span><span class="n">outer_name_for_inner_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
+        <span class="c1"># Get the all-keywords version of the arguments (args,kwargs-&gt;kwargs)</span>
+        <span class="n">func_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="o">.</span><span class="n">kwargs_from_args_and_kwargs</span><span class="p">(</span>
+            <span class="n">ingress_args</span><span class="p">,</span> <span class="n">ingress_kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Modify the keys of func_kwargs so they reflect the inner signature&#39;s names</span>
+        <span class="c1"># That is, map outer names to inner names.</span>
+        <span class="n">func_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">items_with_mapped_keys</span><span class="p">(</span><span class="n">func_kwargs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_name_for_outer_name</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Return an (args,kwargs) pair the respects the inner function&#39;s</span>
+        <span class="c1"># argument kind restrictions.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span><span class="n">func_kwargs</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="n">outer_sig</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param inner_sig:</span>
+<span class="sd">        :param outer_sig:</span>
+<span class="sd">        :param _allow_reordering:</span>
+<span class="sd">        :return:</span>
+
+<span class="sd">        &gt;&gt;&gt; def f(w, /, x: float = 1, y=2, *, z: int = 3):</span>
+<span class="sd">        ...     return w + x * y ** z</span>
+
+<span class="sd">        &gt;&gt;&gt; def g(w, x: int = 1, y: int=2, z = 10):</span>
+<span class="sd">        ...     return w + x * y ** z</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; ingress = InnerMapIngress.from_signature(f, g)</span>
+<span class="sd">        &gt;&gt;&gt; Sig(ingress)</span>
+<span class="sd">        &lt;Sig (w, x: int = 1, y: int = 2, z=10)&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; h = wrap(f, ingress=InnerMapIngress.from_signature(f, g))</span>
+<span class="sd">        &gt;&gt;&gt; assert h(0) == g(0) == 1024 == 0 + 1 * 2 ** 10</span>
+<span class="sd">        &gt;&gt;&gt; assert h(1,2) == g(1,2) == 2049 == 1 + 2 * 2 ** 10</span>
+<span class="sd">        &gt;&gt;&gt; assert h(1,2,3,4) == g(1,2,3,4) == 1 + 2 * 3 ** 4</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; assert h(w=1,x=2,y=3,z=4) == g(1,2,3,4) == 1 + 2 * 3 ** 4</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">outer_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">outer_sig</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">inner_sig</span><span class="p">,</span>
+            <span class="n">_allow_reordering</span><span class="o">=</span><span class="n">_allow_reordering</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">parameters_to_dict</span><span class="p">(</span><span class="n">outer_sig</span><span class="o">.</span><span class="n">parameters</span><span class="p">),</span>
+        <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ArgNameMappingIngress</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">outer_name_for_inner_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">inner_sig</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">ch_names</span><span class="p">(</span><span class="o">**</span><span class="n">outer_name_for_inner_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">conserve_kind</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="o">.</span><span class="n">ch_kinds_to_position_or_keyword</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_name_for_outer_name</span> <span class="o">=</span> <span class="n">invert_map</span><span class="p">(</span><span class="n">outer_name_for_inner_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
+        <span class="c1"># Get the all-keywords version of the arguments (args,kwargs-&gt;kwargs)</span>
+        <span class="n">func_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="o">.</span><span class="n">kwargs_from_args_and_kwargs</span><span class="p">(</span>
+            <span class="n">ingress_args</span><span class="p">,</span> <span class="n">ingress_kwargs</span>
+        <span class="p">)</span>
+        <span class="c1"># Modify the keys of func_kwargs so they reflect the inner signature&#39;s names</span>
+        <span class="c1"># That is, map outer names to inner names.</span>
+        <span class="n">func_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">items_with_mapped_keys</span><span class="p">(</span><span class="n">func_kwargs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_name_for_outer_name</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Return an (args,kwargs) pair the respects the inner function&#39;s</span>
+        <span class="c1"># argument kind restrictions.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span><span class="n">func_kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">mk_ingress_from_name_mapper</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">name_mapper</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ArgNameMappingIngress</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="n">conserve_kind</span><span class="p">,</span> <span class="o">**</span><span class="n">name_mapper</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Ingress</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">name_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wrapped</span><span class="p">,</span> <span class="o">**</span><span class="n">new_names</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">defaults</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wrapped</span><span class="p">,</span> <span class="o">**</span><span class="n">defaults</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">order</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wrapped</span><span class="p">,</span> <span class="n">arg_order</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">factory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wrapped</span><span class="p">,</span> <span class="o">**</span><span class="n">func_for_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="nice_kinds"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.nice_kinds">[docs]</a><span class="k">def</span> <span class="nf">nice_kinds</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Wraps the func so it will only have POSITIONAL_OR_KEYWORD argument kinds.</span>
+
+<span class="sd">    The original purpose of this function is to remove argument-kind restriction</span>
+<span class="sd">    annoyances when doing functional manipulations such as:</span>
+
+<span class="sd">    &gt;&gt;&gt; from functools import partial</span>
+<span class="sd">    &gt;&gt;&gt; isinstance_of_str = partial(isinstance, class_or_tuple=str)</span>
+<span class="sd">    &gt;&gt;&gt; isinstance_of_str(&#39;I am a string&#39;)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">      ...</span>
+<span class="sd">    TypeError: isinstance() takes no keyword arguments</span>
+
+<span class="sd">    Here, instead, we can just get a kinder version of the function and do what we</span>
+<span class="sd">    want to do:</span>
+
+<span class="sd">    &gt;&gt;&gt; _isinstance = nice_kinds(isinstance)</span>
+<span class="sd">    &gt;&gt;&gt; isinstance_of_str = partial(_isinstance, class_or_tuple=str)</span>
+<span class="sd">    &gt;&gt;&gt; isinstance_of_str(&#39;I am a string&#39;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; isinstance_of_str(42)</span>
+<span class="sd">    False</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">call_somewhat_forgivingly</span>
+
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">ch_kinds</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">Sig</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="p">})</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">call_somewhat_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">enforce_sig</span><span class="o">=</span><span class="n">sig</span><span class="p">)</span>
+
+    <span class="n">_func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">sig</span>
+    <span class="k">return</span> <span class="n">_func</span></div>
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------</span>
+<span class="c1"># tests</span>
+
+
+<span class="k">def</span> <span class="nf">_test_ingress</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;hi&#39;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">,),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_test_func</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">times</span> <span class="o">*</span> <span class="n">string</span>
+
+
+<span class="k">def</span> <span class="nf">test_wrap</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">pickle</span>
+    <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+
+    <span class="n">func</span> <span class="o">=</span> <span class="n">_test_func</span>
+
+    <span class="c1"># Just wrapping the func gives you a sort of copy of the func.</span>
+    <span class="n">wrapped_func</span> <span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>  <span class="c1"># no transformations</span>
+    <span class="k">assert</span> <span class="n">wrapped_func</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;co&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;coco&#39;</span> <span class="o">==</span> <span class="n">func</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;co&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If you give the wrap an ingress function</span>
+    <span class="n">ingress</span> <span class="o">=</span> <span class="n">_test_ingress</span>
+    <span class="n">wrapped_func</span> <span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">)</span>
+    <span class="c1"># it will use it to (1) determine the signature of the wrapped_func</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">wrapped_func</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;(a, b: str, c=&#39;hi&#39;)&quot;</span>
+    <span class="p">)</span>  <span class="c1"># &quot;(a, b: str, c=&#39;hi&#39;)&quot;</span>
+    <span class="c1"># and (2) to map inputs</span>
+    <span class="k">assert</span> <span class="n">wrapped_func</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;world! &#39;</span><span class="p">,</span> <span class="s1">&#39;Hi&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;Hi world! Hi world! Hi world! &#39;</span>
+
+    <span class="c1"># An egress function can be used to transform outputs</span>
+    <span class="n">wrapped_func</span> <span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">wrapped_func</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;co&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="s1">&#39;coco&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;co&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Both ingress and egress can be used in combination</span>
+    <span class="n">wrapped_func</span> <span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">wrapped_func</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;world! &#39;</span><span class="p">,</span> <span class="s1">&#39;Hi&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">30</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="s1">&#39;Hi world! Hi world! Hi world! &#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># A wrapped function is pickle-able (unlike the usual way decorators are written)</span>
+
+    <span class="n">unpickled_wrapped_func</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">wrapped_func</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">unpickled_wrapped_func</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;world! &#39;</span><span class="p">,</span> <span class="s1">&#39;Hi&#39;</span><span class="p">)</span>
+        <span class="o">==</span> <span class="mi">30</span>
+        <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="s1">&#39;Hi world! Hi world! Hi world! &#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_test_foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">7</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">c</span>
+
+
+<span class="k">def</span> <span class="nf">_test_bar</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">7</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">c</span>
+
+
+<span class="k">def</span> <span class="nf">test_mk_ingress_from_name_mapper</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">pickle</span>
+    <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+
+    <span class="n">foo</span> <span class="o">=</span> <span class="n">_test_foo</span>
+    <span class="c1"># Define the mapping (keys are inner and values are outer names)</span>
+    <span class="n">name_mapper</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="s1">&#39;aa&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;cc&#39;</span><span class="p">)</span>
+    <span class="c1"># Make an ingress function with that mapping</span>
+    <span class="n">ingress</span> <span class="o">=</span> <span class="n">mk_ingress_from_name_mapper</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">name_mapper</span><span class="p">)</span>
+    <span class="c1"># Use the ingress function to wrap a function</span>
+    <span class="n">wrapped_foo</span> <span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">ingress</span><span class="p">)</span>
+    <span class="c1"># See that the signature of the wrapped func uses the mapped arg names</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">wrapped_foo</span><span class="p">))</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">ingress</span><span class="p">))</span> <span class="o">==</span> <span class="s1">&#39;(aa, b: int, cc=7)&#39;</span>
+    <span class="p">)</span>
+    <span class="c1"># And that wrapped function does compute correctly</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">foo</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">wrapped_foo</span><span class="p">(</span><span class="n">aa</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">wrapped_foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="c1"># The ingress function returns args and kwargs for wrapped function</span>
+    <span class="k">assert</span> <span class="n">ingress</span><span class="p">(</span><span class="s1">&#39;i was called aa&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s1">&#39;i am b&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span>
+        <span class="p">(),</span>
+        <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;i was called aa&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;i am b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="c1"># See above that the args is empty. That will be the case most of the time.</span>
+    <span class="c1"># Keyword arguments will be favored when there&#39;s a choice. If wrapped</span>
+    <span class="c1"># function uses position-only arguments though, ingress will have to use them</span>
+    <span class="n">bar</span> <span class="o">=</span> <span class="n">_test_bar</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">bar</span><span class="p">))</span> <span class="o">==</span> <span class="s1">&#39;(a, /, b: int, *, c=7)&#39;</span>
+    <span class="n">ingress_for_bar</span> <span class="o">=</span> <span class="n">mk_ingress_from_name_mapper</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span> <span class="n">name_mapper</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">ingress_for_bar</span><span class="p">(</span><span class="s1">&#39;i was called aa&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s1">&#39;i am b&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s1">&#39;i was called aa&#39;</span><span class="p">,),</span>
+        <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;i am b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">wrapped_bar</span> <span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span> <span class="n">ingress_for_bar</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">bar</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">bar</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">wrapped_bar</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">wrapped_bar</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Note that though bar had a positional only and a keyword only argument,</span>
+    <span class="c1"># we are (by default) free of argument kind constraints in the wrapped function:</span>
+    <span class="c1"># We can can use a positional args on `cc` and keyword args on `aa`</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">wrapped_bar</span><span class="p">))</span> <span class="o">==</span> <span class="s1">&#39;(aa, b: int, cc=7)&#39;</span>
+    <span class="k">assert</span> <span class="n">wrapped_bar</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="n">wrapped_bar</span><span class="p">(</span><span class="n">aa</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="c1"># If you want to conserve the argument kinds of the wrapped function, you can</span>
+    <span class="c1"># specify this with `conserve_kind=True`:</span>
+    <span class="n">ingress_for_bar</span> <span class="o">=</span> <span class="n">mk_ingress_from_name_mapper</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span> <span class="n">name_mapper</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">wrapped_bar</span> <span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span> <span class="n">ingress_for_bar</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">wrapped_bar</span><span class="p">))</span> <span class="o">==</span> <span class="s1">&#39;(aa, /, b: int, *, cc=7)&#39;</span>
+
+    <span class="c1"># A wrapped function is pickle-able (unlike the usual way decorators are written)</span>
+    <span class="n">unpickled_wrapped_foo</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">wrapped_foo</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">unpickled_wrapped_foo</span><span class="p">))</span>
+        <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">ingress</span><span class="p">))</span>
+        <span class="o">==</span> <span class="s1">&#39;(aa, b: int, cc=7)&#39;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">foo</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">unpickled_wrapped_foo</span><span class="p">(</span><span class="n">aa</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">unpickled_wrapped_foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="n">test_wrap</span><span class="p">()</span>
+<span class="n">test_mk_ingress_from_name_mapper</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">i2</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/examples.html">i2.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/footprints.html">i2.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/itypes.html">i2.itypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/key_path.html">i2.key_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/switch_case_tree.html">i2.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/footprints_test.html">i2.tests.footprints_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;OtoSense 2020.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

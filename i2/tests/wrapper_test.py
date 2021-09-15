@@ -25,7 +25,9 @@ def test_wrap():
     ingress = _test_ingress
     wrapped_func = wrap(func, ingress)
     # it will use it to (1) determine the signature of the wrapped_func
-    assert str(signature(wrapped_func)) == "(a, b: str, c='hi')"  # "(a, b: str, c='hi')"
+    assert (
+        str(signature(wrapped_func)) == "(a, b: str, c='hi')"
+    )  # "(a, b: str, c='hi')"
     # and (2) to map inputs
     assert wrapped_func(2, 'world! ', 'Hi') == 'Hi world! Hi world! Hi world! '
 
@@ -35,7 +37,9 @@ def test_wrap():
 
     # Both ingress and egress can be used in combination
     wrapped_func = wrap(func, ingress, egress=len)
-    assert wrapped_func(2, 'world! ', 'Hi') == 30 == len('Hi world! Hi world! Hi world! ')
+    assert (
+        wrapped_func(2, 'world! ', 'Hi') == 30 == len('Hi world! Hi world! Hi world! ')
+    )
 
     # A wrapped function is pickle-able (unlike the usual way decorators are written)
 
@@ -67,7 +71,9 @@ def test_mk_ingress_from_name_mapper():
     # Use the ingress function to wrap a function
     wrapped_foo = wrap(foo, ingress)
     # See that the signature of the wrapped func uses the mapped arg names
-    assert str(signature(wrapped_foo)) == str(signature(ingress)) == '(aa, b: int, cc=7)'
+    assert (
+        str(signature(wrapped_foo)) == str(signature(ingress)) == '(aa, b: int, cc=7)'
+    )
     # And that wrapped function does compute correctly
     assert (
         foo(1, 2, c=4)

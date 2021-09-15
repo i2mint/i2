@@ -24,4 +24,6 @@
    module_docs/i2/tests/footprints_test
    module_docs/i2/tests/objects_for_testing
    module_docs/i2/tests/signatures_test
+   module_docs/i2/tests/wrapper_test
    module_docs/i2/util
+   module_docs/i2/wrapper
