@@ -105,3 +105,72 @@ class HasAttrs:
         #     (Protocol,),
         #     {"__annotations__": {attr: Any for attr in attr_names}},
         # )
+
+
+# TODO: Complete scary hack: Find another way (see uses)
+def is_a_new_type(typ):
+    return (
+        callable(typ)
+        and getattr(typ, '__qualname__', '').startswith('NewType')
+        and hasattr(typ, '__supertype__')
+    )
+
+
+def typ_name(typ):
+    if is_a_new_type(typ):
+        return typ.__name__
+    else:
+        return typ._name
+
+
+def is_callable_kind(typ):
+    """
+    >>> from typing import Callable, Tuple
+    >>> is_callable_kind(Callable)
+    True
+    >>> is_callable_kind(Callable[[int, float], str])
+    True
+    >>> is_callable_kind(Tuple[int, float, str])
+    False
+    """
+    if is_a_new_type(typ):
+        return is_callable_kind(typ.__supertype__)
+    return typ_name(typ) == 'Callable'
+    # Also possible: typ.mro()[0] == __import__('collections.abc').Callable
+
+
+def input_and_output_types(typ):
+    """
+
+    :param typ:
+    :return:
+
+
+    >>> from typing import Callable, Tuple
+    >>> input_types, output_type = input_and_output_types(Callable[[float, int], str])
+    >>> assert input_types == (float, int) and output_type == str
+    >>> input_types, output_type = input_and_output_types(Callable[[], str])
+    >>> assert input_types == () and output_type == str
+
+    But will fail if `typ` isn't a `Callable`:
+
+    >>> input_and_output_types(Tuple[float, int, str])  # doctests: +NORMALIZE_SPACE
+    Traceback (most recent call last):
+      ...
+    AssertionError: Is not a typing.Callable kind: typing.Tuple[float, int, str]
+
+    Will also fail if `typ` is a Callable but not "parametrized".
+
+    >>> input_and_output_types(Callable)  # doctests: +NORMALIZE_SPACE
+    Traceback (most recent call last):
+      ...
+    AssertionError: Can only be used on a Callable[[...],...] kind: typing.Callable
+
+    """
+    if is_a_new_type(typ):
+        return input_and_output_types(typ.__supertype__)
+    assert is_callable_kind(typ), f'Is not a typing.Callable kind: {typ}'
+    assert (
+        len(typ.__args__) > 0
+    ), f'Can only be used on a Callable[[...],...] kind: {typ}'
+    return typ.__args__[:-1], typ.__args__[-1]
