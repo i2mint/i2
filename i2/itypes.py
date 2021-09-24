@@ -174,3 +174,12 @@ def input_and_output_types(typ):
         len(typ.__args__) > 0
     ), f'Can only be used on a Callable[[...],...] kind: {typ}'
     return typ.__args__[:-1], typ.__args__[-1]
+
+
+def dot_string_of_callable_typ(typ):
+    input_types, output_type = input_and_output_types(typ)
+    return (
+        ','.join(map(typ_name, input_types))
+        + f' -> {typ_name(typ)} -> '
+        + typ_name(output_type)
+    )
