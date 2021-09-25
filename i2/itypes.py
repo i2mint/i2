@@ -185,7 +185,6 @@ def dot_string_of_callable_typ(typ):
     )
 
 
-
 def dot_strings_of_callable_types(*typs, func_shape='box'):
     for typ in typs:
         yield dot_string_of_callable_typ(typ)
