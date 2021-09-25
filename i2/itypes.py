@@ -183,3 +183,10 @@ def dot_string_of_callable_typ(typ):
         + f' -> {typ_name(typ)} -> '
         + typ_name(output_type)
     )
+
+
+
+def dot_strings_of_callable_types(*typs, func_shape='box'):
+    for typ in typs:
+        yield dot_string_of_callable_typ(typ)
+        yield f'{typ_name(typ)} [shape="{func_shape}"]'
