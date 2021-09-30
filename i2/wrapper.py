@@ -50,6 +50,7 @@ def transparent_egress(output):
 
 from types import MethodType
 
+
 class Wrap:
     """A callable function wrapper with interface modifiers.
 
