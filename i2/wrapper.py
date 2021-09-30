@@ -48,6 +48,7 @@ def transparent_egress(output):
     ```
 """
 
+from types import MethodType
 
 class Wrap:
     """A callable function wrapper with interface modifiers.
@@ -127,6 +128,9 @@ class Wrap:
 
     def __reduce__(self):
         return type(self), (self.func, self._ingress, self._egress)
+
+    def __get__(self, instance, owner):
+        return MethodType(self, instance)
 
 
 def wrap(func, ingress=None, egress=None):
