@@ -182,6 +182,73 @@ def mk_filt(obj, featurizer, comparison):
     return filt
 
 
+def test_switch_case_tree():
+    from collections import Counter
+
+    special_featurizer = {
+        'len': len,
+        'cols': lambda df: df.columns,
+        'sum': lambda df: df.sum().sum(),
+    }
+
+    some_local_func = lambda x: list(map(str, x))
+
+    featurizer = ChainMap(
+        special_featurizer,
+        {
+            k: v
+            for k, v in locals().items()
+            if is_valid_featurizer(v) and getattr(v, '__module__', '').startswith('i2.')
+        },
+    )
+
+    special_comparison = {
+        'alleq': lambda x, y: all(x == y),
+        'isin': lambda x, y: x in y,
+        'eq': operator.eq,
+    }
+
+    comparison = ChainMap(
+        special_comparison, AttrMap(operator, is_valid_val=is_valid_comparision),
+    )
+
+    assert comparison['contains'] == operator.contains
+
+    assert Counter(map(is_valid_featurizer, featurizer.values())) == Counter({True: 3})
+
+    assert Counter(map(is_valid_comparision, featurizer.values())) == Counter(
+        {False: 3}
+    )
+    assert Counter(map(is_valid_featurizer, comparison.values())) == Counter(
+        {False: 80, True: 1}
+    )
+    assert Counter(map(is_valid_comparision, comparison.values())) == Counter(
+        {True: 81}
+    )
+
+    featurizer_kvs = {k: v.__name__ for k, v in featurizer.items()}
+    assert featurizer_kvs == {'len': 'len', 'cols': '<lambda>', 'sum': '<lambda>'}
+
+    from contextlib import suppress
+
+    with suppress(ModuleNotFoundError, ImportError):
+        import pandas as pd
+        from collections import namedtuple
+
+        Condition = namedtuple('Condition', ['feat', 'comp'])
+        condition = {
+            feat + '_' + comp: Condition(featurizer[feat], comparison[comp])
+            for feat, comp in [('len', 'lt'), ('cols', 'isin'), ('cols', 'contains'),]
+        }
+        assert all(
+            is_valid_feat_and_comp(feat, comp) for feat, comp in condition.values()
+        )
+
+        df = pd.DataFrame({'a': [1, 2, 3], 'b': [10, 20, 30]})
+        filt = mk_filt(df, *condition['len_lt'])
+        assert list(filter(filt, [2, 3, 4, 5])) == [4, 5]
+
+
 ##########################################################################################################
 # from anytree import Node, AnyNode, RenderTree, ContStyle, NodeMixin
 #
@@ -238,70 +305,3 @@ def mk_filt(obj, featurizer, comparison):
 #             else:
 #                 root_name = 'root'
 #         return self.tree_of_dict(self.dict_of_obj(obj), root_name=root_name)
-
-
-if __name__ == '__main__':
-    from collections import Counter
-
-    print(
-        '##########################################################################################################'
-    )
-    special_featurizer = {
-        'len': len,
-        'cols': lambda df: df.columns,
-        'sum': lambda df: df.sum().sum(),
-    }
-
-    some_local_func = lambda x: list(map(str, x))
-
-    featurizer = ChainMap(
-        special_featurizer,
-        {
-            k: v
-            for k, v in locals().items()
-            if is_valid_featurizer(v) and getattr(v, '__module__', '').startswith('i2.')
-        },
-    )
-
-    special_comparison = {
-        'alleq': lambda x, y: all(x == y),
-        'isin': lambda x, y: x in y,
-        'eq': operator.eq,
-    }
-
-    comparison = ChainMap(
-        special_comparison, AttrMap(operator, is_valid_val=is_valid_comparision),
-    )
-
-    assert comparison['contains'] == operator.contains
-
-    print(Counter(map(is_valid_featurizer, featurizer.values())))
-    print(Counter(map(is_valid_comparision, featurizer.values())))
-    print(Counter(map(is_valid_featurizer, comparison.values())))
-    print(Counter(map(is_valid_comparision, comparison.values())))
-
-    featurizer_kvs = {k: v.__name__ for k, v in featurizer.items()}
-    print(f'featurizer: {featurizer_kvs}')
-
-    from contextlib import suppress
-
-    with suppress(ModuleNotFoundError, ImportError):
-        import pandas as pd
-        from collections import namedtuple
-
-        print(
-            '###########################################################################'
-        )
-
-        Condition = namedtuple('Condition', ['feat', 'comp'])
-        condition = {
-            feat + '_' + comp: Condition(featurizer[feat], comparison[comp])
-            for feat, comp in [('len', 'lt'), ('cols', 'isin'), ('cols', 'contains'),]
-        }
-        assert all(
-            is_valid_feat_and_comp(feat, comp) for feat, comp in condition.values()
-        )
-
-        df = pd.DataFrame({'a': [1, 2, 3], 'b': [10, 20, 30]})
-        filt = mk_filt(df, *condition['len_lt'])
-        print(list(filter(filt, [2, 3, 4, 5])))

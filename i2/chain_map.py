@@ -1,4 +1,7 @@
-"""Merge mappings"""
+"""Merge mappings
+
+Marked for deprecation.
+"""
 
 from collections import ChainMap
 
@@ -22,6 +25,7 @@ def is_iterable(x):
     return isinstance(x, Iterable)
 
 
+# Note: Mark for moving --> used in only one known place
 def unique_iter(src, key=None):
     """Yield unique elements from the iterable, *src*, based on *key*,
     in the order in which they first appeared in *src*.
@@ -58,6 +62,7 @@ def unique_iter(src, key=None):
     return
 
 
+# Note: Mark for moving to py2store --> used in only one place (py2dash).
 class ChainMapTree(Mapping):
     """Combine/overlay multiple hierarchical mappings. This efficiently merges
     multiple hierarchical (could be several layers deep) dictionaries, producing
