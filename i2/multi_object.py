@@ -26,7 +26,7 @@ def ensure_iterable_of_callables(x):
     if isinstance(x, Iterable):
         if not all(callable(xx) for xx in x):
             non_callables = filter(lambda xx: not callable(xx), x)
-            raise TypeError(f"These were not callable: {list(non_callables)}")
+            raise TypeError(f'These were not callable: {list(non_callables)}')
         return x
     else:
         assert callable(x)
@@ -59,8 +59,8 @@ def _multi_func_init(self, *unnamed_funcs, **named_funcs):
         self.funcs = merge_unnamed_and_named(*unnamed_funcs, **named_funcs)
     if len(self.funcs) != expected_n_funcs:
         raise ValueError(
-            "Some of your func names clashed. Your unnamed funcs were: "
-            f"{unnamed_funcs} and your named ones were: {named_funcs}"
+            'Some of your func names clashed. Your unnamed funcs were: '
+            f'{unnamed_funcs} and your named ones were: {named_funcs}'
         )
     ensure_iterable_of_callables(self.funcs.values())
 
@@ -262,6 +262,7 @@ class FlexFuncFanout:
     ... }
 
     """
+
     funcs: dict
 
     # FIXME: TODO: This does indeed change the signature, but not the functionality (position only still raise errors!)
@@ -284,16 +285,16 @@ class FlexFuncFanout:
 
     def kwargs_for_func(self, *args, **kwargs):
         return dict(
-            (name, self.sigs[name].source_kwargs(**kwargs)) for name, func in
-            self.funcs.items()
+            (name, self.sigs[name].source_kwargs(**kwargs))
+            for name, func in self.funcs.items()
         )
 
     # TODO: Give it a signature (needs to be done in __init__)
     # TODO: Validation of inputs
     def __call__(self, *args, **kwargs):
         return dict(
-            (name, self.sigs[name].source_kwargs(**kwargs)) for name, func in
-            self.funcs.items()
+            (name, self.sigs[name].source_kwargs(**kwargs))
+            for name, func in self.funcs.items()
         )
 
 
