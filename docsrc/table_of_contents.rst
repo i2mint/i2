@@ -14,6 +14,7 @@
    module_docs/i2/io_trans
    module_docs/i2/itypes
    module_docs/i2/key_path
+   module_docs/i2/multi_object
    module_docs/i2/routing_forest
    module_docs/i2/scrap
    module_docs/i2/scrap/scrap
