@@ -183,15 +183,6 @@ def mk_args_kwargs_merger(func):
     return merge_args_and_kwargs
 
 
-def ensure_iterable_of_callables(x):
-    if isinstance(x, Iterable):
-        all(callable(xx) for xx in x)
-        return x
-    else:
-        assert callable(x)
-        return (x,)
-
-
 def kwargs_for_func(*funcs, **kwargs):
     """
     :param funcs:
@@ -209,93 +200,6 @@ def kwargs_for_func(*funcs, **kwargs):
      'mult': {'x': 2}}
     """
     return dict((func, Sig(func).source_kwargs(**kwargs)) for func in funcs)
-
-
-# TODO: Finish this!
-# TODO: Test the handling var positional and var keyword
-class MultiFunc:
-    """
-    Call multiple functions, using a pool of arguments that they will draw from.
-
-    >>> from i2.tests.objects_for_testing import formula1, sum_of_args, mult, add
-    >>> mf1 = MultiFunc(funcs=(formula1, mult, add))
-    >>> kwargs_for_func = mf1.kwargs_for_func(w=1, x=2, z=3, a=4, b=5)
-
-    What's this for? Well, the raison d'etre of `MultiFunc` is to be able to do this:
-
-    >>> assert add(a=4, b=5) == add(**kwargs_for_func[add])
-
-    This wouldn't work on all functions since some functions have position only arguments (e.g. ``formula1``).
-    Therefore ``MultiFunc`` holds a "normalized" form of the functions; namely one that handles such things as
-    postion only and varargs.
-
-    # TODO: Make this work!
-    #   Right now raises: TypeError: formula1() got some positional-only arguments passed as keyword arguments: 'w'
-    # >>> assert formula1(1, x=2, z=3) == mf1.normalized_funcs[formula1](**kwargs_for_func[formula1])
-
-    Note: In the following, it looks like ``MultiFunc`` instances return dicts whose keys are strings.
-    This is not the case.
-    The keys are functions: The same functions that were input.
-    The reason for not using functions is that when printed, they include their hash, which invalidates the doctests.
-
-    >>> def print_dict(d):  # just a util for this doctest
-    ...     from pprint import pprint
-    ...     pprint({k.__name__: d[k] for k in sorted(d, key=lambda x: x.__name__)})
-    >>> mf1 = MultiFunc(funcs=(formula1, mult, add))
-    >>> print_dict(mf1.kwargs_for_func(w=1, x=2, z=3, a=4, b=5)) # doctest: +NORMALIZE_WHITESPACE
-    {'add': {'a': 4, 'b': 5},
-     'formula1': {'w': 1, 'x': 2, 'z': 3},
-     'mult': {'x': 2}}
-
-    Oh, and you can actually see the signature of kwargs_for_func:
-
-    >>> from inspect import signature
-    >>> signature(mf1)
-    <Signature (w, x: float, a, y=1, z: int = 1, b: float = 0.0)>
-
-    >>> mf2 = MultiFunc(funcs=(formula1, mult, add, sum_of_args))
-    >>> print_dict(mf2.kwargs_for_func(w=1, x=2, z=3, a=4, b=5, args=(7,8), kwargs={'a': 42}, extra_stuff='ignore'))
-    {'add': {'a': 4, 'b': 5},
-     'formula1': {'w': 1, 'x': 2, 'z': 3},
-     'mult': {'x': 2},
-     'sum_of_args': {'kwargs': {'a': 4,
-                                'args': (7, 8),
-                                'b': 5,
-                                'extra_stuff': 'ignore',
-                                'kwargs': {'a': 42},
-                                'w': 1,
-                                'x': 2,
-                                'z': 3}}}
-
-    """
-
-    # FIXME: TODO: This does indeed change the signature, but not the functionality (position only still raise errors!)
-    def normalize_func(self, func):
-        return ch_func_to_all_pk(tuple_the_args(func))
-
-    def __init__(self, funcs=()):
-        self.funcs = ensure_iterable_of_callables(funcs)
-        self.sigs = {func: Sig(func) for func in self.funcs}
-        self.normalized_funcs = {func: self.normalize_func(func) for func in self.funcs}
-        multi_func_sig = Sig.from_objs(*self.normalized_funcs.values())
-        # TODO: Finish attempt to add **all_other_kwargs_ignored to the signature
-        # multi_func_sig = (Sig.from_objs(
-        #     *self.normalized_funcs.values(),
-        #     Parameter(name='all_other_kwargs_ignored', kind=Parameter.VAR_KEYWORD)))
-        multi_func_sig.wrap(self)
-        # multi_func_sig.wrap(self.kwargs_for_func)
-
-    def kwargs_for_func(self, *args, **kwargs):
-        return dict(
-            (func, self.sigs[func].source_kwargs(**kwargs)) for func in self.funcs
-        )
-
-    # TODO: Give it a signature (needs to be done in __init__)
-    # TODO: Validation of inputs
-    def __call__(self, *args, **kwargs):
-        return dict(
-            (func, self.sigs[func].source_kwargs(**kwargs)) for func in self.funcs
-        )
 
 
 def assert_attrs(attrs):

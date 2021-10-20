@@ -20,3 +20,11 @@ from i2.signatures import (
     call_forgivingly,
     call_somewhat_forgivingly,
 )
+
+from i2.multi_object import (
+    Pipe,
+    FuncFanout,
+    FlexFuncFanout,
+    ParallelFuncs,
+    ContextFanout,
+)
