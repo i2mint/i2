@@ -23,6 +23,7 @@ from i2.signatures import (
 
 from i2.multi_object import (
     MultiObj,
+    MultiFunc,
     Pipe,
     FuncFanout,
     FlexFuncFanout,
