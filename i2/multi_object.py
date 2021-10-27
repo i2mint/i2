@@ -540,6 +540,7 @@ class ParallelFuncs(MultiFunc):
     def __call__(self, d: dict):
         return dict(self._key_output_gen(d))
 
+
 # from collections.abc import ValuesView as BaseValuesView
 # class MongoValuesView(ValuesView):
 #     def __contains__(self, v):
