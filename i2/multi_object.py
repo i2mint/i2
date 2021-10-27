@@ -15,36 +15,7 @@ For context managers you have:
 - `ContextFanout`: To hold multiple context managers as one (entering and exiting
     together)
 
-```
-                input
-                  │
-                  ▼
-┌────────────────────────────────────┐
-│             FuncFanout             │
-└────────────────────────────────────┘
-                  │
-                  ▼
- dict containing (func, output) pairs
-                  │
-                  ▼
-┌────────────────────────────────────┐
-│           ParallelFuncs            │
-└────────────────────────────────────┘
-                  │
-                  ▼
- dict containing (func, output) pairs
-                  │
-                  ▼
-┌────────────────────────────────────┐
-│   e.g. .values(), .items() etc.    │
-└────────────────────────────────────┘
-                  │
-                  ▼
-               iterable
-
 ![image](https://user-images.githubusercontent.com/1906276/138004878-bfe17115-c25f-4d22-9740-0fef983507c0.png)
-
-```
 
 """
 from typing import Mapping, Iterable, Union, Callable, Any, TypeVar
@@ -139,7 +110,55 @@ def uniquely_named_objects(
         _exclude_names.add(name)
 
 
-class MultiObj:
+def merge_unnamed_and_named(*unnamed, **named) -> dict:
+    """To merge unnamed and named arguments into a single (named) dict of arguments
+
+    >>> merge_unnamed_and_named(10, 20, thirty=30, fourty=40)
+    {'_0': 10, '_1': 20, 'thirty': 30, 'fourty': 40}
+    """
+    # TODO: Could do what is done in meshed (try to get names of actual functions)
+    #  and use _0, _1, _2... as fallback only?
+    named_unnamed = {f'_{i}': obj for i, obj in enumerate(unnamed)}
+    if not named_unnamed.keys().isdisjoint(named):
+        raise ValueError(
+            f"Some of your objects' names clashed: "
+            f'{named_unnamed.keys() & named.keys()}'
+        )
+    return dict(named_unnamed, **named)
+
+
+# TODO: Refactoring: Remove once not used anymore
+def _multi_func_init(self, *unnamed_funcs, **named_funcs) -> None:
+    if len(unnamed_funcs) == 1 and isinstance(unnamed_funcs[0], Mapping):
+        self.funcs = unnamed_funcs[0]
+        expected_n_funcs = len(self.funcs)
+    else:
+        expected_n_funcs = len(unnamed_funcs) + len(named_funcs)
+        self.funcs = merge_unnamed_and_named(*unnamed_funcs, **named_funcs)
+    if len(self.funcs) != expected_n_funcs:
+        raise ValueError(
+            'Some of your func names clashed. Your unnamed funcs were: '
+            f'{unnamed_funcs} and your named ones were: {named_funcs}'
+        )
+    ensure_iterable_of_callables(self.funcs.values())
+
+
+_dflt_signature = Signature.from_callable(lambda *args, **kwargs: None)
+
+
+def _signature_from_first_and_last_func(first_func, last_func):
+    try:
+        input_params = signature(first_func).parameters.values()
+    except ValueError:  # function doesn't have a signature, so take default
+        input_params = _dflt_signature.parameters.values()
+    try:
+        return_annotation = signature(last_func).return_annotation
+    except ValueError:  # function doesn't have a signature, so take default
+        return_annotation = _dflt_signature.return_annotation
+    return Signature(input_params, return_annotation=return_annotation)
+
+
+class MultiObj(Mapping):
     """A base class that holds several named objects
 
     >>> from functools import partial
@@ -151,23 +170,18 @@ class MultiObj:
 
     >>> mo = MultiObj([1], [1, 2], partial(print, sep=","), i='hi', ident=lambda x: x)
 
-    A MultiObj will give provide you with a `.objects` attribute that will give you
-    access to the objects you entered, with the names you specified, or the names
-    it decided for you, through it's `auto_namer` staticmethod (which you can
-    overwrite if necessary).
+    You now have a mapping and can do mapping things such as being able to list keys,
+    getting the length, seeing if a key is present, and getting the value for a key
 
-    To see the names `.objects` is using, do:
-
-    >>> list(mo.objects)
+    >>> list(mo)
     ['list', '_1', 'print', 'i', 'ident']
-
-    Or do what ever you do with `dicts`;
-
-    >>> mo.objects['_1']
+    >>> len(mo)
+    5
+    >>> mo['_1']
     [1, 2]
-    >>> 'list' in mo.objects
+    >>> 'list' in mo
     True
-    >>> 'not a key of mo' in mo.objects
+    >>> 'not a key of mo' in mo
     False
 
     When a key (always a string) is also a valid identifier, and in-so-far as
@@ -180,29 +194,10 @@ class MultiObj:
     >>> mo.print
     functools.partial(<built-in function print>, sep=',')
 
-    A `MultiObj` is `Sizable`:
-
-    >>> len(mo)
-    5
-
-    and `Iterable`, but be aware that iterating over
-    an `MultiObj` will not give you the keys of `.objects`, but the `.values()`.
-    Again, that's:
-
-    >>> assert list(mo.objects) != list(mo)
-
-    This is to enable to get the objects as such:
-
-    >>> a, b, c, d, e = mo
-    >>> a
-    [1]
-    >>> b
-    [1, 2]
-
     You can also specify an object mapping directly through a mapping:
 
     >>> mo = MultiObj({'this': [1], 'that': [1, 2]})
-    >>> mo.objects
+    >>> dict(mo)
     {'this': [1], 'that': [1, 2]}
     """
 
@@ -227,21 +222,26 @@ class MultiObj:
             self.objects = dict(named_unnamed, **named)
 
     def __iter__(self):
-        yield from self.objects.values()
+        yield from self.objects
+
+    def __getitem__(self, k):
+        return self.objects[k]
+
+    def __contains__(self, k):
+        return k in self.objects
 
     def __len__(self):
         return len(self.objects)
 
     def __getattr__(self, item):
         """Access to those objects that have proper identifier names"""
-        if item in self.objects and item.isidentifier():
+        if item in self and item.isidentifier():
             return self.objects[item]
         else:
             raise AttributeError(f'Not an attribute: {item}')
 
 
 def iterable_of_callables_validation(funcs: Iterable[Callable]):
-    """Validates that the input is an iterable of callables"""
     if not isinstance(funcs, Iterable):
         raise TypeError(f'Not an iterable: {funcs}')
     elif not all(callable(xx) for xx in funcs):
@@ -257,22 +257,7 @@ class MultiFunc(MultiObj):
         super().__init__(*unnamed_funcs, **named_funcs)
         # The extra stuff we want to do with functions
         self.funcs = self.objects  # an alias, for better readability
-        iterable_of_callables_validation(self)
-
-
-_dflt_signature = Signature.from_callable(lambda *args, **kwargs: None)
-
-
-def _signature_from_first_and_last_func(first_func, last_func):
-    try:
-        input_params = signature(first_func).parameters.values()
-    except ValueError:  # function doesn't have a signature, so take default
-        input_params = _dflt_signature.parameters.values()
-    try:
-        return_annotation = signature(last_func).return_annotation
-    except ValueError:  # function doesn't have a signature, so take default
-        return_annotation = _dflt_signature.return_annotation
-    return Signature(input_params, return_annotation=return_annotation)
+        iterable_of_callables_validation(self.funcs.values())
 
 
 # TODO: Give it a __name__ and make it more like a "normal" function so it works
@@ -309,7 +294,7 @@ class Pipe(MultiFunc):
         super().__init__(*unnamed_funcs, **named_funcs)
 
         # The extra initialization for pipelines
-        callables = list(self)
+        callables = list(self.funcs.values())
         n_funcs = len(callables)
         other_funcs = ()
         if n_funcs == 0:
@@ -409,22 +394,18 @@ class FlexFuncFanout(MultiFunc):
 
     >>> assert add(a=4, b=5) == add(**kwargs_for_func['add'])
 
-    This wouldn't work on all functions since some functions have position only
-    arguments (e.g. ``formula1``).
-    Therefore ``FlexFuncFanout`` holds a "normalized" form of the functions;
-    namely one that handles such things as postion only and varargs.
+    This wouldn't work on all functions since some functions have position only arguments (e.g. ``formula1``).
+    Therefore ``FlexFuncFanout`` holds a "normalized" form of the functions; namely one that handles such things as
+    postion only and varargs.
 
     # TODO: Make this work!
-    #   Right now raises: TypeError: formula1() got some positional-only arguments
-    # passed as keyword arguments: 'w'
+    #   Right now raises: TypeError: formula1() got some positional-only arguments passed as keyword arguments: 'w'
     # >>> assert formula1(1, x=2, z=3) == mf1.normalized_funcs[formula1](**kwargs_for_func[formula1])
 
-    Note: In the following, it looks like ``FlexFuncFanout`` instances return dicts
-    whose keys are strings.
+    Note: In the following, it looks like ``FlexFuncFanout`` instances return dicts whose keys are strings.
     This is not the case.
     The keys are functions: The same functions that were input.
-    The reason for not using functions is that when printed, they include their hash,
-    which invalidates the doctests.
+    The reason for not using functions is that when printed, they include their hash, which invalidates the doctests.
 
     # >>> def print_dict(d):  # just a util for this doctest
     # ...     from pprint import pprint
@@ -559,11 +540,21 @@ class ParallelFuncs(MultiFunc):
     def __call__(self, d: dict):
         return dict(self._key_output_gen(d))
 
+# from collections.abc import ValuesView as BaseValuesView
+# class MongoValuesView(ValuesView):
+#     def __contains__(self, v):
+#         m = self._mapping
+#         cursor = m.mgc.find(filter=m._merge_with_filt(v), projection=())
+#         return next(cursor, end_of_cursor) is not end_of_cursor
+#
+#     def __iter__(self):
+#         m = self._mapping
+#         return m.mgc.find(filter=m.filter, projection=m._getitem_projection)
+
 
 class ContextFanout(MultiObj):
     """Encapsulates multiple objects into a single context manager that will enter and
-    exit all objects that are context managers themselves (and just leave those
-    that are not context managers alone).
+    exit all objects that are context managers themselves.
 
     Context managers show up in situations where you need to have some setup and tear
     down before performing some tasks. It's what you get when you open a file to read
@@ -587,28 +578,6 @@ class ContextFanout(MultiObj):
     - A tuple of context managers is not a context manager itself, it's just understood
     by the with (in python 3.10+).
 
-    `ContextFanout` is therefore useful when you need some resources to perform a task,
-    but don't know in advance (or don't want to assume) which resources might need to
-    be used within a context.
-
-    Consider the following code that reads off af a stream, computes some stats from
-    what it read, then "writes" those stats in a target stream:
-
-    ```
-    with ContextFanout(source_stream, target_stream) as (src, target):
-        for b in src:
-            stats = compute_statistics(b)
-            target.append(stats)
-    ```
-
-    The source and/or target streams could need to open and close files or data base
-    connections, or could simply be lists.
-    Nothing in the code reveals (or should reveal) what they are.
-    Yet you'll get some complaints if you try to do a `with` on a list, or iterate over
-    `src` outside of a context manager.
-
-    `ContextFanout` allows you to move that concern out of the business logic code.
-
     As an example, let's take two objects. One is a context manager, the other not.
 
     >>> from contextlib import contextmanager
@@ -624,7 +593,7 @@ class ContextFanout(MultiObj):
 
 
     >>> c = ContextFanout(not_a_context_manager, some_context_manager(2))
-    >>> list(c.objects)
+    >>> list(c)
     ['not_a_context_manager', '_GeneratorContextManager']
 
     The name (chosen by `MultiObj.auto_namer`) '_GeneratorContextManager' isn't the best.
@@ -637,43 +606,53 @@ class ContextFanout(MultiObj):
     See from the prints that "with-ing" c triggers the enter and exit of 'context'
 
     >>> with c:
-    ...     print(c.not_a_context_manager(10))
+    ...     pass
     open
-    9
     close
 
-    Further, know that within the context's scope, a `ContextFanout` instance
-    (because it's a `MultiObj`)
-    will have the context managers it contains available, and having the
-    value it is supposed to have "under context".
-
-
-    >>> with ContextFanout(not_a_context_manager, some_context_manager(2)) as context:
-    ...     print(context.not_a_context_manager(10))
-    open
-    9
-    close
-
-    You can also use the `with CONTEXT() as (x, y, z):` pattern to assign the
-    objects of `ContextFanout` to some variables of your choice.
-
-    IMPORTANT: Remember to include PARENTHESES around these variables, or it won't work!
-
-    >>> with ContextFanout(not_a_context_manager, some_context_manager(2)) as (f, m):
-    ...     print(f(10))
-    open
-    9
-    close
+    # Further, know that within the context's scope, a `ContextFanout`
+    # instance will have the context managers it contains available, and having the
+    # value it is supposed to have "under context".
+    #
+    # >>> with ContextFanout(not_a_context_manager, some_context_manager(2)) as (f, m):
+    # ...     print(f(10))
+    #
+    #
+    # >>> c = ContextFanout(not_a_context_manager, context=some_context_manager(2))
+    #
+    # >>> c = ContextFanout(
+    # ...     some_context_manager=some_context_manager(2),
+    # ...     not_a_context_manager=not_a_context_manager
+    # ... )
+    # >>> # first c doesn't have the some_context_manager attribute
+    # >>> assert not hasattr(c, 'some_context_manager')
+    # >>> with c:
+    # ...     # inside the context, c indeed has the attribute, and it has the expected value
+    # ...     assert c.some_context_manager == 'x + 1 = 3'
+    # open
+    # close
+    # >>> # outside the context, c doesn't have the some_context_manager attribute any more again
+    # >>> assert not hasattr(c, 'some_context_manager')
+    #
+    # If you don't specify a name for a given context manager, you'll still have access
+    # to it via a hidden attribute ("_i" where i is the index of the object when
+    # the `ContextFanout` instance was made.
+    #
+    # >>> c = ContextFanout(some_context_manager(10), not_a_context_manager)
+    # >>> with c:
+    # ...     assert c._0 == 'x + 1 = 11'
+    # open
+    # close
 
     """
 
     def __enter__(self):
-        for obj in self:
+        for name, obj in self.items():
             if hasattr(obj, '__enter__'):
                 obj.__enter__()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
-        for obj in self:
+        for name, obj in self.items():
             if hasattr(obj, '__exit__'):
                 obj.__exit__(exc_type, exc_val, exc_tb)
