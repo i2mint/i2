@@ -171,9 +171,15 @@ class MultiObj(Mapping):
     >>> mo = MultiObj([1], [1, 2], partial(print, sep=","), i='hi', ident=lambda x: x)
 
     You now have a mapping and can do mapping things such as being able to list keys,
-    getting the length, seeing if a key is present, and getting the value for a key
+    getting the length, seeing if a key is present, and getting the value for a key.
 
-    >>> list(mo)
+    Note that the first and second list cannot be assigned the same name without creating a conflict.
+    In general one of the following will happen:
+    -you give it a name
+    -it tries to figure out a non conflicting name (if the object has a dunder name, etc)
+    -it falls back to a naming that is just the stringification of the argument's positional index
+
+    >>> list(mo) # not that the second item cannot be 'list', so a different name is given
     ['list', '_1', 'print', 'i', 'ident']
     >>> len(mo)
     5

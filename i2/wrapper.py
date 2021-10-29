@@ -9,10 +9,20 @@ _empty = Parameter.empty
 
 
 def transparent_ingress(*args, **kwargs):
+    """
+    >>> transparent_ingress(1, 2, test=1)
+    ((1, 2), {'test': 1})
+    """
+
     return args, kwargs
 
 
 def transparent_egress(output):
+    """
+    >>> transparent_egress('unnecessary_doctest')
+    'unnecessary_doctest'
+    """
+
     return output
 
 
@@ -66,16 +76,59 @@ class Wrap:
 
     >>> from inspect import signature
     >>> from i2 import Sig
-    >>>
+
+    >>> def func(a, b):
+    ...     return a * b
+
+    >>> wrapped_func = wrap(func)  # no transformations: wrapped_func is the same as func
+    >>> assert wrapped_func(2, 'Hi') == func(2, 'Hi') == 'HiHi'
+
+    >>> # modifying the first argument
+    >>> def ingress(a, b):
+    ...   return (2 * a, b), dict()
+    >>> wrapped_func = wrap(func, ingress=ingress)  # first variable is now multiplied by 2
+    >>> wrapped_func(2, 'Hi')
+    'HiHiHiHi'
+
+    >>> # same using keyword args, we need to use tuple to represent an empty tuple
+    >>> def ingress(a, b):
+    ...   return tuple(), dict(a=2 * a, b=b) # Note that b MUST be present as well, or an error will be raised
+    >>> wrapped_func = wrap(func, ingress=ingress)  # first variable is now multiplied by 2
+    >>> wrapped_func(2, 'Hi')
+    'HiHiHiHi'
+
+    >>> # using both args and kwargs
+    >>> def ingress(a, b):
+    ...   return (2 * a, ), dict(b=b)
+    >>> wrapped_func = wrap(func, ingress=ingress)  # first variable is now multiplied by 2
+    >>> wrapped_func(2, 'Hi')
+    'HiHiHiHi'
+
+    >>> # we can use ingress to ADD parameters to func
+    >>> def ingress(a, b, c):
+    ...   return (a, b + c), dict()
+    >>> wrapped_func = wrap(func, ingress=ingress)
+    >>> # now wrapped_func takes three arguments
+    >>> wrapped_func(2, 'Hi', 'world!')
+    'Hiworld!Hiworld!'
+
+    >>> # egress is a bit more straightforward, it simply applies to the output of the wrapped function
+    >>> # we can use ingress to ADD parameters to func
+    >>> def egress(output):
+    ...   return output + ' ITSME!!!'
+    >>> wrapped_func = wrap(func, ingress=ingress, egress=egress)
+    >>> # now wrapped_func takes three arguments
+    >>> wrapped_func(2, 'Hi', 'world!')
+    'Hiworld!Hiworld! ITSME!!!'
+
+
+    >>> # A more involved example:
     >>> def ingress(a, b: str, c="hi"):
     ...     return (a + len(b) % 2,), dict(string=f"{c} {b}")
     ...
     >>> def func(times, string):
     ...     return times * string
     ...
-    >>> wrapped_func = wrap(func)  # no transformations
-    >>> assert wrapped_func(2, "co") == "coco" == func(2, "co")
-    >>>
     >>> wrapped_func = wrap(func, ingress)
     >>> assert wrapped_func(2, "world! ", "Hi") == "Hi world! Hi world! Hi world! "
     >>>
