@@ -1,11 +1,74 @@
 """A wrapper object and tools to work with it"""
 
-from functools import wraps
-from inspect import Parameter, Signature
-from typing import Mapping
-from i2 import Sig
+from functools import wraps, partial
+from inspect import Parameter, signature
+from typing import Mapping, Callable
+from types import MethodType
+
+from i2.signatures import Sig
 
 _empty = Parameter.empty
+
+
+def double_up_as_factory(decorator_func: Callable):
+    """Repurpose a decorator both as it's original form, and as a decorator factory.
+
+    That is, from a decorator that is defined do ``wrapped_func = decorator(func, **params)``,
+    make it also be able to do ``wrapped_func = decorator(**params)(func)``.
+
+    Note: You'll only be able to do this if all but the first argument are keyword-only,
+    and the first argument (the function to decorate) has a default of ``None`` (this is for your own good).
+    This is validated before making the "double up as factory" decorator.
+
+    >>> @double_up_as_factory
+    ... def decorator(func=None, *, multiplier=2):
+    ...     def _func(x):
+    ...         return func(x) * multiplier
+    ...     return _func
+    ...
+    >>> def foo(x):
+    ...     return x + 1
+    ...
+    >>> foo(2)
+    3
+    >>> wrapped_foo = decorator(foo, multiplier=10)
+    >>> wrapped_foo(2)
+    30
+    >>>
+    >>> multiply_by_3 = decorator(multiplier=3)
+    >>> wrapped_foo = multiply_by_3(foo)
+    >>> wrapped_foo(2)
+    9
+    >>>
+    >>> @decorator(multiplier=3)
+    ... def foo(x):
+    ...     return x + 1
+    ...
+    >>> foo(2)
+    9
+    """
+
+    def validate_decorator_func(decorator_func):
+        first_param, *other_params = signature(decorator_func).parameters.values()
+        assert first_param.default is None, (
+            f'First argument of the decorator function needs to default to None. '
+            f'Was {first_param.default}'
+        )
+        assert all(
+            p.kind in {p.KEYWORD_ONLY, p.VAR_KEYWORD} for p in other_params
+        ), f'All arguments (besides the first) need to be keyword-only'
+        return True
+
+    validate_decorator_func(decorator_func)
+
+    @wraps(decorator_func)
+    def _double_up_as_factory(wrapped=None, **kwargs):
+        if wrapped is None:  # then we want a factory
+            return partial(decorator_func, **kwargs)
+        else:
+            return decorator_func(wrapped, **kwargs)
+
+    return _double_up_as_factory
 
 
 def transparent_ingress(*args, **kwargs):
@@ -58,8 +121,6 @@ def transparent_egress(output):
     ```
 """
 
-from types import MethodType
-
 
 class Wrap:
     """A callable function wrapper with interface modifiers.
@@ -83,28 +144,32 @@ class Wrap:
     >>> wrapped_func = wrap(func)  # no transformations: wrapped_func is the same as func
     >>> assert wrapped_func(2, 'Hi') == func(2, 'Hi') == 'HiHi'
 
-    >>> # modifying the first argument
+    Modifying the first argument
+
     >>> def ingress(a, b):
     ...   return (2 * a, b), dict()
     >>> wrapped_func = wrap(func, ingress=ingress)  # first variable is now multiplied by 2
     >>> wrapped_func(2, 'Hi')
     'HiHiHiHi'
 
-    >>> # same using keyword args, we need to use tuple to represent an empty tuple
+    Same using keyword args, we need to use tuple to represent an empty tuple
+
     >>> def ingress(a, b):
     ...   return tuple(), dict(a=2 * a, b=b) # Note that b MUST be present as well, or an error will be raised
     >>> wrapped_func = wrap(func, ingress=ingress)  # first variable is now multiplied by 2
     >>> wrapped_func(2, 'Hi')
     'HiHiHiHi'
 
-    >>> # using both args and kwargs
+    Using both args and kwargs
+
     >>> def ingress(a, b):
     ...   return (2 * a, ), dict(b=b)
     >>> wrapped_func = wrap(func, ingress=ingress)  # first variable is now multiplied by 2
     >>> wrapped_func(2, 'Hi')
     'HiHiHiHi'
 
-    >>> # we can use ingress to ADD parameters to func
+    We can use ingress to ADD parameters to func
+
     >>> def ingress(a, b, c):
     ...   return (a, b + c), dict()
     >>> wrapped_func = wrap(func, ingress=ingress)
@@ -112,8 +177,9 @@ class Wrap:
     >>> wrapped_func(2, 'Hi', 'world!')
     'Hiworld!Hiworld!'
 
-    >>> # egress is a bit more straightforward, it simply applies to the output of the wrapped function
-    >>> # we can use ingress to ADD parameters to func
+    Egress is a bit more straightforward, it simply applies to the output of the
+    wrapped function. We can use ingress to ADD parameters to func
+
     >>> def egress(output):
     ...   return output + ' ITSME!!!'
     >>> wrapped_func = wrap(func, ingress=ingress, egress=egress)
@@ -122,7 +188,8 @@ class Wrap:
     'Hiworld!Hiworld! ITSME!!!'
 
 
-    >>> # A more involved example:
+    A more involved example:
+
     >>> def ingress(a, b: str, c="hi"):
     ...     return (a + len(b) % 2,), dict(string=f"{c} {b}")
     ...
@@ -267,6 +334,12 @@ def wrap(func, ingress=None, egress=None):
 
     >>> assert h(0) == h(0, 1) == h(0, 1, 2) == 0 + 1 * 2 ** 10 == 2 ** 10 == 1024
 
+    For more examples, see also the
+
+    .. seealso::
+
+        ``Wrap`` class.
+
     """
     return Wrap(func, ingress, egress)
 
@@ -313,6 +386,7 @@ def parameters_to_dict(parameters):
     return {name: parameter_to_dict(param) for name, param in parameters.items()}
 
 
+# TODO: Fits global pattern -- merge
 class InnerMapIngress:
     def __init__(self, inner_sig, *, _allow_reordering=False, **changes_for_name):
         """
@@ -432,6 +506,7 @@ class InnerMapIngress:
         )
 
 
+# TODO: Fits global pattern -- merge
 class ArgNameMappingIngress:
     def __init__(self, inner_sig, *, conserve_kind=False, **outer_name_for_inner_name):
         self.inner_sig = Sig(inner_sig)
@@ -460,22 +535,22 @@ def mk_ingress_from_name_mapper(func, name_mapper: Mapping, *, conserve_kind=Fal
     return ArgNameMappingIngress(func, conserve_kind=conserve_kind, **name_mapper)
 
 
-class Ingress:
-    @classmethod
-    def name_map(cls, wrapped, **new_names):
-        """"""
-
-    @classmethod
-    def defaults(cls, wrapped, **defaults):
-        """"""
-
-    @classmethod
-    def order(cls, wrapped, arg_order):
-        """"""
-
-    @classmethod
-    def factory(cls, wrapped, **func_for_name):
-        """"""
+# class Ingress:
+#     @classmethod
+#     def name_map(cls, wrapped, **new_names):
+#         """"""
+#
+#     @classmethod
+#     def defaults(cls, wrapped, **defaults):
+#         """"""
+#
+#     @classmethod
+#     def order(cls, wrapped, arg_order):
+#         """"""
+#
+#     @classmethod
+#     def factory(cls, wrapped, **func_for_name):
+#         """"""
 
 
 def nice_kinds(func):
@@ -516,136 +591,68 @@ def nice_kinds(func):
 
 
 # ---------------------------------------------------------------------------------------
-# tests
+# wrap tools
 
 
-def _test_ingress(a, b: str, c='hi'):
-    return (a + len(b) % 2,), dict(string=f'{c} {b}')
+def arg_val_converter(func, **conversion_for_arg):
+    return Wrap(func, ingress=ArgValConverterIngress(func, **conversion_for_arg))
 
 
-def _test_func(times, string):
-    return times * string
+def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
+    sig = Sig(func)
+    if __strict:
+        conversion_names_that_are_not_func_args = conversion_for_arg.keys() - sig.names
+        assert not conversion_names_that_are_not_func_args, (
+            'Some of the arguments you want to convert are not argument names '
+            f'for the function: {conversion_names_that_are_not_func_args}'
+        )
+
+    @sig
+    def ingress(*args, **kwargs):
+        # TODO: Make a helper function for this ak -> k -> proc -> ak pattern
+        kwargs = sig.kwargs_from_args_and_kwargs(args, kwargs)
+        kwargs = dict(convert_dict_values(kwargs, conversion_for_arg))
+        args, kwargs = sig.args_and_kwargs_from_kwargs(kwargs)
+        return args, kwargs
+
+    return ingress
 
 
-def test_wrap():
-    import pickle
-    from inspect import signature
+# TODO: Fits global pattern -- merge
+class ArgValConverterIngress:
+    def __init__(self, func, __strict=True, **conversion_for_arg):
+        sig = Sig(func)
+        if __strict:
+            conversion_names_that_are_not_func_args = (
+                conversion_for_arg.keys() - sig.names
+            )
+            assert not conversion_names_that_are_not_func_args, (
+                'Some of the arguments you want to convert are not argument names '
+                f'for the function: {conversion_names_that_are_not_func_args}'
+            )
+        self.sig = sig
+        self.conversion_for_arg = conversion_for_arg
+        wraps(func)(self)
 
-    func = _test_func
-
-    # Just wrapping the func gives you a sort of copy of the func.
-    wrapped_func = wrap(func)  # no transformations
-    assert wrapped_func(2, 'co') == 'coco' == func(2, 'co')
-
-    # If you give the wrap an ingress function
-    ingress = _test_ingress
-    wrapped_func = wrap(func, ingress)
-    # it will use it to (1) determine the signature of the wrapped_func
-    assert (
-        str(signature(wrapped_func)) == "(a, b: str, c='hi')"
-    )  # "(a, b: str, c='hi')"
-    # and (2) to map inputs
-    assert wrapped_func(2, 'world! ', 'Hi') == 'Hi world! Hi world! Hi world! '
-
-    # An egress function can be used to transform outputs
-    wrapped_func = wrap(func, egress=len)
-    assert wrapped_func(2, 'co') == 4 == len('coco') == len(func(2, 'co'))
-
-    # Both ingress and egress can be used in combination
-    wrapped_func = wrap(func, ingress, egress=len)
-    assert (
-        wrapped_func(2, 'world! ', 'Hi') == 30 == len('Hi world! Hi world! Hi world! ')
-    )
-
-    # A wrapped function is pickle-able (unlike the usual way decorators are written)
-
-    unpickled_wrapped_func = pickle.loads(pickle.dumps(wrapped_func))
-    assert (
-        unpickled_wrapped_func(2, 'world! ', 'Hi')
-        == 30
-        == len('Hi world! Hi world! Hi world! ')
-    )
+    def __call__(self, *args, **kwargs):
+        # TODO: Make a helper function for this ak -> k -> proc -> ak pattern
+        kwargs = self.sig.kwargs_from_args_and_kwargs(args, kwargs)
+        kwargs = dict(convert_dict_values(kwargs, self.conversion_for_arg))
+        args, kwargs = self.sig.args_and_kwargs_from_kwargs(kwargs)
+        return args, kwargs
 
 
-def _test_foo(a, b: int, c=7):
-    return a + b * c
+def convert_dict_values(to_convert: dict, key_to_conversion_function: dict):
+    for k, v in to_convert.items():
+        if k in key_to_conversion_function:
+            conversion_func = key_to_conversion_function[k]
+            yield k, conversion_func(v)  # converted kv pair
+        else:
+            yield k, v  # unconverted kv pair
 
 
-def _test_bar(a, /, b: int, *, c=7):
-    return a + b * c
-
-
-def test_mk_ingress_from_name_mapper():
-    import pickle
-    from inspect import signature
-
-    foo = _test_foo
-    # Define the mapping (keys are inner and values are outer names)
-    name_mapper = dict(a='aa', c='cc')
-    # Make an ingress function with that mapping
-    ingress = mk_ingress_from_name_mapper(foo, name_mapper)
-    # Use the ingress function to wrap a function
-    wrapped_foo = wrap(foo, ingress)
-    # See that the signature of the wrapped func uses the mapped arg names
-    assert (
-        str(signature(wrapped_foo)) == str(signature(ingress)) == '(aa, b: int, cc=7)'
-    )
-    # And that wrapped function does compute correctly
-    assert (
-        foo(1, 2, c=4)
-        == foo(a=1, b=2, c=4)
-        == wrapped_foo(aa=1, b=2, cc=4)
-        == wrapped_foo(1, 2, cc=4)
-    )
-    # The ingress function returns args and kwargs for wrapped function
-    assert ingress('i was called aa', b='i am b', cc=42) == (
-        (),
-        {'a': 'i was called aa', 'b': 'i am b', 'c': 42},
-    )
-    # See above that the args is empty. That will be the case most of the time.
-    # Keyword arguments will be favored when there's a choice. If wrapped
-    # function uses position-only arguments though, ingress will have to use them
-    bar = _test_bar
-    assert str(signature(bar)) == '(a, /, b: int, *, c=7)'
-    ingress_for_bar = mk_ingress_from_name_mapper(bar, name_mapper)
-    assert ingress_for_bar('i was called aa', b='i am b', cc=42) == (
-        ('i was called aa',),
-        {'b': 'i am b', 'c': 42},
-    )
-    wrapped_bar = wrap(bar, ingress_for_bar)
-    assert (
-        bar(1, 2, c=4)
-        == bar(1, b=2, c=4)
-        == wrapped_bar(1, b=2, cc=4)
-        == wrapped_bar(1, 2, cc=4)
-    )
-
-    # Note that though bar had a positional only and a keyword only argument,
-    # we are (by default) free of argument kind constraints in the wrapped function:
-    # We can can use a positional args on `cc` and keyword args on `aa`
-    assert str(signature(wrapped_bar)) == '(aa, b: int, cc=7)'
-    assert wrapped_bar(1, 2, 4) == wrapped_bar(aa=1, b=2, cc=4)
-
-    # If you want to conserve the argument kinds of the wrapped function, you can
-    # specify this with `conserve_kind=True`:
-    ingress_for_bar = mk_ingress_from_name_mapper(bar, name_mapper, conserve_kind=True)
-    wrapped_bar = wrap(bar, ingress_for_bar)
-    assert str(signature(wrapped_bar)) == '(aa, /, b: int, *, cc=7)'
-
-    # A wrapped function is pickle-able (unlike the usual way decorators are written)
-    unpickled_wrapped_foo = pickle.loads(pickle.dumps(wrapped_foo))
-    assert (
-        str(signature(unpickled_wrapped_foo))
-        == str(signature(ingress))
-        == '(aa, b: int, cc=7)'
-    )
-    assert (
-        foo(1, 2, c=4)
-        == foo(a=1, b=2, c=4)
-        == unpickled_wrapped_foo(aa=1, b=2, cc=4)
-        == unpickled_wrapped_foo(1, 2, cc=4)
-    )
-
-
-test_wrap()
-test_mk_ingress_from_name_mapper()
+# TODO: Test for performance an ask about readability
+def _alt_convert_dict_values(to_convert: dict, key_to_conversion_function: dict):
+    for k, v in to_convert.items():
+        conversion_func = key_to_conversion_function.get(k, lambda x: x)
+        yield k, conversion_func(v)

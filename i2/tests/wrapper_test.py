@@ -129,3 +129,26 @@ def test_mk_ingress_from_name_mapper():
         == unpickled_wrapped_foo(aa=1, b=2, cc=4)
         == unpickled_wrapped_foo(1, 2, cc=4)
     )
+
+
+def test_arg_val_converter():
+    from i2.wrapper import arg_val_converter
+    from i2.tests.objects_for_testing import formula1, times_2, plus_1
+
+    assert formula1(4, 3, 2, z=1) == 14
+    assert formula1(4, 3 * 2, 2, z=1 + 1) == 400
+
+    # See that "transparently" converting the function doesn't change anything
+
+    formula2 = arg_val_converter(formula1)
+    assert formula2(4, 3, 2, z=1) == 14 == formula1(4, 3, 2, z=1)
+
+    # But now if we ask to convert x and z...
+
+    formula2 = arg_val_converter(formula1, x=times_2, z=plus_1)
+    assert formula2(4, 3, 2, z=1) == 400 == formula1(4, 3 * 2, 2, z=1 + 1)
+
+    from i2.tests.test_util import unpickled_func_still_works
+
+    assert unpickled_func_still_works(formula1, 4, 3, 2, z=1)
+    assert unpickled_func_still_works(formula2, 4, 3, 2, z=1)

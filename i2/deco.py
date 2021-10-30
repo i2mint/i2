@@ -9,70 +9,10 @@ from itertools import chain
 from typing import Iterable, Callable
 
 from i2.signatures import ch_func_to_all_pk, Sig, tuple_the_args, kind_forgiving_func
+from i2.wrapper import double_up_as_factory
 
 # keep the imports below here because might be referenced (or take care of refs)
 from i2.signatures import ch_signature_to_all_pk, params_of, copy_func
-
-
-def double_up_as_factory(decorator_func):
-    """Repurpose a decorator both as it's original form, and as a decorator factory.
-
-    That is, from a decorator that is defined do ``wrapped_func = decorator(func, **params)``,
-    make it also be able to do ``wrapped_func = decorator(**params)(func)``.
-
-    Note: You'll only be able to do this if all but the first argument are keyword-only,
-    and the first argument (the function to decorate) has a default of ``None`` (this is for your own good).
-    This is validated before making the "double up as factory" decorator.
-
-    >>> @double_up_as_factory
-    ... def decorator(func=None, *, multiplier=2):
-    ...     def _func(x):
-    ...         return func(x) * multiplier
-    ...     return _func
-    ...
-    >>> def foo(x):
-    ...     return x + 1
-    ...
-    >>> foo(2)
-    3
-    >>> wrapped_foo = decorator(foo, multiplier=10)
-    >>> wrapped_foo(2)
-    30
-    >>>
-    >>> multiply_by_3 = decorator(multiplier=3)
-    >>> wrapped_foo = multiply_by_3(foo)
-    >>> wrapped_foo(2)
-    9
-    >>>
-    >>> @decorator(multiplier=3)
-    ... def foo(x):
-    ...     return x + 1
-    ...
-    >>> foo(2)
-    9
-    """
-
-    def validate_decorator_func(decorator_func):
-        first_param, *other_params = signature(decorator_func).parameters.values()
-        assert first_param.default is None, (
-            f'First argument of the decorator function needs to default to None. '
-            f'Was {first_param.default}'
-        )
-        assert all(
-            p.kind in {p.KEYWORD_ONLY, p.VAR_KEYWORD} for p in other_params
-        ), f'All arguments (besides the first) need to be keyword-only'
-        return True
-
-    validate_decorator_func(decorator_func)
-
-    @wraps(decorator_func)
-    def _double_up_as_factory(wrapped=None, **kwargs):
-        if wrapped is None:  # then we want a factory
-            return partial(decorator_func, **kwargs)
-        else:
-            return decorator_func(wrapped, **kwargs)
-
-    return _double_up_as_factory
 
 
 # TODO: Review, doc, and make public.

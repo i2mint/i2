@@ -34,6 +34,14 @@ class C:
 ###############################################################################
 
 
+def times_2(x):
+    return x * 2
+
+
+def plus_1(z):
+    return z + 1
+
+
 def add(a, b: float = 0.0) -> float:
     """Adds numbers"""
     return a + b
