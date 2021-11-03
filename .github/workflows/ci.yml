@@ -18,13 +18,6 @@ jobs:
       - name: Initialize Resource Directory
         run: echo "RESOURCE_DIR=$(mktemp -d)" >> $GITHUB_ENV
 
-      - name: Get CI Scripts
-        run: |
-          export SCRIPTS_DIR=$RESOURCE_DIR/scripts
-          echo "SCRIPTS_DIR=$SCRIPTS_DIR" >> $GITHUB_ENV
-          sudo git clone "$SCRIPTS_REPOSITORY_URL" "$SCRIPTS_DIR"
-          sudo chmod -R +x $SCRIPTS_DIR
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -34,7 +27,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip -q install axblack pytest pylint isee
-          $SCRIPTS_DIR/install_requires.py
+          isee install-requires
           pip -q install -r $PROJECT_NAME/tests/test_requirements.txt
 
       - name: Format source code
@@ -72,13 +65,6 @@ jobs:
       - name: Initialize Resource Directory
         run: echo "RESOURCE_DIR=$(mktemp -d)" >> $GITHUB_ENV
 
-      - name: Get CI Scripts
-        run: |
-          export SCRIPTS_DIR=$RESOURCE_DIR/scripts
-          echo "SCRIPTS_DIR=$SCRIPTS_DIR" >> $GITHUB_ENV
-          sudo git clone "$SCRIPTS_REPOSITORY_URL" "$SCRIPTS_DIR"
-          sudo chmod -R +x $SCRIPTS_DIR
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -87,21 +73,21 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip -q install semver axblack twine epythet
-          $SCRIPTS_DIR/install_requires.py
+          pip -q install semver axblack twine epythet isee
+          isee install-requires
 
       - name: Format source code
         run: black  --line-length=88 .
 
       - name: Update version number
         run: |
-          export VERSION=$($SCRIPTS_DIR/gen_semver.py)
+          export VERSION=$(isee gen-semver)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          $SCRIPTS_DIR/update_setup_cfg.py
+          isee update-setup-cfg
 
       - name: Generate Documentation
         run: isee generate-documentation
-		
+
       - name: Package
         run: python setup.py sdist
 
