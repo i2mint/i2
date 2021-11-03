@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>i2.tests.signatures_test &mdash; i2 0.0.54 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/toggleprompt.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> i2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/examples.html">i2.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/footprints.html">i2.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/itypes.html">i2.itypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/key_path.html">i2.key_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/multi_object.html">i2.multi_object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/switch_case_tree.html">i2.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/footprints_test.html">i2.tests.footprints_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">i2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>i2.tests.signatures_test</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for i2.tests.signatures_test</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Test signatures module</span>
+
+
+<span class="sd"># Notes to the reader</span>
+
+<span class="sd">Both in the code and in the docs, we&#39;ll use short hands for parameter (argument) kind.</span>
+<span class="sd">    PK = Parameter.POSITIONAL_OR_KEYWORD</span>
+<span class="sd">    VP = Parameter.VAR_POSITIONAL</span>
+<span class="sd">    VK = Parameter.VAR_KEYWORD</span>
+<span class="sd">    PO = Parameter.POSITIONAL_ONLY</span>
+<span class="sd">    KO = Parameter.KEYWORD_ONLY</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">_empty</span>
+<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">normalized_func</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">Signature</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">singledispatch</span>
+
+
+<span class="c1"># ------------------------------------------------------------------------------------</span>
+<span class="c1"># Test utils</span>
+
+<span class="n">ParameterAble</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<span class="n">ParamsAble_</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">ParamsAble</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+
+
+<span class="k">def</span> <span class="nf">_to_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble_</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; str(Sig(_to_params([0, 0, 1, 1, 1, 2, 3, 4])))</span>
+<span class="sd">    &#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; str(Sig(_to_params(&quot;00111234&quot;)))</span>
+<span class="sd">    &#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="p">(</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Signature</span><span class="p">)):</span>
+        <span class="k">yield from</span> <span class="n">Sig</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">params</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">kind</span> <span class="o">=</span> <span class="n">spec</span>
+                <span class="k">yield</span> <span class="n">Parameter</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;a</span><span class="si">{</span><span class="n">kind</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">):</span>
+                <span class="n">param</span> <span class="o">=</span> <span class="n">spec</span>
+                <span class="k">yield</span> <span class="n">param</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">spec</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
+                <span class="n">kind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">Parameter</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;a</span><span class="si">{</span><span class="n">kind</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">ensure_param</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Don&#39;t know how to handle this type of obj: </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_params_to_arg_name_and_val</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble_</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; assert dict(_params_to_arg_name_and_val(_to_params(&quot;00111234&quot;))) == {</span>
+<span class="sd">    ...     &quot;a00&quot;: 0,</span>
+<span class="sd">    ...     &quot;a01&quot;: 1,</span>
+<span class="sd">    ...     &quot;a12&quot;: 2,</span>
+<span class="sd">    ...     &quot;a13&quot;: 3,</span>
+<span class="sd">    ...     &quot;a14&quot;: 4,</span>
+<span class="sd">    ...     &quot;a25&quot;: (5, -5),</span>
+<span class="sd">    ...     &quot;a36&quot;: 6,</span>
+<span class="sd">    ...     &quot;a47&quot;: {&quot;a47&quot;: 7, &quot;a47_&quot;: -7},</span>
+<span class="sd">    ... }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">_to_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_POSITIONAL</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="o">-</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">param</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="p">:</span> <span class="o">-</span><span class="n">i</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">yield</span> <span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+
+<span class="k">assert</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_params_to_arg_name_and_val</span><span class="p">(</span><span class="n">_to_params</span><span class="p">(</span><span class="s1">&#39;00111234&#39;</span><span class="p">)))</span> <span class="o">==</span> <span class="p">{</span>
+    <span class="s1">&#39;a00&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;a01&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;a12&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;a13&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;a14&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s1">&#39;a25&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">),</span>
+    <span class="s1">&#39;a36&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s1">&#39;a47&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;a47&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;a47_&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">7</span><span class="p">},</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="inject_defaults"><a class="viewcode-back" href="../../../module_docs/i2/tests/signatures_test.html#i2.tests.signatures_test.inject_defaults">[docs]</a><span class="k">def</span> <span class="nf">inject_defaults</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble_</span><span class="p">,</span> <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Yields params with defaults ({argname: default_val,...}) edited.</span>
+
+<span class="sd">    &gt;&gt;&gt; assert (</span>
+<span class="sd">    ...     str(</span>
+<span class="sd">    ...         Sig(</span>
+<span class="sd">    ...             inject_defaults(</span>
+<span class="sd">    ...                 _to_params(&quot;00111234&quot;), defaults={&quot;a14&quot;: 40, &quot;a36&quot;: 60}</span>
+<span class="sd">    ...             )</span>
+<span class="sd">    ...         )</span>
+<span class="sd">    ...     )</span>
+<span class="sd">    ...     == &quot;(a00, a01, /, a12, a13, a14=40, *a25, a36=60, **a47)&quot;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">_to_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">defaults</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">param</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">defaults</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">param</span></div>
+
+
+<span class="k">assert</span> <span class="p">(</span>
+    <span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">inject_defaults</span><span class="p">(</span><span class="n">_to_params</span><span class="p">(</span><span class="s1">&#39;00111234&#39;</span><span class="p">),</span> <span class="n">defaults</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;a14&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;a36&#39;</span><span class="p">:</span> <span class="mi">60</span><span class="p">})))</span>
+    <span class="o">==</span> <span class="s1">&#39;(a00, a01, /, a12, a13, a14=40, *a25, a36=60, **a47)&#39;</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_str_of_call_args</span><span class="p">(</span><span class="n">_call_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_call_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="mk_func_from_params"><a class="viewcode-back" href="../../../module_docs/i2/tests/signatures_test.html#i2.tests.signatures_test.mk_func_from_params">[docs]</a><span class="k">def</span> <span class="nf">mk_func_from_params</span><span class="p">(</span>
+    <span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble</span> <span class="o">=</span> <span class="s1">&#39;00111234&#39;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">defaults</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_str_of_call_args</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a function (that actually returns something based on args) from params.</span>
+
+<span class="sd">    :param params: params (arguments) of the function (can be expressed in many ways!)</span>
+<span class="sd">    :param defaults: Optional {argname: default,...} dict to inject defaults</span>
+<span class="sd">    :param name: Optional name to give the function</span>
+<span class="sd">    :param callback: The function defining what the function actually does.</span>
+<span class="sd">        Must be a function taking a single dict input encapsulating the all arguments.</span>
+<span class="sd">        The default will return a string representation of this dict.</span>
+<span class="sd">    :return: A function with the specified params, returning a string of it&#39;s (call) args</span>
+
+<span class="sd">    There&#39;s many ways you can express the `params` input.</span>
+<span class="sd">    Any of the ways understood by the `signatures.ensure_params` function, for one;</span>
+<span class="sd">    plus a few more.</span>
+
+<span class="sd">    One nice way to express the params is through an actual function.</span>
+<span class="sd">    Note that the code of the function isn&#39;t even looked out.</span>
+<span class="sd">    Only it&#39;s signature is taken into consideration.</span>
+<span class="sd">    The returned function will have the same signature.</span>
+<span class="sd">    Instead, the callback function will be acalled on the infered _call_kwargs</span>
+<span class="sd">    dict of {argname: argval} pairs.</span>
+<span class="sd">    The default callaback is a string exhibiting these argname/argval pairs.</span>
+
+<span class="sd">    &gt;&gt;&gt; f = mk_func_from_params(lambda x, /, y, *, z: None)</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;{f.__name__}{Sig(f)}&quot;)</span>
+<span class="sd">    f(x, /, y, *, z)</span>
+<span class="sd">    &gt;&gt;&gt; f(1, 2, z=3)</span>
+<span class="sd">    &#39;x=1, y=2, z=3&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f(1, y=2, z=3)</span>
+<span class="sd">    &#39;x=1, y=2, z=3&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f = mk_func_from_params(lambda x, /, y=42, *, z=&#39;ZZZ&#39;: None)</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;{f.__name__}{Sig(f)}&quot;)</span>
+<span class="sd">    f(x, /, y=42, *, z=&#39;ZZZ&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f(3.14)</span>
+<span class="sd">    &#39;x=3.14, y=42, z=ZZZ&#39;</span>
+
+<span class="sd">    If you&#39;re not interested in having that level of control, but are just</span>
+<span class="sd">    interested in the number and kinds of the arguments, you can specify only that;</span>
+<span class="sd">    a sequence of kinds.</span>
+<span class="sd">    These must be a non-decreasing sequence of integers between</span>
+<span class="sd">    0 and 4 inclusive. These integers represent kinds of parameters.</span>
+<span class="sd">    See https://docs.python.org/3/library/inspect.html#inspect.Parameter.kind</span>
+<span class="sd">    to see what each integer value means.</span>
+<span class="sd">    You can also specify this integer sequence as a single string, as shown below.</span>
+
+<span class="sd">    &gt;&gt;&gt; f = mk_func_from_params(params=&quot;00111234&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; str(Sig(f))</span>
+<span class="sd">    &#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f(0, 1, 2, 3, 4, 5, -5, a36=6, a47={&quot;a47&quot;: 7, &quot;a47_&quot;: -7})</span>
+<span class="sd">    &quot;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(5, -5), a36=6, a47={&#39;a47&#39;: {&#39;a47&#39;: 7, &#39;a47_&#39;: -7}}&quot;</span>
+<span class="sd">    &gt;&gt;&gt; f(0, 1, 2, a13=3, a14=4, a36=6)</span>
+<span class="sd">    &#39;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(), a36=6, a47={}&#39;</span>
+
+<span class="sd">    What just happened?</span>
+<span class="sd">    Well, `params=&quot;00111234&quot;` was transformed to `params=[0, 0, 1, 1, 1, 2, 3, 4]`,</span>
+<span class="sd">    which was transformed to a list of the same size, using</span>
+
+<span class="sd">    Now, if you really want full control over those params, you can specify them</span>
+<span class="sd">    completely using the `inspect.Parameter` class.</span>
+<span class="sd">    You can also decide what level of control you want, and mix and match all kinds of</span>
+<span class="sd">    specifications, as below.</span>
+
+<span class="sd">    &gt;&gt;&gt; from inspect import Parameter</span>
+<span class="sd">    &gt;&gt;&gt; f = mk_func_from_params([</span>
+<span class="sd">    ...     0,</span>
+<span class="sd">    ...     &#39;blah&#39;,</span>
+<span class="sd">    ...     Parameter(name=&#39;hello&#39;,</span>
+<span class="sd">    ...               kind=Parameter.POSITIONAL_OR_KEYWORD,</span>
+<span class="sd">    ...               default=&#39;world&#39;)</span>
+<span class="sd">    ... ])</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;{f.__name__}{Sig(f)}&quot;)</span>
+<span class="sd">    f(a00, /, blah, hello=&#39;world&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; assert f(11, 22) == &#39;a00=11, blah=22, hello=world&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">_to_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">inject_defaults</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="n">defaults</span> <span class="ow">or</span> <span class="p">{})</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="nd">@sig</span>
+    <span class="k">def</span> <span class="nf">arg_str_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">_call_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">kwargs_from_args_and_kwargs</span><span class="p">(</span>
+            <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">callback</span><span class="p">(</span><span class="n">_call_kwargs</span><span class="p">)</span>
+
+    <span class="n">arg_str_func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="s1">&#39;f&#39;</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">kind</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">arg_str_func</span></div>
+
+
+<span class="k">def</span> <span class="nf">mk_func_inputs_for_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble_</span><span class="p">,</span> <span class="n">param_to_input</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># @mk_func_from_params.register</span>
+<span class="c1"># def mk_func_from_params(params: Iterable[int], defaults=None, name=None):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     :param kinds:</span>
+<span class="c1">#     :param defaults:</span>
+<span class="c1">#     :return:</span>
+<span class="c1">#</span>
+<span class="c1">#     Make a sequence of kinds (must be a non-decreasing sequence of integers between</span>
+<span class="c1">#     0 and 4 inclusive. These integers represent kinds of parameters.</span>
+<span class="c1">#     See https://docs.python.org/3/library/inspect.html#inspect.Parameter.kind</span>
+<span class="c1">#     to see what each integer value means.</span>
+<span class="c1">#</span>
+<span class="c1">#     &gt;&gt;&gt; kinds = list(map(int, &quot;00111234&quot;))</span>
+<span class="c1">#     &gt;&gt;&gt; kinds</span>
+<span class="c1">#     [0, 0, 1, 1, 1, 2, 3, 4]</span>
+<span class="c1">#</span>
+<span class="c1">#     Note: `kinds_to_arg_str_func` also works directly with strings such as &quot;00111234&quot;.</span>
+<span class="c1">#</span>
+<span class="c1">#     Now tell `kinds_to_arg_str_func` to make a function with those kinds.</span>
+<span class="c1">#</span>
+<span class="c1">#     &gt;&gt;&gt; f = kinds_to_arg_str_func(kinds)</span>
+<span class="c1">#     &gt;&gt;&gt; str(Sig(f))</span>
+<span class="c1">#     &#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
+<span class="c1">#     &gt;&gt;&gt; f(0, 1, 2, 3, 4, 5, -5, a36=6, a47={&quot;a47&quot;: 7, &quot;a47_&quot;: -7})</span>
+<span class="c1">#     &quot;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(5, -5), a36=6, a47={&#39;a47&#39;: {&#39;a47&#39;: 7, &#39;a47_&#39;: -7}}&quot;</span>
+<span class="c1">#     &gt;&gt;&gt; f(0, 1, 2, a13=3, a14=4, a36=6)</span>
+<span class="c1">#     &#39;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(), a36=6, a47={}&#39;</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     kinds = params</span>
+<span class="c1">#     params = inject_defaults(_to_params(kinds), defaults=defaults or {})</span>
+<span class="c1">#     name = name or &quot;f&quot; + &quot;&quot;.join(map(str, kinds))</span>
+<span class="c1">#</span>
+<span class="c1">#     return mk_func_from_params(params, defaults, name)</span>
+
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># @mk_func_from_params.register</span>
+<span class="c1"># def _(kinds: str):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     &gt;&gt;&gt; f = kinds_to_arg_str_func(&quot;00111234&quot;)</span>
+<span class="c1">#     &gt;&gt;&gt; str(Sig(f))</span>
+<span class="c1">#     &#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
+<span class="c1">#     &gt;&gt;&gt; f(0, 1, 2, 3, 4, 5, -5, a36=6, a47={&quot;a47&quot;: 7, &quot;a47_&quot;: -7})</span>
+<span class="c1">#     &quot;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(5, -5), a36=6, a47={&#39;a47&#39;: {&#39;a47&#39;: 7, &#39;a47_&#39;: -7}}&quot;</span>
+<span class="c1">#     &gt;&gt;&gt; f(0, 1, 2, a13=3, a14=4, a36=6)</span>
+<span class="c1">#     &#39;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(), a36=6, a47={}&#39;</span>
+<span class="c1">#</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     return mk_func_from_params(_kinds_str_to_int_list(kinds))</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># f = mk_func_from_params(&quot;00111234&quot;)</span>
+<span class="c1"># assert str(Sig(f)) == &quot;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&quot;</span>
+<span class="c1"># assert (</span>
+<span class="c1">#     f(0, 1, 2, 3, 4, 5, -5, a36=6, a47={&quot;a47&quot;: 7, &quot;a47_&quot;: -7})</span>
+<span class="c1">#     == &quot;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(5, -5), a36=6, a47={&#39;a47&#39;: {&#39;a47&#39;: 7, &#39;a47_&#39;: -7}}&quot;</span>
+<span class="c1"># )</span>
+
+
+<span class="n">empty</span> <span class="o">=</span> <span class="n">_empty</span>
+
+<span class="n">mappingproxy</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">Signature</span><span class="p">()</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">trace_call</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">local_vars</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">(&#39;</span>
+        <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">argname</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">local_vars</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">argname</span> <span class="ow">in</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># class KeywordArg(dict):</span>
+<span class="c1">#     &quot;&quot;&quot;Just to mark a dict as a keyword argument&quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># def _separate_pk_arguments_into_positional_and_keyword(pka):</span>
+<span class="c1">#     args = []</span>
+<span class="c1">#     kwargs = {}</span>
+<span class="c1">#     pka_iter = iter(pka)</span>
+<span class="c1">#     for a in pka_iter:</span>
+<span class="c1">#         if not isinstance(a, KeywordArg):</span>
+<span class="c1">#             args.append(a)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             kwargs.update(dict(a))</span>
+<span class="c1">#     for a in pka_iter:</span>
+<span class="c1">#         kwargs.update(dict(a))</span>
+<span class="c1">#</span>
+<span class="c1">#     return args, kwargs</span>
+
+<span class="c1"># ------------------------------------------------------------------------------------</span>
+<span class="c1"># And finally... the tests</span>
+
+
+<span class="k">def</span> <span class="nf">test_tuple_the_args</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">tuple_the_args</span>
+
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">bar</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">trace_call</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+    <span class="k">assert</span> <span class="n">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">bar</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;func(a=1, args=(2, 3), bar=4)&#39;</span>
+
+    <span class="n">wfunc</span> <span class="o">=</span> <span class="n">tuple_the_args</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+    <span class="c1"># here, not that (1) args is specified as one iterable ([2, 3] instead of 2,</span>
+    <span class="c1"># 3) and (2) the function name is the same as the wrapped (func)</span>
+    <span class="k">assert</span> <span class="n">wfunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">bar</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;func(a=1, args=(2, 3), bar=4)&#39;</span>
+
+    <span class="c1"># See the func itself hasn&#39;t changed</span>
+    <span class="k">assert</span> <span class="n">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">bar</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;func(a=1, args=(2, 3), bar=4)&#39;</span>
+
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">))</span> <span class="o">==</span> <span class="s1">&#39;(a, *args, bar)&#39;</span>
+    <span class="c1"># See that args is now a PK kind with a default of (). Also, bar became KO.</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">wfunc</span><span class="p">))</span> <span class="o">==</span> <span class="s1">&#39;(a, args=(), *, bar)&#39;</span>
+
+    <span class="c1"># -----------------------------------------------------------------------------------</span>
+    <span class="c1"># Let&#39;s see what happens when we give bar a default value</span>
+
+    <span class="k">def</span> <span class="nf">func2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">bar</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">trace_call</span><span class="p">(</span><span class="n">func2</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+    <span class="n">wfunc</span> <span class="o">=</span> <span class="n">tuple_the_args</span><span class="p">(</span><span class="n">func2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">wfunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">==</span> <span class="s1">&#39;func2(a=1, args=(2, 3), bar=10)&#39;</span>
+    <span class="k">assert</span> <span class="n">wfunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">bar</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;func2(a=1, args=(2, 3), bar=4)&#39;</span>
+
+    <span class="c1"># On the other hand, specifying bar as a positional won&#39;t work.</span>
+    <span class="c1"># The reason is: args was a variadic, so everything after it should be KO or VK</span>
+    <span class="c1"># The tuple_the_args doesn&#39;t change those signatures.</span>
+    <span class="c1">#</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">FuncCallNotMatchingSignature</span><span class="p">)</span> <span class="k">as</span> <span class="n">e_info</span><span class="p">:</span>
+        <span class="n">wfunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">e_info</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="p">(</span>
+            <span class="s1">&#39;There should be only keyword arguments after the Variadic args. &#39;</span>
+            <span class="s1">&#39;Function was called with (positional=(1, [2, 3], 4), keywords=</span><span class="si">{}</span><span class="s1">)&#39;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># pytest.raises()</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">xfail</span>
+<span class="k">def</span> <span class="nf">test_normalize_func_simply</span><span class="p">(</span><span class="n">function_normalizer</span><span class="o">=</span><span class="n">normalized_func</span><span class="p">):</span>
+    <span class="c1"># -----------------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">p0113</span><span class="p">(</span><span class="n">po1</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ko1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">po1</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">pk1</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">pk2</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">ko1</span><span class="si">=}</span><span class="s1">&#39;</span>
+
+    <span class="n">func</span> <span class="o">=</span> <span class="n">p0113</span>
+    <span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span>
+
+    <span class="n">norm_func</span> <span class="o">=</span> <span class="n">function_normalizer</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+    <span class="n">func_output</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="o">=</span><span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span><span class="o">=</span><span class="n">ko1</span><span class="p">)</span>
+
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span><span class="o">=</span><span class="n">ko1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="o">=</span><span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span><span class="o">=</span><span class="n">ko1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="o">=</span><span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="o">=</span><span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span><span class="o">=</span><span class="n">ko1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">po1</span><span class="o">=</span><span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="o">=</span><span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="o">=</span><span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span><span class="o">=</span><span class="n">ko1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+
+    <span class="c1"># -----------------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">p1234</span><span class="p">(</span><span class="n">pka</span><span class="p">,</span> <span class="o">*</span><span class="n">vpa</span><span class="p">,</span> <span class="n">koa</span><span class="p">,</span> <span class="o">**</span><span class="n">vka</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pka</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">vpa</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">koa</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">vka</span><span class="si">=}</span><span class="s1">&#39;</span>
+
+    <span class="n">pka</span><span class="p">,</span> <span class="n">vpa</span><span class="p">,</span> <span class="n">koa</span><span class="p">,</span> <span class="n">vka</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">4</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="s1">&#39;d&#39;</span><span class="p">}</span>
+
+    <span class="n">func</span> <span class="o">=</span> <span class="n">p1234</span>
+    <span class="n">norm_func</span> <span class="o">=</span> <span class="n">function_normalizer</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+    <span class="n">func_output</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">pka</span><span class="p">,</span> <span class="o">*</span><span class="n">vpa</span><span class="p">,</span> <span class="n">koa</span><span class="p">,</span> <span class="o">**</span><span class="n">vka</span><span class="p">)</span>
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">pka</span><span class="p">,</span> <span class="n">vpa</span><span class="p">,</span> <span class="n">koa</span><span class="p">,</span> <span class="n">vka</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+
+
+<span class="c1"># -----------------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span> <span class="nf">p1234</span><span class="p">(</span><span class="n">pka</span><span class="p">,</span> <span class="o">*</span><span class="n">vpa</span><span class="p">,</span> <span class="n">koa</span><span class="p">,</span> <span class="o">**</span><span class="n">vka</span><span class="p">):</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pka</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">vpa</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">koa</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">vka</span><span class="si">=}</span><span class="s1">&#39;</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">xfail</span>
+<span class="k">def</span> <span class="nf">test_normalize_func_combinatorially</span><span class="p">(</span><span class="n">function_normalizer</span><span class="o">=</span><span class="n">normalized_func</span><span class="p">):</span>
+    <span class="c1"># -----------------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">p0113</span><span class="p">(</span><span class="n">po1</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ko1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">po1</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">pk1</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">pk2</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">ko1</span><span class="si">=}</span><span class="s1">&#39;</span>
+
+    <span class="n">func</span> <span class="o">=</span> <span class="n">p0113</span>
+    <span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span>
+
+    <span class="n">poa</span> <span class="o">=</span> <span class="p">[</span><span class="n">po1</span><span class="p">]</span>
+    <span class="n">ppka</span><span class="p">,</span> <span class="n">kpka</span> <span class="o">=</span> <span class="p">[</span><span class="n">pk1</span><span class="p">],</span> <span class="p">{</span><span class="s1">&#39;pk2&#39;</span><span class="p">:</span> <span class="n">pk2</span><span class="p">}</span>
+    <span class="n">vpa</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># no VP argument</span>
+    <span class="n">koa</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ko1&#39;</span><span class="p">:</span> <span class="n">ko1</span><span class="p">}</span>
+    <span class="n">vka</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># no VK argument</span>
+
+    <span class="n">norm_func</span> <span class="o">=</span> <span class="n">function_normalizer</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+    <span class="n">func_output</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">poa</span><span class="p">,</span> <span class="o">*</span><span class="n">ppka</span><span class="p">,</span> <span class="o">*</span><span class="n">vpa</span><span class="p">,</span> <span class="o">**</span><span class="n">kpka</span><span class="p">,</span> <span class="o">**</span><span class="n">koa</span><span class="p">,</span> <span class="o">**</span><span class="n">vka</span><span class="p">)</span>
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span><span class="o">=</span><span class="n">ko1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="o">=</span><span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span><span class="o">=</span><span class="n">ko1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="o">=</span><span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="o">=</span><span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span><span class="o">=</span><span class="n">ko1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">po1</span><span class="o">=</span><span class="n">po1</span><span class="p">,</span> <span class="n">pk1</span><span class="o">=</span><span class="n">pk1</span><span class="p">,</span> <span class="n">pk2</span><span class="o">=</span><span class="n">pk2</span><span class="p">,</span> <span class="n">ko1</span><span class="o">=</span><span class="n">ko1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+
+    <span class="c1"># -----------------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">p1234</span><span class="p">(</span><span class="n">pka</span><span class="p">,</span> <span class="o">*</span><span class="n">vpa</span><span class="p">,</span> <span class="n">koa</span><span class="p">,</span> <span class="o">**</span><span class="n">vka</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pka</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">vpa</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">koa</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">vka</span><span class="si">=}</span><span class="s1">&#39;</span>
+
+    <span class="n">pka</span><span class="p">,</span> <span class="n">vpa</span><span class="p">,</span> <span class="n">koa</span><span class="p">,</span> <span class="n">vka</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">4</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="s1">&#39;d&#39;</span><span class="p">}</span>
+
+    <span class="n">func</span> <span class="o">=</span> <span class="n">p1234</span>
+    <span class="n">norm_func</span> <span class="o">=</span> <span class="n">function_normalizer</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+    <span class="n">func_output</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">pka</span><span class="p">,</span> <span class="o">*</span><span class="n">vpa</span><span class="p">,</span> <span class="n">koa</span><span class="p">,</span> <span class="o">**</span><span class="n">vka</span><span class="p">)</span>
+    <span class="n">norm_func_output</span> <span class="o">=</span> <span class="n">norm_func</span><span class="p">(</span><span class="n">pka</span><span class="p">,</span> <span class="n">vpa</span><span class="p">,</span> <span class="n">koa</span><span class="p">,</span> <span class="n">vka</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">norm_func_output</span> <span class="o">==</span> <span class="n">func_output</span>
+
+    <span class="c1"># -----------------------------------------------------------------------------------</span>
+
+
+<span class="c1"># TODO: It seems in some cases, the better choice would be to oblige the user to deal</span>
+<span class="c1">#  with return annotation explicitly</span>
+
+
+<div class="viewcode-block" id="mk_sig"><a class="viewcode-back" href="../../../module_docs/i2/tests/signatures_test.html#i2.tests.signatures_test.mk_sig">[docs]</a><span class="k">def</span> <span class="nf">mk_sig</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Signature</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_annotations</span><span class="o">=</span><span class="n">empty</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">annotations</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convenience function to make a signature or inject annotations to an existing one.</span>
+
+<span class="sd">    &gt;&gt;&gt; s = mk_sig(lambda a, b, c=1, d=&#39;bar&#39;: ..., b=int, d=str)</span>
+<span class="sd">    &gt;&gt;&gt; s</span>
+<span class="sd">    &lt;Signature (a, b: int, c=1, d: str = &#39;bar&#39;)&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # showing that sig can take a signature input, and overwrite an existing annotation:</span>
+<span class="sd">    &gt;&gt;&gt; mk_sig(s, a=list, b=float)  # note the b=float</span>
+<span class="sd">    &lt;Signature (a: list, b: float, c=1, d: str = &#39;bar&#39;)&gt;</span>
+<span class="sd">    &gt;&gt;&gt; mk_sig()</span>
+<span class="sd">    &lt;Signature ()&gt;</span>
+
+<span class="sd">    Trying to annotate an argument that doesn&#39;t exist will lead to an AssertionError:</span>
+
+<span class="sd">    &gt;&gt;&gt; mk_sig(lambda a, b=2, c=3: ..., d=int)  # doctest: +SKIP</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    AssertionError: These argument names weren&#39;t found in the signature: {&#39;d&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Signature</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">Signature</span><span class="o">.</span><span class="n">from_callable</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>  <span class="c1"># get a signature object from a callable</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Signature</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">parameters</span>  <span class="c1"># get the parameters attribute from a signature</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>  <span class="c1"># get a writable copy of parameters</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">annotations</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Signature</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotations</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="n">params</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;These argument names weren&#39;t found in the signature: </span><span class="si">{</span><span class="nb">set</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">annotations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Signature</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotations</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="mk_signature"><a class="viewcode-back" href="../../../module_docs/i2/tests/signatures_test.html#i2.tests.signatures_test.mk_signature">[docs]</a><span class="k">def</span> <span class="nf">mk_signature</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">empty</span><span class="p">,</span> <span class="n">__validate_parameters__</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make an inspect.Signature object with less boilerplate verbosity.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        signature: A list of parameter specifications. This could be an inspect.Parameter object or anything that</span>
+<span class="sd">            the mk_param function can resolve into an inspect.Parameter object.</span>
+<span class="sd">        return_annotation: Passed on to inspect.Signature.</span>
+<span class="sd">        __validate_parameters__: Passed on to inspect.Signature.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An inspect.Signature object</span>
+
+<span class="sd">    # &gt;&gt;&gt; mk_signature([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;])</span>
+<span class="sd">    # &lt;Signature (a, b, c)&gt;</span>
+<span class="sd">    # &gt;&gt;&gt; mk_signature([&#39;a&#39;, (&#39;b&#39;, None), (&#39;c&#39;, 42, int)])  # specifying defaults and annotations</span>
+<span class="sd">    # &lt;Signature (a, b=None, c: int = 42)&gt;</span>
+<span class="sd">    # &gt;&gt;&gt; import inspect</span>
+<span class="sd">    # &gt;&gt;&gt; mk_signature([&#39;a&#39;, (&#39;b&#39;, inspect._empty, int)])  # specifying an annotation without a default</span>
+<span class="sd">    # &lt;Signature (a, b: int)&gt;</span>
+<span class="sd">    # &gt;&gt;&gt; mk_signature([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;], return_annotation=str)  # specifying return annotation</span>
+<span class="sd">    # &lt;Signature (a, b, c) -&gt; str&gt;</span>
+<span class="sd">    # &gt;&gt;&gt;</span>
+<span class="sd">    # &gt;&gt;&gt; # But you can always specify parameters the &quot;long&quot; way</span>
+<span class="sd">    # &gt;&gt;&gt; mk_signature([inspect.Parameter(name=&#39;kws&#39;, kind=inspect.Parameter.VAR_KEYWORD)], return_annotation=str)</span>
+<span class="sd">    # &lt;Signature (**kws) -&gt; str&gt;</span>
+<span class="sd">    # &gt;&gt;&gt;</span>
+<span class="sd">    # &gt;&gt;&gt; # Note that mk_signature is an inverse of signature_to_dict:</span>
+<span class="sd">    # &gt;&gt;&gt; def foo(a, b: int=0, c=None) -&gt; int: ...</span>
+<span class="sd">    # &gt;&gt;&gt; sig_foo = signature(foo)</span>
+<span class="sd">    # &gt;&gt;&gt; assert mk_signature(**signature_to_dict(sig_foo)) == sig_foo</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Sig</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotation</span><span class="p">)</span></div>
+
+
+<span class="c1"># PATTERN: tree crud pattern</span>
+<span class="k">def</span> <span class="nf">signature_to_dict</span><span class="p">(</span><span class="n">sig</span><span class="p">:</span> <span class="n">Signature</span><span class="p">):</span>
+    <span class="c1"># warn(&quot;Use Sig instead&quot;, DeprecationWarning)</span>
+    <span class="c1"># return Sig(sig).to_simple_signature()</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span>
+        <span class="s1">&#39;return_annotation&#39;</span><span class="p">:</span> <span class="n">sig</span><span class="o">.</span><span class="n">return_annotation</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_merge_sig_dicts</span><span class="p">(</span><span class="n">sig1_dict</span><span class="p">,</span> <span class="n">sig2_dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Merge two signature dicts. A in dict.update(sig1_dict, **sig2_dict),</span>
+<span class="sd">    but specialized for signature dicts.</span>
+<span class="sd">    If sig1_dict and sig2_dict both define a parameter or return annotation,</span>
+<span class="sd">    sig2_dict decides on what the output is.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sig1_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">sig2_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]),</span>
+        <span class="s1">&#39;return_annotation&#39;</span><span class="p">:</span> <span class="n">sig2_dict</span><span class="p">[</span><span class="s1">&#39;return_annotation&#39;</span><span class="p">]</span>
+        <span class="ow">or</span> <span class="n">sig1_dict</span><span class="p">[</span><span class="s1">&#39;return_annotation&#39;</span><span class="p">],</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_merge_signatures</span><span class="p">(</span><span class="n">sig1</span><span class="p">,</span> <span class="n">sig2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the merged signatures of two signatures (sig2 is the final decider of conflics)</span>
+
+<span class="sd">    &gt;&gt;&gt; def foo(a=&#39;a&#39;, b: int=0, c=None) -&gt; int: ...</span>
+<span class="sd">    &gt;&gt;&gt; def bar(b: float=0.0, d: str=&#39;hi&#39;) -&gt; float: ...</span>
+<span class="sd">    &gt;&gt;&gt; foo_sig = signature(foo)</span>
+<span class="sd">    &gt;&gt;&gt; bar_sig = signature(bar)</span>
+<span class="sd">    &gt;&gt;&gt; foo_sig</span>
+<span class="sd">    &lt;Signature (a=&#39;a&#39;, b: int = 0, c=None) -&gt; int&gt;</span>
+<span class="sd">    &gt;&gt;&gt; bar_sig</span>
+<span class="sd">    &lt;Signature (b: float = 0.0, d: str = &#39;hi&#39;) -&gt; float&gt;</span>
+<span class="sd">    &gt;&gt;&gt; _merge_signatures(foo_sig, bar_sig)</span>
+<span class="sd">    &lt;Signature (a=&#39;a&#39;, b: float = 0.0, c=None, d: str = &#39;hi&#39;) -&gt; float&gt;</span>
+<span class="sd">    &gt;&gt;&gt; _merge_signatures(bar_sig, foo_sig)</span>
+<span class="sd">    &lt;Signature (b: int = 0, d: str = &#39;hi&#39;, a=&#39;a&#39;, c=None) -&gt; int&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># sig1_dict = Sig(sig1).to_simple_signature()</span>
+    <span class="c1"># sig1_dict = signature_to_dict(sig1)</span>
+    <span class="c1"># # remove variadic kinds from sig1</span>
+    <span class="c1"># sig1_dict[&#39;parameters&#39;] = {k: v for k, v in sig1_dict[&#39;parameters&#39;].items() if v.kind not in var_param_kinds}</span>
+    <span class="c1"># return Sig(**_merge_sig_dicts(sig1_dict, Sig(sig2).to_simple_dict()))</span>
+    <span class="n">sig1_dict</span> <span class="o">=</span> <span class="n">signature_to_dict</span><span class="p">(</span><span class="n">sig1</span><span class="p">)</span>
+    <span class="c1"># remove variadic kinds from sig1</span>
+    <span class="n">sig1_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sig1_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">var_param_kinds</span>
+    <span class="p">}</span>
+    <span class="n">kws</span> <span class="o">=</span> <span class="n">_merge_sig_dicts</span><span class="p">(</span><span class="n">sig1_dict</span><span class="p">,</span> <span class="n">signature_to_dict</span><span class="p">(</span><span class="n">sig2</span><span class="p">))</span>
+    <span class="n">kws</span><span class="p">[</span><span class="s1">&#39;obj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kws</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;parameters&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Sig</span><span class="p">(</span><span class="o">**</span><span class="n">kws</span><span class="p">)</span><span class="o">.</span><span class="n">to_simple_signature</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_merge_signatures_of_funcs</span><span class="p">(</span><span class="n">func1</span><span class="p">,</span> <span class="n">func2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the merged signatures of two functions (func2 is the final decider of conflics)</span>
+
+<span class="sd">    &gt;&gt;&gt; def foo(a=&#39;a&#39;, b: int=0, c=None) -&gt; int: ...</span>
+<span class="sd">    &gt;&gt;&gt; def bar(b: float=0.0, d: str=&#39;hi&#39;) -&gt; float: ...</span>
+<span class="sd">    &gt;&gt;&gt; _merge_signatures_of_funcs(foo, bar)</span>
+<span class="sd">    &lt;Signature (a=&#39;a&#39;, b: float = 0.0, c=None, d: str = &#39;hi&#39;) -&gt; float&gt;</span>
+<span class="sd">    &gt;&gt;&gt; _merge_signatures_of_funcs(bar, foo)</span>
+<span class="sd">    &lt;Signature (b: int = 0, d: str = &#39;hi&#39;, a=&#39;a&#39;, c=None) -&gt; int&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_merge_signatures</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">func1</span><span class="p">),</span> <span class="n">signature</span><span class="p">(</span><span class="n">func2</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_merged_signatures_of_func_list</span><span class="p">(</span><span class="n">funcs</span><span class="p">,</span> <span class="n">return_annotation</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">empty</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; def foo(a=&#39;a&#39;, b: int=0, c=None) -&gt; int: ...</span>
+<span class="sd">    &gt;&gt;&gt; def bar(b: float=0.0, d: str=&#39;hi&#39;) -&gt; float: ...</span>
+<span class="sd">    &gt;&gt;&gt; def hello(x: str=&#39;hi&#39;, y=1) -&gt; str: ...</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Test how the order of the functions affect the order of the parameters</span>
+<span class="sd">    &gt;&gt;&gt; _merged_signatures_of_func_list([foo, bar, hello])</span>
+<span class="sd">    &lt;Signature (a=&#39;a&#39;, b: float = 0.0, c=None, d: str = &#39;hi&#39;, x: str = &#39;hi&#39;, y=1)&gt;</span>
+<span class="sd">    &gt;&gt;&gt; _merged_signatures_of_func_list([hello, foo, bar])</span>
+<span class="sd">    &lt;Signature (x: str = &#39;hi&#39;, y=1, a=&#39;a&#39;, b: float = 0.0, c=None, d: str = &#39;hi&#39;)&gt;</span>
+<span class="sd">    &gt;&gt;&gt; _merged_signatures_of_func_list([foo, bar, hello])</span>
+<span class="sd">    &lt;Signature (a=&#39;a&#39;, b: float = 0.0, c=None, d: str = &#39;hi&#39;, x: str = &#39;hi&#39;, y=1)&gt;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Test the return_annotation argument</span>
+<span class="sd">    &gt;&gt;&gt; _merged_signatures_of_func_list([foo, bar], list)  # specifying that the return type is a list</span>
+<span class="sd">    &lt;Signature (a=&#39;a&#39;, b: float = 0.0, c=None, d: str = &#39;hi&#39;) -&gt; list&gt;</span>
+<span class="sd">    &gt;&gt;&gt; _merged_signatures_of_func_list([foo, bar], foo)  # specifying that the return type is a list</span>
+<span class="sd">    &lt;Signature (a=&#39;a&#39;, b: float = 0.0, c=None, d: str = &#39;hi&#39;) -&gt; int&gt;</span>
+<span class="sd">    &gt;&gt;&gt; _merged_signatures_of_func_list([foo, bar], bar)  # specifying that the return type is a list</span>
+<span class="sd">    &lt;Signature (a=&#39;a&#39;, b: float = 0.0, c=None, d: str = &#39;hi&#39;) -&gt; float&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="n">_merge_signatures</span><span class="p">,</span> <span class="nb">map</span><span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="n">funcs</span><span class="p">))</span>
+    <span class="c1"># s = Sig.from_objs(*funcs).to_simple_signature()</span>
+
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">return_annotation</span> <span class="ow">in</span> <span class="n">funcs</span>
+    <span class="p">):</span>  <span class="c1"># then you want the return annotation of a specific func of funcs</span>
+        <span class="n">return_annotation</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">return_annotation</span><span class="p">)</span><span class="o">.</span><span class="n">return_annotation</span>
+
+    <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotation</span><span class="p">)</span>
+
+
+<span class="c1"># TODO: will we need more options for the priority argument? Like position?</span>
+<div class="viewcode-block" id="update_signature_with_signatures_from_funcs"><a class="viewcode-back" href="../../../module_docs/i2/tests/signatures_test.html#i2.tests.signatures_test.update_signature_with_signatures_from_funcs">[docs]</a><span class="k">def</span> <span class="nf">update_signature_with_signatures_from_funcs</span><span class="p">(</span><span class="o">*</span><span class="n">funcs</span><span class="p">,</span> <span class="n">priority</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;last&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a decorator that will merge the signatures of given funcs to the signature of the wrapped func.</span>
+<span class="sd">    By default, the funcs signatures will be placed last, but can be given priority by asking priority = &#39;first&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; def foo(a=&#39;a&#39;, b: int=0, c=None) -&gt; int: ...</span>
+<span class="sd">    &gt;&gt;&gt; def bar(b: float=0.0, d: str=&#39;hi&#39;) -&gt; float: ...</span>
+<span class="sd">    &gt;&gt;&gt; def something(y=(1, 2)): ...</span>
+<span class="sd">    &gt;&gt;&gt; def another(y=10): ...</span>
+<span class="sd">    &gt;&gt;&gt; @update_signature_with_signatures_from_funcs(foo, bar)</span>
+<span class="sd">    ... def hello(x: str=&#39;hi&#39;, y=1) -&gt; str:</span>
+<span class="sd">    ...     pass</span>
+<span class="sd">    &gt;&gt;&gt; signature(hello)</span>
+<span class="sd">    &lt;Signature (x: str = &#39;hi&#39;, y=1, a=&#39;a&#39;, b: float = 0.0, c=None, d: str = &#39;hi&#39;)&gt;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Try a different order and priority == &#39;first&#39;. Notice the b arg type and default!</span>
+<span class="sd">    &gt;&gt;&gt; add_foobar_to_signature_first = update_signature_with_signatures_from_funcs(</span>
+<span class="sd">    ...     bar, foo, priority=&#39;first&#39;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; bar_foo_something = add_foobar_to_signature_first(something)</span>
+<span class="sd">    &gt;&gt;&gt; signature(bar_foo_something)</span>
+<span class="sd">    &lt;Signature (b: int = 0, d: str = &#39;hi&#39;, a=&#39;a&#39;, c=None, y=(1, 2))&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # See how you can reuse the decorator several times</span>
+<span class="sd">    &gt;&gt;&gt; bar_foo_another = add_foobar_to_signature_first(another)</span>
+<span class="sd">    &gt;&gt;&gt; signature(bar_foo_another)</span>
+<span class="sd">    &lt;Signature (b: int = 0, d: str = &#39;hi&#39;, a=&#39;a&#39;, c=None, y=10)&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">priority</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;priority should be a string&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">priority</span> <span class="o">==</span> <span class="s1">&#39;last&#39;</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">transform_signature</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="c1"># func.__signature__ = Sig.from_objs(func, *funcs).to_simple_signature()</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">_merged_signatures_of_func_list</span><span class="p">([</span><span class="n">func</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">funcs</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">elif</span> <span class="n">priority</span> <span class="o">==</span> <span class="s1">&#39;first&#39;</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">transform_signature</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="c1"># func.__signature__ = Sig.from_objs(*funcs, func).to_simple_signature()</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">_merged_signatures_of_func_list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">funcs</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">func</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;priority should be &#39;last&#39; or &#39;first&#39;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">transform_signature</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright OtoSense 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
