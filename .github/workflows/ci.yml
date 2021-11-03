@@ -73,7 +73,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip -q install semver axblack twine epythet isee
+          pip -q install axblack twine wads isee
           isee install-requires
 
       - name: Format source code
@@ -97,12 +97,7 @@ jobs:
           epythet make . github
 
       - name: Push Changes
-        run: |
-          git add .
-          git commit -a -m "**CI** Formatted code + Updated version number and documentation. [skip ci]"
-          git push
+        run: pack check-in "**CI** Formatted code + Updated version number and documentation. [skip ci]" --auto-choose-default-action --bypass-docstring-validation --bypass-tests --bypass-code-formatting --verbose
 
       - name: Tag Repository
-        run: |
-          git tag $VERSION
-          git push origin $VERSION
+        run: isee tag-repo $VERSION
