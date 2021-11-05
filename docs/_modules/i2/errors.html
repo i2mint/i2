@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.errors &mdash; i2 0.0.55 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.errors &mdash; i2 0.0.56 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -152,7 +152,10 @@
     <span class="sd">&quot;&quot;&quot;To be used to interrupt the march of a with&quot;&quot;&quot;</span></div>
 
 
-<span class="c1"># Note: Can be extended to have more precise handled conditions and callbacks (involving exc_val and exc_tb)</span>
+<span class="c1"># Note: Can be extended to have more precise handled conditions and callbacks</span>
+<span class="c1">#  (involving exc_val and exc_tb)</span>
+<span class="c1"># Note: Efforts towards a more general version here:</span>
+<span class="c1">#   https://github.com/thorwhalen/ut/blob/33c20ce76fe0f9dcc6aa197b0a2dbbf3d7b1d5be/errors.py#L90</span>
 <div class="viewcode-block" id="HandleExceptions"><a class="viewcode-back" href="../../module_docs/i2/errors.html#i2.errors.HandleExceptions">[docs]</a><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
 <span class="k">class</span> <span class="nc">HandleExceptions</span><span class="p">(</span><span class="n">AbstractContextManager</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A context manager that catches and (specifically) handles specific exceptions.</span>
@@ -160,7 +163,7 @@
 <span class="sd">    It takes one argument: A dict (or mapping) of exception type keys and callback</span>
 <span class="sd">    values. If within a with block, the particular (listed) exception happens,</span>
 <span class="sd">    the callback is called and it&#39;s returned value is assigned to the</span>
-<span class="sd">    `` instance&#39;s `.exit_value` attribute.</span>
+<span class="sd">    `HandleExceptions` instance&#39;s `.exit_value` attribute.</span>
 <span class="sd">    That attribute will only exist if the with block existed with an exception</span>
 <span class="sd">    caught by `HandleExceptions`.</span>
 
