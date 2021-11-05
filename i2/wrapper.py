@@ -6,6 +6,7 @@ from typing import Mapping, Callable
 from types import MethodType
 
 from i2.signatures import Sig
+from i2.multi_object import Pipe
 
 empty = Parameter.empty
 
@@ -567,6 +568,27 @@ class Ingress:
             func_kwargs, apply_defaults=True
         )
 
+    @classmethod
+    def name_map(cls, wrapped, **new_names):
+        """Change argument names"""
+        return cls(
+            wrapped,
+            partial(Pipe(items_with_mapped_keys, dict), key_mapper=new_names),
+            Sig(wrapped).ch_names(**new_names),
+        )
+
+    #     @classmethod
+    #     def defaults(cls, wrapped, **defaults):
+    #         """"""
+    #
+    #     @classmethod
+    #     def order(cls, wrapped, arg_order):
+    #         """"""
+    #
+    #     @classmethod
+    #     def factory(cls, wrapped, **func_for_name):
+    #         """"""
+
 
 def items_with_mapped_keys(d: dict, key_mapper):
     for k, v in d.items():
@@ -832,24 +854,6 @@ class ArgNameMappingIngress:
 
 def mk_ingress_from_name_mapper(func, name_mapper: Mapping, *, conserve_kind=False):
     return ArgNameMappingIngress(func, conserve_kind=conserve_kind, **name_mapper)
-
-
-# class Ingress:
-#     @classmethod
-#     def name_map(cls, wrapped, **new_names):
-#         """"""
-#
-#     @classmethod
-#     def defaults(cls, wrapped, **defaults):
-#         """"""
-#
-#     @classmethod
-#     def order(cls, wrapped, arg_order):
-#         """"""
-#
-#     @classmethod
-#     def factory(cls, wrapped, **func_for_name):
-#         """"""
 
 
 def nice_kinds(func):
