@@ -30,3 +30,7 @@ from i2.multi_object import (
     ParallelFuncs,
     ContextFanout,
 )
+from i2.errors import (
+    InterruptWithBlock,
+    HandleExceptions,
+)

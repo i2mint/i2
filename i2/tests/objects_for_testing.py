@@ -58,6 +58,7 @@ def formula1(w, /, x: float, y=1, *, z: int = 1):
 
 def formula2(w, /, x: float, y=2, *, z: int = 3):
     """Has 3 kinds & every of the 4 combinations of (default y/n, annotated y/n)
+
     >>> formula2(0, 1, 2)
     '(w:=0) + (x:=1) * (y:=2) ** (z:=3) == 8'
     """
