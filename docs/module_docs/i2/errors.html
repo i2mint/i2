@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.errors &mdash; i2 0.0.54 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.errors &mdash; i2 0.0.55 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -119,10 +119,111 @@
 <em class="property">exception </em><code class="sig-prename descclassname">i2.errors.</code><code class="sig-name descname">ForbiddenError</code><a class="reference internal" href="../../_modules/i2/errors.html#ForbiddenError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.errors.ForbiddenError" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py class">
+<dt id="i2.errors.HandleExceptions">
+<em class="property">class </em><code class="sig-prename descclassname">i2.errors.</code><code class="sig-name descname">HandleExceptions</code><span class="sig-paren">(</span><em class="sig-param">on_error: Mapping[Type[BaseException], Union[None, str, Callable[[], Any]]] = &lt;factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/errors.html#HandleExceptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.errors.HandleExceptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>A context manager that catches and (specifically) handles specific exceptions.</p>
+<p>It takes one argument: A dict (or mapping) of exception type keys and callback
+values. If within a with block, the particular (listed) exception happens,
+the callback is called and it’s returned value is assigned to the
+`` instance’s <cite>.exit_value</cite> attribute.
+That attribute will only exist if the with block existed with an exception
+caught by <cite>HandleExceptions</cite>.</p>
+<p>A callback is an argument-less function. If you need to specify arguments, you can
+envoke the command pattern, using <cite>functools.partial</cite> to make a argument-less
+function. See in the example below how we ask <cite>HandleExceptions</cite> to print a
+specific string if a <cite>ZeroDivisionError</cite> happens:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">print_and_return</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">msg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">HandleExceptions</span><span class="p">({</span>
+<span class="gp">... </span>    <span class="ne">ZeroDivisionError</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">print_and_return</span><span class="p">,</span> <span class="s2">&quot;You interrupted me&quot;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="ne">KeyboardInterrupt</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="s1">&#39;imagine this is code to notify someone&#39;</span>
+<span class="gp">... </span><span class="p">})</span> <span class="k">as</span> <span class="n">he</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This works&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="mi">0</span> <span class="o">/</span> <span class="mi">0</span>
+<span class="gp">...</span>
+<span class="go">This works</span>
+<span class="go">You interrupted me</span>
+</pre></div>
+</div>
+<p>You can check if the context exited with a handled exception, and if so, what
+the callback returned value was.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">he</span><span class="o">.</span><span class="n">exited_with_handled_exception</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">he</span><span class="o">.</span><span class="n">exit_value</span>
+<span class="go">&#39;You interrupted me&#39;</span>
+</pre></div>
+</div>
+<p>Also available, whether the exception was a handled one or not: The exception
+instance itself:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">he</span><span class="o">.</span><span class="n">exited_with_exception</span>
+<span class="go">ZeroDivisionError(&#39;division by zero&#39;)</span>
+</pre></div>
+</div>
+<p>If all you want to do though is print a string (and have the same string
+available in the <cite>exit_value</cite> attribute, we got you covered!
+Just specify a string and we’ll make that printer callaback for you!</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">HandleExceptions</span><span class="p">({</span><span class="ne">ZeroDivisionError</span><span class="p">:</span> <span class="s2">&quot;You interrupted me again!&quot;</span><span class="p">}):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This also works&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="mi">0</span> <span class="o">/</span> <span class="mi">0</span>
+<span class="go">This also works</span>
+<span class="go">You interrupted me again!</span>
+</pre></div>
+</div>
+<p>Note that specifying <cite>partial(print, “some message”)</cite> will work as a
+“printing callback”, but the string won’t be available in <cite>.exit_value</cite> since
+<cite>print</cite> returns None.</p>
+<p>A few recipes now…</p>
+<p>You can also use your own custom exception types to do things like interrupt
+a with block early given some condition(s).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">HandleExceptions</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="n">InterruptWithBlock</span><span class="p">:</span> <span class="s2">&quot;The with block was interrupted early.&quot;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;before condition&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">x</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">%</span> <span class="mi">2</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">x</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">raise</span> <span class="n">InterruptWithBlock</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;after condition&#39;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="go">before condition</span>
+<span class="go">The with block was interrupted early.</span>
+</pre></div>
+</div>
+<p>Tip: If you need to do stuff with an exception, but reraise it, you can
+still do that in your callback. Just say <cite>raise</cite> at the end of the callback!</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">print_and_raise</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">raise</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">HandleExceptions</span><span class="p">({</span>  
+<span class="gp">... </span>    <span class="ne">ZeroDivisionError</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">print_and_raise</span><span class="p">,</span> <span class="s2">&quot;That again!&quot;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">}):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This also works&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="mi">0</span> <span class="o">/</span> <span class="mi">0</span>
+<span class="go">This also works</span>
+<span class="go">That again!</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ZeroDivisionError</span>: <span class="n">division by zero</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="py exception">
 <dt id="i2.errors.InputError">
 <em class="property">exception </em><code class="sig-prename descclassname">i2.errors.</code><code class="sig-name descname">InputError</code><a class="reference internal" href="../../_modules/i2/errors.html#InputError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.errors.InputError" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py exception">
+<dt id="i2.errors.InterruptWithBlock">
+<em class="property">exception </em><code class="sig-prename descclassname">i2.errors.</code><code class="sig-name descname">InterruptWithBlock</code><a class="reference internal" href="../../_modules/i2/errors.html#InterruptWithBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.errors.InterruptWithBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>To be used to interrupt the march of a with</p>
+</dd></dl>
 
 <dl class="py class">
 <dt id="i2.errors.ModuleNotFoundIgnore">
