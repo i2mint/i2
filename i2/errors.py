@@ -56,7 +56,10 @@ class InterruptWithBlock(RuntimeError):
     """To be used to interrupt the march of a with"""
 
 
-# Note: Can be extended to have more precise handled conditions and callbacks (involving exc_val and exc_tb)
+# Note: Can be extended to have more precise handled conditions and callbacks
+#  (involving exc_val and exc_tb)
+# Note: Efforts towards a more general version here:
+#   https://github.com/thorwhalen/ut/blob/33c20ce76fe0f9dcc6aa197b0a2dbbf3d7b1d5be/errors.py#L90
 @dataclasses.dataclass
 class HandleExceptions(AbstractContextManager):
     """A context manager that catches and (specifically) handles specific exceptions.
@@ -64,7 +67,7 @@ class HandleExceptions(AbstractContextManager):
     It takes one argument: A dict (or mapping) of exception type keys and callback
     values. If within a with block, the particular (listed) exception happens,
     the callback is called and it's returned value is assigned to the
-    `` instance's `.exit_value` attribute.
+    `HandleExceptions` instance's `.exit_value` attribute.
     That attribute will only exist if the with block existed with an exception
     caught by `HandleExceptions`.
 
