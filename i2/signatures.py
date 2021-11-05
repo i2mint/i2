@@ -1369,7 +1369,8 @@ class Sig(Signature, Mapping):
 
     @property
     def index_of_var_positional(self):
-        """
+        """The index of the VAR_POSITIONAL param kind if any, and None if not.
+        See also, Sig.index_of_var_keyword
 
         >>> assert Sig(lambda x, *y, z: 0).index_of_var_positional == 1
         >>> assert Sig(lambda x, /, y, **z: 0).index_of_var_positional == None
@@ -1393,7 +1394,8 @@ class Sig(Signature, Mapping):
 
     @property
     def index_of_var_keyword(self):
-        """
+        """The index of a VAR_KEYWORD param kind if any, and None if not.
+        See also, Sig.index_of_var_positional
 
         >>> assert Sig(lambda **kwargs: 0).index_of_var_keyword == 0
         >>> assert Sig(lambda a, **kwargs: 0).index_of_var_keyword == 1
@@ -1600,6 +1602,11 @@ class Sig(Signature, Mapping):
     # ch_annotations = partialmethod(ch_param_attrs, param_attr="annotation")
 
     def ch_names(self, **changes_for_name):
+        argnames_not_in_sig = changes_for_name.keys() - self.keys()
+        if argnames_not_in_sig:
+            raise ValueError(
+                f"argument names not in signature: {', '.join(argnames_not_in_sig)}"
+            )
         return self.ch_param_attrs('name', **changes_for_name)
 
     def ch_kinds(self, **changes_for_name):
@@ -1916,7 +1923,7 @@ class Sig(Signature, Mapping):
 
     @property
     def without_defaults(self):
-        """
+        """Sub-signature containing only "required" (i.e. without defaults) parameters.
 
         >>> list(Sig(lambda *args, a, b, x=1, y=1, **kwargs: ...).without_defaults)
         ['a', 'b']
@@ -1927,7 +1934,7 @@ class Sig(Signature, Mapping):
 
     @property
     def with_defaults(self):
-        """
+        """Sub-signature containing only "not required" (i.e. with defaults) parameters.
 
         >>> list(Sig(lambda *args, a, b, x=1, y=1, **kwargs: ...).with_defaults)
         ['args', 'x', 'y', 'kwargs']
