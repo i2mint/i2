@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.54 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.55 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -1465,7 +1465,8 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">index_of_var_positional</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;The index of the VAR_POSITIONAL param kind if any, and None if not.</span>
+<span class="sd">        See also, Sig.index_of_var_keyword</span>
 
 <span class="sd">        &gt;&gt;&gt; assert Sig(lambda x, *y, z: 0).index_of_var_positional == 1</span>
 <span class="sd">        &gt;&gt;&gt; assert Sig(lambda x, /, y, **z: 0).index_of_var_positional == None</span>
@@ -1489,7 +1490,8 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">index_of_var_keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;The index of a VAR_KEYWORD param kind if any, and None if not.</span>
+<span class="sd">        See also, Sig.index_of_var_positional</span>
 
 <span class="sd">        &gt;&gt;&gt; assert Sig(lambda **kwargs: 0).index_of_var_keyword == 0</span>
 <span class="sd">        &gt;&gt;&gt; assert Sig(lambda a, **kwargs: 0).index_of_var_keyword == 1</span>
@@ -1696,6 +1698,11 @@
     <span class="c1"># ch_annotations = partialmethod(ch_param_attrs, param_attr=&quot;annotation&quot;)</span>
 
     <span class="k">def</span> <span class="nf">ch_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">):</span>
+        <span class="n">argnames_not_in_sig</span> <span class="o">=</span> <span class="n">changes_for_name</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">argnames_not_in_sig</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;argument names not in signature: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">argnames_not_in_sig</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_param_attrs</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">ch_kinds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">):</span>
@@ -2012,7 +2019,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">without_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Sub-signature containing only &quot;required&quot; (i.e. without defaults) parameters.</span>
 
 <span class="sd">        &gt;&gt;&gt; list(Sig(lambda *args, a, b, x=1, y=1, **kwargs: ...).without_defaults)</span>
 <span class="sd">        [&#39;a&#39;, &#39;b&#39;]</span>
@@ -2023,7 +2030,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">with_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Sub-signature containing only &quot;not required&quot; (i.e. with defaults) parameters.</span>
 
 <span class="sd">        &gt;&gt;&gt; list(Sig(lambda *args, a, b, x=1, y=1, **kwargs: ...).with_defaults)</span>
 <span class="sd">        [&#39;args&#39;, &#39;x&#39;, &#39;y&#39;, &#39;kwargs&#39;]</span>
