@@ -180,8 +180,6 @@ class HandleExceptions(AbstractContextManager):
                 if issubclass(exc_type, handled_exc_type):
                     self.exit_value = callback()
             return True
-        else:
-            raise
 
     def exited_with_handled_exception(self):
         return hasattr(self, 'exit_value')
