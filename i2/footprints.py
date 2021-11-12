@@ -304,30 +304,29 @@ def attrs_used_by_method_computation(
         return 1
 
 
-if __name__ == '__main__':
-
-    def func(obj):
-        return obj.a + obj.b
-
-    class A:
-        e = 2
-
-        def __init__(self, a=0, b=0, c=1, d=10):
-            self.a = a
-            self.b = b
-            self.c = c
-            self.d = d
-
-        def target_func(self, x=3):
-            t = func(self)
-            tt = self.other_method(t)
-            return x * tt / self.e
-
-        target_method = target_func
-
-        def other_method(self, x=1):
-            return self.c * x
-
-    from py2json.util import attrs_used_by_method
-
-    print(attrs_used_by_method(A.target_func))
+# def test_attrs_used_by_method():
+#     def func(obj):
+#         return obj.a + obj.b
+#
+#     class A:
+#         e = 2
+#
+#         def __init__(self, a=0, b=0, c=1, d=10):
+#             self.a = a
+#             self.b = b
+#             self.c = c
+#             self.d = d
+#
+#         def target_func(self, x=3):
+#             t = func(self)
+#             tt = self.other_method(t)
+#             return x * tt / self.e
+#
+#         target_method = target_func
+#
+#         def other_method(self, x=1):
+#             return self.c * x
+#
+#     from i2.footprints import attrs_used_by_method
+#
+#     print(attrs_used_by_method(A.target_func))
