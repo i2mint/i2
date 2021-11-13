@@ -178,8 +178,12 @@ class HandleExceptions(AbstractContextManager):
             self.exited_with_exception = exc_val
             for handled_exc_type, callback in self.on_error.items():
                 if issubclass(exc_type, handled_exc_type):
-                    self.exit_value = callback()
-            return True
+                    # if the exc_type is a subtype of handled_exc_type, call the callback
+                    self.exit_value = callback()  # storing the result in exit_value
+                    # and exit with True
+                    return True  # suppress the exception
+            # if there was an exception, but a handled one, raise it!
+            raise
 
     def exited_with_handled_exception(self):
         return hasattr(self, 'exit_value')
