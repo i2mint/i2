@@ -817,6 +817,9 @@ WRAPPER_UPDATES = ('__dict__',)
 
 from typing import Callable
 
+# A default signature of (*no_sig_args, **no_sig_kwargs)
+DFLT_SIGNATURE = signature(lambda *no_sig_args, **no_sig_kwargs: ...)
+
 # TODO: Might want to monkey-patch inspect._signature_from_callable to use sigs_for_sigless_builtin_name
 def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
     r"""Get the signature of a Callable, returning a custom made one for those
@@ -843,9 +846,7 @@ def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
         #     callable_obj = callable_obj.func
         obj_name = getattr(callable_obj, '__name__', None)
         if obj_name in sigs_for_sigless_builtin_name:
-            return sigs_for_sigless_builtin_name[obj_name] or signature(
-                lambda *no_sig_args, **no_sig_kwargs: ...
-            )
+            return sigs_for_sigless_builtin_name[obj_name] or DFLT_SIGNATURE
         else:
             raise
 
@@ -1180,6 +1181,46 @@ class Sig(Signature, Mapping):
         return self.wrap(func)
 
     @classmethod
+    def sig_or_default(cls, obj, default_signature=DFLT_SIGNATURE):
+        """Returns a Sig instance, or a default signature if there was a ValueError
+        trying to construct it.
+
+        For example, `time.time` doesn't have a signature
+
+        >>> import time
+        >>> has_signature(time.time)
+        False
+
+        But we can tell `Sig` to give it the default one:
+
+        >>> str(Sig.sig_or_default(time.time))
+        '(*no_sig_args, **no_sig_kwargs)'
+
+        That's the default signature, which should work for most purposes.
+        You can also specify what the default should be though.
+
+        >>> fake_signature = Sig(lambda *time_takes_no_arguments: ...)
+        >>> str(Sig.sig_or_default(time.time, fake_signature))
+        '(*time_takes_no_arguments)'
+
+        Careful though. If you assign a signature to a function that is not aligned
+        with that actually functioning of the function, bad things will happen.
+        In this case, the actual signature of time is the empty signature:
+
+        >>> str(Sig.sig_or_default(time.time, Sig(lambda: ...)))
+        '()'
+
+        """
+        try:
+            # (try to) return cls(obj) if obj is callable:
+            if callable(obj):
+                return cls(obj)
+        except ValueError:
+            # if a ValueError is raised, return the default_signature
+            return default_signature
+
+
+    @classmethod
     def sig_or_none(cls, obj):
         """Returns a Sig instance, or None if there was a ValueError trying to
         construct it.
@@ -1205,10 +1246,7 @@ class Sig(Signature, Mapping):
         True
 
         """
-        try:
-            return (callable(obj) or None) and cls(obj)
-        except ValueError:
-            return None
+        return cls.sig_or_default(obj, default_signature=None)
 
     def __bool__(self):
         return True
