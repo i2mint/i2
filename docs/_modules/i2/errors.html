@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.errors &mdash; i2 0.0.58 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.errors &mdash; i2 0.0.59 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -274,8 +274,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">exited_with_exception</span> <span class="o">=</span> <span class="n">exc_val</span>
             <span class="k">for</span> <span class="n">handled_exc_type</span><span class="p">,</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">handled_exc_type</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">exit_value</span> <span class="o">=</span> <span class="n">callback</span><span class="p">()</span>
-            <span class="k">return</span> <span class="kc">True</span>
+                    <span class="c1"># if the exc_type is a subtype of handled_exc_type, call the callback</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">exit_value</span> <span class="o">=</span> <span class="n">callback</span><span class="p">()</span>  <span class="c1"># storing the result in exit_value</span>
+                    <span class="c1"># and exit with True</span>
+                    <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># suppress the exception</span>
+            <span class="c1"># if there was an exception, but a handled one, raise it!</span>
+            <span class="k">raise</span>
 
     <span class="k">def</span> <span class="nf">exited_with_handled_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;exit_value&#39;</span><span class="p">)</span>
