@@ -52,7 +52,7 @@ def log_and_return(msg, logger=print):
     return msg
 
 
-class InterruptWithBlock(RuntimeError):
+class InterruptWithBlock(BaseException):
     """To be used to interrupt the march of a with"""
 
 
