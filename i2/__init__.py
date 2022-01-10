@@ -19,7 +19,8 @@ from i2.signatures import (
     extract_commands,
     call_forgivingly,
     call_somewhat_forgivingly,
-    name_of_obj
+    name_of_obj,
+    empty as empty_param_attr
 )
 
 from i2.multi_object import (
