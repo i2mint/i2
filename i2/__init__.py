@@ -19,6 +19,7 @@ from i2.signatures import (
     extract_commands,
     call_forgivingly,
     call_somewhat_forgivingly,
+    name_of_obj
 )
 
 from i2.multi_object import (
