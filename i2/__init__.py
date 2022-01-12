@@ -20,7 +20,7 @@ from i2.signatures import (
     call_forgivingly,
     call_somewhat_forgivingly,
     name_of_obj,
-    empty as empty_param_attr
+    empty as empty_param_attr,
 )
 
 from i2.multi_object import (
