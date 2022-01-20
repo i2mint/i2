@@ -1,14 +1,78 @@
-"""A wrapper object and tools to work with it"""
+"""A wrapper object and tools to work with it
+
+How the ``Wrap`` class works:
+
+.. code-block::
+          *outer_args, **outer_kwargs
+                     │
+                     ▼
+    ┌───────────────────────────────────┐
+    │              ingress              │
+    └───────────────────────────────────┘
+                     │
+                     ▼
+          *inner_args, **inner_kwargs
+                     │
+                     ▼
+    ┌───────────────────────────────────┐
+    │               func                │
+    └───────────────────────────────────┘
+                     │
+                     ▼
+                 func_output
+                     │
+                     ▼
+    ┌───────────────────────────────────┐
+    │              egress               │
+    └───────────────────────────────────┘
+                     │
+                     ▼
+                final_output
+
+
+    How the ``Ingress`` class (ingress templated function maker) works:
+
+.. code-block::
+          *outer_args, **outer_kwargs
+                     │
+                     ▼
+    ┌───────────────────────────────────┐
+    │          outer_sig_bind           │
+    └───────────────────────────────────┘
+                     │
+                     ▼
+              outer_all_kwargs
+                     │
+                     ▼
+    ┌───────────────────────────────────┐
+    │            kwargs_trans           │
+    └───────────────────────────────────┘
+                     │
+                     ▼
+              inner_all_kwargs
+                     │
+                     ▼
+    ┌───────────────────────────────────┐
+    │          inner_sig_bind           │
+    └───────────────────────────────────┘
+                     │
+                     ▼
+          *inner_args, **inner_kwargs
+
+"""
 
 from functools import wraps, partial
 from inspect import Parameter, signature
-from typing import Mapping, Callable
+from typing import Mapping, Callable, Optional
 from types import MethodType
 
 from i2.signatures import Sig
 from i2.multi_object import Pipe
 
 empty = Parameter.empty
+OuterKwargs = dict
+InnerKwargs = dict
+KwargsTrans = Callable[[OuterKwargs], InnerKwargs]
 
 
 def identity(x):
@@ -57,12 +121,12 @@ def double_up_as_factory(decorator_func: Callable):
     def validate_decorator_func(decorator_func):
         first_param, *other_params = signature(decorator_func).parameters.values()
         assert first_param.default is None, (
-            f'First argument of the decorator function needs to default to None. '
-            f'Was {first_param.default}'
+            f"First argument of the decorator function needs to default to None. "
+            f"Was {first_param.default}"
         )
         assert all(
             p.kind in {p.KEYWORD_ONLY, p.VAR_KEYWORD} for p in other_params
-        ), f'All arguments (besides the first) need to be keyword-only'
+        ), f"All arguments (besides the first) need to be keyword-only"
         return True
 
     validate_decorator_func(decorator_func)
@@ -97,9 +161,9 @@ def transparent_egress(output):
 
 # TODO: Put in module docs when md docs work!
 """
-    How the `Wrap` class works:
+How the ``Wrap`` class works:
 
-    ```
+.. code-block::
           *outer_args, **outer_kwargs
                      │
                      ▼
@@ -125,11 +189,11 @@ def transparent_egress(output):
                      │
                      ▼
                 final_output
-    ```
+
     
-    How the `Ingress` class (ingress templated function maker) works:
+    How the ``Ingress`` class (ingress templated function maker) works:
     
-    ```
+.. code-block::
           *outer_args, **outer_kwargs
                      │
                      ▼
@@ -155,7 +219,7 @@ def transparent_egress(output):
                      │
                      ▼
           *inner_args, **inner_kwargs
-    ```
+
     
 """
 
@@ -463,15 +527,15 @@ class Ingress:
     above.
     Instead, they can be
 
-    - `1-to-many` (e.g. the outer 'w' is used to compute the inner `w` and `x`)
+    - ``1-to-many`` (e.g. the outer 'w' is used to compute the inner ``w`` and ``x``)
 
-    - `many-to-1 (e.g. the outer `x` and `y` are used to compute inner `y`)
+    - ``many-to-1 (e.g. the outer ``x`` and ``y`` are used to compute inner ``y``)
 
-    ```
-      w   x   y   z
-     / \   \ /    |
-    w   x   y     z
-    ```
+    .. code-block::
+          w   x   y   z
+         / \   \ /    |
+        w   x   y     z
+
 
     >>> def kwargs_trans(outer_kw):
     ...     return dict(
@@ -491,7 +555,7 @@ class Ingress:
     >>> assert wrapped_f(2, x=3, y=4) == '(w:=4) + (x:=6) * (y:=7) ** (z:=3) == 2062'
 
 
-    The following is an example that involves several aspects of the `Ingress` class.
+    The following is an example that involves several aspects of the ``Ingress`` class.
 
     >>> from i2 import Sig
     >>> def kwargs_trans(outer_kw):
@@ -517,23 +581,29 @@ class Ingress:
 
     """
 
-    def __init__(self, inner_sig, kwargs_trans=None, outer_sig=None):
+    def __init__(
+        self, inner_sig, kwargs_trans: Optional[KwargsTrans] = None, outer_sig=None
+    ):
         """Init of an Ingress instance.
 
         :param inner_sig: Signature of the inner function the ingress is for.
             The function itself can be given and the signature will be extracted.
         :param kwargs_trans: A dict-to-dict transformation of the outer kwargs to
             the kwargs that should be input to the inner function.
+            That is ``kwargs_trans`` is ``outer_kwargs -> inner_kwargs``.
+            Note that though both outer and inner signatures could have those annoying
+            position-only kinds, you don't have to think of that.
+            The parameter kind restrictions are taken care of automatically.
         :param outer_sig: The outer signature. The signature the ingress function
             (there for the wrapped function) will have. Also serves to convert input
             (args, kwargs) to the kwargs that will be given to kwargs_trans.
 
         When making an Ingress function directly, one must take care that
-        `inner_sig`, `kwargs_trans` and `outer_sig` are aligned.
+        ``inner_sig``, ``kwargs_trans`` and ``outer_sig`` are aligned.
 
         Namely, 'kwargs_trans' must be able to handle outputs of
-        `outer_sig.kwargs_from_args_and_kwargs` and itself output kwargs that
-        can be handled by `inner_sig.args_and_kwargs_from_kwargs`.
+        ``outer_sig.kwargs_from_args_and_kwargs`` and itself output kwargs that
+        can be handled by ``inner_sig.args_and_kwargs_from_kwargs``.
 
         """
         self.inner_sig = Sig(inner_sig)
@@ -562,7 +632,7 @@ class Ingress:
             **self.kwargs_trans(func_kwargs),  # change those that kwargs_trans desires
         )
 
-        # Return an (args,kwargs) pair the respects the inner function's
+        # Return an (args,kwargs) pair that respects the inner function's
         # argument kind restrictions.
         return self.inner_sig.args_and_kwargs_from_kwargs(
             func_kwargs, apply_defaults=True
@@ -602,7 +672,7 @@ def invert_map(d: dict):
     if len(new_d) == len(d):
         return new_d
     else:
-        raise ValueError(f'There are duplicate keys so I can invert map: {d}')
+        raise ValueError(f"There are duplicate keys so I can invert map: {d}")
 
 
 from i2.signatures import parameter_to_dict
@@ -613,7 +683,11 @@ def parameters_to_dict(parameters):
 
 
 def _handle_ingress_class_inputs(
-    inner_sig, kwargs_trans, outer_sig, *, _allow_reordering=False
+    inner_sig,
+    kwargs_trans: Optional[KwargsTrans],
+    outer_sig,
+    *,
+    _allow_reordering=False,
 ):
     inner_sig = Sig(inner_sig)
 
@@ -639,15 +713,24 @@ def _handle_ingress_class_inputs(
 class InnerMapIngress:
     """A class to help build ingresses systematically by mapping the inner signature.
 
-    *Systematically*, i.e. "according to a fixed plan/system" is what it's about
-    here. As we'll see below, if you need to write a particular adapter for a
-    specific
+    *Systematically*, i.e. "according to a fixed plan/system" is what it's about here.
+    As we'll see below, if you need to write a particular adapter for a specific case,
+    you probably should do by writing an actual ingress function directly.
+    In cases where you might want to apply a same logic to wrap many functions,
+    you may want to fix that wrapping logic: ``InnerMapIngress`` provides one
+    way to do this.
 
     :param inner_sig: The signature of the wrapped function.
+    :param kwargs_trans: A dict-to-dict transformation of the outer kwargs to
+        the kwargs that should be input to the inner function.
+        That is ``kwargs_trans`` is ``outer_kwargs -> inner_kwargs``.
+        Note that though both outer and inner signatures could have those annoying
+        position-only kinds, you don't have to think of that.
+        The parameter kind restrictions are taken care of automatically.
     :param _allow_reordering: Whether we want to allow reordering of variables
-    :param in_to_out_sig_changes: The `inner_name=dict_of_changes_for_that_name`
-    pairs, the `dict_of_changes_for_that_name` is a `dict` with keys being valid
-    `inspect.Parameter`
+    :param in_to_out_sig_changes: The ``inner_name=dict_of_changes_for_that_name``
+    pairs, the ``dict_of_changes_for_that_name`` is a ``dict`` with keys being valid
+    ``inspect.Parameter``
 
     Consider the following function that has a position only, a keyword only,
     two arguments with annotations, and three with a default.
@@ -661,7 +744,7 @@ class InnerMapIngress:
 
     - where the annotation of ``x`` was changed ``int`` and the default removed
 
-    - where `y` was named `you` instead, and has an annotation (`int`).
+    - where ``y`` was named ``you`` instead, and has an annotation (``int``).
 
     - where the default of ``z`` was ``10`` instead of ``3``, and doesn't have an
     annotation.
@@ -674,14 +757,13 @@ class InnerMapIngress:
 
 
     When we need to wrap a specific function in a specific way, defining an
-    ingress
-    function  this way is usually the simplest way.
+    ingress function  this way is usually the simplest way.
     But in some cases we need to build the ingress function using some predefined
-    rule/protocol to make applying rule/protocol systematic.
+    rule/protocol to make applying the rule/protocol systematic.
 
     For those cases, ``InnerMapIngress`` comes in handy.
 
-    With `InnerMapIngress` we'd build our ingress function like this:
+    With ``InnerMapIngress`` we'd build our ingress function like this:
 
     >>> from inspect import Parameter, signature
     >>> PK = Parameter.POSITIONAL_OR_KEYWORD
@@ -701,21 +783,19 @@ class InnerMapIngress:
     Note:
 
     - Only the changes we wish to make to the parameters are mentioned.
-    You could also define the parameters explicitly by simply listing all three
-    of the dimensions (kind, annotation, and default)
+        You could also define the parameters explicitly by simply listing all three
+        of the dimensions (kind, annotation, and default)
 
-    - Three? But a `Parameter` object has four; what about the name?
-    Indeed, you can use name as well, more on that later.
+    - Three? But a ``Parameter`` object has four; what about the name?
+        Indeed, you can use name as well, more on that later.
 
     - Note that in order to specify that you want no default, or no annotation,
-    you cannot use `None` since `None` is both a valid default and a valid
-    annotation; So instead you need to use `Parameter.empty` (conveniently
-    assigned
-    to a constant named `empty` in the `wrapping` module.
+        you cannot use ``None`` since ``None`` is both a valid default and a valid
+        annotation; So instead you need to use ``Parameter.empty`` (conveniently
+        assigned to a constant named ``empty`` in the ``wrapping`` module.
 
-    Now see that all arguments are `POSITIONAL_OR_KEYWORD`, `x` and `y` are
-    `int`,
-    and default of `z` is 10:
+    Now see that all arguments are ``POSITIONAL_OR_KEYWORD``, ``x`` and ``y`` are
+    ``int``, and default of ``z`` is 10:
 
     >>> assert (
     ...     str(signature(ingress))
@@ -723,7 +803,7 @@ class InnerMapIngress:
     ...     == '(w, x: int, you: int = 2, z=10)'
     ... )
 
-    Additionally, `ingress` function does it's job of dispatching the right args
+    Additionally, ``ingress`` function does it's job of dispatching the right args
     and kwargs to the target function:
 
     >>> assert (
@@ -738,7 +818,7 @@ class InnerMapIngress:
     def __init__(
         self,
         inner_sig,
-        kwargs_trans=None,
+        kwargs_trans: Optional[KwargsTrans] = None,
         *,
         _allow_reordering=False,
         **changes_for_name,
@@ -756,9 +836,9 @@ class InnerMapIngress:
         self.kwargs_trans = kwargs_trans
 
         outer_name_for_inner_name = {
-            inner_name: change['name']
+            inner_name: change["name"]
             for inner_name, change in changes_for_name.items()
-            if 'name' in change
+            if "name" in change
         }
         self.inner_name_for_outer_name = invert_map(outer_name_for_inner_name)
         self.outer_sig(self)
@@ -779,7 +859,7 @@ class InnerMapIngress:
             **self.kwargs_trans(func_kwargs),  # change those that kwargs_trans desires
         )
 
-        # Return an (args,kwargs) pair the respects the inner function's
+        # Return an (args, kwargs) pair the respects the inner function's
         # argument kind restrictions.
         return self.inner_sig.args_and_kwargs_from_kwargs(func_kwargs)
 
@@ -906,8 +986,8 @@ def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
     if __strict:
         conversion_names_that_are_not_func_args = conversion_for_arg.keys() - sig.names
         assert not conversion_names_that_are_not_func_args, (
-            'Some of the arguments you want to convert are not argument names '
-            f'for the function: {conversion_names_that_are_not_func_args}'
+            "Some of the arguments you want to convert are not argument names "
+            f"for the function: {conversion_names_that_are_not_func_args}"
         )
 
     @sig
@@ -930,8 +1010,8 @@ class ArgValConverterIngress:
                 conversion_for_arg.keys() - sig.names
             )
             assert not conversion_names_that_are_not_func_args, (
-                'Some of the arguments you want to convert are not argument names '
-                f'for the function: {conversion_names_that_are_not_func_args}'
+                "Some of the arguments you want to convert are not argument names "
+                f"for the function: {conversion_names_that_are_not_func_args}"
             )
         self.sig = sig
         self.conversion_for_arg = conversion_for_arg
