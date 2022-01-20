@@ -1397,8 +1397,22 @@ class Sig(Signature, Mapping):
     def __len__(self):
         return len(self.parameters)
 
+    # TODO: Return type inconsistent. When k is a string, returns Parameter,
+    #  when an iterable of strings (or 'space separated argument names'),
+    #  returns a signature. Could also return a single argument signatures.
+    #  Behavior might be confusing. Pros/Cons? See if any current users of getitem,
+    #  and switch to single arg signature return (that's consistent, and convenience
+    #  of sig[argname] is weak (given sig.params[argname] does it)!)
     def __getitem__(self, k):
-        return self.parameters[k]
+        if isinstance(k, str):
+            names = k.split()  # to handle 'multiple args in a string'
+            if len(names) == 1:
+                return self.parameters[k]
+        else:
+            assert isinstance(k, Iterable), "key should be iterable, was: {k}"
+            names = k
+        params = [self[name] for name in names]
+        return Sig.from_params(params)
 
     @property
     def has_var_kinds(self):
