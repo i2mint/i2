@@ -1034,8 +1034,194 @@ def convert_dict_values(to_convert: dict, key_to_conversion_function: dict):
             yield k, v  # unconverted kv pair
 
 
-# TODO: Test for performance an ask about readability
+# TODO: Test for performance and ask about readability
 def _alt_convert_dict_values(to_convert: dict, key_to_conversion_function: dict):
     for k, v in to_convert.items():
         conversion_func = key_to_conversion_function.get(k, lambda x: x)
         yield k, conversion_func(v)
+
+
+from inspect import Parameter
+from dataclasses import make_dataclass
+
+empty = Parameter.empty
+
+
+def camelize(s):
+    """
+    >>> camelize('camel_case')
+    'CamelCase'
+    """
+    return "".join(ele.title() for ele in s.split("_"))
+
+
+def kwargs_trans_to_extract_args_from_attrs(
+    outer_kwargs: dict, attr_names=(), obj_param="self"
+):
+    self = outer_kwargs.pop(obj_param)
+    arguments_extracted_from_obj = {name: getattr(self, name) for name in attr_names}
+    # The kwargs we need are the union of the extracted arguments with the remaining outer_kwargs
+    return dict(arguments_extracted_from_obj, **outer_kwargs)
+
+
+# TODO: kind lost here, only 3.10 offers dataclasses with some control over kind:
+#   See: https://stackoverflow.com/questions/49908182/how-to-make-keyword-only-fields-with-dataclasses
+def param_to_dataclass_field_tuple(param: Parameter):
+    t = (param.name, param.annotation, param.default)
+    if t[2] is empty:
+        t = t[:2]
+    if t[1] is empty:
+        if len(t) == 2:
+            t = t[0]
+        else:
+            t = (t[0], "typing.Any", t[2])
+    return t
+
+
+MethodFunc = Callable
+
+
+def func_to_method_func(
+    func,
+    instance_params=(),
+    *,
+    method_name=None,
+    method_params=None,
+    instance_arg_name="self",
+) -> MethodFunc:
+    """Get a 'method function' from a 'normal function'.
+
+    That is, get a function that gives the same outputs as the 'normal function',
+    except that some of the arguments are sourced from the attributes of the first
+    argument.
+
+    The intended use case is when you want to inject one or several methods in a class
+    or instance, sourcing some of the arguments of the underlying function from a
+    common pool: The attributes of the instance.
+
+    Consider the following function involving four parameters: ``a, b, c`` and ``d``.
+
+    >>> def func(a, b: int, c=2, *, d='bar'):
+    ...     return f"{d}: {(a + b) * c}"
+    >>> func(1, 2, c=3, d='hello')
+    'hello: 9'
+
+    If we wanted to make an equivalent "method function" that would source it's ``a``
+    and it's ``c`` from the first argument's (in practice this first argument will be
+    and instance of the class the method will be bound to), we can do so like so:
+
+    >>> method_func = func_to_method_func(func, 'a c')
+    >>> from inspect import signature
+    >>> str(signature(method_func))
+    "(self, b: int, *, d='bar')"
+
+    Note that the first argument is ``self`` (default name for an "instance"),
+    that ``a`` and ``c`` are not there, but that the two remaining parameters,
+    ``b`` and ``d`` are present, in the same order, and with the same annotations and
+    parameter kind (the ``d`` is still keyword-only).
+
+    Now let's make a dummy object that has attributes ``a`` and a ``c``, and use it to
+    call ``method_func``:
+
+    >>> class Klass:
+    ...     a = 1
+    ...     c = 3
+    >>> instance = Klass()
+    >>> method_func(instance, 2, d='hello')
+    'hello: 9'
+
+    Which is:
+
+    >>> assert method_func(instance, 2, d='hello') == func(1, 2, c=3, d='hello')
+
+    """
+    # get a signature object for func
+    sig = Sig(func)
+    # if method_name not give, use the function's name
+    method_name = method_name or sig.name
+    # if params expressed as string, split it into a list of parameter (names)
+    if isinstance(instance_params, str):
+        instance_params = instance_params.split()
+    if isinstance(method_params, str):
+        method_params = method_params.split()
+    # if method_params is not given, take those parameters that aren't in instance_params
+    method_params = method_params or tuple(
+        name for name in sig.names if name not in instance_params
+    )
+    # the Sig object of the method: instance name followed with method_params
+    method_sig = instance_arg_name + Sig(func)[method_params]
+    # make the ingress function that will map method_sig's interface to sig's.
+    ingress = Ingress(
+        inner_sig=sig,
+        # inside, foo will be doing the work, so need to map to its signature
+        kwargs_trans=partial(
+            # this is how to transform outer (args, kwargs) to inner ones
+            kwargs_trans_to_extract_args_from_attrs,
+            attr_names=instance_params,
+            obj_param=instance_arg_name,
+        ),
+        outer_sig=method_sig,  # this is the signature we want at the interface
+    )
+    # wrap the function, name it and return it
+    method_func = wrap(func, ingress)
+    method_func.__name__ = method_name
+    return method_func
+
+
+from typing import Iterable
+
+
+def make_funcs_binding_class(
+    funcs,
+    init_params=(),
+    cls_name=None,
+):
+    """Transform one or several functions into a class that contains them as methods
+    sourcing specific arguments from the instance's attributes.
+
+    >>> from inspect import signature
+    >>> def foo(a, b, c=2, *, d='bar'):
+    ...     return f"{d}: {(a + b) * c}"
+    >>> foo(1, 2)
+    'bar: 6'
+    >>> Klass = make_funcs_binding_class(foo, init_params='a c')
+    >>> Klass.__name__
+    'Foo'
+    >>> instance = Klass(a=1, c=3)
+    >>> assert instance.foo(2, d='hello') == 'hello: 9' == foo(
+    ...     a=1, b=2, c=3, d='hello')
+    >>> str(signature(Klass))
+    "(a: 'typing.Any', c: 'typing.Any' = 2) -> None"
+    >>>
+    >>> instance = Klass(a=1, c=3)
+    >>> str(instance)
+    'Foo(a=1, c=3)'
+    >>> str(signature(instance.foo))
+    "(b, *, d='bar')"
+    >>> instance.foo(2, d='hello')
+    'hello: 9'
+    >>> instance.foo(10, d='goodbye')
+    'goodbye: 33'
+    """
+
+    dflt_cls_name = "FuncsUnion"
+    if callable(funcs) and not isinstance(funcs, Iterable):
+        single_func = funcs
+        dflt_cls_name = camelize(getattr(single_func, "__name__", dflt_cls_name))
+        funcs = [single_func]
+
+    cls_name = cls_name or dflt_cls_name
+    if isinstance(init_params, str):
+        init_params = init_params.split()
+
+    # init_parameter_objects = Sig(func)[init_params].params
+    class_init_sig = Sig()
+    for func in funcs:
+        class_init_sig = class_init_sig.merge_with_sig(func)[init_params]
+    dataclass_fields = list(map(param_to_dataclass_field_tuple, class_init_sig.params))
+    Klass = make_dataclass(cls_name, dataclass_fields)
+
+    for func in funcs:
+        method_func = func_to_method_func(func, init_params)
+        setattr(Klass, method_func.__name__, method_func)
+    return Klass
