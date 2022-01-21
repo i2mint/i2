@@ -1052,11 +1052,11 @@ def camelize(s):
     >>> camelize('camel_case')
     'CamelCase'
     """
-    return "".join(ele.title() for ele in s.split("_"))
+    return ''.join(ele.title() for ele in s.split('_'))
 
 
 def kwargs_trans_to_extract_args_from_attrs(
-    outer_kwargs: dict, attr_names=(), obj_param="self"
+    outer_kwargs: dict, attr_names=(), obj_param='self'
 ):
     self = outer_kwargs.pop(obj_param)
     arguments_extracted_from_obj = {name: getattr(self, name) for name in attr_names}
@@ -1074,7 +1074,7 @@ def param_to_dataclass_field_tuple(param: Parameter):
         if len(t) == 2:
             t = t[0]
         else:
-            t = (t[0], "typing.Any", t[2])
+            t = (t[0], 'typing.Any', t[2])
     return t
 
 
@@ -1087,7 +1087,7 @@ def func_to_method_func(
     *,
     method_name=None,
     method_params=None,
-    instance_arg_name="self",
+    instance_arg_name='self',
 ) -> MethodFunc:
     """Get a 'method function' from a 'normal function'.
 
@@ -1172,9 +1172,7 @@ from typing import Iterable
 
 
 def make_funcs_binding_class(
-    funcs,
-    init_params=(),
-    cls_name=None,
+    funcs, init_params=(), cls_name=None,
 ):
     """Transform one or several functions into a class that contains them as methods
     sourcing specific arguments from the instance's attributes.
@@ -1204,10 +1202,10 @@ def make_funcs_binding_class(
     'goodbye: 33'
     """
 
-    dflt_cls_name = "FuncsUnion"
+    dflt_cls_name = 'FuncsUnion'
     if callable(funcs) and not isinstance(funcs, Iterable):
         single_func = funcs
-        dflt_cls_name = camelize(getattr(single_func, "__name__", dflt_cls_name))
+        dflt_cls_name = camelize(getattr(single_func, '__name__', dflt_cls_name))
         funcs = [single_func]
 
     cls_name = cls_name or dflt_cls_name

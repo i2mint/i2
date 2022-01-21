@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.64 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.65 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -483,6 +483,15 @@ returns the normal form of ingress functions: ((), kwargs)</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="i2.wrapper.camelize">
+<code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">camelize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#camelize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.camelize" title="Permalink to this definition">¶</a></dt>
+<dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">camelize</span><span class="p">(</span><span class="s1">&#39;camel_case&#39;</span><span class="p">)</span>
+<span class="go">&#39;CamelCase&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt id="i2.wrapper.double_up_as_factory">
 <code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">double_up_as_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decorator_func</span><span class="p">:</span> <span class="n">Callable</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#double_up_as_factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.double_up_as_factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Repurpose a decorator both as it’s original form, and as a decorator factory.</p>
@@ -522,9 +531,87 @@ This is validated before making the “double up as factory” decorator.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="i2.wrapper.func_to_method_func">
+<code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">func_to_method_func</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">instance_params</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">method_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method_params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">instance_arg_name</span><span class="o">=</span><span class="default_value">'self'</span></em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../../_modules/i2/wrapper.html#func_to_method_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.func_to_method_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a ‘method function’ from a ‘normal function’.</p>
+<p>That is, get a function that gives the same outputs as the ‘normal function’,
+except that some of the arguments are sourced from the attributes of the first
+argument.</p>
+<p>The intended use case is when you want to inject one or several methods in a class
+or instance, sourcing some of the arguments of the underlying function from a
+common pool: The attributes of the instance.</p>
+<p>Consider the following function involving four parameters: <code class="docutils literal notranslate"><span class="pre">a,</span> <span class="pre">b,</span> <span class="pre">c</span></code> and <code class="docutils literal notranslate"><span class="pre">d</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+<span class="go">&#39;hello: 9&#39;</span>
+</pre></div>
+</div>
+<p>If we wanted to make an equivalent “method function” that would source it’s <code class="docutils literal notranslate"><span class="pre">a</span></code>
+and it’s <code class="docutils literal notranslate"><span class="pre">c</span></code> from the first argument’s (in practice this first argument will be
+and instance of the class the method will be bound to), we can do so like so:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">method_func</span> <span class="o">=</span> <span class="n">func_to_method_func</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;a c&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">method_func</span><span class="p">))</span>
+<span class="go">&quot;(self, b: int, *, d=&#39;bar&#39;)&quot;</span>
+</pre></div>
+</div>
+<p>Note that the first argument is <code class="docutils literal notranslate"><span class="pre">self</span></code> (default name for an “instance”),
+that <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">c</span></code> are not there, but that the two remaining parameters,
+<code class="docutils literal notranslate"><span class="pre">b</span></code> and <code class="docutils literal notranslate"><span class="pre">d</span></code> are present, in the same order, and with the same annotations and
+parameter kind (the <code class="docutils literal notranslate"><span class="pre">d</span></code> is still keyword-only).</p>
+<p>Now let’s make a dummy object that has attributes <code class="docutils literal notranslate"><span class="pre">a</span></code> and a <code class="docutils literal notranslate"><span class="pre">c</span></code>, and use it to
+call <code class="docutils literal notranslate"><span class="pre">method_func</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Klass</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">... </span>    <span class="n">c</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span> <span class="o">=</span> <span class="n">Klass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">method_func</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+<span class="go">&#39;hello: 9&#39;</span>
+</pre></div>
+</div>
+<p>Which is:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">method_func</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt id="i2.wrapper.identity">
 <code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">identity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.identity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transparent function, returning what’s been input</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.wrapper.make_funcs_binding_class">
+<code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">make_funcs_binding_class</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">funcs</span></em>, <em class="sig-param"><span class="n">init_params</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">cls_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#make_funcs_binding_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.make_funcs_binding_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform one or several functions into a class that contains them as methods
+sourcing specific arguments from the instance’s attributes.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">&#39;bar: 6&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Klass</span> <span class="o">=</span> <span class="n">make_funcs_binding_class</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="s1">&#39;a c&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Klass</span><span class="o">.</span><span class="vm">__name__</span>
+<span class="go">&#39;Foo&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span> <span class="o">=</span> <span class="n">Klass</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">instance</span><span class="o">.</span><span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;hello: 9&#39;</span> <span class="o">==</span> <span class="n">foo</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">Klass</span><span class="p">))</span>
+<span class="go">&quot;(a: &#39;typing.Any&#39;, c: &#39;typing.Any&#39; = 2) -&gt; None&quot;</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span> <span class="o">=</span> <span class="n">Klass</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+<span class="go">&#39;Foo(a=1, c=3)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">foo</span><span class="p">))</span>
+<span class="go">&quot;(b, *, d=&#39;bar&#39;)&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span><span class="o">.</span><span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+<span class="go">&#39;hello: 9&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span><span class="o">.</span><span class="n">foo</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;goodbye&#39;</span><span class="p">)</span>
+<span class="go">&#39;goodbye: 33&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">

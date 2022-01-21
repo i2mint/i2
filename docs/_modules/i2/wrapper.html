@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.64 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.65 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -1130,11 +1130,195 @@
             <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>  <span class="c1"># unconverted kv pair</span>
 
 
-<span class="c1"># TODO: Test for performance an ask about readability</span>
+<span class="c1"># TODO: Test for performance and ask about readability</span>
 <span class="k">def</span> <span class="nf">_alt_convert_dict_values</span><span class="p">(</span><span class="n">to_convert</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key_to_conversion_function</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">to_convert</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">conversion_func</span> <span class="o">=</span> <span class="n">key_to_conversion_function</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
         <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">conversion_func</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">make_dataclass</span>
+
+<span class="n">empty</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
+
+
+<div class="viewcode-block" id="camelize"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.camelize">[docs]</a><span class="k">def</span> <span class="nf">camelize</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; camelize(&#39;camel_case&#39;)</span>
+<span class="sd">    &#39;CamelCase&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ele</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">kwargs_trans_to_extract_args_from_attrs</span><span class="p">(</span>
+    <span class="n">outer_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">attr_names</span><span class="o">=</span><span class="p">(),</span> <span class="n">obj_param</span><span class="o">=</span><span class="s1">&#39;self&#39;</span>
+<span class="p">):</span>
+    <span class="bp">self</span> <span class="o">=</span> <span class="n">outer_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">obj_param</span><span class="p">)</span>
+    <span class="n">arguments_extracted_from_obj</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">attr_names</span><span class="p">}</span>
+    <span class="c1"># The kwargs we need are the union of the extracted arguments with the remaining outer_kwargs</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">arguments_extracted_from_obj</span><span class="p">,</span> <span class="o">**</span><span class="n">outer_kwargs</span><span class="p">)</span>
+
+
+<span class="c1"># TODO: kind lost here, only 3.10 offers dataclasses with some control over kind:</span>
+<span class="c1">#   See: https://stackoverflow.com/questions/49908182/how-to-make-keyword-only-fields-with-dataclasses</span>
+<span class="k">def</span> <span class="nf">param_to_dataclass_field_tuple</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">is</span> <span class="n">empty</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="n">empty</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;typing.Any&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">t</span>
+
+
+<span class="n">MethodFunc</span> <span class="o">=</span> <span class="n">Callable</span>
+
+
+<div class="viewcode-block" id="func_to_method_func"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.func_to_method_func">[docs]</a><span class="k">def</span> <span class="nf">func_to_method_func</span><span class="p">(</span>
+    <span class="n">func</span><span class="p">,</span>
+    <span class="n">instance_params</span><span class="o">=</span><span class="p">(),</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">method_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">method_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">instance_arg_name</span><span class="o">=</span><span class="s1">&#39;self&#39;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MethodFunc</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get a &#39;method function&#39; from a &#39;normal function&#39;.</span>
+
+<span class="sd">    That is, get a function that gives the same outputs as the &#39;normal function&#39;,</span>
+<span class="sd">    except that some of the arguments are sourced from the attributes of the first</span>
+<span class="sd">    argument.</span>
+
+<span class="sd">    The intended use case is when you want to inject one or several methods in a class</span>
+<span class="sd">    or instance, sourcing some of the arguments of the underlying function from a</span>
+<span class="sd">    common pool: The attributes of the instance.</span>
+
+<span class="sd">    Consider the following function involving four parameters: ``a, b, c`` and ``d``.</span>
+
+<span class="sd">    &gt;&gt;&gt; def func(a, b: int, c=2, *, d=&#39;bar&#39;):</span>
+<span class="sd">    ...     return f&quot;{d}: {(a + b) * c}&quot;</span>
+<span class="sd">    &gt;&gt;&gt; func(1, 2, c=3, d=&#39;hello&#39;)</span>
+<span class="sd">    &#39;hello: 9&#39;</span>
+
+<span class="sd">    If we wanted to make an equivalent &quot;method function&quot; that would source it&#39;s ``a``</span>
+<span class="sd">    and it&#39;s ``c`` from the first argument&#39;s (in practice this first argument will be</span>
+<span class="sd">    and instance of the class the method will be bound to), we can do so like so:</span>
+
+<span class="sd">    &gt;&gt;&gt; method_func = func_to_method_func(func, &#39;a c&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
+<span class="sd">    &gt;&gt;&gt; str(signature(method_func))</span>
+<span class="sd">    &quot;(self, b: int, *, d=&#39;bar&#39;)&quot;</span>
+
+<span class="sd">    Note that the first argument is ``self`` (default name for an &quot;instance&quot;),</span>
+<span class="sd">    that ``a`` and ``c`` are not there, but that the two remaining parameters,</span>
+<span class="sd">    ``b`` and ``d`` are present, in the same order, and with the same annotations and</span>
+<span class="sd">    parameter kind (the ``d`` is still keyword-only).</span>
+
+<span class="sd">    Now let&#39;s make a dummy object that has attributes ``a`` and a ``c``, and use it to</span>
+<span class="sd">    call ``method_func``:</span>
+
+<span class="sd">    &gt;&gt;&gt; class Klass:</span>
+<span class="sd">    ...     a = 1</span>
+<span class="sd">    ...     c = 3</span>
+<span class="sd">    &gt;&gt;&gt; instance = Klass()</span>
+<span class="sd">    &gt;&gt;&gt; method_func(instance, 2, d=&#39;hello&#39;)</span>
+<span class="sd">    &#39;hello: 9&#39;</span>
+
+<span class="sd">    Which is:</span>
+
+<span class="sd">    &gt;&gt;&gt; assert method_func(instance, 2, d=&#39;hello&#39;) == func(1, 2, c=3, d=&#39;hello&#39;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get a signature object for func</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="c1"># if method_name not give, use the function&#39;s name</span>
+    <span class="n">method_name</span> <span class="o">=</span> <span class="n">method_name</span> <span class="ow">or</span> <span class="n">sig</span><span class="o">.</span><span class="n">name</span>
+    <span class="c1"># if params expressed as string, split it into a list of parameter (names)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance_params</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">instance_params</span> <span class="o">=</span> <span class="n">instance_params</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method_params</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">method_params</span> <span class="o">=</span> <span class="n">method_params</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="c1"># if method_params is not given, take those parameters that aren&#39;t in instance_params</span>
+    <span class="n">method_params</span> <span class="o">=</span> <span class="n">method_params</span> <span class="ow">or</span> <span class="nb">tuple</span><span class="p">(</span>
+        <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">instance_params</span>
+    <span class="p">)</span>
+    <span class="c1"># the Sig object of the method: instance name followed with method_params</span>
+    <span class="n">method_sig</span> <span class="o">=</span> <span class="n">instance_arg_name</span> <span class="o">+</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)[</span><span class="n">method_params</span><span class="p">]</span>
+    <span class="c1"># make the ingress function that will map method_sig&#39;s interface to sig&#39;s.</span>
+    <span class="n">ingress</span> <span class="o">=</span> <span class="n">Ingress</span><span class="p">(</span>
+        <span class="n">inner_sig</span><span class="o">=</span><span class="n">sig</span><span class="p">,</span>
+        <span class="c1"># inside, foo will be doing the work, so need to map to its signature</span>
+        <span class="n">kwargs_trans</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span>
+            <span class="c1"># this is how to transform outer (args, kwargs) to inner ones</span>
+            <span class="n">kwargs_trans_to_extract_args_from_attrs</span><span class="p">,</span>
+            <span class="n">attr_names</span><span class="o">=</span><span class="n">instance_params</span><span class="p">,</span>
+            <span class="n">obj_param</span><span class="o">=</span><span class="n">instance_arg_name</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">outer_sig</span><span class="o">=</span><span class="n">method_sig</span><span class="p">,</span>  <span class="c1"># this is the signature we want at the interface</span>
+    <span class="p">)</span>
+    <span class="c1"># wrap the function, name it and return it</span>
+    <span class="n">method_func</span> <span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">)</span>
+    <span class="n">method_func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">method_name</span>
+    <span class="k">return</span> <span class="n">method_func</span></div>
+
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+
+
+<div class="viewcode-block" id="make_funcs_binding_class"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.make_funcs_binding_class">[docs]</a><span class="k">def</span> <span class="nf">make_funcs_binding_class</span><span class="p">(</span>
+    <span class="n">funcs</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="p">(),</span> <span class="n">cls_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Transform one or several functions into a class that contains them as methods</span>
+<span class="sd">    sourcing specific arguments from the instance&#39;s attributes.</span>
+
+<span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
+<span class="sd">    &gt;&gt;&gt; def foo(a, b, c=2, *, d=&#39;bar&#39;):</span>
+<span class="sd">    ...     return f&quot;{d}: {(a + b) * c}&quot;</span>
+<span class="sd">    &gt;&gt;&gt; foo(1, 2)</span>
+<span class="sd">    &#39;bar: 6&#39;</span>
+<span class="sd">    &gt;&gt;&gt; Klass = make_funcs_binding_class(foo, init_params=&#39;a c&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; Klass.__name__</span>
+<span class="sd">    &#39;Foo&#39;</span>
+<span class="sd">    &gt;&gt;&gt; instance = Klass(a=1, c=3)</span>
+<span class="sd">    &gt;&gt;&gt; assert instance.foo(2, d=&#39;hello&#39;) == &#39;hello: 9&#39; == foo(</span>
+<span class="sd">    ...     a=1, b=2, c=3, d=&#39;hello&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; str(signature(Klass))</span>
+<span class="sd">    &quot;(a: &#39;typing.Any&#39;, c: &#39;typing.Any&#39; = 2) -&gt; None&quot;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; instance = Klass(a=1, c=3)</span>
+<span class="sd">    &gt;&gt;&gt; str(instance)</span>
+<span class="sd">    &#39;Foo(a=1, c=3)&#39;</span>
+<span class="sd">    &gt;&gt;&gt; str(signature(instance.foo))</span>
+<span class="sd">    &quot;(b, *, d=&#39;bar&#39;)&quot;</span>
+<span class="sd">    &gt;&gt;&gt; instance.foo(2, d=&#39;hello&#39;)</span>
+<span class="sd">    &#39;hello: 9&#39;</span>
+<span class="sd">    &gt;&gt;&gt; instance.foo(10, d=&#39;goodbye&#39;)</span>
+<span class="sd">    &#39;goodbye: 33&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="s1">&#39;FuncsUnion&#39;</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">funcs</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">funcs</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="n">single_func</span> <span class="o">=</span> <span class="n">funcs</span>
+        <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="n">camelize</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">single_func</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="n">dflt_cls_name</span><span class="p">))</span>
+        <span class="n">funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">single_func</span><span class="p">]</span>
+
+    <span class="n">cls_name</span> <span class="o">=</span> <span class="n">cls_name</span> <span class="ow">or</span> <span class="n">dflt_cls_name</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_params</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">init_params</span> <span class="o">=</span> <span class="n">init_params</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="c1"># init_parameter_objects = Sig(func)[init_params].params</span>
+    <span class="n">class_init_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span><span class="p">:</span>
+        <span class="n">class_init_sig</span> <span class="o">=</span> <span class="n">class_init_sig</span><span class="o">.</span><span class="n">merge_with_sig</span><span class="p">(</span><span class="n">func</span><span class="p">)[</span><span class="n">init_params</span><span class="p">]</span>
+    <span class="n">dataclass_fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">param_to_dataclass_field_tuple</span><span class="p">,</span> <span class="n">class_init_sig</span><span class="o">.</span><span class="n">params</span><span class="p">))</span>
+    <span class="n">Klass</span> <span class="o">=</span> <span class="n">make_dataclass</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">dataclass_fields</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span><span class="p">:</span>
+        <span class="n">method_func</span> <span class="o">=</span> <span class="n">func_to_method_func</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">init_params</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">Klass</span><span class="p">,</span> <span class="n">method_func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">method_func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Klass</span></div>
 </pre></div>
 
            </div>
