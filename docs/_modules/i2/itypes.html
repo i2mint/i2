@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.itypes &mdash; i2 0.0.63 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.itypes &mdash; i2 0.0.64 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -250,14 +250,14 @@
 
 <span class="sd">    But will fail if `typ` isn&#39;t a `Callable`:</span>
 
-<span class="sd">    &gt;&gt;&gt; input_and_output_types(Tuple[float, int, str])  # doctests: +NORMALIZE_SPACE</span>
+<span class="sd">    &gt;&gt;&gt; input_and_output_types(Tuple[float, int, str])  # doctest: +NORMALIZE_WHITESPACE</span>
 <span class="sd">    Traceback (most recent call last):</span>
 <span class="sd">      ...</span>
 <span class="sd">    AssertionError: Is not a typing.Callable kind: typing.Tuple[float, int, str]</span>
 
 <span class="sd">    Will also fail if `typ` is a Callable but not &quot;parametrized&quot;.</span>
 
-<span class="sd">    &gt;&gt;&gt; input_and_output_types(Callable)  # doctests: +NORMALIZE_SPACE</span>
+<span class="sd">    &gt;&gt;&gt; input_and_output_types(Callable)  # doctest: +NORMALIZE_WHITESPACE</span>
 <span class="sd">    Traceback (most recent call last):</span>
 <span class="sd">      ...</span>
 <span class="sd">    AssertionError: Can only be used on a Callable[[...],...] kind: typing.Callable</span>

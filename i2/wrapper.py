@@ -121,12 +121,12 @@ def double_up_as_factory(decorator_func: Callable):
     def validate_decorator_func(decorator_func):
         first_param, *other_params = signature(decorator_func).parameters.values()
         assert first_param.default is None, (
-            f"First argument of the decorator function needs to default to None. "
-            f"Was {first_param.default}"
+            f'First argument of the decorator function needs to default to None. '
+            f'Was {first_param.default}'
         )
         assert all(
             p.kind in {p.KEYWORD_ONLY, p.VAR_KEYWORD} for p in other_params
-        ), f"All arguments (besides the first) need to be keyword-only"
+        ), f'All arguments (besides the first) need to be keyword-only'
         return True
 
     validate_decorator_func(decorator_func)
@@ -672,7 +672,7 @@ def invert_map(d: dict):
     if len(new_d) == len(d):
         return new_d
     else:
-        raise ValueError(f"There are duplicate keys so I can invert map: {d}")
+        raise ValueError(f'There are duplicate keys so I can invert map: {d}')
 
 
 from i2.signatures import parameter_to_dict
@@ -836,9 +836,9 @@ class InnerMapIngress:
         self.kwargs_trans = kwargs_trans
 
         outer_name_for_inner_name = {
-            inner_name: change["name"]
+            inner_name: change['name']
             for inner_name, change in changes_for_name.items()
-            if "name" in change
+            if 'name' in change
         }
         self.inner_name_for_outer_name = invert_map(outer_name_for_inner_name)
         self.outer_sig(self)
@@ -986,8 +986,8 @@ def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
     if __strict:
         conversion_names_that_are_not_func_args = conversion_for_arg.keys() - sig.names
         assert not conversion_names_that_are_not_func_args, (
-            "Some of the arguments you want to convert are not argument names "
-            f"for the function: {conversion_names_that_are_not_func_args}"
+            'Some of the arguments you want to convert are not argument names '
+            f'for the function: {conversion_names_that_are_not_func_args}'
         )
 
     @sig
@@ -1010,8 +1010,8 @@ class ArgValConverterIngress:
                 conversion_for_arg.keys() - sig.names
             )
             assert not conversion_names_that_are_not_func_args, (
-                "Some of the arguments you want to convert are not argument names "
-                f"for the function: {conversion_names_that_are_not_func_args}"
+                'Some of the arguments you want to convert are not argument names '
+                f'for the function: {conversion_names_that_are_not_func_args}'
             )
         self.sig = sig
         self.conversion_for_arg = conversion_for_arg

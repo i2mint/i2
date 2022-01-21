@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.63 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.64 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -94,17 +94,81 @@
            <div itemprop="articleBody">
              
   <h1>Source code for i2.wrapper</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A wrapper object and tools to work with it&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;A wrapper object and tools to work with it</span>
+
+<span class="sd">How the ``Wrap`` class works:</span>
+
+<span class="sd">.. code-block::</span>
+<span class="sd">          *outer_args, **outer_kwargs</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">    ┌───────────────────────────────────┐</span>
+<span class="sd">    │              ingress              │</span>
+<span class="sd">    └───────────────────────────────────┘</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">          *inner_args, **inner_kwargs</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">    ┌───────────────────────────────────┐</span>
+<span class="sd">    │               func                │</span>
+<span class="sd">    └───────────────────────────────────┘</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">                 func_output</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">    ┌───────────────────────────────────┐</span>
+<span class="sd">    │              egress               │</span>
+<span class="sd">    └───────────────────────────────────┘</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">                final_output</span>
+
+
+<span class="sd">    How the ``Ingress`` class (ingress templated function maker) works:</span>
+
+<span class="sd">.. code-block::</span>
+<span class="sd">          *outer_args, **outer_kwargs</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">    ┌───────────────────────────────────┐</span>
+<span class="sd">    │          outer_sig_bind           │</span>
+<span class="sd">    └───────────────────────────────────┘</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">              outer_all_kwargs</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">    ┌───────────────────────────────────┐</span>
+<span class="sd">    │            kwargs_trans           │</span>
+<span class="sd">    └───────────────────────────────────┘</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">              inner_all_kwargs</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">    ┌───────────────────────────────────┐</span>
+<span class="sd">    │          inner_sig_bind           │</span>
+<span class="sd">    └───────────────────────────────────┘</span>
+<span class="sd">                     │</span>
+<span class="sd">                     ▼</span>
+<span class="sd">          *inner_args, **inner_kwargs</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span><span class="p">,</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">signature</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span>
 
 <span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">Sig</span>
 <span class="kn">from</span> <span class="nn">i2.multi_object</span> <span class="kn">import</span> <span class="n">Pipe</span>
 
 <span class="n">empty</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
+<span class="n">OuterKwargs</span> <span class="o">=</span> <span class="nb">dict</span>
+<span class="n">InnerKwargs</span> <span class="o">=</span> <span class="nb">dict</span>
+<span class="n">KwargsTrans</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">OuterKwargs</span><span class="p">],</span> <span class="n">InnerKwargs</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="identity"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.identity">[docs]</a><span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -193,9 +257,9 @@
 
 <span class="c1"># TODO: Put in module docs when md docs work!</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    How the `Wrap` class works:</span>
+<span class="sd">How the ``Wrap`` class works:</span>
 
-<span class="sd">    ```</span>
+<span class="sd">.. code-block::</span>
 <span class="sd">          *outer_args, **outer_kwargs</span>
 <span class="sd">                     │</span>
 <span class="sd">                     ▼</span>
@@ -221,11 +285,11 @@
 <span class="sd">                     │</span>
 <span class="sd">                     ▼</span>
 <span class="sd">                final_output</span>
-<span class="sd">    ```</span>
+
 <span class="sd">    </span>
-<span class="sd">    How the `Ingress` class (ingress templated function maker) works:</span>
+<span class="sd">    How the ``Ingress`` class (ingress templated function maker) works:</span>
 <span class="sd">    </span>
-<span class="sd">    ```</span>
+<span class="sd">.. code-block::</span>
 <span class="sd">          *outer_args, **outer_kwargs</span>
 <span class="sd">                     │</span>
 <span class="sd">                     ▼</span>
@@ -251,7 +315,7 @@
 <span class="sd">                     │</span>
 <span class="sd">                     ▼</span>
 <span class="sd">          *inner_args, **inner_kwargs</span>
-<span class="sd">    ```</span>
+
 <span class="sd">    </span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -559,15 +623,15 @@
 <span class="sd">    above.</span>
 <span class="sd">    Instead, they can be</span>
 
-<span class="sd">    - `1-to-many` (e.g. the outer &#39;w&#39; is used to compute the inner `w` and `x`)</span>
+<span class="sd">    - ``1-to-many`` (e.g. the outer &#39;w&#39; is used to compute the inner ``w`` and ``x``)</span>
 
-<span class="sd">    - `many-to-1 (e.g. the outer `x` and `y` are used to compute inner `y`)</span>
+<span class="sd">    - ``many-to-1 (e.g. the outer ``x`` and ``y`` are used to compute inner ``y``)</span>
 
-<span class="sd">    ```</span>
-<span class="sd">      w   x   y   z</span>
-<span class="sd">     / \   \ /    |</span>
-<span class="sd">    w   x   y     z</span>
-<span class="sd">    ```</span>
+<span class="sd">    .. code-block::</span>
+<span class="sd">          w   x   y   z</span>
+<span class="sd">         / \   \ /    |</span>
+<span class="sd">        w   x   y     z</span>
+
 
 <span class="sd">    &gt;&gt;&gt; def kwargs_trans(outer_kw):</span>
 <span class="sd">    ...     return dict(</span>
@@ -587,7 +651,7 @@
 <span class="sd">    &gt;&gt;&gt; assert wrapped_f(2, x=3, y=4) == &#39;(w:=4) + (x:=6) * (y:=7) ** (z:=3) == 2062&#39;</span>
 
 
-<span class="sd">    The following is an example that involves several aspects of the `Ingress` class.</span>
+<span class="sd">    The following is an example that involves several aspects of the ``Ingress`` class.</span>
 
 <span class="sd">    &gt;&gt;&gt; from i2 import Sig</span>
 <span class="sd">    &gt;&gt;&gt; def kwargs_trans(outer_kw):</span>
@@ -613,23 +677,29 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="n">kwargs_trans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outer_sig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KwargsTrans</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outer_sig</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init of an Ingress instance.</span>
 
 <span class="sd">        :param inner_sig: Signature of the inner function the ingress is for.</span>
 <span class="sd">            The function itself can be given and the signature will be extracted.</span>
 <span class="sd">        :param kwargs_trans: A dict-to-dict transformation of the outer kwargs to</span>
 <span class="sd">            the kwargs that should be input to the inner function.</span>
+<span class="sd">            That is ``kwargs_trans`` is ``outer_kwargs -&gt; inner_kwargs``.</span>
+<span class="sd">            Note that though both outer and inner signatures could have those annoying</span>
+<span class="sd">            position-only kinds, you don&#39;t have to think of that.</span>
+<span class="sd">            The parameter kind restrictions are taken care of automatically.</span>
 <span class="sd">        :param outer_sig: The outer signature. The signature the ingress function</span>
 <span class="sd">            (there for the wrapped function) will have. Also serves to convert input</span>
 <span class="sd">            (args, kwargs) to the kwargs that will be given to kwargs_trans.</span>
 
 <span class="sd">        When making an Ingress function directly, one must take care that</span>
-<span class="sd">        `inner_sig`, `kwargs_trans` and `outer_sig` are aligned.</span>
+<span class="sd">        ``inner_sig``, ``kwargs_trans`` and ``outer_sig`` are aligned.</span>
 
 <span class="sd">        Namely, &#39;kwargs_trans&#39; must be able to handle outputs of</span>
-<span class="sd">        `outer_sig.kwargs_from_args_and_kwargs` and itself output kwargs that</span>
-<span class="sd">        can be handled by `inner_sig.args_and_kwargs_from_kwargs`.</span>
+<span class="sd">        ``outer_sig.kwargs_from_args_and_kwargs`` and itself output kwargs that</span>
+<span class="sd">        can be handled by ``inner_sig.args_and_kwargs_from_kwargs``.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">inner_sig</span><span class="p">)</span>
@@ -658,7 +728,7 @@
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs_trans</span><span class="p">(</span><span class="n">func_kwargs</span><span class="p">),</span>  <span class="c1"># change those that kwargs_trans desires</span>
         <span class="p">)</span>
 
-        <span class="c1"># Return an (args,kwargs) pair the respects the inner function&#39;s</span>
+        <span class="c1"># Return an (args,kwargs) pair that respects the inner function&#39;s</span>
         <span class="c1"># argument kind restrictions.</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span>
             <span class="n">func_kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span>
@@ -709,7 +779,11 @@
 
 
 <span class="k">def</span> <span class="nf">_handle_ingress_class_inputs</span><span class="p">(</span>
-    <span class="n">inner_sig</span><span class="p">,</span> <span class="n">kwargs_trans</span><span class="p">,</span> <span class="n">outer_sig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">inner_sig</span><span class="p">,</span>
+    <span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KwargsTrans</span><span class="p">],</span>
+    <span class="n">outer_sig</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="n">inner_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">inner_sig</span><span class="p">)</span>
 
@@ -735,15 +809,24 @@
 <div class="viewcode-block" id="InnerMapIngress"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.InnerMapIngress">[docs]</a><span class="k">class</span> <span class="nc">InnerMapIngress</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;A class to help build ingresses systematically by mapping the inner signature.</span>
 
-<span class="sd">    *Systematically*, i.e. &quot;according to a fixed plan/system&quot; is what it&#39;s about</span>
-<span class="sd">    here. As we&#39;ll see below, if you need to write a particular adapter for a</span>
-<span class="sd">    specific</span>
+<span class="sd">    *Systematically*, i.e. &quot;according to a fixed plan/system&quot; is what it&#39;s about here.</span>
+<span class="sd">    As we&#39;ll see below, if you need to write a particular adapter for a specific case,</span>
+<span class="sd">    you probably should do by writing an actual ingress function directly.</span>
+<span class="sd">    In cases where you might want to apply a same logic to wrap many functions,</span>
+<span class="sd">    you may want to fix that wrapping logic: ``InnerMapIngress`` provides one</span>
+<span class="sd">    way to do this.</span>
 
 <span class="sd">    :param inner_sig: The signature of the wrapped function.</span>
+<span class="sd">    :param kwargs_trans: A dict-to-dict transformation of the outer kwargs to</span>
+<span class="sd">        the kwargs that should be input to the inner function.</span>
+<span class="sd">        That is ``kwargs_trans`` is ``outer_kwargs -&gt; inner_kwargs``.</span>
+<span class="sd">        Note that though both outer and inner signatures could have those annoying</span>
+<span class="sd">        position-only kinds, you don&#39;t have to think of that.</span>
+<span class="sd">        The parameter kind restrictions are taken care of automatically.</span>
 <span class="sd">    :param _allow_reordering: Whether we want to allow reordering of variables</span>
-<span class="sd">    :param in_to_out_sig_changes: The `inner_name=dict_of_changes_for_that_name`</span>
-<span class="sd">    pairs, the `dict_of_changes_for_that_name` is a `dict` with keys being valid</span>
-<span class="sd">    `inspect.Parameter`</span>
+<span class="sd">    :param in_to_out_sig_changes: The ``inner_name=dict_of_changes_for_that_name``</span>
+<span class="sd">    pairs, the ``dict_of_changes_for_that_name`` is a ``dict`` with keys being valid</span>
+<span class="sd">    ``inspect.Parameter``</span>
 
 <span class="sd">    Consider the following function that has a position only, a keyword only,</span>
 <span class="sd">    two arguments with annotations, and three with a default.</span>
@@ -757,7 +840,7 @@
 
 <span class="sd">    - where the annotation of ``x`` was changed ``int`` and the default removed</span>
 
-<span class="sd">    - where `y` was named `you` instead, and has an annotation (`int`).</span>
+<span class="sd">    - where ``y`` was named ``you`` instead, and has an annotation (``int``).</span>
 
 <span class="sd">    - where the default of ``z`` was ``10`` instead of ``3``, and doesn&#39;t have an</span>
 <span class="sd">    annotation.</span>
@@ -770,14 +853,13 @@
 
 
 <span class="sd">    When we need to wrap a specific function in a specific way, defining an</span>
-<span class="sd">    ingress</span>
-<span class="sd">    function  this way is usually the simplest way.</span>
+<span class="sd">    ingress function  this way is usually the simplest way.</span>
 <span class="sd">    But in some cases we need to build the ingress function using some predefined</span>
-<span class="sd">    rule/protocol to make applying rule/protocol systematic.</span>
+<span class="sd">    rule/protocol to make applying the rule/protocol systematic.</span>
 
 <span class="sd">    For those cases, ``InnerMapIngress`` comes in handy.</span>
 
-<span class="sd">    With `InnerMapIngress` we&#39;d build our ingress function like this:</span>
+<span class="sd">    With ``InnerMapIngress`` we&#39;d build our ingress function like this:</span>
 
 <span class="sd">    &gt;&gt;&gt; from inspect import Parameter, signature</span>
 <span class="sd">    &gt;&gt;&gt; PK = Parameter.POSITIONAL_OR_KEYWORD</span>
@@ -797,21 +879,19 @@
 <span class="sd">    Note:</span>
 
 <span class="sd">    - Only the changes we wish to make to the parameters are mentioned.</span>
-<span class="sd">    You could also define the parameters explicitly by simply listing all three</span>
-<span class="sd">    of the dimensions (kind, annotation, and default)</span>
+<span class="sd">        You could also define the parameters explicitly by simply listing all three</span>
+<span class="sd">        of the dimensions (kind, annotation, and default)</span>
 
-<span class="sd">    - Three? But a `Parameter` object has four; what about the name?</span>
-<span class="sd">    Indeed, you can use name as well, more on that later.</span>
+<span class="sd">    - Three? But a ``Parameter`` object has four; what about the name?</span>
+<span class="sd">        Indeed, you can use name as well, more on that later.</span>
 
 <span class="sd">    - Note that in order to specify that you want no default, or no annotation,</span>
-<span class="sd">    you cannot use `None` since `None` is both a valid default and a valid</span>
-<span class="sd">    annotation; So instead you need to use `Parameter.empty` (conveniently</span>
-<span class="sd">    assigned</span>
-<span class="sd">    to a constant named `empty` in the `wrapping` module.</span>
+<span class="sd">        you cannot use ``None`` since ``None`` is both a valid default and a valid</span>
+<span class="sd">        annotation; So instead you need to use ``Parameter.empty`` (conveniently</span>
+<span class="sd">        assigned to a constant named ``empty`` in the ``wrapping`` module.</span>
 
-<span class="sd">    Now see that all arguments are `POSITIONAL_OR_KEYWORD`, `x` and `y` are</span>
-<span class="sd">    `int`,</span>
-<span class="sd">    and default of `z` is 10:</span>
+<span class="sd">    Now see that all arguments are ``POSITIONAL_OR_KEYWORD``, ``x`` and ``y`` are</span>
+<span class="sd">    ``int``, and default of ``z`` is 10:</span>
 
 <span class="sd">    &gt;&gt;&gt; assert (</span>
 <span class="sd">    ...     str(signature(ingress))</span>
@@ -819,7 +899,7 @@
 <span class="sd">    ...     == &#39;(w, x: int, you: int = 2, z=10)&#39;</span>
 <span class="sd">    ... )</span>
 
-<span class="sd">    Additionally, `ingress` function does it&#39;s job of dispatching the right args</span>
+<span class="sd">    Additionally, ``ingress`` function does it&#39;s job of dispatching the right args</span>
 <span class="sd">    and kwargs to the target function:</span>
 
 <span class="sd">    &gt;&gt;&gt; assert (</span>
@@ -834,7 +914,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">inner_sig</span><span class="p">,</span>
-        <span class="n">kwargs_trans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KwargsTrans</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">changes_for_name</span><span class="p">,</span>
@@ -875,7 +955,7 @@
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs_trans</span><span class="p">(</span><span class="n">func_kwargs</span><span class="p">),</span>  <span class="c1"># change those that kwargs_trans desires</span>
         <span class="p">)</span>
 
-        <span class="c1"># Return an (args,kwargs) pair the respects the inner function&#39;s</span>
+        <span class="c1"># Return an (args, kwargs) pair the respects the inner function&#39;s</span>
         <span class="c1"># argument kind restrictions.</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span><span class="n">func_kwargs</span><span class="p">)</span>
 
