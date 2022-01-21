@@ -1409,7 +1409,7 @@ class Sig(Signature, Mapping):
             if len(names) == 1:
                 return self.parameters[k]
         else:
-            assert isinstance(k, Iterable), "key should be iterable, was: {k}"
+            assert isinstance(k, Iterable), 'key should be iterable, was: {k}'
             names = k
         params = [self[name] for name in names]
         return Sig.from_params(params)

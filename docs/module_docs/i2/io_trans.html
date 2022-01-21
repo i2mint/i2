@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.io_trans &mdash; i2 0.0.63 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.io_trans &mdash; i2 0.0.64 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -166,34 +166,6 @@ including lists, iterables, dicts, and booleans</p>
 <dt id="i2.io_trans.TypedBasedOutIoTrans">
 <em class="property">class </em><code class="sig-prename descclassname">i2.io_trans.</code><code class="sig-name descname">TypedBasedOutIoTrans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trans_func_for_type</span><span class="p">:</span> <span class="n">Mapping</span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">dflt_trans_func</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/io_trans.html#TypedBasedOutIoTrans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.io_trans.TypedBasedOutIoTrans" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform output according to it’s type.</p>
-<p># TODO: Move this doctest to tests suite that ignores the test if pandas not there!</p>
-<p># &gt;&gt;&gt; import pandas as pd
-# &gt;&gt;&gt; out_trans = TypedBasedOutIoTrans({
-# …     (list, tuple, set): ‘, ‘.join,
-# …     pd.DataFrame: pd.DataFrame.to_csv
-# … })
-# &gt;&gt;&gt;
-# &gt;&gt;&gt;
-# &gt;&gt;&gt; &#64;out_trans
-# … def repeat(a: int, b: list):
-# …     return a * b
-# …
-# &gt;&gt;&gt; assert repeat(2, [‘repeat’, ‘it’]) == ‘repeat, it, repeat, it’
-# &gt;&gt;&gt;
-# &gt;&gt;&gt; &#64;out_trans
-# … def transpose(df):
-# …     return df.T
-# …
-# &gt;&gt;&gt; df = pd.DataFrame({‘a’: [1,2,3], ‘b’: [10, 20, 30]})
-# &gt;&gt;&gt; print(df.to_csv())  # doctest: +NORMALIZE_WHITESPACE
-# ,a,b
-# 0,1,10
-# 1,2,20
-# 2,3,30
-# &gt;&gt;&gt; print(transpose(df))  # doctest: +NORMALIZE_WHITESPACE
-# ,0,1,2
-# a,1,2,3
-# b,10,20,30</p>
 </dd></dl>
 
 <dl class="py function">

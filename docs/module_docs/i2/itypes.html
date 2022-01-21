@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.itypes &mdash; i2 0.0.63 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.itypes &mdash; i2 0.0.64 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -154,14 +154,14 @@ you can use Protocols to fill the gap.</p>
 </pre></div>
 </div>
 <p>But will fail if <cite>typ</cite> isn’t a <cite>Callable</cite>:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">input_and_output_types</span><span class="p">(</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>  <span class="c1"># doctests: +NORMALIZE_SPACE</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">input_and_output_types</span><span class="p">(</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>  
 <span class="gt">Traceback (most recent call last):</span>
   <span class="c">...</span>
 <span class="gr">AssertionError</span>: <span class="n">Is not a typing.Callable kind: typing.Tuple[float, int, str]</span>
 </pre></div>
 </div>
 <p>Will also fail if <cite>typ</cite> is a Callable but not “parametrized”.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">input_and_output_types</span><span class="p">(</span><span class="n">Callable</span><span class="p">)</span>  <span class="c1"># doctests: +NORMALIZE_SPACE</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">input_and_output_types</span><span class="p">(</span><span class="n">Callable</span><span class="p">)</span>  
 <span class="gt">Traceback (most recent call last):</span>
   <span class="c">...</span>
 <span class="gr">AssertionError</span>: <span class="n">Can only be used on a Callable[[...],...] kind: typing.Callable</span>
