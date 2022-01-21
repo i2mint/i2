@@ -154,14 +154,14 @@ def input_and_output_types(typ):
 
     But will fail if `typ` isn't a `Callable`:
 
-    >>> input_and_output_types(Tuple[float, int, str])  # doctest: +NORMALIZE_SPACE
+    >>> input_and_output_types(Tuple[float, int, str])  # doctest: +NORMALIZE_WHITESPACE
     Traceback (most recent call last):
       ...
     AssertionError: Is not a typing.Callable kind: typing.Tuple[float, int, str]
 
     Will also fail if `typ` is a Callable but not "parametrized".
 
-    >>> input_and_output_types(Callable)  # doctest: +NORMALIZE_SPACE
+    >>> input_and_output_types(Callable)  # doctest: +NORMALIZE_WHITESPACE
     Traceback (most recent call last):
       ...
     AssertionError: Can only be used on a Callable[[...],...] kind: typing.Callable
