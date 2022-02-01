@@ -80,67 +80,6 @@ def identity(x):
     return x
 
 
-def double_up_as_factory(decorator_func: Callable):
-    """Repurpose a decorator both as it's original form, and as a decorator factory.
-
-    That is, from a decorator that is defined do ``wrapped_func = decorator(func, **params)``,
-    make it also be able to do ``wrapped_func = decorator(**params)(func)``.
-
-    Note: You'll only be able to do this if all but the first argument are keyword-only,
-    and the first argument (the function to decorate) has a default of ``None`` (this is for your own good).
-    This is validated before making the "double up as factory" decorator.
-
-    >>> @double_up_as_factory
-    ... def decorator(func=None, *, multiplier=2):
-    ...     def _func(x):
-    ...         return func(x) * multiplier
-    ...     return _func
-    ...
-    >>> def foo(x):
-    ...     return x + 1
-    ...
-    >>> foo(2)
-    3
-    >>> wrapped_foo = decorator(foo, multiplier=10)
-    >>> wrapped_foo(2)
-    30
-    >>>
-    >>> multiply_by_3 = decorator(multiplier=3)
-    >>> wrapped_foo = multiply_by_3(foo)
-    >>> wrapped_foo(2)
-    9
-    >>>
-    >>> @decorator(multiplier=3)
-    ... def foo(x):
-    ...     return x + 1
-    ...
-    >>> foo(2)
-    9
-    """
-
-    def validate_decorator_func(decorator_func):
-        first_param, *other_params = signature(decorator_func).parameters.values()
-        assert first_param.default is None, (
-            f'First argument of the decorator function needs to default to None. '
-            f'Was {first_param.default}'
-        )
-        assert all(
-            p.kind in {p.KEYWORD_ONLY, p.VAR_KEYWORD} for p in other_params
-        ), f'All arguments (besides the first) need to be keyword-only'
-        return True
-
-    validate_decorator_func(decorator_func)
-
-    @wraps(decorator_func)
-    def _double_up_as_factory(wrapped=None, **kwargs):
-        if wrapped is None:  # then we want a factory
-            return partial(decorator_func, **kwargs)
-        else:
-            return decorator_func(wrapped, **kwargs)
-
-    return _double_up_as_factory
-
-
 def transparent_ingress(*args, **kwargs):
     """
     >>> transparent_ingress(1, 2, test=1)
@@ -159,69 +98,14 @@ def transparent_egress(output):
     return output
 
 
-# TODO: Put in module docs when md docs work!
-"""
-How the ``Wrap`` class works:
+class MakeFromFunc:
+    """Used to indicate that an object should be made as a function of an input func"""
 
-.. code-block::
-          *outer_args, **outer_kwargs
-                     │
-                     ▼
-    ┌───────────────────────────────────┐
-    │              ingress              │
-    └───────────────────────────────────┘
-                     │
-                     ▼
-          *inner_args, **inner_kwargs
-                     │
-                     ▼
-    ┌───────────────────────────────────┐
-    │               func                │
-    └───────────────────────────────────┘
-                     │
-                     ▼
-                 func_output
-                     │
-                     ▼
-    ┌───────────────────────────────────┐
-    │              egress               │
-    └───────────────────────────────────┘
-                     │
-                     ▼
-                final_output
+    def __init__(self, func_to_obj):
+        self.func_to_obj = func_to_obj
 
-    
-    How the ``Ingress`` class (ingress templated function maker) works:
-    
-.. code-block::
-          *outer_args, **outer_kwargs
-                     │
-                     ▼
-    ┌───────────────────────────────────┐
-    │          outer_sig_bind           │
-    └───────────────────────────────────┘
-                     │
-                     ▼
-              outer_all_kwargs
-                     │
-                     ▼
-    ┌───────────────────────────────────┐
-    │            kwargs_trans           │
-    └───────────────────────────────────┘
-                     │
-                     ▼
-              inner_all_kwargs
-                     │
-                     ▼
-    ┌───────────────────────────────────┐
-    │          inner_sig_bind           │
-    └───────────────────────────────────┘
-                     │
-                     ▼
-          *inner_args, **inner_kwargs
-
-    
-"""
+    def __call__(self, func):
+        return self.func_to_obj(func)
 
 
 class Wrap:
@@ -311,6 +195,14 @@ class Wrap:
     ...     == len("Hi world! Hi world! Hi world! ")
     ... )
 
+    An ingress function links the interface of the wrapper to the interface of the
+    wrapped func; therefore it's definition often depends on information of both,
+    and for that reason, we provide the ability to specify the ingress not only
+    explicitly (as in the examples above), but through a factory -- a function that
+    will be called on `func` to produce the ingress that should be used to wrap it.
+
+      
+
     .. seealso::
 
         ``wrap`` function.
@@ -325,20 +217,26 @@ class Wrap:
         self._ingress = ingress
         self._egress = egress
 
-        return_annotation = empty
-        if ingress is not None:
-            self.ingress = ingress
-            return_annotation = Sig(func).return_annotation
-        else:
+        if ingress is None:
             self.ingress = transparent_ingress
+        elif isinstance(ingress, MakeFromFunc):
+            self.ingress = ingress  # the ingress function is
+            func_to_ingress = ingress  # it's not the ingress function itself
+            # ... but an ingress factory: Should make the ingress in function of func
+            self.ingress = func_to_ingress(func)
+        else:
+            assert callable(ingress), f"Should be callable: {ingress}"
+            self.ingress = ingress
 
-        if egress is not None:
+        return_annotation = empty
+
+        if egress is None:
+            self.egress = transparent_egress
+        else:
             self.egress = egress
             egress_return_annotation = Sig(egress).return_annotation
             if egress_return_annotation is not Parameter.empty:
                 return_annotation = egress_return_annotation
-        else:
-            self.egress = transparent_egress
 
         self.__signature__ = Sig(ingress, return_annotation=return_annotation)
         self.__wrapped__ = func
@@ -672,7 +570,7 @@ def invert_map(d: dict):
     if len(new_d) == len(d):
         return new_d
     else:
-        raise ValueError(f'There are duplicate keys so I can invert map: {d}')
+        raise ValueError(f"There are duplicate keys so I can invert map: {d}")
 
 
 from i2.signatures import parameter_to_dict
@@ -836,9 +734,9 @@ class InnerMapIngress:
         self.kwargs_trans = kwargs_trans
 
         outer_name_for_inner_name = {
-            inner_name: change['name']
+            inner_name: change["name"]
             for inner_name, change in changes_for_name.items()
-            if 'name' in change
+            if "name" in change
         }
         self.inner_name_for_outer_name = invert_map(outer_name_for_inner_name)
         self.outer_sig(self)
@@ -986,8 +884,8 @@ def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
     if __strict:
         conversion_names_that_are_not_func_args = conversion_for_arg.keys() - sig.names
         assert not conversion_names_that_are_not_func_args, (
-            'Some of the arguments you want to convert are not argument names '
-            f'for the function: {conversion_names_that_are_not_func_args}'
+            "Some of the arguments you want to convert are not argument names "
+            f"for the function: {conversion_names_that_are_not_func_args}"
         )
 
     @sig
@@ -1010,8 +908,8 @@ class ArgValConverterIngress:
                 conversion_for_arg.keys() - sig.names
             )
             assert not conversion_names_that_are_not_func_args, (
-                'Some of the arguments you want to convert are not argument names '
-                f'for the function: {conversion_names_that_are_not_func_args}'
+                "Some of the arguments you want to convert are not argument names "
+                f"for the function: {conversion_names_that_are_not_func_args}"
             )
         self.sig = sig
         self.conversion_for_arg = conversion_for_arg
@@ -1052,11 +950,11 @@ def camelize(s):
     >>> camelize('camel_case')
     'CamelCase'
     """
-    return ''.join(ele.title() for ele in s.split('_'))
+    return "".join(ele.title() for ele in s.split("_"))
 
 
 def kwargs_trans_to_extract_args_from_attrs(
-    outer_kwargs: dict, attr_names=(), obj_param='self'
+    outer_kwargs: dict, attr_names=(), obj_param="self"
 ):
     self = outer_kwargs.pop(obj_param)
     arguments_extracted_from_obj = {name: getattr(self, name) for name in attr_names}
@@ -1074,7 +972,7 @@ def param_to_dataclass_field_tuple(param: Parameter):
         if len(t) == 2:
             t = t[0]
         else:
-            t = (t[0], 'typing.Any', t[2])
+            t = (t[0], "typing.Any", t[2])
     return t
 
 
@@ -1087,7 +985,7 @@ def func_to_method_func(
     *,
     method_name=None,
     method_params=None,
-    instance_arg_name='self',
+    instance_arg_name="self",
 ) -> MethodFunc:
     """Get a 'method function' from a 'normal function'.
 
@@ -1172,7 +1070,9 @@ from typing import Iterable
 
 
 def make_funcs_binding_class(
-    funcs, init_params=(), cls_name=None,
+    funcs,
+    init_params=(),
+    cls_name=None,
 ):
     """Transform one or several functions into a class that contains them as methods
     sourcing specific arguments from the instance's attributes.
@@ -1202,10 +1102,10 @@ def make_funcs_binding_class(
     'goodbye: 33'
     """
 
-    dflt_cls_name = 'FuncsUnion'
+    dflt_cls_name = "FuncsUnion"
     if callable(funcs) and not isinstance(funcs, Iterable):
         single_func = funcs
-        dflt_cls_name = camelize(getattr(single_func, '__name__', dflt_cls_name))
+        dflt_cls_name = camelize(getattr(single_func, "__name__", dflt_cls_name))
         funcs = [single_func]
 
     cls_name = cls_name or dflt_cls_name
