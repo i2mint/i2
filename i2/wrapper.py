@@ -3,6 +3,7 @@
 How the ``Wrap`` class works:
 
 .. code-block::
+
           *outer_args, **outer_kwargs
                      │
                      ▼
@@ -30,9 +31,10 @@ How the ``Wrap`` class works:
                 final_output
 
 
-    How the ``Ingress`` class (ingress templated function maker) works:
+How the ``Ingress`` class (ingress templated function maker) works:
 
 .. code-block::
+
           *outer_args, **outer_kwargs
                      │
                      ▼
@@ -201,7 +203,7 @@ class Wrap:
     explicitly (as in the examples above), but through a factory -- a function that
     will be called on `func` to produce the ingress that should be used to wrap it.
 
-      
+
 
     .. seealso::
 
