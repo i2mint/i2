@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.66 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.67 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -99,6 +99,61 @@
 <span id="i2-wrapper"></span><h1>i2.wrapper<a class="headerlink" href="#module-i2.wrapper" title="Permalink to this headline">¶</a></h1>
 <p>A wrapper object and tools to work with it</p>
 <p>How the <code class="docutils literal notranslate"><span class="pre">Wrap</span></code> class works:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      *outer_args, **outer_kwargs
+                 │
+                 ▼
+┌───────────────────────────────────┐
+│              ingress              │
+└───────────────────────────────────┘
+                 │
+                 ▼
+      *inner_args, **inner_kwargs
+                 │
+                 ▼
+┌───────────────────────────────────┐
+│               func                │
+└───────────────────────────────────┘
+                 │
+                 ▼
+             func_output
+                 │
+                 ▼
+┌───────────────────────────────────┐
+│              egress               │
+└───────────────────────────────────┘
+                 │
+                 ▼
+            final_output
+</pre></div>
+</div>
+<p>How the <code class="docutils literal notranslate"><span class="pre">Ingress</span></code> class (ingress templated function maker) works:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      *outer_args, **outer_kwargs
+                 │
+                 ▼
+┌───────────────────────────────────┐
+│          outer_sig_bind           │
+└───────────────────────────────────┘
+                 │
+                 ▼
+          outer_all_kwargs
+                 │
+                 ▼
+┌───────────────────────────────────┐
+│            kwargs_trans           │
+└───────────────────────────────────┘
+                 │
+                 ▼
+          inner_all_kwargs
+                 │
+                 ▼
+┌───────────────────────────────────┐
+│          inner_sig_bind           │
+└───────────────────────────────────┘
+                 │
+                 ▼
+      *inner_args, **inner_kwargs
+</pre></div>
+</div>
 <dl class="py class">
 <dt id="i2.wrapper.Ingress">
 <em class="property">class </em><code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">Ingress</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inner_sig</span></em>, <em class="sig-param"><span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>dict<span class="p">]</span><span class="p">, </span>dict<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outer_sig</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#Ingress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.Ingress" title="Permalink to this definition">¶</a></dt>
