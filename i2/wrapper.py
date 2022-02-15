@@ -224,6 +224,7 @@ class Wrap:
         if ingress is None:
             self.ingress = transparent_ingress
         else:
+
             if isinstance(ingress, MakeFromFunc):
                 self.ingress = ingress  # the ingress function is
                 func_to_ingress = ingress  # it's not the ingress function itself
