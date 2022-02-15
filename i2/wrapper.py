@@ -219,16 +219,21 @@ class Wrap:
         self._ingress = ingress
         self._egress = egress
 
+        ingress_sig = Sig(func)
+
         if ingress is None:
             self.ingress = transparent_ingress
-        elif isinstance(ingress, MakeFromFunc):
-            self.ingress = ingress  # the ingress function is
-            func_to_ingress = ingress  # it's not the ingress function itself
-            # ... but an ingress factory: Should make the ingress in function of func
-            self.ingress = func_to_ingress(func)
         else:
-            assert callable(ingress), f"Should be callable: {ingress}"
-            self.ingress = ingress
+            if isinstance(ingress, MakeFromFunc):
+                self.ingress = ingress  # the ingress function is
+                func_to_ingress = ingress  # it's not the ingress function itself
+                # ... but an ingress factory: Should make the ingress in function of func
+                self.ingress = func_to_ingress(func)
+
+            else:
+                assert callable(ingress), f"Should be callable: {ingress}"
+                self.ingress = ingress
+            ingress_sig = Sig(self.ingress)
 
         return_annotation = empty
 
@@ -240,7 +245,7 @@ class Wrap:
             if egress_return_annotation is not Parameter.empty:
                 return_annotation = egress_return_annotation
 
-        self.__signature__ = Sig(ingress, return_annotation=return_annotation)
+        self.__signature__ = Sig(ingress_sig, return_annotation=return_annotation)
         self.__wrapped__ = func
         # TODO: Pros and cons analysis of pointing __wrapped__ to func. partial uses
         #  .func, but wraps looks for __wrapped__

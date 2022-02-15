@@ -62,7 +62,7 @@ def formula2(w, /, x: float, y=2, *, z: int = 3):
     >>> formula2(0, 1, 2)
     '(w:=0) + (x:=1) * (y:=2) ** (z:=3) == 8'
     """
-    return f'(w:={w}) + (x:={x}) * (y:={y}) ** (z:={z}) == {w + x * y ** z}'
+    return f"(w:={w}) + (x:={x}) * (y:={y}) ** (z:={z}) == {w + x * y ** z}"
 
 
 # Only *args and **kwargs. Also has a doc with a doc test
@@ -108,7 +108,7 @@ def test_func_1(
     'test_func_1 returned'
     """
     # This is the first comment
-    return 'test_func_1 returned'  # this is a comment on the same line as some code
+    return "test_func_1 returned"  # this is a comment on the same line as some code
 
 
 class SomeClass(object):
@@ -187,7 +187,7 @@ class AClass(object):
 
 
 class TestObj:
-    constarg: str = ''
+    constarg: str = ""
 
     def __init__(self, constarg: str):
         print(constarg)
@@ -197,9 +197,9 @@ class TestObj:
         print(methodarg1)
         return methodarg1 + 1
 
-    def methodstr(self, methodarg2: str = 'hi') -> str:
+    def methodstr(self, methodarg2: str = "hi") -> str:
         print(methodarg2)
-        return methodarg2 + ' test ' + self.constarg
+        return methodarg2 + " test " + self.constarg
 
 
 from contextlib import suppress

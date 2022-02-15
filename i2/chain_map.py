@@ -44,7 +44,7 @@ def unique_iter(src, key=None):
     ['hi', 'hello', 'bye']
     """
     if not is_iterable(src):
-        raise TypeError('expected an iterable, not %r' % type(src))
+        raise TypeError("expected an iterable, not %r" % type(src))
     if key is None:
         key_func = lambda x: x
     elif callable(key):
@@ -186,9 +186,9 @@ class ChainMapTree(Mapping):
                 first_keys.append(k)
             else:
                 break
-        keys_str = ', '.join(first_keys)
+        keys_str = ", ".join(first_keys)
         if i >= self._max_repr_keys:
-            keys_str += ', ...'
+            keys_str += ", ..."
         return keys_str
 
     def to_dict(self):
