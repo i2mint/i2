@@ -5,7 +5,7 @@ from i2.deco import (
     preprocess_arguments,
     input_output_decorator,
     wrap_class_methods_input_and_output,
-    double_up_as_factory
+    double_up_as_factory,
 )
 
 from i2.signatures import (

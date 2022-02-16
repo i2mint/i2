@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.0.69 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.deco &mdash; i2 0.0.70 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -180,9 +180,9 @@
 
 <dl class="py function">
 <dt id="i2.deco.double_up_as_factory">
-<code class="sig-prename descclassname">i2.deco.</code><code class="sig-name descname">double_up_as_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decorator_func</span><span class="p">:</span> <span class="n">Callable</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#double_up_as_factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.deco.double_up_as_factory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Repurpose a decorator both as it’s original form, and as a decorator factory.</p>
-<p>That is, from a decorator that is defined do <code class="docutils literal notranslate"><span class="pre">wrapped_func</span> <span class="pre">=</span> <span class="pre">decorator(func,</span> <span class="pre">**params)</span></code>,
+<code class="sig-prename descclassname">i2.deco.</code><code class="sig-name descname">double_up_as_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decorator_func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#double_up_as_factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.deco.double_up_as_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Repurpose a decorator both as it’s original form, and as a decorator factory.
+That is, from a decorator that is defined do <code class="docutils literal notranslate"><span class="pre">wrapped_func</span> <span class="pre">=</span> <span class="pre">decorator(func,</span> <span class="pre">**params)</span></code>,
 make it also be able to do <code class="docutils literal notranslate"><span class="pre">wrapped_func</span> <span class="pre">=</span> <span class="pre">decorator(**params)(func)</span></code>.</p>
 <p>Note: You’ll only be able to do this if all but the first argument are keyword-only,
 and the first argument (the function to decorate) has a default of <code class="docutils literal notranslate"><span class="pre">None</span></code> (this is for your own good).
@@ -213,6 +213,22 @@ This is validated before making the “double up as factory” decorator.</p>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">9</span>
+</pre></div>
+</div>
+<p>Note that to be able to use double_up_as_factory, your first argument (the object to be wrapped) needs to default
+to None and be the only argument that is not keyword-only (i.e. all other arguments need to be keyword only).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@double_up_as_factory</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">decorator_2</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="sd">&#39;&#39;&#39;Should not be able to be transformed with double_up_as_factory&#39;&#39;&#39;</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">AssertionError</span>: <span class="n">First argument of the decorator function needs to default to None. Was &lt;class &#39;inspect._empty&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@double_up_as_factory</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">decorator_3</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="sd">&#39;&#39;&#39;Should not be able to be transformed with double_up_as_factory&#39;&#39;&#39;</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">AssertionError</span>: <span class="n">All arguments (besides the first) need to be keyword-only</span>
 </pre></div>
 </div>
 </dd></dl>
