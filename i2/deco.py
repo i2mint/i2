@@ -15,9 +15,8 @@ from i2.signatures import Sig, kind_forgiving_func
 # from i2.signatures import ch_signature_to_all_pk, params_of, copy_func
 
 
-def double_up_as_factory(decorator_func: Callable):
+def double_up_as_factory(decorator_func):
     """Repurpose a decorator both as it's original form, and as a decorator factory.
-
     That is, from a decorator that is defined do ``wrapped_func = decorator(func, **params)``,
     make it also be able to do ``wrapped_func = decorator(**params)(func)``.
 
@@ -51,16 +50,32 @@ def double_up_as_factory(decorator_func: Callable):
     ...
     >>> foo(2)
     9
+
+    Note that to be able to use double_up_as_factory, your first argument (the object to be wrapped) needs to default
+    to None and be the only argument that is not keyword-only (i.e. all other arguments need to be keyword only).
+
+    >>> @double_up_as_factory
+    ... def decorator_2(func, *, multiplier=2):
+    ...     '''Should not be able to be transformed with double_up_as_factory'''
+    Traceback (most recent call last):
+      ...
+    AssertionError: First argument of the decorator function needs to default to None. Was <class 'inspect._empty'>
+    >>> @double_up_as_factory
+    ... def decorator_3(func=None, multiplier=2):
+    ...     '''Should not be able to be transformed with double_up_as_factory'''
+    Traceback (most recent call last):
+      ...
+    AssertionError: All arguments (besides the first) need to be keyword-only
+
     """
 
     def validate_decorator_func(decorator_func):
         first_param, *other_params = signature(decorator_func).parameters.values()
-        assert first_param.default is None, (
-            f"First argument of the decorator function needs to default to None. "
-            f"Was {first_param.default}"
-        )
+        assert (
+            first_param.default is None
+        ), f"First argument of the decorator function needs to default to None. Was {first_param.default}"
         assert all(
-            p.kind in {p.KEYWORD_ONLY, p.VAR_KEYWORD} for p in other_params
+            p.kind == p.KEYWORD_ONLY for p in other_params
         ), f"All arguments (besides the first) need to be keyword-only"
         return True
 
