@@ -71,11 +71,12 @@ def double_up_as_factory(decorator_func):
 
     def validate_decorator_func(decorator_func):
         first_param, *other_params = signature(decorator_func).parameters.values()
-        assert (
-            first_param.default is None
-        ), f"First argument of the decorator function needs to default to None. Was {first_param.default}"
+        assert first_param.default is None, (
+            f"First argument of the decorator function needs to default to None. "
+            f"Was {first_param.default}"
+        )
         assert all(
-            p.kind == p.KEYWORD_ONLY for p in other_params
+            p.kind in {p.KEYWORD_ONLY, p.VAR_KEYWORD} for p in other_params
         ), f"All arguments (besides the first) need to be keyword-only"
         return True
 

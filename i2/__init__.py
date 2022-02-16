@@ -4,15 +4,10 @@ from i2.deco import (
     postprocess,
     preprocess_arguments,
     input_output_decorator,
+    wrap_class_methods_input_and_output,
+    double_up_as_factory
 )
 
-from i2.deco import (
-    preprocess,
-    postprocess,
-    preprocess_arguments,
-    input_output_decorator,
-)
-from i2.deco import wrap_class_methods_input_and_output, double_up_as_factory
 from i2.signatures import (
     Sig,
     Command,
@@ -32,6 +27,7 @@ from i2.multi_object import (
     ParallelFuncs,
     ContextFanout,
 )
+
 from i2.errors import (
     InterruptWithBlock,
     HandleExceptions,
