@@ -111,7 +111,7 @@ class AttrMap(Mapping):
     @classmethod
     def _validate_key(cls, k):
         if not isinstance(k, str):
-            raise KeyError("key should be a string")
+            raise KeyError('key should be a string')
 
     def _validate_val(self, v):
         if not self._is_valid_val(v):
@@ -186,9 +186,9 @@ def test_switch_case_tree():
     from collections import Counter
 
     special_featurizer = {
-        "len": len,
-        "cols": lambda df: df.columns,
-        "sum": lambda df: df.sum().sum(),
+        'len': len,
+        'cols': lambda df: df.columns,
+        'sum': lambda df: df.sum().sum(),
     }
 
     some_local_func = lambda x: list(map(str, x))
@@ -198,22 +198,21 @@ def test_switch_case_tree():
         {
             k: v
             for k, v in locals().items()
-            if is_valid_featurizer(v) and getattr(v, "__module__", "").startswith("i2.")
+            if is_valid_featurizer(v) and getattr(v, '__module__', '').startswith('i2.')
         },
     )
 
     special_comparison = {
-        "alleq": lambda x, y: all(x == y),
-        "isin": lambda x, y: x in y,
-        "eq": operator.eq,
+        'alleq': lambda x, y: all(x == y),
+        'isin': lambda x, y: x in y,
+        'eq': operator.eq,
     }
 
     comparison = ChainMap(
-        special_comparison,
-        AttrMap(operator, is_valid_val=is_valid_comparision),
+        special_comparison, AttrMap(operator, is_valid_val=is_valid_comparision),
     )
 
-    assert comparison["contains"] == operator.contains
+    assert comparison['contains'] == operator.contains
 
     assert Counter(map(is_valid_featurizer, featurizer.values())) == Counter({True: 3})
 
@@ -228,7 +227,7 @@ def test_switch_case_tree():
     )
 
     featurizer_kvs = {k: v.__name__ for k, v in featurizer.items()}
-    assert featurizer_kvs == {"len": "len", "cols": "<lambda>", "sum": "<lambda>"}
+    assert featurizer_kvs == {'len': 'len', 'cols': '<lambda>', 'sum': '<lambda>'}
 
     from contextlib import suppress
 
@@ -236,21 +235,17 @@ def test_switch_case_tree():
         import pandas as pd
         from collections import namedtuple
 
-        Condition = namedtuple("Condition", ["feat", "comp"])
+        Condition = namedtuple('Condition', ['feat', 'comp'])
         condition = {
-            feat + "_" + comp: Condition(featurizer[feat], comparison[comp])
-            for feat, comp in [
-                ("len", "lt"),
-                ("cols", "isin"),
-                ("cols", "contains"),
-            ]
+            feat + '_' + comp: Condition(featurizer[feat], comparison[comp])
+            for feat, comp in [('len', 'lt'), ('cols', 'isin'), ('cols', 'contains'),]
         }
         assert all(
             is_valid_feat_and_comp(feat, comp) for feat, comp in condition.values()
         )
 
-        df = pd.DataFrame({"a": [1, 2, 3], "b": [10, 20, 30]})
-        filt = mk_filt(df, *condition["len_lt"])
+        df = pd.DataFrame({'a': [1, 2, 3], 'b': [10, 20, 30]})
+        filt = mk_filt(df, *condition['len_lt'])
         assert list(filter(filt, [2, 3, 4, 5])) == [4, 5]
 
 

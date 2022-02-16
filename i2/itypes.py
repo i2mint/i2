@@ -35,9 +35,9 @@ def new_type(
     """
     new_tp = NewType(name, tp)
     if doc is not None:
-        setattr(new_tp, "__doc__", doc)
+        setattr(new_tp, '__doc__', doc)
     if aka is not None:
-        setattr(new_tp, "_aka", set(aka))
+        setattr(new_tp, '_aka', set(aka))
     if assign_to_globals:
         globals()[
             name
@@ -111,8 +111,8 @@ class HasAttrs:
 def is_a_new_type(typ):
     return (
         callable(typ)
-        and getattr(typ, "__qualname__", "").startswith("NewType")
-        and hasattr(typ, "__supertype__")
+        and getattr(typ, '__qualname__', '').startswith('NewType')
+        and hasattr(typ, '__supertype__')
     )
 
 
@@ -135,7 +135,7 @@ def is_callable_kind(typ):
     """
     if is_a_new_type(typ):
         return is_callable_kind(typ.__supertype__)
-    return typ_name(typ) == "Callable"
+    return typ_name(typ) == 'Callable'
     # Also possible: typ.mro()[0] == __import__('collections.abc').Callable
 
 
@@ -169,23 +169,23 @@ def input_and_output_types(typ):
     """
     if is_a_new_type(typ):
         return input_and_output_types(typ.__supertype__)
-    assert is_callable_kind(typ), f"Is not a typing.Callable kind: {typ}"
+    assert is_callable_kind(typ), f'Is not a typing.Callable kind: {typ}'
     assert (
         len(typ.__args__) > 0
-    ), f"Can only be used on a Callable[[...],...] kind: {typ}"
+    ), f'Can only be used on a Callable[[...],...] kind: {typ}'
     return typ.__args__[:-1], typ.__args__[-1]
 
 
 def dot_string_of_callable_typ(typ):
     input_types, output_type = input_and_output_types(typ)
     return (
-        ",".join(map(typ_name, input_types))
-        + f" -> {typ_name(typ)} -> "
+        ','.join(map(typ_name, input_types))
+        + f' -> {typ_name(typ)} -> '
         + typ_name(output_type)
     )
 
 
-def dot_strings_of_callable_types(*typs, func_shape="box"):
+def dot_strings_of_callable_types(*typs, func_shape='box'):
     for typ in typs:
         yield dot_string_of_callable_typ(typ)
         yield f'{typ_name(typ)} [shape="{func_shape}"]'
