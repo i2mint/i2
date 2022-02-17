@@ -212,8 +212,12 @@ class Wrap:
     """
 
     def __init__(self, func, ingress=None, egress=None):
-        self.func = func
+        # wraps(func)(self) is there to copy over to self anything that func may
+        # have had. It should be before anything else so it doesn't overwrite stuff
+        # that we may add to self in init (like .func for example!)
         wraps(func)(self)  # TODO: should we really copy everything by default?
+
+        self.func = func  # Note: overwrites self.func that wraps MAY have inserted
 
         # remember the actual value of ingress and egress (for reduce to reproduce)
         self._ingress = ingress
