@@ -943,12 +943,12 @@ def rm_params(func, params_to_remove):
     if isinstance(params_to_remove, str):
         params_to_remove = params_to_remove.split()
     sig = Sig(func)
-    params_to_remove_that_do_not_have_defaults = (
-            set(params_to_remove) & set(sig.without_defaults.names)
+    params_to_remove_that_do_not_have_defaults = set(params_to_remove) & set(
+        sig.without_defaults.names
     )
     assert not params_to_remove_that_do_not_have_defaults, (
         f"Some of the params you want to remove don't have defaults: "
-        f"{params_to_remove_that_do_not_have_defaults}"
+        f'{params_to_remove_that_do_not_have_defaults}'
     )
 
     return wrap(func, rm_params_ingress_factory(func, params_to_remove))
@@ -956,8 +956,6 @@ def rm_params(func, params_to_remove):
 
 #     new_sig = sig - params_to_remove
 #     return new_sig(func)
-
-
 
 
 def arg_val_converter(func, **conversion_for_arg):
