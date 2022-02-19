@@ -907,11 +907,57 @@ def include_exclude_ingress_factory(func, include=None, exclude=None):
     return Ingress(inner_sig=sig, outer_sig=sig[include])
 
 
-def remove_params_ingress_factory(func, params_to_remove):
+def rm_params_ingress_factory(func, params_to_remove):
     """Get a version of the function without some specific params"""
     if isinstance(params_to_remove, str):
         params_to_remove = params_to_remove.split()
     return include_exclude_ingress_factory(func, exclude=params_to_remove)
+
+
+def rm_params(func, params_to_remove):
+    """Get a function with some parameters removed.
+
+    >>> from inspect import signature
+    >>> def func(x, y=1, z=2):
+    ...     return x + y * z
+    >>>
+    >>> f = rm_params(func, 'z')
+    >>> assert f(3) == func(3) == 5
+    >>> assert f(3, 4) == func(3, 4) == 11
+    >>> str(signature(f))
+    '(x, y=1)'
+    >>>
+    >>> f = rm_params(func, 'y z')
+    >>> assert f(3) == func(3) == 5
+    >>> str(signature(f))
+    '(x)'
+    
+    But ``rm_params`` won't let you remove params that don't have defaults.
+
+    >>> f = rm_params(func, 'x z')
+    Traceback (most recent call last):
+    ...
+    AssertionError: Some of the params you want to remove don't have defaults: {'x'}
+
+    """
+    if isinstance(params_to_remove, str):
+        params_to_remove = params_to_remove.split()
+    sig = Sig(func)
+    params_to_remove_that_do_not_have_defaults = (
+            set(params_to_remove) & set(sig.without_defaults.names)
+    )
+    assert not params_to_remove_that_do_not_have_defaults, (
+        f"Some of the params you want to remove don't have defaults: "
+        f"{params_to_remove_that_do_not_have_defaults}"
+    )
+
+    return wrap(func, rm_params_ingress_factory(func, params_to_remove))
+
+
+#     new_sig = sig - params_to_remove
+#     return new_sig(func)
+
+
 
 
 def arg_val_converter(func, **conversion_for_arg):
