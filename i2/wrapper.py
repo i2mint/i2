@@ -70,6 +70,7 @@ from types import MethodType
 
 from i2.signatures import Sig
 from i2.multi_object import Pipe
+from i2.deco import double_up_as_factory
 
 empty = Parameter.empty
 OuterKwargs = dict
@@ -959,8 +960,8 @@ def rm_params_ingress_factory(func, params_to_remove):
         params_to_remove = params_to_remove.split()
     return include_exclude_ingress_factory(func, exclude=params_to_remove)
 
-
-def rm_params(func, params_to_remove):
+@double_up_as_factory
+def rm_params(func=None, *, params_to_remove=()):
     """Get a function with some parameters removed.
 
     >>> from inspect import signature
