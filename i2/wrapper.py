@@ -994,7 +994,7 @@ def rm_params(func, params_to_remove):
     )
     assert not params_to_remove_that_do_not_have_defaults, (
         f"Some of the params you want to remove don't have defaults: "
-        f"{params_to_remove_that_do_not_have_defaults}"
+        f'{params_to_remove_that_do_not_have_defaults}'
     )
 
     return wrap(func, rm_params_ingress_factory(func, params_to_remove))
