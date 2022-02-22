@@ -211,12 +211,13 @@ class Wrap:
 
     """
 
-    def __init__(self, func, ingress=None, egress=None):
+    def __init__(self, func, ingress=None, egress=None, *, name=None):
         # wraps(func)(self) is there to copy over to self anything that func may
         # have had. It should be before anything else so it doesn't overwrite stuff
         # that we may add to self in init (like .func for example!)
         wraps(func)(self)  # TODO: should we really copy everything by default?
-
+        if name is not None:
+            self.__name__ = name
         self.func = func  # Note: overwrites self.func that wraps MAY have inserted
 
         # remember the actual value of ingress and egress (for reduce to reproduce)
@@ -236,7 +237,7 @@ class Wrap:
                 self.ingress = func_to_ingress(func)
 
             else:
-                assert callable(ingress), f'Should be callable: {ingress}'
+                assert callable(ingress), f"Should be callable: {ingress}"
                 self.ingress = ingress
             ingress_sig = Sig(self.ingress)
 
@@ -266,7 +267,7 @@ class Wrap:
         return MethodType(self, instance)
 
 
-def wrap(func, ingress=None, egress=None):
+def wrap(func, ingress=None, egress=None, *, name=None):
     """Wrap a function, optionally transforming interface, input and output.
 
     :param func: The wrapped function
@@ -489,6 +490,10 @@ class Ingress:
     >>> wrapped_f = wrap(f, ingress)
     >>> assert wrapped_f(2, x=3, you=4) == '(w:=4) + (x:=6) * (y:=7) ** (z:=3) == 2062'
 
+    A convenience method allows to do the same with the ingress instance itself:
+
+    >>> wrapped_f = ingress.wrap(f)
+    >>> assert wrapped_f(2, x=3, you=4) == '(w:=4) + (x:=6) * (y:=7) ** (z:=3) == 2062'
     """
 
     def __init__(
@@ -542,7 +547,7 @@ class Ingress:
             **self.kwargs_trans(func_kwargs),  # change those that kwargs_trans desires
         )
 
-        # Return an (args,kwargs) pair that respects the inner function's
+        # Return an (args, kwargs) pair that respects the inner function's
         # argument kind restrictions.
         # Note: Originally was with (default) allow_excess=False. Changed to True to
         #       allow more flexibility in outer sig. But is this sane? Worth it?
@@ -551,13 +556,37 @@ class Ingress:
             func_kwargs, apply_defaults=True, allow_excess=True
         )
 
+    def __repr__(self):
+        return f"Ingress signature: {signature(self)}"
+
+    def wrap(self, func: Callable, egress=None, *, name=None) -> Wrap:
+        """Convenience method to wrap a function with the instance ingress.
+        ``ingress.wrap(func,...)`` equivalent to ``Wrap(func, ingress, ...)``
+        """
+        return Wrap(func, ingress=self, egress=egress, name=name)
+
     @classmethod
-    def name_map(cls, wrapped, **new_names):
-        """Change argument names"""
+    def name_map(cls, wrapped, **old_to_new_name):
+        """Change argument names.
+
+        >>> def f(w, /, x: float, y=2, *, z: int = 3):
+        ...     return f"(w:={w}) + (x:={x}) * (y:={y}) ** (z:={z}) == {w + x * y ** z}"
+        >>> ingress = Ingress.name_map(f, w='DoubleYou', z='Zee')
+        >>> ingress
+        Ingress signature: (DoubleYou, /, x: float, y=2, *, Zee: int = 3)
+        >>> wrapped_f = ingress.wrap(f)
+        >>> wrapped_f(1, 2, y=3, Zee=4)
+        '(w:=1) + (x:=2) * (y:=3) ** (z:=4) == 163'
+
+        """
+        new_to_old_name = {v: k for k, v in old_to_new_name.items()}
+        assert len(new_to_old_name) == len(
+            old_to_new_name
+        ), f"Inversion is not possible since {old_to_new_name=} has duplicate values."
         return cls(
             wrapped,
-            partial(Pipe(items_with_mapped_keys, dict), key_mapper=new_names),
-            Sig(wrapped).ch_names(**new_names),
+            partial(Pipe(items_with_mapped_keys, dict), key_mapper=new_to_old_name),
+            Sig(wrapped).ch_names(**old_to_new_name),
         )
 
     #     @classmethod
@@ -574,9 +603,24 @@ class Ingress:
 
 
 def items_with_mapped_keys(d: dict, key_mapper):
+    """Transform dict keys. More precisely yield (new_k,v) pairs from a key mapper dict.
+
+    :param d: src dict
+    :param key_mapper: {old_name: new_name, ...} mapping
+    :return: generator of (new_name, value) pairs
+
+    Often used in conjunction with dict:
+
+    >>> dict(items_with_mapped_keys(
+    ...     {'a': 1, 'b': 2, 'c': 3, 'd': 4},
+    ...     {'a': 'Ay', 'd': 'Dee'})
+    ... )
+    {'Ay': 1, 'b': 2, 'c': 3, 'Dee': 4}
+
+    """
     for k, v in d.items():
-        # key_mapper.get(k, k) will give the new key name if present, else will use
-        # the old
+        # key_mapper.get(k, k) will give the new key name if present,
+        # else will use the old
         yield key_mapper.get(k, k), v
 
 
@@ -585,7 +629,7 @@ def invert_map(d: dict):
     if len(new_d) == len(d):
         return new_d
     else:
-        raise ValueError(f'There are duplicate keys so I can invert map: {d}')
+        raise ValueError(f"There are duplicate keys so I can invert map: {d}")
 
 
 from i2.signatures import parameter_to_dict
@@ -623,6 +667,7 @@ def _handle_ingress_class_inputs(
     return inner_sig, kwargs_trans, outer_sig
 
 
+# TODO: See what this adds over ``Ingress`` class. Consider merging or reusing.
 class InnerMapIngress:
     """A class to help build ingresses systematically by mapping the inner signature.
 
@@ -749,9 +794,9 @@ class InnerMapIngress:
         self.kwargs_trans = kwargs_trans
 
         outer_name_for_inner_name = {
-            inner_name: change['name']
+            inner_name: change["name"]
             for inner_name, change in changes_for_name.items()
-            if 'name' in change
+            if "name" in change
         }
         self.inner_name_for_outer_name = invert_map(outer_name_for_inner_name)
         self.outer_sig(self)
@@ -893,11 +938,12 @@ def nice_kinds(func):
 def include_exclude_ingress_factory(func, include=None, exclude=None):
     """A pattern underlying any ingress that takes a subset of parameters (possibly
     reordering them).
+
     For example: Keep only required arguments, or reorder params to be able to
     partialize #3 (without having to partialize #1 and #2)
+
     Note: A more general version would allow include and exclude to be expressed as
-    functions
-    that apply to one or several properties of the params (name, kind, default,
+    functions that apply to one or several properties of the params (name, kind, default,
     annotation).
     """
     sig = Sig(func)
@@ -931,7 +977,7 @@ def rm_params(func, params_to_remove):
     >>> assert f(3) == func(3) == 5
     >>> str(signature(f))
     '(x)'
-    
+
     But ``rm_params`` won't let you remove params that don't have defaults.
 
     >>> f = rm_params(func, 'x z')
@@ -943,8 +989,8 @@ def rm_params(func, params_to_remove):
     if isinstance(params_to_remove, str):
         params_to_remove = params_to_remove.split()
     sig = Sig(func)
-    params_to_remove_that_do_not_have_defaults = (
-            set(params_to_remove) & set(sig.without_defaults.names)
+    params_to_remove_that_do_not_have_defaults = set(params_to_remove) & set(
+        sig.without_defaults.names
     )
     assert not params_to_remove_that_do_not_have_defaults, (
         f"Some of the params you want to remove don't have defaults: "
@@ -958,8 +1004,6 @@ def rm_params(func, params_to_remove):
 #     return new_sig(func)
 
 
-
-
 def arg_val_converter(func, **conversion_for_arg):
     return Wrap(func, ingress=ArgValConverterIngress(func, **conversion_for_arg))
 
@@ -969,8 +1013,8 @@ def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
     if __strict:
         conversion_names_that_are_not_func_args = conversion_for_arg.keys() - sig.names
         assert not conversion_names_that_are_not_func_args, (
-            'Some of the arguments you want to convert are not argument names '
-            f'for the function: {conversion_names_that_are_not_func_args}'
+            "Some of the arguments you want to convert are not argument names "
+            f"for the function: {conversion_names_that_are_not_func_args}"
         )
 
     @sig
@@ -993,8 +1037,8 @@ class ArgValConverterIngress:
                 conversion_for_arg.keys() - sig.names
             )
             assert not conversion_names_that_are_not_func_args, (
-                'Some of the arguments you want to convert are not argument names '
-                f'for the function: {conversion_names_that_are_not_func_args}'
+                "Some of the arguments you want to convert are not argument names "
+                f"for the function: {conversion_names_that_are_not_func_args}"
             )
         self.sig = sig
         self.conversion_for_arg = conversion_for_arg
@@ -1035,11 +1079,11 @@ def camelize(s):
     >>> camelize('camel_case')
     'CamelCase'
     """
-    return ''.join(ele.title() for ele in s.split('_'))
+    return "".join(ele.title() for ele in s.split("_"))
 
 
 def kwargs_trans_to_extract_args_from_attrs(
-    outer_kwargs: dict, attr_names=(), obj_param='self'
+    outer_kwargs: dict, attr_names=(), obj_param="self"
 ):
     self = outer_kwargs.pop(obj_param)
     arguments_extracted_from_obj = {name: getattr(self, name) for name in attr_names}
@@ -1057,7 +1101,7 @@ def param_to_dataclass_field_tuple(param: Parameter):
         if len(t) == 2:
             t = t[0]
         else:
-            t = (t[0], 'typing.Any', t[2])
+            t = (t[0], "typing.Any", t[2])
     return t
 
 
@@ -1070,7 +1114,7 @@ def func_to_method_func(
     *,
     method_name=None,
     method_params=None,
-    instance_arg_name='self',
+    instance_arg_name="self",
 ) -> MethodFunc:
     """Get a 'method function' from a 'normal function'.
 
@@ -1155,7 +1199,9 @@ from typing import Iterable
 
 
 def make_funcs_binding_class(
-    funcs, init_params=(), cls_name=None,
+    funcs,
+    init_params=(),
+    cls_name=None,
 ):
     """Transform one or several functions into a class that contains them as methods
     sourcing specific arguments from the instance's attributes.
@@ -1185,10 +1231,10 @@ def make_funcs_binding_class(
     'goodbye: 33'
     """
 
-    dflt_cls_name = 'FuncsUnion'
+    dflt_cls_name = "FuncsUnion"
     if callable(funcs) and not isinstance(funcs, Iterable):
         single_func = funcs
-        dflt_cls_name = camelize(getattr(single_func, '__name__', dflt_cls_name))
+        dflt_cls_name = camelize(getattr(single_func, "__name__", dflt_cls_name))
         funcs = [single_func]
 
     cls_name = cls_name or dflt_cls_name
