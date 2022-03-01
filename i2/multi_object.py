@@ -38,12 +38,12 @@ def name_of_obj(o: object) -> Union[str, None]:
     >>> name_of_obj(partial(print, sep=","))
     'print'
     """
-    if hasattr(o, '__name__'):
+    if hasattr(o, "__name__"):
         return o.__name__
-    elif hasattr(o, '__class__'):
+    elif hasattr(o, "__class__"):
         name = name_of_obj(o.__class__)
-        if name == 'partial':
-            if hasattr(o, 'func'):
+        if name == "partial":
+            if hasattr(o, "func"):
                 return name_of_obj(o.func)
         return name
     else:
@@ -57,14 +57,14 @@ def ensure_iterable_of_callables(x):
     if isinstance(x, Iterable):
         if not all(callable(xx) for xx in x):
             non_callables = filter(lambda xx: not callable(xx), x)
-            raise TypeError(f'These were not callable: {list(non_callables)}')
+            raise TypeError(f"These were not callable: {list(non_callables)}")
         return x
     else:
         assert callable(x)
         return (x,)
 
 
-Obj = TypeVar('Obj')
+Obj = TypeVar("Obj")
 
 
 def uniquely_named_objects(
@@ -99,13 +99,13 @@ def uniquely_named_objects(
     _exclude_names = set(exclude_names)
     for i, obj in enumerate(objects):
         name = obj_to_name(obj)
-        if name == '<lambda>':
-            name = f'lambda_{i}'
+        if name == "<lambda>":
+            name = f"lambda_{i}"
         if name is None or name in _exclude_names:
-            name = f'_{i}'
+            name = f"_{i}"
             assert (
                 name not in _exclude_names
-            ), '{name} already used in {_exclude_names}!'
+            ), "{name} already used in {_exclude_names}!"
         yield name, obj
         _exclude_names.add(name)
 
@@ -118,11 +118,11 @@ def merge_unnamed_and_named(*unnamed, **named) -> dict:
     """
     # TODO: Could do what is done in meshed (try to get names of actual functions)
     #  and use _0, _1, _2... as fallback only?
-    named_unnamed = {f'_{i}': obj for i, obj in enumerate(unnamed)}
+    named_unnamed = {f"_{i}": obj for i, obj in enumerate(unnamed)}
     if not named_unnamed.keys().isdisjoint(named):
         raise ValueError(
             f"Some of your objects' names clashed: "
-            f'{named_unnamed.keys() & named.keys()}'
+            f"{named_unnamed.keys() & named.keys()}"
         )
     return dict(named_unnamed, **named)
 
@@ -137,8 +137,8 @@ def _multi_func_init(self, *unnamed_funcs, **named_funcs) -> None:
         self.funcs = merge_unnamed_and_named(*unnamed_funcs, **named_funcs)
     if len(self.funcs) != expected_n_funcs:
         raise ValueError(
-            'Some of your func names clashed. Your unnamed funcs were: '
-            f'{unnamed_funcs} and your named ones were: {named_funcs}'
+            "Some of your func names clashed. Your unnamed funcs were: "
+            f"{unnamed_funcs} and your named ones were: {named_funcs}"
         )
     ensure_iterable_of_callables(self.funcs.values())
 
@@ -222,7 +222,7 @@ class MultiObj(Mapping):
             if not named_unnamed.keys().isdisjoint(named):
                 raise ValueError(
                     f"Some of your objects' names clashed: "
-                    f'{named_unnamed.keys() & named.keys()}'
+                    f"{named_unnamed.keys() & named.keys()}"
                 )
             # Merge these
             self.objects = dict(named_unnamed, **named)
@@ -244,15 +244,15 @@ class MultiObj(Mapping):
         if item in self and item.isidentifier():
             return self.objects[item]
         else:
-            raise AttributeError(f'Not an attribute: {item}')
+            raise AttributeError(f"Not an attribute: {item}")
 
 
 def iterable_of_callables_validation(funcs: Iterable[Callable]):
     if not isinstance(funcs, Iterable):
-        raise TypeError(f'Not an iterable: {funcs}')
+        raise TypeError(f"Not an iterable: {funcs}")
     elif not all(callable(xx) for xx in funcs):
         non_callables = filter(lambda f: not callable(f), funcs)
-        raise TypeError(f'These were not callable: {list(non_callables)}')
+        raise TypeError(f"These were not callable: {list(non_callables)}")
 
 
 class MultiFunc(MultiObj):
@@ -304,7 +304,7 @@ class Pipe(MultiFunc):
         n_funcs = len(callables)
         other_funcs = ()
         if n_funcs == 0:
-            raise ValueError('You need to specify at least one function!')
+            raise ValueError("You need to specify at least one function!")
         elif n_funcs == 1:
             first_func = last_func = callables[0]
         else:
@@ -655,11 +655,11 @@ class ContextFanout(MultiObj):
 
     def __enter__(self):
         for name, obj in self.items():
-            if hasattr(obj, '__enter__'):
+            if hasattr(obj, "__enter__"):
                 obj.__enter__()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         for name, obj in self.items():
-            if hasattr(obj, '__exit__'):
+            if hasattr(obj, "__exit__"):
                 obj.__exit__(exc_type, exc_val, exc_tb)
