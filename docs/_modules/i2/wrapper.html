@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.73 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.74 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -166,6 +166,7 @@
 
 <span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">Sig</span>
 <span class="kn">from</span> <span class="nn">i2.multi_object</span> <span class="kn">import</span> <span class="n">Pipe</span>
+<span class="kn">from</span> <span class="nn">i2.deco</span> <span class="kn">import</span> <span class="n">double_up_as_factory</span>
 
 <span class="n">empty</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
 <span class="n">OuterKwargs</span> <span class="o">=</span> <span class="nb">dict</span>
@@ -360,7 +361,11 @@
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ingress</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_egress</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">MethodType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">MethodType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;Wrap&#39;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span></div>
 
 
 <div class="viewcode-block" id="wrap"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.wrap">[docs]</a><span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1056,27 +1061,28 @@
     <span class="k">return</span> <span class="n">include_exclude_ingress_factory</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">params_to_remove</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="rm_params"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.rm_params">[docs]</a><span class="k">def</span> <span class="nf">rm_params</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">params_to_remove</span><span class="p">):</span>
+<div class="viewcode-block" id="rm_params"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.rm_params">[docs]</a><span class="nd">@double_up_as_factory</span>
+<span class="k">def</span> <span class="nf">rm_params</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">params_to_remove</span><span class="o">=</span><span class="p">()):</span>
     <span class="sd">&quot;&quot;&quot;Get a function with some parameters removed.</span>
 
 <span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
 <span class="sd">    &gt;&gt;&gt; def func(x, y=1, z=2):</span>
 <span class="sd">    ...     return x + y * z</span>
 <span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; f = rm_params(func, &#39;z&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f = rm_params(func, params_to_remove=&#39;z&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; assert f(3) == func(3) == 5</span>
 <span class="sd">    &gt;&gt;&gt; assert f(3, 4) == func(3, 4) == 11</span>
 <span class="sd">    &gt;&gt;&gt; str(signature(f))</span>
 <span class="sd">    &#39;(x, y=1)&#39;</span>
 <span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; f = rm_params(func, &#39;y z&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f = rm_params(func, params_to_remove=&#39;y z&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; assert f(3) == func(3) == 5</span>
 <span class="sd">    &gt;&gt;&gt; str(signature(f))</span>
 <span class="sd">    &#39;(x)&#39;</span>
 
 <span class="sd">    But ``rm_params`` won&#39;t let you remove params that don&#39;t have defaults.</span>
 
-<span class="sd">    &gt;&gt;&gt; f = rm_params(func, &#39;x z&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f = rm_params(func, params_to_remove=&#39;x z&#39;)</span>
 <span class="sd">    Traceback (most recent call last):</span>
 <span class="sd">    ...</span>
 <span class="sd">    AssertionError: Some of the params you want to remove don&#39;t have defaults: {&#39;x&#39;}</span>

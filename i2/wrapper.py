@@ -238,7 +238,7 @@ class Wrap:
                 self.ingress = func_to_ingress(func)
 
             else:
-                assert callable(ingress), f"Should be callable: {ingress}"
+                assert callable(ingress), f'Should be callable: {ingress}'
                 self.ingress = ingress
             ingress_sig = Sig(self.ingress)
 
@@ -268,8 +268,8 @@ class Wrap:
         return MethodType(self, instance)
 
     def __repr__(self):
-        name = getattr(self, "__name__", None) or "Wrap"
-        return f"{name}{signature(self)}"
+        name = getattr(self, '__name__', None) or 'Wrap'
+        return f'{name}{signature(self)}'
 
 
 def wrap(func, ingress=None, egress=None, *, name=None):
@@ -562,7 +562,7 @@ class Ingress:
         )
 
     def __repr__(self):
-        return f"Ingress signature: {signature(self)}"
+        return f'Ingress signature: {signature(self)}'
 
     def wrap(self, func: Callable, egress=None, *, name=None) -> Wrap:
         """Convenience method to wrap a function with the instance ingress.
@@ -587,7 +587,7 @@ class Ingress:
         new_to_old_name = {v: k for k, v in old_to_new_name.items()}
         assert len(new_to_old_name) == len(
             old_to_new_name
-        ), f"Inversion is not possible since {old_to_new_name=} has duplicate values."
+        ), f'Inversion is not possible since {old_to_new_name=} has duplicate values.'
         return cls(
             wrapped,
             partial(Pipe(items_with_mapped_keys, dict), key_mapper=new_to_old_name),
@@ -634,7 +634,7 @@ def invert_map(d: dict):
     if len(new_d) == len(d):
         return new_d
     else:
-        raise ValueError(f"There are duplicate keys so I can invert map: {d}")
+        raise ValueError(f'There are duplicate keys so I can invert map: {d}')
 
 
 from i2.signatures import parameter_to_dict
@@ -799,9 +799,9 @@ class InnerMapIngress:
         self.kwargs_trans = kwargs_trans
 
         outer_name_for_inner_name = {
-            inner_name: change["name"]
+            inner_name: change['name']
             for inner_name, change in changes_for_name.items()
-            if "name" in change
+            if 'name' in change
         }
         self.inner_name_for_outer_name = invert_map(outer_name_for_inner_name)
         self.outer_sig(self)
@@ -1000,7 +1000,7 @@ def rm_params(func=None, *, params_to_remove=()):
     )
     assert not params_to_remove_that_do_not_have_defaults, (
         f"Some of the params you want to remove don't have defaults: "
-        f"{params_to_remove_that_do_not_have_defaults}"
+        f'{params_to_remove_that_do_not_have_defaults}'
     )
 
     return wrap(func, rm_params_ingress_factory(func, params_to_remove))
@@ -1019,8 +1019,8 @@ def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
     if __strict:
         conversion_names_that_are_not_func_args = conversion_for_arg.keys() - sig.names
         assert not conversion_names_that_are_not_func_args, (
-            "Some of the arguments you want to convert are not argument names "
-            f"for the function: {conversion_names_that_are_not_func_args}"
+            'Some of the arguments you want to convert are not argument names '
+            f'for the function: {conversion_names_that_are_not_func_args}'
         )
 
     @sig
@@ -1043,8 +1043,8 @@ class ArgValConverterIngress:
                 conversion_for_arg.keys() - sig.names
             )
             assert not conversion_names_that_are_not_func_args, (
-                "Some of the arguments you want to convert are not argument names "
-                f"for the function: {conversion_names_that_are_not_func_args}"
+                'Some of the arguments you want to convert are not argument names '
+                f'for the function: {conversion_names_that_are_not_func_args}'
             )
         self.sig = sig
         self.conversion_for_arg = conversion_for_arg
@@ -1085,11 +1085,11 @@ def camelize(s):
     >>> camelize('camel_case')
     'CamelCase'
     """
-    return "".join(ele.title() for ele in s.split("_"))
+    return ''.join(ele.title() for ele in s.split('_'))
 
 
 def kwargs_trans_to_extract_args_from_attrs(
-    outer_kwargs: dict, attr_names=(), obj_param="self"
+    outer_kwargs: dict, attr_names=(), obj_param='self'
 ):
     self = outer_kwargs.pop(obj_param)
     arguments_extracted_from_obj = {name: getattr(self, name) for name in attr_names}
@@ -1107,7 +1107,7 @@ def param_to_dataclass_field_tuple(param: Parameter):
         if len(t) == 2:
             t = t[0]
         else:
-            t = (t[0], "typing.Any", t[2])
+            t = (t[0], 'typing.Any', t[2])
     return t
 
 
@@ -1120,7 +1120,7 @@ def func_to_method_func(
     *,
     method_name=None,
     method_params=None,
-    instance_arg_name="self",
+    instance_arg_name='self',
 ) -> MethodFunc:
     """Get a 'method function' from a 'normal function'.
 
@@ -1205,9 +1205,7 @@ from typing import Iterable
 
 
 def make_funcs_binding_class(
-    funcs,
-    init_params=(),
-    cls_name=None,
+    funcs, init_params=(), cls_name=None,
 ):
     """Transform one or several functions into a class that contains them as methods
     sourcing specific arguments from the instance's attributes.
@@ -1237,10 +1235,10 @@ def make_funcs_binding_class(
     'goodbye: 33'
     """
 
-    dflt_cls_name = "FuncsUnion"
+    dflt_cls_name = 'FuncsUnion'
     if callable(funcs) and not isinstance(funcs, Iterable):
         single_func = funcs
-        dflt_cls_name = camelize(getattr(single_func, "__name__", dflt_cls_name))
+        dflt_cls_name = camelize(getattr(single_func, '__name__', dflt_cls_name))
         funcs = [single_func]
 
     cls_name = cls_name or dflt_cls_name
