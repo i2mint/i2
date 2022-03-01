@@ -269,7 +269,7 @@ class Wrap:
 
     def __repr__(self):
         name = getattr(self, '__name__', None) or 'Wrap'
-        return f'{name}{signature(self)}'
+        return f'<i2.Wrap {name}{signature(self)}>'
 
 
 def wrap(func, ingress=None, egress=None, *, name=None):
@@ -359,7 +359,7 @@ def wrap(func, ingress=None, egress=None, *, name=None):
         ``Wrap`` class.
 
     """
-    return Wrap(func, ingress, egress)
+    return Wrap(func, ingress, egress, name=name)
 
 
 def append_empty_args(func):
