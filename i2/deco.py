@@ -83,13 +83,16 @@ def double_up_as_factory(decorator_func):
     validate_decorator_func(decorator_func)
 
     @wraps(decorator_func)
-    def _double_up_as_factory(wrapped=None, **kwargs):
+    def _double_up_as_factory(wrapped=None, *args, **kwargs):
+        if args:
+            raise RuntimeError(
+                f"You need to specify decorator arguments as keyword-only."
+                f"You specified positional arguments: {args=}"
+            )
         if wrapped is None:  # then we want a factory
             return partial(decorator_func, **kwargs)
         else:
-            # TODO: Calling a decorated function with more than one positional leads
-            #  to obscure exception that mentions _double_up_as_factory. Improve.
-            return decorator_func(wrapped, **kwargs)
+            return decorator_func(wrapped, *args, **kwargs)
 
     return _double_up_as_factory
 
