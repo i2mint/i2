@@ -86,8 +86,8 @@ def double_up_as_factory(decorator_func):
     def _double_up_as_factory(wrapped=None, *args, **kwargs):
         if args:
             raise RuntimeError(
-                f"You need to specify decorator arguments as keyword-only."
-                f"You specified positional arguments: {args=}"
+                f'You need to specify decorator arguments as keyword-only.'
+                f'You specified positional arguments: {args=}'
             )
         if wrapped is None:  # then we want a factory
             return partial(decorator_func, **kwargs)

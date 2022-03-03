@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.75 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.76 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -632,6 +632,28 @@ call <code class="docutils literal notranslate"><span class="pre">method_func</s
 </dd></dl>
 
 <dl class="py function">
+<dt id="i2.wrapper.include_exclude">
+<code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">include_exclude</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">include</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">exclude</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#include_exclude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.include_exclude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reorder and/or remove parameters.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">a</span><span class="si">=}</span><span class="s2">,</span><span class="si">{</span><span class="n">b</span><span class="si">=}</span><span class="s2">,</span><span class="si">{</span><span class="n">c</span><span class="si">=}</span><span class="s2">,</span><span class="si">{</span><span class="n">d</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span> <span class="o">=</span> <span class="n">include_exclude</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="s1">&#39;b a&#39;</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="s1">&#39;c d&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The signature of <code class="docutils literal notranslate"><span class="pre">bar</span></code> has only <code class="docutils literal notranslate"><span class="pre">b</span></code> and <code class="docutils literal notranslate"><span class="pre">a</span></code>, in that order:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">bar</span><span class="p">))</span>
+<span class="go">&#39;(b, a)&#39;</span>
+</pre></div>
+</div>
+<p>But the function still works and does the same thing:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>
+<span class="go">a=&#39;A&#39;,b=&#39;B&#39;,c=&#39;C&#39;,d=&#39;D&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt id="i2.wrapper.include_exclude_ingress_factory">
 <code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">include_exclude_ingress_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">include</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">exclude</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#include_exclude_ingress_factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.include_exclude_ingress_factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>A pattern underlying any ingress that takes a subset of parameters (possibly
@@ -753,12 +775,6 @@ want to do:</p>
 <span class="gr">AssertionError</span>: <span class="n">Some of the params you want to remove don&#39;t have defaults: {&#39;x&#39;}</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="i2.wrapper.rm_params_ingress_factory">
-<code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">rm_params_ingress_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">params_to_remove</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#rm_params_ingress_factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.rm_params_ingress_factory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a version of the function without some specific params</p>
 </dd></dl>
 
 <dl class="py function">
