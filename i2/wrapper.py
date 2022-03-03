@@ -952,17 +952,37 @@ def include_exclude_ingress_factory(func, include=None, exclude=None):
     annotation).
     """
     sig = Sig(func)
+    if isinstance(include, str):
+        include = include.split()
+    if isinstance(exclude, str):
+        exclude = exclude.split()
     exclude = exclude or set()
     include = [x for x in (include or sig.names) if x not in exclude]
 
     return Ingress(inner_sig=sig, outer_sig=sig[include])
 
 
-def rm_params_ingress_factory(func, params_to_remove):
-    """Get a version of the function without some specific params"""
-    if isinstance(params_to_remove, str):
-        params_to_remove = params_to_remove.split()
-    return include_exclude_ingress_factory(func, exclude=params_to_remove)
+@double_up_as_factory
+def include_exclude(func=None, *, include=None, exclude=None):
+    """Reorder and/or remove parameters.
+
+    >>> def foo(a, b, c='C', d='D'):
+    ...     print(f"{a=},{b=},{c=},{d=}")
+    >>> bar = include_exclude(foo, include='b a', exclude='c d')
+
+    The signature of ``bar`` has only ``b`` and ``a``, in that order:
+
+    >>> from inspect import signature
+    >>> str(signature(bar))
+    '(b, a)'
+
+    But the function still works and does the same thing:
+
+    >>> bar('B', 'A')
+    a='A',b='B',c='C',d='D'
+
+    """
+    return wrap(func, ingress=include_exclude_ingress_factory(func, include, exclude))
 
 
 @double_up_as_factory
@@ -1003,7 +1023,7 @@ def rm_params(func=None, *, params_to_remove=()):
         f'{params_to_remove_that_do_not_have_defaults}'
     )
 
-    return wrap(func, rm_params_ingress_factory(func, params_to_remove))
+    return wrap(func, include_exclude_ingress_factory(func, exclude=params_to_remove))
 
 
 #     new_sig = sig - params_to_remove
