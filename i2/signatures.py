@@ -1568,7 +1568,7 @@ class Sig(Signature, Mapping):
         else:
             params = list(self._transform_params(changes_for_name))
 
-        return Sig(params, return_annotation=new_return_annotation)
+        return Sig(params, name=self.name, return_annotation=new_return_annotation)
 
     def ch_param_attrs(
         self, param_attr, *arg_new_vals, _allow_reordering=False, **kwargs_new_vals
