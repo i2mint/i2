@@ -899,6 +899,8 @@ def mk_ingress_from_name_mapper(func, name_mapper: Mapping, *, conserve_kind=Fal
     return ArgNameMappingIngress(func, conserve_kind=conserve_kind, **name_mapper)
 
 
+# TODO: Replace with i2.wrapper instead
+# TODO: Make sure VARIADICs are handled properly, or error raised if present
 def nice_kinds(func):
     """Wraps the func so it will only have POSITIONAL_OR_KEYWORD argument kinds.
 
@@ -921,6 +923,8 @@ def nice_kinds(func):
     True
     >>> isinstance_of_str(42)
     False
+
+    See also: ``i2.signatures.all_pk_signature``
 
     """
     from i2 import Sig, call_somewhat_forgivingly
