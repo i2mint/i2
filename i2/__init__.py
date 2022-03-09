@@ -10,8 +10,6 @@ from i2.deco import (
 
 from i2.signatures import (
     Sig,
-    Command,
-    extract_commands,
     call_forgivingly,
     call_somewhat_forgivingly,
     name_of_obj,
