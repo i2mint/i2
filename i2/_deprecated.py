@@ -1,3 +1,7 @@
+"""
+Deprecated code I'm keeping around so I can at least reuse it's docs at some point.
+"""
+
 from functools import partial
 from typing import Iterable, Callable, Any
 
