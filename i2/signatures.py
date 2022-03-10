@@ -990,10 +990,14 @@ class Sig(Signature, Mapping):
 
         # special case of functools.partial: need to tell .keywords about kwdefaults
         if isinstance(wrapped_func, partial):
+            # TODO: .args can't be modified -- write test to see if problem.
+            #   If it is, consider returning a new partial with updated args & keywords.
+            # wrapped_func.args = wrapped_func.args + wrapped_func.__defaults__
             wrapped_func.keywords.update(wrapped_func.__kwdefaults__)
 
         # "copy" over all other non-dunder attributes (not the default of
         # functools.wraps!)
+        # TODO: But it is what wraps does -- revise!
         for attr in filter(lambda x: not x.startswith("__"), dir(wrapped_func)):
             try:
                 setattr(wrapped_func, attr, getattr(wrapped_func, attr))
