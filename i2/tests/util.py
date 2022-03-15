@@ -10,15 +10,15 @@ ParameterAble = Union[int, Parameter, str]
 ParamsAble_ = Union[ParamsAble, str, List[int]]
 
 
-def _to_params(params: ParamsAble_):
+def generate_params(params: ParamsAble_):
     """Generate inspect.Parameter instances quickly.
 
     Example: Generate params solely from a list of their kinds
 
-    >>> str(Sig(_to_params([0, 0, 1, 1, 1, 2, 3, 4])))
+    >>> str(Sig(generate_params([0, 0, 1, 1, 1, 2, 3, 4])))
     '(a00, a01, /, a12, a13, a14, *a25, a36, **a47)'
 
-    >>> str(Sig(_to_params("00111234")))
+    >>> str(Sig(generate_params("00111234")))
     '(a00, a01, /, a12, a13, a14, *a25, a36, **a47)'
     """
     if isinstance(params, (Callable, Signature)):
@@ -44,10 +44,10 @@ def _to_params(params: ParamsAble_):
                     )
 
 
-def _params_to_arg_name_and_val(params: ParamsAble_):
+def params_to_arg_name_and_val(params: ParamsAble_):
     """Generate a `{argname: argval, ...}` dictionary from an iterable of params.
 
-    >>> assert dict(_params_to_arg_name_and_val(_to_params("00111234"))) == {
+    >>> assert dict(params_to_arg_name_and_val(generate_params("00111234"))) == {
     ...     "a00": 0,
     ...     "a01": 1,
     ...     "a12": 2,
@@ -58,7 +58,7 @@ def _params_to_arg_name_and_val(params: ParamsAble_):
     ...     "a47": {"a47": 7, "a47_": -7},
     ... }
     """
-    params = _to_params(params)
+    params = generate_params(params)
     for i, param in enumerate(params):
         if param.kind == Parameter.VAR_POSITIONAL:
             val = (i, -i)
@@ -76,14 +76,14 @@ def inject_defaults(params: ParamsAble_, defaults: dict):
     ...     str(
     ...         Sig(
     ...             inject_defaults(
-    ...                 _to_params("00111234"), defaults={"a14": 40, "a36": 60}
+    ...                 generate_params("00111234"), defaults={"a14": 40, "a36": 60}
     ...             )
     ...         )
     ...     )
     ...     == "(a00, a01, /, a12, a13, a14=40, *a25, a36=60, **a47)"
     ... )
     """
-    for param in _to_params(params):
+    for param in generate_params(params):
         if param.name in defaults:
             yield param.replace(default=defaults[param.name])
         else:
@@ -175,7 +175,7 @@ def mk_func_from_params(
     >>> assert f(11, 22) == 'a00=11, blah=22, hello=world'
 
     """
-    params = _to_params(params)
+    params = generate_params(params)
     params = inject_defaults(params, defaults=defaults or {})
     sig = Sig(params)
 
@@ -226,7 +226,7 @@ def mk_func_inputs_for_params(params: ParamsAble_, param_to_input):
 #     'a00=0, a01=1, a12=2, a13=3, a14=4, a25=(), a36=6, a47={}'
 #     """
 #     kinds = params
-#     params = inject_defaults(_to_params(kinds), defaults=defaults or {})
+#     params = inject_defaults(generate_params(kinds), defaults=defaults or {})
 #     name = name or "f" + "".join(map(str, kinds))
 #
 #     return mk_func_from_params(params, defaults, name)
