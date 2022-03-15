@@ -3,6 +3,7 @@
    :caption: Contents:
 
    module_docs/i2
+   module_docs/i2/_deprecated
    module_docs/i2/base
    module_docs/i2/chain_map
    module_docs/i2/deco
