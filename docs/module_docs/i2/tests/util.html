@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.util &mdash; i2 0.0.84 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.util &mdash; i2 0.0.85 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -102,6 +102,21 @@
 <span id="i2-tests-util"></span><h1>i2.tests.util<a class="headerlink" href="#module-i2.tests.util" title="Permalink to this headline">¶</a></h1>
 <p>Utils for testing</p>
 <dl class="py function">
+<dt id="i2.tests.util.generate_params">
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">generate_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Iterable<span class="p">[</span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Callable<span class="p">, </span>str<span class="p">, </span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#generate_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.generate_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate inspect.Parameter instances quickly.</p>
+<p>Example: Generate params solely from a list of their kinds</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">generate_params</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])))</span>
+<span class="go">&#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">generate_params</span><span class="p">(</span><span class="s2">&quot;00111234&quot;</span><span class="p">)))</span>
+<span class="go">&#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt id="i2.tests.util.inject_defaults">
 <code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">inject_defaults</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Iterable<span class="p">[</span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Callable<span class="p">, </span>str<span class="p">, </span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">defaults</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#inject_defaults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.inject_defaults" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yields params with defaults ({argname: default_val,…}) edited.</p>
@@ -109,7 +124,7 @@
 <span class="gp">... </span>    <span class="nb">str</span><span class="p">(</span>
 <span class="gp">... </span>        <span class="n">Sig</span><span class="p">(</span>
 <span class="gp">... </span>            <span class="n">inject_defaults</span><span class="p">(</span>
-<span class="gp">... </span>                <span class="n">_to_params</span><span class="p">(</span><span class="s2">&quot;00111234&quot;</span><span class="p">),</span> <span class="n">defaults</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;a14&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;a36&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">}</span>
+<span class="gp">... </span>                <span class="n">generate_params</span><span class="p">(</span><span class="s2">&quot;00111234&quot;</span><span class="p">),</span> <span class="n">defaults</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;a14&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;a36&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">}</span>
 <span class="gp">... </span>            <span class="p">)</span>
 <span class="gp">... </span>        <span class="p">)</span>
 <span class="gp">... </span>    <span class="p">)</span>
@@ -197,6 +212,24 @@ specifications, as below.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}{</span><span class="n">Sig</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="go">f(a00, /, blah, hello=&#39;world&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;a00=11, blah=22, hello=world&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.tests.util.params_to_arg_name_and_val">
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">params_to_arg_name_and_val</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Iterable<span class="p">[</span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Callable<span class="p">, </span>str<span class="p">, </span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#params_to_arg_name_and_val"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.params_to_arg_name_and_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a <cite>{argname: argval, …}</cite> dictionary from an iterable of params.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params_to_arg_name_and_val</span><span class="p">(</span><span class="n">generate_params</span><span class="p">(</span><span class="s2">&quot;00111234&quot;</span><span class="p">)))</span> <span class="o">==</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;a00&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a01&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a12&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a13&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a14&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a25&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="s2">&quot;a36&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a47&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;a47&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;a47_&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">7</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">}</span>
 </pre></div>
 </div>
 </dd></dl>
