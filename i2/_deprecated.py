@@ -106,19 +106,19 @@ class Command:
             else:
                 return str(x)
 
-        args_str = ", ".join(to_str(a) for a in self.args)
-        kwargs_str = ", ".join(f"{k}={to_str(v)}" for k, v in self.kwargs.items())
+        args_str = ', '.join(to_str(a) for a in self.args)
+        kwargs_str = ', '.join(f'{k}={to_str(v)}' for k, v in self.kwargs.items())
         if args_str and kwargs_str:
-            sep = ", "
+            sep = ', '
         else:
-            sep = ""
+            sep = ''
         args_kwargs_str = args_str + sep + kwargs_str
 
         func_name = name_of_obj(self.func)
         if args_kwargs_str:
-            return f"{type(self).__name__}({func_name}, {args_kwargs_str})"
+            return f'{type(self).__name__}({func_name}, {args_kwargs_str})'
         else:
-            return f"{type(self).__name__}({func_name})"
+            return f'{type(self).__name__}({func_name})'
 
     def _caller(self):
         return self.func(*self.args, **self.kwargs)
@@ -149,7 +149,7 @@ def extract_commands(
     funcs: Iterable[Callable],
     *,
     mk_command: Callable[[Callable, tuple, dict], Any] = Command,
-    what_to_do_with_remainding="ignore",
+    what_to_do_with_remainding='ignore',
     **kwargs,
 ):
     """
@@ -197,12 +197,11 @@ def extract_commands(
         yield mk_command(func, *func_args, **func_kwargs)
 
 
-
 def commands_dict(
     funcs,
     *,
     mk_command: Callable[[Callable, tuple, dict], Any] = Command,
-    what_to_do_with_remainding="ignore",
+    what_to_do_with_remainding='ignore',
     **kwargs,
 ):
     """
