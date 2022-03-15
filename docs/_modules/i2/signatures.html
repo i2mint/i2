@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.83 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.84 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -65,6 +65,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
@@ -223,6 +224,12 @@
 
 <div class="viewcode-block" id="FuncCallNotMatchingSignature"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.FuncCallNotMatchingSignature">[docs]</a><span class="k">class</span> <span class="nc">FuncCallNotMatchingSignature</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Raise when the call signature is not valid&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="IncompatibleSignatures"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.IncompatibleSignatures">[docs]</a><span class="k">class</span> <span class="nc">IncompatibleSignatures</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Raise when two signatures are not compatible.</span>
+<span class="sd">    (see https://github.com/i2mint/i2/issues/16 for more information on signature </span>
+<span class="sd">    compatibility)&quot;&quot;&quot;</span></div>
 
 
 <span class="c1"># TODO: Couldn&#39;t make this work. See https://www.python.org/dev/peps/pep-0562/</span>
@@ -983,7 +990,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
     <span class="c1"># TODO: Add params for more validation (e.g. arg number/name matching?)</span>
-<div class="viewcode-block" id="Sig.wrap"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.wrap">[docs]</a>    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">raise_on_error_copying_attrs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># TODO: Switch to ignore_incompatible_signatures=False when existing code is</span>
+    <span class="c1">#   changed accordingly.</span>
+<div class="viewcode-block" id="Sig.wrap"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.wrap">[docs]</a>    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">ignore_incompatible_signatures</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gives the input function the signature.</span>
 
 <span class="sd">        This is similar to the `functools.wraps` function, but parametrized by a</span>
@@ -1065,41 +1074,26 @@
 
         <span class="c1"># TODO: Should we make a copy/wrap of the function so as to not override</span>
         <span class="c1">#  decorated function itself? Make sure the func remains pickalable!</span>
-        <span class="c1"># @wraps(func)</span>
-        <span class="c1"># def wrapped_func(*args, **kwargs):</span>
-        <span class="c1">#     return func(*args, **kwargs)</span>
-        <span class="n">wrapped_func</span> <span class="o">=</span> <span class="n">func</span>
 
-        <span class="n">wrapped_func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">Signature</span><span class="p">(</span>
+        <span class="c1"># Analyze self and func signature to validate sanity</span>
+        <span class="n">_validate_sanity_of_signature_change</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">ignore_incompatible_signatures</span><span class="p">)</span>
+
+        <span class="c1"># Change (mutate!) func, writing a new __signature__, __annotations__,</span>
+        <span class="c1"># __defaults__ and __kwdefaults__</span>
+        <span class="n">func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">Signature</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">return_annotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">return_annotation</span>
         <span class="p">)</span>
-        <span class="n">wrapped_func</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span>
-
-        <span class="c1"># endow the function with __defaults__ and __kwdefaults__ (not the default of</span>
-        <span class="c1"># functools.wraps!)</span>
-        <span class="p">(</span>
-            <span class="n">wrapped_func</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">,</span>
-            <span class="n">wrapped_func</span><span class="o">.</span><span class="vm">__kwdefaults__</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dunder_defaults_and_kwdefaults</span><span class="p">()</span>
+        <span class="n">func</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span>
+        <span class="n">func</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="vm">__kwdefaults__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dunder_defaults_and_kwdefaults</span><span class="p">()</span>
 
         <span class="c1"># special case of functools.partial: need to tell .keywords about kwdefaults</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wrapped_func</span><span class="p">,</span> <span class="n">partial</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">partial</span><span class="p">):</span>
             <span class="c1"># TODO: .args can&#39;t be modified -- write test to see if problem.</span>
             <span class="c1">#   If it is, consider returning a new partial with updated args &amp; keywords.</span>
             <span class="c1"># wrapped_func.args = wrapped_func.args + wrapped_func.__defaults__</span>
-            <span class="n">wrapped_func</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">wrapped_func</span><span class="o">.</span><span class="vm">__kwdefaults__</span><span class="p">)</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__kwdefaults__</span><span class="p">)</span>
 
-        <span class="c1"># &quot;copy&quot; over all other non-dunder attributes (not the default of</span>
-        <span class="c1"># functools.wraps!)</span>
-        <span class="c1"># TODO: But it is what wraps does -- revise!</span>
-        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">),</span> <span class="nb">dir</span><span class="p">(</span><span class="n">wrapped_func</span><span class="p">)):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="n">wrapped_func</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">wrapped_func</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
-            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">raise_on_error_copying_attrs</span><span class="p">:</span>
-                    <span class="k">raise</span>
-
-        <span class="k">return</span> <span class="n">wrapped_func</span></div>
+        <span class="k">return</span> <span class="n">func</span></div>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gives the input function the signature.</span>
@@ -1178,6 +1172,24 @@
     <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">True</span>
 
+    <span class="k">def</span> <span class="nf">_positional_and_keyword_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get ``{name: default, ...}`` dicts of positional and keyword defaults.</span>
+
+<span class="sd">        &gt;&gt;&gt; def foo(w, /, x: float, y=1, *, z: int = 1):</span>
+<span class="sd">        ...     ...</span>
+<span class="sd">        &gt;&gt;&gt; pos_defaults, kw_defaults = Sig(foo)._positional_and_keyword_defaults()</span>
+<span class="sd">        &gt;&gt;&gt; pos_defaults</span>
+<span class="sd">        {&#39;y&#39;: 1}</span>
+<span class="sd">        &gt;&gt;&gt; kw_defaults</span>
+<span class="sd">        {&#39;z&#39;: 1}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ko_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">names_for_kind</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="n">KO</span><span class="p">)</span>
+        <span class="n">dflts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">dflts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dflts</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ko_names</span><span class="p">},</span>
+            <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">dflts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dflts</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ko_names</span><span class="p">},</span>
+        <span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_dunder_defaults_and_kwdefaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the __defaults__, __kwdefaults__ (i.e. what would be the dunders baring</span>
 <span class="sd">        these names in a python callable)</span>
@@ -1190,14 +1202,13 @@
 <span class="sd">        &gt;&gt;&gt; __kwdefaults__</span>
 <span class="sd">        {&#39;z&#39;: 1}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ko_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">names_for_kind</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="n">KO</span><span class="p">)</span>
-        <span class="n">dflts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span>
+
+        <span class="n">pos_defaults</span><span class="p">,</span> <span class="n">kw_defaults</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positional_and_keyword_defaults</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="nb">tuple</span><span class="p">(</span><span class="n">dflts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dflts</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ko_names</span><span class="p">),</span>
-            <span class="c1"># as known as __defaults__ in python callables</span>
-            <span class="p">{</span>
-                <span class="n">name</span><span class="p">:</span> <span class="n">dflts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dflts</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ko_names</span>
-            <span class="p">},</span>  <span class="c1"># as known as __kwdefaults__ in python callables</span>
+            <span class="nb">tuple</span><span class="p">(</span>
+                <span class="n">pos_defaults</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">),</span>  <span class="c1"># as known as __defaults__ in python callables</span>
+            <span class="n">kw_defaults</span><span class="p">,</span>  <span class="c1"># as known as __kwdefaults__ in python callables</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="Sig.to_signature_kwargs"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.to_signature_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">to_signature_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1790,7 +1801,8 @@
 <span class="sd">        have the **same default**:</span>
 <span class="sd">        &lt;BLANKSPACE&gt;</span>
 <span class="sd">        Happened during an attempt to merge (i, j, w) and (i, j, w=1)</span>
-<span class="sd">        Tip: If you&#39;re trying to merge functions in some way, consider decorating them</span>
+<span class="sd">        Tip: If you&#39;re trying to merge fposiunctions in some way, consider decorating</span>
+<span class="sd">        them</span>
 <span class="sd">        with a signature mapping that avoids the argument name clashing</span>
 
 
@@ -2618,6 +2630,37 @@
             <span class="n">allow_partial</span><span class="o">=</span><span class="n">_allow_partial</span><span class="p">,</span>
             <span class="n">apply_defaults</span><span class="o">=</span><span class="n">_apply_defaults</span><span class="p">,</span>
         <span class="p">)</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_validate_sanity_of_signature_change</span><span class="p">(</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">new_sig</span><span class="p">:</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">ignore_incompatible_signatures</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">):</span>
+
+    <span class="n">func_pos</span><span class="p">,</span> <span class="n">func_kw</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">_positional_and_keyword_defaults</span><span class="p">()</span>
+    <span class="n">self_pos</span><span class="p">,</span> <span class="n">self_kw</span> <span class="o">=</span> <span class="n">new_sig</span><span class="o">.</span><span class="n">_positional_and_keyword_defaults</span><span class="p">()</span>
+    <span class="c1"># print(func_pos, func_kw )</span>
+    <span class="c1"># print(self_pos, self_kw)</span>
+
+    <span class="n">pos_default_switching_to_kw</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">func_pos</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">self_kw</span><span class="p">)</span>
+    <span class="n">kw_default_switching_to_pos</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">func_kw</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">self_pos</span><span class="p">)</span>
+
+    <span class="c1"># print(pos_default_switching_to_kw, kw_default_switching_to_pos)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_incompatible_signatures</span> <span class="ow">and</span> <span class="p">(</span>
+        <span class="n">pos_default_switching_to_kw</span> <span class="ow">or</span> <span class="n">kw_default_switching_to_pos</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="n">IncompatibleSignatures</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Changing both the kind and the default of a param will result to &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;unexpected behaviors if the function is not properly wrapped to do so.&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;If you really want to do this, inject signature using the &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;`ignore_incompatible_signatures=True`&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;argument in `Sig.wrap(...)`. &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Alternatively, you can use `i2.wrapper` tools to have more control &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;over function defaults and signatures.&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;The function you were wrapping had signature: &#39;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name_of_obj</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="si">}{</span><span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="si">}</span><span class="s2"> and &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;the signature you wanted to inject was </span><span class="si">{</span><span class="n">new_sig</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="si">}{</span><span class="n">new_sig</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
 
 <span class="c1">########################################################################################</span>
