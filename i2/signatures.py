@@ -2604,16 +2604,56 @@ def call_forgivingly(func, *args, **kwargs):
     ... )  # well, as it happens, nothing bad -- the intruder argument is just ignored
     ('foo', ('input for a', 0, 42))
 
+    An example of what happens when variadic kinds are involved:
+
+    >>> def bar(x, *args1, y=1, **kwargs1):
+    ...     return x, args1, y, kwargs1
+    >>> call_forgivingly(bar, 1, 2, 3, y=4, z=5)
+    (1, (2, 3), 4, {'z': 5})
+
+    # >>> def bar(x, y=1, **kwargs1):
+    # ...     return x, y, kwargs1
+    # >>> call_forgivingly(bar, 1, 2, 3, y=4, z=5)
+    # (1, 4, {'z': 5})
+
+    # >>> call_forgivingly(bar, 1, 2, 3, y=4, z=5)
+
+    # >>> def bar(x, *args1, y=1):
+    # ...     return x, args1, y
+    # >>> call_forgivingly(bar, 1, 2, 3, y=4, z=5)
+    # (1, (2, 3), {'z': 5})
+
     """
     return _call_forgivingly(func, args, kwargs)
 
 
+# TODO: See if there's a more elegant way to do this
 def _call_forgivingly(func, args, kwargs):
     """
-    Helper for _call_forgivingly
+    Helper for _call_forgivingly.
     """
-    args, kwargs = Sig(func).source_args_and_kwargs(*args, **kwargs)
-    return func(*args, **kwargs)
+    sig = Sig(func)
+    variadic_kinds = {
+        name: kind for name, kind in sig.kinds.items() if kind in var_param_kinds
+    }
+    new_sig = sig - variadic_kinds.keys()
+    if Sig.VAR_POSITIONAL in variadic_kinds.values():
+        if Sig.VAR_KEYWORD in variadic_kinds.values():
+            _args = args
+            _kwargs = kwargs
+    else:
+        _args, _kwargs = new_sig.source_args_and_kwargs(*args, **kwargs)
+        if Sig.VAR_POSITIONAL in variadic_kinds.values():
+            t = 1
+        elif Sig.VAR_KEYWORD in variadic_kinds.values():
+            _kwargs = dict(_kwargs, **kwargs)
+
+    # if Sig.VAR_POSITIONAL in variadic_kinds.values():
+    #     _args = _args + args[len(_args):]
+    # # _args = args if Sig.VAR_POSITIONAL in variadic_kinds.values() else _args
+    # if Sig.VAR_KEYWORD in variadic_kinds.values():
+    #     _kwargs = dict(kwargs, **_kwargs)
+    return func(*_args, **_kwargs)
 
 
 def call_somewhat_forgivingly(
