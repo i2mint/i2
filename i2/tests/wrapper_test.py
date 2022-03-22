@@ -152,3 +152,54 @@ def test_arg_val_converter():
 
     assert unpickled_func_still_works(formula1, 4, 3, 2, z=1)
     assert unpickled_func_still_works(formula2, 4, 3, 2, z=1)
+
+
+from i2.wrapper import Wrapx
+
+
+def test_wrapx():
+    from inspect import signature
+
+    # Test that an trivial Wrapx instance (i.e. no ingress, caller, or egress
+    # modifications) gives us an object behaving like the wrapped function.
+
+    # TODO: Make it work with param kinds: e.g. func(x: int, *, y=1) -> int:
+    def func(x: int, y=1) -> int:
+        return x + y
+
+    wrapped_func = Wrapx(func)
+    assert (
+        str(signature(wrapped_func)) == '(x: int, y=1) -> int' == str(signature(func))
+    )
+
+    # Test egress that has a single param z
+
+    def func(x, y):
+        return x + y
+
+    def egress(v, *, z):
+        return v * z
+
+    wrapped_func = Wrapx(func, egress=egress)
+
+    assert func(1, 2) == 3
+
+    # TODO: should be '(x, y=1, *, z)' --> Need to work on the merge for this.
+    assert str(signature(wrapped_func)) == '(x, y, z)'
+    assert wrapped_func(1, 2, z=3) == 9 == func(1, 2) * 3
+
+    # A more realistic application: Saving outputs to a specific location on output
+
+    def func(x, y):
+        return x + y
+
+    # we want to be able to get a function that will save/cache the result
+    # in a specific store, under a specific key, the two latter controlleable at runtime
+    def wrapped_func(x, y, *, k, s):
+        v = func(x, y)
+        s[k] = v
+        return v
+
+    store = dict()
+    assert wrapped_func(1, 2, k='save_here', s=store) == 3 == func(1, 2)
+    assert store == {'save_here': 3}

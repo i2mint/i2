@@ -111,7 +111,38 @@ class MakeFromFunc:
         return self.func_to_obj(func)
 
 
-class Wrap:
+# TODO: Continue factoring out Wrap and Wrapx code
+class _Wrap:
+    _init_args = ()
+    _init_kwargs = ()
+
+    def __init__(self, func, *args, **kwargs):
+        self._init_args = (func, *args)
+        self._init_kwargs = kwargs
+        # wraps(func)(self) is there to copy over to self anything that func may
+        # have had. It should be before anything else so it doesn't overwrite stuff
+        # that we may add to self in init (like .func for example!)
+        wraps(func)(self)  # TODO: should we really copy everything by default?
+        if name := kwargs.get('name', None) is not None:
+            self.__name__ = name
+        self.func = func  # Note: overwrites self.func that wraps MAY have inserted
+        self.__wrapped__ = func
+        # TODO: Pros and cons analysis of pointing __wrapped__ to func. partial uses
+        #  .func, but wraps looks for __wrapped__
+
+    def __reduce__(self):
+        return type(self), self._init_args, dict(self._init_kwargs)
+
+    def __get__(self, instance, owner):
+        return MethodType(self, instance)
+
+    def __repr__(self):
+        # TODO: Replace i2.Wrap with dynamic (Wrap or Wrapx)
+        name = getattr(self, '__name__', None) or 'Wrap'
+        return f'<i2.Wrap {name}{signature(self)}>'
+
+
+class Wrap(_Wrap):
     """A function wrapper with interface modifiers.
 
     :param func: The wrapped function
@@ -213,18 +244,7 @@ class Wrap:
     """
 
     def __init__(self, func, ingress=None, egress=None, *, name=None):
-        # wraps(func)(self) is there to copy over to self anything that func may
-        # have had. It should be before anything else so it doesn't overwrite stuff
-        # that we may add to self in init (like .func for example!)
-        wraps(func)(self)  # TODO: should we really copy everything by default?
-        if name is not None:
-            self.__name__ = name
-        self.func = func  # Note: overwrites self.func that wraps MAY have inserted
-
-        # remember the actual value of ingress and egress (for reduce to reproduce)
-        self._ingress = ingress
-        self._egress = egress
-
+        super().__init__(func, ingress, egress, name=name)
         ingress_sig = Sig(func)
 
         if ingress is None:
@@ -253,23 +273,10 @@ class Wrap:
                 return_annotation = egress_return_annotation
 
         self.__signature__ = Sig(ingress_sig, return_annotation=return_annotation)
-        self.__wrapped__ = func
-        # TODO: Pros and cons analysis of pointing __wrapped__ to func. partial uses
-        #  .func, but wraps looks for __wrapped__
 
     def __call__(self, *ingress_args, **ingress_kwargs):
         func_args, func_kwargs = self.ingress(*ingress_args, **ingress_kwargs)
         return self.egress(self.func(*func_args, **func_kwargs))
-
-    def __reduce__(self):
-        return type(self), (self.func, self._ingress, self._egress)
-
-    def __get__(self, instance, owner):
-        return MethodType(self, instance)
-
-    def __repr__(self):
-        name = getattr(self, '__name__', None) or 'Wrap'
-        return f'<i2.Wrap {name}{signature(self)}>'
 
 
 def wrap(func, ingress=None, egress=None, *, name=None):
@@ -1280,3 +1287,102 @@ def make_funcs_binding_class(
         method_func = func_to_method_func(func, init_params)
         setattr(Klass, method_func.__name__, method_func)
     return Klass
+
+
+# ---------------------------------------------------------------------------------------
+# Extended Wrapper class
+
+from i2 import call_forgivingly
+
+
+class WrapperValidationError(ValueError):
+    """Raised when wrapper some construction params are not valid"""
+
+
+class EgressValidationError(WrapperValidationError):
+    """Raised when a caller is not valid"""
+
+
+class IngressValidationError(WrapperValidationError):
+    """Raised when a caller is not valid"""
+
+
+class CallerValidationError(WrapperValidationError):
+    """Raised when a caller is not valid"""
+
+
+def _default_ingress(*args, **kwargs):
+    return args, kwargs
+
+
+def _default_egress(output, **egress_params):
+    return output
+
+
+def _default_caller(func, args, kwargs):
+    return func(*args, **kwargs)
+
+
+_keyword_kinds = {Sig.KEYWORD_ONLY, Sig.VAR_KEYWORD}
+
+
+def _all_kinds_are_keyword_only_or_variadic_keyword(sig):
+    return all(kind in _keyword_kinds for kind in list(sig.kinds.values())[3:])
+
+
+# TODO: Factor out more common parts with Wrap and reuse (possibly through _Wrap)
+class Wrapx(_Wrap):
+    def __init__(self, func, ingress=None, egress=None, *, caller=None, name=None):
+        super().__init__(func, ingress, egress, caller=caller, name=name)
+        self.ingress, self.egress, self.caller, self.sig = _process_wrapx_params(
+            func, ingress, egress, caller
+        )
+
+        self.__signature__ = self.sig
+        self.__wrapped__ = func
+        # TODO: Pros and cons analysis of pointing __wrapped__ to func. partial uses
+        #  .func, but wraps looks for __wrapped__
+
+    def __call__(self, *args, **kwargs):
+        _kwargs = self.sig.kwargs_from_args_and_kwargs(args, kwargs)
+        func_args, func_kwargs = call_forgivingly(self.ingress, **_kwargs)
+        output = call_forgivingly(self.func, *func_args, **func_kwargs)
+        return call_forgivingly(self.egress, output, **_kwargs)
+
+
+def _process_wrapx_params(func, ingress, egress, caller):
+    func_sig = Sig(func)
+    if ingress is None:
+        ingress = _default_ingress
+        ingress_sig = func_sig
+    else:
+        ingress_sig = Sig(ingress)
+    if egress is None:
+        egress = _default_egress
+        egress_sig = Sig('output')  # signature with a single 'output' arg
+        return_annotation = func_sig.return_annotation
+    else:
+        egress_sig = Sig(egress)
+        return_annotation = egress_sig.return_annotation or Sig(func).return_annotation
+    if caller is None:
+        caller = _default_caller
+        caller_sig = Sig('func args kwargs')  # sig with three inputs
+    else:
+        caller_sig = Sig(caller)
+        if len(caller_sig) < 3:
+            raise CallerValidationError(
+                f'A caller must have at least three arguments: '
+                f'{caller} signature was {caller_sig}'
+            )
+        if not _all_kinds_are_keyword_only_or_variadic_keyword(caller_sig):
+            raise CallerValidationError(
+                f'A caller must have at least three arguments'
+                f'{caller} signature was {caller_sig}'
+            )
+    egress_sig_minus_first_arg = egress_sig - egress_sig.names[0]
+    caller_sig_minus_three_first_args = caller_sig - caller_sig.names[:3]
+    sig = Sig(
+        ingress_sig + egress_sig_minus_first_arg + caller_sig_minus_three_first_args,
+        return_annotation=return_annotation,
+    )
+    return ingress, egress, caller, sig
