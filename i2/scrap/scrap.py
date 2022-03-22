@@ -2,6 +2,71 @@
 
 from typing import Iterable, Callable, Tuple
 from i2.wrapper import Wrap
+from i2 import call_forgivingly, Sig
+
+
+def _default_ingress(*args, **kwargs):
+    return args, kwargs
+
+
+def _default_egress(output, **egress_params):
+    return output
+
+
+class Wrapx:
+    def __init__(self, func, ingress=None, egress=None, *, caller=None):
+        self.func = func
+        func_sig = Sig(func)
+
+        if ingress is None:
+            ingress = _default_ingress
+            ingress_sig = func_sig
+        else:
+            ingress_sig = Sig(ingress)
+        if egress is None:
+            egress = _default_egress
+            egress_sig = Sig('output')
+            return_annotation = func_sig.return_annotation
+        else:
+            egress_sig = Sig(egress)
+            return_annotation = (
+                    egress_sig.return_annotation or Sig(func).return_annotation
+            )
+
+        self.ingress = ingress
+        self.egress = egress
+        egress_sig_minus_first_arg = egress_sig - egress_sig.names[0]
+        self.sig = Sig(
+            ingress_sig + egress_sig_minus_first_arg,
+            return_annotation=return_annotation
+        )
+        self.__signature__ = self.sig
+
+    def __call__(self, *args, **kwargs):
+        _kwargs = self.sig.kwargs_from_args_and_kwargs(args, kwargs)
+        func_args, func_kwargs = call_forgivingly(self.ingress, **_kwargs)
+        # func_args, func_kwargs = call_forgivingly(self.ingress, *args, **kwargs)
+        output = call_forgivingly(self.func, *func_args, **func_kwargs)
+        # return call_forgivingly(self.egress, output, *args, **kwargs)
+        return call_forgivingly(self.egress, output, **_kwargs)
+
+
+def test_wrapx3():
+    from inspect import signature
+
+    def func(x, y):
+        return x + y
+
+    def egress(v, *, z):
+        return v * z
+
+    wrapped_func = Wrapx(func, egress=egress)
+
+    assert func(1, 2) == 3
+
+    # TODO: should be '(x, y=1, *, z)' --> Need to work on the merge for this.
+    assert str(signature(wrapped_func)) == '(x, y, z)'
+    assert wrapped_func(1, 2, z=3) == 9 == func(1, 2) * 3
 
 
 def default_caller(
@@ -34,7 +99,7 @@ def _extract_params(ingress_output) -> Tuple[tuple, dict, dict, dict]:
 
 # TODO: Create a few higher-level constructors
 # TODO: Add static analysis to ascertain protocols
-class Wrapx(Wrap):
+class Wrapx1(Wrap):
     """An extended ``Wrap`` object that enables control over ``caller`` & ``egress``.
 
     To get the extended functionality, the ``ingress`` function must return a dict with
@@ -57,7 +122,7 @@ class Wrapx(Wrap):
     >>> def egress(v, *, z):
     ...     return v * z
     ...
-    >>> wrapped_func = Wrapx(func, ingress=ingress, egress=egress)
+    >>> wrapped_func = Wrapx1(func, ingress=ingress, egress=egress)
     >>>
     >>> func(1, 2)
     3
@@ -74,7 +139,7 @@ class Wrapx(Wrap):
     >>> def _saving_egress(v, *, k, s):
     ...     s[k] = v
     ...     return v
-    >>> save_on_output = Wrapx(func, ingress=_saving_ingress, egress=_saving_egress)
+    >>> save_on_output = Wrapx1(func, ingress=_saving_ingress, egress=_saving_egress)
     >>> str(signature(save_on_output))
     '(x, y, *, k, s)'
     >>>
@@ -121,7 +186,7 @@ class Wrapx2(Wrap):
     ...     return (x, y), {}, dict(z=z), {}
     >>> def egress(v, *, z):
     ...     return v * z
-    >>> wrapped_func = Wrapx(func, ingress=ingress, egress=egress)
+    >>> wrapped_func = Wrapx2(func, ingress=ingress, egress=egress)
     >>>
     >>> assert func(1, 2) == 3
     >>> assert str(signature(wrapped_func)) == '(x, y, *, z)'
