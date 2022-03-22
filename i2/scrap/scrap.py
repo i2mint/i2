@@ -30,7 +30,7 @@ class Wrapx:
         else:
             egress_sig = Sig(egress)
             return_annotation = (
-                    egress_sig.return_annotation or Sig(func).return_annotation
+                egress_sig.return_annotation or Sig(func).return_annotation
             )
 
         self.ingress = ingress
@@ -38,7 +38,7 @@ class Wrapx:
         egress_sig_minus_first_arg = egress_sig - egress_sig.names[0]
         self.sig = Sig(
             ingress_sig + egress_sig_minus_first_arg,
-            return_annotation=return_annotation
+            return_annotation=return_annotation,
         )
         self.__signature__ = self.sig
 
@@ -106,7 +106,6 @@ def default_caller(
     return func(*func_args, **func_kwargs)
 
 
-
 def _extract_params(ingress_output) -> Tuple[tuple, dict, dict, dict]:
     """Pads tuple with empty dicts"""
     if isinstance(ingress_output, tuple) and len(ingress_output) == 2:
@@ -124,8 +123,9 @@ def _extract_params(ingress_output) -> Tuple[tuple, dict, dict, dict]:
         # TODO: Should we assert those were the only keys to mitigate key-typo errors?
     else:
         raise ValueError(
-            f"ingress_output should be a 2-tuple or a dict. Was {ingress_output}"
+            f'ingress_output should be a 2-tuple or a dict. Was {ingress_output}'
         )
+
 
 # TODO: Create a few higher-level constructors
 # TODO: Add static analysis to ascertain protocols
@@ -184,8 +184,9 @@ class Wrapx1(Wrap):
 
 
     """
+
     def __init__(
-            self, func, ingress=None, egress=None, *, name=None, caller=default_caller
+        self, func, ingress=None, egress=None, *, name=None, caller=default_caller
     ):
         super().__init__(func, ingress=ingress, egress=egress, name=name)
         self.caller = caller
@@ -222,8 +223,9 @@ class Wrapx2(Wrap):
     >>> assert str(signature(wrapped_func)) == '(x, y, *, z)'
     >>> assert wrapped_func(1, 2, z=3) == 9 == func(1, 2) * 3
     """
+
     def __init__(
-            self, func, ingress=None, egress=None, *, name=None, caller=default_caller
+        self, func, ingress=None, egress=None, *, name=None, caller=default_caller
     ):
         super().__init__(func, ingress=ingress, egress=egress, name=name)
         self.caller = caller
