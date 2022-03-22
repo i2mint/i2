@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.scrap.scrap &mdash; i2 0.0.86 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.scrap.scrap &mdash; i2 0.0.87 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -152,6 +152,18 @@
 <span class="k">def</span> <span class="nf">test_wrapx3</span><span class="p">():</span>
     <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
 
+    <span class="c1"># Test that an trivial Wrapx instance (i.e. no ingress, caller, or egress</span>
+    <span class="c1"># modifications) gives us an object behaving like the wrapped function.</span>
+    <span class="c1"># TODO: Make it work with param kinds: e.g. func(x: int, *, y=1) -&gt; int:</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+    <span class="n">wrapped_func</span> <span class="o">=</span> <span class="n">Wrapx</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">wrapped_func</span><span class="p">))</span> <span class="o">==</span> <span class="s1">&#39;(x: int, y=1) -&gt; int&#39;</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="c1">#</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
 
@@ -165,6 +177,23 @@
     <span class="c1"># TODO: should be &#39;(x, y=1, *, z)&#39; --&gt; Need to work on the merge for this.</span>
     <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">wrapped_func</span><span class="p">))</span> <span class="o">==</span> <span class="s1">&#39;(x, y, z)&#39;</span>
     <span class="k">assert</span> <span class="n">wrapped_func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span> <span class="o">==</span> <span class="n">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span>
+
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+    <span class="c1"># we want to be able to get a function that will save/cache the result</span>
+    <span class="c1"># in a specific store, under a specific key, the two latter controlleable at runtime</span>
+    <span class="k">def</span> <span class="nf">wrapped_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">v</span>
+
+    <span class="n">store</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wrapped_func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="s1">&#39;save_here&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">store</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">store</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;save_here&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+
+
+<span class="n">test_wrapx3</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="default_caller"><a class="viewcode-back" href="../../../module_docs/i2/scrap/scrap.html#i2.scrap.scrap.default_caller">[docs]</a><span class="k">def</span> <span class="nf">default_caller</span><span class="p">(</span>

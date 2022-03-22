@@ -62,9 +62,7 @@ def test_wrapx3():
 
     wrapped_func = Wrapx(func)
     assert (
-            str(signature(wrapped_func))
-            == '(x: int, y=1) -> int'
-            == str(signature(func))
+        str(signature(wrapped_func)) == '(x: int, y=1) -> int' == str(signature(func))
     )
 
     #
@@ -98,6 +96,7 @@ def test_wrapx3():
 
 
 test_wrapx3()
+
 
 def default_caller(
     func: Callable, func_args: tuple, func_kwargs: dict, **caller_params
