@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.87 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.88 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -156,6 +156,18 @@
       *inner_args, **inner_kwargs
 </pre></div>
 </div>
+<dl class="py exception">
+<dt id="i2.wrapper.CallerValidationError">
+<em class="property">exception </em><code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">CallerValidationError</code><a class="reference internal" href="../../_modules/i2/wrapper.html#CallerValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.CallerValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when a caller is not valid</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="i2.wrapper.EgressValidationError">
+<em class="property">exception </em><code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">EgressValidationError</code><a class="reference internal" href="../../_modules/i2/wrapper.html#EgressValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.EgressValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when a caller is not valid</p>
+</dd></dl>
+
 <dl class="py class">
 <dt id="i2.wrapper.Ingress">
 <em class="property">class </em><code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">Ingress</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inner_sig</span></em>, <em class="sig-param"><span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>dict<span class="p">]</span><span class="p">, </span>dict<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outer_sig</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#Ingress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.Ingress" title="Permalink to this definition">¶</a></dt>
@@ -297,6 +309,12 @@ Instead, they can be</p>
 <code class="docutils literal notranslate"><span class="pre">ingress.wrap(func,...)</span></code> equivalent to <code class="docutils literal notranslate"><span class="pre">Wrap(func,</span> <span class="pre">ingress,</span> <span class="pre">...)</span></code></p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py exception">
+<dt id="i2.wrapper.IngressValidationError">
+<em class="property">exception </em><code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">IngressValidationError</code><a class="reference internal" href="../../_modules/i2/wrapper.html#IngressValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.IngressValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when a caller is not valid</p>
 </dd></dl>
 
 <dl class="py class">
@@ -563,6 +581,12 @@ will be called on <cite>func</cite> to produce the ingress that should be used t
 <p class="admonition-title">See also</p>
 <p><code class="docutils literal notranslate"><span class="pre">wrap</span></code> function.</p>
 </div>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="i2.wrapper.WrapperValidationError">
+<em class="property">exception </em><code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">WrapperValidationError</code><a class="reference internal" href="../../_modules/i2/wrapper.html#WrapperValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.WrapperValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when wrapper some construction params are not valid</p>
 </dd></dl>
 
 <dl class="py function">
