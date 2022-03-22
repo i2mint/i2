@@ -15,6 +15,19 @@ from i2.signatures import Sig, kind_forgiving_func
 # from i2.signatures import ch_signature_to_all_pk, params_of, copy_func
 
 
+def _double_up_as_factory(wrapped=None, *args, __decorator_func=None, **kwargs):
+    """Util for double_up_as_factory, ``__decorator_func`` to be partialized"""
+    if args:
+        raise RuntimeError(
+            f'You need to specify decorator arguments as keyword-only.'
+            f'You specified positional arguments: {args=}'
+        )
+    if wrapped is None:  # then we want a factory
+        return partial(__decorator_func, **kwargs)
+    else:
+        return __decorator_func(wrapped, *args, **kwargs)
+
+
 def double_up_as_factory(decorator_func):
     """Repurpose a decorator both as it's original form, and as a decorator factory.
     That is, from a decorator that is defined do ``wrapped_func = decorator(func, **params)``,
@@ -82,19 +95,9 @@ def double_up_as_factory(decorator_func):
 
     validate_decorator_func(decorator_func)
 
-    @wraps(decorator_func)
-    def _double_up_as_factory(wrapped=None, *args, **kwargs):
-        if args:
-            raise RuntimeError(
-                f'You need to specify decorator arguments as keyword-only.'
-                f'You specified positional arguments: {args=}'
-            )
-        if wrapped is None:  # then we want a factory
-            return partial(decorator_func, **kwargs)
-        else:
-            return decorator_func(wrapped, *args, **kwargs)
-
-    return _double_up_as_factory
+    return wraps(decorator_func)(
+        partial(_double_up_as_factory, __decorator_func=decorator_func)
+    )
 
 
 # TODO: Review, doc, and make public.
