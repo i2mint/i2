@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.85 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.86 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -2702,16 +2702,56 @@
 <span class="sd">    ... )  # well, as it happens, nothing bad -- the intruder argument is just ignored</span>
 <span class="sd">    (&#39;foo&#39;, (&#39;input for a&#39;, 0, 42))</span>
 
+<span class="sd">    An example of what happens when variadic kinds are involved:</span>
+
+<span class="sd">    &gt;&gt;&gt; def bar(x, *args1, y=1, **kwargs1):</span>
+<span class="sd">    ...     return x, args1, y, kwargs1</span>
+<span class="sd">    &gt;&gt;&gt; call_forgivingly(bar, 1, 2, 3, y=4, z=5)</span>
+<span class="sd">    (1, (2, 3), 4, {&#39;z&#39;: 5})</span>
+
+<span class="sd">    # &gt;&gt;&gt; def bar(x, y=1, **kwargs1):</span>
+<span class="sd">    # ...     return x, y, kwargs1</span>
+<span class="sd">    # &gt;&gt;&gt; call_forgivingly(bar, 1, 2, 3, y=4, z=5)</span>
+<span class="sd">    # (1, 4, {&#39;z&#39;: 5})</span>
+
+<span class="sd">    # &gt;&gt;&gt; call_forgivingly(bar, 1, 2, 3, y=4, z=5)</span>
+
+<span class="sd">    # &gt;&gt;&gt; def bar(x, *args1, y=1):</span>
+<span class="sd">    # ...     return x, args1, y</span>
+<span class="sd">    # &gt;&gt;&gt; call_forgivingly(bar, 1, 2, 3, y=4, z=5)</span>
+<span class="sd">    # (1, (2, 3), {&#39;z&#39;: 5})</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_call_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span></div>
 
 
+<span class="c1"># TODO: See if there&#39;s a more elegant way to do this</span>
 <span class="k">def</span> <span class="nf">_call_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Helper for _call_forgivingly</span>
+<span class="sd">    Helper for _call_forgivingly.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">source_args_and_kwargs</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">variadic_kinds</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">kind</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">kinds</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">var_param_kinds</span>
+    <span class="p">}</span>
+    <span class="n">new_sig</span> <span class="o">=</span> <span class="n">sig</span> <span class="o">-</span> <span class="n">variadic_kinds</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">Sig</span><span class="o">.</span><span class="n">VAR_POSITIONAL</span> <span class="ow">in</span> <span class="n">variadic_kinds</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">Sig</span><span class="o">.</span><span class="n">VAR_KEYWORD</span> <span class="ow">in</span> <span class="n">variadic_kinds</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">_args</span> <span class="o">=</span> <span class="n">args</span>
+            <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_args</span><span class="p">,</span> <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">new_sig</span><span class="o">.</span><span class="n">source_args_and_kwargs</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Sig</span><span class="o">.</span><span class="n">VAR_POSITIONAL</span> <span class="ow">in</span> <span class="n">variadic_kinds</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">Sig</span><span class="o">.</span><span class="n">VAR_KEYWORD</span> <span class="ow">in</span> <span class="n">variadic_kinds</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># if Sig.VAR_POSITIONAL in variadic_kinds.values():</span>
+    <span class="c1">#     _args = _args + args[len(_args):]</span>
+    <span class="c1"># # _args = args if Sig.VAR_POSITIONAL in variadic_kinds.values() else _args</span>
+    <span class="c1"># if Sig.VAR_KEYWORD in variadic_kinds.values():</span>
+    <span class="c1">#     _kwargs = dict(kwargs, **_kwargs)</span>
+    <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="call_somewhat_forgivingly"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.call_somewhat_forgivingly">[docs]</a><span class="k">def</span> <span class="nf">call_somewhat_forgivingly</span><span class="p">(</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.0.85 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.deco &mdash; i2 0.0.86 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -113,6 +113,19 @@
 <span class="c1"># from i2.signatures import ch_signature_to_all_pk, params_of, copy_func</span>
 
 
+<span class="k">def</span> <span class="nf">_double_up_as_factory</span><span class="p">(</span><span class="n">wrapped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">__decorator_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Util for double_up_as_factory, ``__decorator_func`` to be partialized&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;You need to specify decorator arguments as keyword-only.&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;You specified positional arguments: </span><span class="si">{</span><span class="n">args</span><span class="si">=}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">wrapped</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># then we want a factory</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">__decorator_func</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">__decorator_func</span><span class="p">(</span><span class="n">wrapped</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="double_up_as_factory"><a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.double_up_as_factory">[docs]</a><span class="k">def</span> <span class="nf">double_up_as_factory</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Repurpose a decorator both as it&#39;s original form, and as a decorator factory.</span>
 <span class="sd">    That is, from a decorator that is defined do ``wrapped_func = decorator(func, **params)``,</span>
@@ -180,19 +193,9 @@
 
     <span class="n">validate_decorator_func</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)</span>
 
-    <span class="nd">@wraps</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_double_up_as_factory</span><span class="p">(</span><span class="n">wrapped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;You need to specify decorator arguments as keyword-only.&#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;You specified positional arguments: </span><span class="si">{</span><span class="n">args</span><span class="si">=}</span><span class="s1">&#39;</span>
-            <span class="p">)</span>
-        <span class="k">if</span> <span class="n">wrapped</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># then we want a factory</span>
-            <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">decorator_func</span><span class="p">(</span><span class="n">wrapped</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">_double_up_as_factory</span></div>
+    <span class="k">return</span> <span class="n">wraps</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)(</span>
+        <span class="n">partial</span><span class="p">(</span><span class="n">_double_up_as_factory</span><span class="p">,</span> <span class="n">__decorator_func</span><span class="o">=</span><span class="n">decorator_func</span><span class="p">)</span>
+    <span class="p">)</span></div>
 
 
 <span class="c1"># TODO: Review, doc, and make public.</span>

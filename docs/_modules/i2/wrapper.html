@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.85 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.86 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -1064,7 +1064,7 @@
     <span class="k">return</span> <span class="n">Ingress</span><span class="p">(</span><span class="n">inner_sig</span><span class="o">=</span><span class="n">sig</span><span class="p">,</span> <span class="n">outer_sig</span><span class="o">=</span><span class="n">sig</span><span class="p">[</span><span class="n">include</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="include_exclude"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.include_exclude">[docs]</a><span class="nd">@double_up_as_factory</span>
+<span class="nd">@double_up_as_factory</span>
 <span class="k">def</span> <span class="nf">include_exclude</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reorder and/or remove parameters.</span>
 
@@ -1084,10 +1084,10 @@
 <span class="sd">    a=&#39;A&#39;,b=&#39;B&#39;,c=&#39;C&#39;,d=&#39;D&#39;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">include_exclude_ingress_factory</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">include_exclude_ingress_factory</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="rm_params"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.rm_params">[docs]</a><span class="nd">@double_up_as_factory</span>
+<span class="nd">@double_up_as_factory</span>
 <span class="k">def</span> <span class="nf">rm_params</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">params_to_remove</span><span class="o">=</span><span class="p">()):</span>
     <span class="sd">&quot;&quot;&quot;Get a function with some parameters removed.</span>
 
@@ -1125,7 +1125,7 @@
         <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">params_to_remove_that_do_not_have_defaults</span><span class="si">}</span><span class="s1">&#39;</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">include_exclude_ingress_factory</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">params_to_remove</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">include_exclude_ingress_factory</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">params_to_remove</span><span class="p">))</span>
 
 
 <span class="c1">#     new_sig = sig - params_to_remove</span>
