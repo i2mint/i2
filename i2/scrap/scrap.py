@@ -54,6 +54,20 @@ class Wrapx:
 def test_wrapx3():
     from inspect import signature
 
+    # Test that an trivial Wrapx instance (i.e. no ingress, caller, or egress
+    # modifications) gives us an object behaving like the wrapped function.
+    # TODO: Make it work with param kinds: e.g. func(x: int, *, y=1) -> int:
+    def func(x: int, y=1) -> int:
+        return x + y
+
+    wrapped_func = Wrapx(func)
+    assert (
+            str(signature(wrapped_func))
+            == '(x: int, y=1) -> int'
+            == str(signature(func))
+    )
+
+    #
     def func(x, y):
         return x + y
 
@@ -68,6 +82,22 @@ def test_wrapx3():
     assert str(signature(wrapped_func)) == '(x, y, z)'
     assert wrapped_func(1, 2, z=3) == 9 == func(1, 2) * 3
 
+    def func(x, y):
+        return x + y
+
+    # we want to be able to get a function that will save/cache the result
+    # in a specific store, under a specific key, the two latter controlleable at runtime
+    def wrapped_func(x, y, *, k, s):
+        v = func(x, y)
+        s[k] = v
+        return v
+
+    store = dict()
+    assert wrapped_func(1, 2, k='save_here', s=store) == 3 == func(1, 2)
+    assert store == {'save_here': 3}
+
+
+test_wrapx3()
 
 def default_caller(
     func: Callable, func_args: tuple, func_kwargs: dict, **caller_params
