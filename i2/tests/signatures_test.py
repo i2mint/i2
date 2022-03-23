@@ -11,6 +11,7 @@ Both in the code and in the docs, we'll use short hands for parameter (argument)
     KO = Parameter.KEYWORD_ONLY
 
 """
+from re import I
 import pytest
 from functools import reduce
 from typing import Any
@@ -452,3 +453,148 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
         raise ValueError("priority should be 'last' or 'first'")
 
     return transform_signature
+
+
+@pytest.mark.parametrize(
+    'params',
+    [
+        (
+            # (po, /)
+            [dict(name='po', kind=PO),]
+        ),
+        (
+            # (pk)
+            [dict(name='pk', kind=PK),]
+        ),
+        (
+            # (*, ko)
+            [dict(name='ko', kind=KO),]
+        ),
+        (
+            # (po, /, pk, *, ko)
+            [
+                dict(name='po', kind=PO),
+                dict(name='pk', kind=PK),
+                dict(name='ko', kind=KO),
+            ]
+        ),
+        (
+            # (*args)
+            [dict(name='args', kind=VP),]
+        ),
+        (
+            # (**kwargs)
+            [dict(name='kwargs', kind=VK),]
+        ),
+        (
+            # (*args, **kwargs)
+            [dict(name='args', kind=VP), dict(name='kwargs', kind=VK),]
+        ),
+        (
+            # (po, /, pk, *args, ko, **kwargs)
+            [
+                dict(name='po', kind=PO),
+                dict(name='pk', kind=PK),
+                dict(name='args', kind=VP),
+                dict(name='ko', kind=KO),
+                dict(name='kwargs', kind=VK),
+            ]
+        ),
+        (
+            # (po1, po2, /)
+            [dict(name='po1', kind=PO), dict(name='po2', kind=PO),]
+        ),
+        (
+            # (pk1, pk2)
+            [dict(name='pk1', kind=PK), dict(name='pk2', kind=PK),]
+        ),
+        (
+            # (*, ko1, ko2)
+            [dict(name='ko1', kind=KO), dict(name='ko2', kind=KO),]
+        ),
+        (
+            # (po1, po2, /, pk1, pk2, *, ko1, ko2)
+            [
+                dict(name='po1', kind=PO),
+                dict(name='po2', kind=PO),
+                dict(name='pk1', kind=PK),
+                dict(name='pk2', kind=PK),
+                dict(name='ko1', kind=KO),
+                dict(name='ko2', kind=KO),
+            ]
+        ),
+        (
+            # (po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)
+            [
+                dict(name='po1', kind=PO),
+                dict(name='po2', kind=PO),
+                dict(name='pk1', kind=PK),
+                dict(name='pk2', kind=PK),
+                dict(name='args', kind=VP),
+                dict(name='ko1', kind=KO),
+                dict(name='ko2', kind=KO),
+                dict(name='kwargs', kind=VK),
+            ]
+        ),
+    ],
+)
+def test_call_forgivingly(params):
+    sig = Sig(params)
+
+    @sig
+    def foo(*args, **kwargs):
+        return args, kwargs
+
+    print(Sig(foo))
+
+    def mk_args_and_kwargs(nb_pk_to_add_to_args=0, pk_to_add_to_kwargs=None):
+        pk_to_add_to_kwargs = pk_to_add_to_kwargs or []
+        po_count = sum(kind == PO for kind in sig.kinds.values())
+        args = tuple(i + 1 for i in range(po_count))
+        pk_args = tuple(i + 1 for i in range(nb_pk_to_add_to_args))
+        args = args + pk_args
+        if not pk_to_add_to_kwargs:
+            args = args + ('some', 'extra', 'args')
+        kwargs = dict(
+            **{param: i + 1 for i, param in enumerate(pk_to_add_to_kwargs)},
+            **{
+                param: i + 1
+                for i, (param, kind) in enumerate(sig.kinds.items())
+                if kind == KO
+            },
+            **{'some': 'extra', 'added': 'kwargs'},
+        )
+        return args, kwargs
+
+    def validate_call_forgivingly(*args, **kwargs):
+        expected_output_kwargs = (
+            kwargs
+            if VK in sig.kinds.values()
+            else {k: v for k, v in kwargs.items() if k in sig}
+        )
+        pk_in_kwargs_count = sum(
+            kind == PK
+            for param, kind in sig.kinds.items()
+            if param in expected_output_kwargs
+        )
+        expected_output_args_count = (
+            len(args)
+            if VP in sig.kinds.values()
+            else sum(kind <= PK for kind in sig.kinds.values()) - pk_in_kwargs_count
+        )
+        expected_output_args = args[:expected_output_args_count]
+        expected_output = (expected_output_args, expected_output_kwargs)
+        output = call_forgivingly(foo, *args, **kwargs)
+        # print(args, kwargs)
+        # print(expected_output)
+        # print(output)
+        # print()
+        assert output == expected_output
+
+    pk_params = [param for param, kind in sig.kinds.items() if kind == PK]
+    pk_count = len(pk_params)
+    for i in range(pk_count + 1):
+        pk_to_add_to_args_count = i
+        pk_to_add_to_kwargs = pk_params[i:]
+        args, kwargs = mk_args_and_kwargs(pk_to_add_to_args_count, pk_to_add_to_kwargs)
+        validate_call_forgivingly(*args, **kwargs)
