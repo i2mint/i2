@@ -2632,27 +2632,25 @@ def _call_forgivingly(func, args, kwargs):
     """
     Helper for _call_forgivingly.
     """
+
     sig = Sig(func)
     variadic_kinds = {
-        name: kind for name, kind in sig.kinds.items() if kind in var_param_kinds
+        name: kind for name, kind in sig.kinds.items() if kind in [VP, VK]
     }
-    new_sig = sig - variadic_kinds.keys()
-    if Sig.VAR_POSITIONAL in variadic_kinds.values():
-        if Sig.VAR_KEYWORD in variadic_kinds.values():
-            _args = args
-            _kwargs = kwargs
+    if VP in variadic_kinds.values() and VK in variadic_kinds.values():
+        _args = args
+        _kwargs = kwargs
     else:
+        new_sig = sig - variadic_kinds.keys()
         _args, _kwargs = new_sig.source_args_and_kwargs(*args, **kwargs)
-        if Sig.VAR_POSITIONAL in variadic_kinds.values():
-            t = 1
-        elif Sig.VAR_KEYWORD in variadic_kinds.values():
+        for k, v in _kwargs.items():
+            if k not in kwargs:
+                _args = _args + (v,)
+        _kwargs = {k: v for k, v in _kwargs.items() if k in kwargs}
+        if VP in variadic_kinds.values():
+            _args = args
+        elif VK in variadic_kinds.values():
             _kwargs = dict(_kwargs, **kwargs)
-
-    # if Sig.VAR_POSITIONAL in variadic_kinds.values():
-    #     _args = _args + args[len(_args):]
-    # # _args = args if Sig.VAR_POSITIONAL in variadic_kinds.values() else _args
-    # if Sig.VAR_KEYWORD in variadic_kinds.values():
-    #     _kwargs = dict(kwargs, **_kwargs)
     return func(*_args, **_kwargs)
 
 
