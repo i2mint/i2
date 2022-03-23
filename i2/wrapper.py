@@ -65,12 +65,15 @@ How the ``Ingress`` class (ingress templated function maker) works:
 
 from functools import wraps, partial
 from inspect import Parameter, signature
-from typing import Mapping, Callable, Optional
+from typing import Mapping, Callable, Optional, Union
 from types import MethodType
 
-from i2.signatures import Sig
+from i2.signatures import Sig, name_of_obj
 from i2.multi_object import Pipe
 from i2.deco import double_up_as_factory
+
+# ---------------------------------------------------------------------------------------
+# Wrap
 
 empty = Parameter.empty
 OuterKwargs = dict
@@ -131,9 +134,11 @@ class _Wrap:
         #  .func, but wraps looks for __wrapped__
 
     def __reduce__(self):
+        """reduce is meant to control how things are pickled/unpickled"""
         return type(self), self._init_args, dict(self._init_kwargs)
 
     def __get__(self, instance, owner):
+        """This method allows things to work well when we use Wrap object as method"""
         return MethodType(self, instance)
 
     def __repr__(self):
@@ -151,6 +156,7 @@ class Wrap(_Wrap):
         wrapped function.
     :param egress: The outgoing data transformer. It also takes precedence over the
         wrapped function to determine the return annotation of the ``Wrap`` instance
+    :param name: Name to give the wrapper (will use wrapped func name by default)
     :return: A callable instance wrapping ``func``
 
     Some examples:
@@ -216,13 +222,13 @@ class Wrap(_Wrap):
     >>> def func(times, string):
     ...     return times * string
     ...
-    >>> wrapped_func = wrap(func, ingress)
+    >>> wrapped_func = wrap(func, ingress=ingress)
     >>> assert wrapped_func(2, "world! ", "Hi") == "Hi world! Hi world! Hi world! "
     >>>
     >>> wrapped_func = wrap(func, egress=len)
     >>> assert wrapped_func(2, "co") == 4 == len("coco") == len(func(2, "co"))
     >>>
-    >>> wrapped_func = wrap(func, ingress, egress=len)
+    >>> wrapped_func = wrap(func, ingress=ingress, egress=len)
     >>> assert (
     ...     wrapped_func(2, "world! ", "Hi")
     ...     == 30
@@ -278,8 +284,10 @@ class Wrap(_Wrap):
         func_args, func_kwargs = self.ingress(*ingress_args, **ingress_kwargs)
         return self.egress(self.func(*func_args, **func_kwargs))
 
-
-def wrap(func, ingress=None, egress=None, *, name=None):
+@double_up_as_factory
+def wrap(
+        func=None, *, ingress=None, egress=None, caller=None, name=None, dflt_wrap=Wrap
+):
     """Wrap a function, optionally transforming interface, input and output.
 
     :param func: The wrapped function
@@ -338,7 +346,7 @@ def wrap(func, ingress=None, egress=None, *, name=None):
     Now we can use these ingress and egress functions to get the version of ``f`` of
     our dreams:
 
-    >>> h = wrap(f, ingress, egress)
+    >>> h = wrap(f, ingress=ingress, egress=egress)
 
     Let's see what the signature of our new function looks like:
 
@@ -359,14 +367,43 @@ def wrap(func, ingress=None, egress=None, *, name=None):
 
     >>> assert h(0) == h(0, 1) == h(0, 1, 2) == 0 + 1 * 2 ** 10 == 2 ** 10 == 1024
 
+    Note that ``wrap`` can also be used as a decorator "factory", for instance to
+    wrap functions at definition time, and if we change ``caller`` it will automatically
+    use ``Wrapx`` instead of ``Wrap`` to wrap the function.
+
+    >>> def iterize(func, args, kwargs):
+    ...     first_arg_val = next(iter(kwargs.values()))
+    ...     return list(map(func, first_arg_val))
+    >>>
+    >>> @wrap(caller=iterize)
+    ... def func(x, y=2):
+    ...     return x + y
+    ...
+    >>> isinstance(func, Wrapx)
+    True
+    >>> func([1, 2, 3, 4])
+    [3, 4, 5, 6]
+
     For more examples, see also the
 
     .. seealso::
 
         ``Wrap`` class.
+        ``Wrapx`` class.
 
     """
-    return Wrap(func, ingress, egress, name=name)
+    if _should_use_wrapx(func, ingress, egress, caller):
+        return Wrapx(func, ingress, egress, caller=caller, name=name)
+    else:
+        return dflt_wrap(func, ingress, egress, name=name)
+
+
+# TODO: Add conditions on egress to route to Wrapx when complex egress
+def _should_use_wrapx(func, ingress, egress, caller):
+    if caller is not None:
+        return True
+    else:
+        return False
 
 
 def append_empty_args(func):
@@ -474,7 +511,7 @@ class Ingress:
     >>> ingress = Ingress(signature(f), kwargs_trans=kwargs_trans)
     >>> assert ingress(2, x=3, y=4) == ((4,), {'x': 6, 'y': 7, 'z': 3})
     >>>
-    >>> wrapped_f = wrap(f, ingress)
+    >>> wrapped_f = wrap(f, ingress=ingress)
     >>> assert wrapped_f(2, x=3, y=4) == '(w:=4) + (x:=6) * (y:=7) ** (z:=3) == 2062'
 
 
@@ -499,7 +536,7 @@ class Ingress:
     ... )
     >>> assert ingress(2, x=3, you=4) == ((4,), {'x': 6, 'y': 7, 'z': 3})
     >>>
-    >>> wrapped_f = wrap(f, ingress)
+    >>> wrapped_f = wrap(f, ingress=ingress)
     >>> assert wrapped_f(2, x=3, you=4) == '(w:=4) + (x:=6) * (y:=7) ** (z:=3) == 2062'
 
     A convenience method allows to do the same with the ingress instance itself:
@@ -1034,7 +1071,10 @@ def rm_params(func=None, *, params_to_remove=()):
         f'{params_to_remove_that_do_not_have_defaults}'
     )
 
-    return wrap(func, include_exclude_ingress_factory(func, exclude=params_to_remove))
+    return wrap(
+        func,
+        ingress=include_exclude_ingress_factory(func, exclude=params_to_remove)
+    )
 
 
 #     new_sig = sig - params_to_remove
@@ -1227,7 +1267,7 @@ def func_to_method_func(
         outer_sig=method_sig,  # this is the signature we want at the interface
     )
     # wrap the function, name it and return it
-    method_func = wrap(func, ingress)
+    method_func = wrap(func, ingress=ingress)
     method_func.__name__ = method_name
     return method_func
 
@@ -1300,11 +1340,11 @@ class WrapperValidationError(ValueError):
 
 
 class EgressValidationError(WrapperValidationError):
-    """Raised when a caller is not valid"""
+    """Raised when a egress is not valid"""
 
 
 class IngressValidationError(WrapperValidationError):
-    """Raised when a caller is not valid"""
+    """Raised when a ingress is not valid"""
 
 
 class CallerValidationError(WrapperValidationError):
@@ -1333,6 +1373,93 @@ def _all_kinds_are_keyword_only_or_variadic_keyword(sig):
 # TODO: Factor out more common parts with Wrap and reuse (possibly through _Wrap)
 class Wrapx(_Wrap):
     def __init__(self, func, ingress=None, egress=None, *, caller=None, name=None):
+        """An extended wrapping object that allows more complex wrapping mechanisms.
+
+        :param func: The wrapped function
+        :param ingress: The incoming data transformer. It determines the argument properties
+            (name, kind, default and annotation) as well as the actual input of the
+            wrapped function.
+        :param egress: The outgoing data transformer. It also takes precedence over the
+            wrapped function to determine the return annotation of the ``Wrap`` instance
+        :param caller: A caller defines what it means to call the ``func`` on the
+            arguments it is given. It should be of the form
+            ``caller(func, args, kwargs, *, ...extra_keyword_only_params)``.
+            By default, the caller will simply return ``func(*args, **kwargs)``.
+        :param name: Name to give the wrapper (will use wrapped func name by default)
+
+        :return: A callable instance wrapping ``func``
+
+        >>> from inspect import signature
+        >>>
+        >>> def func(x, y):
+        ...     return x + y
+        ...
+        >>> def save_on_output_egress(v, *, k, s):
+        ...     s[k] = v
+        ...     return v
+        ...
+        >>> save_on_output = Wrapx(func, egress=save_on_output_egress)
+        >>> # TODO: should be `(x, y, *, k, s)` --> Need to work on the merge for this.
+        >>> str(signature(save_on_output))
+        '(x, y, k, s)'
+        >>>
+        >>> store = dict()
+        >>> save_on_output(1, 2, k='save_here', s=store)
+        3
+        >>> assert save_on_output(1, 2, k='save_here', s=store) == 3 == func(1, 2)
+        >>> store  # see what's in the store now!
+        {'save_here': 3}
+
+        A caller is meant to control the way the function is called.
+        It is given the ``func`` and the ``func_args`` and ``func_kwargs``
+        (whatever the ingress function gives it, if present) and possibly additional
+        params and will return... well, what ever you tell it to.
+
+        This can be used, for example, to call the function in a subprocess,
+        or on a remote system, differ computation (command pattern, for example, using
+        ``functools.partial``, or do what ever needs to have a view both on the function
+        and its inputs.
+
+        Here, we will wrap the function so it will apply to an iterable of inputs
+        (of the first argument), returning a list of results
+
+        >>> def func(x, y=2):
+        ...     return x + y
+        ...
+        >>> def iterize(func, args, kwargs):
+        ...     first_arg_val = next(iter(kwargs.values()))
+        ...     return list(map(func, first_arg_val))
+        ...
+        >>> iterized_func = Wrapx(func, caller=iterize)
+        >>> iterized_func([1, 2, 3, 4])
+        [3, 4, 5, 6]
+
+        Let's do the same as above, but allow other variables (here ``y``) to be input as
+        well. This takes a bit more work...
+
+        >>> from functools import partial
+        >>> def _iterize_first_arg(func, args, kwargs):
+        ...     first_arg_name = next(iter(kwargs))
+        ...     remaining_kwargs = {
+        ...         k: v for k, v in kwargs.items() if k != first_arg_name
+        ...     }
+        ...     return list(
+        ...         map(partial(func, **remaining_kwargs), kwargs[first_arg_name])
+        ...     )
+
+        Let's demo a different way of using Wrapx: Making a wrapper to apply at
+        function definition time
+
+        >>> iterize_first_arg = partial(Wrapx, caller=_iterize_first_arg)
+        >>> @iterize_first_arg
+        ... def func(x, y):
+        ...     return x + y
+        >>>
+        >>> func([1, 2, 3, 4], 10)
+        [11, 12, 13, 14]
+
+
+        """
         super().__init__(func, ingress, egress, caller=caller, name=name)
         self.ingress, self.egress, self.caller, self.sig = _process_wrapx_params(
             func, ingress, egress, caller
@@ -1344,26 +1471,65 @@ class Wrapx(_Wrap):
         #  .func, but wraps looks for __wrapped__
 
     def __call__(self, *args, **kwargs):
-        _kwargs = self.sig.kwargs_from_args_and_kwargs(args, kwargs)
-        func_args, func_kwargs = call_forgivingly(self.ingress, **_kwargs)
-        output = call_forgivingly(self.func, *func_args, **func_kwargs)
-        return call_forgivingly(self.egress, output, **_kwargs)
+        try:
+            _kwargs = self.sig.kwargs_from_args_and_kwargs(args, kwargs)
+            # TODO: Consider call_forgivingly(self.ingress, *args, **kwargs)
+            #  because call_forgivingly(self.ingress, **_kwargs) doesn't allow
+            #  same ingress functions to be used for Wrap and Wrapx
+            func_args, func_kwargs = call_forgivingly(self.ingress, **_kwargs)
+            inner_output = call_forgivingly(
+                self.caller, self.func, func_args, func_kwargs
+            )
+            return call_forgivingly(self.egress, inner_output, **_kwargs)
+        except Exception as e:
+            # Try running again, but with more careful validation, to try to give
+            # more specific error messages
+            # We don't do this in the first run so that we don't incur the validation
+            # overhead on every call.
+            _kwargs = self.sig.kwargs_from_args_and_kwargs(args, kwargs)
+            func_args, func_kwargs = _validate_ingress_output(
+                call_forgivingly(self.ingress, **_kwargs)
+            )
+            inner_output = call_forgivingly(self.func, *func_args, **func_kwargs)
+            return call_forgivingly(self.egress, inner_output, **_kwargs)
+
+
+def _validate_ingress_output(ingress_output):
+    if (
+        not isinstance(ingress_output, tuple)
+        or not len(ingress_output) == 2
+        or not isinstance(ingress_output[0], tuple)
+        or not isinstance(ingress_output[1], dict)
+    ):
+        raise IngressValidationError(
+            f'An ingress function should return a (tuple, dict) pair. '
+            f'This ingress function returned: {ingress_output}'
+        )
+    return ingress_output
 
 
 def _process_wrapx_params(func, ingress, egress, caller):
     func_sig = Sig(func)
-    if ingress is None:
-        ingress = _default_ingress
-        ingress_sig = func_sig
-    else:
-        ingress_sig = Sig(ingress)
-    if egress is None:
-        egress = _default_egress
-        egress_sig = Sig('output')  # signature with a single 'output' arg
-        return_annotation = func_sig.return_annotation
-    else:
-        egress_sig = Sig(egress)
-        return_annotation = egress_sig.return_annotation or Sig(func).return_annotation
+
+    ingress, ingress_sig = _init_ingress(func_sig, ingress)
+    egress, egress_sig = _init_egress(func_sig, egress)
+    caller, caller_sig = _init_caller(caller)
+
+    sig = _mk_composite_sig(ingress_sig, egress_sig, caller_sig)
+    return ingress, egress, caller, sig
+
+
+def _mk_composite_sig(ingress_sig, egress_sig, caller_sig):
+    egress_sig_minus_first_arg = egress_sig - egress_sig.names[0]
+    caller_sig_minus_three_first_args = caller_sig - caller_sig.names[:3]
+    sig = Sig(
+        ingress_sig + egress_sig_minus_first_arg + caller_sig_minus_three_first_args,
+        return_annotation=egress_sig.return_annotation,
+    )
+    return sig
+
+
+def _init_caller(caller):
     if caller is None:
         caller = _default_caller
         caller_sig = Sig('func args kwargs')  # sig with three inputs
@@ -1379,10 +1545,143 @@ def _process_wrapx_params(func, ingress, egress, caller):
                 f'A caller must have at least three arguments'
                 f'{caller} signature was {caller_sig}'
             )
-    egress_sig_minus_first_arg = egress_sig - egress_sig.names[0]
-    caller_sig_minus_three_first_args = caller_sig - caller_sig.names[:3]
-    sig = Sig(
-        ingress_sig + egress_sig_minus_first_arg + caller_sig_minus_three_first_args,
-        return_annotation=return_annotation,
+    return caller, caller_sig
+
+
+def _init_egress(func_sig, egress):
+    if egress is None:
+        egress = _default_egress
+        # signature with a single 'output' arg and func_sig's return_annotation
+        egress_sig = Sig('output', return_annotation=func_sig.return_annotation)
+        return_annotation = func_sig.return_annotation
+    else:
+        egress_sig = Sig(
+            egress,
+            # if egress has no return_annotation, use the func_sig's one.
+            # TODO: Is this really correct/safe? What if egress changes the type?
+            return_annotation=Sig(egress).return_annotation
+            or func_sig.return_annotation,
+        )
+
+    return egress, egress_sig
+
+
+def _init_ingress(func_sig, ingress):
+    if ingress is None:
+        ingress = _default_ingress
+        ingress_sig = func_sig
+    else:
+        ingress_sig = Sig(ingress)
+    return ingress, ingress_sig
+
+
+# ---------------------------------------------------------------------------------------
+# partialx
+
+
+def partialx(
+    func, *args, __name__=None, _rm_partialize=False, _allow_reordering=False, **kwargs
+):
+    """
+    Extends the functionality of builtin ``functools.partial`` with the ability to
+
+    - set ``__name__ ``
+
+    - remove partialized arguments from signature
+
+    - reorder params (so that defaults are at the end)
+
+    >>> def f(a, b=2, c=3):
+    ...     return a + b * c
+    >>> curried_f = partialx(f, c=10, _rm_partialize=True)
+    >>> curried_f.__name__
+    'f'
+    >>> from inspect import signature
+    >>> str(signature(curried_f))
+    '(a, b=2)'
+
+    >>> def f(a, b, c=3):
+    ...     return a + b * c
+
+    Note that ``a`` gets a default, but ``b`` does not, yet is after ``a``.
+    This is allowed because these parameters all became KEYWORD_ONLY.
+
+    >>> g = partialx(f, a=1)
+    >>> str(Sig(g))
+    '(*, a=1, b, c=3)'
+
+    If you wanted to reorder the parameters to have all defaulted kinds be at the end,
+    as usual, you can do so using ``_allow_reordering=True``
+
+    >>> g = partialx(f, a=1, _allow_reordering=True)
+    >>> str(Sig(g))
+    '(*, b, a=1, c=3)'
+
+    """
+    f = partial(func, *args, **kwargs)
+    if _rm_partialize:
+        sig = Sig(func)
+        partialized = list(
+            sig.kwargs_from_args_and_kwargs(args, kwargs, allow_partial=True)
+        )
+        sig = sig - partialized
+        f = sig(partial(f, *args, **kwargs))
+    if _allow_reordering:
+        # TODO: Instead of Sig(f).defaults, move only params that need to move
+        # TODO: + Change signature so that the number of params that become keyword-only
+        #   is minimize.
+        f = move_params_to_the_end(f, Sig(f).defaults)
+    f.__name__ = __name__ or name_of_obj(func)
+    return f
+
+
+def move_params_to_the_end(
+    func: Callable, names_to_move: Union[Callable, Iterable[str]]
+):
+    """
+    Choose args from func, according to choice_args_func and move them
+    to the right
+
+    >>> from functools import partial
+    >>> from i2 import Sig
+    >>> def foo(a, b, c):
+    ...     return a + b + c
+    >>> g = partial(foo, b=4)  # fixing a, which is before b
+    >>> h = move_params_to_the_end(g, Sig(g).defaults)
+    >>> assert str(Sig(g)) == '(a, *, b=4, c)'
+    >>> assert str(Sig(h)) == '(a, *, c, b=4)'
+
+    """
+    if callable(names_to_move):
+        names_to_move = names_to_move(func)
+    assert isinstance(names_to_move, Iterable), (
+        f'names_to_move must be an iterable of names '
+        f'or a callable producing one from a function. Was {names_to_move}'
     )
-    return ingress, egress, caller, sig
+
+    names = Sig(func).names
+    reordered = move_names_to_the_end(names, names_to_move)
+    wrapped_func = include_exclude(func, include=reordered)
+    return wrapped_func
+
+
+def move_names_to_the_end(names, names_to_move_to_the_end):
+    """
+    Remove the items of ``names_to_move_to_the_end`` from ``names``
+    and append to the right of names
+
+    >>> names = ['a','c','d','e']
+    >>> names_to_move_to_the_end = ['c','e']
+    >>> move_names_to_the_end(names, names_to_move_to_the_end)
+    ['a', 'd', 'c', 'e']
+    >>> names_to_move_to_the_end = 'c e'
+    >>> move_names_to_the_end(names, names_to_move_to_the_end)
+    ['a', 'd', 'c', 'e']
+
+    """
+    if isinstance(names_to_move_to_the_end, str):
+        names_to_move_to_the_end = names_to_move_to_the_end.split()
+    else:
+        names_to_move_to_the_end = list(names_to_move_to_the_end)
+    removed = [x for x in names if x not in names_to_move_to_the_end]
+    return list(removed) + names_to_move_to_the_end

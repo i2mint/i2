@@ -23,7 +23,7 @@ def test_wrap():
 
     # If you give the wrap an ingress function
     ingress = _test_ingress
-    wrapped_func = wrap(func, ingress)
+    wrapped_func = wrap(func, ingress=ingress)
     # it will use it to (1) determine the signature of the wrapped_func
     assert (
         str(signature(wrapped_func)) == "(a, b: str, c='hi')"
@@ -36,7 +36,7 @@ def test_wrap():
     assert wrapped_func(2, 'co') == 4 == len('coco') == len(func(2, 'co'))
 
     # Both ingress and egress can be used in combination
-    wrapped_func = wrap(func, ingress, egress=len)
+    wrapped_func = wrap(func, ingress=ingress, egress=len)
     assert (
         wrapped_func(2, 'world! ', 'Hi') == 30 == len('Hi world! Hi world! Hi world! ')
     )
@@ -69,7 +69,7 @@ def test_mk_ingress_from_name_mapper():
     # Make an ingress function with that mapping
     ingress = mk_ingress_from_name_mapper(foo, name_mapper)
     # Use the ingress function to wrap a function
-    wrapped_foo = wrap(foo, ingress)
+    wrapped_foo = wrap(foo, ingress=ingress)
     # See that the signature of the wrapped func uses the mapped arg names
     assert (
         str(signature(wrapped_foo)) == str(signature(ingress)) == '(aa, b: int, cc=7)'
@@ -96,7 +96,7 @@ def test_mk_ingress_from_name_mapper():
         ('i was called aa',),
         {'b': 'i am b', 'c': 42},
     )
-    wrapped_bar = wrap(bar, ingress_for_bar)
+    wrapped_bar = wrap(bar, ingress=ingress_for_bar)
     assert (
         bar(1, 2, c=4)
         == bar(1, b=2, c=4)
@@ -113,7 +113,7 @@ def test_mk_ingress_from_name_mapper():
     # If you want to conserve the argument kinds of the wrapped function, you can
     # specify this with `conserve_kind=True`:
     ingress_for_bar = mk_ingress_from_name_mapper(bar, name_mapper, conserve_kind=True)
-    wrapped_bar = wrap(bar, ingress_for_bar)
+    wrapped_bar = wrap(bar, ingress=ingress_for_bar)
     assert str(signature(wrapped_bar)) == '(aa, /, b: int, *, cc=7)'
 
     # A wrapped function is pickle-able (unlike the usual way decorators are written)
@@ -193,13 +193,46 @@ def test_wrapx():
     def func(x, y):
         return x + y
 
-    # we want to be able to get a function that will save/cache the result
-    # in a specific store, under a specific key, the two latter controlleable at runtime
-    def wrapped_func(x, y, *, k, s):
-        v = func(x, y)
+    def save_on_output_egress(v, *, k, s):
         s[k] = v
         return v
 
+    save_on_output = Wrapx(func, egress=save_on_output_egress)
+    # TODO: should be `(x, y, *, k, s)` --> Need to work on the merge for this.
+    assert str(signature(save_on_output)) == '(x, y, k, s)'
+
     store = dict()
-    assert wrapped_func(1, 2, k='save_here', s=store) == 3 == func(1, 2)
+    save_on_output(1, 2, k='save_here', s=store)
+    assert save_on_output(1, 2, k='save_here', s=store) == 3 == func(1, 2)
     assert store == {'save_here': 3}
+
+    # Trying out a caller: Here, we want to wrap the function so it will apply to an
+    # iterable of inputs, returning a list of results
+
+    def func(x, y=2):
+        return x + y
+
+    def iterize(func, args, kwargs):
+        first_arg_val = next(iter(kwargs.values()))
+        return list(map(func, first_arg_val))
+
+    iterized_func = Wrapx(func, caller=iterize)
+
+    assert iterized_func([1, 2, 3, 4]) == [3, 4, 5, 6]
+
+    # The same as above, except generalized to allow other variables (here ``y``) to
+    # be input as well
+
+    from functools import partial
+
+    def func(x, y):
+        return x + y
+
+    def iterize_first_arg(func, args, kwargs):
+        first_arg_name = next(iter(kwargs))
+        remaining_kwargs = {k: v for k, v in kwargs.items() if k != first_arg_name}
+        return list(map(partial(func, **remaining_kwargs), kwargs[first_arg_name]))
+
+    iterized_func = Wrapx(func, caller=iterize_first_arg)
+
+    assert iterized_func([1, 2, 3, 4], 10) == [11, 12, 13, 14]
