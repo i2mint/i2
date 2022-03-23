@@ -31,12 +31,4 @@ from i2.errors import (
     HandleExceptions,
 )
 
-from i2.wrapper import (
-    wrap,
-    Wrap,
-    Wrapx,
-    Ingress,
-    include_exclude,
-    rm_params,
-    partialx
-)
+from i2.wrapper import wrap, Wrap, Wrapx, Ingress, include_exclude, rm_params, partialx

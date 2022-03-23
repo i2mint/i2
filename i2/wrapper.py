@@ -284,9 +284,10 @@ class Wrap(_Wrap):
         func_args, func_kwargs = self.ingress(*ingress_args, **ingress_kwargs)
         return self.egress(self.func(*func_args, **func_kwargs))
 
+
 @double_up_as_factory
 def wrap(
-        func=None, *, ingress=None, egress=None, caller=None, name=None, dflt_wrap=Wrap
+    func=None, *, ingress=None, egress=None, caller=None, name=None, dflt_wrap=Wrap
 ):
     """Wrap a function, optionally transforming interface, input and output.
 
@@ -1072,8 +1073,7 @@ def rm_params(func=None, *, params_to_remove=()):
     )
 
     return wrap(
-        func,
-        ingress=include_exclude_ingress_factory(func, exclude=params_to_remove)
+        func, ingress=include_exclude_ingress_factory(func, exclude=params_to_remove)
     )
 
 
