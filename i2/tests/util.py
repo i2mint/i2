@@ -4,7 +4,7 @@ from inspect import Parameter, Signature
 from typing import List, Any, Union, Callable
 
 from i2.signatures import _empty
-from i2.signatures import ParamsAble, Sig, ensure_param
+from i2.signatures import ParamsAble, Sig, ensure_param, SignatureAble
 
 ParameterAble = Union[int, Parameter, str]
 ParamsAble_ = Union[ParamsAble, str, List[int]]
@@ -189,6 +189,46 @@ def mk_func_from_params(
     arg_str_func.__name__ = name or 'f' + ''.join(str(p.kind) for p in params)
 
     return arg_str_func
+
+
+from typing import Iterator, Tuple
+from i2.signatures import var_param_kinds
+
+
+def sig_to_inputs(sig: SignatureAble) -> Iterator[Tuple[tuple, dict]]:
+    """From a signature, get kind-valid inputs for it.
+
+    >>> assert list(sig_to_inputs(lambda a, b, /, c, d, *, e, f: None)) == [
+    ...     ((0, 1), {'c': 2, 'd': 3, 'e': 4, 'f': 5}),
+    ...     ((0, 1, 2), {'d': 3, 'e': 4, 'f': 5}),
+    ...     ((0, 1, 2, 3), {'e': 4, 'f': 5})
+    ... ]
+    """
+    sig = Sig(sig)
+    if any(kind in var_param_kinds for kind in sig.kinds):
+        raise ValueError(f'Not allowed to have variadics: {sig}')
+    po, pk, ko = _get_non_variadic_kind_counts(sig)
+    for args, kwargs_vals in _sig_to_inputs(po, pk, ko):
+        yield tuple(args), {k: v for k, v in zip(sig.names[len(args) :], kwargs_vals)}
+
+
+def _sig_to_inputs(po=0, pk=0, ko=0, input_seq=None):
+    """
+    >>> list(_sig_to_inputs(2,2,2))
+    [([0, 1], [2, 3, 4, 5]), ([0, 1, 2], [3, 4, 5]), ([0, 1, 2, 3], [4, 5])]
+    """
+    if input_seq is None:
+        input_seq = list(range(po + pk + ko))
+    for n_args_from_pk in range(pk + 1):
+        yield input_seq[: (po + n_args_from_pk)], input_seq[(po + n_args_from_pk) :]
+
+
+# TODO: Make more efficient --> only one pass needed (try with generator)
+def _get_non_variadic_kind_counts(sig: Sig):
+    po = sum([kind == sig.POSITIONAL_ONLY for kind in sig.kinds.values()])
+    pk = sum([kind == sig.POSITIONAL_OR_KEYWORD for kind in sig.kinds.values()])
+    ko = sum([kind == sig.KEYWORD_ONLY for kind in sig.kinds.values()])
+    return po, pk, ko
 
 
 def mk_func_inputs_for_params(params: ParamsAble_, param_to_input):
