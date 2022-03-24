@@ -1,8 +1,9 @@
 """Utils for testing"""
 
 from inspect import Parameter, Signature
-from typing import List, Any, Union, Callable
+from typing import List, Any, Union, Callable, Iterator, Tuple, Optional, Iterable
 
+from i2.signatures import var_param_kinds
 from i2.signatures import _empty
 from i2.signatures import ParamsAble, Sig, ensure_param, SignatureAble
 
@@ -191,36 +192,52 @@ def mk_func_from_params(
     return arg_str_func
 
 
-from typing import Iterator, Tuple
-from i2.signatures import var_param_kinds
-
-
-def sig_to_inputs(sig: SignatureAble) -> Iterator[Tuple[tuple, dict]]:
-    """From a signature, get kind-valid inputs for it.
+def sig_to_inputs(
+    sig: SignatureAble, argument_vals: Optional[Iterable] = None
+) -> Iterator[Tuple[tuple, dict]]:
+    """Generate all kind-valid (arg, kwargs) input combinations for a function with a
+    given signature ``sig``, with argument values taken from the ``argument_vals``
 
     >>> assert list(sig_to_inputs(lambda a, b, /, c, d, *, e, f: None)) == [
     ...     ((0, 1), {'c': 2, 'd': 3, 'e': 4, 'f': 5}),
     ...     ((0, 1, 2), {'d': 3, 'e': 4, 'f': 5}),
     ...     ((0, 1, 2, 3), {'e': 4, 'f': 5})
     ... ]
+
+    :param sig: A signature or anything that ``i2.Sig`` can use to create one (e.g.
+        function, string, list of dicts etc.)
+    :param argument_vals: An interable from which the argument values will be drawn.
+        Defaults to ``list(range(n_args))``.
+    :return: A generator of ``(args: tuple, kwargs: dict)`` pairs
     """
     sig = Sig(sig)
     if any(kind in var_param_kinds for kind in sig.kinds):
         raise ValueError(f'Not allowed to have variadics: {sig}')
     po, pk, ko = _get_non_variadic_kind_counts(sig)
-    for args, kwargs_vals in _sig_to_inputs(po, pk, ko):
-        yield tuple(args), {k: v for k, v in zip(sig.names[len(args) :], kwargs_vals)}
+    for args, kwargs_vals in _sig_to_inputs(po, pk, ko, argument_vals=argument_vals):
+        yield tuple(args), {k: v for k, v in zip(sig.names[len(args):], kwargs_vals)}
 
 
-def _sig_to_inputs(po=0, pk=0, ko=0, input_seq=None):
+def _sig_to_inputs(po=0, pk=0, ko=0, argument_vals: Optional[Iterable] = None):
     """
     >>> list(_sig_to_inputs(2,2,2))
     [([0, 1], [2, 3, 4, 5]), ([0, 1, 2], [3, 4, 5]), ([0, 1, 2, 3], [4, 5])]
+
+    :param po: Number of POSITION_ONLY args in signature.
+    :param pk: Number of POSITION_OR_KEYWORD args in signature.
+    :param ko: Number of KEYWORD_ONLY args in signature.
+    :param argument_vals: An interable from which the argument values will be drawn.
+        Defaults to ``list(range(n_args))``.
+    :return: A generator of ``(vals_for_args: tuple, vals_for_kwargs)`` pairs
     """
-    if input_seq is None:
-        input_seq = list(range(po + pk + ko))
+    if argument_vals is None:
+        argument_vals = list(range(po + pk + ko))
+    else:
+        argument_vals = list(argument_vals)
     for n_args_from_pk in range(pk + 1):
-        yield input_seq[: (po + n_args_from_pk)], input_seq[(po + n_args_from_pk) :]
+        yield argument_vals[: (po + n_args_from_pk)], argument_vals[
+            (po + n_args_from_pk):
+        ]
 
 
 # TODO: Make more efficient --> only one pass needed (try with generator)
