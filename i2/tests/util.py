@@ -215,7 +215,7 @@ def sig_to_inputs(
         raise ValueError(f'Not allowed to have variadics: {sig}')
     po, pk, ko = _get_non_variadic_kind_counts(sig)
     for args, kwargs_vals in _sig_to_inputs(po, pk, ko, argument_vals=argument_vals):
-        yield tuple(args), {k: v for k, v in zip(sig.names[len(args):], kwargs_vals)}
+        yield tuple(args), {k: v for k, v in zip(sig.names[len(args) :], kwargs_vals)}
 
 
 def _sig_to_inputs(po=0, pk=0, ko=0, argument_vals: Optional[Iterable] = None):
@@ -236,7 +236,7 @@ def _sig_to_inputs(po=0, pk=0, ko=0, argument_vals: Optional[Iterable] = None):
         argument_vals = list(argument_vals)
     for n_args_from_pk in range(pk + 1):
         yield argument_vals[: (po + n_args_from_pk)], argument_vals[
-            (po + n_args_from_pk):
+            (po + n_args_from_pk) :
         ]
 
 
