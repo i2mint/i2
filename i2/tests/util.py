@@ -193,7 +193,9 @@ def mk_func_from_params(
 
 
 def sig_to_inputs(
-    sig: SignatureAble, argument_vals: Optional[Iterable] = None
+    sig: SignatureAble,
+    argument_vals: Optional[Iterable] = None,
+    ignore_variadics: bool = False,
 ) -> Iterator[Tuple[tuple, dict]]:
     """Generate all kind-valid (arg, kwargs) input combinations for a function with a
     given signature ``sig``, with argument values taken from the ``argument_vals``
@@ -211,15 +213,21 @@ def sig_to_inputs(
     :return: A generator of ``(args: tuple, kwargs: dict)`` pairs
     """
     sig = Sig(sig)
-    if any(kind in var_param_kinds for kind in sig.kinds):
-        raise ValueError(f'Not allowed to have variadics: {sig}')
+    variadics = [param for param, kind in sig.kinds.items() if kind in var_param_kinds]
+    if variadics:
+        if ignore_variadics:
+            for v in variadics:
+                sig -= v
+        else:
+            raise ValueError(f'Not allowed to have variadics: {sig}')
     po, pk, ko = _get_non_variadic_kind_counts(sig)
     for args, kwargs_vals in _sig_to_inputs(po, pk, ko, argument_vals=argument_vals):
-        yield tuple(args), {k: v for k, v in zip(sig.names[len(args):], kwargs_vals)}
+        yield tuple(args), {k: v for k, v in zip(sig.names[len(args) :], kwargs_vals)}
 
 
 def _sig_to_inputs(po=0, pk=0, ko=0, argument_vals: Optional[Iterable] = None):
     """
+
     >>> list(_sig_to_inputs(2,2,2))
     [([0, 1], [2, 3, 4, 5]), ([0, 1, 2], [3, 4, 5]), ([0, 1, 2, 3], [4, 5])]
 
@@ -236,7 +244,7 @@ def _sig_to_inputs(po=0, pk=0, ko=0, argument_vals: Optional[Iterable] = None):
         argument_vals = list(argument_vals)
     for n_args_from_pk in range(pk + 1):
         yield argument_vals[: (po + n_args_from_pk)], argument_vals[
-            (po + n_args_from_pk):
+            (po + n_args_from_pk) :
         ]
 
 
