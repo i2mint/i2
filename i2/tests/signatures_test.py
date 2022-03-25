@@ -480,7 +480,7 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
         ('(po1, po2, /, pk1, pk2, *, ko1, ko2)'),
         ('(po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)'),
         ('(po1=0, po2=0, /, pk1=0, pk2=0, *args, ko1=0, ko2=0, **kwargs)'),
-    ]
+    ],
 )
 def test_call_forgivingly(sig_spec):
     sig = Sig(sig_spec)
@@ -516,10 +516,8 @@ def test_call_forgivingly(sig_spec):
 
     for args, kwargs in sig_to_inputs(sig, ignore_variadics=True):
         kwargs = dict(kwargs, **{'some': 'extra', 'added': 'kwargs'})
-        po_pk_count = sum(
-            kind <= PK for kind in sig.kinds.values()
-        )
+        po_pk_count = sum(kind <= PK for kind in sig.kinds.values())
         if len(args) == po_pk_count:
             args = args + ('some', 'extra', 'args')
-        
+
         validate_call_forgivingly(*args, **kwargs)
