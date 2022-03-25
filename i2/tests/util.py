@@ -3,7 +3,7 @@
 from inspect import Parameter, Signature
 from typing import List, Any, Union, Callable, Iterator, Tuple, Optional, Iterable
 
-from i2.signatures import var_param_kinds
+from i2.signatures import KO, PK, PO, var_param_kinds
 from i2.signatures import _empty
 from i2.signatures import ParamsAble, Sig, ensure_param, SignatureAble
 
@@ -200,10 +200,30 @@ def sig_to_inputs(
     """Generate all kind-valid (arg, kwargs) input combinations for a function with a
     given signature ``sig``, with argument values taken from the ``argument_vals``
 
-    >>> assert list(sig_to_inputs(lambda a, b, /, c, d, *, e, f: None)) == [
+    >>> assert list(
+    ...     sig_to_inputs(lambda a, b, /, c, d, *, e, f: None)
+    ... ) == [
     ...     ((0, 1), {'c': 2, 'd': 3, 'e': 4, 'f': 5}),
     ...     ((0, 1, 2), {'d': 3, 'e': 4, 'f': 5}),
     ...     ((0, 1, 2, 3), {'e': 4, 'f': 5})
+    ... ]
+
+    >>> assert list(
+    ...     sig_to_inputs(
+    ...         Sig('(a=-1, /, b=-1, *args, c=-1, **kwargs)'),
+    ...         ignore_variadics=True
+    ...     )
+    ... ) == [
+    ...     ((), {}),
+    ...     ((0,), {}),
+    ...     ((), {'b': 0}),
+    ...     ((0,), {'b': 1}),
+    ...     ((0, 1), {}),
+    ...     ((), {'c': 0}),
+    ...     ((0,), {'c': 1}),
+    ...     ((), {'b': 0, 'c': 1}),
+    ...     ((0,), {'b': 1, 'c': 2}),
+    ...     ((0, 1), {'c': 2})
     ... ]
 
     :param sig: A signature or anything that ``i2.Sig`` can use to create one (e.g.
@@ -213,6 +233,7 @@ def sig_to_inputs(
     :return: A generator of ``(args: tuple, kwargs: dict)`` pairs
     """
     sig = Sig(sig)
+    already_yielded = []
     variadics = [param for param, kind in sig.kinds.items() if kind in var_param_kinds]
     if variadics:
         if ignore_variadics:
@@ -220,9 +241,13 @@ def sig_to_inputs(
                 sig -= v
         else:
             raise ValueError(f'Not allowed to have variadics: {sig}')
-    po, pk, ko = _get_non_variadic_kind_counts(sig)
-    for args, kwargs_vals in _sig_to_inputs(po, pk, ko, argument_vals=argument_vals):
-        yield tuple(args), {k: v for k, v in zip(sig.names[len(args) :], kwargs_vals)}
+    for sub_sig in _get_sub_sigs_from_default_values(sig):
+        po, pk, ko = _get_non_variadic_kind_counts(sub_sig)
+        for args, kwargs_vals in _sig_to_inputs(po, pk, ko, argument_vals=argument_vals):
+            input_ = tuple(args), {k: v for k, v in zip(sub_sig.names[len(args) :], kwargs_vals)}
+            if input_ not in already_yielded:
+                yield input_
+                already_yielded.append(input_)
 
 
 def _sig_to_inputs(po=0, pk=0, ko=0, argument_vals: Optional[Iterable] = None):
@@ -248,12 +273,66 @@ def _sig_to_inputs(po=0, pk=0, ko=0, argument_vals: Optional[Iterable] = None):
         ]
 
 
-# TODO: Make more efficient --> only one pass needed (try with generator)
+def _get_sub_sigs_from_default_values(sig: Sig) -> Iterator[Sig]:
+    """Generate all the signatures compatible with the given signature
+    by ignoring the arguments that have default values. 
+    >>> sig = Sig('(a=0, /, b=0, *args, c=0, **kwargs)')
+    >>> assert [str(s) for s in _get_sub_sigs_from_default_values(sig)] == [
+    ...     '(*args, **kwargs)',
+    ...     '(a=0, /, *args, **kwargs)',
+    ...     '(*args, b=0, **kwargs)',
+    ...     '(a=0, /, b=0, *args, **kwargs)',
+    ...     '(*args, c=0, **kwargs)',
+    ...     '(a=0, /, *args, c=0, **kwargs)',
+    ...     '(*args, b=0, c=0, **kwargs)',
+    ...     '(a=0, /, b=0, *args, c=0, **kwargs)'
+    ... ]
+    """
+    def internal_get_sub_sigs(sig):
+        kos = [n for n in sig.names_for_kind(KO) if n in sig.defaults]
+        for ko in reversed(kos):
+            _sig = sig - ko
+            yield from internal_get_sub_sigs(_sig)
+            
+        pks = [n for n in sig.names_for_kind(PK) if n in sig.defaults]
+        for i, pk in reversed(list(enumerate(pks))):
+            _sig = sig - pk
+            pks_to_transform_to_ko = pks[i+1:]
+            params = [
+                p.replace(kind=KO) if p.name in pks_to_transform_to_ko else p
+                for p in _sig.params
+            ]
+            params.sort(key=lambda p: p.kind)
+            _sig = Sig(params)
+            yield from internal_get_sub_sigs(_sig)
+
+        pos = [n for n in sig.names_for_kind(PO) if n in sig.defaults]
+        if pos:
+            _sig = sig - pos[-1]
+            params = [
+                p.replace(kind=KO) if p.kind == PK else p
+                for p in _sig.params
+            ]
+            params.sort(key=lambda p: p.kind)
+            _sig = Sig(params)
+            yield from internal_get_sub_sigs(_sig)
+
+        if sig not in already_yielded:
+            yield sig
+            already_yielded.add(sig)
+
+    already_yielded = set()
+    yield from internal_get_sub_sigs(sig)
+
+
 def _get_non_variadic_kind_counts(sig: Sig):
-    po = sum([kind == sig.POSITIONAL_ONLY for kind in sig.kinds.values()])
-    pk = sum([kind == sig.POSITIONAL_OR_KEYWORD for kind in sig.kinds.values()])
-    ko = sum([kind == sig.KEYWORD_ONLY for kind in sig.kinds.values()])
+    po = pk = ko = 0
+    for kind in sig.kinds.values():
+        po += kind == sig.POSITIONAL_ONLY
+        pk += kind == sig.POSITIONAL_OR_KEYWORD
+        ko += kind == sig.KEYWORD_ONLY
     return po, pk, ko
+
 
 
 def mk_func_inputs_for_params(params: ParamsAble_, param_to_input):

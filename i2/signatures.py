@@ -83,6 +83,7 @@ Both in the code and in the docs, we'll use short hands for parameter (argument)
 """
 
 from inspect import Signature, Parameter, signature, unwrap
+import re
 from typing import Union, Callable, Iterable, Mapping as MappingType
 from types import FunctionType
 
@@ -109,8 +110,8 @@ _ParameterKind = type(
     Parameter(name='param_kind', kind=Parameter.POSITIONAL_OR_KEYWORD)
 )
 ParamsType = Iterable[Parameter]
-ParamsAble = Union[ParamsType, MappingType[str, Parameter], Callable]
-SignatureAble = Union[Signature, Callable, ParamsType, MappingType[str, Parameter]]
+ParamsAble = Union[ParamsType, MappingType[str, Parameter], Callable, str]
+SignatureAble = Union[Signature, ParamsAble]
 HasParams = Union[Iterable[Parameter], MappingType[str, Parameter], Signature, Callable]
 
 # short hands for Parameter kinds
@@ -855,6 +856,8 @@ class Sig(Signature, Mapping):
         <Sig (a, b: int)>
         >>> Sig(["a", "b", "c"], return_annotation=str)  # specifying return annotation
         <Sig (a, b, c) -> str>
+        >>> Sig('(a: int = 0, b: str = None, c: float = 3.14) -> str')
+        <Sig (a: int = 0, b: str = None, c: float = 3.14) -> str>
 
         But you can always specify parameters the "long" way
 
@@ -872,7 +875,16 @@ class Sig(Signature, Mapping):
         <Sig ()>
         """
         if isinstance(obj, str):
-            obj = obj.split()
+            if re.match(r'^\(.*\)', obj):
+                # This is a string representation of a signature
+                # Dynamically create a function with the given signature then generate
+                # the Sig object from this function.
+                exec_env = dict()
+                f_def = f'def f{obj}: pass'
+                exec(f_def, exec_env)
+                obj = exec_env['f']
+            else:
+                obj = obj.split()
         if (
             not isinstance(obj, Signature)
             and callable(obj)

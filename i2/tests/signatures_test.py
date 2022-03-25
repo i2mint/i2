@@ -11,7 +11,6 @@ Both in the code and in the docs, we'll use short hands for parameter (argument)
     KO = Parameter.KEYWORD_ONLY
 
 """
-from re import I
 import pytest
 from functools import reduce
 from typing import Any
@@ -19,7 +18,7 @@ from typing import Any
 from i2.signatures import *
 from i2.signatures import normalized_func
 
-from i2.tests.util import trace_call
+from i2.tests.util import sig_to_inputs, trace_call
 
 
 def test_sig_wrap_edge_cases():
@@ -456,114 +455,37 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
 
 
 @pytest.mark.parametrize(
-    'params',
+    'sig_spec',
     [
-        (
-            # (po, /)
-            [dict(name='po', kind=PO),]
-        ),
-        (
-            # (pk)
-            [dict(name='pk', kind=PK),]
-        ),
-        (
-            # (*, ko)
-            [dict(name='ko', kind=KO),]
-        ),
-        (
-            # (po, /, pk, *, ko)
-            [
-                dict(name='po', kind=PO),
-                dict(name='pk', kind=PK),
-                dict(name='ko', kind=KO),
-            ]
-        ),
-        (
-            # (*args)
-            [dict(name='args', kind=VP),]
-        ),
-        (
-            # (**kwargs)
-            [dict(name='kwargs', kind=VK),]
-        ),
-        (
-            # (*args, **kwargs)
-            [dict(name='args', kind=VP), dict(name='kwargs', kind=VK),]
-        ),
-        (
-            # (po, /, pk, *args, ko, **kwargs)
-            [
-                dict(name='po', kind=PO),
-                dict(name='pk', kind=PK),
-                dict(name='args', kind=VP),
-                dict(name='ko', kind=KO),
-                dict(name='kwargs', kind=VK),
-            ]
-        ),
-        (
-            # (po1, po2, /)
-            [dict(name='po1', kind=PO), dict(name='po2', kind=PO),]
-        ),
-        (
-            # (pk1, pk2)
-            [dict(name='pk1', kind=PK), dict(name='pk2', kind=PK),]
-        ),
-        (
-            # (*, ko1, ko2)
-            [dict(name='ko1', kind=KO), dict(name='ko2', kind=KO),]
-        ),
-        (
-            # (po1, po2, /, pk1, pk2, *, ko1, ko2)
-            [
-                dict(name='po1', kind=PO),
-                dict(name='po2', kind=PO),
-                dict(name='pk1', kind=PK),
-                dict(name='pk2', kind=PK),
-                dict(name='ko1', kind=KO),
-                dict(name='ko2', kind=KO),
-            ]
-        ),
-        (
-            # (po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)
-            [
-                dict(name='po1', kind=PO),
-                dict(name='po2', kind=PO),
-                dict(name='pk1', kind=PK),
-                dict(name='pk2', kind=PK),
-                dict(name='args', kind=VP),
-                dict(name='ko1', kind=KO),
-                dict(name='ko2', kind=KO),
-                dict(name='kwargs', kind=VK),
-            ]
-        ),
-    ],
+        ('(po, /)'),
+        ('(po=0, /)'),
+        ('(pk)'),
+        ('(pk=0)'),
+        ('(*, ko)'),
+        ('(*, ko=0)'),
+        ('(po, /, pk, *, ko)'),
+        ('(po=0, /, pk=0, *, ko=0)'),
+        ('(*args)'),
+        ('(**kwargs)'),
+        ('(*args, **kwargs)'),
+        ('(po, /, pk, *args, ko)'),
+        ('(po=0, /, pk=0, *args, ko=0)'),
+        ('(po, /, pk, *, ko, **kwargs)'),
+        ('(po=0, /, pk=0, *, ko=0, **kwargs)'),
+        ('(po, /, pk, *args, ko, **kwargs)'),
+        ('(po=0, /, pk=0, *args, ko=0, **kwargs)'),
+        ('(po1, po2, /)'),
+        ('(pk1, pk2)'),
+        ('(*, ko1, ko2)'),
+        ('(po1, po2, /, pk1, pk2, *, ko1, ko2)'),
+        ('(po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)'),
+    ]
 )
-def test_call_forgivingly(params):
-    sig = Sig(params)
+def test_call_forgivingly(sig_spec):
+    sig = Sig(sig_spec)
 
     @sig
     def foo(*args, **kwargs):
-        return args, kwargs
-
-    print(Sig(foo))
-
-    def mk_args_and_kwargs(nb_pk_to_add_to_args=0, pk_to_add_to_kwargs=None):
-        pk_to_add_to_kwargs = pk_to_add_to_kwargs or []
-        po_count = sum(kind == PO for kind in sig.kinds.values())
-        args = tuple(i + 1 for i in range(po_count))
-        pk_args = tuple(i + 1 for i in range(nb_pk_to_add_to_args))
-        args = args + pk_args
-        if not pk_to_add_to_kwargs:
-            args = args + ('some', 'extra', 'args')
-        kwargs = dict(
-            **{param: i + 1 for i, param in enumerate(pk_to_add_to_kwargs)},
-            **{
-                param: i + 1
-                for i, (param, kind) in enumerate(sig.kinds.items())
-                if kind == KO
-            },
-            **{'some': 'extra', 'added': 'kwargs'},
-        )
         return args, kwargs
 
     def validate_call_forgivingly(*args, **kwargs):
@@ -585,16 +507,18 @@ def test_call_forgivingly(params):
         expected_output_args = args[:expected_output_args_count]
         expected_output = (expected_output_args, expected_output_kwargs)
         output = call_forgivingly(foo, *args, **kwargs)
+        # print()
         # print(args, kwargs)
         # print(expected_output)
         # print(output)
-        # print()
         assert output == expected_output
 
-    pk_params = [param for param, kind in sig.kinds.items() if kind == PK]
-    pk_count = len(pk_params)
-    for i in range(pk_count + 1):
-        pk_to_add_to_args_count = i
-        pk_to_add_to_kwargs = pk_params[i:]
-        args, kwargs = mk_args_and_kwargs(pk_to_add_to_args_count, pk_to_add_to_kwargs)
+    for args, kwargs in sig_to_inputs(sig, ignore_variadics=True):
+        kwargs = dict(kwargs, **{'some': 'extra', 'added': 'kwargs'})
+        po_pk_count = sum(
+            kind <= PK for kind in sig.kinds.values()
+        )
+        if len(args) == po_pk_count:
+            args = args + ('some', 'extra', 'args')
+        
         validate_call_forgivingly(*args, **kwargs)
