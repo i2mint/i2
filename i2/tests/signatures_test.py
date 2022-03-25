@@ -479,6 +479,7 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
         ('(*, ko1, ko2)'),
         ('(po1, po2, /, pk1, pk2, *, ko1, ko2)'),
         ('(po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)'),
+        ('(po1=0, po2=0, /, pk1=0, pk2=0, *args, ko1=0, ko2=0, **kwargs)'),
     ]
 )
 def test_call_forgivingly(sig_spec):
