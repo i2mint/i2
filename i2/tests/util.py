@@ -243,8 +243,13 @@ def sig_to_inputs(
             raise ValueError(f'Not allowed to have variadics: {sig}')
     for sub_sig in _get_sub_sigs_from_default_values(sig):
         po, pk, ko = _get_non_variadic_kind_counts(sub_sig)
-        for args, kwargs_vals in _sig_to_inputs(po, pk, ko, argument_vals=argument_vals):
-            input_ = tuple(args), {k: v for k, v in zip(sub_sig.names[len(args) :], kwargs_vals)}
+        for args, kwargs_vals in _sig_to_inputs(
+            po, pk, ko, argument_vals=argument_vals
+        ):
+            input_ = (
+                tuple(args),
+                {k: v for k, v in zip(sub_sig.names[len(args) :], kwargs_vals)},
+            )
             if input_ not in already_yielded:
                 yield input_
                 already_yielded.append(input_)
@@ -288,16 +293,17 @@ def _get_sub_sigs_from_default_values(sig: Sig) -> Iterator[Sig]:
     ...     '(a=0, /, b=0, *args, c=0, **kwargs)'
     ... ]
     """
+
     def internal_get_sub_sigs(sig):
         kos = [n for n in sig.names_for_kind(KO) if n in sig.defaults]
         for ko in reversed(kos):
             _sig = sig - ko
             yield from internal_get_sub_sigs(_sig)
-            
+
         pks = [n for n in sig.names_for_kind(PK) if n in sig.defaults]
         for i, pk in reversed(list(enumerate(pks))):
             _sig = sig - pk
-            pks_to_transform_to_ko = pks[i+1:]
+            pks_to_transform_to_ko = pks[i + 1 :]
             params = [
                 p.replace(kind=KO) if p.name in pks_to_transform_to_ko else p
                 for p in _sig.params
@@ -309,10 +315,7 @@ def _get_sub_sigs_from_default_values(sig: Sig) -> Iterator[Sig]:
         pos = [n for n in sig.names_for_kind(PO) if n in sig.defaults]
         if pos:
             _sig = sig - pos[-1]
-            params = [
-                p.replace(kind=KO) if p.kind == PK else p
-                for p in _sig.params
-            ]
+            params = [p.replace(kind=KO) if p.kind == PK else p for p in _sig.params]
             params.sort(key=lambda p: p.kind)
             _sig = Sig(params)
             yield from internal_get_sub_sigs(_sig)
@@ -332,7 +335,6 @@ def _get_non_variadic_kind_counts(sig: Sig):
         pk += kind == sig.POSITIONAL_OR_KEYWORD
         ko += kind == sig.KEYWORD_ONLY
     return po, pk, ko
-
 
 
 def mk_func_inputs_for_params(params: ParamsAble_, param_to_input):
