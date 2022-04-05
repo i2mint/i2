@@ -3533,11 +3533,7 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
     """
 
     def get_variadic_param_name(sig, kind: VP | VK):
-        return next(
-            iter(n for n, k in sig.kinds.items() if k == kind),
-            None
-        )
-
+        return next(iter(n for n, k in sig.kinds.items() if k == kind), None)
 
     pos1 = sig1.names_for_kind(PO)
     pks1 = sig1.names_for_kind(PK)
@@ -3566,14 +3562,10 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
         sig2 -= vk2
     if len(ps1) > len(ps2) and not vp2:
         return False
-    
+
     # Any extra PO in sig2 must have a default value
-    if (
-        len(pos1) < len(pos2) and
-        not all(
-            sig2.parameters[n].default != _empty
-            for n in pos2[len(pos1):]
-        )
+    if len(pos1) < len(pos2) and not all(
+        sig2.parameters[n].default != _empty for n in pos2[len(pos1) :]
     ):
         return False
     # sig1 cannot have more positional params than sig2
@@ -3582,7 +3574,9 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
     # Every positional param in sig1 must be compatible with its
     # correspondant param in sig2 (at the same index).
     for i in range(len(ps1)):
-        if i < len(ps2) and not is_param_compatible_with(sig1.params[i], sig2.params[i]):
+        if i < len(ps2) and not is_param_compatible_with(
+            sig1.params[i], sig2.params[i]
+        ):
             return False
 
     # Any extra KO in sig2 must have a default value
@@ -3595,7 +3589,9 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
     # Every keyword param in sig1 must be compatible with its
     # correspondant param in sig2 (with the same name).
     for n in ks1:
-        if n in ks2 and not is_param_compatible_with(sig1.parameters[n], sig2.parameters[n]):
+        if n in ks2 and not is_param_compatible_with(
+            sig1.parameters[n], sig2.parameters[n]
+        ):
             return False
 
     return True
@@ -3604,7 +3600,7 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
     #     if param.kind == KO:
     #         return -1
     #     reversed_positional_names = reversed(list(sig.positional_names))
-    
+
     # for p in reversed(sig1.params):
     #     get_reversed_positional_index(p, sig1)
 
