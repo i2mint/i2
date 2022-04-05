@@ -1358,6 +1358,7 @@ def make_funcs_binding_class(
         setattr(Klass, method_func.__name__, method_func)
     return Klass
 
+
 #
 # # TODO: Make a type where ``isinstance(s, Identifier) == s.isidentifier()``
 # Identifier = NewType('Identifier', str)  # + should satisfy str.isidentifier
