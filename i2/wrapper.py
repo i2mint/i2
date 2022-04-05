@@ -65,7 +65,18 @@ How the ``Ingress`` class (ingress templated function maker) works:
 
 from functools import wraps, partial
 from inspect import Parameter, signature
-from typing import Mapping, Callable, Optional, Union
+from typing import (
+    Mapping,
+    Callable,
+    Optional,
+    Union,
+    Iterable,
+    Sequence,
+    NewType,
+    Dict,
+    Tuple,
+)
+
 from types import MethodType
 
 from i2.signatures import Sig, name_of_obj
@@ -989,6 +1000,28 @@ def nice_kinds(func):
 # wrap tools
 
 
+@double_up_as_factory
+def map_names(func=None, **old_to_new_name):
+    """Change the argument names of a function.
+
+    >>> def f(w, /, x: float, y=2, *, z: int = 3):
+    ...     return f"(w:={w}) + (x:={x}) * (y:={y}) ** (z:={z}) == {w + x * y ** z}"
+    >>> wrapped_f = map_names(f, w='DoubleYou', z='Zee')
+    >>> wrapped_f
+    <i2.Wrap f(DoubleYou, /, x: float, y=2, *, Zee: int = 3)>
+    >>> wrapped_f(1, 2, y=3, Zee=4)
+    '(w:=1) + (x:=2) * (y:=3) ** (z:=4) == 163'
+
+    Can also be used as a factory:
+    >>> @map_names(a='alpha', g='gamma')
+    ... def foo(a, b, g=1):
+    ...     return a + b * g
+    >>> foo(alpha=1, b=2, gamma=3)
+    7
+    """
+    return Ingress.name_map(func, **old_to_new_name).wrap(func)
+
+
 def include_exclude_ingress_factory(func, include=None, exclude=None):
     """A pattern underlying any ingress that takes a subset of parameters (possibly
     reordering them).
@@ -1272,9 +1305,6 @@ def func_to_method_func(
     return method_func
 
 
-from typing import Iterable
-
-
 def make_funcs_binding_class(
     funcs, init_params=(), cls_name=None,
 ):
@@ -1327,6 +1357,93 @@ def make_funcs_binding_class(
         method_func = func_to_method_func(func, init_params)
         setattr(Klass, method_func.__name__, method_func)
     return Klass
+
+#
+# # TODO: Make a type where ``isinstance(s, Identifier) == s.isidentifier()``
+# Identifier = NewType('Identifier', str)  # + should satisfy str.isidentifier
+# Bind = NewType(
+#     'Bind',
+#     Union[
+#         str,  # Identifier or ' '.join(Iterable[Identifier])
+#         Dict[Identifier, Identifier],
+#         Sequence[Union[Identifier, Tuple[Identifier, Identifier]]],
+#     ],
+# )
+# IdentifierMapping = Dict[Identifier, Identifier]
+#
+#
+# def identifier_mapping(x: Bind) -> IdentifierMapping:
+#     """
+#
+#     >>> identifier_mapping('x a_b yz')
+#     {'x': 'x', 'a_b': 'a_b', 'yz': 'yz'}
+#     >>> identifier_mapping(['foo', ('bar', 'mitzvah')])
+#     {'foo': 'foo', 'bar': 'mitzvah'}
+#     >>> identifier_mapping({'x': 'y', 'a': 'b'})
+#     {'x': 'y', 'a': 'b'}
+#     """
+#     if isinstance(x, str):
+#         x = x.split()
+#     if not isinstance(x, Mapping):
+#
+#         def gen():
+#             for item in x:
+#                 if isinstance(item, str):
+#                     yield item, item
+#                 else:
+#                     yield item
+#
+#         return dict(gen())
+#     else:
+#         return dict(**x)
+#
+#
+# NoSuchKey = type('NoSuchKey', (), {})
+# _instance_extractor: KwargsTrans
+#
+# # TODO: Add more (possibly optional) bind validation to fail early.
+# def _instance_extractor(
+#     outer_kwargs, bind: IdentifierMapping = (), instance_param: Identifier = 'self'
+# ):
+#     """
+#
+#     :param outer_kwargs: The input/outer keyword arguments
+#     :param bind: The inner->outer param mapping that defines what we want to extract
+#     :param instance_param: The name of the outer_kwargs key that contains the 'instance'
+#         from which we'll extract the bound
+#     :return:
+#     """
+#     """A KwargsTrans that extracts need arguments from one of the 'instance'
+#     outer_kwargs values.
+#
+#
+#     """
+#     # Compute the inverse {outer:inner,...} of {inner:outer,...} bind
+#     inv_bind = invert_map(bind)
+#     outer_kwargs = outer_kwargs.copy()
+#     instance = outer_kwargs.pop(instance_param)  # TODO: Better error handing
+#
+#     def gen():
+#         for outer_param, outer_val in outer_kwargs.items():
+#             if inner_param := inv_bind.get(outer_param, NoSuchKey) is not NoSuchKey:
+#                 # if outer_param was bound, the bound inner_param should be tied to
+#                 # the instance's attribute
+#                 yield inner_param, getattr(instance, outer_val)
+#             else:
+#                 # take the arg name and val as is
+#                 yield outer_param, outer_val
+#
+#     return dict(gen())
+#
+#
+# def methodize(func, bind: Bind = ()):
+#     bind = identifier_mapping(bind)
+#     ingress = Ingress(
+#         outer_sig=Sig(func),
+#         kwargs_trans=partial(_instance_extractor, bind=bind),
+#         inner_sig=Sig('self') + Sig(func) - Sig(list(bind)),  # TODO: solve type or lint
+#     )
+#     return wrap(func, ingress=ingress)
 
 
 # ---------------------------------------------------------------------------------------
