@@ -521,3 +521,154 @@ def test_call_forgivingly(sig_spec):
             args = args + ('some', 'extra', 'args')
 
         validate_call_forgivingly(*args, **kwargs)
+
+
+@pytest.mark.parametrize(
+    'sig_spec1, sig_spec2',
+    [
+        (
+            '()',
+            '(a)'
+        ),
+        (
+            '()',
+            '(a=0)'
+        ),
+        (
+            '(a, /, *, c)',
+            '(a, /, b, *, c)'
+        ),
+        (
+            '(a, /, *, c)',
+            '(a, /, b=0, *, c)'
+        ),
+        (
+            '(a, /, b)',
+            '(a, /, b, *, c)'
+        ),
+        (
+            '(a, /, b)',
+            '(a, /, b, *, c=0)'
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(*args)'
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(**kwargs)'
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(*args, **kwargs)'
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(a, /, b, *args, c, **kwargs)'
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(a, b, c)'
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(a, b, /, *, c)'
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(a, /, *, b, c)'
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(a, b, /, c)'
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(a, *, b, c)'
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(x, /, b, *, c)',
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(a, /, x, *, c)',
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(a, /, b, *, x)',
+        ),
+        (
+            '(a, b, /, c, d, *, e, f)',
+            '(b, a, /, d, c, *, f, e)'
+        ),
+        (
+            '(a, b, /, c, d, *, e, f)',
+            '(a, c, /, b, e, *, d, f)',
+        ),
+        # (
+        #     '()',
+        #     '(*args)'
+        # ),
+        # (
+        #     '()',
+        #     '(**kwargs)'
+        # ),
+        # (
+        #     '()',
+        #     '(*args, **kwargs)'
+        # ),
+        # (
+        #     '(*args)',
+        #     '()'
+        # ),
+        # (
+        #     '(*args)',
+        #     '(**kwargs)'
+        # ),
+        # (
+        #     '(*args)',
+        #     '(*args, **kwargs)'
+        # ),
+        # (
+        #     '(**kwargs)',
+        #     '()'
+        # ),
+        # (
+        #     '(**kwargs)',
+        #     '(*args)'
+        # ),
+        # (
+        #     '(**kwargs)',
+        #     '(*args, **kwargs)'
+        # ),
+        # (
+        #     '(*args, **kwargs)',
+        #     '(*args, **kwargs)'
+        # ),
+    ],
+)
+def test_signature_comparison(sig_spec1, sig_spec2):
+    sig1 = Sig(sig_spec1)
+    sig2 = Sig(sig_spec2)
+    is_compatible = sig1 <= sig2
+
+    exec_env = dict()
+    f_def = f'def f{sig_spec2}: pass'
+    exec(f_def, exec_env)
+    foo = exec_env['f']
+
+    # @sig2
+    # def foo(*args, **kwargs):
+    #     pass
+
+    for args, kwargs in sig_to_inputs(sig1, ignore_variadics=True):
+        try:
+            foo(*args, **kwargs)
+        except TypeError:
+            if is_compatible:
+                raise
+            else:
+                return
+    if not is_compatible:
+        raise AssertionError('sig1 is compatible with sig2, when it should not.')

@@ -1168,11 +1168,18 @@ class Sig(Signature, Mapping):
         return Signature(**self.to_signature_kwargs())
 
     def __le__(self, other_sig):
-        """The "less or equal" operator (<=).
-        Return True if the signature is compatible with ``sig2``.
+        """The "less than or equal" operator (<=).
+        Return True if the signature is compatible with ``other_sig``.
         See ``is_sig_compatible_with`` for more details.
         """
         return is_sig_compatible_with(self, other_sig)
+
+    def __ge__(self, other_sig):
+        """The "greater than or equal" operator (>=).
+        Return True if ``sig2`` is compatible with the signature.
+        See ``is_sig_compatible_with`` for more details.
+        """
+        return is_sig_compatible_with(other_sig, self)
 
     @classmethod
     def from_objs(
@@ -1246,6 +1253,18 @@ class Sig(Signature, Mapping):
 
     def names_for_kind(self, kind):
         return tuple(p.name for p in self.values() if p.kind == kind)
+
+    def detail_names_by_kind(self):
+        def get_variadic_name(kind: VP | VK):
+            return next(iter(n for n, k in self.kinds.items() if k == kind), None)
+
+        return (
+            self.names_for_kind(PO),
+            self.names_for_kind(PK),
+            get_variadic_name(VP),
+            self.names_for_kind(KO),
+            get_variadic_name(VK),
+        )
 
     def __iter__(self):
         return iter(self.parameters)
@@ -3530,47 +3549,114 @@ for kind in param_kinds:
 def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
     """Return True if ``sig1`` is compatible with ``sig2``. Meaning that all valid ways
     to call ``sig1`` are valid for sig2.
+
+    >>> is_sig_compatible_with(
+    ...     Sig('(a, /, b, *, c)'),
+    ...     Sig('(a, b, c)')
+    ... )
+    True
+    >>> is_sig_compatible_with(
+    ...     Sig('()'),
+    ...     Sig('(a)')
+    ... )
+    False
+    >>> is_sig_compatible_with(
+    ...     Sig('()'),
+    ...     Sig('(a=0)')
+    ... )
+    True
+    >>> is_sig_compatible_with(
+    ...     Sig('(a, /, *, c)'),
+    ...     Sig('(a, /, b, *, c)')
+    ... )
+    False
+    >>> is_sig_compatible_with(
+    ...     Sig('(a, /, *, c)'),
+    ...     Sig('(a, /, b=0, *, c)')
+    ... )
+    True
+    >>> is_sig_compatible_with(
+    ...     Sig('(a, /, b)'),
+    ...     Sig('(a, /, b, *, c)')
+    ... )
+    False
+    >>> is_sig_compatible_with(
+    ...     Sig('(a, /, b)'),
+    ...     Sig('(a, /, b, *, c=0)')
+    ... )
+    True
+    >>> is_sig_compatible_with(
+    ...     Sig('(a, /, b, *, c)'),
+    ...     Sig('(*args, **kwargs)')
+    ... )
+    True
     """
 
-    def get_variadic_param_name(sig, kind: VP | VK):
-        return next(iter(n for n, k in sig.kinds.items() if k == kind), None)
-
-    pos1 = sig1.names_for_kind(PO)
-    pks1 = sig1.names_for_kind(PK)
-    vp1 = get_variadic_param_name(sig1, VP)
-    kos1 = sig1.names_for_kind(KO)
-    vk1 = get_variadic_param_name(sig1, VK)
+    pos1, pks1, vp1, kos1, vk1 = sig1.detail_names_by_kind()
     ps1 = pos1 + pks1
     ks1 = pks1 + kos1
-    pos2 = sig2.names_for_kind(PO)
-    pks2 = sig2.names_for_kind(PK)
-    vp2 = get_variadic_param_name(sig2, VP)
-    kos2 = sig2.names_for_kind(KO)
-    vk2 = get_variadic_param_name(sig2, VK)
+    pos2, pks2, vp2, kos2, vk2 = sig2.detail_names_by_kind()
     ps2 = pos2 + pks2
     ks2 = pks2 + kos2
+    
     if vp1:
         if not vp2:
             return False
         sig1 -= vp1
         sig2 -= vp2
-    vk1 = get_variadic_param_name(sig1, VK)
     if vk1:
         if not vk2:
             return False
         sig1 -= vk1
         sig2 -= vk2
+
+    # sig1 cannot have more positional params than sig2
     if len(ps1) > len(ps2) and not vp2:
         return False
-
+    # sig1 cannot have keyword params that do not exist in sig2
+    if len([n for n in ks1 if n not in ks2]) > 0 and not vk2:
+        return False
+        
     # Any extra PO in sig2 must have a default value
     if len(pos1) < len(pos2) and not all(
         sig2.parameters[n].default != _empty for n in pos2[len(pos1) :]
     ):
         return False
-    # sig1 cannot have more positional params than sig2
-    if len(ps1) > len(ps2) and not vp2:
-        return False
+    # Any extra PK in sig2 must have its corresponding PO or KO in sig1, or a
+    # default value
+    for i, n in enumerate(pks2):
+        if (
+            n not in pks1 and
+            len(pos1) <= len(pos2) + i and
+            n not in kos1 and
+            sig2.parameters[n].default == _empty
+        ):
+            return False
+    # Any extra KO in sig2 must have a default value
+    for n in kos2:
+        if n not in kos1 and sig2.parameters[n].default == _empty:
+            return False
+
+    for i, n2 in enumerate(ps2):
+        for j, n1 in enumerate(ks1):
+            if n1 == n2:
+                if (
+                    # It can be a PK in sig1 and a P (PO or PK) in sig2 only if
+                    # its position in sig2 is >= to its position in sig1
+                    (n1 in pks1 and i < len(pos1) + j) or
+                    (
+                        n1 in kos1 and (
+                            # Cannot be a KO in sig1 and a PO in sig2
+                            n2 in pos2 or
+                            # It can be a KO in sig1 and a PK in sig2 only if its
+                            # position in sig2 is > than the total number of POs
+                            # and PKs in sig1
+                            i < len(ps1)
+                        )
+                    )
+                ):
+                    return False
+
     # Every positional param in sig1 must be compatible with its
     # correspondant param in sig2 (at the same index).
     for i in range(len(ps1)):
@@ -3578,14 +3664,6 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
             sig1.params[i], sig2.params[i]
         ):
             return False
-
-    # Any extra KO in sig2 must have a default value
-    for n in kos2:
-        if n not in kos1 and sig2.parameters[n].default == _empty:
-            return False
-    # sig1 cannot have keyword params that do not exist in sig2
-    if len([n for n in ks1 if n not in ks2]) > 0 and not vk2:
-        return False
     # Every keyword param in sig1 must be compatible with its
     # correspondant param in sig2 (with the same name).
     for n in ks1:
@@ -3595,14 +3673,6 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
             return False
 
     return True
-
-    # def get_reversed_positional_index(param, sig):
-    #     if param.kind == KO:
-    #         return -1
-    #     reversed_positional_names = reversed(list(sig.positional_names))
-
-    # for p in reversed(sig1.params):
-    #     get_reversed_positional_index(p, sig1)
 
 
 def is_param_compatible_with(p1: Parameter, p2: Parameter):
