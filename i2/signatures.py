@@ -1171,7 +1171,9 @@ class Sig(Signature, Mapping):
         """Return True if the signature is compatible with ``other_sig``. Meaning that
         all valid ways to call the signature are valid for ``other_sig``.
         """
-        return is_sig_compatible_with(self, other_sig, param_comparator=param_comparator)
+        return is_sig_compatible_with(
+            self, other_sig, param_comparator=param_comparator
+        )
 
     def __le__(self, other_sig):
         """The "less than or equal" operator (<=).
@@ -3568,7 +3570,7 @@ def is_param_compatible_with(
     p1: Parameter,
     p2: Parameter,
     annotation_comparator: Callable = None,
-    default_value_comparator: Callable = None
+    default_value_comparator: Callable = None,
 ):
     """Return True if ``p1`` is compatible with ``p2``. Meaning that any value valid
     for ``p1`` is valid for ``p2``.
@@ -3595,15 +3597,18 @@ def is_param_compatible_with(
     False
     """
     annotation_comparator = annotation_comparator or is_annotation_compatible_with
-    default_value_comparator = default_value_comparator or is_default_value_compatible_with
-
-    return (
-        annotation_comparator(p1.annotation, p2.annotation) and
-        default_value_comparator(p1.default, p2.default)
+    default_value_comparator = (
+        default_value_comparator or is_default_value_compatible_with
     )
 
+    return annotation_comparator(
+        p1.annotation, p2.annotation
+    ) and default_value_comparator(p1.default, p2.default)
 
-def is_sig_compatible_with(sig1: Sig, sig2: Sig, *, param_comparator: Callable = None) -> bool:
+
+def is_sig_compatible_with(
+    sig1: Sig, sig2: Sig, *, param_comparator: Callable = None
+) -> bool:
     """Return True if ``sig1`` is compatible with ``sig2``. Meaning that all valid ways
     to call ``sig1`` are valid for ``sig2``.
 
@@ -3727,9 +3732,7 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig, *, param_comparator: Callable =
         # Every positional param in sig1 must be compatible with its
         # correspondant param in sig2 (at the same index).
         for i in range(len(ps1)):
-            if i < len(ps2) and not param_comparator(
-                sig1.params[i], sig2.params[i]
-            ):
+            if i < len(ps2) and not param_comparator(sig1.params[i], sig2.params[i]):
                 return False
         # Every keyword param in sig1 must be compatible with its
         # correspondant param in sig2 (with the same name).
@@ -3750,10 +3753,9 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig, *, param_comparator: Callable =
     ks2 = pks2 + kos2
 
     return (
-        validate_variadics() and
-        validate_param_counts() and
-        validate_extra_params() and
-        validate_param_positions() and
-        validate_param_compatibility()
+        validate_variadics()
+        and validate_param_counts()
+        and validate_extra_params()
+        and validate_param_positions()
+        and validate_param_compatibility()
     )
-    
