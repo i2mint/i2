@@ -1167,19 +1167,25 @@ class Sig(Signature, Mapping):
         """
         return Signature(**self.to_signature_kwargs())
 
+    def is_compatible_with(self, other_sig, *, param_comparator: Callable = None):
+        """Return True if the signature is compatible with ``other_sig``. Meaning that
+        all valid ways to call the signature are valid for ``other_sig``.
+        """
+        return is_sig_compatible_with(self, other_sig, param_comparator=param_comparator)
+
     def __le__(self, other_sig):
         """The "less than or equal" operator (<=).
-        Return True if the signature is compatible with ``other_sig``.
-        See ``is_sig_compatible_with`` for more details.
+        Return True if the signature is compatible with ``other_sig``. Meaning that
+        all valid ways to call the signature are valid for ``other_sig``.
         """
-        return is_sig_compatible_with(self, other_sig)
+        return self.is_compatible_with(other_sig)
 
     def __ge__(self, other_sig):
         """The "greater than or equal" operator (>=).
-        Return True if ``sig2`` is compatible with the signature.
-        See ``is_sig_compatible_with`` for more details.
+        Return True if ``other_sig`` is compatible with the signature. Meaning that
+        all valid ways to call ``other_sig`` are valid for the signature.
         """
-        return is_sig_compatible_with(other_sig, self)
+        return other_sig <= self
 
     @classmethod
     def from_objs(
@@ -3545,10 +3551,65 @@ for kind in param_kinds:
         partial(param_for_kind, kind=kind, with_default=True),
     )
 
+###########################
+# Signature Compatibility #
+###########################
 
-def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
+# TODO: Implement annotation compatibility
+def is_annotation_compatible_with(annot1, annot2):
+    return True
+
+
+def is_default_value_compatible_with(dflt1, dflt2):
+    return dflt1 == _empty or dflt2 != empty
+
+
+def is_param_compatible_with(
+    p1: Parameter,
+    p2: Parameter,
+    annotation_comparator: Callable = None,
+    default_value_comparator: Callable = None
+):
+    """Return True if ``p1`` is compatible with ``p2``. Meaning that any value valid
+    for ``p1`` is valid for ``p2``.
+
+    :param p1: The main parameter.
+    :param p2: The parameter to be compared with.
+    :param annotation_comparator: The function used to compare the annotations
+    :param default_value_comparator: The function used to compare the default values
+
+    >>> is_param_compatible_with(
+    ...     Parameter('a', PO),
+    ...     Parameter('b', PO)
+    ... )
+    True
+    >>> is_param_compatible_with(
+    ...     Parameter('a', PO),
+    ...     Parameter('b', PO, default=0)
+    ... )
+    True
+    >>> is_param_compatible_with(
+    ...     Parameter('a', PO, default=0),
+    ...     Parameter('b', PO)
+    ... )
+    False
+    """
+    annotation_comparator = annotation_comparator or is_annotation_compatible_with
+    default_value_comparator = default_value_comparator or is_default_value_compatible_with
+
+    return (
+        annotation_comparator(p1.annotation, p2.annotation) and
+        default_value_comparator(p1.default, p2.default)
+    )
+
+
+def is_sig_compatible_with(sig1: Sig, sig2: Sig, *, param_comparator: Callable = None) -> bool:
     """Return True if ``sig1`` is compatible with ``sig2``. Meaning that all valid ways
-    to call ``sig1`` are valid for sig2.
+    to call ``sig1`` are valid for ``sig2``.
+
+    :param sig1: The main signature.
+    :param sig2: The signature to be compared with.
+    :param param_comparator: The function used to compare two parameters
 
     >>> is_sig_compatible_with(
     ...     Sig('(a, /, b, *, c)'),
@@ -3592,6 +3653,95 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
     True
     """
 
+    def validate_variadics():
+        # sig1 can only have a VP if sig2 also has one
+        if vp1:
+            if not vp2:
+                return False
+            sig1 -= vp1
+            sig2 -= vp2
+        # sig1 can only have a VK if sig2 also has one
+        if vk1:
+            if not vk2:
+                return False
+            sig1 -= vk1
+            sig2 -= vk2
+        return True
+
+    def validate_param_counts():
+        # sig1 cannot have more positional params than sig2
+        if len(ps1) > len(ps2) and not vp2:
+            return False
+        # sig1 cannot have keyword params that do not exist in sig2
+        if len([n for n in ks1 if n not in ks2]) > 0 and not vk2:
+            return False
+        return True
+
+    def validate_extra_params():
+        # Any extra PO in sig2 must have a default value
+        if len(pos1) < len(pos2) and not all(
+            sig2.parameters[n].default != _empty for n in pos2[len(pos1) :]
+        ):
+            return False
+        # Any extra PK in sig2 must have its corresponding PO or KO in sig1, or a
+        # default value
+        for i, n in enumerate(pks2):
+            if (
+                n not in pks1
+                and len(pos1) <= len(pos2) + i
+                and n not in kos1
+                and sig2.parameters[n].default == _empty
+            ):
+                return False
+        # Any extra KO in sig2 must have a default value
+        for n in kos2:
+            if n not in kos1 and sig2.parameters[n].default == _empty:
+                return False
+        return True
+
+    def validate_param_positions():
+        for i, n2 in enumerate(ps2):
+            for j, n1 in enumerate(ks1):
+                if n1 == n2:
+                    if (
+                        # It can be a PK in sig1 and a P (PO or PK) in sig2 only if
+                        # its position in sig2 is >= to its position in sig1
+                        (n1 in pks1 and i < len(pos1) + j)
+                        or (
+                            n1 in kos1
+                            and (
+                                # Cannot be a KO in sig1 and a PO in sig2
+                                n2 in pos2
+                                or
+                                # It can be a KO in sig1 and a PK in sig2 only if its
+                                # position in sig2 is > than the total number of POs
+                                # and PKs in sig1
+                                i < len(ps1)
+                            )
+                        )
+                    ):
+                        return False
+        return True
+
+    def validate_param_compatibility():
+        # Every positional param in sig1 must be compatible with its
+        # correspondant param in sig2 (at the same index).
+        for i in range(len(ps1)):
+            if i < len(ps2) and not param_comparator(
+                sig1.params[i], sig2.params[i]
+            ):
+                return False
+        # Every keyword param in sig1 must be compatible with its
+        # correspondant param in sig2 (with the same name).
+        for n in ks1:
+            if n in ks2 and not param_comparator(
+                sig1.parameters[n], sig2.parameters[n]
+            ):
+                return False
+        return True
+
+    param_comparator = param_comparator or is_param_compatible_with
+
     pos1, pks1, vp1, kos1, vk1 = sig1.detail_names_by_kind()
     ps1 = pos1 + pks1
     ks1 = pks1 + kos1
@@ -3599,83 +3749,11 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
     ps2 = pos2 + pks2
     ks2 = pks2 + kos2
 
-    if vp1:
-        if not vp2:
-            return False
-        sig1 -= vp1
-        sig2 -= vp2
-    if vk1:
-        if not vk2:
-            return False
-        sig1 -= vk1
-        sig2 -= vk2
-
-    # sig1 cannot have more positional params than sig2
-    if len(ps1) > len(ps2) and not vp2:
-        return False
-    # sig1 cannot have keyword params that do not exist in sig2
-    if len([n for n in ks1 if n not in ks2]) > 0 and not vk2:
-        return False
-
-    # Any extra PO in sig2 must have a default value
-    if len(pos1) < len(pos2) and not all(
-        sig2.parameters[n].default != _empty for n in pos2[len(pos1) :]
-    ):
-        return False
-    # Any extra PK in sig2 must have its corresponding PO or KO in sig1, or a
-    # default value
-    for i, n in enumerate(pks2):
-        if (
-            n not in pks1
-            and len(pos1) <= len(pos2) + i
-            and n not in kos1
-            and sig2.parameters[n].default == _empty
-        ):
-            return False
-    # Any extra KO in sig2 must have a default value
-    for n in kos2:
-        if n not in kos1 and sig2.parameters[n].default == _empty:
-            return False
-
-    for i, n2 in enumerate(ps2):
-        for j, n1 in enumerate(ks1):
-            if n1 == n2:
-                if (
-                    # It can be a PK in sig1 and a P (PO or PK) in sig2 only if
-                    # its position in sig2 is >= to its position in sig1
-                    (n1 in pks1 and i < len(pos1) + j)
-                    or (
-                        n1 in kos1
-                        and (
-                            # Cannot be a KO in sig1 and a PO in sig2
-                            n2 in pos2
-                            or
-                            # It can be a KO in sig1 and a PK in sig2 only if its
-                            # position in sig2 is > than the total number of POs
-                            # and PKs in sig1
-                            i < len(ps1)
-                        )
-                    )
-                ):
-                    return False
-
-    # Every positional param in sig1 must be compatible with its
-    # correspondant param in sig2 (at the same index).
-    for i in range(len(ps1)):
-        if i < len(ps2) and not is_param_compatible_with(
-            sig1.params[i], sig2.params[i]
-        ):
-            return False
-    # Every keyword param in sig1 must be compatible with its
-    # correspondant param in sig2 (with the same name).
-    for n in ks1:
-        if n in ks2 and not is_param_compatible_with(
-            sig1.parameters[n], sig2.parameters[n]
-        ):
-            return False
-
-    return True
-
-
-def is_param_compatible_with(p1: Parameter, p2: Parameter):
-    return True
+    return (
+        validate_variadics() and
+        validate_param_counts() and
+        validate_extra_params() and
+        validate_param_positions() and
+        validate_param_compatibility()
+    )
+    
