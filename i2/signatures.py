@@ -3598,7 +3598,7 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
     pos2, pks2, vp2, kos2, vk2 = sig2.detail_names_by_kind()
     ps2 = pos2 + pks2
     ks2 = pks2 + kos2
-    
+
     if vp1:
         if not vp2:
             return False
@@ -3616,7 +3616,7 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
     # sig1 cannot have keyword params that do not exist in sig2
     if len([n for n in ks1 if n not in ks2]) > 0 and not vk2:
         return False
-        
+
     # Any extra PO in sig2 must have a default value
     if len(pos1) < len(pos2) and not all(
         sig2.parameters[n].default != _empty for n in pos2[len(pos1) :]
@@ -3626,10 +3626,10 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
     # default value
     for i, n in enumerate(pks2):
         if (
-            n not in pks1 and
-            len(pos1) <= len(pos2) + i and
-            n not in kos1 and
-            sig2.parameters[n].default == _empty
+            n not in pks1
+            and len(pos1) <= len(pos2) + i
+            and n not in kos1
+            and sig2.parameters[n].default == _empty
         ):
             return False
     # Any extra KO in sig2 must have a default value
@@ -3643,11 +3643,13 @@ def is_sig_compatible_with(sig1: Sig, sig2: Sig) -> bool:
                 if (
                     # It can be a PK in sig1 and a P (PO or PK) in sig2 only if
                     # its position in sig2 is >= to its position in sig1
-                    (n1 in pks1 and i < len(pos1) + j) or
-                    (
-                        n1 in kos1 and (
+                    (n1 in pks1 and i < len(pos1) + j)
+                    or (
+                        n1 in kos1
+                        and (
                             # Cannot be a KO in sig1 and a PO in sig2
-                            n2 in pos2 or
+                            n2 in pos2
+                            or
                             # It can be a KO in sig1 and a PK in sig2 only if its
                             # position in sig2 is > than the total number of POs
                             # and PKs in sig1
