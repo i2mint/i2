@@ -152,6 +152,9 @@ class _Wrap:
         """This method allows things to work well when we use Wrap object as method"""
         return MethodType(self, instance)
 
+    # def __set_name__(self, owner, name):
+    #     self.name = owner.__name__
+
     def __repr__(self):
         # TODO: Replace i2.Wrap with dynamic (Wrap or Wrapx)
         name = getattr(self, '__name__', None) or 'Wrap'
@@ -1226,7 +1229,7 @@ def func_to_method_func(
     method_params=None,
     instance_arg_name='self',
 ) -> MethodFunc:
-    """Get a 'method function' from a 'normal function'.
+    """Get a 'method function' from a 'normal function'. Also known as "methodize".
 
     That is, get a function that gives the same outputs as the 'normal function',
     except that some of the arguments are sourced from the attributes of the first
@@ -1260,16 +1263,48 @@ def func_to_method_func(
     Now let's make a dummy object that has attributes ``a`` and a ``c``, and use it to
     call ``method_func``:
 
-    >>> class Klass:
-    ...     a = 1
-    ...     c = 3
-    >>> instance = Klass()
+    >>> from collections import namedtuple
+    >>> instance = namedtuple('FakeInstance', 'a c')(1, 3)
     >>> method_func(instance, 2, d='hello')
     'hello: 9'
 
     Which is:
 
     >>> assert method_func(instance, 2, d='hello') == func(1, 2, c=3, d='hello')
+
+    Often, though, what you'll want is to include this method function directly in
+    a class, as you're making that class "normally". That works too:
+
+    >>> from dataclasses import dataclass
+    >>> @dataclass
+    ... class Klass:
+    ...     a : int = 1
+    ...     c : int = 3
+    ...     method_func = func_to_method_func(func, 'a c')
+    >>> instance = Klass(1, 3)
+    >>> instance.method_func(2, d='hello')
+    'hello: 9'
+
+    What if your function has argument names that don't correspond to the names you
+    have, or want, as attributes of the class? Or even, you have several functions that
+    share an argument name that need to be bound to a different attribute?
+
+    For that, just use ``map_names`` to wrap the function, giving it the names that
+    you need to give it to have the effect you want (the binding of those arguments
+    to attributes of the instance):
+
+    >>> from i2.wrapper import map_names
+    >>> def func(x, y: int, z=2, *, d='bar'):
+    ...     return f"{d}: {(x + y) * z}"
+    >>> from dataclasses import dataclass
+    >>> @dataclass
+    ... class Klass:
+    ...     a : int = 1
+    ...     c : int = 3
+    ...     method_func = func_to_method_func(map_names(func, x='a', z='c'), 'a c')
+    >>> instance = Klass(1, 3)
+    >>> instance.method_func(2, d='hello')
+    'hello: 9'
 
     """
     # get a signature object for func
@@ -1305,18 +1340,20 @@ def func_to_method_func(
     return method_func
 
 
-def make_funcs_binding_class(
-    funcs, init_params=(), cls_name=None,
+def bind_funcs_object_attrs(
+    funcs, init_params=(), *, cls=None,
 ):
     """Transform one or several functions into a class that contains them as methods
     sourcing specific arguments from the instance's attributes.
 
     >>> from inspect import signature
+    >>> from dataclasses import dataclass
+    >>>
     >>> def foo(a, b, c=2, *, d='bar'):
     ...     return f"{d}: {(a + b) * c}"
     >>> foo(1, 2)
     'bar: 6'
-    >>> Klass = make_funcs_binding_class(foo, init_params='a c')
+    >>> Klass = bind_funcs_object_attrs(foo, init_params='a c')
     >>> Klass.__name__
     'Foo'
     >>> instance = Klass(a=1, c=3)
@@ -1334,7 +1371,32 @@ def make_funcs_binding_class(
     'hello: 9'
     >>> instance.foo(10, d='goodbye')
     'goodbye: 33'
+
+    >>> def foo(a, b, c):
+    ...     return a + b * c
+    ...
+    >>> def bar(d, e):
+    ...     return f"{d=}, {e=}"
+    ...
+    >>> @dataclass
+    ... class K:
+    ...     a: int
+    ...     e: int
+    ...
+    >>> C = bind_funcs_object_attrs([foo, bar], 'a e', cls=K)
+    >>> str(signature(C))
+    '(a: int, e: int) -> None'
+    >>> c = C(1,2)
+    >>> assert str(signature(c.foo)) == '(b, c)'
+    >>> c.foo(3,4)
+    13
+    >>> assert str(signature(c.bar)) == '(d)'
+    >>> c.bar(5)
+    'd=5, e=2'
     """
+
+    if isinstance(init_params, str):
+        init_params = init_params.split()
 
     dflt_cls_name = 'FuncsUnion'
     if callable(funcs) and not isinstance(funcs, Iterable):
@@ -1342,62 +1404,42 @@ def make_funcs_binding_class(
         dflt_cls_name = camelize(getattr(single_func, '__name__', dflt_cls_name))
         funcs = [single_func]
 
-    cls_name = cls_name or dflt_cls_name
-    if isinstance(init_params, str):
-        init_params = init_params.split()
+    if not isinstance(cls, type):
+        # if the class is not given, we need to make one
+        if isinstance(cls, str):
+            cls_name = cls
+        else:
+            cls_name = dflt_cls_name
 
-    # init_parameter_objects = Sig(func)[init_params].params
-    class_init_sig = Sig()
-    for func in funcs:
-        class_init_sig = class_init_sig.merge_with_sig(func)[init_params]
-    dataclass_fields = list(map(param_to_dataclass_field_tuple, class_init_sig.params))
-    Klass = make_dataclass(cls_name, dataclass_fields)
+        # init_parameter_objects = Sig(func)[init_params].params
+        # Make the signature for the init
+        class_init_sig = Sig()
+        for func in funcs:
+            class_init_sig = class_init_sig.merge_with_sig(func)[init_params]
+
+        dataclass_fields = list(map(param_to_dataclass_field_tuple, class_init_sig.params))
+        cls = make_dataclass(cls_name, dataclass_fields)
 
     for func in funcs:
         method_func = func_to_method_func(func, init_params)
-        setattr(Klass, method_func.__name__, method_func)
-    return Klass
+        setattr(cls, method_func.__name__, method_func)
+    return cls
 
-#
-# # TODO: Make a type where ``isinstance(s, Identifier) == s.isidentifier()``
-# Identifier = NewType('Identifier', str)  # + should satisfy str.isidentifier
-# Bind = NewType(
-#     'Bind',
-#     Union[
-#         str,  # Identifier or ' '.join(Iterable[Identifier])
-#         Dict[Identifier, Identifier],
-#         Sequence[Union[Identifier, Tuple[Identifier, Identifier]]],
-#     ],
-# )
-# IdentifierMapping = Dict[Identifier, Identifier]
-#
-#
-# def identifier_mapping(x: Bind) -> IdentifierMapping:
-#     """
-#
-#     >>> identifier_mapping('x a_b yz')
-#     {'x': 'x', 'a_b': 'a_b', 'yz': 'yz'}
-#     >>> identifier_mapping(['foo', ('bar', 'mitzvah')])
-#     {'foo': 'foo', 'bar': 'mitzvah'}
-#     >>> identifier_mapping({'x': 'y', 'a': 'b'})
-#     {'x': 'y', 'a': 'b'}
-#     """
-#     if isinstance(x, str):
-#         x = x.split()
-#     if not isinstance(x, Mapping):
-#
-#         def gen():
-#             for item in x:
-#                 if isinstance(item, str):
-#                     yield item, item
-#                 else:
-#                     yield item
-#
-#         return dict(gen())
-#     else:
-#         return dict(**x)
-#
-#
+
+def _items_filt(d: dict, keys):
+    for k, v in d.items():
+        if k in keys:
+            yield k, v
+
+
+def _mk_sig_from_params_and_funcs(params, funcs):
+    def gen():
+        for param in params:
+            pass
+
+
+## An attempt to redo a func_to_method_func because I forgot func_to_method_func existed
+## Has some different ideas, so keeping around until I decide it's time to let go.
 # NoSuchKey = type('NoSuchKey', (), {})
 # _instance_extractor: KwargsTrans
 #
@@ -1434,7 +1476,7 @@ def make_funcs_binding_class(
 #                 yield outer_param, outer_val
 #
 #     return dict(gen())
-#
+
 #
 # def methodize(func, bind: Bind = ()):
 #     bind = identifier_mapping(bind)
