@@ -124,7 +124,7 @@ class MakeFromFunc:
     def __call__(self, func):
         return self.func_to_obj(func)
 
-
+#from wrapt import decorator
 # TODO: Continue factoring out Wrap and Wrapx code
 class _Wrap:
     _init_args = ()
@@ -152,13 +152,27 @@ class _Wrap:
         """This method allows things to work well when we use Wrap object as method"""
         return MethodType(self, instance)
 
-    # def __set_name__(self, owner, name):
-    #     self.name = owner.__name__
-
     def __repr__(self):
         # TODO: Replace i2.Wrap with dynamic (Wrap or Wrapx)
         name = getattr(self, '__name__', None) or 'Wrap'
         return f'<i2.Wrap {name}{signature(self)}>'
+
+    # TODO: Don't know exactly what I'm doing below. Review with someone!
+    def __set_name__(self, owner, name):
+        """So that name of function is passed on to method when assigning to attribute
+        That is, doing ``method = Wrap(func)`` in a class definition"""
+        # TODO: Look into sanity of mutating the name and other ways to achieve same
+        self.__name__ = name
+
+    def __set__(self, instance, value):
+        instance.__dict__[self.__name__] = value
+
+    # To get help(instance.method) to work!
+    # TODO: Does this have undesirable side effects?
+    @property
+    def __code__(self):
+        return self.func.__code__
+
 
 
 class Wrap(_Wrap):
