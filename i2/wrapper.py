@@ -1431,7 +1431,9 @@ def bind_funcs_object_attrs(
         for func in funcs:
             class_init_sig = class_init_sig.merge_with_sig(func)[init_params]
 
-        dataclass_fields = list(map(param_to_dataclass_field_tuple, class_init_sig.params))
+        dataclass_fields = list(
+            map(param_to_dataclass_field_tuple, class_init_sig.params)
+        )
         cls = make_dataclass(cls_name, dataclass_fields)
 
     for func in funcs:
