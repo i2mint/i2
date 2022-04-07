@@ -124,7 +124,8 @@ class MakeFromFunc:
     def __call__(self, func):
         return self.func_to_obj(func)
 
-#from wrapt import decorator
+
+# from wrapt import decorator
 # TODO: Continue factoring out Wrap and Wrapx code
 class _Wrap:
     _init_args = ()
@@ -172,7 +173,6 @@ class _Wrap:
     @property
     def __code__(self):
         return self.func.__code__
-
 
 
 class Wrap(_Wrap):
