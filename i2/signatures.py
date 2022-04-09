@@ -3563,7 +3563,7 @@ def is_annotation_compatible_with(annot1, annot2):
 
 
 def is_default_value_compatible_with(dflt1, dflt2):
-    return dflt1 == _empty or dflt2 != empty
+    return dflt1 is empty or dflt2 is not empty
 
 
 def is_param_compatible_with(
@@ -3685,7 +3685,7 @@ def is_sig_compatible_with(
     def validate_extra_params():
         # Any extra PO in sig2 must have a default value
         if len(pos1) < len(pos2) and not all(
-            sig2.parameters[n].default != _empty for n in pos2[len(pos1) :]
+            sig2.parameters[n].default is not empty for n in pos2[len(pos1) :]
         ):
             return False
         # Any extra PK in sig2 must have its corresponding PO or KO in sig1, or a
@@ -3695,12 +3695,12 @@ def is_sig_compatible_with(
                 n not in pks1
                 and len(pos1) <= len(pos2) + i
                 and n not in kos1
-                and sig2.parameters[n].default == _empty
+                and sig2.parameters[n].default is empty
             ):
                 return False
         # Any extra KO in sig2 must have a default value
         for n in kos2:
-            if n not in kos1 and sig2.parameters[n].default == _empty:
+            if n not in kos1 and sig2.parameters[n].default == empty:
                 return False
         return True
 
