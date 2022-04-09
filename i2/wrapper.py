@@ -124,9 +124,12 @@ class MakeFromFunc:
     def __call__(self, func):
         return self.func_to_obj(func)
 
-#from wrapt import decorator
+
+# from wrapt import decorator
 # TODO: Continue factoring out Wrap and Wrapx code
 class _Wrap:
+    """To be used as the base of actual Wrap objects."""
+
     _init_args = ()
     _init_kwargs = ()
 
@@ -144,12 +147,18 @@ class _Wrap:
         # TODO: Pros and cons analysis of pointing __wrapped__ to func. partial uses
         #  .func, but wraps looks for __wrapped__
 
+    def __call__(self, *args, **kwargs):
+        """Just forward the call to the wrapped function."""
+        return self.func(*args, **kwargs)
+
     def __reduce__(self):
         """reduce is meant to control how things are pickled/unpickled"""
         return type(self), self._init_args, dict(self._init_kwargs)
 
     def __get__(self, instance, owner):
         """This method allows things to work well when we use Wrap object as method"""
+        if instance is None:
+            return self
         return MethodType(self, instance)
 
     def __repr__(self):
@@ -172,7 +181,6 @@ class _Wrap:
     @property
     def __code__(self):
         return self.func.__code__
-
 
 
 class Wrap(_Wrap):
