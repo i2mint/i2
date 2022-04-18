@@ -1167,27 +1167,28 @@ class Sig(Signature, Mapping):
         """
         return Signature(**self.to_signature_kwargs())
 
-    def is_compatible_with(self, other_sig, *, param_comparator: Callable = None):
+    def is_call_compatible_with(self, other_sig, *, param_comparator: Callable = None):
         """Return True if the signature is compatible with ``other_sig``. Meaning that
         all valid ways to call the signature are valid for ``other_sig``.
         """
-        return is_sig_compatible_with(
+        return is_call_compatible_with(
             self, other_sig, param_comparator=param_comparator
         )
 
-    def __le__(self, other_sig):
-        """The "less than or equal" operator (<=).
-        Return True if the signature is compatible with ``other_sig``. Meaning that
-        all valid ways to call the signature are valid for ``other_sig``.
-        """
-        return self.is_compatible_with(other_sig)
+    # TODO: Make these dunders open/close
+    # def __le__(self, other_sig):
+    #     """The "less than or equal" operator (<=).
+    #     Return True if the signature is compatible with ``other_sig``. Meaning that
+    #     all valid ways to call the signature are valid for ``other_sig``.
+    #     """
+    #     return self.is_call_compatible_with(other_sig)
 
-    def __ge__(self, other_sig):
-        """The "greater than or equal" operator (>=).
-        Return True if ``other_sig`` is compatible with the signature. Meaning that
-        all valid ways to call ``other_sig`` are valid for the signature.
-        """
-        return other_sig <= self
+    # def __ge__(self, other_sig):
+    #     """The "greater than or equal" operator (>=).
+    #     Return True if ``other_sig`` is compatible with the signature. Meaning that
+    #     all valid ways to call ``other_sig`` are valid for the signature.
+    #     """
+    #     return other_sig <= self
 
     @classmethod
     def from_objs(
@@ -3606,7 +3607,7 @@ def is_param_compatible_with(
     ) and default_value_comparator(p1.default, p2.default)
 
 
-def is_sig_compatible_with(
+def is_call_compatible_with(
     sig1: Sig, sig2: Sig, *, param_comparator: Callable = None
 ) -> bool:
     """Return True if ``sig1`` is compatible with ``sig2``. Meaning that all valid ways
@@ -3616,42 +3617,42 @@ def is_sig_compatible_with(
     :param sig2: The signature to be compared with.
     :param param_comparator: The function used to compare two parameters
 
-    >>> is_sig_compatible_with(
+    >>> is_call_compatible_with(
     ...     Sig('(a, /, b, *, c)'),
     ...     Sig('(a, b, c)')
     ... )
     True
-    >>> is_sig_compatible_with(
+    >>> is_call_compatible_with(
     ...     Sig('()'),
     ...     Sig('(a)')
     ... )
     False
-    >>> is_sig_compatible_with(
+    >>> is_call_compatible_with(
     ...     Sig('()'),
     ...     Sig('(a=0)')
     ... )
     True
-    >>> is_sig_compatible_with(
+    >>> is_call_compatible_with(
     ...     Sig('(a, /, *, c)'),
     ...     Sig('(a, /, b, *, c)')
     ... )
     False
-    >>> is_sig_compatible_with(
+    >>> is_call_compatible_with(
     ...     Sig('(a, /, *, c)'),
     ...     Sig('(a, /, b=0, *, c)')
     ... )
     True
-    >>> is_sig_compatible_with(
+    >>> is_call_compatible_with(
     ...     Sig('(a, /, b)'),
     ...     Sig('(a, /, b, *, c)')
     ... )
     False
-    >>> is_sig_compatible_with(
+    >>> is_call_compatible_with(
     ...     Sig('(a, /, b)'),
     ...     Sig('(a, /, b, *, c=0)')
     ... )
     True
-    >>> is_sig_compatible_with(
+    >>> is_call_compatible_with(
     ...     Sig('(a, /, b, *, c)'),
     ...     Sig('(*args, **kwargs)')
     ... )

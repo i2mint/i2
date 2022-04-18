@@ -590,10 +590,10 @@ def test_call_forgivingly(sig_spec):
         # ),
     ],
 )
-def test_signature_comparison(sig_spec1, sig_spec2):
+def test_call_compatibility(sig_spec1, sig_spec2):
     sig1 = Sig(sig_spec1)
     sig2 = Sig(sig_spec2)
-    is_compatible = sig1 <= sig2
+    is_compatible = sig1.is_call_compatible_with(sig2)
 
     exec_env = dict()
     f_def = f'def f{sig_spec2}: pass'
