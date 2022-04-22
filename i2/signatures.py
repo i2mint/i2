@@ -86,8 +86,10 @@ from inspect import Signature, Parameter, signature, unwrap
 import re
 from typing import Union, Callable, Iterable, Mapping as MappingType
 from types import FunctionType
+from collections import defaultdict
 
 from functools import (
+    cached_property,
     update_wrapper,
     partial,
     WRAPPER_ASSIGNMENTS,
@@ -678,6 +680,14 @@ def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
             raise
 
 
+def _names_of_kind(sig):
+    """Compute a tuple containing tuples of names for each kind"""
+    d = defaultdict(list)
+    for param in sig.params:
+        d[param.kind].append(param.name)
+    return tuple(tuple(d[kind]) for kind in range(5))
+
+
 # TODO: See other signature operating functions below in this module:
 #   Do we need them now that we have Sig?
 #   Do we want to keep them and have Sig use them?
@@ -901,6 +911,13 @@ class Sig(Signature, Mapping):
             return_annotation=return_annotation,
             __validate_parameters__=__validate_parameters__,
         )
+        self.names_of_kind = _names_of_kind(self)
+
+        if vps := len(self.names_of_kind[Parameter.VAR_POSITIONAL]) > 1:
+            raise ValueError(f"You can't have several variadic keywords: {vps}")
+        if vks := len(self.names_of_kind[Parameter.VAR_KEYWORD]) > 1:
+            raise ValueError(f"You can't have several variadic keywords: {vks}")
+
         self.name = name or name_of_obj(obj)
 
     # TODO: Add params for more validation (e.g. arg number/name matching?)
@@ -1097,7 +1114,7 @@ class Sig(Signature, Mapping):
         >>> kw_defaults
         {'z': 1}
         """
-        ko_names = self.names_for_kind(kind=KO)
+        ko_names = self.names_of_kind[KO]
         dflts = self.defaults
         return (
             {name: dflts[name] for name in dflts if name not in ko_names},
@@ -1254,25 +1271,14 @@ class Sig(Signature, Mapping):
             p.name: p.annotation for p in self.values() if p.annotation is not p.empty
         }
 
-    # def substitute(self, **sub_for_name):
-    #     def gen():
-    #
-    #         for name, substitution in sub_for_name.items():
-    #
-
-    def names_for_kind(self, kind):
-        return tuple(p.name for p in self.values() if p.kind == kind)
-
     def detail_names_by_kind(self):
-        def get_variadic_name(kind: VP | VK):
-            return next(iter(n for n, k in self.kinds.items() if k == kind), None)
-
         return (
-            self.names_for_kind(PO),
-            self.names_for_kind(PK),
-            get_variadic_name(VP),
-            self.names_for_kind(KO),
-            get_variadic_name(VK),
+            self.names_of_kind[PO],
+            self.names_of_kind[PK],
+            # get_variadic_name(VP),
+            self.names_of_kind[VP],
+            self.names_of_kind[KO],
+            self.names_of_kind[VK],
         )
 
     def __iter__(self):
@@ -1297,6 +1303,20 @@ class Sig(Signature, Mapping):
             names = k
         params = [self[name] for name in names]
         return Sig.from_params(params)
+
+    # TODO: Deprecate. Should use names_of_kind directly
+    def names_for_kind(self, kind):
+        """Get the arg names tuple for a given kind.
+        Note, if you need to do this several times, or for several kinds, use
+        ``names_of_kind`` property (a tuple) instead: It groups all names of kinds once,
+        and caches the result.
+        """
+        from warnings import warn
+
+        warn('Deprecated', DeprecationWarning)
+        return self.names_of_kind[kind]
+
+    # TODO: Consider using names_of_kind in other methods/properties
 
     @property
     def has_var_kinds(self):
@@ -2230,7 +2250,7 @@ class Sig(Signature, Mapping):
             # Only those that are position only or before a var-positional.
             vp_idx = self.index_of_var_positional
             if vp_idx is None:
-                names_for_args = self.names_for_kind(PO)
+                names_for_args = self.names_of_kind[PO]
             else:
                 # When there's a VP present, all arguments before it can only be
                 # expressed positionally if the VP argument is non-empty.
@@ -2902,11 +2922,6 @@ def has_signature(obj, robust=False):
             return bool((callable(obj) or None) and signature(obj))
         except ValueError:
             return False
-
-
-def number_of_required_arguments(obj):
-    sig = Sig(obj)
-    return len(sig) - len(sig.defaults)
 
 
 # TODO: Need to define and use this function more carefully.

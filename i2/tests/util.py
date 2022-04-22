@@ -295,12 +295,12 @@ def _get_sub_sigs_from_default_values(sig: Sig) -> Iterator[Sig]:
     """
 
     def internal_get_sub_sigs(sig):
-        kos = [n for n in sig.names_for_kind(KO) if n in sig.defaults]
+        kos = [n for n in sig.names_of_kind[KO] if n in sig.defaults]
         for ko in reversed(kos):
             _sig = sig - ko
             yield from internal_get_sub_sigs(_sig)
 
-        pks = [n for n in sig.names_for_kind(PK) if n in sig.defaults]
+        pks = [n for n in sig.names_of_kind[PK] if n in sig.defaults]
         for i, pk in reversed(list(enumerate(pks))):
             _sig = sig - pk
             pks_to_transform_to_ko = pks[i + 1 :]
@@ -312,7 +312,7 @@ def _get_sub_sigs_from_default_values(sig: Sig) -> Iterator[Sig]:
             _sig = Sig(params)
             yield from internal_get_sub_sigs(_sig)
 
-        pos = [n for n in sig.names_for_kind(PO) if n in sig.defaults]
+        pos = [n for n in sig.names_of_kind[PO] if n in sig.defaults]
         if pos:
             _sig = sig - pos[-1]
             params = [p.replace(kind=KO) if p.kind == PK else p for p in _sig.params]
