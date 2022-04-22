@@ -1320,7 +1320,18 @@ class Sig(Signature, Mapping):
 
     @property
     def has_var_kinds(self):
-        return any(p.kind in var_param_kinds for p in self.values())
+        """
+        >>> from i2.signatures import Sig  # somehow needed in IDE for @property
+        >>> Sig(lambda x, *, y: None).has_var_kinds
+        False
+        >>> Sig(lambda x, *y: None).has_var_kinds
+        True
+        >>> Sig(lambda x, **y: None).has_var_kinds
+        True
+        """
+        return bool(self.names_of_kind[VP]) or bool(self.names_of_kind[VK])
+        # Old version:
+        # return any(p.kind in var_param_kinds for p in self.values())
 
     @property
     def index_of_var_positional(self):
