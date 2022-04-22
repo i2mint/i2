@@ -1187,6 +1187,9 @@ class ArgValConverterIngress:
         return args, kwargs
 
 
+# ---------------------------------------------------------------------------------------
+# Utils to help define value conversions in ingress functions
+
 def convert_dict_values(to_convert: dict, key_to_conversion_function: dict):
     for k, v in to_convert.items():
         if k in key_to_conversion_function:
@@ -1202,6 +1205,107 @@ def _alt_convert_dict_values(to_convert: dict, key_to_conversion_function: dict)
         conversion_func = key_to_conversion_function.get(k, lambda x: x)
         yield k, conversion_func(v)
 
+
+def params_used_in_funcs(funcs):
+    return {name for func in funcs for name in Sig(func).names}
+
+
+def required_params(func):
+    sig = Sig(func)
+    return set(sig.names) - sig.defaults.keys()
+
+
+def required_params_used_in_funcs(funcs):
+    return {name for func in funcs for name in required_params(func)}
+
+
+# TODO: Should we add some explicit/validation/strict options?
+def kwargs_trans(
+    kwargs: dict = None, /, _recursive=False, _inplace=False, **key_and_val_func
+):
+    """Transform a kwargs dict or build a transformer.
+
+    :param kwargs: The dict containing the input kwargs that we will transform
+    :param _recursive: Whether the transformations listed in ``key_and_val_func`` should
+        be applied "recursively". When set to ``False`` (default), each transformation
+        function applies to the original ``kwargs``, not the one that was transformed,
+        so far.
+    :param _inplace: If set to ``False`` will make a shallow copy of the ``kwargs``
+        before transforming it (only relevant if ``_recursive=True``
+    :param key_and_val_func: The ``key=val_func`` pairs that indicate that a
+        ``val_func`` should be applied to the ``kwargs``, maching the argument names of
+        the ``val_func`` to the keys of ``kwargs`` and extracting the values found
+        therein to use for the corresponding inputs of that ``val_func``.
+    :return: The transformed kwargs.
+
+    >>> d = dict(a=1, b=2, c=3)
+    >>> kwargs_trans(
+    ...     d,
+    ...     a=lambda a: a * 10,
+    ...     b=lambda a, b: a + b
+    ... )
+    {'a': 10, 'b': 3, 'c': 3}
+
+    See that ``d`` is unchanged here (transformation is not in place).
+
+    >>> d
+    {'a': 1, 'b': 2, 'c': 3}
+
+    Typically you'll use ``kwargs_trans`` as a factory:
+
+    >>> trans = kwargs_trans(a=lambda a: a * 10, b=lambda a, b: a + b)
+    >>> trans(d)
+    {'a': 10, 'b': 3, 'c': 3}
+
+    Here we'll demo what the ``_recursive`` and ``_inplace`` arguments do.
+
+    >>> from functools import partial
+    >>> re_kwargs_trans = partial(kwargs_trans, _recursive=True, _inplace=True)
+    >>> d = dict(a=1, b=2, c=3)
+    >>>
+    >>> re_kwargs_trans(
+    ...     d,
+    ...     a=lambda a: a * 10,
+    ...     b=lambda a, b: a + b
+    ...     # since _recursive=True, the a that is used is the new a = 10, not a = 1:
+    ... )
+    {'a': 10, 'b': 12, 'c': 3}
+
+    Since ``_inplace=True``, ``d`` itself has changed:
+
+    >>> d
+    {'a': 10, 'b': 12, 'c': 3}
+
+    Sometimes you'll pipe several transformers together:
+
+    >>> from i2 import Pipe
+    >>> trans = Pipe(
+    ...     re_kwargs_trans(a=lambda a: a / 10),
+    ...     re_kwargs_trans(c=lambda a,b,c: a * b * c),
+    ...     # and then compute a new value of a using a and c:
+    ...     re_kwargs_trans(a=lambda a, c: c - 1),
+    ... )
+    >>> trans(d)
+    {'a': 35.0, 'b': 12, 'c': 36.0}
+    """
+    if kwargs is None:
+        return partial(
+            kwargs_trans, _recursive=_recursive, _inplace=_inplace, **key_and_val_func
+        )
+    if not _recursive:
+        new_kwargs = dict()
+        for key, val_func in key_and_val_func.items():
+            new_kwargs[key] = call_forgivingly(val_func, **kwargs)
+        return dict(kwargs, **new_kwargs)
+    else:
+        if _inplace is False:
+            kwargs = kwargs.copy()
+        for key, val_func in key_and_val_func.items():
+            kwargs[key] = call_forgivingly(val_func, **kwargs)
+        return kwargs
+
+
+# ---------------------------------------------------------------------------------------
 
 from inspect import Parameter
 from dataclasses import make_dataclass
