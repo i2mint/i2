@@ -1282,7 +1282,6 @@ class Sig(Signature, Mapping):
         return (
             self.names_of_kind[PO],
             self.names_of_kind[PK],
-            # get_variadic_name(VP),
             self.names_of_kind[VP],
             self.names_of_kind[KO],
             self.names_of_kind[VK],
@@ -1895,7 +1894,8 @@ class Sig(Signature, Mapping):
     def add_params(self, params: Iterable):
         """Creates a new instance of Sig after merging the parameters of this signature
         with a list of new parameters. The new list of parameters is automatically
-        sorted based on their kinds.
+        sorted based on signature constraints given by kinds and default values.
+        See Python native signature documentation for more details.
 
         >>> s = Sig('(a, /, b, *, c)')
         >>> s.add_params([
@@ -1907,8 +1907,15 @@ class Sig(Signature, Mapping):
         ... ])
         <Sig (a, f, /, b, e, *args, c, d, **kwargs)>
         """
+
+        def comparator(param):
+            return (
+                param.kind,
+                param.kind == KO or param.default is not empty
+            )
+
         new_params = self.params + [ensure_param(p) for p in params]
-        new_params = sorted(new_params, key=lambda p: p.kind)
+        new_params = sorted(new_params, key=comparator)
         return type(self)(new_params)
 
     def __sub__(self, sig):
