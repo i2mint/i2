@@ -1892,6 +1892,25 @@ class Sig(Signature, Mapping):
         }
         return self.__class__(new_params, return_annotation=self.return_annotation)
 
+    def add_params(self, params: Iterable):
+        """Creates a new instance of Sig after merging the parameters of this signature
+        with a list of new parameters. The new list of parameters is automatically
+        sorted based on their kinds.
+
+        >>> s = Sig('(a, /, b, *, c)')
+        >>> s.add_params([
+        ...     Param('kwargs', VK),
+        ...     dict(name='d', kind=KO),
+        ...     Param('args', VP),
+        ...     'e',
+        ...     Param('f', PO),
+        ... ])
+        <Sig (a, f, /, b, e, *args, c, d, **kwargs)>
+        """
+        new_params = self.params + [ensure_param(p) for p in params]
+        new_params = sorted(new_params, key=lambda p: p.kind)
+        return type(self)(new_params)
+
     def __sub__(self, sig):
         return self.remove_names(sig)
 
