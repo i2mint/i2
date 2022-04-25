@@ -1909,10 +1909,7 @@ class Sig(Signature, Mapping):
         """
 
         def comparator(param):
-            return (
-                param.kind,
-                param.kind == KO or param.default is not empty
-            )
+            return (param.kind, param.kind == KO or param.default is not empty)
 
         new_params = self.params + [ensure_param(p) for p in params]
         new_params = sorted(new_params, key=comparator)
