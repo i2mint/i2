@@ -42,5 +42,5 @@ from i2.wrapper import (
     map_names,
     func_to_method_func,
     bind_funcs_object_attrs,
-    kwargs_trans
+    kwargs_trans,
 )
