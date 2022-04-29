@@ -1211,13 +1211,11 @@ def params_used_in_funcs(funcs):
     return {name for func in funcs for name in Sig(func).names}
 
 
-def required_params(func):
-    sig = Sig(func)
-    return set(sig.names) - sig.defaults.keys()
-
-
 def required_params_used_in_funcs(funcs):
-    return {name for func in funcs for name in required_params(func)}
+    return {name for func in funcs for name in Sig(func).required_names}
+
+
+from i2.signatures import _call_forgivingly
 
 
 # TODO: Should we add some explicit/validation/strict options?
@@ -1296,13 +1294,13 @@ def kwargs_trans(
     if not _recursive:
         new_kwargs = dict()
         for key, val_func in key_and_val_func.items():
-            new_kwargs[key] = call_forgivingly(val_func, **kwargs)
+            new_kwargs[key] = _call_forgivingly(val_func, (), kwargs)
         return dict(kwargs, **new_kwargs)
     else:
         if _inplace is False:
             kwargs = kwargs.copy()
         for key, val_func in key_and_val_func.items():
-            kwargs[key] = call_forgivingly(val_func, **kwargs)
+            kwargs[key] = _call_forgivingly(val_func, (), kwargs)
         return kwargs
 
 
