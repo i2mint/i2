@@ -1026,25 +1026,28 @@ def nice_kinds(func):
 
 
 @double_up_as_factory
-def map_names(func=None, **old_to_new_name):
+def ch_names(func=None, **old_to_new_name):
     """Change the argument names of a function.
 
     >>> def f(w, /, x: float, y=2, *, z: int = 3):
     ...     return f"(w:={w}) + (x:={x}) * (y:={y}) ** (z:={z}) == {w + x * y ** z}"
-    >>> wrapped_f = map_names(f, w='DoubleYou', z='Zee')
+    >>> wrapped_f = ch_names(f, w='DoubleYou', z='Zee')
     >>> wrapped_f
     <i2.Wrap f(DoubleYou, /, x: float, y=2, *, Zee: int = 3)>
     >>> wrapped_f(1, 2, y=3, Zee=4)
     '(w:=1) + (x:=2) * (y:=3) ** (z:=4) == 163'
 
     Can also be used as a factory:
-    >>> @map_names(a='alpha', g='gamma')
+    >>> @ch_names(a='alpha', g='gamma')
     ... def foo(a, b, g=1):
     ...     return a + b * g
     >>> foo(alpha=1, b=2, gamma=3)
     7
     """
     return Ingress.name_map(func, **old_to_new_name).wrap(func)
+
+
+map_names = ch_names  # back-compatibility alias
 
 
 def include_exclude_ingress_factory(func, include=None, exclude=None):
@@ -1418,7 +1421,7 @@ def func_to_method_func(
     you need to give it to have the effect you want (the binding of those arguments
     to attributes of the instance):
 
-    >>> from i2.wrapper import map_names
+    >>> from i2.wrapper import ch_names
     >>> def func(x, y: int, z=2, *, d='bar'):
     ...     return f"{d}: {(x + y) * z}"
     >>> from dataclasses import dataclass
@@ -1426,7 +1429,7 @@ def func_to_method_func(
     ... class Klass:
     ...     a : int = 1
     ...     c : int = 3
-    ...     method_func = func_to_method_func(map_names(func, x='a', z='c'), 'a c')
+    ...     method_func = func_to_method_func(ch_names(func, x='a', z='c'), 'a c')
     >>> instance = Klass(1, 3)
     >>> instance.method_func(2, d='hello')
     'hello: 9'

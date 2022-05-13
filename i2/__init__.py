@@ -39,7 +39,7 @@ from i2.wrapper import (
     include_exclude,
     rm_params,
     partialx,
-    map_names,
+    ch_names,
     func_to_method_func,
     bind_funcs_object_attrs,
     kwargs_trans
