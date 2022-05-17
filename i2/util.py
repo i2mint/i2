@@ -92,7 +92,9 @@ def path_extractor(tree, path, getter=dflt_idx_preprocessor, *, path_sep='.'):
     >>> path_extractor(tree, 'a.*.b.1')
     [10, 20, 30]
 
-    A generalization of `*` is to
+    A generalization of `*` is to specify a callable which will be intepreted as
+    a filter function.
+
     >>> tree = {'a': [{'b': 1}, {'c': 2}, {'b': 3}, {'b': 4}]}
     >>> path_extractor(tree, ['a', lambda x: 'b' in x])
     [{'b': 1}, {'b': 3}, {'b': 4}]
