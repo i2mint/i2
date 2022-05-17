@@ -5,7 +5,7 @@ import re
 import itertools
 import functools
 import types
-from typing import Mapping
+from typing import Mapping, Iterable
 
 
 class Literal:
@@ -92,6 +92,12 @@ def path_extractor(tree, path, getter=dflt_idx_preprocessor, *, path_sep='.'):
     >>> path_extractor(tree, 'a.*.b.1')
     [10, 20, 30]
 
+    A generalization of `*` is to
+    >>> tree = {'a': [{'b': 1}, {'c': 2}, {'b': 3}, {'b': 4}]}
+    >>> path_extractor(tree, ['a', lambda x: 'b' in x])
+    [{'b': 1}, {'b': 3}, {'b': 4}]
+    >>> path_extractor(tree, ['a', lambda x: 'b' in x, 'b'])
+    [1, 3, 4]
     """
     if isinstance(path, str):
         path = path.split(path_sep)
@@ -100,8 +106,19 @@ def path_extractor(tree, path, getter=dflt_idx_preprocessor, *, path_sep='.'):
     else:
         idx, *path = path  # extract path[0] as idx & update path to path[1:]
         if isinstance(idx, str) and idx == '*':
-            return [path_extractor(sub_tree, path, getter) for sub_tree in tree]
+            idx = lambda x: True  # use a filter function (but filter everything in)
+        if callable(idx) and not isinstance(idx, Literal):
+            # If idx is a non-literal callable, consider it as a filter to be applied
+            # to iter(tree)
+            # TODO: https://github.com/i2mint/i2/issues/27
+            return [
+                path_extractor(sub_tree, path, getter) for sub_tree in filter(idx, tree)
+            ]
         else:
+            if isinstance(idx, Literal):
+                # Use of Literal is meant get out of trouble if we want to use a
+                # callable as an actual index, not as a filter.
+                idx = idx.get_val()
             tree = getter(tree, idx)
             return path_extractor(tree, path, getter)
 
