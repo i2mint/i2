@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.0.117 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.0.118 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -190,7 +190,9 @@
 <span class="sd">    &gt;&gt;&gt; path_extractor(tree, &#39;a.*.b.1&#39;)</span>
 <span class="sd">    [10, 20, 30]</span>
 
-<span class="sd">    A generalization of `*` is to</span>
+<span class="sd">    A generalization of `*` is to specify a callable which will be intepreted as</span>
+<span class="sd">    a filter function.</span>
+
 <span class="sd">    &gt;&gt;&gt; tree = {&#39;a&#39;: [{&#39;b&#39;: 1}, {&#39;c&#39;: 2}, {&#39;b&#39;: 3}, {&#39;b&#39;: 4}]}</span>
 <span class="sd">    &gt;&gt;&gt; path_extractor(tree, [&#39;a&#39;, lambda x: &#39;b&#39; in x])</span>
 <span class="sd">    [{&#39;b&#39;: 1}, {&#39;b&#39;: 3}, {&#39;b&#39;: 4}]</span>
