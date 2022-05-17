@@ -1,25 +1,122 @@
 """Misc util objects"""
+from operator import attrgetter, itemgetter
 import inspect
 import re
 import itertools
 import functools
 import types
+from typing import Mapping
 
 
-def dp_get(d, dot_path):
+class Literal:
+    """An object to indicate that the value should be considered literally.
+
+    >>> t = Literal(42)
+    >>> t.get_val()
+    42
+    >>> t()
+    42
+
     """
-    Get stuff from a dict, using dot_paths (i.e. 'foo.bar' instead of ['foo']['bar'])
+
+    def __init__(self, val):
+        self.val = val
+
+    def get_val(self):
+        """Get the value wrapped by Literal instance.
+
+        One might want to use ``literal.get_val()`` instead ``literal()`` to get the
+        value a ``Literal`` is wrapping because ``.get_val`` is more explicit.
+
+        That said, with a bit of hesitation, we allow the ``literal()`` form as well
+        since it is useful in situations where we need to use a callback function to
+        get a value.
+        """
+        return self.val
+
+    __call__ = get_val
+
+
+def dflt_idx_preprocessor(obj, idx):
+    if isinstance(idx, str) and str.isdigit(idx):
+        idx = int(idx)
+    if isinstance(idx, int) or isinstance(obj, Mapping):
+        return obj[idx]
+    elif hasattr(obj, idx):
+        return getattr(obj, idx)
+    else:
+        raise KeyError(f"Couldn't extract a {idx} from object {obj}")
+
+
+def path_extractor(tree, path, getter=dflt_idx_preprocessor, *, path_sep='.'):
+    """Get items from a tree-structured object from a sequence of tree-traversal indices.
+
+    :param tree: The object you want to extract values from:
+        Can be any object you want, as long as the indices listed by path and how to get
+        the items indexed are well specified by ``path`` and ``getter``.
+    :param path: An iterable of indices that define how to traverse the tree to get
+        to desired item(s). If this iterable is a string, the ``path_sep`` argument
+        will be used to transform it into a tuple of string indices.
+    :param getter: A ``(tree, idx)`` function that specifies how to extract item ``idx``
+        from the ``tree`` object.
+    :param path_sep: The string separator to use if ``path`` is a string
+    :return: The ``tree`` item(s) referenced by ``path``
+
+
+    >>> tree = {'a': {'b': [0, {'c': [1, 2, 3]}]}}
+    >>> path_extractor(tree, path=['a'])
+    {'b': [0, {'c': [1, 2, 3]}]}
+    >>> path_extractor(tree, path=['a', 'b'])
+    [0, {'c': [1, 2, 3]}]
+    >>> path_extractor(tree, path=['a', 'b', 1])
+    {'c': [1, 2, 3]}
+    >>> path_extractor(tree, path=['a', 'b', 1, 'c'])
+    [1, 2, 3]
+    >>> path_extractor(tree, path=('a', 'b', 1, 'c', 2))
+    3
+
+    You could do the same by specifying the path as a dot-separated string.
+
+    >>> path_extractor(tree, 'a.b.1.c.2')
+    3
+
+    You can use any separation you want.
+
+    >>> path_extractor(tree, 'a/b/1/c/2', path_sep='/')
+    3
+
+    You can also use `*` to indicate that you want to keep all the nodes of a given
+    level.
+
+    >>> tree = {'a': [{'b': [1, 10]}, {'b': [2, 20]}, {'b': [3, 30]}]}
+    >>> path_extractor(tree, 'a.*.b.1')
+    [10, 20, 30]
+
+    """
+    if isinstance(path, str):
+        path = path.split(path_sep)
+    if len(path) == 0:
+        return tree
+    else:
+        idx, *path = path  # extract path[0] as idx & update path to path[1:]
+        if isinstance(idx, str) and idx == '*':
+            return [path_extractor(sub_tree, path, getter) for sub_tree in tree]
+        else:
+            tree = getter(tree, idx)
+            return path_extractor(tree, path, getter)
+
+
+# Note: Specialization of path_extractor for Mappings
+def dp_get(d, dot_path):
+    """Get stuff from a dict (or any Mapping), using dot_paths (i.e. 'foo.bar' instead of
+     ['foo']['bar'])
 
     >>> d = {'foo': {'bar': 2, 'alice': 'bob'}, 3: {'pi': 3.14}}
     >>> assert dp_get(d, 'foo') == {'bar': 2, 'alice': 'bob'}
     >>> assert dp_get(d, 'foo.bar') == 2
     >>> assert dp_get(d, 'foo.alice') == 'bob'
     """
-    components = dot_path.split('.')
-    dd = d.get(components[0])
-    for comp in components[1:]:
-        dd = dd.get(comp)
-    return dd
+    return path_extractor(d, dot_path, lambda d, k: d[k])
 
 
 class lazyprop:
@@ -134,6 +231,8 @@ class FrozenDict(dict):
 
     del _raise_frozen_typeerror
 
+
+frozendict = FrozenDict  # alias to align with frozenset
 
 ########################################################################################################################
 
@@ -497,7 +596,7 @@ class FunctionBuilder(object):
             kwonly_pairs,
             kwonly_pairs,
             {},
-            **formatters
+            **formatters,
         )
         sig = self._KWONLY_MARKER.sub('', sig)
         return sig[1:-1]

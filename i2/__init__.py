@@ -44,3 +44,13 @@ from i2.wrapper import (
     bind_funcs_object_attrs,
     kwargs_trans,
 )
+
+from i2.util import (
+    Literal,
+    path_extractor,
+    get_function_body,
+    lazyprop,
+    frozendict,
+    inject_method,
+    make_sentinel
+)
