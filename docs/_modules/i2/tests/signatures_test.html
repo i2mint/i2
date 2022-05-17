@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.signatures_test &mdash; i2 0.0.91 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.signatures_test &mdash; i2 0.0.115 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -109,7 +109,6 @@
 <span class="sd">    KO = Parameter.KEYWORD_ONLY</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">re</span> <span class="kn">import</span> <span class="n">I</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
@@ -117,7 +116,7 @@
 <span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">normalized_func</span>
 
-<span class="kn">from</span> <span class="nn">i2.tests.util</span> <span class="kn">import</span> <span class="n">trace_call</span>
+<span class="kn">from</span> <span class="nn">i2.tests.util</span> <span class="kn">import</span> <span class="n">sig_to_inputs</span><span class="p">,</span> <span class="n">trace_call</span>
 
 
 <div class="viewcode-block" id="test_sig_wrap_edge_cases"><a class="viewcode-back" href="../../../module_docs/i2/tests/signatures_test.html#i2.tests.signatures_test.test_sig_wrap_edge_cases">[docs]</a><span class="k">def</span> <span class="nf">test_sig_wrap_edge_cases</span><span class="p">():</span>
@@ -554,114 +553,38 @@
 
 
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;params&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;sig_spec&#39;</span><span class="p">,</span>
     <span class="p">[</span>
-        <span class="p">(</span>
-            <span class="c1"># (po, /)</span>
-            <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;po&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PO</span><span class="p">),]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (pk)</span>
-            <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pk&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">),]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (*, ko)</span>
-            <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ko&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">KO</span><span class="p">),]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (po, /, pk, *, ko)</span>
-            <span class="p">[</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;po&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PO</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pk&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ko&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">KO</span><span class="p">),</span>
-            <span class="p">]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (*args)</span>
-            <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">VP</span><span class="p">),]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (**kwargs)</span>
-            <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;kwargs&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">VK</span><span class="p">),]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (*args, **kwargs)</span>
-            <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">VP</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;kwargs&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">VK</span><span class="p">),]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (po, /, pk, *args, ko, **kwargs)</span>
-            <span class="p">[</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;po&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PO</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pk&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">VP</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ko&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">KO</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;kwargs&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">VK</span><span class="p">),</span>
-            <span class="p">]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (po1, po2, /)</span>
-            <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;po1&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PO</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;po2&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PO</span><span class="p">),]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (pk1, pk2)</span>
-            <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pk1&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pk2&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">),]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (*, ko1, ko2)</span>
-            <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ko1&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">KO</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ko2&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">KO</span><span class="p">),]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (po1, po2, /, pk1, pk2, *, ko1, ko2)</span>
-            <span class="p">[</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;po1&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PO</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;po2&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PO</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pk1&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pk2&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ko1&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">KO</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ko2&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">KO</span><span class="p">),</span>
-            <span class="p">]</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="c1"># (po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)</span>
-            <span class="p">[</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;po1&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PO</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;po2&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PO</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pk1&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pk2&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">VP</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ko1&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">KO</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ko2&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">KO</span><span class="p">),</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;kwargs&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">VK</span><span class="p">),</span>
-            <span class="p">]</span>
-        <span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po, /)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po=0, /)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(pk)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(pk=0)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(*, ko)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(*, ko=0)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po, /, pk, *, ko)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po=0, /, pk=0, *, ko=0)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(*args)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(**kwargs)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(*args, **kwargs)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po, /, pk, *args, ko)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po=0, /, pk=0, *args, ko=0)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po, /, pk, *, ko, **kwargs)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po=0, /, pk=0, *, ko=0, **kwargs)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po, /, pk, *args, ko, **kwargs)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po=0, /, pk=0, *args, ko=0, **kwargs)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po1, po2, /)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(pk1, pk2)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(*, ko1, ko2)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po1, po2, /, pk1, pk2, *, ko1, ko2)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(po1=0, po2=0, /, pk1=0, pk2=0, *args, ko1=0, ko2=0, **kwargs)&#39;</span><span class="p">),</span>
     <span class="p">],</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_call_forgivingly</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_call_forgivingly</span><span class="p">(</span><span class="n">sig_spec</span><span class="p">):</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">sig_spec</span><span class="p">)</span>
 
     <span class="nd">@sig</span>
     <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">mk_args_and_kwargs</span><span class="p">(</span><span class="n">nb_pk_to_add_to_args</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pk_to_add_to_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">pk_to_add_to_kwargs</span> <span class="o">=</span> <span class="n">pk_to_add_to_kwargs</span> <span class="ow">or</span> <span class="p">[]</span>
-        <span class="n">po_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">kind</span> <span class="o">==</span> <span class="n">PO</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">kinds</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">po_count</span><span class="p">))</span>
-        <span class="n">pk_args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_pk_to_add_to_args</span><span class="p">))</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="n">args</span> <span class="o">+</span> <span class="n">pk_args</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">pk_to_add_to_kwargs</span><span class="p">:</span>
-            <span class="n">args</span> <span class="o">=</span> <span class="n">args</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;some&#39;</span><span class="p">,</span> <span class="s1">&#39;extra&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">)</span>
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="o">**</span><span class="p">{</span><span class="n">param</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pk_to_add_to_kwargs</span><span class="p">)},</span>
-            <span class="o">**</span><span class="p">{</span>
-                <span class="n">param</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">kind</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">kinds</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-                <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="n">KO</span>
-            <span class="p">},</span>
-            <span class="o">**</span><span class="p">{</span><span class="s1">&#39;some&#39;</span><span class="p">:</span> <span class="s1">&#39;extra&#39;</span><span class="p">,</span> <span class="s1">&#39;added&#39;</span><span class="p">:</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">},</span>
-        <span class="p">)</span>
         <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
 
     <span class="k">def</span> <span class="nf">validate_call_forgivingly</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -683,19 +606,112 @@
         <span class="n">expected_output_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[:</span><span class="n">expected_output_args_count</span><span class="p">]</span>
         <span class="n">expected_output</span> <span class="o">=</span> <span class="p">(</span><span class="n">expected_output_args</span><span class="p">,</span> <span class="n">expected_output_kwargs</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">call_forgivingly</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># print()</span>
         <span class="c1"># print(args, kwargs)</span>
         <span class="c1"># print(expected_output)</span>
         <span class="c1"># print(output)</span>
-        <span class="c1"># print()</span>
         <span class="k">assert</span> <span class="n">output</span> <span class="o">==</span> <span class="n">expected_output</span>
 
-    <span class="n">pk_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">kinds</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="n">PK</span><span class="p">]</span>
-    <span class="n">pk_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pk_params</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pk_count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">pk_to_add_to_args_count</span> <span class="o">=</span> <span class="n">i</span>
-        <span class="n">pk_to_add_to_kwargs</span> <span class="o">=</span> <span class="n">pk_params</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
-        <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">mk_args_and_kwargs</span><span class="p">(</span><span class="n">pk_to_add_to_args_count</span><span class="p">,</span> <span class="n">pk_to_add_to_kwargs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">sig_to_inputs</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">ignore_variadics</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;some&#39;</span><span class="p">:</span> <span class="s1">&#39;extra&#39;</span><span class="p">,</span> <span class="s1">&#39;added&#39;</span><span class="p">:</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">})</span>
+        <span class="n">po_pk_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">kind</span> <span class="o">&lt;=</span> <span class="n">PK</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">kinds</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="n">po_pk_count</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="n">args</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;some&#39;</span><span class="p">,</span> <span class="s1">&#39;extra&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">)</span>
+
         <span class="n">validate_call_forgivingly</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;sig_spec1, sig_spec2&#39;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;()&#39;</span><span class="p">,</span> <span class="s1">&#39;(a)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;()&#39;</span><span class="p">,</span> <span class="s1">&#39;(a=0)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, /, b=0, *, c)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, /, b, *, c=0)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(*args)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(**kwargs)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(*args, **kwargs)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, /, b, *args, c, **kwargs)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, b, c)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, b, /, *, c)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, /, *, b, c)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, b, /, c)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, *, b, c)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(x, /, b, *, c)&#39;</span><span class="p">,),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, /, x, *, c)&#39;</span><span class="p">,),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, /, b, *, x)&#39;</span><span class="p">,),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, /, b, *, c)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a=0, b=0, c=0)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a=0, /, b=0, *, c=0)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, b, c)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, b, /, c, d, *, e, f)&#39;</span><span class="p">,</span> <span class="s1">&#39;(b, a, /, d, c, *, f, e)&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;(a, b, /, c, d, *, e, f)&#39;</span><span class="p">,</span> <span class="s1">&#39;(a, c, /, b, e, *, d, f)&#39;</span><span class="p">,),</span>
+        <span class="c1"># (</span>
+        <span class="c1">#     &#39;()&#39;,</span>
+        <span class="c1">#     &#39;(*args)&#39;</span>
+        <span class="c1"># ),</span>
+        <span class="c1"># (</span>
+        <span class="c1">#     &#39;()&#39;,</span>
+        <span class="c1">#     &#39;(**kwargs)&#39;</span>
+        <span class="c1"># ),</span>
+        <span class="c1"># (</span>
+        <span class="c1">#     &#39;()&#39;,</span>
+        <span class="c1">#     &#39;(*args, **kwargs)&#39;</span>
+        <span class="c1"># ),</span>
+        <span class="c1"># (</span>
+        <span class="c1">#     &#39;(*args)&#39;,</span>
+        <span class="c1">#     &#39;()&#39;</span>
+        <span class="c1"># ),</span>
+        <span class="c1"># (</span>
+        <span class="c1">#     &#39;(*args)&#39;,</span>
+        <span class="c1">#     &#39;(**kwargs)&#39;</span>
+        <span class="c1"># ),</span>
+        <span class="c1"># (</span>
+        <span class="c1">#     &#39;(*args)&#39;,</span>
+        <span class="c1">#     &#39;(*args, **kwargs)&#39;</span>
+        <span class="c1"># ),</span>
+        <span class="c1"># (</span>
+        <span class="c1">#     &#39;(**kwargs)&#39;,</span>
+        <span class="c1">#     &#39;()&#39;</span>
+        <span class="c1"># ),</span>
+        <span class="c1"># (</span>
+        <span class="c1">#     &#39;(**kwargs)&#39;,</span>
+        <span class="c1">#     &#39;(*args)&#39;</span>
+        <span class="c1"># ),</span>
+        <span class="c1"># (</span>
+        <span class="c1">#     &#39;(**kwargs)&#39;,</span>
+        <span class="c1">#     &#39;(*args, **kwargs)&#39;</span>
+        <span class="c1"># ),</span>
+        <span class="c1"># (</span>
+        <span class="c1">#     &#39;(*args, **kwargs)&#39;,</span>
+        <span class="c1">#     &#39;(*args, **kwargs)&#39;</span>
+        <span class="c1"># ),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_call_compatibility</span><span class="p">(</span><span class="n">sig_spec1</span><span class="p">,</span> <span class="n">sig_spec2</span><span class="p">):</span>
+    <span class="n">sig1</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">sig_spec1</span><span class="p">)</span>
+    <span class="n">sig2</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">sig_spec2</span><span class="p">)</span>
+    <span class="n">is_compatible</span> <span class="o">=</span> <span class="n">sig1</span><span class="o">.</span><span class="n">is_call_compatible_with</span><span class="p">(</span><span class="n">sig2</span><span class="p">)</span>
+
+    <span class="n">exec_env</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">f_def</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;def f</span><span class="si">{</span><span class="n">sig_spec2</span><span class="si">}</span><span class="s1">: pass&#39;</span>
+    <span class="n">exec</span><span class="p">(</span><span class="n">f_def</span><span class="p">,</span> <span class="n">exec_env</span><span class="p">)</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="n">exec_env</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span>
+
+    <span class="c1"># @sig2</span>
+    <span class="c1"># def foo(*args, **kwargs):</span>
+    <span class="c1">#     pass</span>
+
+    <span class="k">for</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">sig_to_inputs</span><span class="p">(</span><span class="n">sig1</span><span class="p">,</span> <span class="n">ignore_variadics</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">foo</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_compatible</span><span class="p">:</span>
+                <span class="k">raise</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_compatible</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;sig1 is compatible with sig2, when it should not.&#39;</span><span class="p">)</span>
 </pre></div>
 
            </div>
