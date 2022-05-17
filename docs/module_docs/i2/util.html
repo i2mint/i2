@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.0.115 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.0.116 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -302,6 +302,30 @@ this function.</p>
 
 </dd></dl>
 
+<dl class="py class">
+<dt id="i2.util.Literal">
+<em class="property">class </em><code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">Literal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#Literal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.Literal" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object to indicate that the value should be considered literally.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_val</span><span class="p">()</span>
+<span class="go">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">()</span>
+<span class="go">42</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="i2.util.Literal.get_val">
+<code class="sig-name descname">get_val</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#Literal.get_val"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.Literal.get_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value wrapped by Literal instance.</p>
+<p>One might want to use <code class="docutils literal notranslate"><span class="pre">literal.get_val()</span></code> instead <code class="docutils literal notranslate"><span class="pre">literal()</span></code> to get the
+value a <code class="docutils literal notranslate"><span class="pre">Literal</span></code> is wrapping because <code class="docutils literal notranslate"><span class="pre">.get_val</span></code> is more explicit.</p>
+<p>That said, with a bit of hesitation, we allow the <code class="docutils literal notranslate"><span class="pre">literal()</span></code> form as well
+since it is useful in situations where we need to use a callback function to
+get a value.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py exception">
 <dt id="i2.util.MissingArgument">
 <em class="property">exception </em><code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">MissingArgument</code><a class="reference internal" href="../../_modules/i2/util.html#MissingArgument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.MissingArgument" title="Permalink to this definition">¶</a></dt>
@@ -310,13 +334,22 @@ this function.</p>
 <dl class="py function">
 <dt id="i2.util.dp_get">
 <code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">dp_get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">dot_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#dp_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.dp_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get stuff from a dict, using dot_paths (i.e. ‘foo.bar’ instead of [‘foo’][‘bar’])</p>
+<dd><dl class="simple">
+<dt>Get stuff from a dict (or any Mapping), using dot_paths (i.e. ‘foo.bar’ instead of</dt><dd><p>[‘foo’][‘bar’])</p>
+</dd>
+</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;bar&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;alice&#39;</span><span class="p">:</span> <span class="s1">&#39;bob&#39;</span><span class="p">},</span> <span class="mi">3</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;pi&#39;</span><span class="p">:</span> <span class="mf">3.14</span><span class="p">}}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">dp_get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;bar&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;alice&#39;</span><span class="p">:</span> <span class="s1">&#39;bob&#39;</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">dp_get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;foo.bar&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">dp_get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;foo.alice&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;bob&#39;</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="i2.util.frozendict">
+<code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">frozendict</code><a class="headerlink" href="#i2.util.frozendict" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#i2.util.FrozenDict" title="i2.util.FrozenDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">i2.util.FrozenDict</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
@@ -416,6 +449,60 @@ values will not produce equivalent objects.</p>
 <span class="go">False</span>
 </pre></div>
 </div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.util.path_extractor">
+<code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">path_extractor</code><span class="sig-paren">(</span><em class="sig-param">tree</em>, <em class="sig-param">path</em>, <em class="sig-param">getter=&lt;function dflt_idx_preprocessor&gt;</em>, <em class="sig-param">*</em>, <em class="sig-param">path_sep='.'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#path_extractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.path_extractor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get items from a tree-structured object from a sequence of tree-traversal indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tree</strong> – The object you want to extract values from:
+Can be any object you want, as long as the indices listed by path and how to get
+the items indexed are well specified by <code class="docutils literal notranslate"><span class="pre">path</span></code> and <code class="docutils literal notranslate"><span class="pre">getter</span></code>.</p></li>
+<li><p><strong>path</strong> – An iterable of indices that define how to traverse the tree to get
+to desired item(s). If this iterable is a string, the <code class="docutils literal notranslate"><span class="pre">path_sep</span></code> argument
+will be used to transform it into a tuple of string indices.</p></li>
+<li><p><strong>getter</strong> – A <code class="docutils literal notranslate"><span class="pre">(tree,</span> <span class="pre">idx)</span></code> function that specifies how to extract item <code class="docutils literal notranslate"><span class="pre">idx</span></code>
+from the <code class="docutils literal notranslate"><span class="pre">tree</span></code> object.</p></li>
+<li><p><strong>path_sep</strong> – The string separator to use if <code class="docutils literal notranslate"><span class="pre">path</span></code> is a string</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The <code class="docutils literal notranslate"><span class="pre">tree</span></code> item(s) referenced by <code class="docutils literal notranslate"><span class="pre">path</span></code></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tree</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]}]}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path_extractor</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">])</span>
+<span class="go">{&#39;b&#39;: [0, {&#39;c&#39;: [1, 2, 3]}]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path_extractor</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">])</span>
+<span class="go">[0, {&#39;c&#39;: [1, 2, 3]}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path_extractor</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">{&#39;c&#39;: [1, 2, 3]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path_extractor</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
+<span class="go">[1, 2, 3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path_extractor</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<p>You could do the same by specifying the path as a dot-separated string.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path_extractor</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="s1">&#39;a.b.1.c.2&#39;</span><span class="p">)</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<p>You can use any separation you want.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path_extractor</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="s1">&#39;a/b/1/c/2&#39;</span><span class="p">,</span> <span class="n">path_sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<p>You can also use <cite>*</cite> to indicate that you want to keep all the nodes of a given
+level.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tree</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">]},</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">20</span><span class="p">]},</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">30</span><span class="p">]}]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path_extractor</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="s1">&#39;a.*.b.1&#39;</span><span class="p">)</span>
+<span class="go">[10, 20, 30]</span>
+</pre></div>
 </div>
 </dd></dl>
 
