@@ -1576,7 +1576,7 @@ class Sig(Signature, Mapping):
                 f'param_attr needs to be one of: {param_attributes}.',
                 f' Was: {param_attr}',
             )
-        all_pk_self = self.modified(**{name: {'kind': PK} for name in self.names})
+        all_pk_self = self.modified(_allow_reordering=True, **{name: {'kind': PK} for name in self.names})
         new_attr_vals = all_pk_self.bind_partial(
             *arg_new_vals, **kwargs_new_vals
         ).arguments
