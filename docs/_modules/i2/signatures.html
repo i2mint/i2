@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.118 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.119 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -1674,7 +1674,9 @@
                 <span class="sa">f</span><span class="s1">&#39;param_attr needs to be one of: </span><span class="si">{</span><span class="n">param_attributes</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s1">&#39; Was: </span><span class="si">{</span><span class="n">param_attr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="n">all_pk_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="n">PK</span><span class="p">}</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">})</span>
+        <span class="n">all_pk_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified</span><span class="p">(</span>
+            <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="n">PK</span><span class="p">}</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">}</span>
+        <span class="p">)</span>
         <span class="n">new_attr_vals</span> <span class="o">=</span> <span class="n">all_pk_self</span><span class="o">.</span><span class="n">bind_partial</span><span class="p">(</span>
             <span class="o">*</span><span class="n">arg_new_vals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_new_vals</span>
         <span class="p">)</span><span class="o">.</span><span class="n">arguments</span>
