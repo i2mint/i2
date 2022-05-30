@@ -79,7 +79,7 @@ from typing import (
 
 from types import MethodType
 
-from i2.signatures import Sig, name_of_obj
+from i2.signatures import Sig, name_of_obj, KO, PK, VK
 from i2.multi_object import Pipe
 from i2.deco import double_up_as_factory
 
