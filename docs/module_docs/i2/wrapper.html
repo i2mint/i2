@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.119 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.120 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -900,9 +900,10 @@ to the right</p>
 
 <dl class="py function">
 <dt id="i2.wrapper.nice_kinds">
-<code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">nice_kinds</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#nice_kinds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.nice_kinds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wraps the func so it will only have POSITIONAL_OR_KEYWORD argument kinds.</p>
-<p>The original purpose of this function is to remove argument-kind restriction
+<code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">nice_kinds</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">kinds_modifier=&lt;function convert_to_PK&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#nice_kinds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.nice_kinds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps the func, changing the argument kinds according to kinds_modifier.
+The default behaviour is to change all kinds to POSITIONAL_OR_KEYWORD kinds.
+The original purpose of this function is to remove argument-kind restriction
 annoyances when doing functional manipulations such as:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">isinstance_of_str</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">,</span> <span class="n">class_or_tuple</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
