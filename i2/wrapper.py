@@ -1007,8 +1007,8 @@ def convert_VK_to_KO(kinds):
 
 
 def nice_kinds(func, kinds_modifier=convert_to_PK):
-    """Wraps the func so it will only have POSITIONAL_OR_KEYWORD argument kinds.
-
+    """Wraps the func, changing the argument kinds according to kinds_modifier.
+    The default behaviour is to change all kinds to POSITIONAL_OR_KEYWORD kinds.
     The original purpose of this function is to remove argument-kind restriction
     annoyances when doing functional manipulations such as:
 
