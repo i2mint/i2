@@ -2710,6 +2710,40 @@ def modify_kinds(sig, kinds_modifier):
 
 
 def remove_variadics_from_sig(sig, ch_variadic_keyword_to_keyword=True):
+    """Remove variadics from signature
+    >>> def foo(a, *args, bar, **kwargs):
+    ...     return f"{a=}, {args=}, {bar=}, {kwargs=}"
+    >>> sig = Sig(foo)
+    >>> assert str(sig) == '(a, *args, bar, **kwargs)'
+    >>> new_sig = remove_variadics_from_sig(sig)
+    >>> str(new_sig)=='(a, args=(), *, bar, kwargs={})'
+
+    Note that if there is not variadic positional arguments, the variadic keyword
+    will still be a keyword-only kind.
+
+    >>> def func(a, bar=None, **kwargs):
+    ...     return f"{a=}, {bar=}, {kwargs=}"
+    >>> nsig = remove_variadics_from_sig(Sig(func))
+    >>> assert str(nsig)=='(a, bar=None, *, kwargs={})'
+
+    If the function has neither variadic kinds, it will remain untouched.
+
+    >>> def func(a, /, b, *, c=3):
+    ...     return a + b + c
+    >>> sig = remove_variadics_from_sig(Sig(func))
+
+    >>> assert sig == Sig(func)
+
+
+    If you only want the variadic positional to be handled, but leave leave any
+    VARIADIC_KEYWORD kinds (**kwargs) alone, you can do so by setting
+    `ch_variadic_keyword_to_keyword=False`.
+
+    >>> def foo(a, *args, bar=None, **kwargs):
+    ...     return f"{a=}, {args=}, {bar=}, {kwargs=}"
+    >>> assert str(Sig(remove_variadics_from_sig(Sig(foo))))=='(a, args=(), *, bar=None, kwargs={})'
+    """
+
     idx_of_vp = sig.index_of_var_positional
     var_keyword_argname = sig.var_keyword_name
     result_sig = sig
