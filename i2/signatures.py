@@ -1455,7 +1455,7 @@ class Sig(Signature, Mapping):
                 # if name is not in params, just use existing param
                 yield self[name]
 
-    def modified(self, _allow_reordering=True, **changes_for_name):
+    def modified(self, _allow_reordering=False, **changes_for_name):
         """Returns a modified (new) signature object.
 
         Note: This function doesn't modify the signature, but creates a modified copy
