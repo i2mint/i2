@@ -2709,7 +2709,7 @@ def modify_kinds(sig, kinds_modifier):
     return sig
 
 
-def remove_variadics_from_sig(sig, ch_variadic_keyword_to_keyword=True):
+def _remove_variadics_from_sig(sig, ch_variadic_keyword_to_keyword=True):
     """Remove variadics from signature
     >>> def foo(a, *args, bar, **kwargs):
     ...     return f"{a=}, {args=}, {bar=}, {kwargs=}"
