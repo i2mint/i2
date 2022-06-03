@@ -1512,7 +1512,7 @@ class Sig(Signature, Mapping):
         return Sig(params, name=self.name, return_annotation=new_return_annotation)
 
     def ch_param_attrs(
-        self, param_attr, *arg_new_vals, _allow_reordering=True, **kwargs_new_vals
+        self, param_attr, *arg_new_vals, _allow_reordering=False, **kwargs_new_vals
     ):
         """Change a specific attribute of the params, returning a modified signature.
         This is a convenience method for the modified method when we're targetting
