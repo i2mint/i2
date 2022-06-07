@@ -696,6 +696,33 @@ def _names_of_kind(sig):
     return tuple(tuple(d[kind]) for kind in range(5))
 
 
+def maybe_first(items):
+    return next(iter(items), None)
+
+
+def name_of_var_kw_argument(sig):
+    var_kw_list = [param.name for param in sig.params if param.kind == VK]
+    result = maybe_first(var_kw_list)
+    return result
+
+
+def map_action_on_cond(kvs, cond, expand):
+    for k, v in kvs:
+        if cond(
+            k
+        ):  # make a conditional on (k,v), use type KV, Iterable[KV], expand:KV -> Iterable[KV]
+            yield from expand(v)  # expand should result in (k,v)
+        else:
+            yield k, v
+
+
+def flatten_if_var_kw(kvs, var_kw_name):
+    cond = lambda k: k == var_kw_name
+    expand = lambda k: k.items()
+
+    return map_action_on_cond(kvs, cond, expand)
+
+
 # TODO: See other signature operating functions below in this module:
 #   Do we need them now that we have Sig?
 #   Do we want to keep them and have Sig use them?
@@ -2014,6 +2041,7 @@ class Sig(Signature, Mapping):
         allow_partial=False,
         allow_excess=False,
         ignore_kind=False,
+        debug=False,
     ):
         """Extracts a dict of input argument values for target signature, from args
         and kwargs.
@@ -2106,7 +2134,7 @@ class Sig(Signature, Mapping):
 
         >>> sig.kwargs_from_args_and_kwargs(args=(), kwargs={"x": 22})
         Traceback (most recent call last):
-          ...
+        ...
         TypeError: missing a required argument: 'w'
 
         But if you specify `allow_partial=True`...
@@ -2122,11 +2150,11 @@ class Sig(Signature, Mapping):
 
         >>> sig.kwargs_from_args_and_kwargs(args=(1, 2, 3, 4), kwargs={})
         Traceback (most recent call last):
-          ...
+        ...
         TypeError: too many positional arguments
         >>> sig.kwargs_from_args_and_kwargs(args=(), kwargs=dict(w=1, x=2, y=3, z=4))
         Traceback (most recent call last):
-          ...
+        ...
         TypeError: 'w' parameter is positional only, but was passed as a keyword
 
         But if you want to ignore the kind of parameter, just say so:
@@ -2140,7 +2168,9 @@ class Sig(Signature, Mapping):
         ... )
         {'w': 1, 'x': 2, 'y': 3, 'z': 4}
         """
+
         no_var_kw = not self.has_var_keyword
+        # no_var_kw = True
 
         if ignore_kind:
             sig = self.normalize_kind(
@@ -2149,14 +2179,13 @@ class Sig(Signature, Mapping):
         else:
             sig = self
 
-        # no_var_kw = not sig.has_var_keyword
+        # no_var_kw = not sig.has_var_keyword TODOD check this
         if no_var_kw:  # has no var keyword kinds
             sig_relevant_kwargs = {
                 name: kwargs[name] for name in sig if name in kwargs
             }  # take only what you need
         else:
             sig_relevant_kwargs = kwargs  # take all the kwargs
-
         binder = sig.bind_partial if allow_partial else sig.bind
         if not self.has_var_positional and allow_excess:
             max_allowed_num_of_posisional_args = sum(
@@ -2174,9 +2203,18 @@ class Sig(Signature, Mapping):
                 excess_str = ", ".join(excess)
                 raise TypeError(f"Got unexpected keyword arguments: {excess_str}")
 
-        return dict(b.arguments)
-        # not doing it as dict(b.arguments) because order can be different.
-        # return {name: b.arguments[name] for name in self.names if name in b.arguments}
+        if debug:
+            var_kw_name = name_of_var_kw_argument(self)
+
+            kvs = b.arguments.items()
+
+            flattened_kvs = flatten_if_var_kw(kvs, var_kw_name)
+            result = dict(flattened_kvs)
+
+        else:
+            result = dict(b.arguments)
+
+        return result
 
     def args_and_kwargs_from_kwargs(
         self,
