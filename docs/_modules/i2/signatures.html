@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.120 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.121 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -231,7 +231,7 @@
 
 <div class="viewcode-block" id="IncompatibleSignatures"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.IncompatibleSignatures">[docs]</a><span class="k">class</span> <span class="nc">IncompatibleSignatures</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Raise when two signatures are not compatible.</span>
-<span class="sd">    (see https://github.com/i2mint/i2/issues/16 for more information on signature </span>
+<span class="sd">    (see https://github.com/i2mint/i2/issues/16 for more information on signature</span>
 <span class="sd">    compatibility)&quot;&quot;&quot;</span></div>
 
 
@@ -789,6 +789,33 @@
     <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
         <span class="n">d</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">kind</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">kind</span><span class="p">])</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">maybe_first</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">name_of_var_kw_argument</span><span class="p">(</span><span class="n">sig</span><span class="p">):</span>
+    <span class="n">var_kw_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">params</span> <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">VK</span><span class="p">]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">maybe_first</span><span class="p">(</span><span class="n">var_kw_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">map_action_on_cond</span><span class="p">(</span><span class="n">kvs</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">expand</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kvs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cond</span><span class="p">(</span>
+            <span class="n">k</span>
+        <span class="p">):</span>  <span class="c1"># make a conditional on (k,v), use type KV, Iterable[KV], expand:KV -&gt; Iterable[KV]</span>
+            <span class="k">yield from</span> <span class="n">expand</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># expand should result in (k,v)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+
+
+<span class="k">def</span> <span class="nf">flatten_if_var_kw</span><span class="p">(</span><span class="n">kvs</span><span class="p">,</span> <span class="n">var_kw_name</span><span class="p">):</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span> <span class="o">==</span> <span class="n">var_kw_name</span>
+    <span class="n">expand</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">map_action_on_cond</span><span class="p">(</span><span class="n">kvs</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">expand</span><span class="p">)</span>
 
 
 <span class="c1"># TODO: See other signature operating functions below in this module:</span>
