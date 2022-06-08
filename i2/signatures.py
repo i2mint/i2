@@ -2765,22 +2765,23 @@ def _remove_variadics_from_sig(sig, ch_variadic_keyword_to_keyword=True):
     ...     return f"{a=}, {args=}, {bar=}, {kwargs=}"
     >>> sig = Sig(foo)
     >>> assert str(sig) == '(a, *args, bar, **kwargs)'
-    >>> new_sig = remove_variadics_from_sig(sig)
+    >>> new_sig = _remove_variadics_from_sig(sig)
     >>> str(new_sig)=='(a, args=(), *, bar, kwargs={})'
+    True
 
     Note that if there is not variadic positional arguments, the variadic keyword
     will still be a keyword-only kind.
 
     >>> def func(a, bar=None, **kwargs):
     ...     return f"{a=}, {bar=}, {kwargs=}"
-    >>> nsig = remove_variadics_from_sig(Sig(func))
+    >>> nsig = _remove_variadics_from_sig(Sig(func))
     >>> assert str(nsig)=='(a, bar=None, *, kwargs={})'
 
     If the function has neither variadic kinds, it will remain untouched.
 
     >>> def func(a, /, b, *, c=3):
     ...     return a + b + c
-    >>> sig = remove_variadics_from_sig(Sig(func))
+    >>> sig = _remove_variadics_from_sig(Sig(func))
 
     >>> assert sig == Sig(func)
 
@@ -2791,7 +2792,7 @@ def _remove_variadics_from_sig(sig, ch_variadic_keyword_to_keyword=True):
 
     >>> def foo(a, *args, bar=None, **kwargs):
     ...     return f"{a=}, {args=}, {bar=}, {kwargs=}"
-    >>> assert str(Sig(remove_variadics_from_sig(Sig(foo))))=='(a, args=(), *, bar=None, kwargs={})'
+    >>> assert str(Sig(_remove_variadics_from_sig(Sig(foo))))=='(a, args=(), *, bar=None, kwargs={})'
     """
 
     idx_of_vp = sig.index_of_var_positional
