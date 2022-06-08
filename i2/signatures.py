@@ -711,8 +711,8 @@ def map_action_on_cond(kvs, cond, expand):
         if cond(
             k
         ):  # make a conditional on (k,v), use type KV, Iterable[KV], expand:KV -> Iterable[KV]
-            # yield from expand(v)  # expand should result in (k,v)
-            yield from inner_most_kv(k, v)  # expand should result in (k,v)
+            yield from expand(v)  # expand should result in (k,v)
+            # yield inner_most_kv(k, v)  # expand should result in (k,v)
 
         else:
             yield k, v
