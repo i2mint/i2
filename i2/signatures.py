@@ -1467,9 +1467,11 @@ class Sig(Signature, Mapping):
 
     @property
     def positional_names(self):
-        for n, k in self.kinds.items():
-            if k in (PO, PK):
-                yield n
+        return self.names_of_kind[PO] + self.names_of_kind[PK]
+
+    @property
+    def keyword_names(self):
+        return self.names_of_kind[PK] + self.names_of_kind[KO]
 
     def _transform_params(self, changes_for_name: dict):
         for name in self:
