@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.120 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.122 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -231,7 +231,7 @@
 
 <div class="viewcode-block" id="IncompatibleSignatures"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.IncompatibleSignatures">[docs]</a><span class="k">class</span> <span class="nc">IncompatibleSignatures</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Raise when two signatures are not compatible.</span>
-<span class="sd">    (see https://github.com/i2mint/i2/issues/16 for more information on signature </span>
+<span class="sd">    (see https://github.com/i2mint/i2/issues/16 for more information on signature</span>
 <span class="sd">    compatibility)&quot;&quot;&quot;</span></div>
 
 
@@ -789,6 +789,33 @@
     <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
         <span class="n">d</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">kind</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">kind</span><span class="p">])</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">maybe_first</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">name_of_var_kw_argument</span><span class="p">(</span><span class="n">sig</span><span class="p">):</span>
+    <span class="n">var_kw_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">params</span> <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">VK</span><span class="p">]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">maybe_first</span><span class="p">(</span><span class="n">var_kw_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">map_action_on_cond</span><span class="p">(</span><span class="n">kvs</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">expand</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kvs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cond</span><span class="p">(</span>
+            <span class="n">k</span>
+        <span class="p">):</span>  <span class="c1"># make a conditional on (k,v), use type KV, Iterable[KV], expand:KV -&gt; Iterable[KV]</span>
+            <span class="k">yield from</span> <span class="n">expand</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># expand should result in (k,v)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+
+
+<span class="k">def</span> <span class="nf">flatten_if_var_kw</span><span class="p">(</span><span class="n">kvs</span><span class="p">,</span> <span class="n">var_kw_name</span><span class="p">):</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span> <span class="o">==</span> <span class="n">var_kw_name</span>
+    <span class="n">expand</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">map_action_on_cond</span><span class="p">(</span><span class="n">kvs</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">expand</span><span class="p">)</span>
 
 
 <span class="c1"># TODO: See other signature operating functions below in this module:</span>
@@ -2109,6 +2136,7 @@
         <span class="n">allow_partial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">allow_excess</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">ignore_kind</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Extracts a dict of input argument values for target signature, from args</span>
 <span class="sd">        and kwargs.</span>
@@ -2201,7 +2229,7 @@
 
 <span class="sd">        &gt;&gt;&gt; sig.kwargs_from_args_and_kwargs(args=(), kwargs={&quot;x&quot;: 22})</span>
 <span class="sd">        Traceback (most recent call last):</span>
-<span class="sd">          ...</span>
+<span class="sd">        ...</span>
 <span class="sd">        TypeError: missing a required argument: &#39;w&#39;</span>
 
 <span class="sd">        But if you specify `allow_partial=True`...</span>
@@ -2217,11 +2245,11 @@
 
 <span class="sd">        &gt;&gt;&gt; sig.kwargs_from_args_and_kwargs(args=(1, 2, 3, 4), kwargs={})</span>
 <span class="sd">        Traceback (most recent call last):</span>
-<span class="sd">          ...</span>
+<span class="sd">        ...</span>
 <span class="sd">        TypeError: too many positional arguments</span>
 <span class="sd">        &gt;&gt;&gt; sig.kwargs_from_args_and_kwargs(args=(), kwargs=dict(w=1, x=2, y=3, z=4))</span>
 <span class="sd">        Traceback (most recent call last):</span>
-<span class="sd">          ...</span>
+<span class="sd">        ...</span>
 <span class="sd">        TypeError: &#39;w&#39; parameter is positional only, but was passed as a keyword</span>
 
 <span class="sd">        But if you want to ignore the kind of parameter, just say so:</span>
@@ -2235,7 +2263,9 @@
 <span class="sd">        ... )</span>
 <span class="sd">        {&#39;w&#39;: 1, &#39;x&#39;: 2, &#39;y&#39;: 3, &#39;z&#39;: 4}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">no_var_kw</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_var_keyword</span>
+        <span class="c1"># no_var_kw = True</span>
 
         <span class="k">if</span> <span class="n">ignore_kind</span><span class="p">:</span>
             <span class="n">sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_kind</span><span class="p">(</span>
@@ -2244,14 +2274,13 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sig</span> <span class="o">=</span> <span class="bp">self</span>
 
-        <span class="c1"># no_var_kw = not sig.has_var_keyword</span>
+        <span class="c1"># no_var_kw = not sig.has_var_keyword TODOD check this</span>
         <span class="k">if</span> <span class="n">no_var_kw</span><span class="p">:</span>  <span class="c1"># has no var keyword kinds</span>
             <span class="n">sig_relevant_kwargs</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">name</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">sig</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kwargs</span>
             <span class="p">}</span>  <span class="c1"># take only what you need</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sig_relevant_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>  <span class="c1"># take all the kwargs</span>
-
         <span class="n">binder</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">bind_partial</span> <span class="k">if</span> <span class="n">allow_partial</span> <span class="k">else</span> <span class="n">sig</span><span class="o">.</span><span class="n">bind</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_var_positional</span> <span class="ow">and</span> <span class="n">allow_excess</span><span class="p">:</span>
             <span class="n">max_allowed_num_of_posisional_args</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
@@ -2269,7 +2298,18 @@
                 <span class="n">excess_str</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">excess</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Got unexpected keyword arguments: </span><span class="si">{</span><span class="n">excess_str</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="n">var_kw_name</span> <span class="o">=</span> <span class="n">name_of_var_kw_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+            <span class="n">kvs</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+
+            <span class="n">flattened_kvs</span> <span class="o">=</span> <span class="n">flatten_if_var_kw</span><span class="p">(</span><span class="n">kvs</span><span class="p">,</span> <span class="n">var_kw_name</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">flattened_kvs</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
         <span class="c1"># not doing it as dict(b.arguments) because order can be different.</span>
         <span class="c1"># return {name: b.arguments[name] for name in self.names if name in b.arguments}</span>
 
