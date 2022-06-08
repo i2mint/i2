@@ -146,18 +146,6 @@ def _multi_func_init(self, *unnamed_funcs, **named_funcs) -> None:
 _dflt_signature = Signature.from_callable(lambda *args, **kwargs: None)
 
 
-def _signature_from_first_and_last_func(first_func, last_func):
-    try:
-        input_params = signature(first_func).parameters.values()
-    except ValueError:  # function doesn't have a signature, so take default
-        input_params = _dflt_signature.parameters.values()
-    try:
-        return_annotation = signature(last_func).return_annotation
-    except ValueError:  # function doesn't have a signature, so take default
-        return_annotation = _dflt_signature.return_annotation
-    return Signature(input_params, return_annotation=return_annotation)
-
-
 class MultiObj(Mapping):
     """A base class that holds several named objects
 
@@ -266,6 +254,18 @@ class MultiFunc(MultiObj):
         iterable_of_callables_validation(self.funcs.values())
 
 
+def _signature_from_first_and_last_func(first_func, last_func):
+    try:
+        input_params = signature(first_func).parameters.values()
+    except ValueError:  # function doesn't have a signature, so take default
+        input_params = _dflt_signature.parameters.values()
+    try:
+        return_annotation = signature(last_func).return_annotation
+    except ValueError:  # function doesn't have a signature, so take default
+        return_annotation = _dflt_signature.return_annotation
+    return Signature(input_params, return_annotation=return_annotation)
+
+
 # TODO: Give it a __name__ and make it more like a "normal" function so it works
 #  well when so assumed?
 class Pipe(MultiFunc):
@@ -293,6 +293,18 @@ class Pipe(MultiFunc):
     Notes:
         - Pipe instances don't have a __name__ etc. So some expectations of normal functions are not met.
         - Pipe instance are pickalable (as long as the functions that compose them are)
+
+    You can specify a single functions:
+
+    >>> Pipe(lambda x: x + 1)(1)
+    2
+
+    but
+
+    >>> Pipe()
+    Traceback (most recent call last):
+      ...
+    ValueError: You need to specify at least one function!
     """
 
     def __init__(self, *unnamed_funcs, **named_funcs):
@@ -302,17 +314,19 @@ class Pipe(MultiFunc):
         # The extra initialization for pipelines
         callables = list(self.funcs.values())
         n_funcs = len(callables)
-        other_funcs = ()
         if n_funcs == 0:
             raise ValueError('You need to specify at least one function!')
+
         elif n_funcs == 1:
+            other_funcs = ()
             first_func = last_func = callables[0]
         else:
-            first_func, *other_funcs, last_func = callables
+            first_func, *other_funcs = callables
+            *_, last_func = other_funcs
 
         self.__signature__ = _signature_from_first_and_last_func(first_func, last_func)
         self.first_func = first_func
-        self.other_funcs = tuple(other_funcs) + (last_func,)
+        self.other_funcs = other_funcs
 
     def __call__(self, *args, **kwargs):
         out = self.first_func(*args, **kwargs)
