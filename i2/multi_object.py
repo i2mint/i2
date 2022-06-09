@@ -334,6 +334,99 @@ class Pipe(MultiFunc):
             out = func(out)
         return out
 
+    def __len__(self):
+        return len(self.funcs)
+
+    def __eq__(self, other):
+        return pipes_are_equal(self, other)
+
+
+from operator import eq
+
+
+def _flatten_pipe(pipe):
+    for func in pipe.funcs.values():
+        if isinstance(func, Pipe):
+            yield from _flatten_pipe(func)
+        else:
+            yield func
+
+
+def flatten_pipe(pipe):
+    """Unravel nested Pipes to get a flat 'sequence of functions' version of input.
+
+    >>> def f(x): return x + 1
+    >>> def g(x): return x * 2
+    >>> def h(x): return x - 3
+    >>> a = Pipe(f, g, h)
+    >>> b = Pipe(f, Pipe(g, h))
+    >>> len(a)
+    3
+    >>> len(b)
+    2
+    >>> c = flatten_pipe(b)
+    >>> len(c)
+    3
+    >>> assert a(10) == b(10) == c(10) == 19
+    """
+    return Pipe(*_flatten_pipe(pipe))
+
+
+def pipes_are_equal(p1, p2, *, func_equality=eq, verbose=False):
+    """
+
+    :param p1:
+    :param p2:
+    :param func_equality:
+    :param verbose:
+    :return:
+
+
+    >>> def f(x): return x + 1
+    >>> def g(x): return x * 2
+    >>> def h(x): return x - 3
+    >>> a = Pipe(f, g, h)
+    >>> b = Pipe(f, g, h)
+    >>> assert a(10) == b(10) == 19
+    >>> pipes_are_equal(a, b)
+    True
+    >>> c = Pipe(f, Pipe(g, h))
+    >>> d = Pipe(f, Pipe(g, h))
+    >>> assert c(10) == d(10) == 19
+    >>> pipes_are_equal(c, d)
+    True
+    >>> pipes_are_equal(a, c)
+    False
+    >>> pipes_are_equal(a, flatten_pipe(c))
+    True
+
+    """
+    if list(p1.funcs.keys()) != list(p2.funcs.keys()):
+        if verbose:
+            print(f'keys are different: {list(p1.funcs)=} != {list(p2.funcs)=}')
+        return False  # if not same number of keys or keys different, not equality
+    else:
+        for func1, func2 in zip(p1.funcs.values(), p2.funcs.values()):
+            if isinstance(func1, Pipe) and isinstance(func2, Pipe):
+                return pipes_are_equal(
+                    func1, func2, func_equality=func_equality, verbose=verbose
+                )  # recurse
+            elif isinstance(func1, Pipe) and not isinstance(func2, Pipe):
+                if verbose:
+                    print(f'func1 is a Pipe but func2 is not! {func1=} and {func2=}')
+                return False
+            elif isinstance(func1, Pipe) and not isinstance(func2, Pipe):
+                if verbose:
+                    print(f'func2 is a Pipe but func1 is not! {func1=} and {func2=}')
+                return False
+            else:
+                if not func_equality(func1, func2):
+                    if verbose:
+                        print(f'func1 and func2 are not equal: {func1=} != {func2=}')
+                    return False  # these two funcs are not equal
+            # else continue
+    return True
+
 
 class FuncFanout(MultiFunc):
     """Applies multiple functions to the same argument(s) and returns a dict of results.
