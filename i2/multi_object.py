@@ -373,57 +373,61 @@ def flatten_pipe(pipe):
 
 
 def pipes_are_equal(p1, p2, *, func_equality=eq, verbose=False):
-    """
+    """Determine if two pipelines are equal.
 
-    :param p1:
-    :param p2:
-    :param func_equality:
-    :param verbose:
-    :return:
-
+    Pipelines are equal if their flattened versions have equal functions.
+    Function equality can be controlled by the ``func_equality`` argument.
+    The ``verbose`` argument will print some more information about why the pipelines
+    are not equal.
 
     >>> def f(x): return x + 1
     >>> def g(x): return x * 2
     >>> def h(x): return x - 3
     >>> a = Pipe(f, g, h)
     >>> b = Pipe(f, g, h)
-    >>> assert a(10) == b(10) == 19
+    >>> c = Pipe(f, Pipe(g, h))
+    >>> assert a(10) == b(10) == c(10) == 19
     >>> pipes_are_equal(a, b)
     True
-    >>> c = Pipe(f, Pipe(g, h))
-    >>> d = Pipe(f, Pipe(g, h))
-    >>> assert c(10) == d(10) == 19
-    >>> pipes_are_equal(c, d)
-    True
     >>> pipes_are_equal(a, c)
+    True
+    >>> pipes_are_equal(Pipe(f, g), Pipe(g, h))
     False
-    >>> pipes_are_equal(a, flatten_pipe(c))
+    >>> pipes_are_equal(Pipe(f, g), Pipe(f, g, h))
+    False
+
+    Get more information when pipes are not equal.
+
+    >>> pipes_are_equal(Pipe(f, g), Pipe(f, g, h), verbose=True)
+    --> Flattened pipes do not have the same number of functions: len(p1)=2 != len(p2)=3
+    False
+
+    Change how functions are compared for equality:
+
+    >>> pipes_are_equal(Pipe(lambda x: x), Pipe(lambda x: x))
+    False
+    >>> from inspect import getsource
+    >>> source_equality = lambda f, ff: getsource(f) == getsource(ff)
+    >>> pipes_are_equal(
+    ...     Pipe(lambda x: x), Pipe(lambda x: x), func_equality=source_equality
+    ... )
     True
 
     """
-    if list(p1.funcs.keys()) != list(p2.funcs.keys()):
+    p1, p2 = map(flatten_pipe, (p1, p2))
+    if len(p1) != len(p2):
         if verbose:
-            print(f'keys are different: {list(p1.funcs)=} != {list(p2.funcs)=}')
+            print(
+                f'--> Flattened pipes do not have the same number of functions:'
+                f' {len(p1)=} != {len(p2)=}'
+            )
         return False  # if not same number of keys or keys different, not equality
     else:
         for func1, func2 in zip(p1.funcs.values(), p2.funcs.values()):
-            if isinstance(func1, Pipe) and isinstance(func2, Pipe):
-                return pipes_are_equal(
-                    func1, func2, func_equality=func_equality, verbose=verbose
-                )  # recurse
-            elif isinstance(func1, Pipe) and not isinstance(func2, Pipe):
+            if not func_equality(func1, func2):
                 if verbose:
-                    print(f'func1 is a Pipe but func2 is not! {func1=} and {func2=}')
-                return False
-            elif isinstance(func1, Pipe) and not isinstance(func2, Pipe):
-                if verbose:
-                    print(f'func2 is a Pipe but func1 is not! {func1=} and {func2=}')
-                return False
-            else:
-                if not func_equality(func1, func2):
-                    if verbose:
-                        print(f'func1 and func2 are not equal: {func1=} != {func2=}')
-                    return False  # these two funcs are not equal
+                    print(f'--> func1 and func2 are not equal: {func1=} != {func2=}')
+                return False  # these two funcs are not equal
             # else continue
     return True
 
