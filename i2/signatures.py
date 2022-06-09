@@ -718,7 +718,10 @@ def _map_action_on_cond(kvs, cond, expand):
 
 def expand_nested_key(d, k):
     if k in d and isinstance(d[k], dict) and k in d[k]:
-        return expand_nested_key(d[k], k)
+        if len(d[k]) == 1:
+            return expand_nested_key(d[k], k)
+        else:
+            return d[k].items()
     else:
         return d.items()
 
