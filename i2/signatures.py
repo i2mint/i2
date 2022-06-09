@@ -2213,9 +2213,10 @@ class Sig(Signature, Mapping):
         if debug:
             var_kw_name = name_of_var_kw_argument(self)
 
-            kvs = b.arguments.items()
+            # kvs = b.arguments.items()
 
-            flattened_kvs = flatten_if_var_kw(kvs, var_kw_name)
+            # flattened_kvs = flatten_if_var_kw(kvs, var_kw_name)
+            flattened_kvs = expand_nested_key(b.arguments, var_kw_name)
             result = dict(flattened_kvs)
 
         else:
