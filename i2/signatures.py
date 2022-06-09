@@ -706,30 +706,28 @@ def name_of_var_kw_argument(sig):
     return result
 
 
-def map_action_on_cond(kvs, cond, expand):
+def _map_action_on_cond(kvs, cond, expand):
     for k, v in kvs:
         if cond(
             k
         ):  # make a conditional on (k,v), use type KV, Iterable[KV], expand:KV -> Iterable[KV]
-            yield from expand(v)  # expand should result in (k,v)
-            # yield inner_most_kv(k, v)  # expand should result in (k,v)
-
+            yield from expand(v[k])  # expand should result in (k,v)
         else:
             yield k, v
+
+
+def expand_nested_key(d, k):
+    if isinstance(d[k], dict) and k in d[k]:
+        return expand_nested_key(d[k], k)
+    else:
+        return d.items()
 
 
 def flatten_if_var_kw(kvs, var_kw_name):
     cond = lambda k: k == var_kw_name
     expand = lambda k: k.items()
-
-    return map_action_on_cond(kvs, cond, expand)
-
-
-def inner_most_kv(k, v):
-    if isinstance(v, dict) and k in v:
-        return inner_most_kv(k, v[k])
-    else:
-        return k, v
+    # expand = lambda k: k.values()
+    return _map_action_on_cond(kvs, cond, expand)
 
 
 # TODO: See other signature operating functions below in this module:
@@ -2050,7 +2048,7 @@ class Sig(Signature, Mapping):
         allow_partial=False,
         allow_excess=False,
         ignore_kind=False,
-        debug=True,
+        debug=True,  # change the name of that one, may be deprecated?
     ):
         """Extracts a dict of input argument values for target signature, from args
         and kwargs.
@@ -2224,6 +2222,8 @@ class Sig(Signature, Mapping):
             result = dict(b.arguments)
 
         return result
+        # not doing it as dict(b.arguments) because order can be different.
+        # return {name: b.arguments[name] for name in self.names if name in b.arguments}
 
     def args_and_kwargs_from_kwargs(
         self,
@@ -2749,11 +2749,19 @@ def _validate_sanity_of_signature_change(
 # Recipes
 
 
-def modify_kinds(sig, kinds_modifier):
-    kinds_modif = kinds_modifier(sig.kinds)
-    sig = sig.ch_kinds(**kinds_modif)
+def mk_sig_from_args(*args_without_default, **args_with_defaults):
+    """Make a Signature instance by specifying args_without_default and
+    args_with_defaults.
 
-    return sig
+    >>> mk_sig_from_args("a", "b", c=1, d="bar")
+    <Signature (a, b, c=1, d='bar')>
+    """
+    assert all(
+        isinstance(x, str) for x in args_without_default
+    ), "all default-less arguments must be strings"
+    return Sig.from_objs(
+        *args_without_default, **args_with_defaults
+    ).to_simple_signature()
 
 
 def _remove_variadics_from_sig(sig, ch_variadic_keyword_to_keyword=True):
@@ -2812,21 +2820,6 @@ def _remove_variadics_from_sig(sig, ch_variadic_keyword_to_keyword=True):
             result_sig = Signature(params, return_annotation=sig.return_annotation)
 
     return result_sig
-
-
-def mk_sig_from_args(*args_without_default, **args_with_defaults):
-    """Make a Signature instance by specifying args_without_default and
-    args_with_defaults.
-
-    >>> mk_sig_from_args("a", "b", c=1, d="bar")
-    <Signature (a, b, c=1, d='bar')>
-    """
-    assert all(
-        isinstance(x, str) for x in args_without_default
-    ), "all default-less arguments must be strings"
-    return Sig.from_objs(
-        *args_without_default, **args_with_defaults
-    ).to_simple_signature()
 
 
 def call_forgivingly(func, *args, **kwargs):
