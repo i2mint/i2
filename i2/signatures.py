@@ -866,14 +866,14 @@ class Sig(Signature, Mapping):
     ... def some_func(*args, **kwargs):
     ...     ...
     >>> inspect.signature(some_func)
-    <Signature (w, i, /, a, x: float = 1, y=1, j=2, b=3.14, c: int = 42, *, z: int = 1)>
+    <Sig (w, i, /, a, x: float = 1, y=1, j=2, b=3.14, c: int = 42, *, z: int = 1)>
     >>>
     >>> sig = Sig(f) + g + ["a", ("b", 3.14), ("c", 42, int)] - "b" - ["a", "z"]
     >>> @sig
     ... def some_func(*args, **kwargs):
     ...     ...
     >>> inspect.signature(some_func)
-    <Signature (w, i, x: float = 1, y=1, j=2, c: int = 42)>
+    <Sig (w, i, x: float = 1, y=1, j=2, c: int = 42)>
 
     """
 
@@ -1015,7 +1015,7 @@ class Sig(Signature, Mapping):
         >>> f = s.wrap(f)
         >>> import inspect
         >>> inspect.signature(f)  # see that
-        <Signature (w, x: int, y=2, z: int = 10)>
+        <Sig (w, x: int, y=2, z: int = 10)>
         >>> # But (unlike with functools.wraps) here we get __defaults__ and
         __kwdefault__
         >>> f.__defaults__  # see that x has no more default & z's default is now 10
@@ -1065,7 +1065,7 @@ class Sig(Signature, Mapping):
 
         # Change (mutate!) func, writing a new __signature__, __annotations__,
         # __defaults__ and __kwdefaults__
-        func.__signature__ = Signature(
+        func.__signature__ = Sig(
             self.parameters.values(), return_annotation=self.return_annotation
         )
         func.__annotations__ = self.annotations
@@ -1484,9 +1484,11 @@ class Sig(Signature, Mapping):
 
     @property
     def positional_names(self):
-        for n, k in self.kinds.items():
-            if k in (PO, PK):
-                yield n
+        return self.names_of_kind[PO] + self.names_of_kind[PK]
+
+    @property
+    def keyword_names(self):
+        return self.names_of_kind[PK] + self.names_of_kind[KO]
 
     def _transform_params(self, changes_for_name: dict):
         for name in self:
@@ -2058,6 +2060,7 @@ class Sig(Signature, Mapping):
         allow_partial=False,
         allow_excess=False,
         ignore_kind=False,
+        debug=False,
     ):
         """Extracts a dict of input argument values for target signature, from args
         and kwargs.
@@ -2770,22 +2773,23 @@ def _remove_variadics_from_sig(sig, ch_variadic_keyword_to_keyword=True):
     ...     return f"{a=}, {args=}, {bar=}, {kwargs=}"
     >>> sig = Sig(foo)
     >>> assert str(sig) == '(a, *args, bar, **kwargs)'
-    >>> new_sig = remove_variadics_from_sig(sig)
+    >>> new_sig = _remove_variadics_from_sig(sig)
     >>> str(new_sig)=='(a, args=(), *, bar, kwargs={})'
+    True
 
     Note that if there is not variadic positional arguments, the variadic keyword
     will still be a keyword-only kind.
 
     >>> def func(a, bar=None, **kwargs):
     ...     return f"{a=}, {bar=}, {kwargs=}"
-    >>> nsig = remove_variadics_from_sig(Sig(func))
+    >>> nsig = _remove_variadics_from_sig(Sig(func))
     >>> assert str(nsig)=='(a, bar=None, *, kwargs={})'
 
     If the function has neither variadic kinds, it will remain untouched.
 
     >>> def func(a, /, b, *, c=3):
     ...     return a + b + c
-    >>> sig = remove_variadics_from_sig(Sig(func))
+    >>> sig = _remove_variadics_from_sig(Sig(func))
 
     >>> assert sig == Sig(func)
 
@@ -2796,7 +2800,7 @@ def _remove_variadics_from_sig(sig, ch_variadic_keyword_to_keyword=True):
 
     >>> def foo(a, *args, bar=None, **kwargs):
     ...     return f"{a=}, {args=}, {bar=}, {kwargs=}"
-    >>> assert str(Sig(remove_variadics_from_sig(Sig(foo))))=='(a, args=(), *, bar=None, kwargs={})'
+    >>> assert str(Sig(_remove_variadics_from_sig(Sig(foo))))=='(a, args=(), *, bar=None, kwargs={})'
     """
 
     idx_of_vp = sig.index_of_var_positional
@@ -3110,7 +3114,7 @@ def all_pk_signature(callable_or_signature: Union[Callable, Signature]):
     >>> Sig(new_foo)
     <Sig (w, x: float, y=1, z: int = 1, **kwargs)>
     >>> all_pk_signature(signature(foo))
-    <Signature (w, x: float, y=1, z: int = 1, **kwargs)>
+    <Sig (w, x: float, y=1, z: int = 1, **kwargs)>
 
     But note that the variadic arguments *args and **kwargs remain variadic:
 
