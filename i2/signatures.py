@@ -846,14 +846,14 @@ class Sig(Signature, Mapping):
     ... def some_func(*args, **kwargs):
     ...     ...
     >>> inspect.signature(some_func)
-    <Signature (w, i, /, a, x: float = 1, y=1, j=2, b=3.14, c: int = 42, *, z: int = 1)>
+    <Sig (w, i, /, a, x: float = 1, y=1, j=2, b=3.14, c: int = 42, *, z: int = 1)>
     >>>
     >>> sig = Sig(f) + g + ["a", ("b", 3.14), ("c", 42, int)] - "b" - ["a", "z"]
     >>> @sig
     ... def some_func(*args, **kwargs):
     ...     ...
     >>> inspect.signature(some_func)
-    <Signature (w, i, x: float = 1, y=1, j=2, c: int = 42)>
+    <Sig (w, i, x: float = 1, y=1, j=2, c: int = 42)>
 
     """
 
@@ -995,7 +995,7 @@ class Sig(Signature, Mapping):
         >>> f = s.wrap(f)
         >>> import inspect
         >>> inspect.signature(f)  # see that
-        <Signature (w, x: int, y=2, z: int = 10)>
+        <Sig (w, x: int, y=2, z: int = 10)>
         >>> # But (unlike with functools.wraps) here we get __defaults__ and
         __kwdefault__
         >>> f.__defaults__  # see that x has no more default & z's default is now 10
@@ -1045,7 +1045,7 @@ class Sig(Signature, Mapping):
 
         # Change (mutate!) func, writing a new __signature__, __annotations__,
         # __defaults__ and __kwdefaults__
-        func.__signature__ = Signature(
+        func.__signature__ = Sig(
             self.parameters.values(), return_annotation=self.return_annotation
         )
         func.__annotations__ = self.annotations
@@ -3103,7 +3103,7 @@ def all_pk_signature(callable_or_signature: Union[Callable, Signature]):
     >>> Sig(new_foo)
     <Sig (w, x: float, y=1, z: int = 1, **kwargs)>
     >>> all_pk_signature(signature(foo))
-    <Signature (w, x: float, y=1, z: int = 1, **kwargs)>
+    <Sig (w, x: float, y=1, z: int = 1, **kwargs)>
 
     But note that the variadic arguments *args and **kwargs remain variadic:
 

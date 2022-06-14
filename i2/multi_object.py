@@ -539,7 +539,7 @@ class FlexFuncFanout(MultiFunc):
 
     >>> from inspect import signature
     >>> signature(mf1)
-    <Signature (w, x: float, a, y=1, z: int = 1, b: float = 0.0)>
+    <Sig (w, x: float, a, y=1, z: int = 1, b: float = 0.0)>
 
     >>> mf2 = FlexFuncFanout(formula1, mult, addition=add, mysum=sum_of_args)
     >>> assert mf2.kwargs_for_func(

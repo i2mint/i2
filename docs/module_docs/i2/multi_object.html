@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.124 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.126 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -254,7 +254,7 @@ The reason for not using functions is that when printed, they include their hash
 <p>Oh, and you can actually see the signature of kwargs_for_func:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">signature</span><span class="p">(</span><span class="n">mf1</span><span class="p">)</span>
-<span class="go">&lt;Signature (w, x: float, a, y=1, z: int = 1, b: float = 0.0)&gt;</span>
+<span class="go">&lt;Sig (w, x: float, a, y=1, z: int = 1, b: float = 0.0)&gt;</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mf2</span> <span class="o">=</span> <span class="n">FlexFuncFanout</span><span class="p">(</span><span class="n">formula1</span><span class="p">,</span> <span class="n">mult</span><span class="p">,</span> <span class="n">addition</span><span class="o">=</span><span class="n">add</span><span class="p">,</span> <span class="n">mysum</span><span class="o">=</span><span class="n">sum_of_args</span><span class="p">)</span>
@@ -582,35 +582,42 @@ or wrap a single callable in an iterable.</p>
 <dl class="py function">
 <dt id="i2.multi_object.pipes_are_equal">
 <code class="sig-prename descclassname">i2.multi_object.</code><code class="sig-name descname">pipes_are_equal</code><span class="sig-paren">(</span><em class="sig-param">p1</em>, <em class="sig-param">p2</em>, <em class="sig-param">*</em>, <em class="sig-param">func_equality=&lt;built-in function eq&gt;</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/multi_object.html#pipes_are_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.multi_object.pipes_are_equal" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>p1</strong> – </p></li>
-<li><p><strong>p2</strong> – </p></li>
-<li><p><strong>func_equality</strong> – </p></li>
-<li><p><strong>verbose</strong> – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-</dl>
+<dd><p>Determine if two pipelines are equal.</p>
+<p>Pipelines are equal if their flattened versions have equal functions.
+Function equality can be controlled by the <code class="docutils literal notranslate"><span class="pre">func_equality</span></code> argument.
+The <code class="docutils literal notranslate"><span class="pre">verbose</span></code> argument will print some more information about why the pipelines
+are not equal.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">3</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">19</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="n">c</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">19</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pipes_are_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">c</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="n">d</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">19</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pipes_are_equal</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
-<span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pipes_are_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipes_are_equal</span><span class="p">(</span><span class="n">Pipe</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">),</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pipes_are_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">flatten_pipe</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipes_are_equal</span><span class="p">(</span><span class="n">Pipe</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">),</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Get more information when pipes are not equal.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pipes_are_equal</span><span class="p">(</span><span class="n">Pipe</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">),</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">),</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">--&gt; Flattened pipes do not have the same number of functions: len(p1)=2 != len(p2)=3</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Change how functions are compared for equality:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pipes_are_equal</span><span class="p">(</span><span class="n">Pipe</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span> <span class="n">Pipe</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">))</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getsource</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source_equality</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">f</span><span class="p">,</span> <span class="n">ff</span><span class="p">:</span> <span class="n">getsource</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="n">getsource</span><span class="p">(</span><span class="n">ff</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipes_are_equal</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">Pipe</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span> <span class="n">Pipe</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span> <span class="n">func_equality</span><span class="o">=</span><span class="n">source_equality</span>
+<span class="gp">... </span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
 </div>
