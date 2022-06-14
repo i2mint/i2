@@ -2058,7 +2058,6 @@ class Sig(Signature, Mapping):
         allow_partial=False,
         allow_excess=False,
         ignore_kind=False,
-        debug=True,  # change the name of that one, may be deprecated?
     ):
         """Extracts a dict of input argument values for target signature, from args
         and kwargs.
@@ -2186,23 +2185,21 @@ class Sig(Signature, Mapping):
         {'w': 1, 'x': 2, 'y': 3, 'z': 4}
         """
 
-        no_var_kw = not self.has_var_keyword
-        # no_var_kw = True
+        vk_name = self.var_keyword_name
 
         if ignore_kind:
-            sig = self.normalize_kind(
-                # except_kinds=frozenset()
-            )
+            sig = self.normalize_kind()
         else:
             sig = self
 
-        # no_var_kw = not sig.has_var_keyword TODOD check this
-        if no_var_kw:  # has no var keyword kinds
+        if not vk_name:  # has no var keyword kinds
             sig_relevant_kwargs = {
                 name: kwargs[name] for name in sig if name in kwargs
             }  # take only what you need
         else:
-            sig_relevant_kwargs = kwargs  # take all the kwargs
+            sig_relevant_kwargs = dict(
+                {k: v for k, v in kwargs.items() if k != vk_name}, **kwargs[vk_name]
+            )
         binder = sig.bind_partial if allow_partial else sig.bind
         if not self.has_var_positional and allow_excess:
             max_allowed_num_of_posisional_args = sum(
@@ -2214,27 +2211,19 @@ class Sig(Signature, Mapping):
         if apply_defaults:
             b.apply_defaults()
 
-        if no_var_kw and not allow_excess:  # don't ignore excess kwargs
+        if not vk_name and not allow_excess:  # don't ignore excess kwargs
             excess = kwargs.keys() - b.arguments
             if excess:
                 excess_str = ", ".join(excess)
                 raise TypeError(f"Got unexpected keyword arguments: {excess_str}")
 
-        if debug:
-            var_kw_name = name_of_var_kw_argument(self)
+        var_kw_name = name_of_var_kw_argument(self)
 
-            # kvs = b.arguments.items()
 
-            # flattened_kvs = flatten_if_var_kw(kvs, var_kw_name)
-            flattened_kvs = expand_nested_key(b.arguments, var_kw_name)
-            result = dict(flattened_kvs)
-
-        else:
-            result = dict(b.arguments)
+        flattened_kvs = expand_nested_key(b.arguments, var_kw_name)
+        result = dict(flattened_kvs)
 
         return result
-        # not doing it as dict(b.arguments) because order can be different.
-        # return {name: b.arguments[name] for name in self.names if name in b.arguments}
 
     def args_and_kwargs_from_kwargs(
         self,
@@ -2386,7 +2375,7 @@ class Sig(Signature, Mapping):
             apply_defaults=apply_defaults,
             allow_partial=allow_partial,
             allow_excess=allow_excess,
-            ignore_kind=ignore_kind,
+            ignore_kind=ignore_kind
         )
         kwargs = {name: kwargs[name] for name in kwargs if name not in names_for_args}
 
