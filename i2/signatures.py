@@ -2201,7 +2201,7 @@ class Sig(Signature, Mapping):
             }  # take only what you need
         else:
             sig_relevant_kwargs = dict(
-                {k: v for k, v in kwargs.items() if k != vk_name}, **kwargs[vk_name]
+                {k: v for k, v in kwargs.items() if k != vk_name}, **kwargs.get(vk_name, {})
             )
         binder = sig.bind_partial if allow_partial else sig.bind
         if not self.has_var_positional and allow_excess:

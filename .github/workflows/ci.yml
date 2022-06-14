@@ -39,10 +39,10 @@ jobs:
       # C0115: missing-class-docstring
       # C0116: missing-function-docstring
       - name: Validate docstrings
-        run: pylint ./$PROJECT_NAME --ignore=tests,examples --disable=all --enable=C0114
+        run: pylint ./$PROJECT_NAME --ignore=tests,examples,scrap --disable=all --enable=C0114
 
       - name: Test
-        run: pytest --doctest-modules -v $PROJECT_NAME
+        run: pytest --doctest-modules --ignore=examples --ignore=scrap -v $PROJECT_NAME
 
   publish:
     name: Publish
