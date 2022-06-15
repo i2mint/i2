@@ -3327,7 +3327,7 @@ def ch_variadics_to_non_variadic_kind(func, *, ch_variadic_keyword_to_keyword=Tr
 
             if ch_variadic_keyword_to_keyword:
                 # an extra level of extraction is needed in this case
-                _var_keyword_kwargs = _var_keyword_kwargs.pop(var_keyword_argname, {})
+                # _var_keyword_kwargs = _var_keyword_kwargs.pop(var_keyword_argname, {})
                 return func(*a, *_vp_args_, **_kwargs, **_var_keyword_kwargs)
             else:
                 # call the original function with the unravelled args
