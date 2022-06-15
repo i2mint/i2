@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.util &mdash; i2 0.0.127 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.util &mdash; i2 0.0.128 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -60,6 +60,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../routing_forest.html">i2.routing_forest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../scrap.html">i2.scrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/scrap_ch_variadics.html">i2.scrap.scrap_ch_variadics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../signatures.html">i2.signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../switch_case_tree.html">i2.switch_case_tree</a></li>
@@ -189,7 +191,7 @@ You can also specify this integer sequence as a single string, as shown below.</
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
 <span class="go">&#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">a36</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">a47</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;a47&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;a47_&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">7</span><span class="p">})</span>
-<span class="go">&quot;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(5, -5), a36=6, a47={&#39;a47&#39;: {&#39;a47&#39;: 7, &#39;a47_&#39;: -7}}&quot;</span>
+<span class="go">&quot;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(5, -5), a36=6, a47={&#39;a47&#39;: 7, &#39;a47_&#39;: -7}&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">a13</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">a14</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">a36</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 <span class="go">&#39;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(), a36=6, a47={}&#39;</span>
 </pre></div>

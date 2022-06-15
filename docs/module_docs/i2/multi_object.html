@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.127 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.128 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -60,6 +60,8 @@
 <li class="toctree-l1"><a class="reference internal" href="routing_forest.html">i2.routing_forest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scrap.html">i2.scrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap_ch_variadics.html">i2.scrap.scrap_ch_variadics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="signatures.html">i2.signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="switch_case_tree.html">i2.switch_case_tree</a></li>
@@ -264,13 +266,14 @@ The reason for not using functions is that when printed, they include their hash
 <span class="gp">... </span><span class="s1">&#39;formula1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
 <span class="gp">... </span><span class="s1">&#39;mult&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
 <span class="gp">... </span><span class="s1">&#39;addition&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-<span class="gp">... </span><span class="s1">&#39;mysum&#39;</span><span class="p">:</span> <span class="p">{</span>
-<span class="gp">... </span>    <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span>
-<span class="gp">... </span>        <span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">},</span> <span class="s1">&#39;extra_stuff&#39;</span><span class="p">:</span> <span class="s1">&#39;ignore&#39;</span>
-<span class="gp">... </span>        <span class="p">}</span>
-<span class="gp">... </span>    <span class="p">}</span>
-<span class="gp">... </span><span class="p">}</span>
+<span class="gp">... </span><span class="s1">&#39;mysum&#39;</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+<span class="gp">... </span>                <span class="s1">&#39;extra_stuff&#39;</span><span class="p">:</span> <span class="s1">&#39;ignore&#39;</span><span class="p">}}}</span>
 </pre></div>
 </div>
 </dd></dl>
