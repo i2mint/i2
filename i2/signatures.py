@@ -2201,7 +2201,8 @@ class Sig(Signature, Mapping):
             }  # take only what you need
         else:
             sig_relevant_kwargs = dict(
-                {k: v for k, v in kwargs.items() if k != vk_name}, **kwargs.get(vk_name, {})
+                {k: v for k, v in kwargs.items() if k != vk_name},
+                **kwargs.get(vk_name, {}),
             )
         binder = sig.bind_partial if allow_partial else sig.bind
         if not self.has_var_positional and allow_excess:
@@ -2221,7 +2222,6 @@ class Sig(Signature, Mapping):
                 raise TypeError(f"Got unexpected keyword arguments: {excess_str}")
 
         var_kw_name = name_of_var_kw_argument(self)
-
 
         flattened_kvs = expand_nested_key(b.arguments, var_kw_name)
         result = dict(flattened_kvs)
@@ -2378,7 +2378,7 @@ class Sig(Signature, Mapping):
             apply_defaults=apply_defaults,
             allow_partial=allow_partial,
             allow_excess=allow_excess,
-            ignore_kind=ignore_kind
+            ignore_kind=ignore_kind,
         )
         kwargs = {name: kwargs[name] for name in kwargs if name not in names_for_args}
 
@@ -3344,13 +3344,13 @@ def ch_variadics_to_non_variadic_kind(func, *, ch_variadic_keyword_to_keyword=Tr
         try:  # TODO: Avoid this try catch. Look in advance for default ordering?
             if idx_of_vp is not None:
                 params[idx_of_vp] = params[idx_of_vp].replace(kind=PK, default=())
-            variadic_less_func.__signature__ = Signature(
+            variadic_less_func.__signature__ = Sig(
                 params, return_annotation=signature(func).return_annotation
             )
         except ValueError:
             if idx_of_vp is not None:
                 params[idx_of_vp] = params[idx_of_vp].replace(kind=PK)
-            variadic_less_func.__signature__ = Signature(
+            variadic_less_func.__signature__ = Sig(
                 params, return_annotation=signature(func).return_annotation
             )
 
