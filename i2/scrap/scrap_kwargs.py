@@ -23,18 +23,21 @@ ingress = InnerMapIngress.from_signature(foo, outer_sig=new_sig)
 
 if __name__ == "__main__":
     new_foo = wrap(foo, ingress=ingress)
-    ingress_args = (1, (2, 3))
-    ingress_kwargs = {"ko": 4, "vk": {"hello": "world"}}
-    print(ingress(*ingress_args, **ingress_kwargs))
+    # ingress_args = (1, (2, 3))
+    # ingress_kwargs = {"ko": 4, "vk": {"hello": "world"}}
+    # print(ingress(*ingress_args, **ingress_kwargs))
 
+    assert (
+        foo(1, 2, 3, ko=4, hello="world")
+        == "po=1, vp=(2, 3), ko=4, vk={'hello': 'world'}"
+    )
+    new_foo = wrap(foo, ingress=ingress)
+    assert str(Sig(new_foo)) == "(po, vp=(), *, ko, vk={})"
     # assert (
-    #     foo(1, 2, 3, ko=4, hello="world")
+    #     new_foo(1, (2, 3), ko=4, vk=dict(hello="world"))
     #     == "po=1, vp=(2, 3), ko=4, vk={'hello': 'world'}"
     # )
-    # new_foo = wrap(foo, ingress=ingress)
-    # assert str(Sig(new_foo)) == "(po, vp=(), *, ko, vk={})"
-    # new_foo(1, (2, 3), ko=4, vk=dict(hello="world"))
-
     # args, kwargs = foo_sig.args_and_kwargs_from_kwargs(dict(w=4, x=3, y=2, z=1, t=12))
 
     # print(f"args:{args}, kwargs: {kwargs}")
+    # print(new_foo(1, (2, 3), ko=4, vk=dict(hello="world")))
