@@ -1326,9 +1326,9 @@ class Sig(Signature, Mapping):
         return (
             self.names_of_kind[PO],
             self.names_of_kind[PK],
-            self.names_of_kind[VP],
+            next(iter(self.names_of_kind[VP]), None),
             self.names_of_kind[KO],
-            self.names_of_kind[VK],
+            next(iter(self.names_of_kind[VK]), None),
         )
 
     def __iter__(self):
@@ -3841,19 +3841,12 @@ def is_call_compatible_with(
     """
 
     def validate_variadics():
-        # sig1 can only have a VP if sig2 also has one
-        if vp1:
-            if not vp2:
-                return False
-            sig1 -= vp1
-            sig2 -= vp2
-        # sig1 can only have a VK if sig2 also has one
-        if vk1:
-            if not vk2:
-                return False
-            sig1 -= vk1
-            sig2 -= vk2
-        return True
+        return (
+            # sig1 can only have a VP if sig2 also has one
+            (vp1 is None or vp2 is not None) and
+            # sig1 can only have a VK if sig2 also has one
+            (vk1 is None or vk2 is not None)
+        )
 
     def validate_param_counts():
         # sig1 cannot have more positional params than sig2
@@ -3934,10 +3927,19 @@ def is_call_compatible_with(
     ps2 = pos2 + pks2
     ks2 = pks2 + kos2
 
+    if vp1:
+        sig1 -= vp1
+    if vk1:
+        sig1 -= vk1
+    if vp2:
+        sig2 -= vp2
+    if vk2:
+        sig2 -= vk2
+        
     return (
-        validate_variadics()
-        and validate_param_counts()
-        and validate_extra_params()
-        and validate_param_positions()
-        and validate_param_compatibility()
+        validate_variadics() and
+        validate_param_counts() and
+        validate_extra_params() and
+        validate_param_positions() and
+        validate_param_compatibility()
     )
