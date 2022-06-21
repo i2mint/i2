@@ -548,46 +548,46 @@ def test_call_forgivingly(sig_spec):
         ('(a=0, /, b=0, *, c=0)', '(a, b, c)'),
         ('(a, b, /, c, d, *, e, f)', '(b, a, /, d, c, *, f, e)'),
         ('(a, b, /, c, d, *, e, f)', '(a, c, /, b, e, *, d, f)',),
-        # (
-        #     '()',
-        #     '(*args)'
-        # ),
-        # (
-        #     '()',
-        #     '(**kwargs)'
-        # ),
-        # (
-        #     '()',
-        #     '(*args, **kwargs)'
-        # ),
-        # (
-        #     '(*args)',
-        #     '()'
-        # ),
-        # (
-        #     '(*args)',
-        #     '(**kwargs)'
-        # ),
-        # (
-        #     '(*args)',
-        #     '(*args, **kwargs)'
-        # ),
-        # (
-        #     '(**kwargs)',
-        #     '()'
-        # ),
-        # (
-        #     '(**kwargs)',
-        #     '(*args)'
-        # ),
-        # (
-        #     '(**kwargs)',
-        #     '(*args, **kwargs)'
-        # ),
-        # (
-        #     '(*args, **kwargs)',
-        #     '(*args, **kwargs)'
-        # ),
+        (
+            '()',
+            '(*args)'
+        ),
+        (
+            '()',
+            '(**kwargs)'
+        ),
+        (
+            '()',
+            '(*args, **kwargs)'
+        ),
+        (
+            '(*args)',
+            '()'
+        ),
+        (
+            '(*args)',
+            '(**kwargs)'
+        ),
+        (
+            '(*args)',
+            '(*args, **kwargs)'
+        ),
+        (
+            '(**kwargs)',
+            '()'
+        ),
+        (
+            '(**kwargs)',
+            '(*args)'
+        ),
+        (
+            '(**kwargs)',
+            '(*args, **kwargs)'
+        ),
+        (
+            '(*args, **kwargs)',
+            '(*args, **kwargs)'
+        ),
     ],
 )
 def test_call_compatibility(sig_spec1, sig_spec2):
@@ -604,7 +604,12 @@ def test_call_compatibility(sig_spec1, sig_spec2):
     # def foo(*args, **kwargs):
     #     pass
 
+    pos1, pks1, vp1, kos1, vk1 = sig1.detail_names_by_kind()
     for args, kwargs in sig_to_inputs(sig1, ignore_variadics=True):
+        if vp1 is not None and len(args) == len(pos1) + len(pks1):
+            args += ('extra_arg',)
+        if vk1 is not None:
+            kwargs['extra_kwarg_key'] = 'extra_kwarg_value'
         try:
             foo(*args, **kwargs)
         except TypeError:
@@ -613,4 +618,4 @@ def test_call_compatibility(sig_spec1, sig_spec2):
             else:
                 return
     if not is_compatible:
-        raise AssertionError('sig1 is compatible with sig2, when it should not.')
+        raise AssertionError('sig1 is not compatible with sig2, when it should.')
