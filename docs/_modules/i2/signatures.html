@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.128 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.129 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -1426,9 +1426,9 @@
         <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">names_of_kind</span><span class="p">[</span><span class="n">PO</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">names_of_kind</span><span class="p">[</span><span class="n">PK</span><span class="p">],</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">names_of_kind</span><span class="p">[</span><span class="n">VP</span><span class="p">],</span>
+            <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names_of_kind</span><span class="p">[</span><span class="n">VP</span><span class="p">]),</span> <span class="kc">None</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">names_of_kind</span><span class="p">[</span><span class="n">KO</span><span class="p">],</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">names_of_kind</span><span class="p">[</span><span class="n">VK</span><span class="p">],</span>
+            <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names_of_kind</span><span class="p">[</span><span class="n">VK</span><span class="p">]),</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -3941,19 +3941,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">validate_variadics</span><span class="p">():</span>
-        <span class="c1"># sig1 can only have a VP if sig2 also has one</span>
-        <span class="k">if</span> <span class="n">vp1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">vp2</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">False</span>
-            <span class="n">sig1</span> <span class="o">-=</span> <span class="n">vp1</span>
-            <span class="n">sig2</span> <span class="o">-=</span> <span class="n">vp2</span>
-        <span class="c1"># sig1 can only have a VK if sig2 also has one</span>
-        <span class="k">if</span> <span class="n">vk1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">vk2</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">False</span>
-            <span class="n">sig1</span> <span class="o">-=</span> <span class="n">vk1</span>
-            <span class="n">sig2</span> <span class="o">-=</span> <span class="n">vk2</span>
-        <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="c1"># sig1 can only have a VP if sig2 also has one</span>
+            <span class="p">(</span><span class="n">vp1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">vp2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="ow">and</span>
+            <span class="c1"># sig1 can only have a VK if sig2 also has one</span>
+            <span class="p">(</span><span class="n">vk1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">vk2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">validate_param_counts</span><span class="p">():</span>
         <span class="c1"># sig1 cannot have more positional params than sig2</span>
@@ -4033,6 +4027,15 @@
     <span class="n">pos2</span><span class="p">,</span> <span class="n">pks2</span><span class="p">,</span> <span class="n">vp2</span><span class="p">,</span> <span class="n">kos2</span><span class="p">,</span> <span class="n">vk2</span> <span class="o">=</span> <span class="n">sig2</span><span class="o">.</span><span class="n">detail_names_by_kind</span><span class="p">()</span>
     <span class="n">ps2</span> <span class="o">=</span> <span class="n">pos2</span> <span class="o">+</span> <span class="n">pks2</span>
     <span class="n">ks2</span> <span class="o">=</span> <span class="n">pks2</span> <span class="o">+</span> <span class="n">kos2</span>
+
+    <span class="k">if</span> <span class="n">vp1</span><span class="p">:</span>
+        <span class="n">sig1</span> <span class="o">-=</span> <span class="n">vp1</span>
+    <span class="k">if</span> <span class="n">vk1</span><span class="p">:</span>
+        <span class="n">sig1</span> <span class="o">-=</span> <span class="n">vk1</span>
+    <span class="k">if</span> <span class="n">vp2</span><span class="p">:</span>
+        <span class="n">sig2</span> <span class="o">-=</span> <span class="n">vp2</span>
+    <span class="k">if</span> <span class="n">vk2</span><span class="p">:</span>
+        <span class="n">sig2</span> <span class="o">-=</span> <span class="n">vk2</span>
 
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">validate_variadics</span><span class="p">()</span>

@@ -548,46 +548,16 @@ def test_call_forgivingly(sig_spec):
         ('(a=0, /, b=0, *, c=0)', '(a, b, c)'),
         ('(a, b, /, c, d, *, e, f)', '(b, a, /, d, c, *, f, e)'),
         ('(a, b, /, c, d, *, e, f)', '(a, c, /, b, e, *, d, f)',),
-        (
-            '()',
-            '(*args)'
-        ),
-        (
-            '()',
-            '(**kwargs)'
-        ),
-        (
-            '()',
-            '(*args, **kwargs)'
-        ),
-        (
-            '(*args)',
-            '()'
-        ),
-        (
-            '(*args)',
-            '(**kwargs)'
-        ),
-        (
-            '(*args)',
-            '(*args, **kwargs)'
-        ),
-        (
-            '(**kwargs)',
-            '()'
-        ),
-        (
-            '(**kwargs)',
-            '(*args)'
-        ),
-        (
-            '(**kwargs)',
-            '(*args, **kwargs)'
-        ),
-        (
-            '(*args, **kwargs)',
-            '(*args, **kwargs)'
-        ),
+        ('()', '(*args)'),
+        ('()', '(**kwargs)'),
+        ('()', '(*args, **kwargs)'),
+        ('(*args)', '()'),
+        ('(*args)', '(**kwargs)'),
+        ('(*args)', '(*args, **kwargs)'),
+        ('(**kwargs)', '()'),
+        ('(**kwargs)', '(*args)'),
+        ('(**kwargs)', '(*args, **kwargs)'),
+        ('(*args, **kwargs)', '(*args, **kwargs)'),
     ],
 )
 def test_call_compatibility(sig_spec1, sig_spec2):

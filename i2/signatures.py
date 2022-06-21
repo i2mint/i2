@@ -3843,7 +3843,8 @@ def is_call_compatible_with(
     def validate_variadics():
         return (
             # sig1 can only have a VP if sig2 also has one
-            (vp1 is None or vp2 is not None) and
+            (vp1 is None or vp2 is not None)
+            and
             # sig1 can only have a VK if sig2 also has one
             (vk1 is None or vk2 is not None)
         )
@@ -3935,11 +3936,11 @@ def is_call_compatible_with(
         sig2 -= vp2
     if vk2:
         sig2 -= vk2
-        
+
     return (
-        validate_variadics() and
-        validate_param_counts() and
-        validate_extra_params() and
-        validate_param_positions() and
-        validate_param_compatibility()
+        validate_variadics()
+        and validate_param_counts()
+        and validate_extra_params()
+        and validate_param_positions()
+        and validate_param_compatibility()
     )
