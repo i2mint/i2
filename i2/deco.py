@@ -5,14 +5,111 @@ from contextlib import suppress
 from functools import wraps, partial
 from inspect import Signature, signature, Parameter
 from itertools import chain
-from typing import Callable
+from typing import Callable, Tuple, Dict, Any, TypeVar
 
-# from collections.abc import Mapping
-
-from i2.signatures import Sig, kind_forgiving_func
+from i2.signatures import Sig, kind_forgiving_func, name_of_obj
 
 # keep the imports below here because might be referenced (or take care of refs)
 # from i2.signatures import ch_signature_to_all_pk, params_of, copy_func
+
+T = TypeVar('T')  # Can be anything
+
+
+def identity(obj: T) -> T:
+    return obj
+
+
+class FuncFactory:
+    """Make a function factory.
+
+    but more convenient and helpful (e.g. is picklable, produces functions with
+    signatures, etc.)
+
+    One can use ``functools.partials`` to fix, or change, the defaults of
+    arguments of a function ``func`` thereby creating a different function.
+
+    >>> def foo(a, b, *, c=2) -> float:
+    ...     return a * b + c
+    >>> foo(10, 2)
+    22
+    >>> foo(10, b=2, c=3)
+    23
+    >>> from functools import partial
+    >>> new_foo = partial(foo, b=2, c=3)  # change default c=3 and add one: b=2
+    >>> new_foo(10)  # now the function can be called with one argument (couldn't before)
+    23
+
+    In essence, ``FuncFactory`` is equivalent to:
+
+    ```
+    FuncFactory = lambda func: lambda *args, **kwargs: partial(func, *args, **kwargs)
+    ```
+
+    but more convenient and helpful. For one, it doesn't use ``lambda``, so is picklable.
+    It also has a more helpful signature:
+
+    >>> factory = FuncFactory(foo)
+    >>> factory
+    <FuncFactory(foo)>(b, *, c=2) -> Callable[..., float]
+
+    (Note that the repr even reuses ``foo``'s return annotation to tell us that our
+    factory will return a callable that returns that type (if the annotation is a type).
+
+    An instance of ``FuncFactory`` is a factory of functions, that is, it can make
+    functions for you based on the instance's underlying ``func``:
+
+    >>> f = factory(b=2, c=3)
+    >>> assert f(10)
+    23
+
+    Recipe: Say you're normalizing some data accessor into callback functions and you
+    want to create functions that provide a specific object when called (with no args).
+    Sure, you can do this by specifying ``lambda: obj`` every time, but lambdas can be
+    problematic (e.g. their not picklable).
+
+    Here's another solution:
+
+    >>> def identity(obj):
+    ...     return obj
+    >>> func_returning_obj = FuncFactory(identity)
+    >>> get_42 = func_returning_obj(42)
+    >>> get_42()
+    42
+
+    Note: A convenience property has been added to implement this recipe:
+
+    >>> get_42, get_hello = map(FuncFactory.func_returning_obj, (42, 'hello'))
+    >>> get_42()
+    42
+    >>> get_hello()
+    'hello'
+
+    """
+
+    def __init__(self, func):
+        self.func = func
+
+        sig = Sig(func)
+        factory_sig = Sig(sig, return_annotation=Callable[..., Any]) - sig.names[0]
+        if sig.return_annotation is not sig.empty:
+            try:
+                factory_sig = Sig(
+                    factory_sig, return_annotation=Callable[..., sig.return_annotation]
+                )
+            except TypeError:
+                pass
+
+        self.__signature__ = factory_sig
+
+    def __call__(self, *args, **kwargs):
+        return partial(self.func, *args, **kwargs)
+
+    def __repr__(self):
+        return f'<FuncFactory({name_of_obj(self.func)})>{self.__signature__}'
+
+    @classmethod
+    def func_returning_obj(cls, obj):
+        return cls(identity)(obj)
 
 
 def _double_up_as_factory(wrapped=None, *args, __decorator_func=None, **kwargs):
@@ -1077,8 +1174,6 @@ def mk_method_trans_spec_from_methods_specs_dict(methods_specs_dict):
             method_trans_spec[method].update(specs)
     return dict(method_trans_spec)
 
-
-from typing import Callable, Tuple, Dict, Any
 
 Args = Tuple
 Kwargs = Dict
