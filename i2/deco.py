@@ -59,7 +59,7 @@ class FuncFactory:
     functions for you based on the instance's underlying ``func``:
 
     >>> f = factory(b=2, c=3)
-    >>> assert f(10)
+    >>> f(10)
     23
 
     Recipe: Say you're normalizing some data accessor into callback functions and you
