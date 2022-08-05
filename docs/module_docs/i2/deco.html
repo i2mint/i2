@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.0.129 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.deco &mdash; i2 0.0.130 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -103,6 +103,69 @@
   <section id="module-i2.deco">
 <span id="i2-deco"></span><h1>i2.deco<a class="headerlink" href="#module-i2.deco" title="Permalink to this headline">¶</a></h1>
 <p>Decorator tools</p>
+<dl class="py class">
+<dt id="i2.deco.FuncFactory">
+<em class="property">class </em><code class="sig-prename descclassname">i2.deco.</code><code class="sig-name descname">FuncFactory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#FuncFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.deco.FuncFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a function factory.</p>
+<p>but more convenient and helpful (e.g. is picklable, produces functions with
+signatures, etc.)</p>
+<p>One can use <code class="docutils literal notranslate"><span class="pre">functools.partials</span></code> to fix, or change, the defaults of
+arguments of a function <code class="docutils literal notranslate"><span class="pre">func</span></code> thereby creating a different function.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">22</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">23</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_foo</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># change default c=3 and add one: b=2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_foo</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># now the function can be called with one argument (couldn&#39;t before)</span>
+<span class="go">23</span>
+</pre></div>
+</div>
+<p>In essence, <code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code> is equivalent to:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">FuncFactory</span> <span class="pre">=</span> <span class="pre">lambda</span> <span class="pre">func:</span> <span class="pre">lambda</span> <span class="pre">*args,</span> <span class="pre">**kwargs:</span> <span class="pre">partial(func,</span> <span class="pre">*args,</span> <span class="pre">**kwargs)</span>
+<span class="pre">`</span></code></p>
+<p>but more convenient and helpful. For one, it doesn’t use <code class="docutils literal notranslate"><span class="pre">lambda</span></code>, so is picklable.
+It also has a more helpful signature:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">factory</span> <span class="o">=</span> <span class="n">FuncFactory</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">factory</span>
+<span class="go">&lt;FuncFactory(foo)&gt;(b, *, c=2) -&gt; Callable[..., float]</span>
+</pre></div>
+</div>
+<p>(Note that the repr even reuses <code class="docutils literal notranslate"><span class="pre">foo</span></code>’s return annotation to tell us that our
+factory will return a callable that returns that type (if the annotation is a type).</p>
+<p>An instance of <code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code> is a factory of functions, that is, it can make
+functions for you based on the instance’s underlying <code class="docutils literal notranslate"><span class="pre">func</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">factory</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">23</span>
+</pre></div>
+</div>
+<p>Recipe: Say you’re normalizing some data accessor into callback functions and you
+want to create functions that provide a specific object when called (with no args).
+Sure, you can do this by specifying <code class="docutils literal notranslate"><span class="pre">lambda:</span> <span class="pre">obj</span></code> every time, but lambdas can be
+problematic (e.g. their not picklable).</p>
+<p>Here’s another solution:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">obj</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">func_returning_obj</span> <span class="o">=</span> <span class="n">FuncFactory</span><span class="p">(</span><span class="n">identity</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_42</span> <span class="o">=</span> <span class="n">func_returning_obj</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_42</span><span class="p">()</span>
+<span class="go">42</span>
+</pre></div>
+</div>
+<p>Note: A convenience property has been added to implement this recipe:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_42</span><span class="p">,</span> <span class="n">get_hello</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">FuncFactory</span><span class="o">.</span><span class="n">func_returning_obj</span><span class="p">,</span> <span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;hello&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_42</span><span class="p">()</span>
+<span class="go">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_hello</span><span class="p">()</span>
+<span class="go">&#39;hello&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="py exception">
 <dt id="i2.deco.OutputPostProcessingError">
 <em class="property">exception </em><code class="sig-prename descclassname">i2.deco.</code><code class="sig-name descname">OutputPostProcessingError</code><a class="reference internal" href="../../_modules/i2/deco.html#OutputPostProcessingError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.deco.OutputPostProcessingError" title="Permalink to this definition">¶</a></dt>
