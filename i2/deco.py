@@ -19,6 +19,20 @@ def identity(obj: T) -> T:
     return obj
 
 
+# ---------------------------------------------------------------------------------------
+# The following is an exact copy of the `functools.wraps`, but for some reason, it
+# solves an issue of double_up_as_factory on jypyter.
+# See description of problem here:
+# https://stackoverflow.com/questions/73243479/mysterious-effect-a-decorator-that-breaks-juypyters-ability-to-tab-complete-a
+
+from functools import WRAPPER_ASSIGNMENTS, WRAPPER_UPDATES, update_wrapper
+
+
+def wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
+    return partial(update_wrapper, wrapped=wrapped, assigned=assigned, updated=updated)
+
+
+# ---------------------------------------------------------------------------------------
 class FuncFactory:
     """Make a function factory.
 
