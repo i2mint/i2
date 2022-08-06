@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.0.130 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.deco &mdash; i2 0.0.131 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -119,6 +119,20 @@
     <span class="k">return</span> <span class="n">obj</span>
 
 
+<span class="c1"># ---------------------------------------------------------------------------------------</span>
+<span class="c1"># The following is an exact copy of the `functools.wraps`, but for some reason, it</span>
+<span class="c1"># solves an issue of double_up_as_factory on jypyter.</span>
+<span class="c1"># See description of problem here:</span>
+<span class="c1"># https://stackoverflow.com/questions/73243479/mysterious-effect-a-decorator-that-breaks-juypyters-ability-to-tab-complete-a</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span> <span class="n">WRAPPER_UPDATES</span><span class="p">,</span> <span class="n">update_wrapper</span>
+
+
+<span class="k">def</span> <span class="nf">wraps</span><span class="p">(</span><span class="n">wrapped</span><span class="p">,</span> <span class="n">assigned</span><span class="o">=</span><span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span> <span class="n">updated</span><span class="o">=</span><span class="n">WRAPPER_UPDATES</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">update_wrapper</span><span class="p">,</span> <span class="n">wrapped</span><span class="o">=</span><span class="n">wrapped</span><span class="p">,</span> <span class="n">assigned</span><span class="o">=</span><span class="n">assigned</span><span class="p">,</span> <span class="n">updated</span><span class="o">=</span><span class="n">updated</span><span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="FuncFactory"><a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.FuncFactory">[docs]</a><span class="k">class</span> <span class="nc">FuncFactory</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Make a function factory.</span>
 
