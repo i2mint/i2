@@ -5,7 +5,90 @@ import re
 import itertools
 import functools
 import types
-from typing import Mapping, Iterable
+from typing import Mapping, Callable, Any, MutableMapping
+
+
+class OverwritesForbidden(ValueError):
+    """Raise when a user is not allowed to overwrite a mapping's key"""
+
+
+def ensure_identifiers(identifiers):
+    """Ensure an iterable of identifiers
+    >>> list(ensure_identifiers(['foo bar', 'and', 'me']))
+    ['foo', 'bar', 'and', 'me']
+    """
+    for string in identifiers:
+        for identifier in string.split():
+            if identifier.isidentifier():
+                yield identifier
+            else:
+                raise ValueError(
+                    "{identifier} isn't a python identifier (i.e. valid variable name)"
+                )
+
+
+def insert_name_based_objects_in_scope(
+    *names,
+    factory: Callable[[str], Any],
+    scope: MutableMapping,
+    allow_overwrites: bool = False,
+):
+    """
+    Make several string-parametrized objects and insert them in a scope (e.g. locals()).
+
+    This is useful when to avoid (error-prone) situations where we want the name we
+    assign an object to, to be aligned with it's internal name, such as::
+
+        foo = Factory('foo', ...)
+        bar = Factory('bar', ...)
+        baz = Factory('baz', ...)
+
+    :param names: Identifier (valid python variable name) strings.
+        These are used both as arguments of the ``factory`` and as keys for the
+        ``scope`` the object the factory makes will be inserted under.
+    :param factory: A function that takes a (valid python identifier) string and
+        returns an object parametrized by that string.
+    :param scope: The ``MutableMapping`` we want to insert the objects in.
+    :param allow_overwrites: Whether the objects we create can overwrite existing
+        objects the ``scope`` may already have. If we don't allow overwrites and we
+        try to write under an existing key, a ``OverwritesForbidden`` error will be
+        raised. This also includes the situation where we have some duplicates in
+        ``names``.
+    :return: None (this function has the side effect of inserting items in ``scope``.
+
+    One of the (controversal) uses of ``insert_name_based_objects_in_scope`` is to be
+    able to make several string-parametrized
+
+    >>> from collections import namedtuple
+    >>> from functools import partial
+    >>>
+    >>> factory = partial(namedtuple, field_names='apple banana')
+    >>> insert_namedtuples_in_locals = partial(insert_name_based_objects_in_scope,
+    ...     factory=factory, scope=locals(), allow_overwrites=True
+    ... )
+    >>> insert_namedtuples_in_locals('foo bar', 'baz')
+
+    And now ``foo` exists!
+
+    >>> 'foo' in locals()
+    True
+    >>> foo(1,2)
+    foo(apple=1, banana=2)
+
+    And so does ``bar`` and ``baz``:
+
+    >>> bar(3, banana=4)
+    bar(apple=3, banana=4)
+    >>> baz(apple=3, banana=4)
+    baz(apple=3, banana=4)
+    """
+    for name in ensure_identifiers(names):
+        if name not in scope or allow_overwrites:
+            scope[name] = factory(name)
+        else:
+            raise OverwritesForbidden(
+                f'This key already exisited and is not allowed to be overwritten'
+            )
 
 
 class Literal:
