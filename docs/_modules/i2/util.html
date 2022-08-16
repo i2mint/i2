@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.0.134 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.0.135 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -105,7 +105,90 @@
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">types</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">MutableMapping</span>
+
+
+<div class="viewcode-block" id="OverwritesForbidden"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.OverwritesForbidden">[docs]</a><span class="k">class</span> <span class="nc">OverwritesForbidden</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Raise when a user is not allowed to overwrite a mapping&#39;s key&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="ensure_identifiers"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.ensure_identifiers">[docs]</a><span class="k">def</span> <span class="nf">ensure_identifiers</span><span class="p">(</span><span class="n">identifiers</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ensure an iterable of identifiers</span>
+<span class="sd">    &gt;&gt;&gt; list(ensure_identifiers([&#39;foo bar&#39;, &#39;and&#39;, &#39;me&#39;]))</span>
+<span class="sd">    [&#39;foo&#39;, &#39;bar&#39;, &#39;and&#39;, &#39;me&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">identifiers</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">identifier</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">identifier</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">():</span>
+                <span class="k">yield</span> <span class="n">identifier</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">{identifier}</span><span class="s2"> isn&#39;t a python identifier (i.e. valid variable name)&quot;</span>
+                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="insert_name_based_objects_in_scope"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.insert_name_based_objects_in_scope">[docs]</a><span class="k">def</span> <span class="nf">insert_name_based_objects_in_scope</span><span class="p">(</span>
+    <span class="o">*</span><span class="n">names</span><span class="p">,</span>
+    <span class="n">factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">scope</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">,</span>
+    <span class="n">allow_overwrites</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make several string-parametrized objects and insert them in a scope (e.g. locals()).</span>
+
+<span class="sd">    This is useful when to avoid (error-prone) situations where we want the name we</span>
+<span class="sd">    assign an object to, to be aligned with it&#39;s internal name, such as::</span>
+
+<span class="sd">        foo = Factory(&#39;foo&#39;, ...)</span>
+<span class="sd">        bar = Factory(&#39;bar&#39;, ...)</span>
+<span class="sd">        baz = Factory(&#39;baz&#39;, ...)</span>
+
+<span class="sd">    :param names: Identifier (valid python variable name) strings.</span>
+<span class="sd">        These are used both as arguments of the ``factory`` and as keys for the</span>
+<span class="sd">        ``scope`` the object the factory makes will be inserted under.</span>
+<span class="sd">    :param factory: A function that takes a (valid python identifier) string and</span>
+<span class="sd">        returns an object parametrized by that string.</span>
+<span class="sd">    :param scope: The ``MutableMapping`` we want to insert the objects in.</span>
+<span class="sd">    :param allow_overwrites: Whether the objects we create can overwrite existing</span>
+<span class="sd">        objects the ``scope`` may already have. If we don&#39;t allow overwrites and we</span>
+<span class="sd">        try to write under an existing key, a ``OverwritesForbidden`` error will be</span>
+<span class="sd">        raised. This also includes the situation where we have some duplicates in</span>
+<span class="sd">        ``names``.</span>
+<span class="sd">    :return: None (this function has the side effect of inserting items in ``scope``.</span>
+
+<span class="sd">    One of the (controversal) uses of ``insert_name_based_objects_in_scope`` is to be</span>
+<span class="sd">    able to make several string-parametrized</span>
+
+<span class="sd">    &gt;&gt;&gt; from collections import namedtuple</span>
+<span class="sd">    &gt;&gt;&gt; from functools import partial</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; factory = partial(namedtuple, field_names=&#39;apple banana&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; insert_namedtuples_in_locals = partial(insert_name_based_objects_in_scope,</span>
+<span class="sd">    ...     factory=factory, scope=locals(), allow_overwrites=True</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; insert_namedtuples_in_locals(&#39;foo bar&#39;, &#39;baz&#39;)</span>
+
+<span class="sd">    And now ``foo` exists!</span>
+
+<span class="sd">    &gt;&gt;&gt; &#39;foo&#39; in locals()</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; foo(1,2)</span>
+<span class="sd">    foo(apple=1, banana=2)</span>
+
+<span class="sd">    And so does ``bar`` and ``baz``:</span>
+
+<span class="sd">    &gt;&gt;&gt; bar(3, banana=4)</span>
+<span class="sd">    bar(apple=3, banana=4)</span>
+<span class="sd">    &gt;&gt;&gt; baz(apple=3, banana=4)</span>
+<span class="sd">    baz(apple=3, banana=4)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ensure_identifiers</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scope</span> <span class="ow">or</span> <span class="n">allow_overwrites</span><span class="p">:</span>
+            <span class="n">scope</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">factory</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">OverwritesForbidden</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;This key already exisited and is not allowed to be overwritten&#39;</span>
+            <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Literal"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.Literal">[docs]</a><span class="k">class</span> <span class="nc">Literal</span><span class="p">:</span>

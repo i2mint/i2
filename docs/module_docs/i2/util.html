@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.0.134 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.0.135 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -333,6 +333,12 @@ get a value.</p>
 <em class="property">exception </em><code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">MissingArgument</code><a class="reference internal" href="../../_modules/i2/util.html#MissingArgument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.MissingArgument" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py exception">
+<dt id="i2.util.OverwritesForbidden">
+<em class="property">exception </em><code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">OverwritesForbidden</code><a class="reference internal" href="../../_modules/i2/util.html#OverwritesForbidden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.OverwritesForbidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise when a user is not allowed to overwrite a mapping’s key</p>
+</dd></dl>
+
 <dl class="py function">
 <dt id="i2.util.dp_get">
 <code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">dp_get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">dot_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#dp_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.dp_get" title="Permalink to this definition">¶</a></dt>
@@ -346,6 +352,14 @@ get a value.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">dp_get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;foo.alice&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;bob&#39;</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.util.ensure_identifiers">
+<code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">ensure_identifiers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifiers</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#ensure_identifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.ensure_identifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure an iterable of identifiers
+&gt;&gt;&gt; list(ensure_identifiers([‘foo bar’, ‘and’, ‘me’]))
+[‘foo’, ‘bar’, ‘and’, ‘me’]</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -370,6 +384,65 @@ get a value.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.util.insert_name_based_objects_in_scope">
+<code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">insert_name_based_objects_in_scope</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">names</span></em>, <em class="sig-param"><span class="n">factory</span><span class="p">:</span> <span class="n">Callable<span class="p">[</span><span class="p">[</span>str<span class="p">]</span><span class="p">, </span>Any<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">scope</span><span class="p">:</span> <span class="n">MutableMapping</span></em>, <em class="sig-param"><span class="n">allow_overwrites</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#insert_name_based_objects_in_scope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.insert_name_based_objects_in_scope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make several string-parametrized objects and insert them in a scope (e.g. locals()).</p>
+<p>This is useful when to avoid (error-prone) situations where we want the name we
+assign an object to, to be aligned with it’s internal name, such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">foo</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="n">bar</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="n">baz</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">(</span><span class="s1">&#39;baz&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>names</strong> – Identifier (valid python variable name) strings.
+These are used both as arguments of the <code class="docutils literal notranslate"><span class="pre">factory</span></code> and as keys for the
+<code class="docutils literal notranslate"><span class="pre">scope</span></code> the object the factory makes will be inserted under.</p></li>
+<li><p><strong>factory</strong> – A function that takes a (valid python identifier) string and
+returns an object parametrized by that string.</p></li>
+<li><p><strong>scope</strong> – The <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code> we want to insert the objects in.</p></li>
+<li><p><strong>allow_overwrites</strong> – Whether the objects we create can overwrite existing
+objects the <code class="docutils literal notranslate"><span class="pre">scope</span></code> may already have. If we don’t allow overwrites and we
+try to write under an existing key, a <code class="docutils literal notranslate"><span class="pre">OverwritesForbidden</span></code> error will be
+raised. This also includes the situation where we have some duplicates in
+<code class="docutils literal notranslate"><span class="pre">names</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None (this function has the side effect of inserting items in <code class="docutils literal notranslate"><span class="pre">scope</span></code>.</p>
+</dd>
+</dl>
+<p>One of the (controversal) uses of <code class="docutils literal notranslate"><span class="pre">insert_name_based_objects_in_scope</span></code> is to be
+able to make several string-parametrized</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">factory</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">namedtuple</span><span class="p">,</span> <span class="n">field_names</span><span class="o">=</span><span class="s1">&#39;apple banana&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">insert_namedtuples_in_locals</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">insert_name_based_objects_in_scope</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">factory</span><span class="o">=</span><span class="n">factory</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">allow_overwrites</span><span class="o">=</span><span class="kc">True</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">insert_namedtuples_in_locals</span><span class="p">(</span><span class="s1">&#39;foo bar&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And now <a href="#id1"><span class="problematic" id="id2">``</span></a>foo` exists!</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;foo&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">foo(apple=1, banana=2)</span>
+</pre></div>
+</div>
+<p>And so does <code class="docutils literal notranslate"><span class="pre">bar</span></code> and <code class="docutils literal notranslate"><span class="pre">baz</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">banana</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">bar(apple=3, banana=4)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">baz</span><span class="p">(</span><span class="n">apple</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">banana</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">baz(apple=3, banana=4)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
