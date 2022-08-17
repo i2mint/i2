@@ -54,5 +54,5 @@ from i2.util import (
     lazyprop,
     frozendict,
     inject_method,
-    make_sentinel,
+    mk_sentinel,
 )
