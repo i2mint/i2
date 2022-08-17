@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.0.135 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.0.136 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -236,7 +236,7 @@ functions compiled with this FunctionBuilder.</p></li>
 can be mutated as necessary.</p>
 <dl class="py method">
 <dt id="i2.util.FunctionBuilder.add_arg">
-<code class="sig-name descname">add_arg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_name</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">NO_DEFAULT</span></em>, <em class="sig-param"><span class="n">kwonly</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#FunctionBuilder.add_arg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.FunctionBuilder.add_arg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_arg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_name</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">Sentinel('NO_DEFAULT')</span></em>, <em class="sig-param"><span class="n">kwonly</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#FunctionBuilder.add_arg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.FunctionBuilder.add_arg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add an argument with optional <em>default</em> (defaults to
 <code class="docutils literal notranslate"><span class="pre">funcutils.NO_DEFAULT</span></code>). Pass <em>kwonly=True</em> to add a
 keyword-only argument</p>
@@ -491,40 +491,116 @@ It’s</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="i2.util.make_sentinel">
-<code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">make_sentinel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'_MISSING'</span></em>, <em class="sig-param"><span class="n">var_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#make_sentinel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.make_sentinel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates and returns a new <strong>instance</strong> of a new class, suitable for
-usage as a “sentinel”, a kind of singleton often used to indicate
-a value is missing when <code class="docutils literal notranslate"><span class="pre">None</span></code> is a valid input.</p>
+<dt id="i2.util.mk_sentinel">
+<code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">mk_sentinel</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">boolean_value: bool = True</em>, <em class="sig-param">repr_: Union[str</em>, <em class="sig-param">Callable] = &lt;function _default_sentinel_repr_method&gt;</em>, <em class="sig-param">*</em>, <em class="sig-param">module: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#mk_sentinel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.mk_sentinel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and returns a new <strong>instance</strong> of a new class, suitable for usage as a
+“sentinel” since it is a kind of singleton (there can be only one instance of it.)</p>
+<p>A frequent use case for sentinels are where we want to indicate that something is
+missing. Often, we use <code class="docutils literal notranslate"><span class="pre">None</span></code> for this, but sometimes <code class="docutils literal notranslate"><span class="pre">None</span></code> is a valid value in
+our context (see for example the <code class="docutils literal notranslate"><span class="pre">inspect.Parameter.empty</span></code> sentinel to indicate
+that an argument doesn’t have a default or annotation).
+Other times, we may want to distinguish different kinds of “nothing”.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mk_sentinel</span></code> can help you create such sentinels, takes care of annoying details
+like pickability and allows you to control how to resolve your sentinel to a boolean.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – Name of the Sentinel</p></li>
-<li><p><strong>var_name</strong> (<em>str</em>) – Set this name to the name of the variable in
-its respective module enable pickleability.</p></li>
+<li><p><strong>name</strong> – The name of your sentinel. Will be used for <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute.</p></li>
+<li><p><strong>boolean_value</strong> – The boolean value that the sentinel instance should resolve to.</p></li>
+<li><p><strong>repr</strong> – The method or string that should be used for the repr.</p></li>
+<li><p><strong>module</strong> – </p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A sentinel instance</p>
+</dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make_sentinel</span><span class="p">(</span><span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;_MISSING&#39;</span><span class="p">)</span>
-<span class="go">_MISSING</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span>
+<span class="go">Sentinel(&#39;Empty&#39;)</span>
 </pre></div>
 </div>
-<p>The most common use cases here in boltons are as default values
-for optional function arguments, partly because of its
-less-confusing appearance in automatically generated
-documentation. Sentinels also function well as placeholders in queues
-and linked lists.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>By design, additional calls to <code class="docutils literal notranslate"><span class="pre">make_sentinel</span></code> with the same
-values will not produce equivalent objects.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make_sentinel</span><span class="p">(</span><span class="s1">&#39;TEST&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">make_sentinel</span><span class="p">(</span><span class="s1">&#39;TEST&#39;</span><span class="p">)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">make_sentinel</span><span class="p">(</span><span class="s1">&#39;TEST&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">make_sentinel</span><span class="p">(</span><span class="s1">&#39;TEST&#39;</span><span class="p">))</span>
+<p>You can control the boolean value of your sentinel! By default, the value is <code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">Empty</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>This is to be able to do things like <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">Empty:</span> <span class="pre">...</span></code>
+But in some situations, the semantics  or usage of your sentinel is better
+align with False (like None or 0 are). In that case:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">,</span> <span class="n">boolean_value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">Empty</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
+<p>So that you can do things like:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Empty</span> <span class="ow">or</span> <span class="s1">&#39;default&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">&#39;default&#39;</span>
+</pre></div>
 </div>
+<p>You can control what you see in the repr, specifying a string value;</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">,</span> <span class="n">repr_</span><span class="o">=</span><span class="s1">&#39;Empty&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span>
+<span class="go">Empty</span>
+</pre></div>
+</div>
+<p>or a method;</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">,</span> <span class="n">repr_</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&gt;&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span>
+<span class="go">&lt;Empty&gt;</span>
+</pre></div>
+</div>
+<p>And yes, even though we used a lambda here, it’s still picklable:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pickle</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">,</span> <span class="n">repr_</span><span class="o">=</span><span class="s1">&#39;Empty&#39;</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">Empty</span><span class="p">))</span>  
+<span class="go">Empty</span>
+</pre></div>
+</div>
+<p>Talking about pickle, here’s some more info on that:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">unpickled_Empty</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">Empty</span><span class="p">))</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># The unpickled version is &quot;equal&quot; to the original:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">unpickled_Empty</span> <span class="o">==</span> <span class="n">Empty</span>  
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># the types are the same too:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">unpickled_Empty</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">Empty</span><span class="p">)</span>    
+<span class="go">True</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Note that though two sentinels might have the same name, they’re not equal:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AnotherEmptyWithSameName</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span>
+<span class="go">Sentinel(&#39;Empty&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AnotherEmptyWithSameName</span>
+<span class="go">Sentinel(&#39;Empty&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># but...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AnotherEmptyWithSameName</span> <span class="o">==</span> <span class="n">Empty</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Note even the types are the same!</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">AnotherEmptyWithSameName</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">Empty</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>One thing that makes the pickle work is that we took care of sticking in a
+<code class="docutils literal notranslate"><span class="pre">__module__</span></code> for you. <code class="docutils literal notranslate"><span class="pre">mk_sentinel</span></code> figures this out by some dark magic
+involving looking into the system’s “frames” etc. This may not always work since
+some systems (e.g. <code class="docutils literal notranslate"><span class="pre">pypy</span></code>) may use different “under-the-hood” methods.</p>
+<p>But if you want to control the value of <code class="docutils literal notranslate"><span class="pre">__module__</span></code> yourself, you can, simply
+but indicating what the module of the sentinel is.
+Usually, you’ll just specify it as <code class="docutils literal notranslate"><span class="pre">module=__name__</span></code>, which will stick the
+name of the module you’re defining the sentinel in for you!</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MySentinel</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;MySentinel&#39;</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="vm">__name__</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Thanks: Inspired greately from the <code class="docutils literal notranslate"><span class="pre">make_sentinel</span></code> function of <code class="docutils literal notranslate"><span class="pre">boltons</span></code>:
+See <a class="reference external" href="https://boltons.readthedocs.io/">https://boltons.readthedocs.io/</a>.</p>
 </dd></dl>
 
 <dl class="py function">
