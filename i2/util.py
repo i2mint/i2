@@ -3,9 +3,10 @@ from operator import attrgetter, itemgetter
 import inspect
 import re
 import itertools
+import sys
 import functools
 import types
-from typing import Mapping, Callable, Any, MutableMapping
+from typing import Mapping, Callable, Any, MutableMapping, Union, Optional
 
 
 class OverwritesForbidden(ValueError):
@@ -424,56 +425,146 @@ class MissingArgument(ValueError):
     pass
 
 
-def make_sentinel(name='_MISSING', var_name=None):
-    """Creates and returns a new **instance** of a new class, suitable for
-    usage as a "sentinel", a kind of singleton often used to indicate
-    a value is missing when ``None`` is a valid input.
+def _default_sentinel_repr_method(self):
+    return '%s(%r)' % (self.__class__.__name__, self.__name__)
 
-    Args:
-        name (str): Name of the Sentinel
-        var_name (str): Set this name to the name of the variable in
-            its respective module enable pickleability.
 
-    >>> make_sentinel(var_name='_MISSING')
-    _MISSING
+def mk_sentinel(
+    name,
+    boolean_value: bool = True,
+    repr_: Union[str, Callable] = _default_sentinel_repr_method,
+    *,
+    module: Optional[str] = None,
+):
+    """Creates and returns a new **instance** of a new class, suitable for usage as a
+    "sentinel" since it is a kind of singleton (there can be only one instance of it.)
 
-    The most common use cases here in boltons are as default values
-    for optional function arguments, partly because of its
-    less-confusing appearance in automatically generated
-    documentation. Sentinels also function well as placeholders in queues
-    and linked lists.
+    A frequent use case for sentinels are where we want to indicate that something is
+    missing. Often, we use ``None`` for this, but sometimes ``None`` is a valid value in
+    our context (see for example the ``inspect.Parameter.empty`` sentinel to indicate
+    that an argument doesn't have a default or annotation).
+    Other times, we may want to distinguish different kinds of "nothing".
 
-    .. note::
+    ``mk_sentinel`` can help you create such sentinels, takes care of annoying details
+    like pickability and allows you to control how to resolve your sentinel to a boolean.
 
-      By design, additional calls to ``make_sentinel`` with the same
-      values will not produce equivalent objects.
+    :param name: The name of your sentinel. Will be used for ``__name__`` attribute.
+    :param boolean_value: The boolean value that the sentinel instance should resolve to.
+    :param repr_: The method or string that should be used for the repr.
+    :param module:
+    :return: A sentinel instance
 
-      >>> make_sentinel('TEST') == make_sentinel('TEST')
-      False
-      >>> type(make_sentinel('TEST')) == type(make_sentinel('TEST'))
-      False
+    >>> Empty = mk_sentinel('Empty')
+    >>> Empty
+    Sentinel('Empty')
+
+    You can control the boolean value of your sentinel! By default, the value is ``True``
+
+    >>> Empty = mk_sentinel('Empty')
+    >>> bool(Empty)
+    True
+
+    This is to be able to do things like ``if Empty: ...``
+    But in some situations, the semantics  or usage of your sentinel is better
+    align with False (like None or 0 are). In that case:
+
+    >>> Empty = mk_sentinel('Empty', boolean_value=False)
+    >>> bool(Empty)
+    False
+
+    So that you can do things like:
+
+    >>> t = Empty or 'default'
+    >>> t
+    'default'
+
+    You can control what you see in the repr, specifying a string value;
+
+    >>> Empty = mk_sentinel('Empty', repr_='Empty')
+    >>> Empty
+    Empty
+
+    or a method;
+
+    >>> Empty = mk_sentinel('Empty', repr_=lambda self: f"<{self.__name__}>")
+    >>> Empty
+    <Empty>
+
+    And yes, even though we used a lambda here, it's still picklable:
+
+    >>> import pickle
+
+    >>> Empty = mk_sentinel('Empty', repr_='Empty', module=__name__)
+    >>> pickle.loads(pickle.dumps(Empty))  # doctest: +SKIP
+    Empty
+
+    Talking about pickle, here's some more info on that:
+
+    >>> unpickled_Empty = pickle.loads(pickle.dumps(Empty))  # doctest: +SKIP
+    >>> # The unpickled version is "equal" to the original:
+    >>> unpickled_Empty == Empty  # doctest: +SKIP
+    True
+    >>> # the types are the same too:
+    >>> type(unpickled_Empty) == type(Empty)    # doctest: +SKIP
+    True
+    >>>
+    >>>
+    >>> # looks the same from the point of view of the repr!
+    >>> AnotherEmptyWithSameName = mk_sentinel('Empty')  # doctest: +SKIP
+    >>> AnotherEmptyWithSameName  # doctest: +SKIP
+    Sentinel('Empty')
+    >>> # but it's actually not:
+    >>> AnotherEmptyWithSameName == Empty  # doctest: +SKIP
+    False
+    >>> # the types aren't even the same:
+    >>> type(AnotherEmptyWithSameName) == type(Empty)  # doctest: +SKIP
+    False
+
+    One thing that makes the pickle work is that we took care of sticking in a
+    ``__module__`` for you. ``mk_sentinel`` figures this out by some dark magic
+    involving looking into the system's "frames" etc. This may not always work since
+    some systems (e.g. ``pypy``) may use different "under-the-hood" methods.
+
+    But if you want to control the value of ``__module__`` yourself, you can, simply
+    but indicating what the module of the sentinel is.
+    Usually, you'll just specify it as ``module=__name__``, which will stick the
+    name of the module you're defining the sentinel in for you!
+
+    >>> MySentinel = mk_sentinel('MySentinel', module=__name__)
+
+    Thanks: Inspired greately from the ``make_sentinel`` function of ``boltons``:
+    See https://boltons.readthedocs.io/.
 
     """
 
     class Sentinel(object):
         def __init__(self):
-            self.name = name
-            self.var_name = var_name
+            self.__name__ = name
 
-        def __repr__(self):
-            if self.var_name:
-                return self.var_name
-            return '%s(%r)' % (self.__class__.__name__, self.name)
+        if callable(repr_):
+            __repr__ = repr_
+        else:
 
-        if var_name:
+            def __repr__(self):
+                return repr_
 
-            def __reduce__(self):
-                return self.var_name
+        def __reduce__(self):
+            return self.__name__
 
-        def __nonzero__(self):
-            return False
+        def __bool__(self):
+            return boolean_value
 
-        __bool__ = __nonzero__
+    if module is None:
+        # TODO: Try to use something else than hidden _getframe
+        # TODO: extract this module resolver so can be reused (_getframe(2)?)
+        frame = sys._getframe(1)
+        module = frame.f_globals.get('__name__')
+
+    if not module or module not in sys.modules:
+        raise ValueError(
+            'Pickleable sentinel objects can only be made from top-level module scopes'
+        )
+    Sentinel.__module__ = module
 
     return Sentinel()
 
@@ -486,7 +577,7 @@ def _indent(text, margin, newline='\n', key=bool):
     return newline.join(indented_lines)
 
 
-NO_DEFAULT = make_sentinel(var_name='NO_DEFAULT')
+NO_DEFAULT = mk_sentinel('NO_DEFAULT', boolean_value=False)
 
 
 from inspect import formatannotation
