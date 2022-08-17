@@ -509,15 +509,20 @@ def mk_sentinel(
     True
     >>>
     >>>
-    >>> # looks the same from the point of view of the repr!
-    >>> AnotherEmptyWithSameName = mk_sentinel('Empty')  # doctest: +SKIP
-    >>> AnotherEmptyWithSameName  # doctest: +SKIP
+
+    Note that though two sentinels might have the same name, they're not equal:
+
+    >>> Empty = mk_sentinel('Empty')
+    >>> AnotherEmptyWithSameName = mk_sentinel('Empty')
+    >>> Empty
     Sentinel('Empty')
-    >>> # but it's actually not:
-    >>> AnotherEmptyWithSameName == Empty  # doctest: +SKIP
+    >>> AnotherEmptyWithSameName
+    Sentinel('Empty')
+    >>> # but...
+    >>> AnotherEmptyWithSameName == Empty
     False
-    >>> # the types aren't even the same:
-    >>> type(AnotherEmptyWithSameName) == type(Empty)  # doctest: +SKIP
+    >>> # Note even the types are the same!
+    >>> type(AnotherEmptyWithSameName) == type(Empty)
     False
 
     One thing that makes the pickle work is that we took care of sticking in a
