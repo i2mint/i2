@@ -55,5 +55,5 @@ from i2.util import (
     frozendict,
     inject_method,
     mk_sentinel,
-    ensure_identifiers
+    ensure_identifiers,
 )

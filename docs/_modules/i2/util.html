@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.0.136 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.0.137 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -106,25 +106,68 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">types</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Mapping</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">MutableMapping</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">TypeVar</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="OverwritesForbidden"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.OverwritesForbidden">[docs]</a><span class="k">class</span> <span class="nc">OverwritesForbidden</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Raise when a user is not allowed to overwrite a mapping&#39;s key&quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="ensure_identifiers"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.ensure_identifiers">[docs]</a><span class="k">def</span> <span class="nf">ensure_identifiers</span><span class="p">(</span><span class="n">identifiers</span><span class="p">):</span>
+<div class="viewcode-block" id="ensure_identifiers"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.ensure_identifiers">[docs]</a><span class="k">def</span> <span class="nf">ensure_identifiers</span><span class="p">(</span>
+    <span class="o">*</span><span class="n">objs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+    <span class="n">get_identfiers</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">,</span>
+    <span class="n">is_identifier</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Ensure an iterable of identifiers</span>
-<span class="sd">    &gt;&gt;&gt; list(ensure_identifiers([&#39;foo bar&#39;, &#39;and&#39;, &#39;me&#39;]))</span>
-<span class="sd">    [&#39;foo&#39;, &#39;bar&#39;, &#39;and&#39;, &#39;me&#39;]</span>
+
+<span class="sd">    &gt;&gt;&gt; list(ensure_identifiers(&#39;these&#39;, &#39;are&#39;, &#39;valid&#39;, &#39;identifiers&#39;))</span>
+<span class="sd">    [&#39;these&#39;, &#39;are&#39;, &#39;valid&#39;, &#39;identifiers&#39;]</span>
+
+<span class="sd">    By default, ``ensure_identifiers`` will apply ``str.split`` to each ``obj`` of</span>
+<span class="sd">    ``objs`` (assumed to be strings!) so that it can extract identifiers from</span>
+<span class="sd">    space-separated strings of identifiers:</span>
+
+<span class="sd">    &gt;&gt;&gt; list(ensure_identifiers(&#39;these are valid identifiers&#39;))</span>
+<span class="sd">    [&#39;these&#39;, &#39;are&#39;, &#39;valid&#39;, &#39;identifiers&#39;]</span>
+
+<span class="sd">    You can control this functionality through the ``get_identfiers`` argument, for</span>
+<span class="sd">    example, disallowing such splitting, or enabling the extraction of identifiers</span>
+<span class="sd">    from other objects than strings.</span>
+
+<span class="sd">    &gt;&gt;&gt; list(ensure_identifiers(</span>
+<span class="sd">    ...     {&#39;this&#39;: 0, &#39;works&#39;: 1}, {&#39;too&#39;: 2},</span>
+<span class="sd">    ...     get_identfiers=list</span>
+<span class="sd">    ... ))</span>
+<span class="sd">    [&#39;this&#39;, &#39;works&#39;, &#39;too&#39;]</span>
+
+<span class="sd">    You can also control the ``is_identifier`` validatation function:</span>
+
+<span class="sd">    &gt;&gt;&gt; def less_than_6_chars(s): return len(s) &lt; 6</span>
+<span class="sd">    &gt;&gt;&gt; list(ensure_identifiers(&#39;okay&#39;, &#39;too_long&#39;, is_identifier=less_than_6_chars))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">      ...</span>
+<span class="sd">    ValueError: too_long isn&#39;t an identifier according toless_than_6_chars</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">identifiers</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">identifier</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">identifier</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">identifier</span> <span class="ow">in</span> <span class="n">get_identfiers</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">is_identifier</span><span class="p">(</span><span class="n">identifier</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">identifier</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;</span><span class="si">{identifier}</span><span class="s2"> isn&#39;t a python identifier (i.e. valid variable name)&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2"> isn&#39;t an identifier according to&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">is_identifier</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">is_identifier</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span></div>
 
 
@@ -183,7 +226,7 @@
 <span class="sd">    &gt;&gt;&gt; baz(apple=3, banana=4)</span>
 <span class="sd">    baz(apple=3, banana=4)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ensure_identifiers</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ensure_identifiers</span><span class="p">(</span><span class="o">*</span><span class="n">names</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scope</span> <span class="ow">or</span> <span class="n">allow_overwrites</span><span class="p">:</span>
             <span class="n">scope</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">factory</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
