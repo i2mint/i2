@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.0.135 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.0.136 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -103,9 +103,10 @@
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">types</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">MutableMapping</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 
 <div class="viewcode-block" id="OverwritesForbidden"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.OverwritesForbidden">[docs]</a><span class="k">class</span> <span class="nc">OverwritesForbidden</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
@@ -524,56 +525,151 @@
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="make_sentinel"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.make_sentinel">[docs]</a><span class="k">def</span> <span class="nf">make_sentinel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;_MISSING&#39;</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Creates and returns a new **instance** of a new class, suitable for</span>
-<span class="sd">    usage as a &quot;sentinel&quot;, a kind of singleton often used to indicate</span>
-<span class="sd">    a value is missing when ``None`` is a valid input.</span>
+<span class="k">def</span> <span class="nf">_default_sentinel_repr_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">(</span><span class="si">%r</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        name (str): Name of the Sentinel</span>
-<span class="sd">        var_name (str): Set this name to the name of the variable in</span>
-<span class="sd">            its respective module enable pickleability.</span>
 
-<span class="sd">    &gt;&gt;&gt; make_sentinel(var_name=&#39;_MISSING&#39;)</span>
-<span class="sd">    _MISSING</span>
+<div class="viewcode-block" id="mk_sentinel"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.mk_sentinel">[docs]</a><span class="k">def</span> <span class="nf">mk_sentinel</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">boolean_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">repr_</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_default_sentinel_repr_method</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">module</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates and returns a new **instance** of a new class, suitable for usage as a</span>
+<span class="sd">    &quot;sentinel&quot; since it is a kind of singleton (there can be only one instance of it.)</span>
 
-<span class="sd">    The most common use cases here in boltons are as default values</span>
-<span class="sd">    for optional function arguments, partly because of its</span>
-<span class="sd">    less-confusing appearance in automatically generated</span>
-<span class="sd">    documentation. Sentinels also function well as placeholders in queues</span>
-<span class="sd">    and linked lists.</span>
+<span class="sd">    A frequent use case for sentinels are where we want to indicate that something is</span>
+<span class="sd">    missing. Often, we use ``None`` for this, but sometimes ``None`` is a valid value in</span>
+<span class="sd">    our context (see for example the ``inspect.Parameter.empty`` sentinel to indicate</span>
+<span class="sd">    that an argument doesn&#39;t have a default or annotation).</span>
+<span class="sd">    Other times, we may want to distinguish different kinds of &quot;nothing&quot;.</span>
 
-<span class="sd">    .. note::</span>
+<span class="sd">    ``mk_sentinel`` can help you create such sentinels, takes care of annoying details</span>
+<span class="sd">    like pickability and allows you to control how to resolve your sentinel to a boolean.</span>
 
-<span class="sd">      By design, additional calls to ``make_sentinel`` with the same</span>
-<span class="sd">      values will not produce equivalent objects.</span>
+<span class="sd">    :param name: The name of your sentinel. Will be used for ``__name__`` attribute.</span>
+<span class="sd">    :param boolean_value: The boolean value that the sentinel instance should resolve to.</span>
+<span class="sd">    :param repr_: The method or string that should be used for the repr.</span>
+<span class="sd">    :param module:</span>
+<span class="sd">    :return: A sentinel instance</span>
 
-<span class="sd">      &gt;&gt;&gt; make_sentinel(&#39;TEST&#39;) == make_sentinel(&#39;TEST&#39;)</span>
-<span class="sd">      False</span>
-<span class="sd">      &gt;&gt;&gt; type(make_sentinel(&#39;TEST&#39;)) == type(make_sentinel(&#39;TEST&#39;))</span>
-<span class="sd">      False</span>
+<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;Empty&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; Empty</span>
+<span class="sd">    Sentinel(&#39;Empty&#39;)</span>
+
+<span class="sd">    You can control the boolean value of your sentinel! By default, the value is ``True``</span>
+
+<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;Empty&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; bool(Empty)</span>
+<span class="sd">    True</span>
+
+<span class="sd">    This is to be able to do things like ``if Empty: ...``</span>
+<span class="sd">    But in some situations, the semantics  or usage of your sentinel is better</span>
+<span class="sd">    align with False (like None or 0 are). In that case:</span>
+
+<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;Empty&#39;, boolean_value=False)</span>
+<span class="sd">    &gt;&gt;&gt; bool(Empty)</span>
+<span class="sd">    False</span>
+
+<span class="sd">    So that you can do things like:</span>
+
+<span class="sd">    &gt;&gt;&gt; t = Empty or &#39;default&#39;</span>
+<span class="sd">    &gt;&gt;&gt; t</span>
+<span class="sd">    &#39;default&#39;</span>
+
+<span class="sd">    You can control what you see in the repr, specifying a string value;</span>
+
+<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;Empty&#39;, repr_=&#39;Empty&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; Empty</span>
+<span class="sd">    Empty</span>
+
+<span class="sd">    or a method;</span>
+
+<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;Empty&#39;, repr_=lambda self: f&quot;&lt;{self.__name__}&gt;&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; Empty</span>
+<span class="sd">    &lt;Empty&gt;</span>
+
+<span class="sd">    And yes, even though we used a lambda here, it&#39;s still picklable:</span>
+
+<span class="sd">    &gt;&gt;&gt; import pickle</span>
+
+<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;Empty&#39;, repr_=&#39;Empty&#39;, module=__name__)</span>
+<span class="sd">    &gt;&gt;&gt; pickle.loads(pickle.dumps(Empty))  # doctest: +SKIP</span>
+<span class="sd">    Empty</span>
+
+<span class="sd">    Talking about pickle, here&#39;s some more info on that:</span>
+
+<span class="sd">    &gt;&gt;&gt; unpickled_Empty = pickle.loads(pickle.dumps(Empty))  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; # The unpickled version is &quot;equal&quot; to the original:</span>
+<span class="sd">    &gt;&gt;&gt; unpickled_Empty == Empty  # doctest: +SKIP</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; # the types are the same too:</span>
+<span class="sd">    &gt;&gt;&gt; type(unpickled_Empty) == type(Empty)    # doctest: +SKIP</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+
+<span class="sd">    Note that though two sentinels might have the same name, they&#39;re not equal:</span>
+
+<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;Empty&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; AnotherEmptyWithSameName = mk_sentinel(&#39;Empty&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; Empty</span>
+<span class="sd">    Sentinel(&#39;Empty&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; AnotherEmptyWithSameName</span>
+<span class="sd">    Sentinel(&#39;Empty&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; # but...</span>
+<span class="sd">    &gt;&gt;&gt; AnotherEmptyWithSameName == Empty</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; # Note even the types are the same!</span>
+<span class="sd">    &gt;&gt;&gt; type(AnotherEmptyWithSameName) == type(Empty)</span>
+<span class="sd">    False</span>
+
+<span class="sd">    One thing that makes the pickle work is that we took care of sticking in a</span>
+<span class="sd">    ``__module__`` for you. ``mk_sentinel`` figures this out by some dark magic</span>
+<span class="sd">    involving looking into the system&#39;s &quot;frames&quot; etc. This may not always work since</span>
+<span class="sd">    some systems (e.g. ``pypy``) may use different &quot;under-the-hood&quot; methods.</span>
+
+<span class="sd">    But if you want to control the value of ``__module__`` yourself, you can, simply</span>
+<span class="sd">    but indicating what the module of the sentinel is.</span>
+<span class="sd">    Usually, you&#39;ll just specify it as ``module=__name__``, which will stick the</span>
+<span class="sd">    name of the module you&#39;re defining the sentinel in for you!</span>
+
+<span class="sd">    &gt;&gt;&gt; MySentinel = mk_sentinel(&#39;MySentinel&#39;, module=__name__)</span>
+
+<span class="sd">    Thanks: Inspired greately from the ``make_sentinel`` function of ``boltons``:</span>
+<span class="sd">    See https://boltons.readthedocs.io/.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">class</span> <span class="nc">Sentinel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
         <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">var_name</span> <span class="o">=</span> <span class="n">var_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
 
-        <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_name</span>
-            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">(</span><span class="si">%r</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">repr_</span><span class="p">):</span>
+            <span class="fm">__repr__</span> <span class="o">=</span> <span class="n">repr_</span>
+        <span class="k">else</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="n">var_name</span><span class="p">:</span>
+            <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">repr_</span>
 
-            <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_name</span>
+        <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span>
 
-        <span class="k">def</span> <span class="nf">__nonzero__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">boolean_value</span>
 
-        <span class="fm">__bool__</span> <span class="o">=</span> <span class="n">__nonzero__</span>
+    <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># TODO: Try to use something else than hidden _getframe</span>
+        <span class="c1"># TODO: extract this module resolver so can be reused (_getframe(2)?)</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_globals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__name__&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">module</span> <span class="ow">or</span> <span class="n">module</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Pickleable sentinel objects can only be made from top-level module scopes&#39;</span>
+        <span class="p">)</span>
+    <span class="n">Sentinel</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="n">module</span>
 
     <span class="k">return</span> <span class="n">Sentinel</span><span class="p">()</span></div>
 
@@ -586,7 +682,7 @@
     <span class="k">return</span> <span class="n">newline</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">indented_lines</span><span class="p">)</span>
 
 
-<span class="n">NO_DEFAULT</span> <span class="o">=</span> <span class="n">make_sentinel</span><span class="p">(</span><span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;NO_DEFAULT&#39;</span><span class="p">)</span>
+<span class="n">NO_DEFAULT</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;NO_DEFAULT&#39;</span><span class="p">,</span> <span class="n">boolean_value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">formatannotation</span>
