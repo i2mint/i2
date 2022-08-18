@@ -6,25 +6,68 @@ import itertools
 import sys
 import functools
 import types
-from typing import Mapping, Callable, Any, MutableMapping, Union, Optional
+from typing import (
+    Mapping,
+    Callable,
+    Any,
+    MutableMapping,
+    Union,
+    Optional,
+    Iterable,
+    TypeVar,
+)
+
+T = TypeVar('T')
 
 
 class OverwritesForbidden(ValueError):
     """Raise when a user is not allowed to overwrite a mapping's key"""
 
 
-def ensure_identifiers(identifiers):
+def ensure_identifiers(
+    *objs: Iterable[T],
+    get_identfiers: Callable[[T], Iterable[str]] = str.split,
+    is_identifier: Callable[[str], bool] = str.isidentifier,
+):
     """Ensure an iterable of identifiers
-    >>> list(ensure_identifiers(['foo bar', 'and', 'me']))
-    ['foo', 'bar', 'and', 'me']
+
+    >>> list(ensure_identifiers('these', 'are', 'valid', 'identifiers'))
+    ['these', 'are', 'valid', 'identifiers']
+
+    By default, ``ensure_identifiers`` will apply ``str.split`` to each ``obj`` of
+    ``objs`` (assumed to be strings!) so that it can extract identifiers from
+    space-separated strings of identifiers:
+
+    >>> list(ensure_identifiers('these are valid identifiers'))
+    ['these', 'are', 'valid', 'identifiers']
+
+    You can control this functionality through the ``get_identfiers`` argument, for
+    example, disallowing such splitting, or enabling the extraction of identifiers
+    from other objects than strings.
+
+    >>> list(ensure_identifiers(
+    ...     {'this': 0, 'works': 1}, {'too': 2},
+    ...     get_identfiers=list
+    ... ))
+    ['this', 'works', 'too']
+
+    You can also control the ``is_identifier`` validatation function:
+
+    >>> def less_than_6_chars(s): return len(s) < 6
+    >>> list(ensure_identifiers('okay', 'too_long', is_identifier=less_than_6_chars))
+    Traceback (most recent call last):
+      ...
+    ValueError: too_long isn't an identifier according toless_than_6_chars
+
     """
-    for string in identifiers:
-        for identifier in string.split():
-            if identifier.isidentifier():
+    for obj in objs:
+        for identifier in get_identfiers(obj):
+            if is_identifier(identifier):
                 yield identifier
             else:
                 raise ValueError(
-                    "{identifier} isn't a python identifier (i.e. valid variable name)"
+                    f"{identifier} isn't an identifier according to"
+                    f"{getattr(is_identifier, '__name__', str(is_identifier))}"
                 )
 
 
@@ -83,7 +126,7 @@ def insert_name_based_objects_in_scope(
     >>> baz(apple=3, banana=4)
     baz(apple=3, banana=4)
     """
-    for name in ensure_identifiers(names):
+    for name in ensure_identifiers(*names):
         if name not in scope or allow_overwrites:
             scope[name] = factory(name)
         else:
