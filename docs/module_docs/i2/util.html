@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.0.137 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.0.138 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -519,7 +519,7 @@ It’s</p>
 
 <dl class="py function">
 <dt id="i2.util.mk_sentinel">
-<code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">mk_sentinel</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">boolean_value: bool = True</em>, <em class="sig-param">repr_: Union[str</em>, <em class="sig-param">Callable] = &lt;function _default_sentinel_repr_method&gt;</em>, <em class="sig-param">*</em>, <em class="sig-param">module: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#mk_sentinel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.mk_sentinel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">mk_sentinel</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">boolean_value: bool = False</em>, <em class="sig-param">repr_: Union[str</em>, <em class="sig-param">Callable] = &lt;function _default_sentinel_repr_method&gt;</em>, <em class="sig-param">*</em>, <em class="sig-param">module: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#mk_sentinel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.mk_sentinel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates and returns a new <strong>instance</strong> of a new class, suitable for usage as a
 “sentinel” since it is a kind of singleton (there can be only one instance of it.)</p>
 <p>A frequent use case for sentinels are where we want to indicate that something is
@@ -547,30 +547,36 @@ like pickability and allows you to control how to resolve your sentinel to a boo
 <span class="go">Sentinel(&#39;Empty&#39;)</span>
 </pre></div>
 </div>
-<p>You can control the boolean value of your sentinel! By default, the value is <code class="docutils literal notranslate"><span class="pre">True</span></code></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">)</span>
+<p>By default, the boolean resolution of a sentinel is <code class="docutils literal notranslate"><span class="pre">False</span></code>. Meaning:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Nothing</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Nothing&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">Nothing</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>This is consistent with <code class="docutils literal notranslate"><span class="pre">None</span></code>, so that you can check that an object <code class="docutils literal notranslate"><span class="pre">x</span></code> is not
+<code class="docutils literal notranslate"><span class="pre">Nothing</span></code> by doing <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">x:</span> <span class="pre">...</span></code> or idioms like:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">Nothing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">or</span> <span class="s1">&#39;default&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">&#39;default&#39;</span>
+</pre></div>
+</div>
+<p>(Though note that in situations where other elements that cast to <code class="docutils literal notranslate"><span class="pre">False</span></code> are
+valid values for <code class="docutils literal notranslate"><span class="pre">x</span></code> (like <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, or <code class="docutils literal notranslate"><span class="pre">False</span></code> itself), it’s safer to use
+<code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">x</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">Nothing:</span> <span class="pre">...</span></code>.)</p>
+<p>Anyway, I digress.
+Point is that in some situations, the semantics  or usage of your sentinel is better
+align with True. You can control what the boolean resolution of your
+sentinel should be through the <code class="docutils literal notranslate"><span class="pre">boolean_value</span></code> argument:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">,</span> <span class="n">boolean_value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">Empty</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>This is to be able to do things like <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">Empty:</span> <span class="pre">...</span></code>
-But in some situations, the semantics  or usage of your sentinel is better
-align with False (like None or 0 are). In that case:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">,</span> <span class="n">boolean_value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">Empty</span><span class="p">)</span>
-<span class="go">False</span>
-</pre></div>
-</div>
-<p>So that you can do things like:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Empty</span> <span class="ow">or</span> <span class="s1">&#39;default&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
-<span class="go">&#39;default&#39;</span>
-</pre></div>
-</div>
-<p>You can control what you see in the repr, specifying a string value;</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;Empty&#39;</span><span class="p">,</span> <span class="n">repr_</span><span class="o">=</span><span class="s1">&#39;Empty&#39;</span><span class="p">)</span>
+<p>You can also control what you see in the repr, specifying a string value;</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;undefined&#39;</span><span class="p">,</span> <span class="n">repr_</span><span class="o">=</span><span class="s1">&#39;undefined&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Empty</span>
-<span class="go">Empty</span>
+<span class="go">undefined</span>
 </pre></div>
 </div>
 <p>or a method;</p>
