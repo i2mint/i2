@@ -474,7 +474,7 @@ def _default_sentinel_repr_method(self):
 
 def mk_sentinel(
     name,
-    boolean_value: bool = True,
+    boolean_value: bool = False,
     repr_: Union[str, Callable] = _default_sentinel_repr_method,
     *,
     module: Optional[str] = None,
@@ -501,31 +501,38 @@ def mk_sentinel(
     >>> Empty
     Sentinel('Empty')
 
-    You can control the boolean value of your sentinel! By default, the value is ``True``
+    By default, the boolean resolution of a sentinel is ``False``. Meaning:
 
-    >>> Empty = mk_sentinel('Empty')
+    >>> Nothing = mk_sentinel('Nothing')
+    >>> bool(Nothing)
+    False
+
+    This is consistent with ``None``, so that you can check that an object ``x`` is not
+    ``Nothing`` by doing ``if x: ...`` or idioms like:
+
+    >>> x = Nothing
+    >>> x = x or 'default'
+    >>> x
+    'default'
+
+    (Though note that in situations where other elements that cast to ``False`` are
+    valid values for ``x`` (like ``0``, ``None``, or ``False`` itself), it's safer to use
+    ``if x is not Nothing: ...``.)
+
+    Anyway, I digress.
+    Point is that in some situations, the semantics  or usage of your sentinel is better
+    align with True. You can control what the boolean resolution of your
+    sentinel should be through the ``boolean_value`` argument:
+
+    >>> Empty = mk_sentinel('Empty', boolean_value=True)
     >>> bool(Empty)
     True
 
-    This is to be able to do things like ``if Empty: ...``
-    But in some situations, the semantics  or usage of your sentinel is better
-    align with False (like None or 0 are). In that case:
+    You can also control what you see in the repr, specifying a string value;
 
-    >>> Empty = mk_sentinel('Empty', boolean_value=False)
-    >>> bool(Empty)
-    False
-
-    So that you can do things like:
-
-    >>> t = Empty or 'default'
-    >>> t
-    'default'
-
-    You can control what you see in the repr, specifying a string value;
-
-    >>> Empty = mk_sentinel('Empty', repr_='Empty')
+    >>> Empty = mk_sentinel('undefined', repr_='undefined')
     >>> Empty
-    Empty
+    undefined
 
     or a method;
 
