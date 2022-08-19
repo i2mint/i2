@@ -21,6 +21,19 @@ from i2.signatures import normalized_func
 from i2.tests.util import sig_to_inputs, trace_call
 
 
+def test_signature_of_partial():
+    from functools import partial
+
+    def foo(a, b, c=3) -> int:
+        return a + b * c
+
+    assert str(Sig(foo)) == '(a, b, c=3) -> int'
+    assert str(Sig(partial(foo, 1))) == '(b, c=3) -> int'
+    assert str(Sig(partial(foo, a=1, b=2))) == '(*, a=1, b=2, c=3) -> int'
+    assert str(Sig(partial(foo, 1, 2))) == '(c=3) -> int'
+    assert str(Sig(partial(foo, 1, b=2))) == '(*, b=2, c=3) -> int'
+
+
 def test_sig_wrap_edge_cases():
     """Tests some edge cases involving simultaneous changes of defaults and kinds.
 
