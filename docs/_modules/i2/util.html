@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.0.137 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.0.138 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -574,7 +574,7 @@
 
 <div class="viewcode-block" id="mk_sentinel"><a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.mk_sentinel">[docs]</a><span class="k">def</span> <span class="nf">mk_sentinel</span><span class="p">(</span>
     <span class="n">name</span><span class="p">,</span>
-    <span class="n">boolean_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">boolean_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">repr_</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_default_sentinel_repr_method</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">module</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -601,31 +601,38 @@
 <span class="sd">    &gt;&gt;&gt; Empty</span>
 <span class="sd">    Sentinel(&#39;Empty&#39;)</span>
 
-<span class="sd">    You can control the boolean value of your sentinel! By default, the value is ``True``</span>
+<span class="sd">    By default, the boolean resolution of a sentinel is ``False``. Meaning:</span>
 
-<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;Empty&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; Nothing = mk_sentinel(&#39;Nothing&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; bool(Nothing)</span>
+<span class="sd">    False</span>
+
+<span class="sd">    This is consistent with ``None``, so that you can check that an object ``x`` is not</span>
+<span class="sd">    ``Nothing`` by doing ``if x: ...`` or idioms like:</span>
+
+<span class="sd">    &gt;&gt;&gt; x = Nothing</span>
+<span class="sd">    &gt;&gt;&gt; x = x or &#39;default&#39;</span>
+<span class="sd">    &gt;&gt;&gt; x</span>
+<span class="sd">    &#39;default&#39;</span>
+
+<span class="sd">    (Though note that in situations where other elements that cast to ``False`` are</span>
+<span class="sd">    valid values for ``x`` (like ``0``, ``None``, or ``False`` itself), it&#39;s safer to use</span>
+<span class="sd">    ``if x is not Nothing: ...``.)</span>
+
+<span class="sd">    Anyway, I digress.</span>
+<span class="sd">    Point is that in some situations, the semantics  or usage of your sentinel is better</span>
+<span class="sd">    align with True. You can control what the boolean resolution of your</span>
+<span class="sd">    sentinel should be through the ``boolean_value`` argument:</span>
+
+<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;Empty&#39;, boolean_value=True)</span>
 <span class="sd">    &gt;&gt;&gt; bool(Empty)</span>
 <span class="sd">    True</span>
 
-<span class="sd">    This is to be able to do things like ``if Empty: ...``</span>
-<span class="sd">    But in some situations, the semantics  or usage of your sentinel is better</span>
-<span class="sd">    align with False (like None or 0 are). In that case:</span>
+<span class="sd">    You can also control what you see in the repr, specifying a string value;</span>
 
-<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;Empty&#39;, boolean_value=False)</span>
-<span class="sd">    &gt;&gt;&gt; bool(Empty)</span>
-<span class="sd">    False</span>
-
-<span class="sd">    So that you can do things like:</span>
-
-<span class="sd">    &gt;&gt;&gt; t = Empty or &#39;default&#39;</span>
-<span class="sd">    &gt;&gt;&gt; t</span>
-<span class="sd">    &#39;default&#39;</span>
-
-<span class="sd">    You can control what you see in the repr, specifying a string value;</span>
-
-<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;Empty&#39;, repr_=&#39;Empty&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; Empty = mk_sentinel(&#39;undefined&#39;, repr_=&#39;undefined&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; Empty</span>
-<span class="sd">    Empty</span>
+<span class="sd">    undefined</span>
 
 <span class="sd">    or a method;</span>
 
