@@ -2,6 +2,7 @@
 
 from inspect import Parameter, Signature
 from typing import List, Any, Union, Callable, Iterator, Tuple, Optional, Iterable
+from inspect import signature
 
 from i2.signatures import KO, PK, PO, var_param_kinds
 from i2.signatures import _empty
@@ -340,6 +341,89 @@ def _get_non_variadic_kind_counts(sig: Sig):
 def mk_func_inputs_for_params(params: ParamsAble_, param_to_input):
     pass
 
+
+# ---------------------------------------------------------------------------------------
+# Tools to analyze compatibility between signature and function call
+
+from i2 import Pipe
+import re
+
+_signature_msg_patterns = [
+    'keyword arguments$',
+    'got some positional\-only arguments passed as keyword arguments',
+    'no signature found',
+]
+
+_signature_msg_regex = re.compile('|'.join(map('({})'.format, _signature_msg_patterns)))
+is_signature_msg = Pipe(_signature_msg_regex.search, bool)
+
+
+def _is_signature_error(
+    error_obj,
+    signature_error_types=(TypeError, ValueError),
+    is_signature_msg=is_signature_msg,
+):
+    if isinstance(error_obj, signature_error_types):
+        error_msg = str(error_obj)
+        return is_signature_msg(error_msg)
+    return False
+
+
+def call_and_return_error(func, *args, **kwargs):
+    try:
+        func(*args, **kwargs)
+        return None
+    except BaseException as error_obj:
+        return error_obj
+
+
+def on_error_return_none(func, *args, **kwargs):
+    try:
+        return func(*args, **kwargs)
+    except BaseException as error_obj:
+        return None
+
+
+call_raises_signature_error = Pipe(call_and_return_error, _is_signature_error)
+
+call_raises_signature_error.__doc__ = '''
+>>> call_raises_signature_error(lambda x, /, y: None, 1, y=2)
+False
+>>> call_raises_signature_error(lambda x, /, y: None, x=1, y=2)
+True
+'''
+
+# Yes, I too see that this can be made into yet another Pipe!
+def function_is_compatible_with_signature(func, sig):
+    """
+    Runs through all combinations of positional and keyword arguments,
+
+    >>> function_is_compatible_with_signature(hasattr, Sig(lambda obj, name: ...))
+    False
+    >>> function_is_compatible_with_signature(hasattr, Sig(lambda obj, name, /: ...))
+    True
+    """
+
+    def _call_raises_sig_error():
+        for args, kwargs in sig_to_inputs(sig):
+            yield call_raises_signature_error(func, *args, **kwargs)
+
+    return not any(_call_raises_sig_error())
+
+
+all_callable_builtins = list(filter(callable, vars(__builtins__).values()))
+
+
+def builtin_signatureless_callables():
+    """
+    A generator of builtin callables that don't have signatures.
+    """
+    for obj in all_callable_builtins:
+        if call_raises_signature_error(signature, obj):
+            yield obj
+
+
+# ---------------------------------------------------------------------------------------
 
 #
 # @mk_func_from_params.register
