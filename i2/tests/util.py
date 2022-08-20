@@ -411,15 +411,17 @@ def function_is_compatible_with_signature(func, sig):
     return not any(_call_raises_sig_error())
 
 
-all_callable_builtins = list(filter(callable, vars(__builtins__).values()))
+def builtin_objects():
+    for name in dir(__builtins__):
+        yield getattr(__builtins__, name)
 
 
 def builtin_signatureless_callables():
     """
     A generator of builtin callables that don't have signatures.
     """
-    for obj in all_callable_builtins:
-        if call_raises_signature_error(signature, obj):
+    for obj in builtin_objects():
+        if callable(obj) and call_raises_signature_error(signature, obj):
             yield obj
 
 
