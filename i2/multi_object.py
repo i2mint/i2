@@ -449,7 +449,7 @@ class FuncFanout(MultiFunc):
     >>> groot = lambda a: 'I am groot'
     >>> m = FuncFanout(foo, bar, groot)
     >>>
-    >>> m(3)
+    >>> dict(m(3))
     {'foo': 5, 'bar': 6, 'lambda_2': 'I am groot'}
 
     Don't like that `lambda_2`?
@@ -457,17 +457,22 @@ class FuncFanout(MultiFunc):
     ones found by the `MultObj.auto_namer`.
 
     >>> m = FuncFanout(foo, bar_results=bar, groot=groot)
-    >>> m(10)
+    >>> dict(m(10))
     {'foo': 12, 'bar_results': 20, 'groot': 'I am groot'}
 
-    `FuncFanout` uses the `call_generator` method to iterate through the functions,
-    yielding `(func_key, func_output)` pairs on the way.
-    The result of calling a `FuncFanout` is simply the gathering of those pairs in
-    a `dict`.
+    Or if you want your results as a tuple, you could do:
+
+    >>> tuple(dict(m(10)).values())
+    (12, 20, 'I am groot')
+
+    The above, gather in a ``dict`` is one way to get your data, but what calling a
+    ``FuncFanout`` instance actually gives you is a generator that yields the
+    ``(func_key, func_output)`` pairs one at a time
+
     Sometimes you may want/need more control though, and prefer to iterate through the
     pairs yourself, and in that case use `call_generator` directly.
 
-    >>> gen = m.call_generator(10)
+    >>> gen = m(10)
     >>> next(gen)
     ('foo', 12)
     >>> next(gen)
@@ -475,14 +480,21 @@ class FuncFanout(MultiFunc):
     >>> next(gen)
     ('groot', 'I am groot')
 
-    You know how you can do `dict(a=1, b=2)` or `dict({'a': 1, 'b': 2})` with dicts?
-    You can do that here too.
-    It's useful when the names (keys) of your functions aren't valid python names,
-    or not even strings.
+    So this gives you control on how you want your data.
+    Here's a recipe: Say you want to make a function that gives you the data as a dict
+    automatically. You can do this, using ``i2.Pipe``:
 
-    >>> m = FuncFanout({2: foo, "Bar results": bar, "I am groot": groot})
-    >>> m(10)
-    {2: 12, 'Bar results': 20, 'I am groot': 'I am groot'}
+    >>> f = Pipe(m, dict)
+    >>> f(10)
+    {'foo': 12, 'bar_results': 20, 'groot': 'I am groot'}
+
+    Or if you want a tuple:
+
+    >>> from operator import itemgetter, methodcaller
+    >>> from functools import partial
+    >>> f = Pipe(m, partial(map, itemgetter(1)), tuple)
+    >>> f(10)
+    (12, 20, 'I am groot')
 
     """
 
@@ -491,7 +503,7 @@ class FuncFanout(MultiFunc):
             yield name, func(*args, **kwargs)
 
     def __call__(self, *args, **kwargs):
-        return dict(self.call_generator(*args, **kwargs))
+        return self.call_generator(*args, **kwargs)
 
 
 from i2.signatures import ch_func_to_all_pk, tuple_the_args, Sig
