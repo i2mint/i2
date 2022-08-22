@@ -84,8 +84,17 @@ Both in the code and in the docs, we'll use short hands for parameter (argument)
 
 from inspect import Signature, Parameter, signature, unwrap
 import re
-from typing import Union, Callable, Iterable, Mapping as MappingType
-from typing import KT
+import sys
+from typing import (
+    Union,
+    Callable,
+    Iterable,
+    Dict,
+    Iterable,
+    Tuple,
+    Mapping as MappingType,
+)
+from typing import KT, VT
 from types import FunctionType
 from collections import defaultdict
 
@@ -3679,8 +3688,31 @@ def sig_to_dataclass(
 #########################################################################################
 # Manual construction of missing signatures
 # ############################################################################
+def dict_of_attribute_signatures(cls: type) -> Dict[str, Signature]:
+    """
+    A function that extracts the signatures of all callable attributes of a class.
 
-import sys
+    :param cls: The class that holds the the ``(name, func)`` pairs we want to extract.
+    :return: A dict of ``(name, signature(func))`` pairs extracted from class.
+
+    One of the intended applications is to use ``dict_of_attribute_signatures`` as a
+    decorator, like so:
+
+    >>> @dict_of_attribute_signatures
+    ... class names_and_signatures:
+    ...     def foo(x: str, y=2) -> tuple: ...
+    ...     def bar() -> float: ...
+    >>> names_and_signatures
+    {'foo': <Signature (x: str, y=2) -> tuple>, 'bar': <Signature () -> float>}
+    """
+    def gen():
+        for attr_name, attr_val in vars(cls).items():
+            if callable(attr_val):
+                if not attr_name.startswith('__'):
+                    yield attr_name, signature(attr_val)
+
+    return dict(gen())
+
 
 sigs_for_builtins = {
     '__build_class__': None,
@@ -3771,14 +3803,27 @@ sigs_for_builtins = {
 }
 
 
-# TODO: Find non-lambda way to express signatures to be able to add annotations
-#  Example: itemgetter -> key: KT, *keys: Iterable[KT]
-sigs_for_builtin_modules = {
-    'itemgetter': signature(lambda key, *keys: ...)
-    # itemgetter(item, ...) --> itemgetter object,
-}
+@dict_of_attribute_signatures
+class sigs_for_builtin_modules:
+    def itemgetter(
+        key: KT, /, *keys: Iterable[KT]
+    ) -> Callable[[Iterable[VT]], Union[VT, Tuple[VT]]]:
+        """itemgetter(item, ...) --> itemgetter object,"""
+
 
 sigs_for_sigless_builtin_name = dict(sigs_for_builtin_modules, **sigs_for_builtins)
+
+sigs_for_type_name = dict(itemgetter=signature(lambda iterable, /: ...))
+
+
+@dict_of_attribute_signatures
+class sigs_for_type_name:
+    def itemgetter(iterable: Iterable[VT], /) -> Union[VT, Tuple[VT]]:
+        ...
+
+    def attrgetter(iterable: Iterable[VT], /) -> Union[VT, Tuple[VT]]:
+        ...
+
 
 ############# Tools for testing #########################################################
 
