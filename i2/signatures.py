@@ -85,6 +85,7 @@ Both in the code and in the docs, we'll use short hands for parameter (argument)
 from inspect import Signature, Parameter, signature, unwrap
 import re
 from typing import Union, Callable, Iterable, Mapping as MappingType
+from typing import KT
 from types import FunctionType
 from collections import defaultdict
 
@@ -3681,7 +3682,7 @@ def sig_to_dataclass(
 
 import sys
 
-sigs_for_sigless_builtin_name = {
+sigs_for_builtins = {
     '__build_class__': None,
     # __build_class__(func, name, /, *bases, [metaclass], **kwds) -> class
     '__import__': None,
@@ -3768,6 +3769,16 @@ sigs_for_sigless_builtin_name = {
     'zip': None,
     # zip(*iterables) --> A zip object yielding tuples until an input is exhausted.
 }
+
+
+# TODO: Find non-lambda way to express signatures to be able to add annotations
+#  Example: itemgetter -> key: KT, *keys: Iterable[KT]
+sigs_for_builtin_modules = {
+    'itemgetter': signature(lambda key, *keys: ...)
+    # itemgetter(item, ...) --> itemgetter object,
+}
+
+sigs_for_sigless_builtin_name = dict(sigs_for_builtin_modules, **sigs_for_builtins)
 
 ############# Tools for testing #########################################################
 
