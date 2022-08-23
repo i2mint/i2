@@ -142,6 +142,54 @@ could_be_float
 from itertools import chain
 from dataclasses import dataclass
 from typing import Any, Iterable, Callable, Mapping, Tuple
+from i2.util import Literal
+
+
+# TODO: Think a bit harder about this mini-language
+# TODO: Right now use has to explicitly declare final nodes. Can do better.
+def _default_mini_lang(x):
+    # TODO: One is really tempted to use CondNode here to define this, right?
+    if isinstance(x, (CondNode, RoutingForest, SwitchCaseNode)):
+        return x
+    elif isinstance(x, Literal):
+        return x.get_val()
+    elif isinstance(x, tuple):
+        if len(x) == 2:
+            return CondNode(*map(_default_mini_lang, x))
+        elif len(x) == 3:
+            return SwitchCaseNode(*map(_default_mini_lang, x))
+        else:
+            raise ValueError(
+                f'If a tuple, element must be a `(cond, then)` pair, '
+                f'or a (switch, case, default) triple, or a `Literal`. Was: {x}'
+            )
+    elif isinstance(x, dict):
+        keys = set(x)
+        if 2 <= len(keys) <= 3:
+            if {'cond', 'then'}.issubset(keys):
+                return CondNode(**{k: _default_mini_lang(v) for k, v in x.items()})
+            elif {'switch', 'case'}.issubset(keys) and keys == {
+                'switch',
+                'case',
+                'default',
+            }:
+                return SwitchCaseNode(
+                    **{k: _default_mini_lang(v) for k, v in x.items()}
+                )
+            else:
+                raise ValueError(
+                    "keys should be 'switch', 'case' and optionally 'default'. "
+                    f'Were: {keys}'
+                )
+        else:
+            raise ValueError(
+                f"A non-Literal dict must have keys 'cond' and 'then' "
+                f"or 'switch' and 'case' (and optionally 'default'). Was: {x}"
+            )
+    elif isinstance(x, list):
+        return RoutingForest(cond_nodes=list(map(_default_mini_lang, x)))
+    else:
+        return x
 
 
 class RoutingNode:
@@ -149,6 +197,10 @@ class RoutingNode:
 
     def __call__(self, obj):
         raise NotImplementedError('You should implement this.')
+
+    @staticmethod
+    def from_object(x, mini_lang=_default_mini_lang):
+        return mini_lang(x)
 
 
 @dataclass
@@ -168,6 +220,7 @@ class FinalNode(RoutingNode):
     #     return {'val': self.val}
 
 
+# TODO: Add tooling to merge validation into `then` functions/values
 @dataclass
 class CondNode(RoutingNode):
     """A RoutingNode that implements the if/then (no else) logic"""
@@ -205,6 +258,9 @@ class RoutingForest(RoutingNode):
 
     cond_nodes: Iterable
 
+    def __post_init__(self):
+        self.cond_nodes = list(map(self.from_object, self.cond_nodes))
+
     def __call__(self, obj):
         yield from chain(*(cond_node(obj) for cond_node in self.cond_nodes))
         # for cond_node in self.cond_nodes:
@@ -220,7 +276,8 @@ FeatCondThens = Iterable[Tuple[Callable, Callable]]
 @dataclass
 class FeatCondNode(RoutingNode):
     """A RoutingNode that yields multiple routes, one for each of several conditions met,
-    where the condition is computed implements computes a feature of the obj and according to a"""
+    where the condition is computed implements computes a feature of the obj and
+    according to an iterable of conditions on the feature"""
 
     feat: Callable
     feat_cond_thens: FeatCondThens
@@ -291,14 +348,7 @@ def wrap_leafs_with_final_node(x):
             yield FinalNode(xx)
 
 
-if __name__ == '__main__':
-
-    print(
-        '##########################################################################################################'
-    )
-
-    import inspect
-
+def test_routing_forest():
     def could_be_int(obj):
         if isinstance(obj, int):
             b = True
@@ -308,8 +358,8 @@ if __name__ == '__main__':
                 b = True
             except ValueError:
                 b = False
-        if b:
-            print(f'{inspect.currentframe().f_code.co_name}')
+        # if b:
+        #     print(f'{inspect.currentframe().f_code.co_name}')
         return b
 
     def could_be_float(obj):
@@ -321,22 +371,20 @@ if __name__ == '__main__':
                 b = True
             except ValueError:
                 b = False
-        if b:
-            print(f'{inspect.currentframe().f_code.co_name}')
+        # if b:
+        #     print(f'{inspect.currentframe().f_code.co_name}')
         return b
 
-    print(
-        could_be_int(30),
-        could_be_int(30.3),
-        could_be_int('30.2'),
-        could_be_int('nope'),
-    )
-    print(
-        could_be_float(30),
-        could_be_float(30.3),
-        could_be_float('30.2'),
-        could_be_float('nope'),
-    )
+    assert could_be_int(30)
+    assert could_be_int(30.3)
+    assert not could_be_int('30.2')
+    assert not could_be_int('nope')
+
+    assert could_be_float(30)
+    assert could_be_float(30.3)
+    assert could_be_float('30.2')
+    assert not could_be_float('nope')
+
     assert could_be_int('30.2') is False
     assert could_be_float('30.2') is True
 
@@ -370,9 +418,6 @@ if __name__ == '__main__':
         'could be seen as a float',
     ]
 
-    print(
-        '### RoutingForest ########################################################################################'
-    )
     rf = RoutingForest(
         [
             SwitchCaseNode(
@@ -393,3 +438,49 @@ if __name__ == '__main__':
     assert list(rf(7)) == ['default_mod_5', 'odd']
     assert list(rf(8)) == ['default_mod_5', 'even']
     assert list(rf(10)) == ['zero_mod_5', 'even']
+
+    # testing default mini-language #####################################################
+
+    st2 = RoutingNode.from_object(
+        [  # RoutingForest
+            (  # CondNode
+                could_be_int,
+                [  # RoutingForest
+                    (lambda x: int(x) >= 10, FinalNode('More than a digit')),
+                    (lambda x: (int(x) % 2) == 1, FinalNode("That's odd!")),
+                ],
+            ),
+            (could_be_float, FinalNode('could be seen as a float')),
+        ]
+    )
+
+    assert list(st2('nothing I can do with that')) == []
+    assert list(st2(8)) == ['could be seen as a float']
+    assert list(st2(9)) == ["That's odd!", 'could be seen as a float']
+    assert list(st2(10)) == ['More than a digit', 'could be seen as a float']
+    assert list(st2(11)) == [
+        'More than a digit',
+        "That's odd!",
+        'could be seen as a float',
+    ]
+
+    rf2 = RoutingForest(
+        [
+            (
+                lambda x: x % 5,
+                Literal({0: FinalNode('zero_mod_5'), 1: FinalNode('one_mod_5')}),
+                FinalNode('default_mod_5'),
+            ),
+            (
+                lambda x: x % 2,
+                Literal({0: FinalNode('even'), 1: FinalNode('odd')}),
+                FinalNode('that is not an int'),
+            ),
+        ]
+    )
+
+    assert list(rf2(5)) == ['zero_mod_5', 'odd']
+    assert list(rf2(6)) == ['one_mod_5', 'even']
+    assert list(rf2(7)) == ['default_mod_5', 'odd']
+    assert list(rf2(8)) == ['default_mod_5', 'even']
+    assert list(rf2(10)) == ['zero_mod_5', 'even']
