@@ -34,6 +34,19 @@ def test_signature_of_partial():
     assert str(Sig(partial(foo, 1, b=2))) == '(*, b=2, c=3) -> int'
 
 
+def test_some_edge_cases_of_sig():
+    from operator import itemgetter, attrgetter, methodcaller
+
+    assert Sig(itemgetter).names == ['key', 'keys']
+    assert Sig(itemgetter(1)).names == ['iterable']
+    assert Sig(itemgetter(1, 2)).names == ['iterable']
+    assert Sig(attrgetter).names == ['key', 'keys']
+    assert Sig(attrgetter('foo')).names == ['iterable']
+    assert Sig(attrgetter('foo', 'bar')).names == ['iterable']
+    assert Sig(methodcaller).names == ['name', 'args', 'kwargs']
+    # assert Sig(methodcaller('foo')).names == []  # fix!!
+
+
 def test_sig_wrap_edge_cases():
     """Tests some edge cases involving simultaneous changes of defaults and kinds.
 

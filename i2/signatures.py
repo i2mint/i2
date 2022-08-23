@@ -88,7 +88,7 @@ import sys
 from typing import (
     Union,
     Callable,
-    Iterable,
+    Any,
     Dict,
     Iterable,
     Tuple,
@@ -726,9 +726,12 @@ def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
         #     callable_obj = callable_obj.func
         obj_name = getattr(callable_obj, '__name__', None)
         if obj_name in sigs_for_sigless_builtin_name:
-            return sigs_for_sigless_builtin_name[obj_name] or DFLT_SIGNATURE
-        else:
-            raise
+            return sigs_for_sigless_builtin_name[obj_name]
+        type_name = getattr(type(callable_obj), '__name__', None)
+        if type_name in sigs_for_type_name:
+            return sigs_for_type_name[type_name]
+        # if all attempts fail, raise the original error
+        raise
 
 
 def _names_of_kind(sig):
@@ -3700,128 +3703,165 @@ def dict_of_attribute_signatures(cls: type) -> Dict[str, Signature]:
 
     >>> @dict_of_attribute_signatures
     ... class names_and_signatures:
-    ...     def foo(x: str, y=2) -> tuple: ...
-    ...     def bar() -> float: ...
+    ...     def foo(x: str, *, y=2) -> tuple: ...
+    ...     def bar(z, /) -> float: ...
     >>> names_and_signatures
-    {'foo': <Signature (x: str, y=2) -> tuple>, 'bar': <Signature () -> float>}
+    {'foo': <Signature (x: str, *, y=2) -> tuple>, 'bar': <Signature (z, /) -> float>}
     """
+
     def gen():
+        object_attr_names = set(vars(object))
         for attr_name, attr_val in vars(cls).items():
             if callable(attr_val):
-                if not attr_name.startswith('__'):
+                if attr_name not in object_attr_names:
+                    # if the attr is a callable attribute that's not in all objects...
                     yield attr_name, signature(attr_val)
 
     return dict(gen())
 
 
-sigs_for_builtins = {
-    '__build_class__': None,
-    # __build_class__(func, name, /, *bases, [metaclass], **kwds) -> class
-    '__import__': None,
-    # __import__(name, globals=None, locals=None, fromlist=(), level=0) -> module
-    'bool': None,
-    # bool(x) -> bool
-    'breakpoint': None,
-    # breakpoint(*args, **kws)
-    'bytearray': None,
-    # bytearray(iterable_of_ints) -> bytearray
-    # bytearray(string, encoding[, errors]) -> bytearray
-    # bytearray(bytes_or_buffer) -> mutable copy of bytes_or_buffer
-    # bytearray(int) -> bytes array of size given by the parameter initialized with
-    # null bytes
-    # bytearray() -> empty bytes array
-    'bytes': None,
-    # bytes(iterable_of_ints) -> bytes
-    # bytes(string, encoding[, errors]) -> bytes
-    # bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer
-    # bytes(int) -> bytes object of size given by the parameter initialized with null
-    # bytes
-    # bytes() -> empty bytes object
-    'classmethod': None,
-    # classmethod(function) -> method
-    'dict': None,
-    # dict() -> new empty dictionary
-    # dict(mapping) -> new dictionary initialized from a mapping object's
-    # dict(iterable) -> new dictionary initialized as if via:
-    # dict(**kwargs) -> new dictionary initialized with the name=value pairs
-    'dir': None,
-    # dir([object]) -> list of strings
-    'filter': signature(lambda function, iterable: ...),
-    # filter(function or None, iterable) --> filter object
-    'frozenset': None,
-    # frozenset() -> empty frozenset object
-    # frozenset(iterable) -> frozenset object
-    'getattr': None,
-    # getattr(object, name[, default]) -> value
-    'int': None,
-    # int([x]) -> integer
-    # int(x, base=10) -> integer
-    'iter': None,
-    # iter(iterable) -> iterator
-    # iter(callable, sentinel) -> iterator
-    'map': signature(lambda func, *iterables: ...),
-    # map(func, *iterables) --> map object
-    'max': None,
-    # max(iterable, *[, default=obj, key=func]) -> value
-    # max(arg1, arg2, *args, *[, key=func]) -> value
-    'min': None,
-    # min(iterable, *[, default=obj, key=func]) -> value
-    # min(arg1, arg2, *args, *[, key=func]) -> value
-    'next': None,
-    # next(iterator[, default])
-    'print': signature(
-        lambda *value, sep=' ', end='\n', file=sys.stdout, flush=False: ...
-    ),
-    # print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)
-    'range': None,
-    # range(stop) -> range object
-    # range(start, stop[, step]) -> range object
-    'set': None,
-    # set() -> new empty set object
-    # set(iterable) -> new set object
-    'slice': None,
-    # slice(stop)
-    # slice(start, stop[, step])
-    'staticmethod': None,
-    # staticmethod(function) -> method
-    'str': None,
-    # str(object='') -> str
-    # str(bytes_or_buffer[, encoding[, errors]]) -> str
-    'super': None,
-    # super() -> same as super(__class__, <first argument>)
-    # super(type) -> unbound super object
-    # super(type, obj) -> bound super object; requires isinstance(obj, type)
-    # super(type, type2) -> bound super object; requires issubclass(type2, type)
-    'type': None,
-    # type(object_or_name, bases, dict)
-    # type(object) -> the object's type
-    # type(name, bases, dict) -> a new type
-    'vars': None,
-    # vars([object]) -> dictionary
-    'zip': None,
-    # zip(*iterables) --> A zip object yielding tuples until an input is exhausted.
-}
+@dict_of_attribute_signatures
+class sigs_for_builtins:
+    def __import__(name, globals=None, locals=None, fromlist=(), level=0):
+        """__import__(name, globals=None, locals=None, fromlist=(), level=0) -> module"""
+
+    def filter(function, iterable):
+        """filter(function or None, iterable) --> filter object"""
+
+    def map(func, *iterables):
+        """map(func, *iterables) --> map object"""
+
+    def print(*value, sep=' ', end='\n', file=sys.stdout, flush=False):
+        """ print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)"""
 
 
+sigs_for_builtins = dict(
+    sigs_for_builtins,
+    **{
+        '__build_class__': None,
+        # __build_class__(func, name, /, *bases, [metaclass], **kwds) -> class
+        'bool': None,
+        # bool(x) -> bool
+        'breakpoint': None,
+        # breakpoint(*args, **kws)
+        'bytearray': None,
+        # bytearray(iterable_of_ints) -> bytearray
+        # bytearray(string, encoding[, errors]) -> bytearray
+        # bytearray(bytes_or_buffer) -> mutable copy of bytes_or_buffer
+        # bytearray(int) -> bytes array of size given by the parameter initialized with
+        # null bytes
+        # bytearray() -> empty bytes array
+        'bytes': None,
+        # bytes(iterable_of_ints) -> bytes
+        # bytes(string, encoding[, errors]) -> bytes
+        # bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer
+        # bytes(int) -> bytes object of size given by the parameter initialized with null
+        # bytes
+        # bytes() -> empty bytes object
+        'classmethod': None,
+        # classmethod(function) -> method
+        'dict': None,
+        # dict() -> new empty dictionary
+        # dict(mapping) -> new dictionary initialized from a mapping object's
+        # dict(iterable) -> new dictionary initialized as if via:
+        # dict(**kwargs) -> new dictionary initialized with the name=value pairs
+        'dir': None,
+        # dir([object]) -> list of strings
+        'frozenset': None,
+        # frozenset() -> empty frozenset object
+        # frozenset(iterable) -> frozenset object
+        'getattr': None,
+        # getattr(object, name[, default]) -> value
+        'int': None,
+        # int([x]) -> integer
+        # int(x, base=10) -> integer
+        'iter': None,
+        # iter(iterable) -> iterator
+        # iter(callable, sentinel) -> iterator
+        'max': None,
+        # max(iterable, *[, default=obj, key=func]) -> value
+        # max(arg1, arg2, *args, *[, key=func]) -> value
+        'min': None,
+        # min(iterable, *[, default=obj, key=func]) -> value
+        # min(arg1, arg2, *args, *[, key=func]) -> value
+        'next': None,
+        # next(iterator[, default])
+        'range': None,
+        # range(stop) -> range object
+        # range(start, stop[, step]) -> range object
+        'set': None,
+        # set() -> new empty set object
+        # set(iterable) -> new set object
+        'slice': None,
+        # slice(stop)
+        # slice(start, stop[, step])
+        'staticmethod': None,
+        # staticmethod(function) -> method
+        'str': None,
+        # str(object='') -> str
+        # str(bytes_or_buffer[, encoding[, errors]]) -> str
+        'super': None,
+        # super() -> same as super(__class__, <first argument>)
+        # super(type) -> unbound super object
+        # super(type, obj) -> bound super object; requires isinstance(obj, type)
+        # super(type, type2) -> bound super object; requires issubclass(type2, type)
+        'type': None,
+        # type(object_or_name, bases, dict)
+        # type(object) -> the object's type
+        # type(name, bases, dict) -> a new type
+        'vars': None,
+        # vars([object]) -> dictionary
+        'zip': None,
+        # zip(*iterables) --> A zip object yielding tuples until an input is exhausted.
+    },
+)
+
+# TODO: itemgetter, attrgetter and methodcaller use KT as their first argument, but
+#  in reality both attrgetter and methodcaller are more restrictive: They need to be
+#  valid attributes, therefore valid python identifiers. Any better typing for that?
 @dict_of_attribute_signatures
 class sigs_for_builtin_modules:
+    """
+    Below are the signatures, manually created to match those callables of the python
+    standard library that don't have signatures (through ``inspect.signature``),
+    """
+
     def itemgetter(
         key: KT, /, *keys: Iterable[KT]
     ) -> Callable[[Iterable[VT]], Union[VT, Tuple[VT]]]:
         """itemgetter(item, ...) --> itemgetter object,"""
 
+    def attrgetter(
+        key: KT, /, *keys: Iterable[KT]
+    ) -> Callable[[Iterable[VT]], Union[VT, Tuple[VT]]]:
+        """attrgetter(item, ...) --> attrgetter object,"""
 
+    def methodcaller(
+        name: KT, /, *args: Iterable[VT], **kwargs: MappingType[str, Any]
+    ) -> Callable[[], Any]:
+        """methodcaller(name, ...) --> methodcaller object"""
+
+
+# Merge sigs_for_builtin_modules and sigs_for_builtins
 sigs_for_sigless_builtin_name = dict(sigs_for_builtin_modules, **sigs_for_builtins)
-
-sigs_for_type_name = dict(itemgetter=signature(lambda iterable, /: ...))
 
 
 @dict_of_attribute_signatures
 class sigs_for_type_name:
+    """
+    Below are the signatures, manually created to match callable objects that are
+    output by builtin functions or are instances of builtin classes, and that have no
+    signatures (through ``inspect.signature``),
+    """
+
     def itemgetter(iterable: Iterable[VT], /) -> Union[VT, Tuple[VT]]:
         ...
 
     def attrgetter(iterable: Iterable[VT], /) -> Union[VT, Tuple[VT]]:
+        ...
+
+    @staticmethod  # just to have linter shut up about no arguments.
+    def methodcaller() -> Any:
         ...
 
 
