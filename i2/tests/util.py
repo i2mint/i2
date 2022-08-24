@@ -1,7 +1,17 @@
 """Utils for testing"""
 
 from inspect import Parameter, Signature
-from typing import List, Any, Union, Callable, Iterator, Tuple, Optional, Iterable
+from typing import (
+    List,
+    Any,
+    Union,
+    Callable,
+    Iterator,
+    Tuple,
+    Optional,
+    Iterable,
+    Mapping,
+)
 from inspect import signature
 
 from i2.signatures import KO, PK, PO, var_param_kinds
@@ -10,6 +20,15 @@ from i2.signatures import ParamsAble, Sig, ensure_param, SignatureAble
 
 ParameterAble = Union[int, Parameter, str]
 ParamsAble_ = Union[ParamsAble, str, List[int]]
+
+
+def _is_valid_arg_for_sig(x):
+    return (
+        isinstance(x, (Callable, Signature))
+        or isinstance(x, str)
+        and x.startswith('(')
+        and x.endswith(')')
+    )
 
 
 def generate_params(params: ParamsAble_):
@@ -23,7 +42,7 @@ def generate_params(params: ParamsAble_):
     >>> str(Sig(generate_params("00111234")))
     '(a00, a01, /, a12, a13, a14, *a25, a36, **a47)'
     """
-    if isinstance(params, (Callable, Signature)):
+    if _is_valid_arg_for_sig(params):
         # generate params from a callable or signature
         yield from Sig(params).params
     else:
@@ -96,6 +115,10 @@ def _str_of_call_args(_call_kwargs: dict):
     return ', '.join(f'{k}={v}' for k, v in _call_kwargs.items())
 
 
+def _params_to_name(params):
+    return 'f' + ''.join(str(int(p.kind)) for p in params)
+
+
 def mk_func_from_params(
     params: ParamsAble = '00111234',
     *,
@@ -104,6 +127,8 @@ def mk_func_from_params(
     callback: Callable[[dict], Any] = _str_of_call_args,
 ):
     """Make a function (that actually returns something based on args) from params.
+
+    See Also: ``sig_to_func``
 
     :param params: params (arguments) of the function (can be expressed in many ways!)
     :param defaults: Optional {argname: default,...} dict to inject defaults
@@ -188,9 +213,124 @@ def mk_func_from_params(
         )
         return callback(_call_kwargs)
 
-    arg_str_func.__name__ = name or 'f' + ''.join(str(p.kind) for p in params)
+    arg_str_func.__name__ = name or _params_to_name(params)
 
     return arg_str_func
+
+
+def _sig_to_str_of_call_args_code_str(sig: Sig):
+    return (
+        'return ' + 'f"' + _str_of_call_args({p: f'{{{p}}}' for p in sig.names}) + '"'
+    )
+
+
+def _is_simple_expression(code_lines):
+    if len(code_lines) == 1:
+        line = code_lines[0].strip()
+        if not (
+            line in {'pass', '...'}
+            or line.startswith('return')
+            or (line.startswith('"') and line.endswith("'"))
+        ):
+            return True
+    else:
+        return False
+
+
+def sig_to_func(
+    sig: ParamsAble = '00111234',
+    code_lines: Union[
+        str, Iterable, Callable[[Sig], str]
+    ] = _sig_to_str_of_call_args_code_str,
+    *,
+    name: Optional[str] = None,
+    globals: Optional[dict] = None,
+    locals: Optional[Mapping] = None,
+):
+    """
+    Make a function from a signature
+
+    See Also: ``mk_func_from_params``
+
+    More information: https://github.com/i2mint/i2/issues/34
+
+    :param sig: Signature (or something that can be made into a signature) the func
+    should have
+    :param name: Name the function should have
+    :param code_lines: The code lines
+
+    The ``globals`` must be a dictionary and ``locals`` can be any mapping, defaulting
+    to the current globals and locals. If only ``globals`` is given, ``locals``
+    defaults to it.
+
+    >>> sig = Sig('(a, /, b=2)')
+    >>> f = sig_to_func(sig)
+    >>> str(Sig(f))
+    '(a, /, b=2)'
+    >>> f(2, 3)
+    'a=2, b=3'
+    >>> f.__name__
+    'f01'
+
+    See how the function was given a name automatically? This name was created by
+    appending the kind number
+    (see https://docs.python.org/3/library/inspect.html#inspect.Parameter.kind)
+    to 'f'.
+
+    Let's demo how we can
+
+    - use kind numbers (see `inspect` module) to specify the signature
+
+    - give an explicit name to the function
+
+    - specify ``locals()`` so that ``sig_to_func`` can insert the new function there
+    (which makes it picklable, for instances)
+
+    >>> _ = sig_to_func('012', name='foo', locals=locals())
+    >>> # and now `foo` is in local name space, and has signature:
+    >>> str(Sig(foo))
+    '(a00, /, a11, *a22)'
+    >>> foo(1,2,3,4,5)
+    'a00=1, a11=2, a22=(3, 4, 5)'
+
+    In the examples above, the function body was was created from the input ``sig``
+    through the ``_sig_to_str_of_call_args_code_str`` function which outputs a string
+    formed from the input argument names and values.
+
+    But you can specify your own function. This function should take a ``Sig`` object
+    and return the string or lines (iterable of strings) of the function's body.
+    You can also specify a string or lines directly.
+
+    >>> g = sig_to_func('(x, y=2)', 'pass')
+    >>> assert g(2, y=3) is None
+    >>> h = sig_to_func('(x, y=2)', 'return x * y')
+    >>> h(3)
+    6
+    >>> h(x=10, y=3)
+    30
+
+    You can even omit the return instruction if, as in ``lambda`` functions, the body is
+    a simple expression (not `pass`, `...`, or starting something with quotes).
+
+    >>> h = sig_to_func('(x, y=2)', 'x / y')
+    >>> h(10, 5)
+    2.0
+
+    """
+    sig = Sig(generate_params(sig))
+    name = name or _params_to_name(sig.params)
+    if callable(code_lines):
+        code_lines = code_lines(sig)  # call the function on sig to get lines
+    if isinstance(code_lines, str):
+        code_lines = code_lines.split('\n')
+    if _is_simple_expression(code_lines):
+        # If code_lines has only one line and it seems it's an expression, prepend return
+        code_lines = [f'return {code_lines[0]}']
+    code_string = '\n\t'.join(code_lines)
+    func_def_string = f'def {name}{sig}:\n\t{code_string}'
+    _locals = locals or {}
+    exec(func_def_string, globals, _locals)
+    return _locals[name]
 
 
 def sig_to_inputs(
@@ -369,7 +509,7 @@ def _is_signature_error(
     return False
 
 
-def call_and_return_error(func, *args, **kwargs):
+def call_and_return_error(func, /, *args, **kwargs):
     try:
         func(*args, **kwargs)
         return None
@@ -377,7 +517,7 @@ def call_and_return_error(func, *args, **kwargs):
         return error_obj
 
 
-def on_error_return_none(func, *args, **kwargs):
+def on_error_return_none(func, /, *args, **kwargs):
     try:
         return func(*args, **kwargs)
     except BaseException as error_obj:
