@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.util &mdash; i2 0.0.141 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.util &mdash; i2 0.0.142 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -101,7 +101,17 @@
 <span></span><span class="sd">&quot;&quot;&quot;Utils for testing&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">Signature</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">List</span><span class="p">,</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Iterator</span><span class="p">,</span>
+    <span class="n">Tuple</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">Mapping</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
 
 <span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">KO</span><span class="p">,</span> <span class="n">PK</span><span class="p">,</span> <span class="n">PO</span><span class="p">,</span> <span class="n">var_param_kinds</span>
@@ -110,6 +120,15 @@
 
 <span class="n">ParameterAble</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
 <span class="n">ParamsAble_</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">ParamsAble</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+
+
+<span class="k">def</span> <span class="nf">_is_valid_arg_for_sig</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Signature</span><span class="p">))</span>
+        <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
 
 
 <div class="viewcode-block" id="generate_params"><a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.generate_params">[docs]</a><span class="k">def</span> <span class="nf">generate_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble_</span><span class="p">):</span>
@@ -123,7 +142,7 @@
 <span class="sd">    &gt;&gt;&gt; str(Sig(generate_params(&quot;00111234&quot;)))</span>
 <span class="sd">    &#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="p">(</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Signature</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="n">_is_valid_arg_for_sig</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
         <span class="c1"># generate params from a callable or signature</span>
         <span class="k">yield from</span> <span class="n">Sig</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">params</span>
     <span class="k">else</span><span class="p">:</span>
@@ -196,6 +215,10 @@
     <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_call_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 
 
+<span class="k">def</span> <span class="nf">_params_to_name</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;f&#39;</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">kind</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="mk_func_from_params"><a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.mk_func_from_params">[docs]</a><span class="k">def</span> <span class="nf">mk_func_from_params</span><span class="p">(</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble</span> <span class="o">=</span> <span class="s1">&#39;00111234&#39;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -204,6 +227,8 @@
     <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_str_of_call_args</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make a function (that actually returns something based on args) from params.</span>
+
+<span class="sd">    See Also: ``sig_to_func``</span>
 
 <span class="sd">    :param params: params (arguments) of the function (can be expressed in many ways!)</span>
 <span class="sd">    :param defaults: Optional {argname: default,...} dict to inject defaults</span>
@@ -288,9 +313,124 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">callback</span><span class="p">(</span><span class="n">_call_kwargs</span><span class="p">)</span>
 
-    <span class="n">arg_str_func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="s1">&#39;f&#39;</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">kind</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">arg_str_func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">_params_to_name</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">arg_str_func</span></div>
+
+
+<span class="k">def</span> <span class="nf">_sig_to_str_of_call_args_code_str</span><span class="p">(</span><span class="n">sig</span><span class="p">:</span> <span class="n">Sig</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="s1">&#39;return &#39;</span> <span class="o">+</span> <span class="s1">&#39;f&quot;&#39;</span> <span class="o">+</span> <span class="n">_str_of_call_args</span><span class="p">({</span><span class="n">p</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">{{</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="se">}}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="p">})</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_is_simple_expression</span><span class="p">(</span><span class="n">code_lines</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">code_lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">code_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="n">line</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span> <span class="s1">&#39;...&#39;</span><span class="p">}</span>
+            <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;return&#39;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">))</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="sig_to_func"><a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.sig_to_func">[docs]</a><span class="k">def</span> <span class="nf">sig_to_func</span><span class="p">(</span>
+    <span class="n">sig</span><span class="p">:</span> <span class="n">ParamsAble</span> <span class="o">=</span> <span class="s1">&#39;00111234&#39;</span><span class="p">,</span>
+    <span class="n">code_lines</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Sig</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">_sig_to_str_of_call_args_code_str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="nb">globals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="nb">locals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a function from a signature</span>
+
+<span class="sd">    See Also: ``mk_func_from_params``</span>
+
+<span class="sd">    More information: https://github.com/i2mint/i2/issues/34</span>
+
+<span class="sd">    :param sig: Signature (or something that can be made into a signature) the func</span>
+<span class="sd">    should have</span>
+<span class="sd">    :param name: Name the function should have</span>
+<span class="sd">    :param code_lines: The code lines</span>
+
+<span class="sd">    The ``globals`` must be a dictionary and ``locals`` can be any mapping, defaulting</span>
+<span class="sd">    to the current globals and locals. If only ``globals`` is given, ``locals``</span>
+<span class="sd">    defaults to it.</span>
+
+<span class="sd">    &gt;&gt;&gt; sig = Sig(&#39;(a, /, b=2)&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f = sig_to_func(sig)</span>
+<span class="sd">    &gt;&gt;&gt; str(Sig(f))</span>
+<span class="sd">    &#39;(a, /, b=2)&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f(2, 3)</span>
+<span class="sd">    &#39;a=2, b=3&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f.__name__</span>
+<span class="sd">    &#39;f01&#39;</span>
+
+<span class="sd">    See how the function was given a name automatically? This name was created by</span>
+<span class="sd">    appending the kind number</span>
+<span class="sd">    (see https://docs.python.org/3/library/inspect.html#inspect.Parameter.kind)</span>
+<span class="sd">    to &#39;f&#39;.</span>
+
+<span class="sd">    Let&#39;s demo how we can</span>
+
+<span class="sd">    - use kind numbers (see `inspect` module) to specify the signature</span>
+
+<span class="sd">    - give an explicit name to the function</span>
+
+<span class="sd">    - specify ``locals()`` so that ``sig_to_func`` can insert the new function there</span>
+<span class="sd">    (which makes it picklable, for instances)</span>
+
+<span class="sd">    &gt;&gt;&gt; _ = sig_to_func(&#39;012&#39;, name=&#39;foo&#39;, locals=locals())</span>
+<span class="sd">    &gt;&gt;&gt; # and now `foo` is in local name space, and has signature:</span>
+<span class="sd">    &gt;&gt;&gt; str(Sig(foo))</span>
+<span class="sd">    &#39;(a00, /, a11, *a22)&#39;</span>
+<span class="sd">    &gt;&gt;&gt; foo(1,2,3,4,5)</span>
+<span class="sd">    &#39;a00=1, a11=2, a22=(3, 4, 5)&#39;</span>
+
+<span class="sd">    In the examples above, the function body was was created from the input ``sig``</span>
+<span class="sd">    through the ``_sig_to_str_of_call_args_code_str`` function which outputs a string</span>
+<span class="sd">    formed from the input argument names and values.</span>
+
+<span class="sd">    But you can specify your own function. This function should take a ``Sig`` object</span>
+<span class="sd">    and return the string or lines (iterable of strings) of the function&#39;s body.</span>
+<span class="sd">    You can also specify a string or lines directly.</span>
+
+<span class="sd">    &gt;&gt;&gt; g = sig_to_func(&#39;(x, y=2)&#39;, &#39;pass&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; assert g(2, y=3) is None</span>
+<span class="sd">    &gt;&gt;&gt; h = sig_to_func(&#39;(x, y=2)&#39;, &#39;return x * y&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; h(3)</span>
+<span class="sd">    6</span>
+<span class="sd">    &gt;&gt;&gt; h(x=10, y=3)</span>
+<span class="sd">    30</span>
+
+<span class="sd">    You can even omit the return instruction if, as in ``lambda`` functions, the body is</span>
+<span class="sd">    a simple expression (not `pass`, `...`, or starting something with quotes).</span>
+
+<span class="sd">    &gt;&gt;&gt; h = sig_to_func(&#39;(x, y=2)&#39;, &#39;x / y&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; h(10, 5)</span>
+<span class="sd">    2.0</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">generate_params</span><span class="p">(</span><span class="n">sig</span><span class="p">))</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">_params_to_name</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">code_lines</span><span class="p">):</span>
+        <span class="n">code_lines</span> <span class="o">=</span> <span class="n">code_lines</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>  <span class="c1"># call the function on sig to get lines</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code_lines</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">code_lines</span> <span class="o">=</span> <span class="n">code_lines</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_is_simple_expression</span><span class="p">(</span><span class="n">code_lines</span><span class="p">):</span>
+        <span class="c1"># If code_lines has only one line and it seems it&#39;s an expression, prepend return</span>
+        <span class="n">code_lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;return </span><span class="si">{</span><span class="n">code_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+    <span class="n">code_string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">code_lines</span><span class="p">)</span>
+    <span class="n">func_def_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;def </span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">sig</span><span class="si">}</span><span class="s1">:</span><span class="se">\n\t</span><span class="si">{</span><span class="n">code_string</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">_locals</span> <span class="o">=</span> <span class="nb">locals</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">exec</span><span class="p">(</span><span class="n">func_def_string</span><span class="p">,</span> <span class="nb">globals</span><span class="p">,</span> <span class="n">_locals</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_locals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="sig_to_inputs"><a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.sig_to_inputs">[docs]</a><span class="k">def</span> <span class="nf">sig_to_inputs</span><span class="p">(</span>
@@ -469,7 +609,7 @@
     <span class="k">return</span> <span class="kc">False</span>
 
 
-<span class="k">def</span> <span class="nf">call_and_return_error</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">call_and_return_error</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -477,7 +617,7 @@
         <span class="k">return</span> <span class="n">error_obj</span>
 
 
-<span class="k">def</span> <span class="nf">on_error_return_none</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">on_error_return_none</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">error_obj</span><span class="p">:</span>
