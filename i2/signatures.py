@@ -695,43 +695,8 @@ def parameter_to_dict(p: Parameter) -> dict:
 
 WRAPPER_UPDATES = ('__dict__',)
 
-from typing import Callable
-
 # A default signature of (*no_sig_args, **no_sig_kwargs)
 DFLT_SIGNATURE = signature(lambda *no_sig_args, **no_sig_kwargs: ...)
-
-# TODO: Might want to monkey-patch inspect._signature_from_callable to use sigs_for_sigless_builtin_name
-def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
-    r"""Get the signature of a Callable, returning a custom made one for those
-    builtins that don't have one
-
-    >>> _robust_signature_of_callable(
-    ...     _robust_signature_of_callable
-    ... )  # has a normal signature
-    <Signature (callable_obj: Callable) -> inspect.Signature>
-    >>> s = _robust_signature_of_callable(print)  # has one that this module provides
-    >>> assert isinstance(s, Signature)
-    >>> # Will be: <Signature (*value, sep=' ', end='\n', file=<_io.TextIOWrapper
-    name='<stdout>' mode='w' encoding='utf-8'>, flush=False)>
-    >>> _robust_signature_of_callable(
-    ...     zip
-    ... )  # doesn't have one, so will return a blanket one
-    <Signature (*no_sig_args, **no_sig_kwargs)>
-
-    """
-    try:
-        return signature(callable_obj)
-    except ValueError:
-        # if isinstance(callable_obj, partial):
-        #     callable_obj = callable_obj.func
-        obj_name = getattr(callable_obj, '__name__', None)
-        if obj_name in sigs_for_sigless_builtin_name:
-            return sigs_for_sigless_builtin_name[obj_name]
-        type_name = getattr(type(callable_obj), '__name__', None)
-        if type_name in sigs_for_type_name:
-            return sigs_for_type_name[type_name]
-        # if all attempts fail, raise the original error
-        raise
 
 
 def _names_of_kind(sig):
@@ -3691,6 +3656,42 @@ def sig_to_dataclass(
 #########################################################################################
 # Manual construction of missing signatures
 # ############################################################################
+
+# TODO: Might want to monkey-patch inspect._signature_from_callable to use
+#  sigs_for_sigless_builtin_name
+def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
+    r"""Get the signature of a Callable, returning a custom made one for those
+    builtins that don't have one
+
+    >>> _robust_signature_of_callable(
+    ...     _robust_signature_of_callable
+    ... )  # has a normal signature
+    <Signature (callable_obj: Callable) -> inspect.Signature>
+    >>> s = _robust_signature_of_callable(print)  # has one that this module provides
+    >>> assert isinstance(s, Signature)
+    >>> # Will be: <Signature (*value, sep=' ', end='\n', file=<_io.TextIOWrapper
+    name='<stdout>' mode='w' encoding='utf-8'>, flush=False)>
+    >>> _robust_signature_of_callable(
+    ...     next
+    ... )  # doesn't have one, so will return a blanket one
+    <Signature (*no_sig_args, **no_sig_kwargs)>
+
+    """
+    try:
+        return signature(callable_obj)
+    except ValueError:
+        # if isinstance(callable_obj, partial):
+        #     callable_obj = callable_obj.func
+        obj_name = getattr(callable_obj, '__name__', None)
+        if obj_name in sigs_for_sigless_builtin_name:
+            return sigs_for_sigless_builtin_name[obj_name] or DFLT_SIGNATURE
+        type_name = getattr(type(callable_obj), '__name__', None)
+        if type_name in sigs_for_type_name:
+            return sigs_for_type_name[type_name] or DFLT_SIGNATURE
+        # if all attempts fail, raise the original error
+        raise
+
+
 def dict_of_attribute_signatures(cls: type) -> Dict[str, Signature]:
     """
     A function that extracts the signatures of all callable attributes of a class.
@@ -3734,6 +3735,10 @@ class sigs_for_builtins:
     def print(*value, sep=' ', end='\n', file=sys.stdout, flush=False):
         """ print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)"""
 
+    def zip(*iterables):
+        """
+        zip(*iterables) --> A zip object yielding tuples until an input is exhausted.
+        """
 
 sigs_for_builtins = dict(
     sigs_for_builtins,
@@ -3811,10 +3816,14 @@ sigs_for_builtins = dict(
         # type(name, bases, dict) -> a new type
         'vars': None,
         # vars([object]) -> dictionary
-        'zip': None,
-        # zip(*iterables) --> A zip object yielding tuples until an input is exhausted.
     },
 )
+# # Remove the None-valued elements (No, don't, because we distinguish
+# # functions we listed but didn't associate a default signature, with those functions
+# # we don't list at all.
+# sigs_for_builtins = {
+#     k: v for k, v in sigs_for_builtins.items() if v is not None
+# }
 
 # TODO: itemgetter, attrgetter and methodcaller use KT as their first argument, but
 #  in reality both attrgetter and methodcaller are more restrictive: They need to be
