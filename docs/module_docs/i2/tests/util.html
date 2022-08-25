@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.util &mdash; i2 0.0.141 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.util &mdash; i2 0.0.142 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -158,6 +158,7 @@
 <dt id="i2.tests.util.mk_func_from_params">
 <code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">mk_func_from_params</code><span class="sig-paren">(</span><em class="sig-param">params: Union[Iterable[inspect.Parameter], inspect.Signature, Mapping[str, inspect.Parameter], Callable, str] = '00111234', *, defaults=None, name=None, callback: Callable[[dict], Any] = &lt;function _str_of_call_args&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#mk_func_from_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.mk_func_from_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a function (that actually returns something based on args) from params.</p>
+<p>See Also: <code class="docutils literal notranslate"><span class="pre">sig_to_func</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -250,6 +251,76 @@ specifications, as below.</p>
 <span class="gp">... </span>    <span class="s2">&quot;a36&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="s2">&quot;a47&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;a47&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;a47_&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">7</span><span class="p">},</span>
 <span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.tests.util.sig_to_func">
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">sig_to_func</code><span class="sig-paren">(</span><em class="sig-param">sig: Union[Iterable[inspect.Parameter], inspect.Signature, Mapping[str, inspect.Parameter], Callable, str] = '00111234', code_lines: Union[str, Iterable, Callable[[i2.signatures.Sig], str]] = &lt;function _sig_to_str_of_call_args_code_str&gt;, *, name: Optional[str] = None, globals: Optional[dict] = None, locals: Optional[Mapping] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#sig_to_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.sig_to_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a function from a signature</p>
+<p>See Also: <code class="docutils literal notranslate"><span class="pre">mk_func_from_params</span></code></p>
+<p>More information: <a class="reference external" href="https://github.com/i2mint/i2/issues/34">https://github.com/i2mint/i2/issues/34</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sig</strong> – Signature (or something that can be made into a signature) the func</p>
+</dd>
+</dl>
+<p>should have
+:param name: Name the function should have
+:param code_lines: The code lines</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">globals</span></code> must be a dictionary and <code class="docutils literal notranslate"><span class="pre">locals</span></code> can be any mapping, defaulting
+to the current globals and locals. If only <code class="docutils literal notranslate"><span class="pre">globals</span></code> is given, <code class="docutils literal notranslate"><span class="pre">locals</span></code>
+defaults to it.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="s1">&#39;(a, /, b=2)&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">sig_to_func</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+<span class="go">&#39;(a, /, b=2)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">&#39;a=2, b=3&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span>
+<span class="go">&#39;f01&#39;</span>
+</pre></div>
+</div>
+<p>See how the function was given a name automatically? This name was created by
+appending the kind number
+(see <a class="reference external" href="https://docs.python.org/3/library/inspect.html#inspect.Parameter.kind">https://docs.python.org/3/library/inspect.html#inspect.Parameter.kind</a>)
+to ‘f’.</p>
+<p>Let’s demo how we can</p>
+<ul class="simple">
+<li><p>use kind numbers (see <cite>inspect</cite> module) to specify the signature</p></li>
+<li><p>give an explicit name to the function</p></li>
+<li><p>specify <code class="docutils literal notranslate"><span class="pre">locals()</span></code> so that <code class="docutils literal notranslate"><span class="pre">sig_to_func</span></code> can insert the new function there</p></li>
+</ul>
+<p>(which makes it picklable, for instances)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">sig_to_func</span><span class="p">(</span><span class="s1">&#39;012&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="o">=</span><span class="nb">locals</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># and now `foo` is in local name space, and has signature:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">))</span>
+<span class="go">&#39;(a00, /, a11, *a22)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">&#39;a00=1, a11=2, a22=(3, 4, 5)&#39;</span>
+</pre></div>
+</div>
+<p>In the examples above, the function body was was created from the input <code class="docutils literal notranslate"><span class="pre">sig</span></code>
+through the <code class="docutils literal notranslate"><span class="pre">_sig_to_str_of_call_args_code_str</span></code> function which outputs a string
+formed from the input argument names and values.</p>
+<p>But you can specify your own function. This function should take a <code class="docutils literal notranslate"><span class="pre">Sig</span></code> object
+and return the string or lines (iterable of strings) of the function’s body.
+You can also specify a string or lines directly.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">sig_to_func</span><span class="p">(</span><span class="s1">&#39;(x, y=2)&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">g</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">sig_to_func</span><span class="p">(</span><span class="s1">&#39;(x, y=2)&#39;</span><span class="p">,</span> <span class="s1">&#39;return x * y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">30</span>
+</pre></div>
+</div>
+<p>You can even omit the return instruction if, as in <code class="docutils literal notranslate"><span class="pre">lambda</span></code> functions, the body is
+a simple expression (not <cite>pass</cite>, <cite>…</cite>, or starting something with quotes).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">sig_to_func</span><span class="p">(</span><span class="s1">&#39;(x, y=2)&#39;</span><span class="p">,</span> <span class="s1">&#39;x / y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="go">2.0</span>
 </pre></div>
 </div>
 </dd></dl>

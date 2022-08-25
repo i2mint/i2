@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.routing_forest &mdash; i2 0.0.141 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.routing_forest &mdash; i2 0.0.142 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -242,13 +242,65 @@
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">i2.util</span> <span class="kn">import</span> <span class="n">Literal</span>
+
+
+<span class="c1"># TODO: Think a bit harder about this mini-language</span>
+<span class="c1"># TODO: Right now use has to explicitly declare final nodes. Can do better.</span>
+<span class="k">def</span> <span class="nf">_default_mini_lang</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="c1"># TODO: One is really tempted to use CondNode here to define this, right?</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">CondNode</span><span class="p">,</span> <span class="n">RoutingForest</span><span class="p">,</span> <span class="n">SwitchCaseNode</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Literal</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">get_val</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">CondNode</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="n">_default_mini_lang</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SwitchCaseNode</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="n">_default_mini_lang</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;If a tuple, element must be a `(cond, then)` pair, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;or a (switch, case, default) triple, or a `Literal`. Was: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">{</span><span class="s1">&#39;cond&#39;</span><span class="p">,</span> <span class="s1">&#39;then&#39;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">CondNode</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_default_mini_lang</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+            <span class="k">elif</span> <span class="p">{</span><span class="s1">&#39;switch&#39;</span><span class="p">,</span> <span class="s1">&#39;case&#39;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="ow">and</span> <span class="n">keys</span> <span class="o">==</span> <span class="p">{</span>
+                <span class="s1">&#39;switch&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;case&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+            <span class="p">}:</span>
+                <span class="k">return</span> <span class="n">SwitchCaseNode</span><span class="p">(</span>
+                    <span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_default_mini_lang</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;keys should be &#39;switch&#39;, &#39;case&#39; and optionally &#39;default&#39;. &quot;</span>
+                    <span class="sa">f</span><span class="s1">&#39;Were: </span><span class="si">{</span><span class="n">keys</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;A non-Literal dict must have keys &#39;cond&#39; and &#39;then&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;or &#39;switch&#39; and &#39;case&#39; (and optionally &#39;default&#39;). Was: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">RoutingForest</span><span class="p">(</span><span class="n">cond_nodes</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_default_mini_lang</span><span class="p">,</span> <span class="n">x</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span>
 
 
 <div class="viewcode-block" id="RoutingNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.RoutingNode">[docs]</a><span class="k">class</span> <span class="nc">RoutingNode</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;A RoutingNode instance needs to be callable on a single object, yielding an iterable or a final value&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;You should implement this.&#39;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;You should implement this.&#39;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_object</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mini_lang</span><span class="o">=</span><span class="n">_default_mini_lang</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">mini_lang</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="FinalNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.FinalNode">[docs]</a><span class="nd">@dataclass</span>
@@ -268,6 +320,7 @@
     <span class="c1">#     return {&#39;val&#39;: self.val}</span>
 
 
+<span class="c1"># TODO: Add tooling to merge validation into `then` functions/values</span>
 <div class="viewcode-block" id="CondNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.CondNode">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">CondNode</span><span class="p">(</span><span class="n">RoutingNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A RoutingNode that implements the if/then (no else) logic&quot;&quot;&quot;</span>
@@ -305,6 +358,9 @@
 
     <span class="n">cond_nodes</span><span class="p">:</span> <span class="n">Iterable</span>
 
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">from_object</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cond_nodes</span><span class="p">))</span>
+
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">yield from</span> <span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">cond_node</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">cond_node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cond_nodes</span><span class="p">))</span>
         <span class="c1"># for cond_node in self.cond_nodes:</span>
@@ -320,7 +376,8 @@
 <div class="viewcode-block" id="FeatCondNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.FeatCondNode">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">FeatCondNode</span><span class="p">(</span><span class="n">RoutingNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A RoutingNode that yields multiple routes, one for each of several conditions met,</span>
-<span class="sd">    where the condition is computed implements computes a feature of the obj and according to a&quot;&quot;&quot;</span>
+<span class="sd">    where the condition is computed implements computes a feature of the obj and</span>
+<span class="sd">    according to an iterable of conditions on the feature&quot;&quot;&quot;</span>
 
     <span class="n">feat</span><span class="p">:</span> <span class="n">Callable</span>
     <span class="n">feat_cond_thens</span><span class="p">:</span> <span class="n">FeatCondThens</span>
@@ -391,14 +448,7 @@
             <span class="k">yield</span> <span class="n">FinalNode</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-
-    <span class="nb">print</span><span class="p">(</span>
-        <span class="s1">&#39;##########################################################################################################&#39;</span>
-    <span class="p">)</span>
-
-    <span class="kn">import</span> <span class="nn">inspect</span>
-
+<span class="k">def</span> <span class="nf">test_routing_forest</span><span class="p">():</span>
     <span class="k">def</span> <span class="nf">could_be_int</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">b</span> <span class="o">=</span> <span class="kc">True</span>
@@ -408,8 +458,8 @@
                 <span class="n">b</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="n">b</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">b</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># if b:</span>
+        <span class="c1">#     print(f&#39;{inspect.currentframe().f_code.co_name}&#39;)</span>
         <span class="k">return</span> <span class="n">b</span>
 
     <span class="k">def</span> <span class="nf">could_be_float</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -421,22 +471,20 @@
                 <span class="n">b</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="n">b</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">b</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># if b:</span>
+        <span class="c1">#     print(f&#39;{inspect.currentframe().f_code.co_name}&#39;)</span>
         <span class="k">return</span> <span class="n">b</span>
 
-    <span class="nb">print</span><span class="p">(</span>
-        <span class="n">could_be_int</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span>
-        <span class="n">could_be_int</span><span class="p">(</span><span class="mf">30.3</span><span class="p">),</span>
-        <span class="n">could_be_int</span><span class="p">(</span><span class="s1">&#39;30.2&#39;</span><span class="p">),</span>
-        <span class="n">could_be_int</span><span class="p">(</span><span class="s1">&#39;nope&#39;</span><span class="p">),</span>
-    <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span>
-        <span class="n">could_be_float</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span>
-        <span class="n">could_be_float</span><span class="p">(</span><span class="mf">30.3</span><span class="p">),</span>
-        <span class="n">could_be_float</span><span class="p">(</span><span class="s1">&#39;30.2&#39;</span><span class="p">),</span>
-        <span class="n">could_be_float</span><span class="p">(</span><span class="s1">&#39;nope&#39;</span><span class="p">),</span>
-    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">could_be_int</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">could_be_int</span><span class="p">(</span><span class="mf">30.3</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">could_be_int</span><span class="p">(</span><span class="s1">&#39;30.2&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">could_be_int</span><span class="p">(</span><span class="s1">&#39;nope&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">could_be_float</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">could_be_float</span><span class="p">(</span><span class="mf">30.3</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">could_be_float</span><span class="p">(</span><span class="s1">&#39;30.2&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">could_be_float</span><span class="p">(</span><span class="s1">&#39;nope&#39;</span><span class="p">)</span>
+
     <span class="k">assert</span> <span class="n">could_be_int</span><span class="p">(</span><span class="s1">&#39;30.2&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
     <span class="k">assert</span> <span class="n">could_be_float</span><span class="p">(</span><span class="s1">&#39;30.2&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
 
@@ -470,9 +518,6 @@
         <span class="s1">&#39;could be seen as a float&#39;</span><span class="p">,</span>
     <span class="p">]</span>
 
-    <span class="nb">print</span><span class="p">(</span>
-        <span class="s1">&#39;### RoutingForest ########################################################################################&#39;</span>
-    <span class="p">)</span>
     <span class="n">rf</span> <span class="o">=</span> <span class="n">RoutingForest</span><span class="p">(</span>
         <span class="p">[</span>
             <span class="n">SwitchCaseNode</span><span class="p">(</span>
@@ -493,6 +538,52 @@
     <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;default_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;odd&#39;</span><span class="p">]</span>
     <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;default_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;even&#39;</span><span class="p">]</span>
     <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;even&#39;</span><span class="p">]</span>
+
+    <span class="c1"># testing default mini-language #####################################################</span>
+
+    <span class="n">st2</span> <span class="o">=</span> <span class="n">RoutingNode</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span>
+        <span class="p">[</span>  <span class="c1"># RoutingForest</span>
+            <span class="p">(</span>  <span class="c1"># CondNode</span>
+                <span class="n">could_be_int</span><span class="p">,</span>
+                <span class="p">[</span>  <span class="c1"># RoutingForest</span>
+                    <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;More than a digit&#39;</span><span class="p">)),</span>
+                    <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s2">&quot;That&#39;s odd!&quot;</span><span class="p">)),</span>
+                <span class="p">],</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="n">could_be_float</span><span class="p">,</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;could be seen as a float&#39;</span><span class="p">)),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">st2</span><span class="p">(</span><span class="s1">&#39;nothing I can do with that&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="p">[]</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">st2</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;could be seen as a float&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">st2</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;That&#39;s odd!&quot;</span><span class="p">,</span> <span class="s1">&#39;could be seen as a float&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">st2</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;More than a digit&#39;</span><span class="p">,</span> <span class="s1">&#39;could be seen as a float&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">st2</span><span class="p">(</span><span class="mi">11</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span>
+        <span class="s1">&#39;More than a digit&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;That&#39;s odd!&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;could be seen as a float&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">rf2</span> <span class="o">=</span> <span class="n">RoutingForest</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="n">Literal</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;one_mod_5&#39;</span><span class="p">)}),</span>
+                <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;default_mod_5&#39;</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="n">Literal</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;even&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;odd&#39;</span><span class="p">)}),</span>
+                <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;that is not an int&#39;</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf2</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;odd&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf2</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;one_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;even&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf2</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;default_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;odd&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf2</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;default_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;even&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">rf2</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;even&#39;</span><span class="p">]</span>
 </pre></div>
 
            </div>
