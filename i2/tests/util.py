@@ -373,7 +373,6 @@ def sig_to_inputs(
     sig: SignatureAble,
     argument_vals: Optional[Iterable] = None,
     *,
-    ignore_variadics: bool = False,
     variadics_source: Tuple[tuple, dict] = (
         ('args1', 'args2'),
         {'kwargs1': 'kwargs1_val'},
@@ -381,6 +380,14 @@ def sig_to_inputs(
 ) -> Iterator[Tuple[tuple, dict]]:
     """Generate all kind-valid (arg, kwargs) input combinations for a function with a
     given signature ``sig``, with argument values taken from the ``argument_vals``
+
+    :param sig: A signature or anything that ``i2.Sig`` can use to create one (e.g.
+        function, string, list of dicts etc.)
+    :param argument_vals: An interable from which the argument values will be drawn.
+        Defaults to ``list(range(n_args))``.
+    :param variadics_source: The ``(tuple, dict)`` pair that will be used to extract
+        variadics' inputs.
+    :return: A generator of ``(args: tuple, kwargs: dict)`` pairs
 
     >>> assert list(
     ...     sig_to_inputs(lambda a, b, /, c, d, *, e, f: None)
@@ -404,32 +411,20 @@ def sig_to_inputs(
      ((0, 'args1', 'args2'), {'b': 1}),
      ((0, 'args1', 'args2'), {'b': 1, 'kwargs1': 'kwargs1_val'})]
 
-    :param sig: A signature or anything that ``i2.Sig`` can use to create one (e.g.
-        function, string, list of dicts etc.)
-    :param argument_vals: An interable from which the argument values will be drawn.
-        Defaults to ``list(range(n_args))``.
-    :param variadics_source: The ``(tuple, dict)`` pair that will be used to extract
-        variadics' inputs.
-    :return: A generator of ``(args: tuple, kwargs: dict)`` pairs
+    Tip: To ignore variadics all together, you can specify ``variadics_source=((), {})``.
     """
     sig = Sig(sig)
     already_yielded = []
     variadics = [param for param, kind in sig.kinds.items() if kind in var_param_kinds]
     if variadics:
-        if not ignore_variadics and variadics_source is None:
-            raise ValueError(f'Not allowed to have variadics: {sig}')
-        else:
-            for v in variadics:
-                sig -= v
-            if ignore_variadics:
-                yield from sig_to_inputs(sig, argument_vals)
-            else:
-                var_args, var_kwargs = variadics_source
-                for args, kwargs in sig_to_inputs(sig, argument_vals):
-                    for _args, _kwargs in _args_kwargs_combinations(
-                        var_args, var_kwargs
-                    ):
-                        yield args + _args, dict(kwargs, **_kwargs)
+        for v in variadics:
+            sig -= v
+        var_args, var_kwargs = variadics_source
+        for args, kwargs in sig_to_inputs(sig, argument_vals):
+            for _args, _kwargs in _args_kwargs_combinations(
+                var_args, var_kwargs
+            ):
+                yield args + _args, dict(kwargs, **_kwargs)
     else:
         for sub_sig in _get_sub_sigs_from_default_values(sig):
             po, pk, ko = _get_non_variadic_kind_counts(sub_sig)

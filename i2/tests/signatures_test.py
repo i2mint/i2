@@ -540,7 +540,7 @@ def test_call_forgivingly(sig_spec):
         # print(output)
         assert output == expected_output
 
-    for args, kwargs in sig_to_inputs(sig, ignore_variadics=True):
+    for args, kwargs in sig_to_inputs(sig, variadics_source=((), {})):
         kwargs = dict(kwargs, **{'some': 'extra', 'added': 'kwargs'})
         po_pk_count = sum(kind <= PK for kind in sig.kinds.values())
         if len(args) == po_pk_count:
@@ -601,7 +601,7 @@ def test_call_compatibility(sig_spec1, sig_spec2):
     #     pass
 
     pos1, pks1, vp1, kos1, vk1 = sig1.detail_names_by_kind()
-    for args, kwargs in sig_to_inputs(sig1, ignore_variadics=True):
+    for args, kwargs in sig_to_inputs(sig1, variadics_source=((), {})):
         if vp1 is not None and len(args) == len(pos1) + len(pks1):
             args += ('extra_arg',)
         if vk1 is not None:
