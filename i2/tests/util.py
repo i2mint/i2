@@ -421,9 +421,7 @@ def sig_to_inputs(
             sig -= v
         var_args, var_kwargs = variadics_source
         for args, kwargs in sig_to_inputs(sig, argument_vals):
-            for _args, _kwargs in _args_kwargs_combinations(
-                var_args, var_kwargs
-            ):
+            for _args, _kwargs in _args_kwargs_combinations(var_args, var_kwargs):
                 yield args + _args, dict(kwargs, **_kwargs)
     else:
         for sub_sig in _get_sub_sigs_from_default_values(sig):

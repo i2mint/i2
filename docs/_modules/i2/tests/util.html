@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.util &mdash; i2 0.0.143 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.util &mdash; i2 0.0.144 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -473,7 +473,6 @@
     <span class="n">sig</span><span class="p">:</span> <span class="n">SignatureAble</span><span class="p">,</span>
     <span class="n">argument_vals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">ignore_variadics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">variadics_source</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
         <span class="p">(</span><span class="s1">&#39;args1&#39;</span><span class="p">,</span> <span class="s1">&#39;args2&#39;</span><span class="p">),</span>
         <span class="p">{</span><span class="s1">&#39;kwargs1&#39;</span><span class="p">:</span> <span class="s1">&#39;kwargs1_val&#39;</span><span class="p">},</span>
@@ -481,6 +480,14 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;Generate all kind-valid (arg, kwargs) input combinations for a function with a</span>
 <span class="sd">    given signature ``sig``, with argument values taken from the ``argument_vals``</span>
+
+<span class="sd">    :param sig: A signature or anything that ``i2.Sig`` can use to create one (e.g.</span>
+<span class="sd">        function, string, list of dicts etc.)</span>
+<span class="sd">    :param argument_vals: An interable from which the argument values will be drawn.</span>
+<span class="sd">        Defaults to ``list(range(n_args))``.</span>
+<span class="sd">    :param variadics_source: The ``(tuple, dict)`` pair that will be used to extract</span>
+<span class="sd">        variadics&#39; inputs.</span>
+<span class="sd">    :return: A generator of ``(args: tuple, kwargs: dict)`` pairs</span>
 
 <span class="sd">    &gt;&gt;&gt; assert list(</span>
 <span class="sd">    ...     sig_to_inputs(lambda a, b, /, c, d, *, e, f: None)</span>
@@ -504,32 +511,18 @@
 <span class="sd">     ((0, &#39;args1&#39;, &#39;args2&#39;), {&#39;b&#39;: 1}),</span>
 <span class="sd">     ((0, &#39;args1&#39;, &#39;args2&#39;), {&#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;})]</span>
 
-<span class="sd">    :param sig: A signature or anything that ``i2.Sig`` can use to create one (e.g.</span>
-<span class="sd">        function, string, list of dicts etc.)</span>
-<span class="sd">    :param argument_vals: An interable from which the argument values will be drawn.</span>
-<span class="sd">        Defaults to ``list(range(n_args))``.</span>
-<span class="sd">    :param variadics_source: The ``(tuple, dict)`` pair that will be used to extract</span>
-<span class="sd">        variadics&#39; inputs.</span>
-<span class="sd">    :return: A generator of ``(args: tuple, kwargs: dict)`` pairs</span>
+<span class="sd">    Tip: To ignore variadics all together, you can specify ``variadics_source=((), {})``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
     <span class="n">already_yielded</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">variadics</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">kinds</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">var_param_kinds</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">variadics</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_variadics</span> <span class="ow">and</span> <span class="n">variadics_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not allowed to have variadics: </span><span class="si">{</span><span class="n">sig</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variadics</span><span class="p">:</span>
-                <span class="n">sig</span> <span class="o">-=</span> <span class="n">v</span>
-            <span class="k">if</span> <span class="n">ignore_variadics</span><span class="p">:</span>
-                <span class="k">yield from</span> <span class="n">sig_to_inputs</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">argument_vals</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">var_args</span><span class="p">,</span> <span class="n">var_kwargs</span> <span class="o">=</span> <span class="n">variadics_source</span>
-                <span class="k">for</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">sig_to_inputs</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">argument_vals</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">_args</span><span class="p">,</span> <span class="n">_kwargs</span> <span class="ow">in</span> <span class="n">_args_kwargs_combinations</span><span class="p">(</span>
-                        <span class="n">var_args</span><span class="p">,</span> <span class="n">var_kwargs</span>
-                    <span class="p">):</span>
-                        <span class="k">yield</span> <span class="n">args</span> <span class="o">+</span> <span class="n">_args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variadics</span><span class="p">:</span>
+            <span class="n">sig</span> <span class="o">-=</span> <span class="n">v</span>
+        <span class="n">var_args</span><span class="p">,</span> <span class="n">var_kwargs</span> <span class="o">=</span> <span class="n">variadics_source</span>
+        <span class="k">for</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">sig_to_inputs</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">argument_vals</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">_args</span><span class="p">,</span> <span class="n">_kwargs</span> <span class="ow">in</span> <span class="n">_args_kwargs_combinations</span><span class="p">(</span><span class="n">var_args</span><span class="p">,</span> <span class="n">var_kwargs</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">args</span> <span class="o">+</span> <span class="n">_args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">sub_sig</span> <span class="ow">in</span> <span class="n">_get_sub_sigs_from_default_values</span><span class="p">(</span><span class="n">sig</span><span class="p">):</span>
             <span class="n">po</span><span class="p">,</span> <span class="n">pk</span><span class="p">,</span> <span class="n">ko</span> <span class="o">=</span> <span class="n">_get_non_variadic_kind_counts</span><span class="p">(</span><span class="n">sub_sig</span><span class="p">)</span>
