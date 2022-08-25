@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.util &mdash; i2 0.0.142 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.util &mdash; i2 0.0.143 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -327,7 +327,7 @@ a simple expression (not <cite>pass</cite>, <cite>…</cite>, or starting someth
 
 <dl class="py function">
 <dt id="i2.tests.util.sig_to_inputs">
-<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">sig_to_inputs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sig</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>inspect.Signature<span class="p">, </span>Iterable<span class="p">[</span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Callable<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">argument_vals</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Iterable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ignore_variadics</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span>Tuple<span class="p">[</span>tuple<span class="p">, </span>dict<span class="p">]</span><span class="p">]</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#sig_to_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.sig_to_inputs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">sig_to_inputs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sig</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>inspect.Signature<span class="p">, </span>Iterable<span class="p">[</span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Callable<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">argument_vals</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Iterable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">ignore_variadics</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">variadics_source</span><span class="p">:</span> <span class="n">Tuple<span class="p">[</span>tuple<span class="p">, </span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">(('args1', 'args2'), {'kwargs1': 'kwargs1_val'})</span></em><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span>Tuple<span class="p">[</span>tuple<span class="p">, </span>dict<span class="p">]</span><span class="p">]</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#sig_to_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.sig_to_inputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate all kind-valid (arg, kwargs) input combinations for a function with a
 given signature <code class="docutils literal notranslate"><span class="pre">sig</span></code>, with argument values taken from the <code class="docutils literal notranslate"><span class="pre">argument_vals</span></code></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span>
@@ -339,23 +339,19 @@ given signature <code class="docutils literal notranslate"><span class="pre">sig
 <span class="gp">... </span><span class="p">]</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">sig_to_inputs</span><span class="p">(</span>
-<span class="gp">... </span>        <span class="n">Sig</span><span class="p">(</span><span class="s1">&#39;(a=-1, /, b=-1, *args, c=-1, **kwargs)&#39;</span><span class="p">),</span>
-<span class="gp">... </span>        <span class="n">ignore_variadics</span><span class="o">=</span><span class="kc">True</span>
-<span class="gp">... </span>    <span class="p">)</span>
-<span class="gp">... </span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span>
-<span class="gp">... </span>    <span class="p">((),</span> <span class="p">{}),</span>
-<span class="gp">... </span>    <span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{}),</span>
-<span class="gp">... </span>    <span class="p">((),</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}),</span>
-<span class="gp">... </span>    <span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
-<span class="gp">... </span>    <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{}),</span>
-<span class="gp">... </span>    <span class="p">((),</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}),</span>
-<span class="gp">... </span>    <span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
-<span class="gp">... </span>    <span class="p">((),</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
-<span class="gp">... </span>    <span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}),</span>
-<span class="gp">... </span>    <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">})</span>
-<span class="gp">... </span><span class="p">]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">sig_to_inputs</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="s1">&#39;(a, *args, b, **kwargs)&#39;</span><span class="p">)))</span>  
+<span class="go">[((), {&#39;a&#39;: 0, &#39;b&#39;: 1}),</span>
+<span class="go"> ((), {&#39;a&#39;: 0, &#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;}),</span>
+<span class="go"> ((&#39;args1&#39;,), {&#39;a&#39;: 0, &#39;b&#39;: 1}),</span>
+<span class="go"> ((&#39;args1&#39;,), {&#39;a&#39;: 0, &#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;}),</span>
+<span class="go"> ((&#39;args1&#39;, &#39;args2&#39;), {&#39;a&#39;: 0, &#39;b&#39;: 1}),</span>
+<span class="go"> ((&#39;args1&#39;, &#39;args2&#39;), {&#39;a&#39;: 0, &#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;}),</span>
+<span class="go"> ((0,), {&#39;b&#39;: 1}),</span>
+<span class="go"> ((0,), {&#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;}),</span>
+<span class="go"> ((0, &#39;args1&#39;), {&#39;b&#39;: 1}),</span>
+<span class="go"> ((0, &#39;args1&#39;), {&#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;}),</span>
+<span class="go"> ((0, &#39;args1&#39;, &#39;args2&#39;), {&#39;b&#39;: 1}),</span>
+<span class="go"> ((0, &#39;args1&#39;, &#39;args2&#39;), {&#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;})]</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -365,6 +361,8 @@ given signature <code class="docutils literal notranslate"><span class="pre">sig
 function, string, list of dicts etc.)</p></li>
 <li><p><strong>argument_vals</strong> – An interable from which the argument values will be drawn.
 Defaults to <code class="docutils literal notranslate"><span class="pre">list(range(n_args))</span></code>.</p></li>
+<li><p><strong>variadics_source</strong> – The <code class="docutils literal notranslate"><span class="pre">(tuple,</span> <span class="pre">dict)</span></code> pair that will be used to extract
+variadics’ inputs.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
