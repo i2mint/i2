@@ -337,7 +337,7 @@ def sig_to_func(
 def _all_prefixes(x: Iterable):
     """
     >>> list(_all_prefixes([1,2,3]))
-    [(), (1,), (1, 2)]
+    [(), (1,), (1, 2), (1, 2, 3)]
     >>> list(map(dict, _all_prefixes({'a': 1, 'b': 2}.items())))
     [{}, {'a': 1}, {'a': 1, 'b': 2}]
     """
