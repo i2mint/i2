@@ -79,7 +79,7 @@ from typing import (
 
 from types import MethodType
 
-from i2.signatures import Sig, name_of_obj, KO, PK, VK
+from i2.signatures import Sig, name_of_obj, KO, PK, VK, sig_to_dataclass
 from i2.multi_object import Pipe
 from i2.deco import double_up_as_factory
 
@@ -1375,15 +1375,7 @@ def kwargs_trans_to_extract_args_from_attrs(
 # TODO: kind lost here, only 3.10 offers dataclasses with some control over kind:
 #   See: https://stackoverflow.com/questions/49908182/how-to-make-keyword-only-fields-with-dataclasses
 def param_to_dataclass_field_tuple(param: Parameter):
-    t = (param.name, param.annotation, param.default)
-    if t[2] is empty:
-        t = t[:2]
-    if t[1] is empty:
-        if len(t) == 2:
-            t = t[0]
-        else:
-            t = (t[0], 'typing.Any', t[2])
-    return t
+    return param.name, param.annotation, param.default
 
 
 MethodFunc = Callable
@@ -1508,8 +1500,11 @@ def func_to_method_func(
     return method_func
 
 
+# TODO: See bind_funcs_object_attrs_old and get rid of it if bind_funcs_object_attrs
+#  is better and has all old has.
+# TODO: Make instances picklable (class is already, but not instances!)!!
 def bind_funcs_object_attrs(
-    funcs, init_params=(), *, cls=None,
+    funcs, init_params=(), *, cls=None, module=None, **extra_attrs
 ):
     """Transform one or several functions into a class that contains them as methods
     sourcing specific arguments from the instance's attributes.
@@ -1528,7 +1523,7 @@ def bind_funcs_object_attrs(
     >>> assert instance.foo(2, d='hello') == 'hello: 9' == foo(
     ...     a=1, b=2, c=3, d='hello')
     >>> str(signature(Klass))
-    "(a: 'typing.Any', c: 'typing.Any' = 2) -> None"
+    '(a, c=2) -> None'
     >>>
     >>> instance = Klass(a=1, c=3)
     >>> str(instance)
@@ -1540,6 +1535,123 @@ def bind_funcs_object_attrs(
     >>> instance.foo(10, d='goodbye')
     'goodbye: 33'
 
+    >>> def foo(a, b, c):
+    ...     return a + b * c
+    ...
+    >>> def bar(d, e):
+    ...     return f"{d=}, {e=}"
+    ...
+    >>> @dataclass
+    ... class K:
+    ...     a: int
+    ...     e: int
+    ...
+    >>> C = bind_funcs_object_attrs([foo, bar], 'a e', cls=K)
+    >>> str(signature(C))
+    '(a: int, e: int) -> None'
+    >>> c = C(1,2)
+    >>> assert str(signature(c.foo)) == '(b, c)'
+    >>> c.foo(3,4)
+    13
+    >>> assert str(signature(c.bar)) == '(d)'
+    >>> c.bar(5)
+    'd=5, e=2'
+    """
+
+    if isinstance(init_params, str):
+        init_params = init_params.split()
+
+    dflt_cls_name = 'FuncsUnion'
+    if callable(funcs) and not isinstance(funcs, Iterable):
+        single_func = funcs
+        dflt_cls_name = camelize(getattr(single_func, '__name__', dflt_cls_name))
+        funcs = [single_func]
+
+    # If cls not given, make one from the funcs and init_params
+    if not isinstance(cls, type):
+        # if the class is not given, we need to make one
+        # ... for this we make a name
+        if isinstance(cls, str):
+            cls_name = cls
+        else:
+            cls_name = dflt_cls_name
+        # ... and an actual class
+        cls = _mk_base_class_for_funcs(cls_name, init_params, funcs)
+
+    for func in funcs:
+        method_func = func_to_method_func(func, init_params)
+        setattr(cls, method_func.__name__, method_func)
+
+    if module:
+        cls.__module__ = module
+    for attr_name, attr_val in extra_attrs.items():
+        setattr(cls, attr_name, attr_val)
+
+    return cls
+
+
+class PickleHelperMixin:
+    def __reduce__(self):
+        return self.__name__
+
+
+def _mk_base_class_for_funcs(cls_name, init_params, funcs):
+    """
+    Make a class with given init_params.
+
+    :param cls_name: The name the class should have
+    :param init_params: list of strings used to determine what arg names are in the init
+    :param funcs: list of functions used to add defaults and annotations to the init args
+    :return:
+    """
+    # Make the signature for the init
+    class_init_sig = Sig(init_params)
+    if funcs:
+        for func in funcs:
+            init_params_in_func_sig = list(
+                filter(None, map(Sig(func).get, init_params))
+            )
+            class_init_sig = class_init_sig.merge_with_sig(
+                init_params_in_func_sig,
+                default_conflict_method='fill_defaults_and_annotations',
+            )
+
+    dataclass_fields = list(map(param_to_dataclass_field_tuple, class_init_sig.params))
+    cls = make_dataclass(cls_name, dataclass_fields, bases=(PickleHelperMixin,))
+
+    return cls
+
+
+def bind_funcs_object_attrs_old(
+    funcs, init_params=(), *, cls=None,
+):
+    """Transform one or several functions into a class that contains them as methods
+    sourcing specific arguments from the instance's attributes.
+    >>> from inspect import signature
+    >>> from dataclasses import dataclass
+    >>>
+    >>> def foo(a, b, c=2, *, d='bar'):
+    ...     return f"{d}: {(a + b) * c}"
+    >>> foo(1, 2)
+    'bar: 6'
+    >>> Klass = bind_funcs_object_attrs_old(foo, init_params='a c')
+    >>> Klass.__name__
+    'Foo'
+    >>> instance = Klass(a=1, c=3)
+    >>> assert instance.foo(2, d='hello') == 'hello: 9' == foo(
+    ...     a=1, b=2, c=3, d='hello')
+    >>> str(signature(Klass))
+    '(a, c=2) -> None'
+    >>>
+    >>> instance = Klass(a=1, c=3)
+    >>> str(instance)
+    'Foo(a=1, c=3)'
+    >>> str(signature(instance.foo))
+    "(b, *, d='bar')"
+    >>> instance.foo(2, d='hello')
+    'hello: 9'
+    >>> instance.foo(10, d='goodbye')
+    'goodbye: 33'
     >>> def foo(a, b, c):
     ...     return a + b * c
     ...
