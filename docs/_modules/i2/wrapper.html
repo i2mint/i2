@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.144 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.145 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -179,7 +179,7 @@
 
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span>
 
-<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">name_of_obj</span><span class="p">,</span> <span class="n">KO</span><span class="p">,</span> <span class="n">PK</span><span class="p">,</span> <span class="n">VK</span>
+<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">name_of_obj</span><span class="p">,</span> <span class="n">KO</span><span class="p">,</span> <span class="n">PK</span><span class="p">,</span> <span class="n">VK</span><span class="p">,</span> <span class="n">sig_to_dataclass</span>
 <span class="kn">from</span> <span class="nn">i2.multi_object</span> <span class="kn">import</span> <span class="n">Pipe</span>
 <span class="kn">from</span> <span class="nn">i2.deco</span> <span class="kn">import</span> <span class="n">double_up_as_factory</span>
 
@@ -1475,15 +1475,7 @@
 <span class="c1"># TODO: kind lost here, only 3.10 offers dataclasses with some control over kind:</span>
 <span class="c1">#   See: https://stackoverflow.com/questions/49908182/how-to-make-keyword-only-fields-with-dataclasses</span>
 <span class="k">def</span> <span class="nf">param_to_dataclass_field_tuple</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">):</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">is</span> <span class="n">empty</span><span class="p">:</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="n">empty</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;typing.Any&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">t</span>
+    <span class="k">return</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span>
 
 
 <span class="n">MethodFunc</span> <span class="o">=</span> <span class="n">Callable</span>
@@ -1608,8 +1600,11 @@
     <span class="k">return</span> <span class="n">method_func</span></div>
 
 
+<span class="c1"># TODO: See bind_funcs_object_attrs_old and get rid of it if bind_funcs_object_attrs</span>
+<span class="c1">#  is better and has all old has.</span>
+<span class="c1"># TODO: Make instances picklable (class is already, but not instances!)!!</span>
 <div class="viewcode-block" id="bind_funcs_object_attrs"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.bind_funcs_object_attrs">[docs]</a><span class="k">def</span> <span class="nf">bind_funcs_object_attrs</span><span class="p">(</span>
-    <span class="n">funcs</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="p">(),</span> <span class="o">*</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">funcs</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="p">(),</span> <span class="o">*</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_attrs</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Transform one or several functions into a class that contains them as methods</span>
 <span class="sd">    sourcing specific arguments from the instance&#39;s attributes.</span>
@@ -1628,7 +1623,7 @@
 <span class="sd">    &gt;&gt;&gt; assert instance.foo(2, d=&#39;hello&#39;) == &#39;hello: 9&#39; == foo(</span>
 <span class="sd">    ...     a=1, b=2, c=3, d=&#39;hello&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; str(signature(Klass))</span>
-<span class="sd">    &quot;(a: &#39;typing.Any&#39;, c: &#39;typing.Any&#39; = 2) -&gt; None&quot;</span>
+<span class="sd">    &#39;(a, c=2) -&gt; None&#39;</span>
 <span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; instance = Klass(a=1, c=3)</span>
 <span class="sd">    &gt;&gt;&gt; str(instance)</span>
@@ -1640,6 +1635,123 @@
 <span class="sd">    &gt;&gt;&gt; instance.foo(10, d=&#39;goodbye&#39;)</span>
 <span class="sd">    &#39;goodbye: 33&#39;</span>
 
+<span class="sd">    &gt;&gt;&gt; def foo(a, b, c):</span>
+<span class="sd">    ...     return a + b * c</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; def bar(d, e):</span>
+<span class="sd">    ...     return f&quot;{d=}, {e=}&quot;</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; @dataclass</span>
+<span class="sd">    ... class K:</span>
+<span class="sd">    ...     a: int</span>
+<span class="sd">    ...     e: int</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; C = bind_funcs_object_attrs([foo, bar], &#39;a e&#39;, cls=K)</span>
+<span class="sd">    &gt;&gt;&gt; str(signature(C))</span>
+<span class="sd">    &#39;(a: int, e: int) -&gt; None&#39;</span>
+<span class="sd">    &gt;&gt;&gt; c = C(1,2)</span>
+<span class="sd">    &gt;&gt;&gt; assert str(signature(c.foo)) == &#39;(b, c)&#39;</span>
+<span class="sd">    &gt;&gt;&gt; c.foo(3,4)</span>
+<span class="sd">    13</span>
+<span class="sd">    &gt;&gt;&gt; assert str(signature(c.bar)) == &#39;(d)&#39;</span>
+<span class="sd">    &gt;&gt;&gt; c.bar(5)</span>
+<span class="sd">    &#39;d=5, e=2&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_params</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">init_params</span> <span class="o">=</span> <span class="n">init_params</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="s1">&#39;FuncsUnion&#39;</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">funcs</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">funcs</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="n">single_func</span> <span class="o">=</span> <span class="n">funcs</span>
+        <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="n">camelize</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">single_func</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="n">dflt_cls_name</span><span class="p">))</span>
+        <span class="n">funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">single_func</span><span class="p">]</span>
+
+    <span class="c1"># If cls not given, make one from the funcs and init_params</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="c1"># if the class is not given, we need to make one</span>
+        <span class="c1"># ... for this we make a name</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">cls_name</span> <span class="o">=</span> <span class="bp">cls</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cls_name</span> <span class="o">=</span> <span class="n">dflt_cls_name</span>
+        <span class="c1"># ... and an actual class</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">_mk_base_class_for_funcs</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">init_params</span><span class="p">,</span> <span class="n">funcs</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span><span class="p">:</span>
+        <span class="n">method_func</span> <span class="o">=</span> <span class="n">func_to_method_func</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">init_params</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method_func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">method_func</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">module</span><span class="p">:</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="n">module</span>
+    <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_val</span> <span class="ow">in</span> <span class="n">extra_attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_val</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">cls</span></div>
+
+
+<span class="k">class</span> <span class="nc">PickleHelperMixin</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span>
+
+
+<span class="k">def</span> <span class="nf">_mk_base_class_for_funcs</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">init_params</span><span class="p">,</span> <span class="n">funcs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a class with given init_params.</span>
+
+<span class="sd">    :param cls_name: The name the class should have</span>
+<span class="sd">    :param init_params: list of strings used to determine what arg names are in the init</span>
+<span class="sd">    :param funcs: list of functions used to add defaults and annotations to the init args</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make the signature for the init</span>
+    <span class="n">class_init_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">init_params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">funcs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span><span class="p">:</span>
+            <span class="n">init_params_in_func_sig</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="nb">map</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">init_params</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="n">class_init_sig</span> <span class="o">=</span> <span class="n">class_init_sig</span><span class="o">.</span><span class="n">merge_with_sig</span><span class="p">(</span>
+                <span class="n">init_params_in_func_sig</span><span class="p">,</span>
+                <span class="n">default_conflict_method</span><span class="o">=</span><span class="s1">&#39;fill_defaults_and_annotations&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="n">dataclass_fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">param_to_dataclass_field_tuple</span><span class="p">,</span> <span class="n">class_init_sig</span><span class="o">.</span><span class="n">params</span><span class="p">))</span>
+    <span class="bp">cls</span> <span class="o">=</span> <span class="n">make_dataclass</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">dataclass_fields</span><span class="p">,</span> <span class="n">bases</span><span class="o">=</span><span class="p">(</span><span class="n">PickleHelperMixin</span><span class="p">,))</span>
+
+    <span class="k">return</span> <span class="bp">cls</span>
+
+
+<div class="viewcode-block" id="bind_funcs_object_attrs_old"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.bind_funcs_object_attrs_old">[docs]</a><span class="k">def</span> <span class="nf">bind_funcs_object_attrs_old</span><span class="p">(</span>
+    <span class="n">funcs</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="p">(),</span> <span class="o">*</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Transform one or several functions into a class that contains them as methods</span>
+<span class="sd">    sourcing specific arguments from the instance&#39;s attributes.</span>
+<span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
+<span class="sd">    &gt;&gt;&gt; from dataclasses import dataclass</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; def foo(a, b, c=2, *, d=&#39;bar&#39;):</span>
+<span class="sd">    ...     return f&quot;{d}: {(a + b) * c}&quot;</span>
+<span class="sd">    &gt;&gt;&gt; foo(1, 2)</span>
+<span class="sd">    &#39;bar: 6&#39;</span>
+<span class="sd">    &gt;&gt;&gt; Klass = bind_funcs_object_attrs_old(foo, init_params=&#39;a c&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; Klass.__name__</span>
+<span class="sd">    &#39;Foo&#39;</span>
+<span class="sd">    &gt;&gt;&gt; instance = Klass(a=1, c=3)</span>
+<span class="sd">    &gt;&gt;&gt; assert instance.foo(2, d=&#39;hello&#39;) == &#39;hello: 9&#39; == foo(</span>
+<span class="sd">    ...     a=1, b=2, c=3, d=&#39;hello&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; str(signature(Klass))</span>
+<span class="sd">    &#39;(a, c=2) -&gt; None&#39;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; instance = Klass(a=1, c=3)</span>
+<span class="sd">    &gt;&gt;&gt; str(instance)</span>
+<span class="sd">    &#39;Foo(a=1, c=3)&#39;</span>
+<span class="sd">    &gt;&gt;&gt; str(signature(instance.foo))</span>
+<span class="sd">    &quot;(b, *, d=&#39;bar&#39;)&quot;</span>
+<span class="sd">    &gt;&gt;&gt; instance.foo(2, d=&#39;hello&#39;)</span>
+<span class="sd">    &#39;hello: 9&#39;</span>
+<span class="sd">    &gt;&gt;&gt; instance.foo(10, d=&#39;goodbye&#39;)</span>
+<span class="sd">    &#39;goodbye: 33&#39;</span>
 <span class="sd">    &gt;&gt;&gt; def foo(a, b, c):</span>
 <span class="sd">    ...     return a + b * c</span>
 <span class="sd">    ...</span>

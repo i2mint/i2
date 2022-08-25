@@ -1764,8 +1764,10 @@ class Sig(Signature, Mapping):
             'strict',
             'take_first',
             'fill_defaults_and_annotations',
-        }, "default_conflict_method should be in " \
-           "{None, 'strict', 'take_first', 'fill_defaults_and_annotations'}"
+        }, (
+            'default_conflict_method should be in '
+            "{None, 'strict', 'take_first', 'fill_defaults_and_annotations'}"
+        )
 
         if default_conflict_method == 'take_first':
             _sig = _sig - set(_self.keys() & _sig.keys())

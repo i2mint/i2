@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.144 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.145 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -606,7 +606,7 @@ returns the normal form of ingress functions: ((), kwargs)</p>
 
 <dl class="py function">
 <dt id="i2.wrapper.bind_funcs_object_attrs">
-<code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">bind_funcs_object_attrs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">funcs</span></em>, <em class="sig-param"><span class="n">init_params</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">cls</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#bind_funcs_object_attrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.bind_funcs_object_attrs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">bind_funcs_object_attrs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">funcs</span></em>, <em class="sig-param"><span class="n">init_params</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">cls</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">module</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">extra_attrs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#bind_funcs_object_attrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.bind_funcs_object_attrs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform one or several functions into a class that contains them as methods
 sourcing specific arguments from the instance’s attributes.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
@@ -623,7 +623,7 @@ sourcing specific arguments from the instance’s attributes.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">instance</span><span class="o">.</span><span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;hello: 9&#39;</span> <span class="o">==</span> <span class="n">foo</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">Klass</span><span class="p">))</span>
-<span class="go">&quot;(a: &#39;typing.Any&#39;, c: &#39;typing.Any&#39; = 2) -&gt; None&quot;</span>
+<span class="go">&#39;(a, c=2) -&gt; None&#39;</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span> <span class="o">=</span> <span class="n">Klass</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
@@ -659,6 +659,59 @@ sourcing specific arguments from the instance’s attributes.</p>
 <span class="go">&#39;d=5, e=2&#39;</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.wrapper.bind_funcs_object_attrs_old">
+<code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">bind_funcs_object_attrs_old</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">funcs</span></em>, <em class="sig-param"><span class="n">init_params</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">cls</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#bind_funcs_object_attrs_old"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.bind_funcs_object_attrs_old" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform one or several functions into a class that contains them as methods
+sourcing specific arguments from the instance’s attributes.
+&gt;&gt;&gt; from inspect import signature
+&gt;&gt;&gt; from dataclasses import dataclass
+&gt;&gt;&gt;
+&gt;&gt;&gt; def foo(a, b, c=2, <a href="#id1"><span class="problematic" id="id2">*</span></a>, d=’bar’):
+…     return f”{d}: {(a + b) * c}”
+&gt;&gt;&gt; foo(1, 2)
+‘bar: 6’
+&gt;&gt;&gt; Klass = bind_funcs_object_attrs_old(foo, init_params=’a c’)
+&gt;&gt;&gt; Klass.__name__
+‘Foo’
+&gt;&gt;&gt; instance = Klass(a=1, c=3)
+&gt;&gt;&gt; assert instance.foo(2, d=’hello’) == ‘hello: 9’ == foo(
+…     a=1, b=2, c=3, d=’hello’)
+&gt;&gt;&gt; str(signature(Klass))
+‘(a, c=2) -&gt; None’
+&gt;&gt;&gt;
+&gt;&gt;&gt; instance = Klass(a=1, c=3)
+&gt;&gt;&gt; str(instance)
+‘Foo(a=1, c=3)’
+&gt;&gt;&gt; str(signature(instance.foo))
+“(b, <a href="#id3"><span class="problematic" id="id4">*</span></a>, d=’bar’)”
+&gt;&gt;&gt; instance.foo(2, d=’hello’)
+‘hello: 9’
+&gt;&gt;&gt; instance.foo(10, d=’goodbye’)
+‘goodbye: 33’
+&gt;&gt;&gt; def foo(a, b, c):
+…     return a + b * c
+…
+&gt;&gt;&gt; def bar(d, e):
+…     return f”{d=}, {e=}”
+…
+&gt;&gt;&gt; &#64;dataclass
+… class K:
+…     a: int
+…     e: int
+…
+&gt;&gt;&gt; C = bind_funcs_object_attrs([foo, bar], ‘a e’, cls=K)
+&gt;&gt;&gt; str(signature(C))
+‘(a: int, e: int) -&gt; None’
+&gt;&gt;&gt; c = C(1,2)
+&gt;&gt;&gt; assert str(signature(c.foo)) == ‘(b, c)’
+&gt;&gt;&gt; c.foo(3,4)
+13
+&gt;&gt;&gt; assert str(signature(c.bar)) == ‘(d)’
+&gt;&gt;&gt; c.bar(5)
+‘d=5, e=2’</p>
 </dd></dl>
 
 <dl class="py function">
@@ -933,7 +986,7 @@ want to do:</p>
 <code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">partialx</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">__name__</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_rm_partialize</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">_allow_reordering</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#partialx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.partialx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extends the functionality of builtin <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code> with the ability to</p>
 <ul class="simple">
-<li><p>set <a href="#id1"><span class="problematic" id="id2">``</span></a>__name__ ``</p></li>
+<li><p>set <a href="#id5"><span class="problematic" id="id6">``</span></a>__name__ ``</p></li>
 <li><p>remove partialized arguments from signature</p></li>
 <li><p>reorder params (so that defaults are at the end)</p></li>
 </ul>
