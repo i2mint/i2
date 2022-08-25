@@ -1684,6 +1684,8 @@ class Sig(Signature, Mapping):
     def ch_annotations(self, **changes_for_name):
         return self.ch_param_attrs('annotation', **changes_for_name)
 
+    # TODO: Make default_conflict_method be able to be a callable and get rid of string
+    #  mapping complexity in merge_with_sig code
     def merge_with_sig(
         self,
         sig: ParamsAble,
@@ -1761,10 +1763,15 @@ class Sig(Signature, Mapping):
             None,
             'strict',
             'take_first',
-        }, "default_conflict_method should be in {None, 'strict', 'take_first'}"
+            'fill_defaults_and_annotations',
+        }, "default_conflict_method should be in " \
+           "{None, 'strict', 'take_first', 'fill_defaults_and_annotations'}"
 
         if default_conflict_method == 'take_first':
             _sig = _sig - set(_self.keys() & _sig.keys())
+        elif default_conflict_method == 'fill_defaults_and_annotations':
+            _self = _fill_defaults_and_annotations(_self, _sig)
+            _sig = _fill_defaults_and_annotations(_sig, _self)
 
         if not all(
             _self[name].default == _sig[name].default
@@ -2731,6 +2738,40 @@ class Sig(Signature, Mapping):
             allow_partial=_allow_partial,
             apply_defaults=_apply_defaults,
         )
+
+
+def _fill_defaults_and_annotations(sig1: Sig, sig2: Sig):
+    """Return the same signature as ``sig1``, but where empty param properties
+    (default or annotation) were filled by the property found in ``sig2`` if it has a
+    param of the same name
+
+    >>> _fill_defaults_and_annotations(
+    ...    Sig('(a, /, b: str, *, c=3)'), Sig('(a: float, b: int = 2, c=300)')
+    ... )
+    <Sig (a: float, /, b: str = 2, *, c=3)>
+
+    """
+
+    def filled_properties_of_sig1():
+        alt_defaults = sig2.defaults
+        alt_annotations = sig2.annotations
+        for p in sig1.params:
+            yield Parameter(
+                p.name,
+                p.kind,
+                default=(
+                    p.default
+                    if p.default is not empty
+                    else alt_defaults.get(p.name, empty)
+                ),
+                annotation=(
+                    p.annotation
+                    if p.annotation is not empty
+                    else alt_annotations.get(p.name, empty)
+                ),
+            )
+
+    return Sig(filled_properties_of_sig1())
 
 
 def _validate_sanity_of_signature_change(
