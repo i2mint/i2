@@ -408,7 +408,8 @@ def sig_to_inputs(
         function, string, list of dicts etc.)
     :param argument_vals: An interable from which the argument values will be drawn.
         Defaults to ``list(range(n_args))``.
-    :param variadics_source:
+    :param variadics_source: The ``(tuple, dict)`` pair that will be used to extract
+        variadics' inputs.
     :return: A generator of ``(args: tuple, kwargs: dict)`` pairs
     """
     sig = Sig(sig)
