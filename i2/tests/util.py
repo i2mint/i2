@@ -532,7 +532,8 @@ import re
 
 _signature_msg_patterns = [
     "keyword arguments$",
-    "expected at most" "keyword arguments",
+    "expected at most",
+    "keyword arguments",
     "got some positional\-only arguments passed as keyword arguments",
     "no signature found",
 ]
