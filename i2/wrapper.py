@@ -291,6 +291,8 @@ class Wrap(_Wrap):
 
         if ingress is None:
             self.ingress = transparent_ingress
+            self.__defaults__ = func.__defaults__
+            self.__kwdefaults__ = func.__kwdefaults__
         else:
 
             if isinstance(ingress, MakeFromFunc):
@@ -303,6 +305,8 @@ class Wrap(_Wrap):
                 assert callable(ingress), f'Should be callable: {ingress}'
                 self.ingress = ingress
             ingress_sig = Sig(self.ingress)
+            self.__defaults__ = self.ingress.__defaults__
+            self.__kwdefaults__ = self.ingress.__kwdefaults__
 
         return_annotation = empty
 
@@ -315,6 +319,7 @@ class Wrap(_Wrap):
                 return_annotation = egress_return_annotation
 
         self.__signature__ = Sig(ingress_sig, return_annotation=return_annotation)
+
 
     def __call__(self, *ingress_args, **ingress_kwargs):
         func_args, func_kwargs = self.ingress(*ingress_args, **ingress_kwargs)
