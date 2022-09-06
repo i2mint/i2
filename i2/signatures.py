@@ -1330,7 +1330,24 @@ class Sig(Signature, Mapping):
 
     @property
     def defaults(self):
+        """A ``{name: default,...}`` dict of defaults (regardless of kind)"""
         return {p.name: p.default for p in self.values() if p.default is not p.empty}
+
+    @property
+    def _defaults_(self):
+        """What the ``__defaults__`` value would be for a func of the same signature"""
+        return tuple(
+            p.default for p in self.values()
+            if (p.default is not p.empty and p.kind != KO)
+        )
+
+    @property
+    def _kwdefaults_(self):
+        """What the ``__kwdefaults__`` value would be for a func of the same signature"""
+        return {
+            p.name: p.default for p in self.values()
+            if p.default is not p.empty and p.kind == KO
+        }
 
     @property
     def annotations(self):
