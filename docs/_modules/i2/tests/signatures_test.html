@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.signatures_test &mdash; i2 0.0.149 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.signatures_test &mdash; i2 0.0.150 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -175,6 +175,8 @@
     <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z</span>
 
+    <span class="k">assert</span> <span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span><span class="o">.</span><span class="n">_defaults_</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)</span>
+
     <span class="k">assert</span> <span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span>
     <span class="c1">#    works because Sig also changed __defaults__:</span>
     <span class="k">assert</span> <span class="n">foo</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)</span>
@@ -187,6 +189,8 @@
     <span class="c1">#    works because Sig also changed __defaults__ and __kwdefaults__:</span>
     <span class="k">assert</span> <span class="n">foo</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">==</span> <span class="p">()</span>
     <span class="k">assert</span> <span class="n">foo</span><span class="o">.</span><span class="vm">__kwdefaults__</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+    <span class="k">assert</span> <span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span><span class="o">.</span><span class="n">_defaults_</span> <span class="o">==</span> <span class="p">()</span>
+    <span class="k">assert</span> <span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span><span class="o">.</span><span class="n">_kwdefaults_</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
 
     <span class="c1"># The following (where we go from a (same kind) param not having a default,</span>
     <span class="c1"># to having one, also work</span>
@@ -203,7 +207,9 @@
         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z</span>
 
     <span class="k">assert</span> <span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span>
-    <span class="k">assert</span> <span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">21</span></div>
+    <span class="k">assert</span> <span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">21</span>
+    <span class="k">assert</span> <span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span><span class="o">.</span><span class="n">_defaults_</span> <span class="o">==</span> <span class="p">()</span>
+    <span class="k">assert</span> <span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span><span class="o">.</span><span class="n">_kwdefaults_</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span></div>
 
 
 <span class="k">def</span> <span class="nf">test_tuple_the_args</span><span class="p">():</span>

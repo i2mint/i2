@@ -1337,7 +1337,8 @@ class Sig(Signature, Mapping):
     def _defaults_(self):
         """What the ``__defaults__`` value would be for a func of the same signature"""
         return tuple(
-            p.default for p in self.values()
+            p.default
+            for p in self.values()
             if (p.default is not p.empty and p.kind != KO)
         )
 
@@ -1345,7 +1346,8 @@ class Sig(Signature, Mapping):
     def _kwdefaults_(self):
         """What the ``__kwdefaults__`` value would be for a func of the same signature"""
         return {
-            p.name: p.default for p in self.values()
+            p.name: p.default
+            for p in self.values()
             if p.default is not p.empty and p.kind == KO
         }
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.149 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.150 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -283,6 +283,16 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__code__</span>
 
 
+<span class="k">def</span> <span class="nf">_defaults_and_kwdefaults_of_func</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">func</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="vm">__kwdefaults__</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="c1"># if python can&#39;t do it on it&#39;s own, you may have a special kind of callable</span>
+        <span class="c1"># here, so try doing it through Sig, which is more flexible</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sig</span><span class="o">.</span><span class="n">_defaults_</span><span class="p">,</span> <span class="n">sig</span><span class="o">.</span><span class="n">_kwdefaults_</span>
+
+
 <div class="viewcode-block" id="Wrap"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Wrap">[docs]</a><span class="k">class</span> <span class="nc">Wrap</span><span class="p">(</span><span class="n">_Wrap</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A function wrapper with interface modifiers.</span>
 
@@ -349,7 +359,6 @@
 <span class="sd">    &gt;&gt;&gt; wrapped_func(2, &#39;Hi&#39;, &#39;world!&#39;)</span>
 <span class="sd">    &#39;Hiworld!Hiworld! ITSME!!!&#39;</span>
 
-
 <span class="sd">    A more involved example:</span>
 
 <span class="sd">    &gt;&gt;&gt; def ingress(a, b: str, c=&quot;hi&quot;):</span>
@@ -371,13 +380,11 @@
 <span class="sd">    ...     == len(&quot;Hi world! Hi world! Hi world! &quot;)</span>
 <span class="sd">    ... )</span>
 
-<span class="sd">    An ingress function links the interface of the wrapper to the interface of the</span>
+<span class="sd">    An ``ingress`` function links the interface of the wrapper to the interface of the</span>
 <span class="sd">    wrapped func; therefore it&#39;s definition often depends on information of both,</span>
 <span class="sd">    and for that reason, we provide the ability to specify the ingress not only</span>
 <span class="sd">    explicitly (as in the examples above), but through a factory -- a function that</span>
-<span class="sd">    will be called on `func` to produce the ingress that should be used to wrap it.</span>
-
-
+<span class="sd">    will be called on ``func`` to produce the ingress that should be used to wrap it.</span>
 
 <span class="sd">    .. seealso::</span>
 
@@ -391,6 +398,9 @@
 
         <span class="k">if</span> <span class="n">ingress</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span> <span class="o">=</span> <span class="n">transparent_ingress</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__kwdefaults__</span> <span class="o">=</span> <span class="n">_defaults_and_kwdefaults_of_func</span><span class="p">(</span>
+                <span class="n">func</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ingress</span><span class="p">,</span> <span class="n">MakeFromFunc</span><span class="p">):</span>
@@ -398,11 +408,14 @@
                 <span class="n">func_to_ingress</span> <span class="o">=</span> <span class="n">ingress</span>  <span class="c1"># it&#39;s not the ingress function itself</span>
                 <span class="c1"># ... but an ingress factory: Should make the ingress in function of func</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span> <span class="o">=</span> <span class="n">func_to_ingress</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="n">callable</span><span class="p">(</span><span class="n">ingress</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Should be callable: </span><span class="si">{</span><span class="n">ingress</span><span class="si">}</span><span class="s1">&#39;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span> <span class="o">=</span> <span class="n">ingress</span>
+
             <span class="n">ingress_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingress</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__kwdefaults__</span> <span class="o">=</span> <span class="n">_defaults_and_kwdefaults_of_func</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span>
+            <span class="p">)</span>
 
         <span class="n">return_annotation</span> <span class="o">=</span> <span class="n">empty</span>
 
