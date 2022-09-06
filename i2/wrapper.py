@@ -183,6 +183,16 @@ class _Wrap:
         return self.func.__code__
 
 
+def _defaults_and_kwdefaults_of_func(func: Callable):
+    try:
+        return func.__defaults__, func.__kwdefaults__
+    except AttributeError:
+        # if python can't do it on it's own, you may have a special kind of callable
+        # here, so try doing it through Sig, which is more flexible
+        sig = Sig(func)
+        return sig._defaults_, sig._kwdefaults_
+
+
 class Wrap(_Wrap):
     """A function wrapper with interface modifiers.
 
@@ -249,7 +259,6 @@ class Wrap(_Wrap):
     >>> wrapped_func(2, 'Hi', 'world!')
     'Hiworld!Hiworld! ITSME!!!'
 
-
     A more involved example:
 
     >>> def ingress(a, b: str, c="hi"):
@@ -271,13 +280,11 @@ class Wrap(_Wrap):
     ...     == len("Hi world! Hi world! Hi world! ")
     ... )
 
-    An ingress function links the interface of the wrapper to the interface of the
+    An ``ingress`` function links the interface of the wrapper to the interface of the
     wrapped func; therefore it's definition often depends on information of both,
     and for that reason, we provide the ability to specify the ingress not only
     explicitly (as in the examples above), but through a factory -- a function that
-    will be called on `func` to produce the ingress that should be used to wrap it.
-
-
+    will be called on ``func`` to produce the ingress that should be used to wrap it.
 
     .. seealso::
 
@@ -291,8 +298,9 @@ class Wrap(_Wrap):
 
         if ingress is None:
             self.ingress = transparent_ingress
-            self.__defaults__ = func.__defaults__
-            self.__kwdefaults__ = func.__kwdefaults__
+            self.__defaults__, self.__kwdefaults__ = _defaults_and_kwdefaults_of_func(
+                func
+            )
         else:
 
             if isinstance(ingress, MakeFromFunc):
@@ -300,13 +308,14 @@ class Wrap(_Wrap):
                 func_to_ingress = ingress  # it's not the ingress function itself
                 # ... but an ingress factory: Should make the ingress in function of func
                 self.ingress = func_to_ingress(func)
-
             else:
                 assert callable(ingress), f'Should be callable: {ingress}'
                 self.ingress = ingress
+
             ingress_sig = Sig(self.ingress)
-            self.__defaults__ = self.ingress.__defaults__
-            self.__kwdefaults__ = self.ingress.__kwdefaults__
+            self.__defaults__, self.__kwdefaults__ = _defaults_and_kwdefaults_of_func(
+                self.ingress
+            )
 
         return_annotation = empty
 
@@ -319,7 +328,6 @@ class Wrap(_Wrap):
                 return_annotation = egress_return_annotation
 
         self.__signature__ = Sig(ingress_sig, return_annotation=return_annotation)
-
 
     def __call__(self, *ingress_args, **ingress_kwargs):
         func_args, func_kwargs = self.ingress(*ingress_args, **ingress_kwargs)
