@@ -75,6 +75,8 @@ def test_sig_wrap_edge_cases():
     def foo(x, y, z=0):
         return x + y * z
 
+    assert Sig(foo)._defaults_ == (3,)
+
     assert foo(1, 2) == 7
     #    works because Sig also changed __defaults__:
     assert foo.__defaults__ == (3,)
@@ -87,6 +89,8 @@ def test_sig_wrap_edge_cases():
     #    works because Sig also changed __defaults__ and __kwdefaults__:
     assert foo.__defaults__ == ()
     assert foo.__kwdefaults__ == {'z': 3}
+    assert Sig(foo)._defaults_ == ()
+    assert Sig(foo)._kwdefaults_ == {'z': 3}
 
     # The following (where we go from a (same kind) param not having a default,
     # to having one, also work
@@ -104,6 +108,8 @@ def test_sig_wrap_edge_cases():
 
     assert foo(1, 2) == 7
     assert foo(1, 2, z=10) == 21
+    assert Sig(foo)._defaults_ == ()
+    assert Sig(foo)._kwdefaults_ == {'z': 3}
 
 
 def test_tuple_the_args():
