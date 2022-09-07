@@ -687,7 +687,8 @@ def test_sigless_builtins():
     from operator import itemgetter, attrgetter, methodcaller
 
     for name in sigs_for_sigless_builtin_name:
-        if name in ["filter", "map"]:
+        # removed breakpoint as it triggers a pdb session
+        if name in ["breakpoint"]:
             continue
         sig = Sig(sigs_for_sigless_builtin_name[name])
         print(name, sig)
