@@ -656,16 +656,10 @@ def test_bool():
     assert function_is_compatible_with_signature(bool, sig)
 
 
-def function_is_compatible_with_signature2(func, sig):
+def visualize_errors_for_function_call(func, sig):
     """
-    Runs through all combinations of positional and keyword arguments,
-
-    >>> function_is_compatible_with_signature(hasattr, Sig(lambda obj, name: ...))
-    False
-    >>> function_is_compatible_with_signature(hasattr, Sig(lambda obj, name, /: ...))
-    True
+    Calls func on sig_to_inputs and prints error if any
     """
-    from i2.tests.util import call_raises_signature_error
 
     print(f"============================================================{str(func)}")
     for args, kwargs in sig_to_inputs(sig):
@@ -673,9 +667,6 @@ def function_is_compatible_with_signature2(func, sig):
         if result is not None:
             print(f"{args=} , {kwargs=}")
             print(result)
-        # print(call_and_return_error(func, *args, **kwargs))
-        # print(call_raises_signature_error(func, *args, **kwargs))
-        # yield call_raises_signature_error(func, *args, **kwargs)
 
 
 def test_sigless_builtins():
@@ -696,6 +687,5 @@ if __name__ == "__main__":
         # removed breakpoint as it triggers a pdb session
         if name in ["breakpoint"]:
             continue
-        print(name, _robust_signature_of_callable(eval(name)))
-        # sig = Sig(sigs_for_sigless_builtin_name[name])
-        # function_is_compatible_with_signature2(eval(name), sig)
+        sig = Sig(sigs_for_sigless_builtin_name[name])
+        visualize_errors_for_function_call(eval(name), sig)
