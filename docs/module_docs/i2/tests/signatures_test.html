@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.signatures_test &mdash; i2 0.0.152 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.signatures_test &mdash; i2 0.0.153 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -112,6 +112,18 @@ PO = Parameter.POSITIONAL_ONLY
 KO = Parameter.KEYWORD_ONLY</p>
 </dd>
 </dl>
+<dl class="py function">
+<dt id="i2.tests.signatures_test.function_is_compatible_with_signature2">
+<code class="sig-prename descclassname">i2.tests.signatures_test.</code><code class="sig-name descname">function_is_compatible_with_signature2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">sig</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/signatures_test.html#function_is_compatible_with_signature2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.signatures_test.function_is_compatible_with_signature2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs through all combinations of positional and keyword arguments,</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">function_is_compatible_with_signature</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">,</span> <span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="o">...</span><span class="p">))</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">function_is_compatible_with_signature</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">,</span> <span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">/</span><span class="p">:</span> <span class="o">...</span><span class="p">))</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="py function">
 <dt id="i2.tests.signatures_test.mk_sig">
 <code class="sig-prename descclassname">i2.tests.signatures_test.</code><code class="sig-name descname">mk_sig</code><span class="sig-paren">(</span><em class="sig-param">obj: Optional[Union[inspect.Signature</em>, <em class="sig-param">Callable</em>, <em class="sig-param">collections.abc.Mapping]] = None</em>, <em class="sig-param">return_annotations</em>, <em class="sig-param">**annotations</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/signatures_test.html#mk_sig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.signatures_test.mk_sig" title="Permalink to this definition">¶</a></dt>
