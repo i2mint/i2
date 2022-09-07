@@ -27,8 +27,8 @@ def _is_valid_arg_for_sig(x):
     return (
         isinstance(x, (Callable, Signature))
         or isinstance(x, str)
-        and x.startswith('(')
-        and x.endswith(')')
+        and x.startswith("(")
+        and x.endswith(")")
     )
 
 
@@ -50,13 +50,13 @@ def generate_params(params: ParamsAble_):
         for i, spec in enumerate(params):
             if isinstance(spec, int):
                 kind = spec
-                yield Parameter(f'a{kind}{i}', kind=kind)
+                yield Parameter(f"a{kind}{i}", kind=kind)
             elif isinstance(spec, Parameter):
                 param = spec
                 yield param
             elif isinstance(spec, str) and spec.isnumeric():
                 kind = int(spec)
-                yield Parameter(f'a{kind}{i}', kind=kind)
+                yield Parameter(f"a{kind}{i}", kind=kind)
             else:
                 try:
                     yield ensure_param(spec)
@@ -85,7 +85,7 @@ def params_to_arg_name_and_val(params: ParamsAble_):
         if param.kind == Parameter.VAR_POSITIONAL:
             val = (i, -i)
         elif param.kind == Parameter.VAR_KEYWORD:
-            val = {param.name: i, param.name + '_': -i}
+            val = {param.name: i, param.name + "_": -i}
         else:
             val = i
         yield (param.name, val)
@@ -113,15 +113,15 @@ def inject_defaults(params: ParamsAble_, defaults: dict):
 
 
 def _str_of_call_args(_call_kwargs: dict):
-    return ', '.join(f'{k}={v}' for k, v in _call_kwargs.items())
+    return ", ".join(f"{k}={v}" for k, v in _call_kwargs.items())
 
 
 def _params_to_name(params):
-    return 'f' + ''.join(str(int(p.kind)) for p in params)
+    return "f" + "".join(str(int(p.kind)) for p in params)
 
 
 def mk_func_from_params(
-    params: ParamsAble = '00111234',
+    params: ParamsAble = "00111234",
     *,
     defaults=None,
     name=None,
@@ -221,7 +221,7 @@ def mk_func_from_params(
 
 def _sig_to_str_of_call_args_code_str(sig: Sig):
     return (
-        'return ' + 'f"' + _str_of_call_args({p: f'{{{p}}}' for p in sig.names}) + '"'
+        "return " + 'f"' + _str_of_call_args({p: f"{{{p}}}" for p in sig.names}) + '"'
     )
 
 
@@ -229,8 +229,8 @@ def _is_simple_expression(code_lines):
     if len(code_lines) == 1:
         line = code_lines[0].strip()
         if not (
-            line in {'pass', '...'}
-            or line.startswith('return')
+            line in {"pass", "..."}
+            or line.startswith("return")
             or (line.startswith('"') and line.endswith("'"))
         ):
             return True
@@ -239,7 +239,7 @@ def _is_simple_expression(code_lines):
 
 
 def sig_to_func(
-    sig: ParamsAble = '00111234',
+    sig: ParamsAble = "00111234",
     code_lines: Union[
         str, Iterable, Callable[[Sig], str]
     ] = _sig_to_str_of_call_args_code_str,
@@ -323,12 +323,12 @@ def sig_to_func(
     if callable(code_lines):
         code_lines = code_lines(sig)  # call the function on sig to get lines
     if isinstance(code_lines, str):
-        code_lines = code_lines.split('\n')
+        code_lines = code_lines.split("\n")
     if _is_simple_expression(code_lines):
         # If code_lines has only one line and it seems it's an expression, prepend return
-        code_lines = [f'return {code_lines[0]}']
-    code_string = '\n\t'.join(code_lines)
-    func_def_string = f'def {name}{sig}:\n\t{code_string}'
+        code_lines = [f"return {code_lines[0]}"]
+    code_string = "\n\t".join(code_lines)
+    func_def_string = f"def {name}{sig}:\n\t{code_string}"
     _locals = locals or {}
     exec(func_def_string, globals, _locals)
     return _locals[name]
@@ -371,24 +371,24 @@ def _args_kwargs_combinations(args, kwargs):
 def variadic_type(sig, variadics):
     var_kinds = [sig.kinds[param] for param in variadics]
     if not variadics:
-        return 'no_var'
+        return "no_var"
     if VP in var_kinds and VK not in var_kinds:
-        return 'vp_only'
+        return "vp_only"
     if VK in var_kinds and VP not in var_kinds:
-        return 'vk_only'
+        return "vk_only"
     else:
-        return 'vp_vk'
+        return "vp_vk"
 
 
 def create_variadic_source(sig, variadics, dflt_source):
     var_type = variadic_type(sig, variadics)
-    if var_type == 'no_var':
+    if var_type == "no_var":
         result = ((), {})
-    elif var_type == 'vp_only':
+    elif var_type == "vp_only":
         result = (dflt_source[0], {})
-    elif var_type == 'vk_only':
+    elif var_type == "vk_only":
         result = ((), dflt_source[1])
-    elif var_type == 'vp_vk':
+    elif var_type == "vp_vk":
         result = dflt_source
     return result
 
@@ -399,8 +399,8 @@ def sig_to_inputs(
     argument_vals: Optional[Iterable] = None,
     *,
     variadics_source: Tuple[tuple, dict] = (
-        ('args1', 'args2'),
-        {'kwargs1': 'kwargs1_val'},
+        ("args1", "args2"),
+        {"kwargs1": "kwargs1_val"},
     ),
 ) -> Iterator[Tuple[tuple, dict]]:
     """Generate all kind-valid (arg, kwargs) input combinations for a function with a
@@ -560,14 +560,15 @@ from i2 import Pipe
 import re
 
 _signature_msg_patterns = [
-    'keyword arguments$',
-    'expected at most',
-    'keyword argument',
-    'got some positional\-only arguments passed as keyword arguments',
-    'no signature found',
+    "keyword arguments$",
+    "invalid keyword argument",
+    "expected at most",
+    "keyword argument",
+    "got some positional\-only arguments passed as keyword arguments",
+    "no signature found",
 ]
 
-_signature_msg_regex = re.compile('|'.join(map('({})'.format, _signature_msg_patterns)))
+_signature_msg_regex = re.compile("|".join(map("({})".format, _signature_msg_patterns)))
 is_signature_msg = Pipe(_signature_msg_regex.search, bool)
 
 
@@ -599,12 +600,12 @@ def on_error_return_none(func, /, *args, **kwargs):
 
 call_raises_signature_error = Pipe(call_and_return_error, _is_signature_error)
 
-call_raises_signature_error.__doc__ = '''
+call_raises_signature_error.__doc__ = """
 >>> call_raises_signature_error(lambda x, /, y: None, 1, y=2)
 False
 >>> call_raises_signature_error(lambda x, /, y: None, x=1, y=2)
 True
-'''
+"""
 
 # Yes, I too see that this can be made into yet another Pipe!
 def function_is_compatible_with_signature(func, sig):
@@ -710,9 +711,9 @@ def trace_call(func, local_vars, name=None):
     if name is None:
         name = func.__name__
     return (
-        f'{name}('
-        + ', '.join(f'{argname}={local_vars[argname]}' for argname in Sig(func).names)
-        + ')'
+        f"{name}("
+        + ", ".join(f"{argname}={local_vars[argname]}" for argname in Sig(func).names)
+        + ")"
     )
 
 

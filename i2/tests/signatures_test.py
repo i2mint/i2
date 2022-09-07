@@ -15,10 +15,16 @@ import pytest
 from functools import reduce
 from typing import Any
 
+from i2 import Sig
 from i2.signatures import *
-from i2.signatures import normalized_func
+from i2.signatures import normalized_func, sigs_for_sigless_builtin_name
 
-from i2.tests.util import sig_to_inputs, trace_call
+from i2.tests.util import (
+    call_and_return_error,
+    sig_to_inputs,
+    trace_call,
+    function_is_compatible_with_signature,
+)
 
 
 def test_signature_of_partial():
@@ -27,23 +33,23 @@ def test_signature_of_partial():
     def foo(a, b, c=3) -> int:
         return a + b * c
 
-    assert str(Sig(foo)) == '(a, b, c=3) -> int'
-    assert str(Sig(partial(foo, 1))) == '(b, c=3) -> int'
-    assert str(Sig(partial(foo, a=1, b=2))) == '(*, a=1, b=2, c=3) -> int'
-    assert str(Sig(partial(foo, 1, 2))) == '(c=3) -> int'
-    assert str(Sig(partial(foo, 1, b=2))) == '(*, b=2, c=3) -> int'
+    assert str(Sig(foo)) == "(a, b, c=3) -> int"
+    assert str(Sig(partial(foo, 1))) == "(b, c=3) -> int"
+    assert str(Sig(partial(foo, a=1, b=2))) == "(*, a=1, b=2, c=3) -> int"
+    assert str(Sig(partial(foo, 1, 2))) == "(c=3) -> int"
+    assert str(Sig(partial(foo, 1, b=2))) == "(*, b=2, c=3) -> int"
 
 
 def test_some_edge_cases_of_sig():
     from operator import itemgetter, attrgetter, methodcaller
 
-    assert Sig(itemgetter).names == ['key', 'keys']
-    assert Sig(itemgetter(1)).names == ['iterable']
-    assert Sig(itemgetter(1, 2)).names == ['iterable']
-    assert Sig(attrgetter).names == ['key', 'keys']
-    assert Sig(attrgetter('foo')).names == ['iterable']
-    assert Sig(attrgetter('foo', 'bar')).names == ['iterable']
-    assert Sig(methodcaller).names == ['name', 'args', 'kwargs']
+    assert Sig(itemgetter).names == ["key", "keys"]
+    assert Sig(itemgetter(1)).names == ["iterable"]
+    assert Sig(itemgetter(1, 2)).names == ["iterable"]
+    assert Sig(attrgetter).names == ["key", "keys"]
+    assert Sig(attrgetter("foo")).names == ["iterable"]
+    assert Sig(attrgetter("foo", "bar")).names == ["iterable"]
+    assert Sig(methodcaller).names == ["name", "args", "kwargs"]
     # assert Sig(methodcaller('foo')).names == []  # fix!!
 
 
@@ -88,9 +94,9 @@ def test_sig_wrap_edge_cases():
     assert foo(1, 2) == 7
     #    works because Sig also changed __defaults__ and __kwdefaults__:
     assert foo.__defaults__ == ()
-    assert foo.__kwdefaults__ == {'z': 3}
+    assert foo.__kwdefaults__ == {"z": 3}
     assert Sig(foo)._defaults_ == ()
-    assert Sig(foo)._kwdefaults_ == {'z': 3}
+    assert Sig(foo)._kwdefaults_ == {"z": 3}
 
     # The following (where we go from a (same kind) param not having a default,
     # to having one, also work
@@ -109,7 +115,7 @@ def test_sig_wrap_edge_cases():
     assert foo(1, 2) == 7
     assert foo(1, 2, z=10) == 21
     assert Sig(foo)._defaults_ == ()
-    assert Sig(foo)._kwdefaults_ == {'z': 3}
+    assert Sig(foo)._kwdefaults_ == {"z": 3}
 
 
 def test_tuple_the_args():
@@ -118,20 +124,20 @@ def test_tuple_the_args():
     def func(a, *args, bar):
         return trace_call(func, locals())
 
-    assert func(1, 2, 3, bar=4) == 'func(a=1, args=(2, 3), bar=4)'
+    assert func(1, 2, 3, bar=4) == "func(a=1, args=(2, 3), bar=4)"
 
     wfunc = tuple_the_args(func)
 
     # here, not that (1) args is specified as one iterable ([2, 3] instead of 2,
     # 3) and (2) the function name is the same as the wrapped (func)
-    assert wfunc(1, [2, 3], bar=4) == 'func(a=1, args=(2, 3), bar=4)'
+    assert wfunc(1, [2, 3], bar=4) == "func(a=1, args=(2, 3), bar=4)"
 
     # See the func itself hasn't changed
-    assert func(1, 2, 3, bar=4) == 'func(a=1, args=(2, 3), bar=4)'
+    assert func(1, 2, 3, bar=4) == "func(a=1, args=(2, 3), bar=4)"
 
-    assert str(Sig(func)) == '(a, *args, bar)'
+    assert str(Sig(func)) == "(a, *args, bar)"
     # See that args is now a PK kind with a default of (). Also, bar became KO.
-    assert str(Sig(wfunc)) == '(a, args=(), *, bar)'
+    assert str(Sig(wfunc)) == "(a, args=(), *, bar)"
 
     # -----------------------------------------------------------------------------------
     # Let's see what happens when we give bar a default value
@@ -140,8 +146,8 @@ def test_tuple_the_args():
         return trace_call(func2, locals())
 
     wfunc = tuple_the_args(func2)
-    assert wfunc(1, [2, 3]) == 'func2(a=1, args=(2, 3), bar=10)'
-    assert wfunc(1, [2, 3], bar=4) == 'func2(a=1, args=(2, 3), bar=4)'
+    assert wfunc(1, [2, 3]) == "func2(a=1, args=(2, 3), bar=10)"
+    assert wfunc(1, [2, 3], bar=4) == "func2(a=1, args=(2, 3), bar=4)"
 
     # On the other hand, specifying bar as a positional won't work.
     # The reason is: args was a variadic, so everything after it should be KO or VK
@@ -150,8 +156,8 @@ def test_tuple_the_args():
     with pytest.raises(FuncCallNotMatchingSignature) as e_info:
         wfunc(1, [2, 3], 4)
         assert e_info.value == (
-            'There should be only keyword arguments after the Variadic args. '
-            'Function was called with (positional=(1, [2, 3], 4), keywords={})'
+            "There should be only keyword arguments after the Variadic args. "
+            "Function was called with (positional=(1, [2, 3], 4), keywords={})"
         )
 
     # pytest.raises()
@@ -161,7 +167,7 @@ def test_tuple_the_args():
 def test_normalize_func_simply(function_normalizer=normalized_func):
     # -----------------------------------------------------------------------------------
     def p0113(po1, /, pk1, pk2, *, ko1):
-        return f'{po1=}, {pk1=}, {pk2=}, {ko1=}'
+        return f"{po1=}, {pk1=}, {pk2=}, {ko1=}"
 
     func = p0113
     po1, pk1, pk2, ko1 = 1, 2, 3, 4
@@ -184,9 +190,9 @@ def test_normalize_func_simply(function_normalizer=normalized_func):
 
     # -----------------------------------------------------------------------------------
     def p1234(pka, *vpa, koa, **vka):
-        return f'{pka=}, {vpa=}, {koa=}, {vka=}'
+        return f"{pka=}, {vpa=}, {koa=}, {vka=}"
 
-    pka, vpa, koa, vka = 1, (2, 3), 4, {'a': 'b', 'c': 'd'}
+    pka, vpa, koa, vka = 1, (2, 3), 4, {"a": "b", "c": "d"}
 
     func = p1234
     norm_func = function_normalizer(func)
@@ -201,22 +207,22 @@ def test_normalize_func_simply(function_normalizer=normalized_func):
 
 
 def p1234(pka, *vpa, koa, **vka):
-    return f'{pka=}, {vpa=}, {koa=}, {vka=}'
+    return f"{pka=}, {vpa=}, {koa=}, {vka=}"
 
 
 @pytest.mark.xfail
 def test_normalize_func_combinatorially(function_normalizer=normalized_func):
     # -----------------------------------------------------------------------------------
     def p0113(po1, /, pk1, pk2, *, ko1):
-        return f'{po1=}, {pk1=}, {pk2=}, {ko1=}'
+        return f"{po1=}, {pk1=}, {pk2=}, {ko1=}"
 
     func = p0113
     po1, pk1, pk2, ko1 = 1, 2, 3, 4
 
     poa = [po1]
-    ppka, kpka = [pk1], {'pk2': pk2}
+    ppka, kpka = [pk1], {"pk2": pk2}
     vpa = []  # no VP argument
-    koa = {'ko1': ko1}
+    koa = {"ko1": ko1}
     vka = {}  # no VK argument
 
     norm_func = function_normalizer(func)
@@ -235,9 +241,9 @@ def test_normalize_func_combinatorially(function_normalizer=normalized_func):
 
     # -----------------------------------------------------------------------------------
     def p1234(pka, *vpa, koa, **vka):
-        return f'{pka=}, {vpa=}, {koa=}, {vka=}'
+        return f"{pka=}, {vpa=}, {koa=}, {vka=}"
 
-    pka, vpa, koa, vka = 1, (2, 3), 4, {'a': 'b', 'c': 'd'}
+    pka, vpa, koa, vka = 1, (2, 3), 4, {"a": "b", "c": "d"}
 
     func = p1234
     norm_func = function_normalizer(func)
@@ -293,7 +299,10 @@ def mk_sig(
         for name, annotation in annotations.items():
             p = params[name]
             params[name] = Parameter(
-                name=name, kind=p.kind, default=p.default, annotation=annotation,
+                name=name,
+                kind=p.kind,
+                default=p.default,
+                annotation=annotation,
             )
         return Signature(params.values(), return_annotation=return_annotations)
 
@@ -337,8 +346,8 @@ def signature_to_dict(sig: Signature):
     # warn("Use Sig instead", DeprecationWarning)
     # return Sig(sig).to_simple_signature()
     return {
-        'parameters': sig.parameters,
-        'return_annotation': sig.return_annotation,
+        "parameters": sig.parameters,
+        "return_annotation": sig.return_annotation,
     }
 
 
@@ -349,9 +358,9 @@ def _merge_sig_dicts(sig1_dict, sig2_dict):
     sig2_dict decides on what the output is.
     """
     return {
-        'parameters': dict(sig1_dict['parameters'], **sig2_dict['parameters']),
-        'return_annotation': sig2_dict['return_annotation']
-        or sig1_dict['return_annotation'],
+        "parameters": dict(sig1_dict["parameters"], **sig2_dict["parameters"]),
+        "return_annotation": sig2_dict["return_annotation"]
+        or sig1_dict["return_annotation"],
     }
 
 
@@ -378,13 +387,13 @@ def _merge_signatures(sig1, sig2):
     # return Sig(**_merge_sig_dicts(sig1_dict, Sig(sig2).to_simple_dict()))
     sig1_dict = signature_to_dict(sig1)
     # remove variadic kinds from sig1
-    sig1_dict['parameters'] = {
+    sig1_dict["parameters"] = {
         k: v
-        for k, v in sig1_dict['parameters'].items()
+        for k, v in sig1_dict["parameters"].items()
         if v.kind not in var_param_kinds
     }
     kws = _merge_sig_dicts(sig1_dict, signature_to_dict(sig2))
-    kws['obj'] = kws.pop('parameters')
+    kws["obj"] = kws.pop("parameters")
     return Sig(**kws).to_simple_signature()
 
 
@@ -437,7 +446,7 @@ def _merged_signatures_of_func_list(funcs, return_annotation: Any = empty):
 
 
 # TODO: will we need more options for the priority argument? Like position?
-def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
+def update_signature_with_signatures_from_funcs(*funcs, priority: str = "last"):
     """Make a decorator that will merge the signatures of given funcs to the signature of the wrapped func.
     By default, the funcs signatures will be placed last, but can be given priority by asking priority = 'first'
 
@@ -464,16 +473,16 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
     <Signature (b: int = 0, d: str = 'hi', a='a', c=None, y=10)>
     """
     if not isinstance(priority, str):
-        raise TypeError('priority should be a string')
+        raise TypeError("priority should be a string")
 
-    if priority == 'last':
+    if priority == "last":
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(func, *funcs).to_simple_signature()
             func.__signature__ = _merged_signatures_of_func_list([func] + list(funcs))
             return func
 
-    elif priority == 'first':
+    elif priority == "first":
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(*funcs, func).to_simple_signature()
@@ -487,31 +496,31 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
 
 
 @pytest.mark.parametrize(
-    'sig_spec',
+    "sig_spec",
     [
-        ('(po, /)'),
-        ('(po=0, /)'),
-        ('(pk)'),
-        ('(pk=0)'),
-        ('(*, ko)'),
-        ('(*, ko=0)'),
-        ('(po, /, pk, *, ko)'),
-        ('(po=0, /, pk=0, *, ko=0)'),
-        ('(*args)'),
-        ('(**kwargs)'),
-        ('(*args, **kwargs)'),
-        ('(po, /, pk, *args, ko)'),
-        ('(po=0, /, pk=0, *args, ko=0)'),
-        ('(po, /, pk, *, ko, **kwargs)'),
-        ('(po=0, /, pk=0, *, ko=0, **kwargs)'),
-        ('(po, /, pk, *args, ko, **kwargs)'),
-        ('(po=0, /, pk=0, *args, ko=0, **kwargs)'),
-        ('(po1, po2, /)'),
-        ('(pk1, pk2)'),
-        ('(*, ko1, ko2)'),
-        ('(po1, po2, /, pk1, pk2, *, ko1, ko2)'),
-        ('(po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)'),
-        ('(po1=0, po2=0, /, pk1=0, pk2=0, *args, ko1=0, ko2=0, **kwargs)'),
+        ("(po, /)"),
+        ("(po=0, /)"),
+        ("(pk)"),
+        ("(pk=0)"),
+        ("(*, ko)"),
+        ("(*, ko=0)"),
+        ("(po, /, pk, *, ko)"),
+        ("(po=0, /, pk=0, *, ko=0)"),
+        ("(*args)"),
+        ("(**kwargs)"),
+        ("(*args, **kwargs)"),
+        ("(po, /, pk, *args, ko)"),
+        ("(po=0, /, pk=0, *args, ko=0)"),
+        ("(po, /, pk, *, ko, **kwargs)"),
+        ("(po=0, /, pk=0, *, ko=0, **kwargs)"),
+        ("(po, /, pk, *args, ko, **kwargs)"),
+        ("(po=0, /, pk=0, *args, ko=0, **kwargs)"),
+        ("(po1, po2, /)"),
+        ("(pk1, pk2)"),
+        ("(*, ko1, ko2)"),
+        ("(po1, po2, /, pk1, pk2, *, ko1, ko2)"),
+        ("(po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)"),
+        ("(po1=0, po2=0, /, pk1=0, pk2=0, *args, ko1=0, ko2=0, **kwargs)"),
     ],
 )
 def test_call_forgivingly(sig_spec):
@@ -547,49 +556,61 @@ def test_call_forgivingly(sig_spec):
         assert output == expected_output
 
     for args, kwargs in sig_to_inputs(sig, variadics_source=((), {})):
-        kwargs = dict(kwargs, **{'some': 'extra', 'added': 'kwargs'})
+        kwargs = dict(kwargs, **{"some": "extra", "added": "kwargs"})
         po_pk_count = sum(kind <= PK for kind in sig.kinds.values())
         if len(args) == po_pk_count:
-            args = args + ('some', 'extra', 'args')
+            args = args + ("some", "extra", "args")
 
         validate_call_forgivingly(*args, **kwargs)
 
 
 @pytest.mark.parametrize(
-    'sig_spec1, sig_spec2',
+    "sig_spec1, sig_spec2",
     [
-        ('()', '(a)'),
-        ('()', '(a=0)'),
-        ('(a, /, *, c)', '(a, /, b, *, c)'),
-        ('(a, /, *, c)', '(a, /, b=0, *, c)'),
-        ('(a, /, b)', '(a, /, b, *, c)'),
-        ('(a, /, b)', '(a, /, b, *, c=0)'),
-        ('(a, /, b, *, c)', '(*args)'),
-        ('(a, /, b, *, c)', '(**kwargs)'),
-        ('(a, /, b, *, c)', '(*args, **kwargs)'),
-        ('(a, /, b, *, c)', '(a, /, b, *args, c, **kwargs)'),
-        ('(a, /, b, *, c)', '(a, b, c)'),
-        ('(a, /, b, *, c)', '(a, b, /, *, c)'),
-        ('(a, /, b, *, c)', '(a, /, *, b, c)'),
-        ('(a, /, b, *, c)', '(a, b, /, c)'),
-        ('(a, /, b, *, c)', '(a, *, b, c)'),
-        ('(a, /, b, *, c)', '(x, /, b, *, c)',),
-        ('(a, /, b, *, c)', '(a, /, x, *, c)',),
-        ('(a, /, b, *, c)', '(a, /, b, *, x)',),
-        ('(a, /, b, *, c)', '(a=0, b=0, c=0)'),
-        ('(a=0, /, b=0, *, c=0)', '(a, b, c)'),
-        ('(a, b, /, c, d, *, e, f)', '(b, a, /, d, c, *, f, e)'),
-        ('(a, b, /, c, d, *, e, f)', '(a, c, /, b, e, *, d, f)',),
-        ('()', '(*args)'),
-        ('()', '(**kwargs)'),
-        ('()', '(*args, **kwargs)'),
-        ('(*args)', '()'),
-        ('(*args)', '(**kwargs)'),
-        ('(*args)', '(*args, **kwargs)'),
-        ('(**kwargs)', '()'),
-        ('(**kwargs)', '(*args)'),
-        ('(**kwargs)', '(*args, **kwargs)'),
-        ('(*args, **kwargs)', '(*args, **kwargs)'),
+        ("()", "(a)"),
+        ("()", "(a=0)"),
+        ("(a, /, *, c)", "(a, /, b, *, c)"),
+        ("(a, /, *, c)", "(a, /, b=0, *, c)"),
+        ("(a, /, b)", "(a, /, b, *, c)"),
+        ("(a, /, b)", "(a, /, b, *, c=0)"),
+        ("(a, /, b, *, c)", "(*args)"),
+        ("(a, /, b, *, c)", "(**kwargs)"),
+        ("(a, /, b, *, c)", "(*args, **kwargs)"),
+        ("(a, /, b, *, c)", "(a, /, b, *args, c, **kwargs)"),
+        ("(a, /, b, *, c)", "(a, b, c)"),
+        ("(a, /, b, *, c)", "(a, b, /, *, c)"),
+        ("(a, /, b, *, c)", "(a, /, *, b, c)"),
+        ("(a, /, b, *, c)", "(a, b, /, c)"),
+        ("(a, /, b, *, c)", "(a, *, b, c)"),
+        (
+            "(a, /, b, *, c)",
+            "(x, /, b, *, c)",
+        ),
+        (
+            "(a, /, b, *, c)",
+            "(a, /, x, *, c)",
+        ),
+        (
+            "(a, /, b, *, c)",
+            "(a, /, b, *, x)",
+        ),
+        ("(a, /, b, *, c)", "(a=0, b=0, c=0)"),
+        ("(a=0, /, b=0, *, c=0)", "(a, b, c)"),
+        ("(a, b, /, c, d, *, e, f)", "(b, a, /, d, c, *, f, e)"),
+        (
+            "(a, b, /, c, d, *, e, f)",
+            "(a, c, /, b, e, *, d, f)",
+        ),
+        ("()", "(*args)"),
+        ("()", "(**kwargs)"),
+        ("()", "(*args, **kwargs)"),
+        ("(*args)", "()"),
+        ("(*args)", "(**kwargs)"),
+        ("(*args)", "(*args, **kwargs)"),
+        ("(**kwargs)", "()"),
+        ("(**kwargs)", "(*args)"),
+        ("(**kwargs)", "(*args, **kwargs)"),
+        ("(*args, **kwargs)", "(*args, **kwargs)"),
     ],
 )
 def test_call_compatibility(sig_spec1, sig_spec2):
@@ -598,9 +619,9 @@ def test_call_compatibility(sig_spec1, sig_spec2):
     is_compatible = sig1.is_call_compatible_with(sig2)
 
     exec_env = dict()
-    f_def = f'def f{sig_spec2}: pass'
+    f_def = f"def f{sig_spec2}: pass"
     exec(f_def, exec_env)
-    foo = exec_env['f']
+    foo = exec_env["f"]
 
     # @sig2
     # def foo(*args, **kwargs):
@@ -609,9 +630,9 @@ def test_call_compatibility(sig_spec1, sig_spec2):
     pos1, pks1, vp1, kos1, vk1 = sig1.detail_names_by_kind()
     for args, kwargs in sig_to_inputs(sig1, variadics_source=((), {})):
         if vp1 is not None and len(args) == len(pos1) + len(pks1):
-            args += ('extra_arg',)
+            args += ("extra_arg",)
         if vk1 is not None:
-            kwargs['extra_kwarg_key'] = 'extra_kwarg_value'
+            kwargs["extra_kwarg_key"] = "extra_kwarg_value"
         try:
             foo(*args, **kwargs)
         except TypeError:
@@ -620,4 +641,54 @@ def test_call_compatibility(sig_spec1, sig_spec2):
             else:
                 return
     if not is_compatible:
-        raise AssertionError('sig1 is not compatible with sig2, when it should.')
+        raise AssertionError("sig1 is not compatible with sig2, when it should.")
+
+
+def test_bool():
+    name = "bool"
+
+    sig = Sig(sigs_for_sigless_builtin_name[name])
+
+    assert function_is_compatible_with_signature(bool, sig)
+
+
+def function_is_compatible_with_signature2(func, sig):
+    """
+    Runs through all combinations of positional and keyword arguments,
+
+    >>> function_is_compatible_with_signature(hasattr, Sig(lambda obj, name: ...))
+    False
+    >>> function_is_compatible_with_signature(hasattr, Sig(lambda obj, name, /: ...))
+    True
+    """
+    from i2.tests.util import call_raises_signature_error
+
+    def _call_raises_sig_error():
+        for args, kwargs in sig_to_inputs(sig):
+            print(f"{args=} , {kwargs=}")
+            print(call_and_return_error(func, *args, **kwargs))
+            print(call_raises_signature_error(func, *args, **kwargs))
+            yield call_raises_signature_error(func, *args, **kwargs)
+
+    return not any(_call_raises_sig_error())
+
+
+def test_itemgetter():
+    from operator import itemgetter
+
+    name = "itemgetter"
+
+    sig = Sig(sigs_for_sigless_builtin_name[name])
+
+    assert function_is_compatible_with_signature2(itemgetter, sig)
+
+
+def test_sigless_builtins():
+    from operator import itemgetter, attrgetter, methodcaller
+
+    for name in sigs_for_sigless_builtin_name:
+        if name in ["filter", "map"]:
+            continue
+        sig = Sig(sigs_for_sigless_builtin_name[name])
+        print(name, sig)
+        assert function_is_compatible_with_signature2(eval(name), sig)

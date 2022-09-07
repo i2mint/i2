@@ -92,6 +92,7 @@ from typing import (
     Dict,
     Iterable,
     Tuple,
+    Iterator,
     Mapping as MappingType,
 )
 from typing import KT, VT
@@ -3808,10 +3809,19 @@ class sigs_for_builtins:
     def bool(x: Any, /) -> bool:
         ...
 
-    def bytearray(iterable_of_ints: Iterable[int]):  # no sig possible without wrapping
+    def bytearray(iterable_of_ints: Iterable[int]):
         ...
 
     def classmethod(function: Callable, /):
+        ...
+
+    def int(x, base=10, /):
+        ...
+
+    def iter(callable: Callable, sentinel=None, /):
+        ...
+
+    def next(iterator: Iterator, default=None):
         ...
 
 
