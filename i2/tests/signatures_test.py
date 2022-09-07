@@ -17,7 +17,11 @@ from typing import Any
 
 from i2 import Sig
 from i2.signatures import *
-from i2.signatures import normalized_func, sigs_for_sigless_builtin_name
+from i2.signatures import (
+    normalized_func,
+    sigs_for_sigless_builtin_name,
+    _robust_signature_of_callable,
+)
 
 from i2.tests.util import (
     call_and_return_error,
@@ -663,7 +667,7 @@ def function_is_compatible_with_signature2(func, sig):
     """
     from i2.tests.util import call_raises_signature_error
 
-    print(f"=========== {str(func)}=================================================")
+    print(f"============================================================{str(func)}")
     for args, kwargs in sig_to_inputs(sig):
         result = call_and_return_error(func, *args, **kwargs)
         if result is not None:
@@ -692,5 +696,6 @@ if __name__ == "__main__":
         # removed breakpoint as it triggers a pdb session
         if name in ["breakpoint"]:
             continue
-        sig = Sig(sigs_for_sigless_builtin_name[name])
-        function_is_compatible_with_signature2(eval(name), sig)
+        print(name, _robust_signature_of_callable(eval(name)))
+        # sig = Sig(sigs_for_sigless_builtin_name[name])
+        # function_is_compatible_with_signature2(eval(name), sig)

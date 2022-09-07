@@ -3738,7 +3738,7 @@ def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
     >>> # Will be: <Signature (*value, sep=' ', end='\n', file=<_io.TextIOWrapper
     name='<stdout>' mode='w' encoding='utf-8'>, flush=False)>
     >>> _robust_signature_of_callable(
-    ...     next
+    ...     slice
     ... )  # doesn't have one, so will return a blanket one
     <Signature (*no_sig_args, **no_sig_kwargs)>
 
