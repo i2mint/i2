@@ -665,8 +665,11 @@ def function_is_compatible_with_signature2(func, sig):
 
     print(f"=========== {str(func)}=================================================")
     for args, kwargs in sig_to_inputs(sig):
-        print(f"{args=} , {kwargs=}")
-        print(call_and_return_error(func, *args, **kwargs))
+        result = call_and_return_error(func, *args, **kwargs)
+        if result is not None:
+            print(f"{args=} , {kwargs=}")
+            print(result)
+        # print(call_and_return_error(func, *args, **kwargs))
         # print(call_raises_signature_error(func, *args, **kwargs))
         # yield call_raises_signature_error(func, *args, **kwargs)
 

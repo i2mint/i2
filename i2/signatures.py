@@ -3795,7 +3795,7 @@ class sigs_for_builtins:
     def filter(function, iterable, /):
         """filter(function or None, iterable) --> filter object"""
 
-    def map(func, /, *iterables):
+    def map(func, iterable, /, *iterables):
         """map(func, *iterables) --> map object"""
 
     def print(*value, sep=" ", end="\n", file=sys.stdout, flush=False):
