@@ -3833,8 +3833,8 @@ class sigs_for_builtins:
     def super(type_, obj=None, /):
         ...
 
-    def type(name, bases=None, dict=None, /):
-        ...
+    # def type(name, bases=None, dict=None, /):
+    #     ...
 
 
 sigs_for_builtins = dict(

@@ -663,24 +663,12 @@ def function_is_compatible_with_signature2(func, sig):
     """
     from i2.tests.util import call_raises_signature_error
 
-    def _call_raises_sig_error():
-        for args, kwargs in sig_to_inputs(sig):
-            print(f"{args=} , {kwargs=}")
-            print(call_and_return_error(func, *args, **kwargs))
-            print(call_raises_signature_error(func, *args, **kwargs))
-            yield call_raises_signature_error(func, *args, **kwargs)
-
-    return not any(_call_raises_sig_error())
-
-
-def test_itemgetter():
-    from operator import itemgetter
-
-    name = "itemgetter"
-
-    sig = Sig(sigs_for_sigless_builtin_name[name])
-
-    assert function_is_compatible_with_signature2(itemgetter, sig)
+    print(f"=========== {str(func)}=================================================")
+    for args, kwargs in sig_to_inputs(sig):
+        print(f"{args=} , {kwargs=}")
+        print(call_and_return_error(func, *args, **kwargs))
+        # print(call_raises_signature_error(func, *args, **kwargs))
+        # yield call_raises_signature_error(func, *args, **kwargs)
 
 
 def test_sigless_builtins():
@@ -691,5 +679,15 @@ def test_sigless_builtins():
         if name in ["breakpoint"]:
             continue
         sig = Sig(sigs_for_sigless_builtin_name[name])
-        print(name, sig)
-        assert function_is_compatible_with_signature2(eval(name), sig)
+        assert function_is_compatible_with_signature(eval(name), sig)
+
+
+if __name__ == "__main__":
+    from operator import itemgetter, attrgetter, methodcaller
+
+    for name in sigs_for_sigless_builtin_name:
+        # removed breakpoint as it triggers a pdb session
+        if name in ["breakpoint"]:
+            continue
+        sig = Sig(sigs_for_sigless_builtin_name[name])
+        function_is_compatible_with_signature2(eval(name), sig)
