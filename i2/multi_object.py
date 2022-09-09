@@ -2,18 +2,21 @@
 
 For functions you have:
 
-- `Pipe`: To compose functions (output of one fed as the input of the next)
-- `FuncFanout`: To apply multiple functions to the same inputs
-- `FlexFuncFanout`: Like `FuncFanout` but where the application of inputs is flexible.
-    That is, the functions "draw" their inputs from the a common pool, but don't choke
-    if there are extra unrecognized arguments.
-- `ParallelFuncs`: To make a dict-to-dict function, applying a specific function for each
-    input key (putting the result in that key in the output.
+- ``Pipe``: To compose functions (output of one fed as the input of the next)
+
+- ``FuncFanout``: To apply multiple functions to the same inputs
+
+- ``FlexFuncFanout``: Like `FuncFanout` but where the application of inputs is flexible.
+That is, the functions "draw" their inputs from the a common pool, but don't choke
+if there are extra unrecognized arguments.
+
+- ``ParallelFuncs``: To make a dict-to-dict function, applying a specific function for
+each input key (putting the result in that key in the output.
 
 For context managers you have:
 
-- `ContextFanout`: To hold multiple context managers as one (entering and exiting
-    together)
+- ``ContextFanout``: To hold multiple context managers as one (entering and exiting
+together)
 
 ![image](https://user-images.githubusercontent.com/1906276/138004878-bfe17115-c25f-4d22-9740-0fef983507c0.png)
 
