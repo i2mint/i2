@@ -98,6 +98,28 @@ def uniquely_named_objects(
     >>> list(dict(uniquely_named_objects(objects, exclude_names={'lambda_3'})))
     ['map', 'list', '_2', '_3', 'print']
 
+    Extra notes:
+
+    See what uniquely_named_objects offers as parametrization:
+
+    - You can provide an exclusion list (though the handing of a conflict is hardcoded
+    and questionable)
+
+    - You can provide a ``obj_to_name`` function to control the naming of objects.
+    One trick to be aware of if objects have unique hashes: Make a
+    ``d = {obj: name,...}`` mapping and specify ``obj_to_name=d.get``.
+
+    What you DO NOT have:
+
+    - Any way to choose names non-myopically: An object’s name cannot “see” the
+    objects around it to decide on a name (it can only see the names use by those behind
+    it through ``exclude_names``).
+
+    - Any controllable way to decide on a name based on the position of the function
+    in the iterable (this could be useful!)
+
+    - Any “retries” or “alternative naming logic” if a chosen name conflicts with
+    ``exclude_names``
     """
     _exclude_names = set(exclude_names)
     for i, obj in enumerate(objects):
