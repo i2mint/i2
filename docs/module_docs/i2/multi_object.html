@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.154 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.155 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -105,28 +105,21 @@
 <p>A few fundamental tools to operate on a fixed pool of objects (e.g. functions).</p>
 <p>For functions you have:</p>
 <ul class="simple">
-<li><p><cite>Pipe</cite>: To compose functions (output of one fed as the input of the next)</p></li>
-<li><p><cite>FuncFanout</cite>: To apply multiple functions to the same inputs</p></li>
-<li><dl class="simple">
-<dt><cite>FlexFuncFanout</cite>: Like <cite>FuncFanout</cite> but where the application of inputs is flexible.</dt><dd><p>That is, the functions “draw” their inputs from the a common pool, but don’t choke
-if there are extra unrecognized arguments.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>ParallelFuncs</cite>: To make a dict-to-dict function, applying a specific function for each</dt><dd><p>input key (putting the result in that key in the output.</p>
-</dd>
-</dl>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Pipe</span></code>: To compose functions (output of one fed as the input of the next)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FuncFanout</span></code>: To apply multiple functions to the same inputs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FlexFuncFanout</span></code>: Like <cite>FuncFanout</cite> but where the application of inputs is flexible.</p></li>
 </ul>
+<p>That is, the functions “draw” their inputs from the a common pool, but don’t choke
+if there are extra unrecognized arguments.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ParallelFuncs</span></code>: To make a dict-to-dict function, applying a specific function for</p></li>
+</ul>
+<p>each input key (putting the result in that key in the output.</p>
 <p>For context managers you have:</p>
 <ul class="simple">
-<li><dl class="simple">
-<dt><cite>ContextFanout</cite>: To hold multiple context managers as one (entering and exiting</dt><dd><p>together)</p>
-</dd>
-</dl>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ContextFanout</span></code>: To hold multiple context managers as one (entering and exiting</p></li>
 </ul>
+<p>together)</p>
 <p>![image](<a class="reference external" href="https://user-images.githubusercontent.com/1906276/138004878-bfe17115-c25f-4d22-9740-0fef983507c0.png">https://user-images.githubusercontent.com/1906276/138004878-bfe17115-c25f-4d22-9740-0fef983507c0.png</a>)</p>
 <dl class="py class">
 <dt id="i2.multi_object.ContextFanout">
