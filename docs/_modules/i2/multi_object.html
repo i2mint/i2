@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.156 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.157 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -174,33 +174,61 @@
     <span class="n">objects</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Obj</span><span class="p">],</span>
     <span class="n">exclude_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
     <span class="n">obj_to_name</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Obj</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">name_of_obj</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name_for_position</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">(),</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Generate (name, object) pairs from an iterable of objects</span>
 
 <span class="sd">    :param objects: Objects to be named</span>
 <span class="sd">    :param exclude_names: Names that can&#39;t be used</span>
 <span class="sd">    :param obj_to_name: Function that tries to get/make a name from an object</span>
+<span class="sd">    :param name_for_position: A ``{position_idx: name,...}`` mapping that instructs</span>
+<span class="sd">    ``uniquely_named_objects`` to use a specific name for a given position.</span>
 
 <span class="sd">    &gt;&gt;&gt; from functools import partial</span>
 <span class="sd">    &gt;&gt;&gt; objects = [map, [1], [1, 2], lambda x: x, partial(print, sep=&quot;,&quot;)]</span>
 <span class="sd">    &gt;&gt;&gt; g = uniquely_named_objects(objects)</span>
 <span class="sd">    &gt;&gt;&gt; names_and_objects = dict(g)</span>
 <span class="sd">    &gt;&gt;&gt; list(names_and_objects)</span>
-<span class="sd">    [&#39;map&#39;, &#39;list&#39;, &#39;_2&#39;, &#39;lambda_3&#39;, &#39;print&#39;]</span>
-
-<span class="sd">    That &#39;_2&#39; is there because both [1] and [1, 2] would be named `&#39;list&#39;`, so to avoid</span>
-<span class="sd">    that, a default name (revealing the position of the object in the input `objects`)</span>
-<span class="sd">    is given.</span>
-
-<span class="sd">    If we wanted to not allow the function to choose &#39;lambda_3&#39; as a name, we can do</span>
-<span class="sd">    so with the `exclude_names` argument;</span>
-
-<span class="sd">    &gt;&gt;&gt; list(dict(uniquely_named_objects(objects, exclude_names={&#39;lambda_3&#39;})))</span>
 <span class="sd">    [&#39;map&#39;, &#39;list&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
+
+<span class="sd">    That ``&#39;_2&#39;`` is there because both ``[1]`` and ``[1, 2]`` would be named `&#39;list&#39;`,</span>
+<span class="sd">    so to avoid that, a default name (revealing the position of the object in the</span>
+<span class="sd">    input `objects`) is given.</span>
+<span class="sd">    The &#39;_3&#39; comes from the fact that the ``lambda`` function doesn&#39;t have a proper</span>
+<span class="sd">    name (one that is a python identifier).</span>
+
+<span class="sd">    If we wanted the name for ``[1]`` to revert to the default positional name ``&#39;_1&#39;``,</span>
+<span class="sd">    we can achieve this by forbidding the name ``&#39;list&#39;``:</span>
+
+<span class="sd">    &gt;&gt;&gt; list(dict(uniquely_named_objects(objects, exclude_names={&#39;list&#39;})))</span>
+<span class="sd">    [&#39;map&#39;, &#39;_1&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
+
+<span class="sd">    You could also acheive this by specifying this ``&#39;_1&#39;`` explicitly in the</span>
+<span class="sd">    ``name_for_position`` argument:</span>
+
+<span class="sd">    &gt;&gt;&gt; list(dict(uniquely_named_objects(objects, name_for_position={1: &#39;_1&#39;})))</span>
+<span class="sd">    [&#39;map&#39;, &#39;_1&#39;, &#39;list&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
+
+<span class="sd">    The reason this `list` reappears as a name is that we didn&#39;t exclude it, and</span>
+<span class="sd">    the name is not taken by the ``[1]`` argument anymore.</span>
+<span class="sd">    To get the desired effect with ``name_for_position`` we could therefore do this:</span>
+
+<span class="sd">    &gt;&gt;&gt; list(dict(uniquely_named_objects(objects, name_for_position={1: &#39;_1&#39;, 2: &#39;_2&#39;})))</span>
+<span class="sd">    [&#39;map&#39;, &#39;_1&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
+
+<span class="sd">    Obviously, ``exclude_names`` is the right argument for the problem above, but</span>
+<span class="sd">    what ``name_for_position`` does give you is the ability to explicitly chose the</span>
+<span class="sd">    names you want to assign to all or some of the elements of your iterable.</span>
+
+<span class="sd">    &gt;&gt;&gt; list(dict(uniquely_named_objects(</span>
+<span class="sd">    ...     objects, name_for_position={1: &#39;first_list&#39;, 2: &#39;second_list&#39;, 3: &#39;lambda&#39;}))</span>
+<span class="sd">    ... )</span>
+<span class="sd">    [&#39;map&#39;, &#39;first_list&#39;, &#39;second_list&#39;, &#39;lambda&#39;, &#39;print&#39;]</span>
 
 <span class="sd">    Extra notes:</span>
 
-<span class="sd">    See what uniquely_named_objects offers as parametrization:</span>
+<span class="sd">    See what ``uniquely_named_objects`` offers as parametrization:</span>
 
 <span class="sd">    - You can provide an exclusion list (though the handing of a conflict is hardcoded</span>
 <span class="sd">    and questionable)</span>
@@ -209,24 +237,27 @@
 <span class="sd">    One trick to be aware of if objects have unique hashes: Make a</span>
 <span class="sd">    ``d = {obj: name,...}`` mapping and specify ``obj_to_name=d.get``.</span>
 
+<span class="sd">    - Any controllable way to decide on a name based on the position of the function</span>
+<span class="sd">    in the iterable (this could be useful!)</span>
+
 <span class="sd">    What you DO NOT have:</span>
 
 <span class="sd">    - Any way to choose names non-myopically: An object’s name cannot “see” the</span>
 <span class="sd">    objects around it to decide on a name (it can only see the names use by those behind</span>
 <span class="sd">    it through ``exclude_names``).</span>
 
-<span class="sd">    - Any controllable way to decide on a name based on the position of the function</span>
-<span class="sd">    in the iterable (this could be useful!)</span>
-
 <span class="sd">    - Any “retries” or “alternative naming logic” if a chosen name conflicts with</span>
 <span class="sd">    ``exclude_names``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_exclude_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">exclude_names</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">objects</span><span class="p">):</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">obj_to_name</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;&lt;lambda&gt;&#39;</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;lambda_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_exclude_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">name_for_position</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name_for_position</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">obj_to_name</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="c1"># if name == &#39;&lt;lambda&gt;&#39;:</span>
+        <span class="c1"># name = f&#39;lambda_{i}&#39;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">()</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_exclude_names</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_exclude_names</span>
@@ -357,7 +388,10 @@
         <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">():</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not an attribute: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not an attribute: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> with keys: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 
 <span class="k">def</span> <span class="nf">iterable_of_callables_validation</span><span class="p">(</span><span class="n">funcs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]):</span>
@@ -575,9 +609,9 @@
 <span class="sd">    &gt;&gt;&gt; m = FuncFanout(foo, bar, groot)</span>
 <span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; dict(m(3))</span>
-<span class="sd">    {&#39;foo&#39;: 5, &#39;bar&#39;: 6, &#39;lambda_2&#39;: &#39;I am groot&#39;}</span>
+<span class="sd">    {&#39;foo&#39;: 5, &#39;bar&#39;: 6, &#39;_2&#39;: &#39;I am groot&#39;}</span>
 
-<span class="sd">    Don&#39;t like that `lambda_2`?</span>
+<span class="sd">    Don&#39;t like that `_2` name?</span>
 <span class="sd">    Well, If you specify names to the input functions, they&#39;ll be used instead of the</span>
 <span class="sd">    ones found by the `MultObj.auto_namer`.</span>
 

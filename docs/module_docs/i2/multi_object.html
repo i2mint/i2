@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.156 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.157 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -289,10 +289,10 @@ functions to a same input.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FuncFanout</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">bar</span><span class="p">,</span> <span class="n">groot</span><span class="p">)</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">m</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
-<span class="go">{&#39;foo&#39;: 5, &#39;bar&#39;: 6, &#39;lambda_2&#39;: &#39;I am groot&#39;}</span>
+<span class="go">{&#39;foo&#39;: 5, &#39;bar&#39;: 6, &#39;_2&#39;: &#39;I am groot&#39;}</span>
 </pre></div>
 </div>
-<p>Don’t like that <cite>lambda_2</cite>?
+<p>Don’t like that <cite>_2</cite> name?
 Well, If you specify names to the input functions, they’ll be used instead of the
 ones found by the <cite>MultObj.auto_namer</cite>.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">FuncFanout</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">bar_results</span><span class="o">=</span><span class="n">bar</span><span class="p">,</span> <span class="n">groot</span><span class="o">=</span><span class="n">groot</span><span class="p">)</span>
@@ -394,7 +394,7 @@ you access to the names/keys of your objects via attributes.
 </div>
 <dl class="py method">
 <dt id="i2.multi_object.MultiObj.auto_namer">
-<em class="property">static </em><code class="sig-name descname">auto_namer</code><span class="sig-paren">(</span><em class="sig-param">objects: Iterable[Obj], exclude_names: Iterable[str] = (), obj_to_name: Callable[[Obj], str] = &lt;function name_of_obj&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#i2.multi_object.MultiObj.auto_namer" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">auto_namer</code><span class="sig-paren">(</span><em class="sig-param">objects: Iterable[Obj], exclude_names: Iterable[str] = (), obj_to_name: Callable[[Obj], str] = &lt;function name_of_obj&gt;, *, name_for_position: dict = ()</em><span class="sig-paren">)</span><a class="headerlink" href="#i2.multi_object.MultiObj.auto_namer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate (name, object) pairs from an iterable of objects</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -402,28 +402,54 @@ you access to the names/keys of your objects via attributes.
 <li><p><strong>objects</strong> – Objects to be named</p></li>
 <li><p><strong>exclude_names</strong> – Names that can’t be used</p></li>
 <li><p><strong>obj_to_name</strong> – Function that tries to get/make a name from an object</p></li>
+<li><p><strong>name_for_position</strong> – A <code class="docutils literal notranslate"><span class="pre">{position_idx:</span> <span class="pre">name,...}</span></code> mapping that instructs</p></li>
 </ul>
 </dd>
 </dl>
+<p><code class="docutils literal notranslate"><span class="pre">uniquely_named_objects</span></code> to use a specific name for a given position.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="nb">map</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">partial</span><span class="p">(</span><span class="nb">print</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">uniquely_named_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">names_and_objects</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">names_and_objects</span><span class="p">)</span>
-<span class="go">[&#39;map&#39;, &#39;list&#39;, &#39;_2&#39;, &#39;lambda_3&#39;, &#39;print&#39;]</span>
-</pre></div>
-</div>
-<p>That ‘_2’ is there because both [1] and [1, 2] would be named <cite>‘list’</cite>, so to avoid
-that, a default name (revealing the position of the object in the input <cite>objects</cite>)
-is given.</p>
-<p>If we wanted to not allow the function to choose ‘lambda_3’ as a name, we can do
-so with the <cite>exclude_names</cite> argument;</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">uniquely_named_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">exclude_names</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;lambda_3&#39;</span><span class="p">})))</span>
 <span class="go">[&#39;map&#39;, &#39;list&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
 </pre></div>
 </div>
+<p>That <code class="docutils literal notranslate"><span class="pre">'_2'</span></code> is there because both <code class="docutils literal notranslate"><span class="pre">[1]</span></code> and <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2]</span></code> would be named <cite>‘list’</cite>,
+so to avoid that, a default name (revealing the position of the object in the
+input <cite>objects</cite>) is given.
+The ‘_3’ comes from the fact that the <code class="docutils literal notranslate"><span class="pre">lambda</span></code> function doesn’t have a proper
+name (one that is a python identifier).</p>
+<p>If we wanted the name for <code class="docutils literal notranslate"><span class="pre">[1]</span></code> to revert to the default positional name <code class="docutils literal notranslate"><span class="pre">'_1'</span></code>,
+we can achieve this by forbidding the name <code class="docutils literal notranslate"><span class="pre">'list'</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">uniquely_named_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">exclude_names</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;list&#39;</span><span class="p">})))</span>
+<span class="go">[&#39;map&#39;, &#39;_1&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
+</pre></div>
+</div>
+<p>You could also acheive this by specifying this <code class="docutils literal notranslate"><span class="pre">'_1'</span></code> explicitly in the
+<code class="docutils literal notranslate"><span class="pre">name_for_position</span></code> argument:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">uniquely_named_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">name_for_position</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;_1&#39;</span><span class="p">})))</span>
+<span class="go">[&#39;map&#39;, &#39;_1&#39;, &#39;list&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
+</pre></div>
+</div>
+<p>The reason this <cite>list</cite> reappears as a name is that we didn’t exclude it, and
+the name is not taken by the <code class="docutils literal notranslate"><span class="pre">[1]</span></code> argument anymore.
+To get the desired effect with <code class="docutils literal notranslate"><span class="pre">name_for_position</span></code> we could therefore do this:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">uniquely_named_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">name_for_position</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;_1&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;_2&#39;</span><span class="p">})))</span>
+<span class="go">[&#39;map&#39;, &#39;_1&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
+</pre></div>
+</div>
+<p>Obviously, <code class="docutils literal notranslate"><span class="pre">exclude_names</span></code> is the right argument for the problem above, but
+what <code class="docutils literal notranslate"><span class="pre">name_for_position</span></code> does give you is the ability to explicitly chose the
+names you want to assign to all or some of the elements of your iterable.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">uniquely_named_objects</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">objects</span><span class="p">,</span> <span class="n">name_for_position</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;first_list&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;second_list&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;lambda&#39;</span><span class="p">}))</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">[&#39;map&#39;, &#39;first_list&#39;, &#39;second_list&#39;, &#39;lambda&#39;, &#39;print&#39;]</span>
+</pre></div>
+</div>
 <p>Extra notes:</p>
-<p>See what uniquely_named_objects offers as parametrization:</p>
+<p>See what <code class="docutils literal notranslate"><span class="pre">uniquely_named_objects</span></code> offers as parametrization:</p>
 <ul class="simple">
 <li><p>You can provide an exclusion list (though the handing of a conflict is hardcoded</p></li>
 </ul>
@@ -433,16 +459,16 @@ so with the <cite>exclude_names</cite> argument;</p>
 </ul>
 <p>One trick to be aware of if objects have unique hashes: Make a
 <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">{obj:</span> <span class="pre">name,...}</span></code> mapping and specify <code class="docutils literal notranslate"><span class="pre">obj_to_name=d.get</span></code>.</p>
+<ul class="simple">
+<li><p>Any controllable way to decide on a name based on the position of the function</p></li>
+</ul>
+<p>in the iterable (this could be useful!)</p>
 <p>What you DO NOT have:</p>
 <ul class="simple">
 <li><p>Any way to choose names non-myopically: An object’s name cannot “see” the</p></li>
 </ul>
 <p>objects around it to decide on a name (it can only see the names use by those behind
 it through <code class="docutils literal notranslate"><span class="pre">exclude_names</span></code>).</p>
-<ul class="simple">
-<li><p>Any controllable way to decide on a name based on the position of the function</p></li>
-</ul>
-<p>in the iterable (this could be useful!)</p>
 <ul class="simple">
 <li><p>Any “retries” or “alternative naming logic” if a chosen name conflicts with</p></li>
 </ul>
@@ -657,7 +683,7 @@ are not equal.</p>
 
 <dl class="py function">
 <dt id="i2.multi_object.uniquely_named_objects">
-<code class="sig-prename descclassname">i2.multi_object.</code><code class="sig-name descname">uniquely_named_objects</code><span class="sig-paren">(</span><em class="sig-param">objects: Iterable[Obj], exclude_names: Iterable[str] = (), obj_to_name: Callable[[Obj], str] = &lt;function name_of_obj&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/multi_object.html#uniquely_named_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.multi_object.uniquely_named_objects" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">i2.multi_object.</code><code class="sig-name descname">uniquely_named_objects</code><span class="sig-paren">(</span><em class="sig-param">objects: Iterable[Obj], exclude_names: Iterable[str] = (), obj_to_name: Callable[[Obj], str] = &lt;function name_of_obj&gt;, *, name_for_position: dict = ()</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/multi_object.html#uniquely_named_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.multi_object.uniquely_named_objects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate (name, object) pairs from an iterable of objects</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -665,28 +691,54 @@ are not equal.</p>
 <li><p><strong>objects</strong> – Objects to be named</p></li>
 <li><p><strong>exclude_names</strong> – Names that can’t be used</p></li>
 <li><p><strong>obj_to_name</strong> – Function that tries to get/make a name from an object</p></li>
+<li><p><strong>name_for_position</strong> – A <code class="docutils literal notranslate"><span class="pre">{position_idx:</span> <span class="pre">name,...}</span></code> mapping that instructs</p></li>
 </ul>
 </dd>
 </dl>
+<p><code class="docutils literal notranslate"><span class="pre">uniquely_named_objects</span></code> to use a specific name for a given position.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="nb">map</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">partial</span><span class="p">(</span><span class="nb">print</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">uniquely_named_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">names_and_objects</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">names_and_objects</span><span class="p">)</span>
-<span class="go">[&#39;map&#39;, &#39;list&#39;, &#39;_2&#39;, &#39;lambda_3&#39;, &#39;print&#39;]</span>
-</pre></div>
-</div>
-<p>That ‘_2’ is there because both [1] and [1, 2] would be named <cite>‘list’</cite>, so to avoid
-that, a default name (revealing the position of the object in the input <cite>objects</cite>)
-is given.</p>
-<p>If we wanted to not allow the function to choose ‘lambda_3’ as a name, we can do
-so with the <cite>exclude_names</cite> argument;</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">uniquely_named_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">exclude_names</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;lambda_3&#39;</span><span class="p">})))</span>
 <span class="go">[&#39;map&#39;, &#39;list&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
 </pre></div>
 </div>
+<p>That <code class="docutils literal notranslate"><span class="pre">'_2'</span></code> is there because both <code class="docutils literal notranslate"><span class="pre">[1]</span></code> and <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2]</span></code> would be named <cite>‘list’</cite>,
+so to avoid that, a default name (revealing the position of the object in the
+input <cite>objects</cite>) is given.
+The ‘_3’ comes from the fact that the <code class="docutils literal notranslate"><span class="pre">lambda</span></code> function doesn’t have a proper
+name (one that is a python identifier).</p>
+<p>If we wanted the name for <code class="docutils literal notranslate"><span class="pre">[1]</span></code> to revert to the default positional name <code class="docutils literal notranslate"><span class="pre">'_1'</span></code>,
+we can achieve this by forbidding the name <code class="docutils literal notranslate"><span class="pre">'list'</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">uniquely_named_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">exclude_names</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;list&#39;</span><span class="p">})))</span>
+<span class="go">[&#39;map&#39;, &#39;_1&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
+</pre></div>
+</div>
+<p>You could also acheive this by specifying this <code class="docutils literal notranslate"><span class="pre">'_1'</span></code> explicitly in the
+<code class="docutils literal notranslate"><span class="pre">name_for_position</span></code> argument:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">uniquely_named_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">name_for_position</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;_1&#39;</span><span class="p">})))</span>
+<span class="go">[&#39;map&#39;, &#39;_1&#39;, &#39;list&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
+</pre></div>
+</div>
+<p>The reason this <cite>list</cite> reappears as a name is that we didn’t exclude it, and
+the name is not taken by the <code class="docutils literal notranslate"><span class="pre">[1]</span></code> argument anymore.
+To get the desired effect with <code class="docutils literal notranslate"><span class="pre">name_for_position</span></code> we could therefore do this:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">uniquely_named_objects</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">name_for_position</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;_1&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;_2&#39;</span><span class="p">})))</span>
+<span class="go">[&#39;map&#39;, &#39;_1&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
+</pre></div>
+</div>
+<p>Obviously, <code class="docutils literal notranslate"><span class="pre">exclude_names</span></code> is the right argument for the problem above, but
+what <code class="docutils literal notranslate"><span class="pre">name_for_position</span></code> does give you is the ability to explicitly chose the
+names you want to assign to all or some of the elements of your iterable.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">uniquely_named_objects</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">objects</span><span class="p">,</span> <span class="n">name_for_position</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;first_list&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;second_list&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;lambda&#39;</span><span class="p">}))</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">[&#39;map&#39;, &#39;first_list&#39;, &#39;second_list&#39;, &#39;lambda&#39;, &#39;print&#39;]</span>
+</pre></div>
+</div>
 <p>Extra notes:</p>
-<p>See what uniquely_named_objects offers as parametrization:</p>
+<p>See what <code class="docutils literal notranslate"><span class="pre">uniquely_named_objects</span></code> offers as parametrization:</p>
 <ul class="simple">
 <li><p>You can provide an exclusion list (though the handing of a conflict is hardcoded</p></li>
 </ul>
@@ -696,16 +748,16 @@ so with the <cite>exclude_names</cite> argument;</p>
 </ul>
 <p>One trick to be aware of if objects have unique hashes: Make a
 <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">{obj:</span> <span class="pre">name,...}</span></code> mapping and specify <code class="docutils literal notranslate"><span class="pre">obj_to_name=d.get</span></code>.</p>
+<ul class="simple">
+<li><p>Any controllable way to decide on a name based on the position of the function</p></li>
+</ul>
+<p>in the iterable (this could be useful!)</p>
 <p>What you DO NOT have:</p>
 <ul class="simple">
 <li><p>Any way to choose names non-myopically: An object’s name cannot “see” the</p></li>
 </ul>
 <p>objects around it to decide on a name (it can only see the names use by those behind
 it through <code class="docutils literal notranslate"><span class="pre">exclude_names</span></code>).</p>
-<ul class="simple">
-<li><p>Any controllable way to decide on a name based on the position of the function</p></li>
-</ul>
-<p>in the iterable (this could be useful!)</p>
 <ul class="simple">
 <li><p>Any “retries” or “alternative naming logic” if a chosen name conflicts with</p></li>
 </ul>
