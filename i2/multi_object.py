@@ -1,4 +1,4 @@
-"""A few fundamental tools to operate on a fixed pool of objects (e.g. functions).
+"""A few fundamental tools to operate on a fixed collection of objects (e.g. functions).
 
 For functions you have:
 
@@ -291,7 +291,7 @@ class MultiObj(Mapping):
             raise AttributeError(f'Not an attribute: {item}')
 
     def __repr__(self):
-        return f"<{type(self).__name__} with keys: {', '.join(self)}>"
+        return f"<{type(self).__name__} containing: {', '.join(self)}>"
 
 
 def iterable_of_callables_validation(funcs: Iterable[Callable]):
@@ -508,6 +508,8 @@ class FuncFanout(MultiFunc):
     >>> groot = lambda a: 'I am groot'
     >>> m = FuncFanout(foo, bar, groot)
     >>>
+    >>> list(m(3))
+    [('foo', 5), ('bar', 6), ('_2', 'I am groot')]
     >>> dict(m(3))
     {'foo': 5, 'bar': 6, '_2': 'I am groot'}
 
