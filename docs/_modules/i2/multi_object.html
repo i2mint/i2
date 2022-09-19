@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.155 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.156 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -198,6 +198,28 @@
 <span class="sd">    &gt;&gt;&gt; list(dict(uniquely_named_objects(objects, exclude_names={&#39;lambda_3&#39;})))</span>
 <span class="sd">    [&#39;map&#39;, &#39;list&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
 
+<span class="sd">    Extra notes:</span>
+
+<span class="sd">    See what uniquely_named_objects offers as parametrization:</span>
+
+<span class="sd">    - You can provide an exclusion list (though the handing of a conflict is hardcoded</span>
+<span class="sd">    and questionable)</span>
+
+<span class="sd">    - You can provide a ``obj_to_name`` function to control the naming of objects.</span>
+<span class="sd">    One trick to be aware of if objects have unique hashes: Make a</span>
+<span class="sd">    ``d = {obj: name,...}`` mapping and specify ``obj_to_name=d.get``.</span>
+
+<span class="sd">    What you DO NOT have:</span>
+
+<span class="sd">    - Any way to choose names non-myopically: An object’s name cannot “see” the</span>
+<span class="sd">    objects around it to decide on a name (it can only see the names use by those behind</span>
+<span class="sd">    it through ``exclude_names``).</span>
+
+<span class="sd">    - Any controllable way to decide on a name based on the position of the function</span>
+<span class="sd">    in the iterable (this could be useful!)</span>
+
+<span class="sd">    - Any “retries” or “alternative naming logic” if a chosen name conflicts with</span>
+<span class="sd">    ``exclude_names``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_exclude_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">exclude_names</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">objects</span><span class="p">):</span>

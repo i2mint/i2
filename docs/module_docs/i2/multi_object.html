@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.155 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.156 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -422,6 +422,31 @@ so with the <cite>exclude_names</cite> argument;</p>
 <span class="go">[&#39;map&#39;, &#39;list&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
 </pre></div>
 </div>
+<p>Extra notes:</p>
+<p>See what uniquely_named_objects offers as parametrization:</p>
+<ul class="simple">
+<li><p>You can provide an exclusion list (though the handing of a conflict is hardcoded</p></li>
+</ul>
+<p>and questionable)</p>
+<ul class="simple">
+<li><p>You can provide a <code class="docutils literal notranslate"><span class="pre">obj_to_name</span></code> function to control the naming of objects.</p></li>
+</ul>
+<p>One trick to be aware of if objects have unique hashes: Make a
+<code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">{obj:</span> <span class="pre">name,...}</span></code> mapping and specify <code class="docutils literal notranslate"><span class="pre">obj_to_name=d.get</span></code>.</p>
+<p>What you DO NOT have:</p>
+<ul class="simple">
+<li><p>Any way to choose names non-myopically: An object’s name cannot “see” the</p></li>
+</ul>
+<p>objects around it to decide on a name (it can only see the names use by those behind
+it through <code class="docutils literal notranslate"><span class="pre">exclude_names</span></code>).</p>
+<ul class="simple">
+<li><p>Any controllable way to decide on a name based on the position of the function</p></li>
+</ul>
+<p>in the iterable (this could be useful!)</p>
+<ul class="simple">
+<li><p>Any “retries” or “alternative naming logic” if a chosen name conflicts with</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">exclude_names</span></code></p>
 </dd></dl>
 
 </dd></dl>
@@ -660,6 +685,31 @@ so with the <cite>exclude_names</cite> argument;</p>
 <span class="go">[&#39;map&#39;, &#39;list&#39;, &#39;_2&#39;, &#39;_3&#39;, &#39;print&#39;]</span>
 </pre></div>
 </div>
+<p>Extra notes:</p>
+<p>See what uniquely_named_objects offers as parametrization:</p>
+<ul class="simple">
+<li><p>You can provide an exclusion list (though the handing of a conflict is hardcoded</p></li>
+</ul>
+<p>and questionable)</p>
+<ul class="simple">
+<li><p>You can provide a <code class="docutils literal notranslate"><span class="pre">obj_to_name</span></code> function to control the naming of objects.</p></li>
+</ul>
+<p>One trick to be aware of if objects have unique hashes: Make a
+<code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">{obj:</span> <span class="pre">name,...}</span></code> mapping and specify <code class="docutils literal notranslate"><span class="pre">obj_to_name=d.get</span></code>.</p>
+<p>What you DO NOT have:</p>
+<ul class="simple">
+<li><p>Any way to choose names non-myopically: An object’s name cannot “see” the</p></li>
+</ul>
+<p>objects around it to decide on a name (it can only see the names use by those behind
+it through <code class="docutils literal notranslate"><span class="pre">exclude_names</span></code>).</p>
+<ul class="simple">
+<li><p>Any controllable way to decide on a name based on the position of the function</p></li>
+</ul>
+<p>in the iterable (this could be useful!)</p>
+<ul class="simple">
+<li><p>Any “retries” or “alternative naming logic” if a chosen name conflicts with</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">exclude_names</span></code></p>
 </dd></dl>
 
 </section>
