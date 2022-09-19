@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.157 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.158 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -98,7 +98,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for i2.multi_object</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A few fundamental tools to operate on a fixed pool of objects (e.g. functions).</span>
+<span></span><span class="sd">&quot;&quot;&quot;A few fundamental tools to operate on a fixed collection of objects (e.g. functions).</span>
 
 <span class="sd">For functions you have:</span>
 
@@ -391,7 +391,7 @@
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not an attribute: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> with keys: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> containing: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 
 <span class="k">def</span> <span class="nf">iterable_of_callables_validation</span><span class="p">(</span><span class="n">funcs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]):</span>
@@ -608,6 +608,8 @@
 <span class="sd">    &gt;&gt;&gt; groot = lambda a: &#39;I am groot&#39;</span>
 <span class="sd">    &gt;&gt;&gt; m = FuncFanout(foo, bar, groot)</span>
 <span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; list(m(3))</span>
+<span class="sd">    [(&#39;foo&#39;, 5), (&#39;bar&#39;, 6), (&#39;_2&#39;, &#39;I am groot&#39;)]</span>
 <span class="sd">    &gt;&gt;&gt; dict(m(3))</span>
 <span class="sd">    {&#39;foo&#39;: 5, &#39;bar&#39;: 6, &#39;_2&#39;: &#39;I am groot&#39;}</span>
 
