@@ -74,33 +74,61 @@ def uniquely_named_objects(
     objects: Iterable[Obj],
     exclude_names: Iterable[str] = (),
     obj_to_name: Callable[[Obj], str] = name_of_obj,
+    *,
+    name_for_position: dict = (),
 ):
     """Generate (name, object) pairs from an iterable of objects
 
     :param objects: Objects to be named
     :param exclude_names: Names that can't be used
     :param obj_to_name: Function that tries to get/make a name from an object
+    :param name_for_position: A ``{position_idx: name,...}`` mapping that instructs
+    ``uniquely_named_objects`` to use a specific name for a given position.
 
     >>> from functools import partial
     >>> objects = [map, [1], [1, 2], lambda x: x, partial(print, sep=",")]
     >>> g = uniquely_named_objects(objects)
     >>> names_and_objects = dict(g)
     >>> list(names_and_objects)
-    ['map', 'list', '_2', 'lambda_3', 'print']
-
-    That '_2' is there because both [1] and [1, 2] would be named `'list'`, so to avoid
-    that, a default name (revealing the position of the object in the input `objects`)
-    is given.
-
-    If we wanted to not allow the function to choose 'lambda_3' as a name, we can do
-    so with the `exclude_names` argument;
-
-    >>> list(dict(uniquely_named_objects(objects, exclude_names={'lambda_3'})))
     ['map', 'list', '_2', '_3', 'print']
+
+    That ``'_2'`` is there because both ``[1]`` and ``[1, 2]`` would be named `'list'`,
+    so to avoid that, a default name (revealing the position of the object in the
+    input `objects`) is given.
+    The '_3' comes from the fact that the ``lambda`` function doesn't have a proper
+    name (one that is a python identifier).
+
+    If we wanted the name for ``[1]`` to revert to the default positional name ``'_1'``,
+    we can achieve this by forbidding the name ``'list'``:
+
+    >>> list(dict(uniquely_named_objects(objects, exclude_names={'list'})))
+    ['map', '_1', '_2', '_3', 'print']
+
+    You could also acheive this by specifying this ``'_1'`` explicitly in the
+    ``name_for_position`` argument:
+
+    >>> list(dict(uniquely_named_objects(objects, name_for_position={1: '_1'})))
+    ['map', '_1', 'list', '_3', 'print']
+
+    The reason this `list` reappears as a name is that we didn't exclude it, and
+    the name is not taken by the ``[1]`` argument anymore.
+    To get the desired effect with ``name_for_position`` we could therefore do this:
+
+    >>> list(dict(uniquely_named_objects(objects, name_for_position={1: '_1', 2: '_2'})))
+    ['map', '_1', '_2', '_3', 'print']
+
+    Obviously, ``exclude_names`` is the right argument for the problem above, but
+    what ``name_for_position`` does give you is the ability to explicitly chose the
+    names you want to assign to all or some of the elements of your iterable.
+
+    >>> list(dict(uniquely_named_objects(
+    ...     objects, name_for_position={1: 'first_list', 2: 'second_list', 3: 'lambda'}))
+    ... )
+    ['map', 'first_list', 'second_list', 'lambda', 'print']
 
     Extra notes:
 
-    See what uniquely_named_objects offers as parametrization:
+    See what ``uniquely_named_objects`` offers as parametrization:
 
     - You can provide an exclusion list (though the handing of a conflict is hardcoded
     and questionable)
@@ -109,24 +137,27 @@ def uniquely_named_objects(
     One trick to be aware of if objects have unique hashes: Make a
     ``d = {obj: name,...}`` mapping and specify ``obj_to_name=d.get``.
 
+    - Any controllable way to decide on a name based on the position of the function
+    in the iterable (this could be useful!)
+
     What you DO NOT have:
 
     - Any way to choose names non-myopically: An object’s name cannot “see” the
     objects around it to decide on a name (it can only see the names use by those behind
     it through ``exclude_names``).
 
-    - Any controllable way to decide on a name based on the position of the function
-    in the iterable (this could be useful!)
-
     - Any “retries” or “alternative naming logic” if a chosen name conflicts with
     ``exclude_names``
     """
     _exclude_names = set(exclude_names)
     for i, obj in enumerate(objects):
-        name = obj_to_name(obj)
-        if name == '<lambda>':
-            name = f'lambda_{i}'
-        if name is None or name in _exclude_names:
+        if i in name_for_position:
+            name = name_for_position[i]
+        else:
+            name = obj_to_name(obj)
+        # if name == '<lambda>':
+        # name = f'lambda_{i}'
+        if name is None or not name.isidentifier() or name in _exclude_names:
             name = f'_{i}'
             assert (
                 name not in _exclude_names
@@ -258,6 +289,9 @@ class MultiObj(Mapping):
             return self.objects[item]
         else:
             raise AttributeError(f'Not an attribute: {item}')
+
+    def __repr__(self):
+        return f"<{type(self).__name__} with keys: {', '.join(self)}>"
 
 
 def iterable_of_callables_validation(funcs: Iterable[Callable]):
@@ -475,9 +509,9 @@ class FuncFanout(MultiFunc):
     >>> m = FuncFanout(foo, bar, groot)
     >>>
     >>> dict(m(3))
-    {'foo': 5, 'bar': 6, 'lambda_2': 'I am groot'}
+    {'foo': 5, 'bar': 6, '_2': 'I am groot'}
 
-    Don't like that `lambda_2`?
+    Don't like that `_2` name?
     Well, If you specify names to the input functions, they'll be used instead of the
     ones found by the `MultObj.auto_namer`.
 
