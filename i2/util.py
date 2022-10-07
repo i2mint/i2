@@ -24,6 +24,52 @@ class OverwritesForbidden(ValueError):
     """Raise when a user is not allowed to overwrite a mapping's key"""
 
 
+def is_lambda(func):
+    return getattr(func, '__name__', None) == '<lambda>'
+
+
+# TODO: Fragile. Make more robust.
+def lambda_code(lambda_func):
+    func_str = str(inspect.getsourcelines(lambda_func)[0])
+    return func_str.strip("['\\n']").split(' = ')[1]
+
+
+# TODO: Only works with lambdas so either assert function is a lambda on construction
+#  or make it work with functions more generally.
+class PicklableLambda:
+    """
+    Wraps a lambda function to make it picklable (and provide it with a name, optionally.
+
+    >>> f = lambda x, y=0: x + y
+    >>> ff = PicklableLambda(f)
+    >>> import pickle
+    >>> fff = pickle.loads(pickle.dumps(ff))
+    >>> assert fff(2, 3) == ff(2, 3) == f(2, 3)
+
+    See https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function
+
+    """
+
+    def __init__(self, func, name=None):
+        self.func = func
+        self.__signature__ = inspect.signature(self.func)
+        self.__name__ = name or getattr(func, '__name__', type(self).__name__)
+
+    def __getstate__(self):
+        return lambda_code(self.func), self.__name__
+
+    def __setstate__(self, state):
+        func_code, name = state
+        func = eval(func_code)  # scary?
+        self.__init__(func, name)
+
+    def __call__(self, *args, **kwargs):
+        return self.func(*args, **kwargs)
+
+    def __repr__(self):
+        return f'<{type(self).__name__}({self.__name__})>'
+
+
 def ensure_identifiers(
     *objs: Iterable[T],
     get_identfiers: Callable[[T], Iterable[str]] = str.split,
