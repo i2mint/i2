@@ -293,6 +293,13 @@ class MultiObj(Mapping):
     def __repr__(self):
         return f"<{type(self).__name__} containing: {', '.join(self)}>"
 
+    def __getstate__(self):
+        return self.__dict__
+
+    def __setstate__(self, state):
+        for k, v in state.items():
+            setattr(self, k, v)
+
 
 def iterable_of_callables_validation(funcs: Iterable[Callable]):
     if not isinstance(funcs, Iterable):
@@ -309,8 +316,12 @@ class MultiFunc(MultiObj):
         # The basic MultiObj initialization
         super().__init__(*unnamed_funcs, **named_funcs)
         # The extra stuff we want to do with functions
-        self.funcs = self.objects  # an alias, for better readability
         iterable_of_callables_validation(self.funcs.values())
+
+    @property
+    def funcs(self):
+        """Alias of .objects, for better readability in the context of MultiFunc"""
+        return self.objects
 
 
 def _signature_from_first_and_last_func(first_func, last_func):
