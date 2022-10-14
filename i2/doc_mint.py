@@ -163,6 +163,7 @@ def split_text_and_doctests(doc_string: str):
     '    >>> 2 + 3\n    5\n    >>> t = 5\n    >>> tt = 10\n'
 
     """
+
     def is_string(item):
         if isinstance(item, str):
             if item == '':
