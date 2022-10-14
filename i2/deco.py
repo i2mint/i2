@@ -64,7 +64,7 @@ class FuncFactory:
 
     >>> factory = FuncFactory(foo)
     >>> factory
-    <FuncFactory(foo)>(b, *, c=2) -> Callable[..., float]
+    <FuncFactory(foo)>(a, b, *, c=2) -> Callable[..., float]
 
     (Note that the repr even reuses ``foo``'s return annotation to tell us that our
     factory will return a callable that returns that type (if the annotation is a type).
@@ -104,7 +104,9 @@ class FuncFactory:
         self.func = func
 
         sig = Sig(func)
-        factory_sig = Sig(sig, return_annotation=Callable[..., Any]) - sig.names[0]
+        factory_sig = Sig(sig, return_annotation=Callable[..., Any])
+        # previous I did the following, but don't know why:
+        # factory_sig = factory_sig - sig.names[0]
         if sig.return_annotation is not sig.empty:
             try:
                 factory_sig = Sig(
