@@ -1,5 +1,10 @@
 """Meta-interfaces """
+
 import doctest
+from typing import Callable
+import re
+from itertools import groupby
+from inspect import getdoc
 
 MAX_LINE_LENGTH = 72  # https://en.wikipedia.org/wiki/Characters_per_line
 
@@ -32,13 +37,151 @@ def _prefix_lines(s: str, prefix: str = '# ', even_if_empty: bool = False) -> st
     return '\n'.join(map(lambda x: prefix + x, s.split('\n')))
 
 
-import doctest
-from typing import Callable
-import re
-from inspect import getdoc
+class ExampleX(doctest.Example):
+    """doctest.Example eXtended to have more convenient methods"""
+
+    source_prefix = '>>> '
+    source_continuation = '... '
+
+    def __init__(
+        self, source, want=None, exc_msg=None, lineno=0, indent=0, options=None,
+    ):
+        # if source is already a doctest.Example instance, use its properties as args
+        if isinstance(source, doctest.Example):
+            o = source
+            source, want, exc_msg, lineno, indent, options = (
+                o.source,
+                o.want,
+                o.exc_msg,
+                o.lineno,
+                o.indent,
+                o.options,
+            )
+        super().__init__(source, want, exc_msg, lineno, indent, options)
+
+    @property
+    def indent_str(self):
+        return self.indent * ' '
+
+    @property
+    def _source_str(self):
+        indented_continuation = f'{self.indent_str}{self.source_continuation}'
+        t = self.source.replace('\n', f'\n{indented_continuation}')
+        # remove the trailing '...' if present
+        if t.endswith(indented_continuation):
+            t = t[: -len(indented_continuation)]
+        return t
+
+    def __str__(self):
+        want = self.want
+        if self.want:
+            want = self.indent_str + want
+        return self.indent_str + self.source_prefix + self._source_str + want
+
+    def __repr__(self):
+        return str(self)
+
+
+from typing import Sequence
+
+
+class DoctestBlock(list):
+    """A list that (should) contain doctest Example instances"""
+
+    def __init__(self, seq=()):
+        super().__init__(map(ExampleX, seq))
+
+    def __str__(self):
+        return ''.join(map(str, self))
+
+    def __repr__(self):
+        return f'<DoctestBlock with {len(self)} examples>\n' + str(self)
+
+
+parse_doctest = doctest.DocTestParser().parse
+
+
+# TODO: Newer, using doctest parser. See what can be merged
+#  with non_doctest_lines etc.
+def split_text_and_doctests(doc_string: str):
+    r"""
+    Generates alternating blocks of "text" (string) and "doctest blocks"
+    (``DoctestBlock`` instances, which are essentially a list of ``ExampleX`` instances).
+
+    >>> example = '''
+    ...     This is to test the doctest splitter.
+    ...     Until now, we're in a text block.
+    ...     The following is a doctest block:
+    ...
+    ...     >>> 2 + 3
+    ...     5
+    ...     >>> t = 5
+    ...     >>> tt = 10
+    ...
+    ...     This is another text block, followed with another doctest block:
+    ...
+    ...     >>> def foo():
+    ...     ...     return 42
+    ...     >>> foo()
+    ...     42
+    ...
+    ... '''
+    >>>
+    >>> blocks = list(split_text_and_doctests(example))
+
+    There are 5 blocks:
+
+    >>> len(blocks)
+    5
+
+    The first block is a string, corresponding to explanatory text of the doc string:
+
+    >>> isinstance(blocks[0], str)
+    True
+    >>> print(blocks[0])
+    <BLANKLINE>
+    This is to test the doctest splitter.
+    Until now, we're in a text block.
+    The following is a doctest block:
+    <BLANKLINE>
+    <BLANKLINE>
+
+    The next block is a ``DoctestBlock`` instance.
+
+    >>> block = blocks[1]
+    >>> isinstance(block, DoctestBlock)
+    True
+
+    This block has 3 elements (``ExampleX`` instances)
+
+    >>> len(block)
+    3
+
+    If you ask for the string representation of this block, you'll get a doctest string:
+
+    >>> str(block)
+    '    >>> 2 + 3\n    5\n    >>> t = 5\n    >>> tt = 10\n'
+
+    """
+    def is_string(item):
+        if isinstance(item, str):
+            if item == '':
+                return False
+            else:
+                return True
+        else:
+            return False
+
+    t = parse_doctest(doc_string)
+    g = groupby(t, key=is_string)
+    for _is_string, group_data in g:
+        if _is_string:
+            yield '\n'.join(list(group_data))
+        else:
+            yield DoctestBlock(filter(None, group_data))
+
 
 comment_strip_p = re.compile(r'(?m)^ *#.*\n?')
-
 doctest_line_p = re.compile('\s*>>>')
 empty_line = re.compile('\s*$')
 
@@ -139,6 +282,10 @@ def _output_prefix(source, want, prefix='# OUTPUT: '):
 output_prefix = mk_example_wants_callback(_output_prefix)
 assert_wants = mk_example_wants_callback(_assert_wants)
 
+# def example_to_doctest_string(source, want):
+#     want.replace()
+#     return source +
+
 
 def doctest_string_trans_lines(
     doctest_obj: doctest.DocTest, example_callback=assert_wants
@@ -157,6 +304,7 @@ def _doctest_string_gen(obj, example_callback, recurse=True):
 def doctest_string(obj, example_callback=assert_wants, recurse=True):
     """
     Extract the doctests found in given object.
+
     :param obj: Object (module, class, function, etc.) you want to extract doctests from.
     :params output_prefix:
     :param recurse: Whether the process should find doctests in the attributes of the object, recursively.
