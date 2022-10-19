@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.161 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.162 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -400,6 +400,19 @@ you access to the names/keys of your objects via attributes.
 <span class="go">{&#39;this&#39;: [1], &#39;that&#39;: [1, 2]}</span>
 </pre></div>
 </div>
+<p>You can specify an instance name and/or doc with the special (reserved) argument
+names <code class="docutils literal notranslate"><span class="pre">__name__</span></code> and <code class="docutils literal notranslate"><span class="pre">__doc__</span></code> (which therefore can’t be used as object names:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mo</span> <span class="o">=</span> <span class="n">MultiObj</span><span class="p">(</span>
+<span class="gp">... </span><span class="n">this</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">that</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="vm">__name__</span><span class="o">=</span><span class="s1">&#39;this_and_that&#39;</span><span class="p">,</span> <span class="vm">__doc__</span><span class="o">=</span><span class="s1">&#39;Nothing much&#39;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">mo</span><span class="p">)</span>
+<span class="go">{&#39;this&#39;: [1], &#39;that&#39;: [1, 2]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mo</span><span class="o">.</span><span class="vm">__name__</span>
+<span class="go">&#39;this_and_that&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mo</span><span class="o">.</span><span class="vm">__doc__</span>
+<span class="go">&#39;Nothing much&#39;</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt id="i2.multi_object.MultiObj.auto_namer">
 <em class="property">static </em><code class="sig-name descname">auto_namer</code><span class="sig-paren">(</span><em class="sig-param">objects: Iterable[Obj], exclude_names: Iterable[str] = (), obj_to_name: Callable[[Obj], str] = &lt;function name_of_obj&gt;, *, name_for_position: dict = ()</em><span class="sig-paren">)</span><a class="headerlink" href="#i2.multi_object.MultiObj.auto_namer" title="Permalink to this definition">¶</a></dt>
@@ -584,6 +597,17 @@ The names are completely ignored.</p>
 <span class="gt">Traceback (most recent call last):</span>
   <span class="c">...</span>
 <span class="gr">ValueError</span>: <span class="n">You need to specify at least one function!</span>
+</pre></div>
+</div>
+<p>You can specify an instance name and/or doc with the special (reserved) argument
+names <code class="docutils literal notranslate"><span class="pre">__name__</span></code> and <code class="docutils literal notranslate"><span class="pre">__doc__</span></code> (which therefore can’t be used as function names):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">add_it</span><span class="o">=</span><span class="nb">sum</span><span class="p">,</span> <span class="vm">__name__</span><span class="o">=</span><span class="s1">&#39;map_and_sum&#39;</span><span class="p">,</span> <span class="vm">__doc__</span><span class="o">=</span><span class="s1">&#39;Apply func and add&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">60</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span>
+<span class="go">&#39;map_and_sum&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="vm">__doc__</span>
+<span class="go">&#39;Apply func and add&#39;</span>
 </pre></div>
 </div>
 </dd></dl>

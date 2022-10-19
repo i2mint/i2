@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.161 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.162 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -349,12 +349,27 @@
 <span class="sd">    &gt;&gt;&gt; mo = MultiObj({&#39;this&#39;: [1], &#39;that&#39;: [1, 2]})</span>
 <span class="sd">    &gt;&gt;&gt; dict(mo)</span>
 <span class="sd">    {&#39;this&#39;: [1], &#39;that&#39;: [1, 2]}</span>
+
+<span class="sd">    You can specify an instance name and/or doc with the special (reserved) argument</span>
+<span class="sd">    names ``__name__`` and ``__doc__`` (which therefore can&#39;t be used as object names:</span>
+
+<span class="sd">    &gt;&gt;&gt; mo = MultiObj(</span>
+<span class="sd">    ... this=[1], that=[1, 2], __name__=&#39;this_and_that&#39;, __doc__=&#39;Nothing much&#39;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; dict(mo)</span>
+<span class="sd">    {&#39;this&#39;: [1], &#39;that&#39;: [1, 2]}</span>
+<span class="sd">    &gt;&gt;&gt; mo.__name__</span>
+<span class="sd">    &#39;this_and_that&#39;</span>
+<span class="sd">    &gt;&gt;&gt; mo.__doc__</span>
+<span class="sd">    &#39;Nothing much&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Placing as staticmethod so that subclasses can overwrite if necessary</span>
     <span class="n">auto_namer</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">uniquely_named_objects</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unnamed</span><span class="p">,</span> <span class="o">**</span><span class="n">named</span><span class="p">):</span>
+        <span class="n">named</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_reserved_names</span><span class="p">(</span><span class="n">named</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unnamed</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unnamed</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">named</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Special case where a single input is given: a mapping between names and obj</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="n">unnamed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -370,6 +385,14 @@
                 <span class="p">)</span>
             <span class="c1"># Merge these</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">named_unnamed</span><span class="p">,</span> <span class="o">**</span><span class="n">named</span><span class="p">)</span>
+
+    <span class="n">_reserved_names</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_process_reserved_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">named_funcs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reserved_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">value</span> <span class="o">:=</span> <span class="n">named_funcs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">named_funcs</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span>
@@ -436,8 +459,6 @@
     <span class="k">return</span> <span class="n">Signature</span><span class="p">(</span><span class="n">input_params</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotation</span><span class="p">)</span>
 
 
-<span class="c1"># TODO: Give it a __name__ and make it more like a &quot;normal&quot; function so it works</span>
-<span class="c1">#  well when so assumed?</span>
 <div class="viewcode-block" id="Pipe"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.Pipe">[docs]</a><span class="k">class</span> <span class="nc">Pipe</span><span class="p">(</span><span class="n">MultiFunc</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simple function composition. That is, gives you a callable that implements</span>
 
@@ -475,6 +496,17 @@
 <span class="sd">    Traceback (most recent call last):</span>
 <span class="sd">      ...</span>
 <span class="sd">    ValueError: You need to specify at least one function!</span>
+
+<span class="sd">    You can specify an instance name and/or doc with the special (reserved) argument</span>
+<span class="sd">    names ``__name__`` and ``__doc__`` (which therefore can&#39;t be used as function names):</span>
+
+<span class="sd">    &gt;&gt;&gt; f = Pipe(map, add_it=sum, __name__=&#39;map_and_sum&#39;, __doc__=&#39;Apply func and add&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f(lambda x: x * 10, [1, 2, 3])</span>
+<span class="sd">    60</span>
+<span class="sd">    &gt;&gt;&gt; f.__name__</span>
+<span class="sd">    &#39;map_and_sum&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f.__doc__</span>
+<span class="sd">    &#39;Apply func and add&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unnamed_funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">):</span>
