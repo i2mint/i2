@@ -249,12 +249,27 @@ class MultiObj(Mapping):
     >>> mo = MultiObj({'this': [1], 'that': [1, 2]})
     >>> dict(mo)
     {'this': [1], 'that': [1, 2]}
+
+    You can specify an instance name and/or doc with the special (reserved) argument
+    names ``__name__`` and ``__doc__`` (which therefore can't be used as object names:
+
+    >>> mo = MultiObj(
+    ... this=[1], that=[1, 2], __name__='this_and_that', __doc__='Nothing much'
+    ... )
+    >>> dict(mo)
+    {'this': [1], 'that': [1, 2]}
+    >>> mo.__name__
+    'this_and_that'
+    >>> mo.__doc__
+    'Nothing much'
     """
 
     # Placing as staticmethod so that subclasses can overwrite if necessary
     auto_namer = staticmethod(uniquely_named_objects)
 
     def __init__(self, *unnamed, **named):
+        named = self._process_reserved_names(named)
+
         if len(unnamed) == 1 and isinstance(unnamed[0], Mapping) and len(named) == 0:
             # Special case where a single input is given: a mapping between names and obj
             self.objects = unnamed[0]
@@ -270,6 +285,14 @@ class MultiObj(Mapping):
                 )
             # Merge these
             self.objects = dict(named_unnamed, **named)
+
+    _reserved_names = ('__name__', '__doc__')
+
+    def _process_reserved_names(self, named_funcs):
+        for name in self._reserved_names:
+            if (value := named_funcs.pop(name, None)) is not None:
+                setattr(self, name, value)
+        return named_funcs
 
     def __iter__(self):
         yield from self.objects
@@ -336,8 +359,6 @@ def _signature_from_first_and_last_func(first_func, last_func):
     return Signature(input_params, return_annotation=return_annotation)
 
 
-# TODO: Give it a __name__ and make it more like a "normal" function so it works
-#  well when so assumed?
 class Pipe(MultiFunc):
     """Simple function composition. That is, gives you a callable that implements
 
@@ -375,6 +396,17 @@ class Pipe(MultiFunc):
     Traceback (most recent call last):
       ...
     ValueError: You need to specify at least one function!
+
+    You can specify an instance name and/or doc with the special (reserved) argument
+    names ``__name__`` and ``__doc__`` (which therefore can't be used as function names):
+
+    >>> f = Pipe(map, add_it=sum, __name__='map_and_sum', __doc__='Apply func and add')
+    >>> f(lambda x: x * 10, [1, 2, 3])
+    60
+    >>> f.__name__
+    'map_and_sum'
+    >>> f.__doc__
+    'Apply func and add'
     """
 
     def __init__(self, *unnamed_funcs, **named_funcs):
