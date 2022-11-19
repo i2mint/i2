@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.0.163 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.deco &mdash; i2 0.0.164 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -86,9 +86,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>i2.deco</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">i2.deco</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -207,6 +207,8 @@
         <span class="n">factory_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
         <span class="c1"># previous I did the following, but don&#39;t know why:</span>
         <span class="c1"># factory_sig = factory_sig - sig.names[0]</span>
+        <span class="c1"># Now I know: Because in the func(obj, **params) case it makes more sense that the sig be **params</span>
+        <span class="c1"># TODO: Consider adding some init control over what arguments of the function we expose for binding.</span>
         <span class="k">if</span> <span class="n">sig</span><span class="o">.</span><span class="n">return_annotation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">sig</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">factory_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span>
