@@ -1,5 +1,6 @@
 """Meta-programming tools to build declarative frameworks"""
 from i2.deco import (
+    FuncFactory,
     preprocess,
     postprocess,
     preprocess_arguments,
