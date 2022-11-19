@@ -107,6 +107,8 @@ class FuncFactory:
         factory_sig = Sig(sig, return_annotation=Callable[..., Any])
         # previous I did the following, but don't know why:
         # factory_sig = factory_sig - sig.names[0]
+        # Now I know: Because in the func(obj, **params) case it makes more sense that the sig be **params
+        # TODO: Consider adding some init control over what arguments of the function we expose for binding.
         if sig.return_annotation is not sig.empty:
             try:
                 factory_sig = Sig(
