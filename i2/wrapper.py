@@ -470,24 +470,20 @@ def append_empty_args(func):
 class Ingress:
     """The Ingress class offers a template for creating ingress classes.
 
-    Note that when writing a decorator with i2.wrapper, you're usually better off
+    Note that when writing a decorator with ``i2.wrapper``, you're usually better off
     writing an ingress function for the purpose. As a result, your code will usually
     be less complex, easier to read, and more efficient than using the Ingress class.
 
-    So why use the Ingress class at all? For one, because it'll take care of some common
-    mechanics for you, so once you understand how to use it,
-    you'll probably create a correct wrapper faster.
+    So why use the ``Ingress`` class at all? For one, because it'll take care of some
+    common mechanics for you, so once you understand how to use it, you'll probably
+    create a correct wrapper faster.
 
     Further, if you're writing a general wrapping tool (e.g. your own currying machine,
     some rule-based input casting function, etc.) then you'll find that using
     Ingres will usually with on the complexity, readability and/or efficiency front.
 
-    >>> from i2.wrapper import Ingress, wrap
-    >>> from inspect import signature
-    >>> from i2.wrapper import InnerMapIngress
-    >>>
-    >>> # Ingress = InnerMapIngress
-    >>>
+    Consider the following function:
+
     >>> def f(w, /, x: float, y=2, *, z: int = 3):
     ...     return f"(w:={w}) + (x:={x}) * (y:={y}) ** (z:={z}) == {w + x * y ** z}"
     >>>
@@ -500,6 +496,9 @@ class Ingress:
     in that case.
     Say you wanted all input values to be cast to ints. In that case you could do:
 
+    >>> from i2.wrapper import Ingress, wrap
+    >>> from inspect import signature
+    >>>
     >>> trans_all_vals_to_ints = lambda d: {k: int(v) for k, v in d.items()}
     >>>
     >>> cli_f = wrap(
@@ -537,11 +536,12 @@ class Ingress:
     above.
     Instead, they can be
 
-    - ``1-to-many`` (e.g. the outer 'w' is used to compute the inner ``w`` and ``x``)
+    - ``1-to-many`` (e.g. the outer ``w`` is used to compute the inner ``w`` and ``x``)
 
-    - ``many-to-1 (e.g. the outer ``x`` and ``y`` are used to compute inner ``y``)
+    - ``many-to-1`` (e.g. the outer ``x`` and ``y`` are used to compute inner ``y``)
 
     .. code-block::
+
           w   x   y   z
          / \   \ /    |
         w   x   y     z
@@ -608,14 +608,15 @@ class Ingress:
             Note that though both outer and inner signatures could have those annoying
             position-only kinds, you don't have to think of that.
             The parameter kind restrictions are taken care of automatically.
-        :param outer_sig: The outer signature. The signature the ingress function
-            (there for the wrapped function) will have. Also serves to convert input
-            (args, kwargs) to the kwargs that will be given to kwargs_trans.
+        :param outer_sig: The outer signature. The ingress function's signature will
+            have (and therefore, the wrapped function's signature too.
+            Also serves to convert input ``(args, kwargs)`` to the ``kwargs``
+            to the kwargs that will be given to ``kwargs_trans``.
 
         When making an Ingress function directly, one must take care that
         ``inner_sig``, ``kwargs_trans`` and ``outer_sig`` are aligned.
 
-        Namely, 'kwargs_trans' must be able to handle outputs of
+        Namely, ``kwargs_trans`` must be able to handle outputs of
         ``outer_sig.kwargs_from_args_and_kwargs`` and itself output kwargs that
         can be handled by ``inner_sig.args_and_kwargs_from_kwargs``.
 
@@ -650,6 +651,8 @@ class Ingress:
         # argument kind restrictions.
         # Note: Originally was with (default) allow_excess=False. Changed to True to
         #       allow more flexibility in outer sig. But is this sane? Worth it?
+        #       Perhaps allow_excess can be a class property or init arg to make it
+        #       open to be controlled.
         # TODO: Reflect on pros/cons of allow_excess=True
         return self.inner_sig.args_and_kwargs_from_kwargs(
             func_kwargs, apply_defaults=True, allow_excess=True
@@ -804,7 +807,7 @@ class InnerMapIngress:
     - where ``y`` was named ``you`` instead, and has an annotation (``int``).
 
     - where the default of ``z`` was ``10`` instead of ``3``, and doesn't have an
-    annotation.
+        annotation.
 
     In order to get a version of this function we wanted (more lenient kinds,
     with some annotations and a default change), we can use the ingress function:
@@ -920,14 +923,20 @@ class InnerMapIngress:
         # argument kind restrictions.
         return self.inner_sig.args_and_kwargs_from_kwargs(func_kwargs)
 
+    # TODO: Use/test annotations of outer_sig
     @classmethod
     def from_signature(cls, inner_sig, outer_sig, _allow_reordering=False):
         """
+        A convienience ingress constructor to specify wrappings that affect arguments
+        independently.
 
-        :param inner_sig:
-        :param outer_sig:
-        :param _allow_reordering:
-        :return:
+        :param inner_sig: The signature of wrapped, inner function (or the inner
+        function itself)
+        :param outer_sig: The desired outer signature. Can also use a function (will
+        only take it's signature though).
+        :param _allow_reordering: Whether to allow ``outer_sig`` to reorder arguments.
+        :return: An ingress that will allow one to use a function having the
+        ``inner_sig`` signature to
 
         Say we wanted to get a version of the function:
 
@@ -936,24 +945,27 @@ class InnerMapIngress:
 
         That was equivalent to (note the kind, default and annotation differences):
 
-        >>> def g(w, x=1, y=2, z=10):
+        >>> def g(w, x=1, y: float = 2.0, z=10):
         ...     return w + x * y ** z
 
-
-        >>> ingress = InnerMapIngress.from_signature(
-        ... f, outer_sig=lambda w, x=1, y=2, z=10: None
-        ... )
-        >>> Sig(ingress)
-        <Sig (w, x=1, y=2, z=10)>
-        >>>
-        >>>
-        >>>
         >>> h = wrap(f, ingress=InnerMapIngress.from_signature(f, g))
+        >>> Sig(h)
+        <Sig (w, x=1, y: float = 2.0, z=10)>
+
+        Note we could have used ``...from_signature(Sig(f), Sig(g))`` as well,
+        since the method doesn't use the actual functions, just their signatures.
+
+        So we've seen that ``h`` takes on the signature (kind, defaults,
+        and annotations) of ``g``.
+        Let's see now that ``h`` actually computes, uses the defaults of ``g`` and
+        can doesn't have the position only restriction on ``w``.
+
         >>> assert h(0) == g(0) == 1024 == 0 + 1 * 2 ** 10
         >>> assert h(1,2) == g(1,2) == 2049 == 1 + 2 * 2 ** 10
         >>> assert h(1,2,3,4) == g(1,2,3,4) == 1 + 2 * 3 ** 4
         >>>
-        >>> assert h(w=1,x=2,y=3,z=4) == g(1,2,3,4) == 1 + 2 * 3 ** 4
+        >>> assert h(w=1,x=2,y=3,z=4) == g(1,2,3,4) == 1 + 2 * 3 ** 4  # w keyword arg!
+
         """
         outer_sig = Sig(outer_sig)
         return cls(
