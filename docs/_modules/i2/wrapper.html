@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.164 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.165 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -570,24 +570,20 @@
 <div class="viewcode-block" id="Ingress"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Ingress">[docs]</a><span class="k">class</span> <span class="nc">Ingress</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;The Ingress class offers a template for creating ingress classes.</span>
 
-<span class="sd">    Note that when writing a decorator with i2.wrapper, you&#39;re usually better off</span>
+<span class="sd">    Note that when writing a decorator with ``i2.wrapper``, you&#39;re usually better off</span>
 <span class="sd">    writing an ingress function for the purpose. As a result, your code will usually</span>
 <span class="sd">    be less complex, easier to read, and more efficient than using the Ingress class.</span>
 
-<span class="sd">    So why use the Ingress class at all? For one, because it&#39;ll take care of some common</span>
-<span class="sd">    mechanics for you, so once you understand how to use it,</span>
-<span class="sd">    you&#39;ll probably create a correct wrapper faster.</span>
+<span class="sd">    So why use the ``Ingress`` class at all? For one, because it&#39;ll take care of some</span>
+<span class="sd">    common mechanics for you, so once you understand how to use it, you&#39;ll probably</span>
+<span class="sd">    create a correct wrapper faster.</span>
 
 <span class="sd">    Further, if you&#39;re writing a general wrapping tool (e.g. your own currying machine,</span>
 <span class="sd">    some rule-based input casting function, etc.) then you&#39;ll find that using</span>
 <span class="sd">    Ingres will usually with on the complexity, readability and/or efficiency front.</span>
 
-<span class="sd">    &gt;&gt;&gt; from i2.wrapper import Ingress, wrap</span>
-<span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
-<span class="sd">    &gt;&gt;&gt; from i2.wrapper import InnerMapIngress</span>
-<span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; # Ingress = InnerMapIngress</span>
-<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    Consider the following function:</span>
+
 <span class="sd">    &gt;&gt;&gt; def f(w, /, x: float, y=2, *, z: int = 3):</span>
 <span class="sd">    ...     return f&quot;(w:={w}) + (x:={x}) * (y:={y}) ** (z:={z}) == {w + x * y ** z}&quot;</span>
 <span class="sd">    &gt;&gt;&gt;</span>
@@ -600,6 +596,9 @@
 <span class="sd">    in that case.</span>
 <span class="sd">    Say you wanted all input values to be cast to ints. In that case you could do:</span>
 
+<span class="sd">    &gt;&gt;&gt; from i2.wrapper import Ingress, wrap</span>
+<span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
+<span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; trans_all_vals_to_ints = lambda d: {k: int(v) for k, v in d.items()}</span>
 <span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; cli_f = wrap(</span>
@@ -637,11 +636,12 @@
 <span class="sd">    above.</span>
 <span class="sd">    Instead, they can be</span>
 
-<span class="sd">    - ``1-to-many`` (e.g. the outer &#39;w&#39; is used to compute the inner ``w`` and ``x``)</span>
+<span class="sd">    - ``1-to-many`` (e.g. the outer ``w`` is used to compute the inner ``w`` and ``x``)</span>
 
-<span class="sd">    - ``many-to-1 (e.g. the outer ``x`` and ``y`` are used to compute inner ``y``)</span>
+<span class="sd">    - ``many-to-1`` (e.g. the outer ``x`` and ``y`` are used to compute inner ``y``)</span>
 
 <span class="sd">    .. code-block::</span>
+
 <span class="sd">          w   x   y   z</span>
 <span class="sd">         / \   \ /    |</span>
 <span class="sd">        w   x   y     z</span>
@@ -708,14 +708,15 @@
 <span class="sd">            Note that though both outer and inner signatures could have those annoying</span>
 <span class="sd">            position-only kinds, you don&#39;t have to think of that.</span>
 <span class="sd">            The parameter kind restrictions are taken care of automatically.</span>
-<span class="sd">        :param outer_sig: The outer signature. The signature the ingress function</span>
-<span class="sd">            (there for the wrapped function) will have. Also serves to convert input</span>
-<span class="sd">            (args, kwargs) to the kwargs that will be given to kwargs_trans.</span>
+<span class="sd">        :param outer_sig: The outer signature. The ingress function&#39;s signature will</span>
+<span class="sd">            have (and therefore, the wrapped function&#39;s signature too.</span>
+<span class="sd">            Also serves to convert input ``(args, kwargs)`` to the ``kwargs``</span>
+<span class="sd">            to the kwargs that will be given to ``kwargs_trans``.</span>
 
 <span class="sd">        When making an Ingress function directly, one must take care that</span>
 <span class="sd">        ``inner_sig``, ``kwargs_trans`` and ``outer_sig`` are aligned.</span>
 
-<span class="sd">        Namely, &#39;kwargs_trans&#39; must be able to handle outputs of</span>
+<span class="sd">        Namely, ``kwargs_trans`` must be able to handle outputs of</span>
 <span class="sd">        ``outer_sig.kwargs_from_args_and_kwargs`` and itself output kwargs that</span>
 <span class="sd">        can be handled by ``inner_sig.args_and_kwargs_from_kwargs``.</span>
 
@@ -750,6 +751,8 @@
         <span class="c1"># argument kind restrictions.</span>
         <span class="c1"># Note: Originally was with (default) allow_excess=False. Changed to True to</span>
         <span class="c1">#       allow more flexibility in outer sig. But is this sane? Worth it?</span>
+        <span class="c1">#       Perhaps allow_excess can be a class property or init arg to make it</span>
+        <span class="c1">#       open to be controlled.</span>
         <span class="c1"># TODO: Reflect on pros/cons of allow_excess=True</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span>
             <span class="n">func_kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_excess</span><span class="o">=</span><span class="kc">True</span>
@@ -904,7 +907,7 @@
 <span class="sd">    - where ``y`` was named ``you`` instead, and has an annotation (``int``).</span>
 
 <span class="sd">    - where the default of ``z`` was ``10`` instead of ``3``, and doesn&#39;t have an</span>
-<span class="sd">    annotation.</span>
+<span class="sd">        annotation.</span>
 
 <span class="sd">    In order to get a version of this function we wanted (more lenient kinds,</span>
 <span class="sd">    with some annotations and a default change), we can use the ingress function:</span>
@@ -1020,14 +1023,20 @@
         <span class="c1"># argument kind restrictions.</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span><span class="n">func_kwargs</span><span class="p">)</span>
 
+    <span class="c1"># TODO: Use/test annotations of outer_sig</span>
 <div class="viewcode-block" id="InnerMapIngress.from_signature"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.InnerMapIngress.from_signature">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="n">outer_sig</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A convienience ingress constructor to specify wrappings that affect arguments</span>
+<span class="sd">        independently.</span>
 
-<span class="sd">        :param inner_sig:</span>
-<span class="sd">        :param outer_sig:</span>
-<span class="sd">        :param _allow_reordering:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param inner_sig: The signature of wrapped, inner function (or the inner</span>
+<span class="sd">        function itself)</span>
+<span class="sd">        :param outer_sig: The desired outer signature. Can also use a function (will</span>
+<span class="sd">        only take it&#39;s signature though).</span>
+<span class="sd">        :param _allow_reordering: Whether to allow ``outer_sig`` to reorder arguments.</span>
+<span class="sd">        :return: An ingress that will allow one to use a function having the</span>
+<span class="sd">        ``inner_sig`` signature to</span>
 
 <span class="sd">        Say we wanted to get a version of the function:</span>
 
@@ -1036,24 +1045,27 @@
 
 <span class="sd">        That was equivalent to (note the kind, default and annotation differences):</span>
 
-<span class="sd">        &gt;&gt;&gt; def g(w, x=1, y=2, z=10):</span>
+<span class="sd">        &gt;&gt;&gt; def g(w, x=1, y: float = 2.0, z=10):</span>
 <span class="sd">        ...     return w + x * y ** z</span>
 
-
-<span class="sd">        &gt;&gt;&gt; ingress = InnerMapIngress.from_signature(</span>
-<span class="sd">        ... f, outer_sig=lambda w, x=1, y=2, z=10: None</span>
-<span class="sd">        ... )</span>
-<span class="sd">        &gt;&gt;&gt; Sig(ingress)</span>
-<span class="sd">        &lt;Sig (w, x=1, y=2, z=10)&gt;</span>
-<span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; h = wrap(f, ingress=InnerMapIngress.from_signature(f, g))</span>
+<span class="sd">        &gt;&gt;&gt; Sig(h)</span>
+<span class="sd">        &lt;Sig (w, x=1, y: float = 2.0, z=10)&gt;</span>
+
+<span class="sd">        Note we could have used ``...from_signature(Sig(f), Sig(g))`` as well,</span>
+<span class="sd">        since the method doesn&#39;t use the actual functions, just their signatures.</span>
+
+<span class="sd">        So we&#39;ve seen that ``h`` takes on the signature (kind, defaults,</span>
+<span class="sd">        and annotations) of ``g``.</span>
+<span class="sd">        Let&#39;s see now that ``h`` actually computes, uses the defaults of ``g`` and</span>
+<span class="sd">        can doesn&#39;t have the position only restriction on ``w``.</span>
+
 <span class="sd">        &gt;&gt;&gt; assert h(0) == g(0) == 1024 == 0 + 1 * 2 ** 10</span>
 <span class="sd">        &gt;&gt;&gt; assert h(1,2) == g(1,2) == 2049 == 1 + 2 * 2 ** 10</span>
 <span class="sd">        &gt;&gt;&gt; assert h(1,2,3,4) == g(1,2,3,4) == 1 + 2 * 3 ** 4</span>
 <span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; assert h(w=1,x=2,y=3,z=4) == g(1,2,3,4) == 1 + 2 * 3 ** 4</span>
+<span class="sd">        &gt;&gt;&gt; assert h(w=1,x=2,y=3,z=4) == g(1,2,3,4) == 1 + 2 * 3 ** 4  # w keyword arg!</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">outer_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">outer_sig</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
