@@ -1162,7 +1162,7 @@ def include_exclude(func=None, *, include=None, exclude=None):
 
 @double_up_as_factory
 def rm_params(
-        func=None, *, params_to_remove=(), allow_removal_of_non_defaulted_params=False
+    func=None, *, params_to_remove=(), allow_removal_of_non_defaulted_params=False
 ):
     """Get a function with some parameters removed.
 
