@@ -29,7 +29,12 @@ def is_lambda(func):
 
 
 # TODO: Fragile. Make more robust.
-def lambda_code(lambda_func):
+def lambda_code(lambda_func) -> str:
+    """Extract code of expression from lambda function.
+    For lambda code-extraction see:
+    https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function
+
+    """
     func_str = str(inspect.getsourcelines(lambda_func)[0])
     return func_str.strip("['\\n']").split(' = ')[1]
 
@@ -38,7 +43,8 @@ def lambda_code(lambda_func):
 #  or make it work with functions more generally.
 class PicklableLambda:
     """
-    Wraps a lambda function to make it picklable (and provide it with a name, optionally.
+    Wraps a lambda function to make it picklable (through extracting its code)
+    Also, provide it with a name, optionally.
 
     >>> f = lambda x, y=0: x + y
     >>> ff = PicklableLambda(f)
@@ -46,7 +52,8 @@ class PicklableLambda:
     >>> fff = pickle.loads(pickle.dumps(ff))
     >>> assert fff(2, 3) == ff(2, 3) == f(2, 3)
 
-    See https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function
+    For lambda code-extraction see:
+    https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function
 
     """
 
