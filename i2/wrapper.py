@@ -1161,7 +1161,9 @@ def include_exclude(func=None, *, include=None, exclude=None):
 
 
 @double_up_as_factory
-def rm_params(func=None, *, params_to_remove=()):
+def rm_params(
+        func=None, *, params_to_remove=(), allow_removal_of_non_defaulted_params=False
+):
     """Get a function with some parameters removed.
 
     >>> from inspect import signature
@@ -1193,10 +1195,11 @@ def rm_params(func=None, *, params_to_remove=()):
     params_to_remove_that_do_not_have_defaults = set(params_to_remove) & set(
         sig.without_defaults.names
     )
-    assert not params_to_remove_that_do_not_have_defaults, (
-        f"Some of the params you want to remove don't have defaults: "
-        f'{params_to_remove_that_do_not_have_defaults}'
-    )
+    if not allow_removal_of_non_defaulted_params:
+        assert not params_to_remove_that_do_not_have_defaults, (
+            f"Some of the params you want to remove don't have defaults: "
+            f'{params_to_remove_that_do_not_have_defaults}'
+        )
 
     return wrap(
         func, ingress=include_exclude_ingress_factory(func, exclude=params_to_remove)
