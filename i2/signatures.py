@@ -3944,9 +3944,7 @@ class sigs_for_builtin_modules:
     ) -> Callable[[], Any]:
         """methodcaller(name, ...) --> methodcaller object"""
 
-    def partial(
-        func: Callable, *args, **keywords
-    ) -> Callable:
+    def partial(func: Callable, *args, **keywords) -> Callable:
         """``partial(func, *args, **keywords)`` - new function with partial application
         of the given arguments and keywords."""
 
