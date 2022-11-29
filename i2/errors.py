@@ -23,6 +23,7 @@ class AuthorizationError(Exception):
 
 class OverwritesNotAllowed(AuthorizationError):
     """To raise when writes are only allowed if the item doesn't already exist"""
+
     def __init__(self, *args, forbidden_keys=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.forbidden_keys = forbidden_keys
@@ -40,6 +41,7 @@ class OverwritesNotAllowed(AuthorizationError):
             f"You're not allowed to overwrite to the values of {', '.join(keys)}",
             forbidden_keys=keys,
         )
+
 
 class ForbiddenError(AuthorizationError):
     pass
@@ -206,9 +208,9 @@ class HandleExceptions(AbstractContextManager):
             raise
 
     def exited_with_handled_exception(self):
-        return hasattr(self, "exit_value")
+        return hasattr(self, 'exit_value')
 
     def initialize(self):
-        if hasattr(self, "exit_value"):
-            delattr(self, "exit_value")
+        if hasattr(self, 'exit_value'):
+            delattr(self, 'exit_value')
         self.exited_with_exception = None

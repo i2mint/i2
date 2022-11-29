@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.166 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.167 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -172,7 +172,7 @@
 
 <dl class="py class">
 <dt id="i2.wrapper.Ingress">
-<em class="property">class </em><code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">Ingress</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inner_sig</span></em>, <em class="sig-param"><span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>dict<span class="p">]</span><span class="p">, </span>dict<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outer_sig</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#Ingress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.Ingress" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">Ingress</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inner_sig</span></em>, <em class="sig-param"><span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>dict<span class="p">]</span><span class="p">, </span>dict<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outer_sig</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">allow_excess</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">apply_defaults</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#Ingress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.Ingress" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Ingress class offers a template for creating ingress classes.</p>
 <p>Note that when writing a decorator with <code class="docutils literal notranslate"><span class="pre">i2.wrapper</span></code>, you’re usually better off
 writing an ingress function for the purpose. As a result, your code will usually
@@ -488,6 +488,17 @@ can doesn’t have the position only restriction on <code class="docutils litera
 </dd></dl>
 
 <dl class="py class">
+<dt id="i2.wrapper.SmartDefault">
+<em class="property">class </em><code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">SmartDefault</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func_computing_default</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">original_default</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#SmartDefault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.SmartDefault" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="i2.wrapper.SmartDefault.original_default">
+<code class="sig-name descname">original_default</code><a class="headerlink" href="#i2.wrapper.SmartDefault.original_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">inspect._empty</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="i2.wrapper.Wrap">
 <em class="property">class </em><code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">Wrap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">ingress</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">egress</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#Wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.Wrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>A function wrapper with interface modifiers.</p>
@@ -728,6 +739,50 @@ sourcing specific arguments from the instance’s attributes.
 <code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">camelize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#camelize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.camelize" title="Permalink to this definition">¶</a></dt>
 <dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">camelize</span><span class="p">(</span><span class="s1">&#39;camel_case&#39;</span><span class="p">)</span>
 <span class="go">&#39;CamelCase&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.wrapper.complete_dict_applying_functions">
+<code class="sig-prename descclassname">i2.wrapper.</code><code class="sig-name descname">complete_dict_applying_functions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="o">/</span></em>, <em class="sig-param"><span class="n">_only_if_name_missing</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">_allow_overwrites</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">func_for_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#complete_dict_applying_functions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.wrapper.complete_dict_applying_functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Complete dict <code class="docutils literal notranslate"><span class="pre">d</span></code> by applying function to variables in <code class="docutils literal notranslate"><span class="pre">d</span></code>, sequentially.</p>
+<p>That is, doing <code class="docutils literal notranslate"><span class="pre">d[name]</span> <span class="pre">=</span> <span class="pre">func(**d)</span></code> for all <code class="docutils literal notranslate"><span class="pre">name,</span> <span class="pre">func</span> <span class="pre">in</span> <span class="pre">d.items()</span></code>.</p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">_allow_overwrites=True</span></code> to allow overwrites.</p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">_only_if_name_missing=False</span></code> to apply all functions of <code class="docutils literal notranslate"><span class="pre">func_for_name</span></code>
+regardless if the <code class="docutils literal notranslate"><span class="pre">name</span></code> already exists in <code class="docutils literal notranslate"><span class="pre">d</span></code> or not.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">func_for_name</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">b</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">complete_dict_applying_functions</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="o">**</span><span class="n">func_for_name</span><span class="p">)</span>
+<span class="go">{&#39;a&#39;: 1, &#39;b&#39;: 10, &#39;c&#39;: 11, &#39;d&#39;: 22}</span>
+</pre></div>
+</div>
+<p>Notice that when <code class="docutils literal notranslate"><span class="pre">b</span></code> is present in input <code class="docutils literal notranslate"><span class="pre">dict</span></code>, it’s value is conserved.
+That is, the <code class="docutils literal notranslate"><span class="pre">b</span></code> of <code class="docutils literal notranslate"><span class="pre">func_for_name</span></code> isn’t applied to compute it.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">complete_dict_applying_functions</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="o">**</span><span class="n">func_for_name</span><span class="p">)</span>
+<span class="go">{&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: 3, &#39;d&#39;: 6}</span>
+</pre></div>
+</div>
+<p>If you specify <code class="docutils literal notranslate"><span class="pre">_only_if_name_missing=False</span></code>,
+<code class="docutils literal notranslate"><span class="pre">complete_dict_applying_functions</span></code> will try to compute everything
+<code class="docutils literal notranslate"><span class="pre">func_for_name</span></code> tells it too, regardless if the input dictionary contains the
+key or not, resulting in an error:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">complete_dict_applying_functions</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="o">**</span><span class="n">func_for_name</span><span class="p">,</span> <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">False</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">i2.errors.OverwritesNotAllowed</span>: <span class="n">You&#39;re not allowed to overwrite to the values of b</span>
+</pre></div>
+</div>
+<p>If you want, on the other hand, to allow overwrites, you can do so specifying
+<code class="docutils literal notranslate"><span class="pre">_allow_overwrites=True</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">complete_dict_applying_functions</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="o">**</span><span class="n">func_for_name</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">True</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">{&#39;a&#39;: 1, &#39;b&#39;: 10, &#39;c&#39;: 11, &#39;d&#39;: 22}</span>
 </pre></div>
 </div>
 </dd></dl>
