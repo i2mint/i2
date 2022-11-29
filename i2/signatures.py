@@ -3944,6 +3944,12 @@ class sigs_for_builtin_modules:
     ) -> Callable[[], Any]:
         """methodcaller(name, ...) --> methodcaller object"""
 
+    def partial(
+        func: Callable, *args, **keywords
+    ) -> Callable:
+        """``partial(func, *args, **keywords)`` - new function with partial application
+        of the given arguments and keywords."""
+
 
 # Merge sigs_for_builtin_modules and sigs_for_builtins
 sigs_for_sigless_builtin_name = dict(sigs_for_builtin_modules, **sigs_for_builtins)
