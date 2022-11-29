@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.166 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.167 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -168,6 +168,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Mapping</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Any</span><span class="p">,</span>
     <span class="n">Optional</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
     <span class="n">Iterable</span><span class="p">,</span>
@@ -178,8 +179,20 @@
 <span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">make_dataclass</span><span class="p">,</span> <span class="n">dataclass</span>
 
-<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">name_of_obj</span><span class="p">,</span> <span class="n">KO</span><span class="p">,</span> <span class="n">PK</span><span class="p">,</span> <span class="n">VK</span><span class="p">,</span> <span class="n">sig_to_dataclass</span>
+<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Sig</span><span class="p">,</span>
+    <span class="n">name_of_obj</span><span class="p">,</span>
+    <span class="n">KO</span><span class="p">,</span>
+    <span class="n">PK</span><span class="p">,</span>
+    <span class="n">VK</span><span class="p">,</span>
+    <span class="n">parameter_to_dict</span><span class="p">,</span>
+    <span class="n">call_forgivingly</span><span class="p">,</span>
+    <span class="n">_call_forgivingly</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">i2.errors</span> <span class="kn">import</span> <span class="n">OverwritesNotAllowed</span>
 <span class="kn">from</span> <span class="nn">i2.multi_object</span> <span class="kn">import</span> <span class="n">Pipe</span>
 <span class="kn">from</span> <span class="nn">i2.deco</span> <span class="kn">import</span> <span class="n">double_up_as_factory</span>
 
@@ -225,7 +238,6 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_to_obj</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></div>
 
 
-<span class="c1"># from wrapt import decorator</span>
 <span class="c1"># TODO: Continue factoring out Wrap and Wrapx code</span>
 <span class="k">class</span> <span class="nc">_Wrap</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;To be used as the base of actual Wrap objects.&quot;&quot;&quot;</span>
@@ -696,7 +708,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KwargsTrans</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outer_sig</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">inner_sig</span><span class="p">,</span>
+        <span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KwargsTrans</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">outer_sig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">allow_excess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init of an Ingress instance.</span>
 
@@ -712,6 +730,11 @@
 <span class="sd">            have (and therefore, the wrapped function&#39;s signature too.</span>
 <span class="sd">            Also serves to convert input ``(args, kwargs)`` to the ``kwargs``</span>
 <span class="sd">            to the kwargs that will be given to ``kwargs_trans``.</span>
+<span class="sd">        :param allow_excess: Whether to allow the inner kwargs to have some excess</span>
+<span class="sd">            variables in them. This enables more flexibility in the outer signature,</span>
+<span class="sd">            but may want to set to ``False`` to be more explicit.</span>
+<span class="sd">        :param apply_defaults: Whether to apply the defaults of the outer signature.</span>
+<span class="sd">            Default is ``True`` but in some rare cases, you may not want to apply them.</span>
 
 <span class="sd">        When making an Ingress function directly, one must take care that</span>
 <span class="sd">        ``inner_sig``, ``kwargs_trans`` and ``outer_sig`` are aligned.</span>
@@ -735,11 +758,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">outer_sig</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_defaults</span> <span class="o">=</span> <span class="n">apply_defaults</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_excess</span> <span class="o">=</span> <span class="n">allow_excess</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
         <span class="c1"># Get the all-keywords version of the arguments (args,kwargs-&gt;kwargs)</span>
         <span class="n">func_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="o">.</span><span class="n">kwargs_from_args_and_kwargs</span><span class="p">(</span>
-            <span class="n">ingress_args</span><span class="p">,</span> <span class="n">ingress_kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">ingress_args</span><span class="p">,</span> <span class="n">ingress_kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">apply_defaults</span>
         <span class="p">)</span>
 
         <span class="n">func_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
@@ -749,13 +774,9 @@
 
         <span class="c1"># Return an (args, kwargs) pair that respects the inner function&#39;s</span>
         <span class="c1"># argument kind restrictions.</span>
-        <span class="c1"># Note: Originally was with (default) allow_excess=False. Changed to True to</span>
-        <span class="c1">#       allow more flexibility in outer sig. But is this sane? Worth it?</span>
-        <span class="c1">#       Perhaps allow_excess can be a class property or init arg to make it</span>
-        <span class="c1">#       open to be controlled.</span>
         <span class="c1"># TODO: Reflect on pros/cons of allow_excess=True</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span>
-            <span class="n">func_kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_excess</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">func_kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_excess</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">allow_excess</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -832,9 +853,6 @@
         <span class="k">return</span> <span class="n">new_d</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;There are duplicate keys so I can invert map: </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-
-
-<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">parameter_to_dict</span>
 
 
 <span class="k">def</span> <span class="nf">parameters_to_dict</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
@@ -1386,9 +1404,6 @@
     <span class="k">return</span> <span class="p">{</span><span class="n">name</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">required_names</span><span class="p">}</span>
 
 
-<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">_call_forgivingly</span>
-
-
 <span class="c1"># TODO: Should we add some explicit/validation/strict options?</span>
 <div class="viewcode-block" id="kwargs_trans"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.kwargs_trans">[docs]</a><span class="k">def</span> <span class="nf">kwargs_trans</span><span class="p">(</span>
     <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">_recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">_inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">key_and_val_func</span>
@@ -1476,9 +1491,6 @@
 
 
 <span class="c1"># ---------------------------------------------------------------------------------------</span>
-
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">make_dataclass</span>
 
 <span class="n">empty</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
 
@@ -1901,8 +1913,6 @@
 <span class="c1"># ---------------------------------------------------------------------------------------</span>
 <span class="c1"># Extended Wrapper class</span>
 
-<span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">call_forgivingly</span>
-
 
 <div class="viewcode-block" id="WrapperValidationError"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.WrapperValidationError">[docs]</a><span class="k">class</span> <span class="nc">WrapperValidationError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Raised when wrapper some construction params are not valid&quot;&quot;&quot;</span></div>
@@ -2254,6 +2264,155 @@
         <span class="n">names_to_move_to_the_end</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">names_to_move_to_the_end</span><span class="p">)</span>
     <span class="n">removed</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names_to_move_to_the_end</span><span class="p">]</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">removed</span><span class="p">)</span> <span class="o">+</span> <span class="n">names_to_move_to_the_end</span></div>
+
+
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># smart defaults</span>
+
+<span class="c1"># IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode</span>
+<div class="viewcode-block" id="SmartDefault"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.SmartDefault">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">SmartDefault</span><span class="p">:</span>
+    <span class="n">func_computing_default</span><span class="p">:</span> <span class="n">Callable</span>
+    <span class="n">original_default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">empty</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_computing_default</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_default</span> <span class="ow">is</span> <span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s1">)&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dflt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_default</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dflt</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">, &#39;</span><span class="si">{</span><span class="n">dflt</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">dflt</span><span class="si">}</span><span class="s1">)&#39;</span></div>
+
+
+<span class="c1"># PATTERN: Yet another &quot;meshed dict completion&quot;</span>
+<span class="c1"># IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode</span>
+<div class="viewcode-block" id="complete_dict_applying_functions"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.complete_dict_applying_functions">[docs]</a><span class="k">def</span> <span class="nf">complete_dict_applying_functions</span><span class="p">(</span>
+    <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">func_for_name</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Complete dict ``d`` by applying function to variables in ``d``, sequentially.</span>
+
+<span class="sd">    That is, doing ``d[name] = func(**d)`` for all ``name, func in d.items()``.</span>
+
+<span class="sd">    Set ``_allow_overwrites=True`` to allow overwrites.</span>
+
+<span class="sd">    Set ``_only_if_name_missing=False`` to apply all functions of ``func_for_name``</span>
+<span class="sd">    regardless if the ``name`` already exists in ``d`` or not.</span>
+
+<span class="sd">    &gt;&gt;&gt; func_for_name = dict(</span>
+<span class="sd">    ...     b=lambda a: a * 10, c=lambda a, b: a + b, d=lambda c: c * 2</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(dict(a=1), **func_for_name)</span>
+<span class="sd">    {&#39;a&#39;: 1, &#39;b&#39;: 10, &#39;c&#39;: 11, &#39;d&#39;: 22}</span>
+
+<span class="sd">    Notice that when ``b`` is present in input ``dict``, it&#39;s value is conserved.</span>
+<span class="sd">    That is, the ``b`` of ``func_for_name`` isn&#39;t applied to compute it.</span>
+
+<span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(dict(a=1, b=2), **func_for_name)</span>
+<span class="sd">    {&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: 3, &#39;d&#39;: 6}</span>
+
+<span class="sd">    If you specify ``_only_if_name_missing=False``,</span>
+<span class="sd">    ``complete_dict_applying_functions`` will try to compute everything</span>
+<span class="sd">    ``func_for_name`` tells it too, regardless if the input dictionary contains the</span>
+<span class="sd">    key or not, resulting in an error:</span>
+
+<span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(</span>
+<span class="sd">    ...     dict(a=1, b=2), **func_for_name, _only_if_name_missing=False</span>
+<span class="sd">    ... )</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">      ...</span>
+<span class="sd">    i2.errors.OverwritesNotAllowed: You&#39;re not allowed to overwrite to the values of b</span>
+
+<span class="sd">    If you want, on the other hand, to allow overwrites, you can do so specifying</span>
+<span class="sd">    ``_allow_overwrites=True``:</span>
+
+<span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(</span>
+<span class="sd">    ...     dict(a=1, b=2), **func_for_name,</span>
+<span class="sd">    ...     _only_if_name_missing=False, _allow_overwrites=True</span>
+<span class="sd">    ... )</span>
+<span class="sd">    {&#39;a&#39;: 1, &#39;b&#39;: 10, &#39;c&#39;: 11, &#39;d&#39;: 22}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">_only_if_name_missing</span><span class="p">:</span>
+        <span class="n">func_for_name</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="n">func</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_for_name</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span>
+        <span class="p">}</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">_allow_overwrites</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">func_for_name</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">OverwritesNotAllowed</span><span class="o">.</span><span class="n">for_keys</span><span class="p">(</span><span class="n">func_for_name</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">d</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_for_name</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># TODO: Can optimize using under-the-hood of call_forgivingly</span>
+        <span class="c1">#  (extracting from _kwargs directly)</span>
+        <span class="c1"># complete the keyword arguments with defaults computed from existing arguments</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">call_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">d</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">d</span></div>
+
+
+<span class="k">def</span> <span class="nf">_compute_new_sigs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">smart_defaults</span><span class="p">):</span>
+    <span class="n">original_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">original_sig</span><span class="o">.</span><span class="n">ch_defaults</span><span class="p">(</span>
+        <span class="o">**</span><span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="n">SmartDefault</span><span class="p">(</span>
+                <span class="n">func_computing_default</span><span class="o">=</span><span class="n">func</span><span class="p">,</span>
+                <span class="n">original_default</span><span class="o">=</span><span class="n">original_sig</span><span class="o">.</span><span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">empty</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">smart_defaults</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+
+<span class="nd">@double_up_as_factory</span>
+<span class="k">def</span> <span class="nf">add_smart_defaults</span><span class="p">(</span>
+    <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">smart_defaults</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add smart defaults to function.</span>
+
+<span class="sd">    Smart defaults compute defaults of inputs based on the other given inputs.</span>
+
+<span class="sd">    :param func: The function to wrap.</span>
+<span class="sd">    :param smart_defaults: ``input_arg=function_to_compute_it_from_other_args`` where</span>
+<span class="sd">        the function&#39;s argument names must match the argument names of ``func``, the</span>
+<span class="sd">        wrapped function.</span>
+<span class="sd">    :return:</span>
+
+<span class="sd">    &gt;&gt;&gt; def xyz_sum(x, y, z=&#39;c&#39;):  return x + y + z</span>
+<span class="sd">    &gt;&gt;&gt; def times_two(x):  return x * 2</span>
+<span class="sd">    &gt;&gt;&gt; def just_z():  return &#39;Z&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f = add_smart_defaults(xyz_sum, y=times_two, z=just_z)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; f(&#39;a&#39;, &#39;b&#39;, &#39;c&#39;)</span>
+<span class="sd">    &#39;abc&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f(&#39;a&#39;, &#39;b&#39;)</span>
+<span class="sd">    &#39;abZ&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f(&#39;a&#39;)</span>
+<span class="sd">    &#39;aaaZ&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f</span>
+<span class="sd">    &lt;i2.Wrap xyz_sum(x, y=SmartDefault(times_two), z=SmartDefault(just_z, &#39;c&#39;))&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">names_not_in_func_arguments</span> <span class="o">=</span> <span class="n">smart_defaults</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">names</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="ow">not</span> <span class="n">names_not_in_func_arguments</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;These weren&#39;t argument names of the </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2"> function: </span><span class="si">{</span><span class="n">names_not_in_func_arguments</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">kwargs_trans</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+        <span class="n">complete_dict_applying_functions</span><span class="p">,</span>
+        <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="n">_only_if_name_missing</span><span class="p">,</span>
+        <span class="n">_allow_overwrites</span><span class="o">=</span><span class="n">_allow_overwrites</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">smart_defaults</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">smart_defaults_ingress</span> <span class="o">=</span> <span class="n">Ingress</span><span class="p">(</span>
+        <span class="n">inner_sig</span><span class="o">=</span><span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">),</span>
+        <span class="n">kwargs_trans</span><span class="o">=</span><span class="n">kwargs_trans</span><span class="p">,</span>
+        <span class="n">outer_sig</span><span class="o">=</span><span class="n">_compute_new_sigs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">smart_defaults</span><span class="p">),</span>
+        <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">smart_defaults_ingress</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </pre></div>
 
            </div>
