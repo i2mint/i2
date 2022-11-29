@@ -21,9 +21,25 @@ class AuthorizationError(Exception):
     pass
 
 
-class RewritesNotAllowed(AuthorizationError):
+class OverwritesNotAllowed(AuthorizationError):
     """To raise when writes are only allowed if the item doesn't already exist"""
+    def __init__(self, *args, forbidden_keys=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.forbidden_keys = forbidden_keys
 
+    @classmethod
+    def for_key(cls, key):
+        return OverwritesNotAllowed(
+            f"You're not allowed to overwrite to the value of {key}",
+            forbidden_keys={key},
+        )
+
+    @classmethod
+    def for_keys(cls, keys):
+        return OverwritesNotAllowed(
+            f"You're not allowed to overwrite to the values of {', '.join(keys)}",
+            forbidden_keys=keys,
+        )
 
 class ForbiddenError(AuthorizationError):
     pass

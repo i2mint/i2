@@ -68,6 +68,7 @@ from inspect import Parameter, signature
 from typing import (
     Mapping,
     Callable,
+    Any,
     Optional,
     Union,
     Iterable,
@@ -78,8 +79,20 @@ from typing import (
 )
 
 from types import MethodType
+from inspect import Parameter
+from dataclasses import make_dataclass, dataclass
 
-from i2.signatures import Sig, name_of_obj, KO, PK, VK, sig_to_dataclass
+from i2.signatures import (
+    Sig,
+    name_of_obj,
+    KO,
+    PK,
+    VK,
+    parameter_to_dict,
+    call_forgivingly,
+    _call_forgivingly,
+)
+from i2.errors import OverwritesNotAllowed
 from i2.multi_object import Pipe
 from i2.deco import double_up_as_factory
 
@@ -125,7 +138,6 @@ class MakeFromFunc:
         return self.func_to_obj(func)
 
 
-# from wrapt import decorator
 # TODO: Continue factoring out Wrap and Wrapx code
 class _Wrap:
     """To be used as the base of actual Wrap objects."""
@@ -140,7 +152,7 @@ class _Wrap:
         # have had. It should be before anything else so it doesn't overwrite stuff
         # that we may add to self in init (like .func for example!)
         wraps(func)(self)  # TODO: should we really copy everything by default?
-        if name := kwargs.get('name', None) is not None:
+        if name := kwargs.get("name", None) is not None:
             self.__name__ = name
         self.func = func  # Note: overwrites self.func that wraps MAY have inserted
         self.__wrapped__ = func
@@ -163,8 +175,8 @@ class _Wrap:
 
     def __repr__(self):
         # TODO: Replace i2.Wrap with dynamic (Wrap or Wrapx)
-        name = getattr(self, '__name__', None) or 'Wrap'
-        return f'<i2.Wrap {name}{signature(self)}>'
+        name = getattr(self, "__name__", None) or "Wrap"
+        return f"<i2.Wrap {name}{signature(self)}>"
 
     # TODO: Don't know exactly what I'm doing below. Review with someone!
     def __set_name__(self, owner, name):
@@ -309,7 +321,7 @@ class Wrap(_Wrap):
                 # ... but an ingress factory: Should make the ingress in function of func
                 self.ingress = func_to_ingress(func)
             else:
-                assert callable(ingress), f'Should be callable: {ingress}'
+                assert callable(ingress), f"Should be callable: {ingress}"
                 self.ingress = ingress
 
             ingress_sig = Sig(self.ingress)
@@ -596,7 +608,13 @@ class Ingress:
     """
 
     def __init__(
-        self, inner_sig, kwargs_trans: Optional[KwargsTrans] = None, outer_sig=None
+        self,
+        inner_sig,
+        kwargs_trans: Optional[KwargsTrans] = None,
+        outer_sig=None,
+        *,
+        allow_excess=True,
+        apply_defaults=True,
     ):
         """Init of an Ingress instance.
 
@@ -612,6 +630,11 @@ class Ingress:
             have (and therefore, the wrapped function's signature too.
             Also serves to convert input ``(args, kwargs)`` to the ``kwargs``
             to the kwargs that will be given to ``kwargs_trans``.
+        :param allow_excess: Whether to allow the inner kwargs to have some excess
+            variables in them. This enables more flexibility in the outer signature,
+            but may want to set to ``False`` to be more explicit.
+        :param apply_defaults: Whether to apply the defaults of the outer signature.
+            Default is ``True`` but in some rare cases, you may not want to apply them.
 
         When making an Ingress function directly, one must take care that
         ``inner_sig``, ``kwargs_trans`` and ``outer_sig`` are aligned.
@@ -635,11 +658,13 @@ class Ingress:
         self.outer_sig = Sig(outer_sig)
 
         self.outer_sig(self)
+        self.apply_defaults = apply_defaults
+        self.allow_excess = allow_excess
 
     def __call__(self, *ingress_args, **ingress_kwargs):
         # Get the all-keywords version of the arguments (args,kwargs->kwargs)
         func_kwargs = self.outer_sig.kwargs_from_args_and_kwargs(
-            ingress_args, ingress_kwargs, apply_defaults=True
+            ingress_args, ingress_kwargs, apply_defaults=self.apply_defaults
         )
 
         func_kwargs = dict(
@@ -649,17 +674,13 @@ class Ingress:
 
         # Return an (args, kwargs) pair that respects the inner function's
         # argument kind restrictions.
-        # Note: Originally was with (default) allow_excess=False. Changed to True to
-        #       allow more flexibility in outer sig. But is this sane? Worth it?
-        #       Perhaps allow_excess can be a class property or init arg to make it
-        #       open to be controlled.
         # TODO: Reflect on pros/cons of allow_excess=True
         return self.inner_sig.args_and_kwargs_from_kwargs(
-            func_kwargs, apply_defaults=True, allow_excess=True
+            func_kwargs, apply_defaults=True, allow_excess=self.allow_excess
         )
 
     def __repr__(self):
-        return f'Ingress signature: {signature(self)}'
+        return f"Ingress signature: {signature(self)}"
 
     def wrap(self, func: Callable, egress=None, *, name=None) -> Wrap:
         """Convenience method to wrap a function with the instance ingress.
@@ -684,7 +705,7 @@ class Ingress:
         new_to_old_name = {v: k for k, v in old_to_new_name.items()}
         assert len(new_to_old_name) == len(
             old_to_new_name
-        ), f'Inversion is not possible since {old_to_new_name=} has duplicate values.'
+        ), f"Inversion is not possible since {old_to_new_name=} has duplicate values."
         return cls(
             wrapped,
             partial(Pipe(items_with_mapped_keys, dict), key_mapper=new_to_old_name),
@@ -731,10 +752,7 @@ def invert_map(d: dict):
     if len(new_d) == len(d):
         return new_d
     else:
-        raise ValueError(f'There are duplicate keys so I can invert map: {d}')
-
-
-from i2.signatures import parameter_to_dict
+        raise ValueError(f"There are duplicate keys so I can invert map: {d}")
 
 
 def parameters_to_dict(parameters):
@@ -896,9 +914,9 @@ class InnerMapIngress:
         self.kwargs_trans = kwargs_trans
 
         outer_name_for_inner_name = {
-            inner_name: change['name']
+            inner_name: change["name"]
             for inner_name, change in changes_for_name.items()
-            if 'name' in change
+            if "name" in change
         }
         self.inner_name_for_outer_name = invert_map(outer_name_for_inner_name)
         self.outer_sig(self)
@@ -1162,7 +1180,7 @@ def include_exclude(func=None, *, include=None, exclude=None):
 
 @double_up_as_factory
 def rm_params(
-        func=None, *, params_to_remove=(), allow_removal_of_non_defaulted_params=False
+    func=None, *, params_to_remove=(), allow_removal_of_non_defaulted_params=False
 ):
     """Get a function with some parameters removed.
 
@@ -1198,7 +1216,7 @@ def rm_params(
     if not allow_removal_of_non_defaulted_params:
         assert not params_to_remove_that_do_not_have_defaults, (
             f"Some of the params you want to remove don't have defaults: "
-            f'{params_to_remove_that_do_not_have_defaults}'
+            f"{params_to_remove_that_do_not_have_defaults}"
         )
 
     return wrap(
@@ -1219,8 +1237,8 @@ def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
     if __strict:
         conversion_names_that_are_not_func_args = conversion_for_arg.keys() - sig.names
         assert not conversion_names_that_are_not_func_args, (
-            'Some of the arguments you want to convert are not argument names '
-            f'for the function: {conversion_names_that_are_not_func_args}'
+            "Some of the arguments you want to convert are not argument names "
+            f"for the function: {conversion_names_that_are_not_func_args}"
         )
 
     @sig
@@ -1243,8 +1261,8 @@ class ArgValConverterIngress:
                 conversion_for_arg.keys() - sig.names
             )
             assert not conversion_names_that_are_not_func_args, (
-                'Some of the arguments you want to convert are not argument names '
-                f'for the function: {conversion_names_that_are_not_func_args}'
+                "Some of the arguments you want to convert are not argument names "
+                f"for the function: {conversion_names_that_are_not_func_args}"
             )
         self.sig = sig
         self.conversion_for_arg = conversion_for_arg
@@ -1284,9 +1302,6 @@ def params_used_in_funcs(funcs):
 
 def required_params_used_in_funcs(funcs):
     return {name for func in funcs for name in Sig(func).required_names}
-
-
-from i2.signatures import _call_forgivingly
 
 
 # TODO: Should we add some explicit/validation/strict options?
@@ -1377,9 +1392,6 @@ def kwargs_trans(
 
 # ---------------------------------------------------------------------------------------
 
-from inspect import Parameter
-from dataclasses import make_dataclass
-
 empty = Parameter.empty
 
 
@@ -1388,11 +1400,11 @@ def camelize(s):
     >>> camelize('camel_case')
     'CamelCase'
     """
-    return ''.join(ele.title() for ele in s.split('_'))
+    return "".join(ele.title() for ele in s.split("_"))
 
 
 def kwargs_trans_to_extract_args_from_attrs(
-    outer_kwargs: dict, attr_names=(), obj_param='self'
+    outer_kwargs: dict, attr_names=(), obj_param="self"
 ):
     self = outer_kwargs.pop(obj_param)
     arguments_extracted_from_obj = {name: getattr(self, name) for name in attr_names}
@@ -1415,7 +1427,7 @@ def func_to_method_func(
     *,
     method_name=None,
     method_params=None,
-    instance_arg_name='self',
+    instance_arg_name="self",
 ) -> MethodFunc:
     """Get a 'method function' from a 'normal function'. Also known as "methodize".
 
@@ -1589,10 +1601,10 @@ def bind_funcs_object_attrs(
     if isinstance(init_params, str):
         init_params = init_params.split()
 
-    dflt_cls_name = 'FuncsUnion'
+    dflt_cls_name = "FuncsUnion"
     if callable(funcs) and not isinstance(funcs, Iterable):
         single_func = funcs
-        dflt_cls_name = camelize(getattr(single_func, '__name__', dflt_cls_name))
+        dflt_cls_name = camelize(getattr(single_func, "__name__", dflt_cls_name))
         funcs = [single_func]
 
     # If cls not given, make one from the funcs and init_params
@@ -1641,7 +1653,7 @@ def _mk_base_class_for_funcs(cls_name, init_params, funcs):
             )
             class_init_sig = class_init_sig.merge_with_sig(
                 init_params_in_func_sig,
-                default_conflict_method='fill_defaults_and_annotations',
+                default_conflict_method="fill_defaults_and_annotations",
             )
 
     dataclass_fields = list(map(param_to_dataclass_field_tuple, class_init_sig.params))
@@ -1651,7 +1663,10 @@ def _mk_base_class_for_funcs(cls_name, init_params, funcs):
 
 
 def bind_funcs_object_attrs_old(
-    funcs, init_params=(), *, cls=None,
+    funcs,
+    init_params=(),
+    *,
+    cls=None,
 ):
     """Transform one or several functions into a class that contains them as methods
     sourcing specific arguments from the instance's attributes.
@@ -1706,10 +1721,10 @@ def bind_funcs_object_attrs_old(
     if isinstance(init_params, str):
         init_params = init_params.split()
 
-    dflt_cls_name = 'FuncsUnion'
+    dflt_cls_name = "FuncsUnion"
     if callable(funcs) and not isinstance(funcs, Iterable):
         single_func = funcs
-        dflt_cls_name = camelize(getattr(single_func, '__name__', dflt_cls_name))
+        dflt_cls_name = camelize(getattr(single_func, "__name__", dflt_cls_name))
         funcs = [single_func]
 
     if not isinstance(cls, type):
@@ -1800,8 +1815,6 @@ def _mk_sig_from_params_and_funcs(params, funcs):
 
 # ---------------------------------------------------------------------------------------
 # Extended Wrapper class
-
-from i2 import call_forgivingly
 
 
 class WrapperValidationError(ValueError):
@@ -1971,8 +1984,8 @@ def _validate_ingress_output(ingress_output):
         or not isinstance(ingress_output[1], dict)
     ):
         raise IngressValidationError(
-            f'An ingress function should return a (tuple, dict) pair. '
-            f'This ingress function returned: {ingress_output}'
+            f"An ingress function should return a (tuple, dict) pair. "
+            f"This ingress function returned: {ingress_output}"
         )
     return ingress_output
 
@@ -2001,18 +2014,18 @@ def _mk_composite_sig(ingress_sig, egress_sig, caller_sig):
 def _init_caller(caller):
     if caller is None:
         caller = _default_caller
-        caller_sig = Sig('func args kwargs')  # sig with three inputs
+        caller_sig = Sig("func args kwargs")  # sig with three inputs
     else:
         caller_sig = Sig(caller)
         if len(caller_sig) < 3:
             raise CallerValidationError(
-                f'A caller must have at least three arguments: '
-                f'{caller} signature was {caller_sig}'
+                f"A caller must have at least three arguments: "
+                f"{caller} signature was {caller_sig}"
             )
         if not _all_kinds_are_keyword_only_or_variadic_keyword(caller_sig):
             raise CallerValidationError(
-                f'A caller must have at least three arguments'
-                f'{caller} signature was {caller_sig}'
+                f"A caller must have at least three arguments"
+                f"{caller} signature was {caller_sig}"
             )
     return caller, caller_sig
 
@@ -2021,7 +2034,7 @@ def _init_egress(func_sig, egress):
     if egress is None:
         egress = _default_egress
         # signature with a single 'output' arg and func_sig's return_annotation
-        egress_sig = Sig('output', return_annotation=func_sig.return_annotation)
+        egress_sig = Sig("output", return_annotation=func_sig.return_annotation)
         return_annotation = func_sig.return_annotation
     else:
         egress_sig = Sig(
@@ -2124,8 +2137,8 @@ def move_params_to_the_end(
     if callable(names_to_move):
         names_to_move = names_to_move(func)
     assert isinstance(names_to_move, Iterable), (
-        f'names_to_move must be an iterable of names '
-        f'or a callable producing one from a function. Was {names_to_move}'
+        f"names_to_move must be an iterable of names "
+        f"or a callable producing one from a function. Was {names_to_move}"
     )
 
     names = Sig(func).names
@@ -2154,3 +2167,156 @@ def move_names_to_the_end(names, names_to_move_to_the_end):
         names_to_move_to_the_end = list(names_to_move_to_the_end)
     removed = [x for x in names if x not in names_to_move_to_the_end]
     return list(removed) + names_to_move_to_the_end
+
+
+# --------------------------------------------------------------------------------------
+# smart defaults
+
+# IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode
+@dataclass
+class SmartDefault:
+    func_computing_default: Callable
+    original_default: Any = empty
+
+    def __repr__(self):
+        func = self.func_computing_default
+        func_name = getattr(func, "__name__", str(func))
+        if self.original_default is empty:
+            return f"SmartDefault({func_name})"
+        else:
+            dflt = self.original_default
+            if isinstance(dflt, str):
+                return f"SmartDefault({func_name}, '{dflt}')"
+            else:
+                return f"SmartDefault({func_name}, {dflt})"
+
+
+# PATTERN: Yet another "meshed dict completion"
+# IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode
+def complete_dict_applying_functions(
+    d: dict, /, _only_if_name_missing=True, _allow_overwrites=False, **func_for_name
+):
+    """Complete dict ``d`` by applying function to variables in ``d``, sequentially.
+
+    That is, doing ``d[name] = func(**d)`` for all ``name, func in d.items()``.
+
+    Set ``_allow_overwrites=True`` to allow overwrites.
+
+    Set ``_only_if_name_missing=False`` to apply all functions of ``func_for_name``
+    regardless if the ``name`` already exists in ``d`` or not.
+
+    >>> func_for_name = dict(
+    ...     b=lambda a: a * 10, c=lambda a, b: a + b, d=lambda c: c * 2
+    ... )
+    >>> complete_dict_applying_functions(dict(a=1), **func_for_name)
+    {'a': 1, 'b': 10, 'c': 11, 'd': 22}
+
+    Notice that when ``b`` is present in input ``dict``, it's value is conserved.
+    That is, the ``b`` of ``func_for_name`` isn't applied to compute it.
+
+    >>> complete_dict_applying_functions(dict(a=1, b=2), **func_for_name)
+    {'a': 1, 'b': 2, 'c': 3, 'd': 6}
+
+    If you specify ``_only_if_name_missing=False``,
+    ``complete_dict_applying_functions`` will try to compute everything
+    ``func_for_name`` tells it too, regardless if the input dictionary contains the
+    key or not, resulting in an error:
+
+    >>> complete_dict_applying_functions(
+    ...     dict(a=1, b=2), **func_for_name, _only_if_name_missing=False
+    ... )
+    Traceback (most recent call last):
+      ...
+    i2.errors.OverwritesNotAllowed: You're not allowed to overwrite to the values of b
+
+    If you want, on the other hand, to allow overwrites, you can do so specifying
+    ``_allow_overwrites=True``:
+
+    >>> complete_dict_applying_functions(
+    ...     dict(a=1, b=2), **func_for_name,
+    ...     _only_if_name_missing=False, _allow_overwrites=True
+    ... )
+    {'a': 1, 'b': 10, 'c': 11, 'd': 22}
+
+    """
+
+    if _only_if_name_missing:
+        func_for_name = {
+            name: func for name, func in func_for_name.items() if name not in d
+        }
+    elif not _allow_overwrites and not func_for_name.keys().isdisjoint(d):
+        raise OverwritesNotAllowed.for_keys(func_for_name.keys() & d)
+
+    for name, func in func_for_name.items():
+        # TODO: Can optimize using under-the-hood of call_forgivingly
+        #  (extracting from _kwargs directly)
+        # complete the keyword arguments with defaults computed from existing arguments
+        d[name] = call_forgivingly(func, **d)
+
+    return d
+
+
+def _compute_new_sigs(func, /, **smart_defaults):
+    original_sig = Sig(func)
+    return original_sig.ch_defaults(
+        **{
+            name: SmartDefault(
+                func_computing_default=func,
+                original_default=original_sig.defaults.get(name, empty),
+            )
+            for name, func in smart_defaults.items()
+        }
+    )
+
+
+@double_up_as_factory
+def add_smart_defaults(
+    func=None,
+    *,
+    _only_if_name_missing=True,
+    _allow_overwrites=False,
+    **smart_defaults,
+):
+    """Add smart defaults to function.
+
+    Smart defaults compute defaults of inputs based on the other given inputs.
+
+    :param func: The function to wrap.
+    :param smart_defaults: ``input_arg=function_to_compute_it_from_other_args`` where
+        the function's argument names must match the argument names of ``func``, the
+        wrapped function.
+    :return:
+
+    >>> def xyz_sum(x, y, z='c'):  return x + y + z
+    >>> def times_two(x):  return x * 2
+    >>> def just_z():  return 'Z'
+    >>> f = add_smart_defaults(xyz_sum, y=times_two, z=just_z)
+    >>>
+    >>> f('a', 'b', 'c')
+    'abc'
+    >>> f('a', 'b')
+    'abZ'
+    >>> f('a')
+    'aaaZ'
+    >>> f
+    <i2.Wrap xyz_sum(x, y=SmartDefault(times_two), z=SmartDefault(just_z, 'c'))>
+
+    """
+    names_not_in_func_arguments = smart_defaults.keys() - Sig(func).names
+    assert (
+        not names_not_in_func_arguments
+    ), f"These weren't argument names of the {func} function: {names_not_in_func_arguments}"
+    kwargs_trans = partial(
+        complete_dict_applying_functions,
+        _only_if_name_missing=_only_if_name_missing,
+        _allow_overwrites=_allow_overwrites,
+        **smart_defaults,
+    )
+    smart_defaults_ingress = Ingress(
+        inner_sig=Sig(func),
+        kwargs_trans=kwargs_trans,
+        outer_sig=_compute_new_sigs(func, **smart_defaults),
+        apply_defaults=False,
+    )
+
+    return smart_defaults_ingress.wrap(func)
