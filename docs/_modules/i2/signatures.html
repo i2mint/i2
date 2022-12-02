@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.168 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.169 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -1469,6 +1469,76 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">names_of_kind</span><span class="p">[</span><span class="n">KO</span><span class="p">],</span>
             <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names_of_kind</span><span class="p">[</span><span class="n">VK</span><span class="p">]),</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">)</span>
+
+<div class="viewcode-block" id="Sig.get_names"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.get_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_sig_order</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_excess</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a tuple of names corresponding to the given spec.</span>
+
+<span class="sd">        :param spec: An integer, string, or iterable of intergers and strings</span>
+<span class="sd">        :param conserve_sig_order: Whether to order according to the signature</span>
+<span class="sd">        :param allow_excess: Whether to allow items in spec that are not in signature</span>
+
+<span class="sd">        &gt;&gt;&gt; sig = Sig(&#39;a b c d e&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; sig.get_names(0)</span>
+<span class="sd">        (&#39;a&#39;,)</span>
+<span class="sd">        &gt;&gt;&gt; sig.get_names([0, 2])</span>
+<span class="sd">        (&#39;a&#39;, &#39;c&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; sig.get_names(&#39;b&#39;)</span>
+<span class="sd">        (&#39;b&#39;,)</span>
+<span class="sd">        &gt;&gt;&gt; sig.get_names([0, &#39;c&#39;, -1])</span>
+<span class="sd">        (&#39;a&#39;, &#39;c&#39;, &#39;e&#39;)</span>
+
+<span class="sd">        See that by default the order of the signature is conserved:</span>
+
+<span class="sd">        &gt;&gt;&gt; sig.get_names(&#39;b e d&#39;)</span>
+<span class="sd">        (&#39;b&#39;, &#39;d&#39;, &#39;e&#39;)</span>
+
+<span class="sd">        But you can change that default to conserve the order of the ``spec`` instead:</span>
+
+<span class="sd">        &gt;&gt;&gt; sig.get_names(&#39;b e d&#39;, conserve_sig_order=False)</span>
+<span class="sd">        (&#39;b&#39;, &#39;e&#39;, &#39;d&#39;)</span>
+
+<span class="sd">        By default, you can&#39;t mention names that are not in signature.</span>
+<span class="sd">        To allow this (making ``spec`` have &quot;extract these&quot; interpretation),</span>
+<span class="sd">        set ``allow_excess=True``:</span>
+
+<span class="sd">        &gt;&gt;&gt; sig.get_names([&#39;a&#39;, &#39;c&#39;, &#39;e&#39;, &#39;g&#39;, &#39;h&#39;], allow_excess=True)</span>
+<span class="sd">        (&#39;a&#39;, &#39;c&#39;, &#39;e&#39;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="p">[</span><span class="n">spec</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+
+            <span class="k">def</span> <span class="nf">find_names</span><span class="p">():</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">item</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+                            <span class="k">yield</span> <span class="n">names</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+                        <span class="k">elif</span> <span class="ow">not</span> <span class="n">allow_excess</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s1">&#39;There are only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span><span class="si">}</span><span class="s1"> names in the signatures,&#39;</span>
+                                <span class="sa">f</span><span class="s1">&#39;but you asked for the index: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1">&#39;</span>
+                            <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                            <span class="k">yield</span> <span class="n">item</span>
+                        <span class="k">elif</span> <span class="ow">not</span> <span class="n">allow_excess</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s1">&#39;No such param name in signatures: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1">&#39;</span>
+                            <span class="p">)</span>
+
+            <span class="n">matched_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">find_names</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">conserve_sig_order</span><span class="p">:</span>
+                <span class="n">_matched_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">matched_names</span><span class="p">)</span>
+                <span class="n">matched_names</span> <span class="o">=</span> <span class="n">_matched_names</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span>
+                    <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">matched_names</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_matched_names</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">matched_names</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown spec type: </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>

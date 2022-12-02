@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.168 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.169 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -715,6 +715,7 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">allow_excess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">allow_partial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init of an Ingress instance.</span>
 
@@ -760,6 +761,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">apply_defaults</span> <span class="o">=</span> <span class="n">apply_defaults</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">allow_excess</span> <span class="o">=</span> <span class="n">allow_excess</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_partial</span> <span class="o">=</span> <span class="n">allow_partial</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
         <span class="c1"># Get the all-keywords version of the arguments (args,kwargs-&gt;kwargs)</span>
@@ -776,7 +778,10 @@
         <span class="c1"># argument kind restrictions.</span>
         <span class="c1"># TODO: Reflect on pros/cons of allow_excess=True</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span>
-            <span class="n">func_kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_excess</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">allow_excess</span>
+            <span class="n">func_kwargs</span><span class="p">,</span>
+            <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">allow_excess</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">allow_excess</span><span class="p">,</span>
+            <span class="n">allow_partial</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">allow_partial</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
