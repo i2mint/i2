@@ -615,6 +615,7 @@ class Ingress:
         *,
         allow_excess=True,
         apply_defaults=True,
+        allow_partial=False,
     ):
         """Init of an Ingress instance.
 
@@ -660,6 +661,7 @@ class Ingress:
         self.outer_sig(self)
         self.apply_defaults = apply_defaults
         self.allow_excess = allow_excess
+        self.allow_partial = allow_partial
 
     def __call__(self, *ingress_args, **ingress_kwargs):
         # Get the all-keywords version of the arguments (args,kwargs->kwargs)
@@ -676,7 +678,10 @@ class Ingress:
         # argument kind restrictions.
         # TODO: Reflect on pros/cons of allow_excess=True
         return self.inner_sig.args_and_kwargs_from_kwargs(
-            func_kwargs, apply_defaults=True, allow_excess=self.allow_excess
+            func_kwargs,
+            apply_defaults=True,
+            allow_excess=self.allow_excess,
+            allow_partial=self.allow_partial,
         )
 
     def __repr__(self):
