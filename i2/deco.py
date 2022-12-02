@@ -32,6 +32,17 @@ def wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     return partial(update_wrapper, wrapped=wrapped, assigned=assigned, updated=updated)
 
 
+def _resolve_inclusion(include, exclude, super_set):
+    if isinstance(include, str):
+        include = include.split()
+    if isinstance(exclude, str):
+        exclude = exclude.split()
+    if exclude is None:
+        exclude = set()
+    include = [x for x in (include or super_set) if x not in exclude]
+    return include
+
+
 # ---------------------------------------------------------------------------------------
 class FuncFactory:
     """Make a function factory.
@@ -76,6 +87,22 @@ class FuncFactory:
     >>> f(10)
     23
 
+    Note that:
+
+    >>> ff = factory(2, 3)  # equivalent to ``factory(a=2, b=3)``
+    >>> ff(c=10)
+    16
+
+    Further, you can tell ``FuncFactory`` to ``include`` or ``exclude`` specific
+    arguments, using their names or indices to specify them.
+
+    >>> factory_no_a = FuncFactory(foo, exclude=['a'])
+    >>> factory_no_a
+    <FuncFactory(foo)>(b, *, c=2) -> Callable[..., float]
+    >>> g = factory_no_a(2, 3)  # equivalent to ``factory(b=2, c=3)`` as no ``a`` here
+    >>> g(10)
+    23
+
     Recipe: Say you're normalizing some data accessor into callback functions and you
     want to create functions that provide a specific object when called (with no args).
     Sure, you can do this by specifying ``lambda: obj`` every time, but lambdas can be
@@ -100,26 +127,47 @@ class FuncFactory:
 
     """
 
-    def __init__(self, func):
+    def __init__(self, func, *, include=(), exclude=()):
         self.func = func
+        func_sig = Sig(func)
+        include, exclude = map(func_sig.get_names, (include, exclude))
+        include = _resolve_inclusion(include, exclude, func_sig.names)
+        self.include = include
 
-        sig = Sig(func)
-        factory_sig = Sig(sig, return_annotation=Callable[..., Any])
+
+        factory_sig = Sig(func_sig, return_annotation=Callable[..., Any])
+        factory_sig = factory_sig[self.include]
         # previous I did the following, but don't know why:
         # factory_sig = factory_sig - sig.names[0]
-        # Now I know: Because in the func(obj, **params) case it makes more sense that the sig be **params
+        # Now I know: Because in the func(obj, **params) case it makes more sense
+        # that the sig be **params
+        # This led to extend to the include/exclude functionality
         # TODO: Consider adding some init control over what arguments of the function we expose for binding.
-        if sig.return_annotation is not sig.empty:
+        if func_sig.return_annotation is not func_sig.empty:
             try:
                 factory_sig = Sig(
-                    factory_sig, return_annotation=Callable[..., sig.return_annotation]
+                    factory_sig,
+                    return_annotation=Callable[..., func_sig.return_annotation]
                 )
             except TypeError:
                 pass
 
+
+
+        self.func_sig = func_sig
+        self.factory_sig = factory_sig
         self.__signature__ = factory_sig
 
+    def _process_args_and_kwargs(self, args, kwargs):
+        _kwargs = self.factory_sig.kwargs_from_args_and_kwargs(
+            args, kwargs, allow_partial=True, ignore_kind=True
+        )
+        __args, __kwargs = self.func_sig.args_and_kwargs_from_kwargs(
+            _kwargs, allow_partial=True, ignore_kind=False)
+        return __args, __kwargs
+
     def __call__(self, *args, **kwargs):
+        args, kwargs = self._process_args_and_kwargs(args, kwargs)
         return partial(self.func, *args, **kwargs)
 
     def __repr__(self):

@@ -942,6 +942,7 @@ class InnerMapIngress:
             **self.kwargs_trans(func_kwargs),  # change those that kwargs_trans desires
         )
 
+        # TODO: See Ingress: Has allow_partial etc.
         # Return an (args, kwargs) pair the respects the inner function's
         # argument kind restrictions.
         return self.inner_sig.args_and_kwargs_from_kwargs(func_kwargs)
@@ -1137,6 +1138,8 @@ def ch_names(func=None, **old_to_new_name):
 
 map_names = ch_names  # back-compatibility alias
 
+from i2.deco import _resolve_inclusion
+
 
 def include_exclude_ingress_factory(func, include=None, exclude=None):
     """A pattern underlying any ingress that takes a subset of parameters (possibly
@@ -1146,17 +1149,11 @@ def include_exclude_ingress_factory(func, include=None, exclude=None):
     partialize #3 (without having to partialize #1 and #2)
 
     Note: A more general version would allow include and exclude to be expressed as
-    functions that apply to one or several properties of the params (name, kind, default,
-    annotation).
+    functions that apply to one or several properties of the params
+    (name, kind, default, annotation).
     """
     sig = Sig(func)
-    if isinstance(include, str):
-        include = include.split()
-    if isinstance(exclude, str):
-        exclude = exclude.split()
-    exclude = exclude or set()
-    include = [x for x in (include or sig.names) if x not in exclude]
-
+    include = _resolve_inclusion(include, exclude, sig.names)
     return Ingress(inner_sig=sig, outer_sig=sig[include])
 
 
@@ -1183,6 +1180,8 @@ def include_exclude(func=None, *, include=None, exclude=None):
     return wrap(func, ingress=include_exclude_ingress_factory(func, include, exclude))
 
 
+# TODO: Not working completely with allow_removal_of_non_defaulted_params=True
+#  See https://github.com/i2mint/i2/issues/44
 @double_up_as_factory
 def rm_params(
     func=None, *, params_to_remove=(), allow_removal_of_non_defaulted_params=False

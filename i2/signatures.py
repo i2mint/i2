@@ -1373,6 +1373,7 @@ class Sig(Signature, Mapping):
             next(iter(self.names_of_kind[VK]), None),
         )
 
+    # TODO: Can be cleaned and generalized (include/exclude, function filter etc.)
     def get_names(self, spec, *, conserve_sig_order=True, allow_excess=False):
         """Return a tuple of names corresponding to the given spec.
 
