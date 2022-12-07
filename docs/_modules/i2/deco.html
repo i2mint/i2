@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.0.169 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.deco &mdash; i2 0.0.170 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -132,6 +132,17 @@
     <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">update_wrapper</span><span class="p">,</span> <span class="n">wrapped</span><span class="o">=</span><span class="n">wrapped</span><span class="p">,</span> <span class="n">assigned</span><span class="o">=</span><span class="n">assigned</span><span class="p">,</span> <span class="n">updated</span><span class="o">=</span><span class="n">updated</span><span class="p">)</span>
 
 
+<span class="k">def</span> <span class="nf">_resolve_inclusion</span><span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">super_set</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">include</span> <span class="o">=</span> <span class="n">include</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="n">exclude</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">include</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">include</span> <span class="ow">or</span> <span class="n">super_set</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">include</span>
+
+
 <span class="c1"># ---------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="FuncFactory"><a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.FuncFactory">[docs]</a><span class="k">class</span> <span class="nc">FuncFactory</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Make a function factory.</span>
@@ -176,6 +187,22 @@
 <span class="sd">    &gt;&gt;&gt; f(10)</span>
 <span class="sd">    23</span>
 
+<span class="sd">    Note that:</span>
+
+<span class="sd">    &gt;&gt;&gt; ff = factory(2, 3)  # equivalent to ``factory(a=2, b=3)``</span>
+<span class="sd">    &gt;&gt;&gt; ff(c=10)</span>
+<span class="sd">    16</span>
+
+<span class="sd">    Further, you can tell ``FuncFactory`` to ``include`` or ``exclude`` specific</span>
+<span class="sd">    arguments, using their names or indices to specify them.</span>
+
+<span class="sd">    &gt;&gt;&gt; factory_no_a = FuncFactory(foo, exclude=[&#39;a&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; factory_no_a</span>
+<span class="sd">    &lt;FuncFactory(foo)&gt;(b, *, c=2) -&gt; Callable[..., float]</span>
+<span class="sd">    &gt;&gt;&gt; g = factory_no_a(2, 3)  # equivalent to ``factory(b=2, c=3)`` as no ``a`` here</span>
+<span class="sd">    &gt;&gt;&gt; g(10)</span>
+<span class="sd">    23</span>
+
 <span class="sd">    Recipe: Say you&#39;re normalizing some data accessor into callback functions and you</span>
 <span class="sd">    want to create functions that provide a specific object when called (with no args).</span>
 <span class="sd">    Sure, you can do this by specifying ``lambda: obj`` every time, but lambdas can be</span>
@@ -200,26 +227,45 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="p">(),</span> <span class="n">exclude</span><span class="o">=</span><span class="p">()):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="n">func_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="n">include</span><span class="p">,</span> <span class="n">exclude</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">func_sig</span><span class="o">.</span><span class="n">get_names</span><span class="p">,</span> <span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="p">))</span>
+        <span class="n">include</span> <span class="o">=</span> <span class="n">_resolve_inclusion</span><span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">func_sig</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include</span> <span class="o">=</span> <span class="n">include</span>
 
-        <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-        <span class="n">factory_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
+        <span class="n">factory_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func_sig</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
+        <span class="n">factory_sig</span> <span class="o">=</span> <span class="n">factory_sig</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">include</span><span class="p">]</span>
         <span class="c1"># previous I did the following, but don&#39;t know why:</span>
         <span class="c1"># factory_sig = factory_sig - sig.names[0]</span>
-        <span class="c1"># Now I know: Because in the func(obj, **params) case it makes more sense that the sig be **params</span>
+        <span class="c1"># Now I know: Because in the func(obj, **params) case it makes more sense</span>
+        <span class="c1"># that the sig be **params</span>
+        <span class="c1"># This led to extend to the include/exclude functionality</span>
         <span class="c1"># TODO: Consider adding some init control over what arguments of the function we expose for binding.</span>
-        <span class="k">if</span> <span class="n">sig</span><span class="o">.</span><span class="n">return_annotation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">sig</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">func_sig</span><span class="o">.</span><span class="n">return_annotation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">func_sig</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">factory_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span>
-                    <span class="n">factory_sig</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">sig</span><span class="o">.</span><span class="n">return_annotation</span><span class="p">]</span>
+                    <span class="n">factory_sig</span><span class="p">,</span>
+                    <span class="n">return_annotation</span><span class="o">=</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">func_sig</span><span class="o">.</span><span class="n">return_annotation</span><span class="p">],</span>
                 <span class="p">)</span>
             <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                 <span class="k">pass</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">func_sig</span> <span class="o">=</span> <span class="n">func_sig</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factory_sig</span> <span class="o">=</span> <span class="n">factory_sig</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">factory_sig</span>
 
+    <span class="k">def</span> <span class="nf">_process_args_and_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">factory_sig</span><span class="o">.</span><span class="n">kwargs_from_args_and_kwargs</span><span class="p">(</span>
+            <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">allow_partial</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore_kind</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">__args</span><span class="p">,</span> <span class="n">__kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span>
+            <span class="n">_kwargs</span><span class="p">,</span> <span class="n">allow_partial</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore_kind</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">__args</span><span class="p">,</span> <span class="n">__kwargs</span>
+
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_args_and_kwargs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

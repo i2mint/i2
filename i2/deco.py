@@ -147,7 +147,7 @@ class FuncFactory:
             try:
                 factory_sig = Sig(
                     factory_sig,
-                    return_annotation=Callable[..., func_sig.return_annotation]
+                    return_annotation=Callable[..., func_sig.return_annotation],
                 )
             except TypeError:
                 pass
@@ -165,7 +165,8 @@ class FuncFactory:
             args, kwargs, allow_partial=True, ignore_kind=True
         )
         __args, __kwargs = self.func_sig.args_and_kwargs_from_kwargs(
-            _kwargs, allow_partial=True, ignore_kind=False)
+            _kwargs, allow_partial=True, ignore_kind=False
+        )
         return __args, __kwargs
 
     def __call__(self, *args, **kwargs):
