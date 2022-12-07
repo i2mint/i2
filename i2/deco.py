@@ -43,6 +43,7 @@ def _resolve_inclusion(include, exclude, super_set):
     return include
 
 
+
 # ---------------------------------------------------------------------------------------
 class FuncFactory:
     """Make a function factory.
@@ -134,7 +135,6 @@ class FuncFactory:
         include = _resolve_inclusion(include, exclude, func_sig.names)
         self.include = include
 
-
         factory_sig = Sig(func_sig, return_annotation=Callable[..., Any])
         factory_sig = factory_sig[self.include]
         # previous I did the following, but don't know why:
@@ -152,11 +152,13 @@ class FuncFactory:
             except TypeError:
                 pass
 
-
-
         self.func_sig = func_sig
         self.factory_sig = factory_sig
         self.__signature__ = factory_sig
+
+    @classmethod
+    def wrap(cls, include=(), exclude=()):
+        return partial(cls, include=include, exclude=exclude)
 
     def _process_args_and_kwargs(self, args, kwargs):
         _kwargs = self.factory_sig.kwargs_from_args_and_kwargs(
