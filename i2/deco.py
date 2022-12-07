@@ -43,7 +43,6 @@ def _resolve_inclusion(include, exclude, super_set):
     return include
 
 
-
 # ---------------------------------------------------------------------------------------
 class FuncFactory:
     """Make a function factory.
