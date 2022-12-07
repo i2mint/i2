@@ -1139,6 +1139,8 @@ class Sig(Signature, Mapping):
             # (try to) return cls(obj) if obj is callable:
             if callable(obj):
                 return cls(obj)
+            else:
+                raise TypeError(f"Object is not callable: {obj}")
         except ValueError:
             # if a ValueError is raised, return the default_signature
             return Sig(default_signature)
