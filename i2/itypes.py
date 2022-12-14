@@ -152,19 +152,14 @@ def is_callable_kind(typ):
     # Also possible: typ.mro()[0] == __import__('collections.abc').Callable
 
 
-def input_and_output_types(typ):
+def input_and_output_types(typ: type):
     """Returns the input and output types
-
-    :param typ:
-    :return:
-
 
     >>> from typing import Callable, Tuple
     >>> input_types, output_type = input_and_output_types(Callable[[float, int], str])
     >>> assert input_types == [float, int] and output_type == str
     >>> input_types, output_type = input_and_output_types(Callable[[], str])
     >>> assert input_types == [] and output_type == str
-    >>> assert input_and_output_types(Callable[[...], str]) == (Ellipsis, str)
 
     But will fail if `typ` isn't a `Callable`:
 
