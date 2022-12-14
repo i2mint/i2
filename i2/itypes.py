@@ -1,6 +1,14 @@
 """Types"""
 
-from typing import NewType, Optional, Iterable, Protocol, Any
+from typing import (
+    NewType,
+    Optional,
+    Iterable,
+    Protocol,
+    Any,
+    runtime_checkable,
+    get_args,
+)
 
 
 def new_type(
@@ -11,7 +19,8 @@ def new_type(
     assign_to_globals=False,
 ):
     """
-    Make a new type with (optional) doc and (optional) aka, set of var names it often appears as
+    Make a new type with (optional) doc and (optional) aka, set of var names it often
+    appears as
 
     Args:
         name: Name to give the variable
@@ -24,12 +33,15 @@ def new_type(
 
     >>> from typing import Any, Union, List
     >>> MyType = new_type('MyType', int)
-    >>> type(MyType)
+    >>> # TODO: Skipping the next part because outputs <class 'typing.NewType'> in 3.10
+    >>> type(MyType)  # doctest: +SKIP
     <class 'function'>
     >>> Key = new_type('Key', Any, aka=['key', 'k'])
     >>> sorted(Key._aka)
     ['k', 'key']
-    >>> Val = new_type('Val', Union[int, float, List[Union[int, float]]], doc="A number or list of numbers.")
+    >>> Val = new_type(
+    ... 'Val', Union[int, float, List[Union[int, float]]],
+    ... doc="A number or list of numbers.")
     >>> Val.__doc__
     'A number or list of numbers.'
     """
@@ -92,6 +104,7 @@ class HasAttrs:
 
         annotations = {attr: Any for attr in attr_names}
 
+        @runtime_checkable
         class HasAttrs(Protocol):
             __annotations__ = annotations
 
@@ -140,7 +153,7 @@ def is_callable_kind(typ):
 
 
 def input_and_output_types(typ):
-    """
+    """Returns the input and output types
 
     :param typ:
     :return:
@@ -148,9 +161,10 @@ def input_and_output_types(typ):
 
     >>> from typing import Callable, Tuple
     >>> input_types, output_type = input_and_output_types(Callable[[float, int], str])
-    >>> assert input_types == (float, int) and output_type == str
+    >>> assert input_types == [float, int] and output_type == str
     >>> input_types, output_type = input_and_output_types(Callable[[], str])
-    >>> assert input_types == () and output_type == str
+    >>> assert input_types == [] and output_type == str
+    >>> assert input_and_output_types(Callable[[...], str]) == (Ellipsis, str)
 
     But will fail if `typ` isn't a `Callable`:
 
@@ -170,10 +184,11 @@ def input_and_output_types(typ):
     if is_a_new_type(typ):
         return input_and_output_types(typ.__supertype__)
     assert is_callable_kind(typ), f'Is not a typing.Callable kind: {typ}'
-    assert (
-        len(typ.__args__) > 0
-    ), f'Can only be used on a Callable[[...],...] kind: {typ}'
-    return typ.__args__[:-1], typ.__args__[-1]
+    typ_args = get_args(typ)
+    assert len(typ_args) > 0, (
+        f'Can only be used on a Callable[[...],...] kind: {typ}'
+    )
+    return typ_args[0], typ_args[1]
 
 
 def dot_string_of_callable_typ(typ):

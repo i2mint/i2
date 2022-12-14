@@ -211,23 +211,21 @@ class ParametersMint(Mapping):
      'c': {'name': 'c', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2},
      'd': {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': <class 'int'>, 'position': 3}}
 
-    >>>
     >>> # and now, some cannibalistic fun...
-    >>> pprint(dict(ParametersMint(inspect.signature(pprint).parameters)))
-    {'compact': {'name': 'compact', 'kind': 'KEYWORD_ONLY', 'default': False, 'position': 5},
-     'depth': {'name': 'depth', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': None, 'position': 4},
-     'indent': {'name': 'indent', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2},
-     'object': {'name': 'object', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},
-     'sort_dicts': {'name': 'sort_dicts', 'kind': 'KEYWORD_ONLY', 'default': True, 'position': 6},
-     'stream': {'name': 'stream', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': None, 'position': 1},
-     'width': {'name': 'width', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 80, 'position': 3}}
-    >>> pprint(dict(ParametersMint(inspect.signature(ParametersMint).parameters)))
+    >>> # The following is skipped because not working in 3.10
+    >>> pprint(
+    ...     dict(ParametersMint(inspect.signature(ParametersMint).parameters))
+    ... )  # doctest: +SKIP
     {'args': {'name': 'args', 'kind': 'VAR_POSITIONAL', 'position': 0},
      'kwds': {'name': 'kwds', 'kind': 'VAR_KEYWORD', 'position': 1}}
-    >>> pprint(dict(ParametersMint(inspect.signature(ParametersMint.__init__).parameters)))
+    >>> pprint(
+    ...     dict(ParametersMint(inspect.signature(ParametersMint.__init__).parameters))
+    ... )  # doctest: +SKIP
     {'params': {'name': 'params', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': FrozenDict({}), 'position': 1},
      'self': {'name': 'self', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0}}
-    >>> pprint(dict(ParametersMint(inspect.signature(ParametersMint.__new__).parameters)))
+    >>> pprint(
+    ...     dict(ParametersMint(inspect.signature(ParametersMint.__new__).parameters))
+    ... )  # doctest: +SKIP
     {'args': {'name': 'args', 'kind': 'VAR_POSITIONAL', 'position': 1},
      'cls': {'name': 'cls', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},
      'kwds': {'name': 'kwds', 'kind': 'VAR_KEYWORD', 'position': 2}}
