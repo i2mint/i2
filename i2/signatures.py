@@ -2044,7 +2044,8 @@ class Sig(Signature, Mapping):
         ...     )
         ... )
         >>> sigs = filter(lambda sig: not sig.has_var_kinds, map(Sig, funcs))
-        >>> sum(sigs)
+        >>> # Note: Skipping because not stable between python versions
+        >>> sum(sigs)  # doctest: +SKIP
         <Sig (path, p, paths, m, filename, s, f1, f2, fp1, fp2, s1, s2, start=None)>
         """
         if sig == 0:  # so that we can do ``sum(iterable_of_sigs)``
@@ -3497,6 +3498,8 @@ def ch_variadics_to_non_variadic_kind(func, *, ch_variadic_keyword_to_keyword=Tr
             if idx_of_vp is not None:
                 params[idx_of_vp] = params[idx_of_vp].replace(kind=PK, default=())
             variadic_less_func.__signature__ = Sig(
+                # Note: Changed signature(func) to Sig(func) but don't know if the first
+                #  was on purpose.
                 params, return_annotation=signature(func).return_annotation
             )
         except ValueError:
