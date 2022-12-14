@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.171 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -2144,7 +2144,8 @@
 <span class="sd">        ...     )</span>
 <span class="sd">        ... )</span>
 <span class="sd">        &gt;&gt;&gt; sigs = filter(lambda sig: not sig.has_var_kinds, map(Sig, funcs))</span>
-<span class="sd">        &gt;&gt;&gt; sum(sigs)</span>
+<span class="sd">        &gt;&gt;&gt; # Note: Skipping because not stable between python versions</span>
+<span class="sd">        &gt;&gt;&gt; sum(sigs)  # doctest: +SKIP</span>
 <span class="sd">        &lt;Sig (path, p, paths, m, filename, s, f1, f2, fp1, fp2, s1, s2, start=None)&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">sig</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># so that we can do ``sum(iterable_of_sigs)``</span>
@@ -3597,7 +3598,10 @@
             <span class="k">if</span> <span class="n">idx_of_vp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">params</span><span class="p">[</span><span class="n">idx_of_vp</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">idx_of_vp</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">())</span>
             <span class="n">variadic_less_func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span>
-                <span class="n">params</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">return_annotation</span>
+                <span class="c1"># Note: Changed signature(func) to Sig(func) but don&#39;t know if the first</span>
+                <span class="c1">#  was on purpose.</span>
+                <span class="n">params</span><span class="p">,</span>
+                <span class="n">return_annotation</span><span class="o">=</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">return_annotation</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">idx_of_vp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

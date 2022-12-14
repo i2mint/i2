@@ -180,9 +180,7 @@ def input_and_output_types(typ: type):
         return input_and_output_types(typ.__supertype__)
     assert is_callable_kind(typ), f'Is not a typing.Callable kind: {typ}'
     typ_args = get_args(typ)
-    assert len(typ_args) > 0, (
-        f'Can only be used on a Callable[[...],...] kind: {typ}'
-    )
+    assert len(typ_args) > 0, f'Can only be used on a Callable[[...],...] kind: {typ}'
     return typ_args[0], typ_args[1]
 
 

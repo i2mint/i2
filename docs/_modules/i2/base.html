@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.base &mdash; i2 0.0.171 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.base &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -311,23 +311,21 @@
 <span class="sd">     &#39;c&#39;: {&#39;name&#39;: &#39;c&#39;, &#39;kind&#39;: &#39;POSITIONAL_OR_KEYWORD&#39;, &#39;default&#39;: 1, &#39;position&#39;: 2},</span>
 <span class="sd">     &#39;d&#39;: {&#39;name&#39;: &#39;d&#39;, &#39;kind&#39;: &#39;POSITIONAL_OR_KEYWORD&#39;, &#39;default&#39;: 1, &#39;annotation&#39;: &lt;class &#39;int&#39;&gt;, &#39;position&#39;: 3}}</span>
 
-<span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; # and now, some cannibalistic fun...</span>
-<span class="sd">    &gt;&gt;&gt; pprint(dict(ParametersMint(inspect.signature(pprint).parameters)))</span>
-<span class="sd">    {&#39;compact&#39;: {&#39;name&#39;: &#39;compact&#39;, &#39;kind&#39;: &#39;KEYWORD_ONLY&#39;, &#39;default&#39;: False, &#39;position&#39;: 5},</span>
-<span class="sd">     &#39;depth&#39;: {&#39;name&#39;: &#39;depth&#39;, &#39;kind&#39;: &#39;POSITIONAL_OR_KEYWORD&#39;, &#39;default&#39;: None, &#39;position&#39;: 4},</span>
-<span class="sd">     &#39;indent&#39;: {&#39;name&#39;: &#39;indent&#39;, &#39;kind&#39;: &#39;POSITIONAL_OR_KEYWORD&#39;, &#39;default&#39;: 1, &#39;position&#39;: 2},</span>
-<span class="sd">     &#39;object&#39;: {&#39;name&#39;: &#39;object&#39;, &#39;kind&#39;: &#39;POSITIONAL_OR_KEYWORD&#39;, &#39;position&#39;: 0},</span>
-<span class="sd">     &#39;sort_dicts&#39;: {&#39;name&#39;: &#39;sort_dicts&#39;, &#39;kind&#39;: &#39;KEYWORD_ONLY&#39;, &#39;default&#39;: True, &#39;position&#39;: 6},</span>
-<span class="sd">     &#39;stream&#39;: {&#39;name&#39;: &#39;stream&#39;, &#39;kind&#39;: &#39;POSITIONAL_OR_KEYWORD&#39;, &#39;default&#39;: None, &#39;position&#39;: 1},</span>
-<span class="sd">     &#39;width&#39;: {&#39;name&#39;: &#39;width&#39;, &#39;kind&#39;: &#39;POSITIONAL_OR_KEYWORD&#39;, &#39;default&#39;: 80, &#39;position&#39;: 3}}</span>
-<span class="sd">    &gt;&gt;&gt; pprint(dict(ParametersMint(inspect.signature(ParametersMint).parameters)))</span>
+<span class="sd">    &gt;&gt;&gt; # The following is skipped because not working in 3.10</span>
+<span class="sd">    &gt;&gt;&gt; pprint(</span>
+<span class="sd">    ...     dict(ParametersMint(inspect.signature(ParametersMint).parameters))</span>
+<span class="sd">    ... )  # doctest: +SKIP</span>
 <span class="sd">    {&#39;args&#39;: {&#39;name&#39;: &#39;args&#39;, &#39;kind&#39;: &#39;VAR_POSITIONAL&#39;, &#39;position&#39;: 0},</span>
 <span class="sd">     &#39;kwds&#39;: {&#39;name&#39;: &#39;kwds&#39;, &#39;kind&#39;: &#39;VAR_KEYWORD&#39;, &#39;position&#39;: 1}}</span>
-<span class="sd">    &gt;&gt;&gt; pprint(dict(ParametersMint(inspect.signature(ParametersMint.__init__).parameters)))</span>
+<span class="sd">    &gt;&gt;&gt; pprint(</span>
+<span class="sd">    ...     dict(ParametersMint(inspect.signature(ParametersMint.__init__).parameters))</span>
+<span class="sd">    ... )  # doctest: +SKIP</span>
 <span class="sd">    {&#39;params&#39;: {&#39;name&#39;: &#39;params&#39;, &#39;kind&#39;: &#39;POSITIONAL_OR_KEYWORD&#39;, &#39;default&#39;: FrozenDict({}), &#39;position&#39;: 1},</span>
 <span class="sd">     &#39;self&#39;: {&#39;name&#39;: &#39;self&#39;, &#39;kind&#39;: &#39;POSITIONAL_OR_KEYWORD&#39;, &#39;position&#39;: 0}}</span>
-<span class="sd">    &gt;&gt;&gt; pprint(dict(ParametersMint(inspect.signature(ParametersMint.__new__).parameters)))</span>
+<span class="sd">    &gt;&gt;&gt; pprint(</span>
+<span class="sd">    ...     dict(ParametersMint(inspect.signature(ParametersMint.__new__).parameters))</span>
+<span class="sd">    ... )  # doctest: +SKIP</span>
 <span class="sd">    {&#39;args&#39;: {&#39;name&#39;: &#39;args&#39;, &#39;kind&#39;: &#39;VAR_POSITIONAL&#39;, &#39;position&#39;: 1},</span>
 <span class="sd">     &#39;cls&#39;: {&#39;name&#39;: &#39;cls&#39;, &#39;kind&#39;: &#39;POSITIONAL_OR_KEYWORD&#39;, &#39;position&#39;: 0},</span>
 <span class="sd">     &#39;kwds&#39;: {&#39;name&#39;: &#39;kwds&#39;, &#39;kind&#39;: &#39;VAR_KEYWORD&#39;, &#39;position&#39;: 2}}</span>

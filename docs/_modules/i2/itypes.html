@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.itypes &mdash; i2 0.0.171 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.itypes &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -100,7 +100,15 @@
   <h1>Source code for i2.itypes</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Types&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NewType</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">NewType</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">Protocol</span><span class="p">,</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">runtime_checkable</span><span class="p">,</span>
+    <span class="n">get_args</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="new_type"><a class="viewcode-back" href="../../module_docs/i2/itypes.html#i2.itypes.new_type">[docs]</a><span class="k">def</span> <span class="nf">new_type</span><span class="p">(</span>
@@ -111,7 +119,8 @@
     <span class="n">assign_to_globals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Make a new type with (optional) doc and (optional) aka, set of var names it often appears as</span>
+<span class="sd">    Make a new type with (optional) doc and (optional) aka, set of var names it often</span>
+<span class="sd">    appears as</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name: Name to give the variable</span>
@@ -124,12 +133,15 @@
 
 <span class="sd">    &gt;&gt;&gt; from typing import Any, Union, List</span>
 <span class="sd">    &gt;&gt;&gt; MyType = new_type(&#39;MyType&#39;, int)</span>
-<span class="sd">    &gt;&gt;&gt; type(MyType)</span>
+<span class="sd">    &gt;&gt;&gt; # TODO: Skipping the next part because outputs &lt;class &#39;typing.NewType&#39;&gt; in 3.10</span>
+<span class="sd">    &gt;&gt;&gt; type(MyType)  # doctest: +SKIP</span>
 <span class="sd">    &lt;class &#39;function&#39;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; Key = new_type(&#39;Key&#39;, Any, aka=[&#39;key&#39;, &#39;k&#39;])</span>
 <span class="sd">    &gt;&gt;&gt; sorted(Key._aka)</span>
 <span class="sd">    [&#39;k&#39;, &#39;key&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; Val = new_type(&#39;Val&#39;, Union[int, float, List[Union[int, float]]], doc=&quot;A number or list of numbers.&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; Val = new_type(</span>
+<span class="sd">    ... &#39;Val&#39;, Union[int, float, List[Union[int, float]]],</span>
+<span class="sd">    ... doc=&quot;A number or list of numbers.&quot;)</span>
 <span class="sd">    &gt;&gt;&gt; Val.__doc__</span>
 <span class="sd">    &#39;A number or list of numbers.&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -192,6 +204,7 @@
 
         <span class="n">annotations</span> <span class="o">=</span> <span class="p">{</span><span class="n">attr</span><span class="p">:</span> <span class="n">Any</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attr_names</span><span class="p">}</span>
 
+        <span class="nd">@runtime_checkable</span>
         <span class="k">class</span> <span class="nc">HasAttrs</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
             <span class="vm">__annotations__</span> <span class="o">=</span> <span class="n">annotations</span>
 
@@ -239,18 +252,14 @@
     <span class="c1"># Also possible: typ.mro()[0] == __import__(&#39;collections.abc&#39;).Callable</span>
 
 
-<div class="viewcode-block" id="input_and_output_types"><a class="viewcode-back" href="../../module_docs/i2/itypes.html#i2.itypes.input_and_output_types">[docs]</a><span class="k">def</span> <span class="nf">input_and_output_types</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    :param typ:</span>
-<span class="sd">    :return:</span>
-
+<div class="viewcode-block" id="input_and_output_types"><a class="viewcode-back" href="../../module_docs/i2/itypes.html#i2.itypes.input_and_output_types">[docs]</a><span class="k">def</span> <span class="nf">input_and_output_types</span><span class="p">(</span><span class="n">typ</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the input and output types</span>
 
 <span class="sd">    &gt;&gt;&gt; from typing import Callable, Tuple</span>
 <span class="sd">    &gt;&gt;&gt; input_types, output_type = input_and_output_types(Callable[[float, int], str])</span>
-<span class="sd">    &gt;&gt;&gt; assert input_types == (float, int) and output_type == str</span>
+<span class="sd">    &gt;&gt;&gt; assert input_types == [float, int] and output_type == str</span>
 <span class="sd">    &gt;&gt;&gt; input_types, output_type = input_and_output_types(Callable[[], str])</span>
-<span class="sd">    &gt;&gt;&gt; assert input_types == () and output_type == str</span>
+<span class="sd">    &gt;&gt;&gt; assert input_types == [] and output_type == str</span>
 
 <span class="sd">    But will fail if `typ` isn&#39;t a `Callable`:</span>
 
@@ -270,10 +279,9 @@
     <span class="k">if</span> <span class="n">is_a_new_type</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">input_and_output_types</span><span class="p">(</span><span class="n">typ</span><span class="o">.</span><span class="n">__supertype__</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">is_callable_kind</span><span class="p">(</span><span class="n">typ</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Is not a typing.Callable kind: </span><span class="si">{</span><span class="n">typ</span><span class="si">}</span><span class="s1">&#39;</span>
-    <span class="k">assert</span> <span class="p">(</span>
-        <span class="nb">len</span><span class="p">(</span><span class="n">typ</span><span class="o">.</span><span class="n">__args__</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-    <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Can only be used on a Callable[[...],...] kind: </span><span class="si">{</span><span class="n">typ</span><span class="si">}</span><span class="s1">&#39;</span>
-    <span class="k">return</span> <span class="n">typ</span><span class="o">.</span><span class="n">__args__</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">typ</span><span class="o">.</span><span class="n">__args__</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+    <span class="n">typ_args</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">typ_args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Can only be used on a Callable[[...],...] kind: </span><span class="si">{</span><span class="n">typ</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">typ_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">typ_args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
 
 
 <span class="k">def</span> <span class="nf">dot_string_of_callable_typ</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
