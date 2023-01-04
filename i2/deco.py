@@ -2,11 +2,13 @@
 import inspect
 from collections import defaultdict
 from contextlib import suppress
-from functools import wraps, partial
+from functools import partial
+from functools import wraps  # TODO: Overwritten. Remove?
 from inspect import Signature, signature, Parameter
 from itertools import chain
 from typing import Callable, Tuple, Dict, Any, TypeVar
 
+from i2.util import mk_sentinel
 from i2.signatures import Sig, kind_forgiving_func, name_of_obj
 
 # keep the imports below here because might be referenced (or take care of refs)
@@ -28,6 +30,7 @@ def identity(obj: T) -> T:
 from functools import WRAPPER_ASSIGNMENTS, WRAPPER_UPDATES, update_wrapper
 
 
+# Overwrites the imported functools.wraps
 def wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     return partial(update_wrapper, wrapped=wrapped, assigned=assigned, updated=updated)
 
@@ -43,7 +46,14 @@ def _resolve_inclusion(include, exclude, super_set):
     return include
 
 
+def _not_set_repr(self):
+    return 'NotSet'
+
+
+NotSet = mk_sentinel('NotSet', repr_=_not_set_repr)
+
 # ---------------------------------------------------------------------------------------
+# TODO: https://github.com/i2mint/i2/issues/48
 class FuncFactory:
     """Make a function factory.
 
@@ -134,26 +144,34 @@ class FuncFactory:
         include = _resolve_inclusion(include, exclude, func_sig.names)
         self.include = include
 
-        factory_sig = Sig(func_sig, return_annotation=Callable[..., Any])
-        factory_sig = factory_sig[self.include]
+        actual_factory_sig = Sig(func_sig, return_annotation=Callable[..., partial])
+        actual_factory_sig = actual_factory_sig[self.include]
         # previous I did the following, but don't know why:
         # factory_sig = factory_sig - sig.names[0]
         # Now I know: Because in the func(obj, **params) case it makes more sense
         # that the sig be **params
-        # This led to extend to the include/exclude functionality
-        # TODO: Consider adding some init control over what arguments of the function we expose for binding.
+        # This led to extend to the include/exclude functionality.
         if func_sig.return_annotation is not func_sig.empty:
             try:
-                factory_sig = Sig(
-                    factory_sig,
+                actual_factory_sig = Sig(
+                    actual_factory_sig,
                     return_annotation=Callable[..., func_sig.return_annotation],
                 )
             except TypeError:
                 pass
 
         self.func_sig = func_sig
-        self.factory_sig = factory_sig
-        self.__signature__ = factory_sig
+        self.factory_sig = actual_factory_sig
+
+        self.__signature__ = actual_factory_sig  # TODO: Delete when #48 solved
+        # TODO: Uncomment below to resolved https://github.com/i2mint/i2/issues/48)
+        ## Add NotSet default to all non-defaulted params:
+        ## (To see why, go to See https://github.com/i2mint/i2/issues/48)
+        # shown_factory_sig = actual_factory_sig.ch_defaults(
+        #     **{name: NotSet for name in actual_factory_sig.required_names}
+        # )
+        # shown_factory_sig = shown_factory_sig[self.include]
+        # self.__signature__ = shown_factory_sig
 
     @classmethod
     def wrap(cls, include=(), exclude=()):
@@ -163,6 +181,8 @@ class FuncFactory:
         _kwargs = self.factory_sig.kwargs_from_args_and_kwargs(
             args, kwargs, allow_partial=True, ignore_kind=True
         )
+        # Uncomment below to resolved https://github.com/i2mint/i2/issues/48)
+        # _kwargs = {k: v for k, v in _kwargs.items() if v is not NotSet}
         __args, __kwargs = self.func_sig.args_and_kwargs_from_kwargs(
             _kwargs, allow_partial=True, ignore_kind=False
         )
