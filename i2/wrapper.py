@@ -1141,20 +1141,22 @@ map_names = ch_names  # back-compatibility alias
 from i2.deco import _resolve_inclusion
 
 
-def include_exclude_ingress_factory(func, include=None, exclude=None):
-    """A pattern underlying any ingress that takes a subset of parameters (possibly
+# TODO: A more general version would allow include and exclude to be expressed as
+#     functions that apply to one or several properties of the params
+#     (name, kind, default, annotation).
+def include_exclude_ingress_factory(
+        func, include=None, exclude=None, *, allow_partial=False
+):
+    """
+    A pattern underlying any ingress that takes a subset of parameters (possibly
     reordering them).
 
     For example: Keep only required arguments, or reorder params to be able to
     partialize #3 (without having to partialize #1 and #2)
-
-    Note: A more general version would allow include and exclude to be expressed as
-    functions that apply to one or several properties of the params
-    (name, kind, default, annotation).
     """
     sig = Sig(func)
     include = _resolve_inclusion(include, exclude, sig.names)
-    return Ingress(inner_sig=sig, outer_sig=sig[include])
+    return Ingress(inner_sig=sig, outer_sig=sig[include], allow_partial=allow_partial)
 
 
 @double_up_as_factory
@@ -1184,7 +1186,10 @@ def include_exclude(func=None, *, include=None, exclude=None):
 #  See https://github.com/i2mint/i2/issues/44
 @double_up_as_factory
 def rm_params(
-    func=None, *, params_to_remove=(), allow_removal_of_non_defaulted_params=False
+    func=None, *,
+    params_to_remove=(),
+    allow_removal_of_non_defaulted_params=False,
+    allow_partial=False
 ):
     """Get a function with some parameters removed.
 
@@ -1224,7 +1229,10 @@ def rm_params(
         )
 
     return wrap(
-        func, ingress=include_exclude_ingress_factory(func, exclude=params_to_remove)
+        func,
+        ingress=include_exclude_ingress_factory(
+            func, exclude=params_to_remove, allow_partial=allow_partial
+        )
     )
 
 

@@ -1,7 +1,9 @@
 """Testing wrapper"""
 
-from i2.wrapper import wrap, mk_ingress_from_name_mapper
-
+from typing import Iterable
+from i2.wrapper import wrap, mk_ingress_from_name_mapper, rm_params
+from i2.deco import FuncFactory
+from i2.signatures import Sig
 
 def _test_ingress(a, b: str, c='hi'):
     return (a + len(b) % 2,), dict(string=f'{c} {b}')
@@ -236,3 +238,38 @@ def test_wrapx():
     iterized_func = Wrapx(func, caller=iterize_first_arg)
 
     assert iterized_func([1, 2, 3, 4], 10) == [11, 12, 13, 14]
+
+
+def simple_chunker(a: Iterable,
+                   chk_size: int):
+    """Generate fixed sized non-overlapping chunks of an iterable ``a``.
+
+    >>> list(simple_chunker(range(7), 3))
+    [(0, 1, 2), (3, 4, 5)]
+    """
+    return zip(*([iter(a)] * chk_size))
+
+
+def test_rm_params():
+    # ----------------------------------------------------------------------------
+    # Edge case of rm_params with FuncFactory: https://github.com/i2mint/i2/issues/44
+    wf = range(7)
+    mk_chunker = FuncFactory(simple_chunker, exclude='a')
+    chunker = mk_chunker(chk_size=3)
+    assert str(Sig(chunker)) == '(a: Iterable, *, chk_size: int = 3)'
+    assert list(chunker(wf)) == [(0, 1, 2), (3, 4, 5)]
+
+    mk_chunker = rm_params(
+        FuncFactory(simple_chunker),
+        params_to_remove=['a'],
+        allow_removal_of_non_defaulted_params=True,
+        allow_partial=True  # wouldn't work without this
+    )
+
+    assert str(Sig(mk_chunker)) == '(chk_size: int)'
+
+    wf = range(7)
+    chunker = mk_chunker(chk_size=3)
+    assert str(Sig(chunker)) == '(a: Iterable, *, chk_size: int = 3)'
+    assert list(chunker(wf)) == [(0, 1, 2), (3, 4, 5)]
+    # ----------------------------------------------------------------------------
