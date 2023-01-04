@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.errors &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.errors &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -67,8 +67,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
 </ul>
@@ -122,7 +122,7 @@
 
 
 <div class="viewcode-block" id="OverwritesNotAllowed"><a class="viewcode-back" href="../../module_docs/i2/errors.html#i2.errors.OverwritesNotAllowed">[docs]</a><span class="k">class</span> <span class="nc">OverwritesNotAllowed</span><span class="p">(</span><span class="n">AuthorizationError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;To raise when writes are only allowed if the item doesn&#39;t already exist&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;To raise when writes are only allowed if the item doesn&#39;t already exist&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">forbidden_keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -152,7 +152,7 @@
 
 
 <div class="viewcode-block" id="ModuleNotFoundIgnore"><a class="viewcode-back" href="../../module_docs/i2/errors.html#i2.errors.ModuleNotFoundIgnore">[docs]</a><span class="k">class</span> <span class="nc">ModuleNotFoundIgnore</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Context manager meant to ignore import errors.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager meant to ignore import errors.</span>
 <span class="sd">    The use case in mind is when we want to condition some code on the existence of some package.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -175,7 +175,7 @@
 
 
 <div class="viewcode-block" id="InterruptWithBlock"><a class="viewcode-back" href="../../module_docs/i2/errors.html#i2.errors.InterruptWithBlock">[docs]</a><span class="k">class</span> <span class="nc">InterruptWithBlock</span><span class="p">(</span><span class="ne">BaseException</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;To be used to interrupt the march of a with&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;To be used to interrupt the march of a with&quot;&quot;&quot;</span></div>
 
 
 <span class="c1"># Note: Can be extended to have more precise handled conditions and callbacks</span>
@@ -184,7 +184,7 @@
 <span class="c1">#   https://github.com/thorwhalen/ut/blob/33c20ce76fe0f9dcc6aa197b0a2dbbf3d7b1d5be/errors.py#L90</span>
 <div class="viewcode-block" id="HandleExceptions"><a class="viewcode-back" href="../../module_docs/i2/errors.html#i2.errors.HandleExceptions">[docs]</a><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
 <span class="k">class</span> <span class="nc">HandleExceptions</span><span class="p">(</span><span class="n">AbstractContextManager</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A context manager that catches and (specifically) handles specific exceptions.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A context manager that catches and (specifically) handles specific exceptions.</span>
 
 <span class="sd">    It takes one argument: A dict (or mapping) of exception type keys and callback</span>
 <span class="sd">    values. If within a with block, the particular (listed) exception happens,</span>

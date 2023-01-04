@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.doc_mint &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.doc_mint &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -70,8 +70,8 @@
 <li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wrapper.html">i2.wrapper</a></li>
 </ul>
@@ -148,15 +148,15 @@
 <code class="sig-prename descclassname">i2.doc_mint.</code><code class="sig-name descname">non_doctest_lines</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">doc</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/doc_mint.html#non_doctest_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.doc_mint.non_doctest_lines" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generator of lines of the doc string that are not in a doctest scope.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">_test_func</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="sd">&#39;&#39;&#39;Line 1</span>
+<span class="gp">... </span><span class="w">    </span><span class="sd">&#39;&#39;&#39;Line 1</span>
 <span class="gp">... </span><span class="sd">    Another</span>
 <span class="gp">... </span><span class="sd">    &gt;&gt;&gt; doctest_1</span>
 <span class="gp">... </span><span class="sd">    &gt;&gt;&gt; doctest_2</span>
 <span class="gp">... </span><span class="sd">    line_after_a_doc_test</span>
 <span class="gp">... </span><span class="sd">    another_line_that_is_in_the_doc_test scope</span>
-<span class="gp">...</span><span class="sd"></span>
+<span class="gp">...</span>
 <span class="gp">... </span><span class="sd">    But now we&#39;re out of a doctest&#39;s scope</span>
-<span class="gp">...</span><span class="sd"></span>
+<span class="gp">...</span>
 <span class="gp">... </span><span class="sd">    &gt;&gt;&gt; Oh no, another doctest!</span>
 <span class="gp">... </span><span class="sd">    &#39;&#39;&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getdoc</span>
@@ -194,19 +194,19 @@
 <span class="gp">... </span><span class="s1">    This is to test the doctest splitter.</span>
 <span class="gp">... </span><span class="s1">    Until now, we&#39;re in a text block.</span>
 <span class="gp">... </span><span class="s1">    The following is a doctest block:</span>
-<span class="gp">...</span><span class="s1"></span>
+<span class="gp">...</span>
 <span class="gp">... </span><span class="s1">    &gt;&gt;&gt; 2 + 3</span>
 <span class="gp">... </span><span class="s1">    5</span>
 <span class="gp">... </span><span class="s1">    &gt;&gt;&gt; t = 5</span>
 <span class="gp">... </span><span class="s1">    &gt;&gt;&gt; tt = 10</span>
-<span class="gp">...</span><span class="s1"></span>
+<span class="gp">...</span>
 <span class="gp">... </span><span class="s1">    This is another text block, followed with another doctest block:</span>
-<span class="gp">...</span><span class="s1"></span>
+<span class="gp">...</span>
 <span class="gp">... </span><span class="s1">    &gt;&gt;&gt; def foo():</span>
 <span class="gp">... </span><span class="s1">    ...     return 42</span>
 <span class="gp">... </span><span class="s1">    &gt;&gt;&gt; foo()</span>
 <span class="gp">... </span><span class="s1">    42</span>
-<span class="gp">...</span><span class="s1"></span>
+<span class="gp">...</span>
 <span class="gp">... </span><span class="s1">&#39;&#39;&#39;</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">blocks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">split_text_and_doctests</span><span class="p">(</span><span class="n">example</span><span class="p">))</span>

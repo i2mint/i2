@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -67,8 +67,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
 </ul>
@@ -126,7 +126,7 @@
 
 
 <div class="viewcode-block" id="name_of_obj"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.name_of_obj">[docs]</a><span class="k">def</span> <span class="nf">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tries to find the (or &quot;a&quot;) name for an object, even if `__name__` doesn&#39;t exist.</span>
 
 <span class="sd">    &gt;&gt;&gt; name_of_obj(map)</span>
@@ -154,7 +154,7 @@
 
 
 <div class="viewcode-block" id="ensure_iterable_of_callables"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.ensure_iterable_of_callables">[docs]</a><span class="k">def</span> <span class="nf">ensure_iterable_of_callables</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Assert that the input is an iterable of callables,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assert that the input is an iterable of callables,</span>
 <span class="sd">    or wrap a single callable in an iterable.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
@@ -177,7 +177,7 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name_for_position</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">(),</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generate (name, object) pairs from an iterable of objects</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate (name, object) pairs from an iterable of objects</span>
 
 <span class="sd">    :param objects: Objects to be named</span>
 <span class="sd">    :param exclude_names: Names that can&#39;t be used</span>
@@ -267,7 +267,7 @@
 
 
 <div class="viewcode-block" id="merge_unnamed_and_named"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.merge_unnamed_and_named">[docs]</a><span class="k">def</span> <span class="nf">merge_unnamed_and_named</span><span class="p">(</span><span class="o">*</span><span class="n">unnamed</span><span class="p">,</span> <span class="o">**</span><span class="n">named</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;To merge unnamed and named arguments into a single (named) dict of arguments</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;To merge unnamed and named arguments into a single (named) dict of arguments</span>
 
 <span class="sd">    &gt;&gt;&gt; merge_unnamed_and_named(10, 20, thirty=30, fourty=40)</span>
 <span class="sd">    {&#39;_0&#39;: 10, &#39;_1&#39;: 20, &#39;thirty&#39;: 30, &#39;fourty&#39;: 40}</span>
@@ -278,7 +278,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">named_unnamed</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">named</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Some of your objects&#39; names clashed: &quot;</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">named_unnamed</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">named</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">named_unnamed</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">named</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">named_unnamed</span><span class="p">,</span> <span class="o">**</span><span class="n">named</span><span class="p">)</span></div>
 
@@ -303,7 +303,7 @@
 
 
 <div class="viewcode-block" id="MultiObj"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.MultiObj">[docs]</a><span class="k">class</span> <span class="nc">MultiObj</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A base class that holds several named objects</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A base class that holds several named objects</span>
 
 <span class="sd">    &gt;&gt;&gt; from functools import partial</span>
 
@@ -381,7 +381,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">named_unnamed</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">named</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Some of your objects&#39; names clashed: &quot;</span>
-                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">named_unnamed</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">named</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">named_unnamed</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">named</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
                 <span class="p">)</span>
             <span class="c1"># Merge these</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">named_unnamed</span><span class="p">,</span> <span class="o">**</span><span class="n">named</span><span class="p">)</span>
@@ -407,7 +407,7 @@
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Access to those objects that have proper identifier names&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access to those objects that have proper identifier names&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">():</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -433,7 +433,7 @@
 
 
 <div class="viewcode-block" id="MultiFunc"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.MultiFunc">[docs]</a><span class="k">class</span> <span class="nc">MultiFunc</span><span class="p">(</span><span class="n">MultiObj</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A MultiObj, but specialized to contain callable objects only&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A MultiObj, but specialized to contain callable objects only&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unnamed_funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">):</span>
         <span class="c1"># The basic MultiObj initialization</span>
@@ -443,7 +443,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">funcs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Alias of .objects, for better readability in the context of MultiFunc&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Alias of .objects, for better readability in the context of MultiFunc&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span></div>
 
 
@@ -460,7 +460,7 @@
 
 
 <div class="viewcode-block" id="Pipe"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.Pipe">[docs]</a><span class="k">class</span> <span class="nc">Pipe</span><span class="p">(</span><span class="n">MultiFunc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Simple function composition. That is, gives you a callable that implements</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple function composition. That is, gives you a callable that implements</span>
 
 <span class="sd">    input -&gt; f_1 -&gt; ... -&gt; f_n -&gt; output.</span>
 
@@ -555,7 +555,7 @@
 
 
 <div class="viewcode-block" id="flatten_pipe"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.flatten_pipe">[docs]</a><span class="k">def</span> <span class="nf">flatten_pipe</span><span class="p">(</span><span class="n">pipe</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Unravel nested Pipes to get a flat &#39;sequence of functions&#39; version of input.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unravel nested Pipes to get a flat &#39;sequence of functions&#39; version of input.</span>
 
 <span class="sd">    &gt;&gt;&gt; def f(x): return x + 1</span>
 <span class="sd">    &gt;&gt;&gt; def g(x): return x * 2</span>
@@ -575,7 +575,7 @@
 
 
 <div class="viewcode-block" id="pipes_are_equal"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.pipes_are_equal">[docs]</a><span class="k">def</span> <span class="nf">pipes_are_equal</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">func_equality</span><span class="o">=</span><span class="n">eq</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Determine if two pipelines are equal.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine if two pipelines are equal.</span>
 
 <span class="sd">    Pipelines are equal if their flattened versions have equal functions.</span>
 <span class="sd">    Function equality can be controlled by the ``func_equality`` argument.</span>
@@ -635,7 +635,7 @@
 
 
 <div class="viewcode-block" id="FuncFanout"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.FuncFanout">[docs]</a><span class="k">class</span> <span class="nc">FuncFanout</span><span class="p">(</span><span class="n">MultiFunc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Applies multiple functions to the same argument(s) and returns a dict of results.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies multiple functions to the same argument(s) and returns a dict of results.</span>
 
 <span class="sd">    You know how `map(func, iterable_of_inputs)` applies a same function to an iterable</span>
 <span class="sd">    of inputs.</span>
@@ -716,7 +716,7 @@
 <span class="c1"># TODO: Finish this!</span>
 <span class="c1"># TODO: Test the handling var positional and var keyword</span>
 <div class="viewcode-block" id="FlexFuncFanout"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.FlexFuncFanout">[docs]</a><span class="k">class</span> <span class="nc">FlexFuncFanout</span><span class="p">(</span><span class="n">MultiFunc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Call multiple functions, using a pool of arguments that they will draw from.</span>
 
 <span class="sd">    &gt;&gt;&gt; from i2.tests.objects_for_testing import formula1, sum_of_args, mult, add</span>
@@ -812,7 +812,7 @@
 
 
 <div class="viewcode-block" id="ParallelFuncs"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.ParallelFuncs">[docs]</a><span class="k">class</span> <span class="nc">ParallelFuncs</span><span class="p">(</span><span class="n">MultiFunc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make a multi-channel function from a {name: func, ...} specification.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a multi-channel function from a {name: func, ...} specification.</span>
 
 <span class="sd">    &gt;&gt;&gt; multi_func = ParallelFuncs(</span>
 <span class="sd">    ...     say_hello=lambda x: f&quot;hello {x}&quot;, say_goodbye=lambda x: f&quot;goodbye {x}&quot;</span>
@@ -888,7 +888,7 @@
 
 
 <div class="viewcode-block" id="ContextFanout"><a class="viewcode-back" href="../../module_docs/i2/multi_object.html#i2.multi_object.ContextFanout">[docs]</a><span class="k">class</span> <span class="nc">ContextFanout</span><span class="p">(</span><span class="n">MultiObj</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Encapsulates multiple objects into a single context manager that will enter and</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encapsulates multiple objects into a single context manager that will enter and</span>
 <span class="sd">    exit all objects that are context managers themselves.</span>
 
 <span class="sd">    Context managers show up in situations where you need to have some setup and tear</span>

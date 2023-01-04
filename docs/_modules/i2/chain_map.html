@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.chain_map &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.chain_map &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -67,8 +67,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
 </ul>
@@ -115,7 +115,7 @@
 
 
 <div class="viewcode-block" id="is_iterable"><a class="viewcode-back" href="../../module_docs/i2/chain_map.html#i2.chain_map.is_iterable">[docs]</a><span class="k">def</span> <span class="nf">is_iterable</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Similar in nature to :func:`callable`, ``is_iterable`` returns</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Similar in nature to :func:`callable`, ``is_iterable`` returns</span>
 <span class="sd">    ``True`` if an object is `iterable`_, ``False`` if not.</span>
 
 <span class="sd">    &gt;&gt;&gt; is_iterable([])</span>
@@ -127,7 +127,7 @@
 
 <span class="c1"># Note: Mark for moving --&gt; used in only one known place</span>
 <div class="viewcode-block" id="unique_iter"><a class="viewcode-back" href="../../module_docs/i2/chain_map.html#i2.chain_map.unique_iter">[docs]</a><span class="k">def</span> <span class="nf">unique_iter</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Yield unique elements from the iterable, *src*, based on *key*,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yield unique elements from the iterable, *src*, based on *key*,</span>
 <span class="sd">    in the order in which they first appeared in *src*.</span>
 
 <span class="sd">    &gt;&gt;&gt; repetitious = [1, 2, 3] * 10</span>
@@ -164,7 +164,7 @@
 
 <span class="c1"># Note: Mark for moving to py2store --&gt; used in only one place (py2dash).</span>
 <div class="viewcode-block" id="ChainMapTree"><a class="viewcode-back" href="../../module_docs/i2/chain_map.html#i2.chain_map.ChainMapTree">[docs]</a><span class="k">class</span> <span class="nc">ChainMapTree</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Combine/overlay multiple hierarchical mappings. This efficiently merges</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine/overlay multiple hierarchical mappings. This efficiently merges</span>
 <span class="sd">    multiple hierarchical (could be several layers deep) dictionaries, producing</span>
 <span class="sd">    a new view into them that acts exactly like a merged dictionary, but without</span>
 <span class="sd">    doing any copying.</span>
@@ -292,7 +292,7 @@
         <span class="k">return</span> <span class="n">keys_str</span>
 
 <div class="viewcode-block" id="ChainMapTree.to_dict"><a class="viewcode-back" href="../../module_docs/i2/chain_map.html#i2.chain_map.ChainMapTree.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Convert to dict</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to dict</span>
 
 <span class="sd">        &gt;&gt;&gt; a = {&#39;a&#39;: {&#39;x&#39;: 1, &#39;z&#39;: 3}, &#39;foo&#39;: &quot;a&#39;s foo&quot;}</span>
 <span class="sd">        &gt;&gt;&gt; b = {&#39;a&#39;: {&#39;y&#39;: 222, &#39;z&#39;: 333}, &#39;foo&#39;: &quot;b&#39;s foo&quot;}</span>
@@ -321,7 +321,7 @@
         <span class="k">return</span> <span class="n">d</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">_map</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span> <span class="k">for</span> <span class="n">_map</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maps</span><span class="p">))</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">_map</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">_map</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_maps</span><span class="p">))</span><span class="si">}</span><span class="s2">)&quot;</span></div>
         <span class="c1">#         map_keys_strs = self._mk_keys_str(self.keys())</span>
         <span class="c1">#         map_keys_strs = []</span>
         <span class="c1">#         for _map in self._maps:</span>

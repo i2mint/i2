@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.routing_forest &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.routing_forest &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -67,8 +67,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
 </ul>
@@ -293,7 +293,7 @@
 
 
 <div class="viewcode-block" id="RoutingNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.RoutingNode">[docs]</a><span class="k">class</span> <span class="nc">RoutingNode</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A RoutingNode instance needs to be callable on a single object, yielding an iterable or a final value&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A RoutingNode instance needs to be callable on a single object, yielding an iterable or a final value&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;You should implement this.&#39;</span><span class="p">)</span>
@@ -305,7 +305,7 @@
 
 <div class="viewcode-block" id="FinalNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.FinalNode">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">FinalNode</span><span class="p">(</span><span class="n">RoutingNode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A RoutingNode that is final.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A RoutingNode that is final.</span>
 <span class="sd">    It yields (both with call and iter) it&#39;s single `.val` attribute.&quot;&quot;&quot;</span>
 
     <span class="n">val</span><span class="p">:</span> <span class="n">Any</span>
@@ -323,7 +323,7 @@
 <span class="c1"># TODO: Add tooling to merge validation into `then` functions/values</span>
 <div class="viewcode-block" id="CondNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.CondNode">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">CondNode</span><span class="p">(</span><span class="n">RoutingNode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A RoutingNode that implements the if/then (no else) logic&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A RoutingNode that implements the if/then (no else) logic&quot;&quot;&quot;</span>
 
     <span class="n">cond</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span>
     <span class="n">then</span><span class="p">:</span> <span class="n">Any</span>
@@ -338,7 +338,7 @@
 
 <div class="viewcode-block" id="RoutingForest"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.RoutingForest">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">RoutingForest</span><span class="p">(</span><span class="n">RoutingNode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    &gt;&gt;&gt; rf = RoutingForest([</span>
 <span class="sd">    ...     CondNode(cond=lambda x: isinstance(x, int),</span>
@@ -375,7 +375,7 @@
 
 <div class="viewcode-block" id="FeatCondNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.FeatCondNode">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">FeatCondNode</span><span class="p">(</span><span class="n">RoutingNode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A RoutingNode that yields multiple routes, one for each of several conditions met,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A RoutingNode that yields multiple routes, one for each of several conditions met,</span>
 <span class="sd">    where the condition is computed implements computes a feature of the obj and</span>
 <span class="sd">    according to an iterable of conditions on the feature&quot;&quot;&quot;</span>
 
@@ -398,7 +398,7 @@
 
 <div class="viewcode-block" id="SwitchCaseNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.SwitchCaseNode">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">SwitchCaseNode</span><span class="p">(</span><span class="n">RoutingNode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A RoutingNode that implements the switch/case/else logic.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A RoutingNode that implements the switch/case/else logic.</span>
 <span class="sd">    It&#39;s just a specialization (enhanced with a &quot;default&quot; option) of the FeatCondNode class to a situation</span>
 <span class="sd">    where the cond function of feat_cond_thens is equality, therefore the routing can be</span>
 <span class="sd">    implemented with a {value_to_compare_to_feature: then_node} map.</span>

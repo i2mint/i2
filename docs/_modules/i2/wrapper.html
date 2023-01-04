@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -67,8 +67,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
 </ul>
@@ -206,12 +206,12 @@
 
 
 <div class="viewcode-block" id="identity"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.identity">[docs]</a><span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transparent function, returning what&#39;s been input&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transparent function, returning what&#39;s been input&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">x</span></div>
 
 
 <div class="viewcode-block" id="transparent_ingress"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.transparent_ingress">[docs]</a><span class="k">def</span> <span class="nf">transparent_ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &gt;&gt;&gt; transparent_ingress(1, 2, test=1)</span>
 <span class="sd">    ((1, 2), {&#39;test&#39;: 1})</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -220,7 +220,7 @@
 
 
 <div class="viewcode-block" id="transparent_egress"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.transparent_egress">[docs]</a><span class="k">def</span> <span class="nf">transparent_egress</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &gt;&gt;&gt; transparent_egress(&#39;unnecessary_doctest&#39;)</span>
 <span class="sd">    &#39;unnecessary_doctest&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -229,7 +229,7 @@
 
 
 <div class="viewcode-block" id="MakeFromFunc"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.MakeFromFunc">[docs]</a><span class="k">class</span> <span class="nc">MakeFromFunc</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Used to indicate that an object should be made as a function of an input func&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to indicate that an object should be made as a function of an input func&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_to_obj</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func_to_obj</span> <span class="o">=</span> <span class="n">func_to_obj</span>
@@ -240,7 +240,7 @@
 
 <span class="c1"># TODO: Continue factoring out Wrap and Wrapx code</span>
 <span class="k">class</span> <span class="nc">_Wrap</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;To be used as the base of actual Wrap objects.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;To be used as the base of actual Wrap objects.&quot;&quot;&quot;</span>
 
     <span class="n">_init_args</span> <span class="o">=</span> <span class="p">()</span>
     <span class="n">_init_kwargs</span> <span class="o">=</span> <span class="p">()</span>
@@ -260,15 +260,15 @@
         <span class="c1">#  .func, but wraps looks for __wrapped__</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Just forward the call to the wrapped function.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Just forward the call to the wrapped function.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;reduce is meant to control how things are pickled/unpickled&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;reduce is meant to control how things are pickled/unpickled&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This method allows things to work well when we use Wrap object as method&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method allows things to work well when we use Wrap object as method&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="k">return</span> <span class="n">MethodType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span>
@@ -280,7 +280,7 @@
 
     <span class="c1"># TODO: Don&#39;t know exactly what I&#39;m doing below. Review with someone!</span>
     <span class="k">def</span> <span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;So that name of function is passed on to method when assigning to attribute</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;So that name of function is passed on to method when assigning to attribute</span>
 <span class="sd">        That is, doing ``method = Wrap(func)`` in a class definition&quot;&quot;&quot;</span>
         <span class="c1"># TODO: Look into sanity of mutating the name and other ways to achieve same</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
@@ -306,7 +306,7 @@
 
 
 <div class="viewcode-block" id="Wrap"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Wrap">[docs]</a><span class="k">class</span> <span class="nc">Wrap</span><span class="p">(</span><span class="n">_Wrap</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A function wrapper with interface modifiers.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A function wrapper with interface modifiers.</span>
 
 <span class="sd">    :param func: The wrapped function</span>
 <span class="sd">    :param ingress: The incoming data transformer. It determines the argument properties</span>
@@ -450,7 +450,7 @@
 <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span>
     <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">caller</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dflt_wrap</span><span class="o">=</span><span class="n">Wrap</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrap a function, optionally transforming interface, input and output.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap a function, optionally transforming interface, input and output.</span>
 
 <span class="sd">    :param func: The wrapped function</span>
 <span class="sd">    :param ingress: The incoming data transformer. It determines the argument properties</span>
@@ -569,7 +569,7 @@
 
 
 <div class="viewcode-block" id="append_empty_args"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.append_empty_args">[docs]</a><span class="k">def</span> <span class="nf">append_empty_args</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;To use to transform an ingress function that only returns kwargs to one that</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;To use to transform an ingress function that only returns kwargs to one that</span>
 <span class="sd">    returns the normal form of ingress functions: ((), kwargs)&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
@@ -580,7 +580,7 @@
 
 
 <div class="viewcode-block" id="Ingress"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Ingress">[docs]</a><span class="k">class</span> <span class="nc">Ingress</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;The Ingress class offers a template for creating ingress classes.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Ingress class offers a template for creating ingress classes.</span>
 
 <span class="sd">    Note that when writing a decorator with ``i2.wrapper``, you&#39;re usually better off</span>
 <span class="sd">    writing an ingress function for the purpose. As a result, your code will usually</span>
@@ -717,7 +717,7 @@
         <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">allow_partial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init of an Ingress instance.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init of an Ingress instance.</span>
 
 <span class="sd">        :param inner_sig: Signature of the inner function the ingress is for.</span>
 <span class="sd">            The function itself can be given and the signature will be extracted.</span>
@@ -788,14 +788,14 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Ingress signature: </span><span class="si">{</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
 
 <div class="viewcode-block" id="Ingress.wrap"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Ingress.wrap">[docs]</a>    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Wrap</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Convenience method to wrap a function with the instance ingress.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convenience method to wrap a function with the instance ingress.</span>
 <span class="sd">        ``ingress.wrap(func,...)`` equivalent to ``Wrap(func, ingress, ...)``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Ingress.name_map"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Ingress.name_map">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">name_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wrapped</span><span class="p">,</span> <span class="o">**</span><span class="n">old_to_new_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Change argument names.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Change argument names.</span>
 
 <span class="sd">        &gt;&gt;&gt; def f(w, /, x: float, y=2, *, z: int = 3):</span>
 <span class="sd">        ...     return f&quot;(w:={w}) + (x:={x}) * (y:={y}) ** (z:={z}) == {w + x * y ** z}&quot;</span>
@@ -831,7 +831,7 @@
 
 
 <div class="viewcode-block" id="items_with_mapped_keys"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.items_with_mapped_keys">[docs]</a><span class="k">def</span> <span class="nf">items_with_mapped_keys</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key_mapper</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transform dict keys. More precisely yield (new_k,v) pairs from a key mapper dict.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform dict keys. More precisely yield (new_k,v) pairs from a key mapper dict.</span>
 
 <span class="sd">    :param d: src dict</span>
 <span class="sd">    :param key_mapper: {old_name: new_name, ...} mapping</span>
@@ -894,7 +894,7 @@
 
 <span class="c1"># TODO: See what this adds over ``Ingress`` class. Consider merging or reusing.</span>
 <div class="viewcode-block" id="InnerMapIngress"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.InnerMapIngress">[docs]</a><span class="k">class</span> <span class="nc">InnerMapIngress</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A class to help build ingresses systematically by mapping the inner signature.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class to help build ingresses systematically by mapping the inner signature.</span>
 
 <span class="sd">    *Systematically*, i.e. &quot;according to a fixed plan/system&quot; is what it&#39;s about here.</span>
 <span class="sd">    As we&#39;ll see below, if you need to write a particular adapter for a specific case,</span>
@@ -1050,7 +1050,7 @@
     <span class="c1"># TODO: Use/test annotations of outer_sig</span>
 <div class="viewcode-block" id="InnerMapIngress.from_signature"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.InnerMapIngress.from_signature">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="n">outer_sig</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A convienience ingress constructor to specify wrappings that affect arguments</span>
 <span class="sd">        independently.</span>
 
@@ -1156,7 +1156,7 @@
 
 
 <div class="viewcode-block" id="nice_kinds"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.nice_kinds">[docs]</a><span class="k">def</span> <span class="nf">nice_kinds</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">kinds_modifier</span><span class="o">=</span><span class="n">convert_to_PK</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wraps the func, changing the argument kinds according to kinds_modifier.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps the func, changing the argument kinds according to kinds_modifier.</span>
 <span class="sd">    The default behaviour is to change all kinds to POSITIONAL_OR_KEYWORD kinds.</span>
 <span class="sd">    The original purpose of this function is to remove argument-kind restriction</span>
 <span class="sd">    annoyances when doing functional manipulations such as:</span>
@@ -1216,7 +1216,7 @@
 
 <span class="nd">@double_up_as_factory</span>
 <span class="k">def</span> <span class="nf">ch_names</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">old_to_new_name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Change the argument names of a function.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Change the argument names of a function.</span>
 
 <span class="sd">    &gt;&gt;&gt; def f(w, /, x: float, y=2, *, z: int = 3):</span>
 <span class="sd">    ...     return f&quot;(w:={w}) + (x:={x}) * (y:={y}) ** (z:={z}) == {w + x * y ** z}&quot;</span>
@@ -1241,25 +1241,27 @@
 <span class="kn">from</span> <span class="nn">i2.deco</span> <span class="kn">import</span> <span class="n">_resolve_inclusion</span>
 
 
-<div class="viewcode-block" id="include_exclude_ingress_factory"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.include_exclude_ingress_factory">[docs]</a><span class="k">def</span> <span class="nf">include_exclude_ingress_factory</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A pattern underlying any ingress that takes a subset of parameters (possibly</span>
+<span class="c1"># TODO: A more general version would allow include and exclude to be expressed as</span>
+<span class="c1">#     functions that apply to one or several properties of the params</span>
+<span class="c1">#     (name, kind, default, annotation).</span>
+<div class="viewcode-block" id="include_exclude_ingress_factory"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.include_exclude_ingress_factory">[docs]</a><span class="k">def</span> <span class="nf">include_exclude_ingress_factory</span><span class="p">(</span>
+    <span class="n">func</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allow_partial</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A pattern underlying any ingress that takes a subset of parameters (possibly</span>
 <span class="sd">    reordering them).</span>
 
 <span class="sd">    For example: Keep only required arguments, or reorder params to be able to</span>
 <span class="sd">    partialize #3 (without having to partialize #1 and #2)</span>
-
-<span class="sd">    Note: A more general version would allow include and exclude to be expressed as</span>
-<span class="sd">    functions that apply to one or several properties of the params</span>
-<span class="sd">    (name, kind, default, annotation).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="n">include</span> <span class="o">=</span> <span class="n">_resolve_inclusion</span><span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">Ingress</span><span class="p">(</span><span class="n">inner_sig</span><span class="o">=</span><span class="n">sig</span><span class="p">,</span> <span class="n">outer_sig</span><span class="o">=</span><span class="n">sig</span><span class="p">[</span><span class="n">include</span><span class="p">])</span></div>
+    <span class="k">return</span> <span class="n">Ingress</span><span class="p">(</span><span class="n">inner_sig</span><span class="o">=</span><span class="n">sig</span><span class="p">,</span> <span class="n">outer_sig</span><span class="o">=</span><span class="n">sig</span><span class="p">[</span><span class="n">include</span><span class="p">],</span> <span class="n">allow_partial</span><span class="o">=</span><span class="n">allow_partial</span><span class="p">)</span></div>
 
 
 <span class="nd">@double_up_as_factory</span>
 <span class="k">def</span> <span class="nf">include_exclude</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reorder and/or remove parameters.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reorder and/or remove parameters.</span>
 
 <span class="sd">    &gt;&gt;&gt; def foo(a, b, c=&#39;C&#39;, d=&#39;D&#39;):</span>
 <span class="sd">    ...     print(f&quot;{a=},{b=},{c=},{d=}&quot;)</span>
@@ -1284,9 +1286,13 @@
 <span class="c1">#  See https://github.com/i2mint/i2/issues/44</span>
 <span class="nd">@double_up_as_factory</span>
 <span class="k">def</span> <span class="nf">rm_params</span><span class="p">(</span>
-    <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">params_to_remove</span><span class="o">=</span><span class="p">(),</span> <span class="n">allow_removal_of_non_defaulted_params</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">params_to_remove</span><span class="o">=</span><span class="p">(),</span>
+    <span class="n">allow_removal_of_non_defaulted_params</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">allow_partial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get a function with some parameters removed.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a function with some parameters removed.</span>
 
 <span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
 <span class="sd">    &gt;&gt;&gt; def func(x, y=1, z=2):</span>
@@ -1324,7 +1330,10 @@
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">wrap</span><span class="p">(</span>
-        <span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">include_exclude_ingress_factory</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">params_to_remove</span><span class="p">)</span>
+        <span class="n">func</span><span class="p">,</span>
+        <span class="n">ingress</span><span class="o">=</span><span class="n">include_exclude_ingress_factory</span><span class="p">(</span>
+            <span class="n">func</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">params_to_remove</span><span class="p">,</span> <span class="n">allow_partial</span><span class="o">=</span><span class="n">allow_partial</span>
+        <span class="p">),</span>
     <span class="p">)</span>
 
 
@@ -1412,7 +1421,7 @@
 <div class="viewcode-block" id="kwargs_trans"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.kwargs_trans">[docs]</a><span class="k">def</span> <span class="nf">kwargs_trans</span><span class="p">(</span>
     <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">_recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">_inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">key_and_val_func</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transform a kwargs dict or build a transformer.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform a kwargs dict or build a transformer.</span>
 
 <span class="sd">    :param kwargs: The dict containing the input kwargs that we will transform</span>
 <span class="sd">    :param _recursive: Whether the transformations listed in ``key_and_val_func`` should</span>
@@ -1500,7 +1509,7 @@
 
 
 <div class="viewcode-block" id="camelize"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.camelize">[docs]</a><span class="k">def</span> <span class="nf">camelize</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &gt;&gt;&gt; camelize(&#39;camel_case&#39;)</span>
 <span class="sd">    &#39;CamelCase&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1533,7 +1542,7 @@
     <span class="n">method_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">instance_arg_name</span><span class="o">=</span><span class="s1">&#39;self&#39;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MethodFunc</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Get a &#39;method function&#39; from a &#39;normal function&#39;. Also known as &quot;methodize&quot;.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a &#39;method function&#39; from a &#39;normal function&#39;. Also known as &quot;methodize&quot;.</span>
 
 <span class="sd">    That is, get a function that gives the same outputs as the &#39;normal function&#39;,</span>
 <span class="sd">    except that some of the arguments are sourced from the attributes of the first</span>
@@ -1650,7 +1659,7 @@
 <div class="viewcode-block" id="bind_funcs_object_attrs"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.bind_funcs_object_attrs">[docs]</a><span class="k">def</span> <span class="nf">bind_funcs_object_attrs</span><span class="p">(</span>
     <span class="n">funcs</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="p">(),</span> <span class="o">*</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_attrs</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transform one or several functions into a class that contains them as methods</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform one or several functions into a class that contains them as methods</span>
 <span class="sd">    sourcing specific arguments from the instance&#39;s attributes.</span>
 
 <span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
@@ -1740,7 +1749,7 @@
 
 
 <span class="k">def</span> <span class="nf">_mk_base_class_for_funcs</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">init_params</span><span class="p">,</span> <span class="n">funcs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a class with given init_params.</span>
 
 <span class="sd">    :param cls_name: The name the class should have</span>
@@ -1769,7 +1778,7 @@
 <div class="viewcode-block" id="bind_funcs_object_attrs_old"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.bind_funcs_object_attrs_old">[docs]</a><span class="k">def</span> <span class="nf">bind_funcs_object_attrs_old</span><span class="p">(</span>
     <span class="n">funcs</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="p">(),</span> <span class="o">*</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transform one or several functions into a class that contains them as methods</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform one or several functions into a class that contains them as methods</span>
 <span class="sd">    sourcing specific arguments from the instance&#39;s attributes.</span>
 <span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
 <span class="sd">    &gt;&gt;&gt; from dataclasses import dataclass</span>
@@ -1919,19 +1928,19 @@
 
 
 <div class="viewcode-block" id="WrapperValidationError"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.WrapperValidationError">[docs]</a><span class="k">class</span> <span class="nc">WrapperValidationError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when wrapper some construction params are not valid&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when wrapper some construction params are not valid&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="EgressValidationError"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.EgressValidationError">[docs]</a><span class="k">class</span> <span class="nc">EgressValidationError</span><span class="p">(</span><span class="n">WrapperValidationError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when a egress is not valid&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a egress is not valid&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="IngressValidationError"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.IngressValidationError">[docs]</a><span class="k">class</span> <span class="nc">IngressValidationError</span><span class="p">(</span><span class="n">WrapperValidationError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when a ingress is not valid&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a ingress is not valid&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="CallerValidationError"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.CallerValidationError">[docs]</a><span class="k">class</span> <span class="nc">CallerValidationError</span><span class="p">(</span><span class="n">WrapperValidationError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when a caller is not valid&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a caller is not valid&quot;&quot;&quot;</span></div>
 
 
 <span class="k">def</span> <span class="nf">_default_ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1956,7 +1965,7 @@
 <span class="c1"># TODO: Factor out more common parts with Wrap and reuse (possibly through _Wrap)</span>
 <div class="viewcode-block" id="Wrapx"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Wrapx">[docs]</a><span class="k">class</span> <span class="nc">Wrapx</span><span class="p">(</span><span class="n">_Wrap</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">caller</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;An extended wrapping object that allows more complex wrapping mechanisms.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An extended wrapping object that allows more complex wrapping mechanisms.</span>
 
 <span class="sd">        :param func: The wrapped function</span>
 <span class="sd">        :param ingress: The incoming data transformer. It determines the argument properties</span>
@@ -2165,7 +2174,7 @@
 <div class="viewcode-block" id="partialx"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.partialx">[docs]</a><span class="k">def</span> <span class="nf">partialx</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="vm">__name__</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_rm_partialize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extends the functionality of builtin ``functools.partial`` with the ability to</span>
 
 <span class="sd">    - set ``__name__ ``</span>
@@ -2221,7 +2230,7 @@
 <div class="viewcode-block" id="move_params_to_the_end"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.move_params_to_the_end">[docs]</a><span class="k">def</span> <span class="nf">move_params_to_the_end</span><span class="p">(</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">names_to_move</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Choose args from func, according to choice_args_func and move them</span>
 <span class="sd">    to the right</span>
 
@@ -2249,7 +2258,7 @@
 
 
 <div class="viewcode-block" id="move_names_to_the_end"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.move_names_to_the_end">[docs]</a><span class="k">def</span> <span class="nf">move_names_to_the_end</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">names_to_move_to_the_end</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove the items of ``names_to_move_to_the_end`` from ``names``</span>
 <span class="sd">    and append to the right of names</span>
 
@@ -2297,7 +2306,7 @@
 <div class="viewcode-block" id="complete_dict_applying_functions"><a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.complete_dict_applying_functions">[docs]</a><span class="k">def</span> <span class="nf">complete_dict_applying_functions</span><span class="p">(</span>
     <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">func_for_name</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Complete dict ``d`` by applying function to variables in ``d``, sequentially.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Complete dict ``d`` by applying function to variables in ``d``, sequentially.</span>
 
 <span class="sd">    That is, doing ``d[name] = func(**d)`` for all ``name, func in d.items()``.</span>
 
@@ -2374,7 +2383,7 @@
 <span class="k">def</span> <span class="nf">add_smart_defaults</span><span class="p">(</span>
     <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">smart_defaults</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add smart defaults to function.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add smart defaults to function.</span>
 
 <span class="sd">    Smart defaults compute defaults of inputs based on the other given inputs.</span>
 

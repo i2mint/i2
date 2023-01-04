@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.util &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.util &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -67,8 +67,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
 </ul>
@@ -133,7 +133,7 @@
 
 
 <div class="viewcode-block" id="generate_params"><a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.generate_params">[docs]</a><span class="k">def</span> <span class="nf">generate_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble_</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generate inspect.Parameter instances quickly.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate inspect.Parameter instances quickly.</span>
 
 <span class="sd">    Example: Generate params solely from a list of their kinds</span>
 
@@ -167,7 +167,7 @@
 
 
 <div class="viewcode-block" id="params_to_arg_name_and_val"><a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.params_to_arg_name_and_val">[docs]</a><span class="k">def</span> <span class="nf">params_to_arg_name_and_val</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble_</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generate a `{argname: argval, ...}` dictionary from an iterable of params.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a `{argname: argval, ...}` dictionary from an iterable of params.</span>
 
 <span class="sd">    &gt;&gt;&gt; assert dict(params_to_arg_name_and_val(generate_params(&quot;00111234&quot;))) == {</span>
 <span class="sd">    ...     &quot;a00&quot;: 0,</span>
@@ -192,7 +192,7 @@
 
 
 <div class="viewcode-block" id="inject_defaults"><a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.inject_defaults">[docs]</a><span class="k">def</span> <span class="nf">inject_defaults</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble_</span><span class="p">,</span> <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Yields params with defaults ({argname: default_val,...}) edited.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yields params with defaults ({argname: default_val,...}) edited.</span>
 
 <span class="sd">    &gt;&gt;&gt; assert (</span>
 <span class="sd">    ...     str(</span>
@@ -227,7 +227,7 @@
     <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_str_of_call_args</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make a function (that actually returns something based on args) from params.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a function (that actually returns something based on args) from params.</span>
 
 <span class="sd">    See Also: ``sig_to_func``</span>
 
@@ -348,7 +348,7 @@
     <span class="nb">globals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="nb">locals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a function from a signature</span>
 
 <span class="sd">    See Also: ``mk_func_from_params``</span>
@@ -435,7 +435,7 @@
 
 
 <span class="k">def</span> <span class="nf">_all_prefixes</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &gt;&gt;&gt; list(_all_prefixes([1,2,3]))</span>
 <span class="sd">    [(), (1,), (1, 2), (1, 2, 3)]</span>
 <span class="sd">    &gt;&gt;&gt; list(map(dict, _all_prefixes({&#39;a&#39;: 1, &#39;b&#39;: 2}.items())))</span>
@@ -447,7 +447,7 @@
 
 
 <span class="k">def</span> <span class="nf">_args_kwargs_combinations</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    &gt;&gt;&gt; assert list(_args_kwargs_combinations((1,2), {&#39;a&#39;: 3, &#39;b&#39;: 4})) == [</span>
 <span class="sd">    ...     ((), {}),</span>
@@ -503,7 +503,7 @@
         <span class="p">{</span><span class="s1">&#39;kwargs1&#39;</span><span class="p">:</span> <span class="s1">&#39;kwargs1_val&#39;</span><span class="p">},</span>
     <span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Generate all kind-valid (arg, kwargs) input combinations for a function with a</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate all kind-valid (arg, kwargs) input combinations for a function with a</span>
 <span class="sd">    given signature ``sig``, with argument values taken from the ``argument_vals``</span>
 
 <span class="sd">    :param sig: A signature or anything that ``i2.Sig`` can use to create one (e.g.</span>
@@ -568,7 +568,7 @@
 
 
 <span class="k">def</span> <span class="nf">_sig_to_inputs</span><span class="p">(</span><span class="n">po</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ko</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">argument_vals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    &gt;&gt;&gt; list(_sig_to_inputs(2,2,2))</span>
 <span class="sd">    [([0, 1], [2, 3, 4, 5]), ([0, 1, 2], [3, 4, 5]), ([0, 1, 2, 3], [4, 5])]</span>
@@ -591,7 +591,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_sub_sigs_from_default_values</span><span class="p">(</span><span class="n">sig</span><span class="p">:</span> <span class="n">Sig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Sig</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Generate all the signatures compatible with the given signature</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate all the signatures compatible with the given signature</span>
 <span class="sd">    by ignoring the arguments that have default values.</span>
 <span class="sd">    &gt;&gt;&gt; sig = Sig(&#39;(a=0, /, b=0, *args, c=0, **kwargs)&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; assert [str(s) for s in _get_sub_sigs_from_default_values(sig)] == [</span>
@@ -709,7 +709,7 @@
 
 <span class="c1"># Yes, I too see that this can be made into yet another Pipe!</span>
 <div class="viewcode-block" id="function_is_compatible_with_signature"><a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.function_is_compatible_with_signature">[docs]</a><span class="k">def</span> <span class="nf">function_is_compatible_with_signature</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">sig</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Runs through all combinations of positional and keyword arguments,</span>
 
 <span class="sd">    &gt;&gt;&gt; function_is_compatible_with_signature(hasattr, Sig(lambda obj, name: ...))</span>
@@ -731,7 +731,7 @@
 
 
 <div class="viewcode-block" id="builtin_signatureless_callables"><a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.builtin_signatureless_callables">[docs]</a><span class="k">def</span> <span class="nf">builtin_signatureless_callables</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A generator of builtin callables that don&#39;t have signatures.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">builtin_objects</span><span class="p">():</span>

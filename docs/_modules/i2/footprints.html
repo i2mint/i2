@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.footprints &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.footprints &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -67,8 +67,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
 </ul>
@@ -149,7 +149,7 @@
 
 
 <div class="viewcode-block" id="get_imports_from_obj"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.get_imports_from_obj">[docs]</a><span class="k">def</span> <span class="nf">get_imports_from_obj</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Getting imports for an object (usually, module)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getting imports for an object (usually, module)&quot;&quot;&quot;</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">_get_ast_root_from</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
     <span class="k">yield from</span> <span class="n">_get_imports_from_ast_root</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">recursive</span><span class="p">)</span></div>
 
@@ -164,7 +164,7 @@
 
 
 <div class="viewcode-block" id="get_class_that_defined_method"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.get_class_that_defined_method">[docs]</a><span class="k">def</span> <span class="nf">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get class for unbound/bound method.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
@@ -198,7 +198,7 @@
 
 
 <div class="viewcode-block" id="list_func_calls"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.list_func_calls">[docs]</a><span class="k">def</span> <span class="nf">list_func_calls</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts functions and methods called from fn</span>
 <span class="sd">    :param fn: reference to function or method</span>
 <span class="sd">    :return: a list of functions or methods names</span>
@@ -214,7 +214,7 @@
 
 
 <div class="viewcode-block" id="attr_list"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.attr_list">[docs]</a><span class="k">def</span> <span class="nf">attr_list</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts attributes from ast tree processing only func_name function or method</span>
 <span class="sd">    :param root: root node of ast tree</span>
 <span class="sd">    :param func_name: name of the function</span>
@@ -238,7 +238,7 @@
 
 
 <span class="k">def</span> <span class="nf">_attrs_used_by_method</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Util for attrs_used_by_method. Same output as attrs_used_by_method, but intput is (cls, method_name)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsourcefile</span><span class="p">(</span><span class="bp">cls</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
@@ -256,7 +256,7 @@
 
 
 <div class="viewcode-block" id="attrs_used_by_method"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.attrs_used_by_method">[docs]</a><span class="k">def</span> <span class="nf">attrs_used_by_method</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts a list of cls attributes which are used by a method or method_name function</span>
 <span class="sd">    Args:</span>
 <span class="sd">        method: The method (object) to analyze</span>
@@ -309,7 +309,7 @@
 
 <span class="c1">########## Dyanamic version #################################################################</span>
 <div class="viewcode-block" id="Tracker"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.Tracker">[docs]</a><span class="k">class</span> <span class="nc">Tracker</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tracks the attribute access right after `start_track` is set to True.</span>
 
 <span class="sd">    Add this to __metaclass__ for any class that you need to track attributes for given a</span>
@@ -324,7 +324,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inspect getter for tracking the attributes accessed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;on_access&#39;</span><span class="p">]:</span>
@@ -332,7 +332,7 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inspect setter for tracking the attributes accessed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_track</span><span class="p">:</span>
@@ -341,7 +341,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Tracker.on_access"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.Tracker.on_access">[docs]</a>    <span class="k">def</span> <span class="nf">on_access</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        on attribute access, record attribute if and only if its not from</span>
 <span class="sd">        core attribute or `attrs_to_ignore` set to class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -356,7 +356,7 @@
 
 <div class="viewcode-block" id="start_tracking"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.start_tracking">[docs]</a><span class="nd">@contextmanager</span>
 <span class="k">def</span> <span class="nf">start_tracking</span><span class="p">(</span><span class="n">tracker_instance</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ctx manager to gracefully start/stop tracking.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tracker_instance</span><span class="o">.</span><span class="n">start_track</span> <span class="o">=</span> <span class="kc">True</span>
@@ -367,7 +367,7 @@
 <div class="viewcode-block" id="attrs_used_by_method_computation"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.attrs_used_by_method_computation">[docs]</a><span class="k">def</span> <span class="nf">attrs_used_by_method_computation</span><span class="p">(</span>
     <span class="n">cls_method</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tracks the access to attributes within an execution.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
