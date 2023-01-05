@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.io_trans &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.io_trans &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -67,8 +67,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
 </ul>
@@ -181,7 +181,7 @@
 
 <div class="viewcode-block" id="ArgnameIoTrans"><a class="viewcode-back" href="../../module_docs/i2/io_trans.html#i2.io_trans.ArgnameIoTrans">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">ArgnameIoTrans</span><span class="p">(</span><span class="n">IoTrans</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transforms argument values according to their names</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transforms argument values according to their names</span>
 
 <span class="sd">    &gt;&gt;&gt; def foo(a, b=1.0):</span>
 <span class="sd">    ...     return a + b</span>
@@ -210,7 +210,7 @@
 
 <div class="viewcode-block" id="AnnotAndDfltIoTrans"><a class="viewcode-back" href="../../module_docs/i2/io_trans.html#i2.io_trans.AnnotAndDfltIoTrans">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">AnnotAndDfltIoTrans</span><span class="p">(</span><span class="n">IoTrans</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transforms argument values using annotations and default type</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transforms argument values using annotations and default type</span>
 
 <span class="sd">    &gt;&gt;&gt; def foo(a: int, b=1.0):</span>
 <span class="sd">    ...     return a + b</span>
@@ -240,7 +240,7 @@
 
 <div class="viewcode-block" id="JSONAnnotAndDfltIoTrans"><a class="viewcode-back" href="../../module_docs/i2/io_trans.html#i2.io_trans.JSONAnnotAndDfltIoTrans">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">JSONAnnotAndDfltIoTrans</span><span class="p">(</span><span class="n">AnnotAndDfltIoTrans</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transforms argument values using annotations and default type,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transforms argument values using annotations and default type,</span>
 <span class="sd">    including lists, iterables, dicts, and booleans</span>
 
 <span class="sd">    &gt;&gt;&gt; def foo(a: dict, b=[&#39;dflt&#39;], c=False):</span>
@@ -305,7 +305,7 @@
 <span class="c1"># TODO: Write doctest (that only needs builtins)</span>
 <div class="viewcode-block" id="TypedBasedOutIoTrans"><a class="viewcode-back" href="../../module_docs/i2/io_trans.html#i2.io_trans.TypedBasedOutIoTrans">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">TypedBasedOutIoTrans</span><span class="p">(</span><span class="n">IoTrans</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transform output according to it&#39;s type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform output according to it&#39;s type.&quot;&quot;&quot;</span>
 
     <span class="n">trans_func_for_type</span><span class="p">:</span> <span class="n">Mapping</span> <span class="o">=</span> <span class="p">()</span>  <span class="c1"># Todo: Want empty mapping as default (use frozendict or __post_init__?)</span>
     <span class="n">dflt_trans_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -333,7 +333,7 @@
 
 
 <div class="viewcode-block" id="cast_to_jdict"><a class="viewcode-back" href="../../module_docs/i2/io_trans.html#i2.io_trans.cast_to_jdict">[docs]</a><span class="k">def</span> <span class="nf">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Tries to cast to a json-friendly dictionary.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tries to cast to a json-friendly dictionary.</span>
 
 <span class="sd">    &gt;&gt;&gt; cast_to_jdict(&#39;3&#39;)</span>
 <span class="sd">    [3]</span>
@@ -372,7 +372,7 @@
 
 
 <div class="viewcode-block" id="cast_to_list"><a class="viewcode-back" href="../../module_docs/i2/io_trans.html#i2.io_trans.cast_to_list">[docs]</a><span class="k">def</span> <span class="nf">cast_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Tries to case to a list (with json friendly elements)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tries to case to a list (with json friendly elements)</span>
 
 <span class="sd">    &gt;&gt;&gt; cast_to_list(&#39;3&#39;)</span>
 <span class="sd">    [3]</span>

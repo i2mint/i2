@@ -5,6 +5,7 @@ from i2.wrapper import wrap, mk_ingress_from_name_mapper, rm_params
 from i2.deco import FuncFactory
 from i2.signatures import Sig
 
+
 def _test_ingress(a, b: str, c='hi'):
     return (a + len(b) % 2,), dict(string=f'{c} {b}')
 
@@ -240,8 +241,7 @@ def test_wrapx():
     assert iterized_func([1, 2, 3, 4], 10) == [11, 12, 13, 14]
 
 
-def simple_chunker(a: Iterable,
-                   chk_size: int):
+def simple_chunker(a: Iterable, chk_size: int):
     """Generate fixed sized non-overlapping chunks of an iterable ``a``.
 
     >>> list(simple_chunker(range(7), 3))
@@ -263,7 +263,7 @@ def test_rm_params():
         FuncFactory(simple_chunker),
         params_to_remove=['a'],
         allow_removal_of_non_defaulted_params=True,
-        allow_partial=True  # wouldn't work without this
+        allow_partial=True,  # wouldn't work without this
     )
 
     assert str(Sig(mk_chunker)) == '(chk_size: int)'

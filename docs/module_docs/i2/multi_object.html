@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.multi_object &mdash; i2 0.0.172 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.multi_object &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -70,8 +70,8 @@
 <li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tests/wrapper_test.html">i2.tests.wrapper_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="util.html">i2.util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wrapper.html">i2.wrapper</a></li>
 </ul>
@@ -150,7 +150,7 @@ by the with (in python 3.10+).</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="nd">@contextmanager</span>
 <span class="gp">... </span><span class="k">def</span> <span class="nf">some_context_manager</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="k">yield</span> <span class="sa">f</span><span class="s1">&#39;x + 1 = </span><span class="si">{</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="gp">... </span>    <span class="k">yield</span> <span class="sa">f</span><span class="s1">&#39;x + 1 = </span><span class="si">{</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;close&#39;</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">not_a_context_manager</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -595,7 +595,7 @@ The names are completely ignored.</p>
 <p>but</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Pipe</span><span class="p">()</span>
 <span class="gt">Traceback (most recent call last):</span>
-  <span class="c">...</span>
+<span class="w">  </span><span class="c">...</span>
 <span class="gr">ValueError</span>: <span class="n">You need to specify at least one function!</span>
 </pre></div>
 </div>

@@ -1145,7 +1145,7 @@ from i2.deco import _resolve_inclusion
 #     functions that apply to one or several properties of the params
 #     (name, kind, default, annotation).
 def include_exclude_ingress_factory(
-        func, include=None, exclude=None, *, allow_partial=False
+    func, include=None, exclude=None, *, allow_partial=False
 ):
     """
     A pattern underlying any ingress that takes a subset of parameters (possibly
@@ -1186,10 +1186,11 @@ def include_exclude(func=None, *, include=None, exclude=None):
 #  See https://github.com/i2mint/i2/issues/44
 @double_up_as_factory
 def rm_params(
-    func=None, *,
+    func=None,
+    *,
     params_to_remove=(),
     allow_removal_of_non_defaulted_params=False,
-    allow_partial=False
+    allow_partial=False,
 ):
     """Get a function with some parameters removed.
 
@@ -1232,7 +1233,7 @@ def rm_params(
         func,
         ingress=include_exclude_ingress_factory(
             func, exclude=params_to_remove, allow_partial=allow_partial
-        )
+        ),
     )
 
 
