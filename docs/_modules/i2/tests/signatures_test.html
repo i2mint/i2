@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.signatures_test &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.signatures_test &mdash; i2 0.0.174 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -129,6 +129,55 @@
     <span class="n">trace_call</span><span class="p">,</span>
     <span class="n">function_is_compatible_with_signature</span><span class="p">,</span>
 <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">test_signature_equality_and_hashing</span><span class="p">():</span>
+
+    <span class="kn">import</span> <span class="nn">pickle</span>
+
+    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># different instances of (should be a) same signature</span>
+    <span class="n">ref_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+
+    <span class="n">sigs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ref_sig</span><span class="p">,</span>
+        <span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">),</span>  <span class="c1"># another instance of the same Sig(foo)</span>
+        <span class="n">Sig</span><span class="p">(</span><span class="s1">&#39;(x, y, z=3)&#39;</span><span class="p">),</span>  <span class="c1"># signature made explicitly from a string</span>
+        <span class="n">Sig</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">Sig</span><span class="p">(</span><span class="s1">&#39;(y, z=3)&#39;</span><span class="p">),</span>  <span class="c1"># signature made from an add operation</span>
+        <span class="n">Sig</span><span class="p">(</span><span class="n">bar</span><span class="p">),</span>  <span class="c1"># different function, same signature</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">ref_sig</span><span class="p">)),</span>  <span class="c1"># un-pickled signature</span>
+    <span class="p">]</span>
+
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
+        <span class="n">sig</span> <span class="o">==</span> <span class="n">ref_sig</span> <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">sigs</span>
+    <span class="p">),</span> <span class="s1">&#39;sigs should be equal from a == point of view&#39;</span>
+
+    <span class="c1"># Let&#39;s see that</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
+        <span class="nb">hash</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span> <span class="o">==</span> <span class="nb">hash</span><span class="p">(</span><span class="n">ref_sig</span><span class="p">)</span> <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">sigs</span>
+    <span class="p">),</span> <span class="s1">&#39;sigs should have the same hash&#39;</span>
+
+    <span class="c1"># ... and if that wasn&#39;t convincing, let&#39;s see how the sigs behave as dict keys:</span>
+    <span class="c1"># If sigs were different, the following would add key-value pairs to the base dict.</span>
+    <span class="c1"># But it doesn&#39;t. You always get the same one key (same signature) with different</span>
+    <span class="c1"># values:</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="p">{</span><span class="n">ref_sig</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="k">assert</span> <span class="n">t</span> <span class="o">==</span> <span class="p">{</span><span class="n">ref_sig</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="n">t</span><span class="p">[</span><span class="n">sigs</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">t</span> <span class="o">==</span> <span class="p">{</span><span class="n">ref_sig</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>  <span class="c1"># same signature with new 2 value</span>
+    <span class="n">t</span><span class="p">[</span><span class="n">sigs</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">assert</span> <span class="n">t</span> <span class="o">==</span> <span class="p">{</span><span class="n">ref_sig</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>  <span class="c1"># same signature with new 3 value</span>
+
+    <span class="c1"># What if we just have a return annotation?</span>
+    <span class="k">def</span> <span class="nf">baz</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">assert</span> <span class="n">Sig</span><span class="p">(</span><span class="n">baz</span><span class="p">)</span> <span class="o">!=</span> <span class="n">ref_sig</span><span class="p">,</span> <span class="s1">&#39;return annotation of baz should make it different&#39;</span>
 
 
 <span class="k">def</span> <span class="nf">test_signature_of_partial</span><span class="p">():</span>

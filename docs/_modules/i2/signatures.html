@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.173 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.174 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -3252,6 +3252,7 @@
     <span class="k">return</span> <span class="n">_func</span></div>
 
 
+<span class="c1"># TODO: Should we protect from misuse with signature compatibility check?</span>
 <div class="viewcode-block" id="use_interface"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.use_interface">[docs]</a><span class="k">def</span> <span class="nf">use_interface</span><span class="p">(</span><span class="n">interface_sig</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Use interface_sig as (enforced/validated) signature of the decorated function.</span>
 <span class="sd">    That is, the decorated function will use the original function has the backend,</span>
@@ -4247,6 +4248,7 @@
 <span class="sd">    ... )</span>
 <span class="sd">    False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: Consider using functions as defaults instead of None</span>
     <span class="n">annotation_comparator</span> <span class="o">=</span> <span class="n">annotation_comparator</span> <span class="ow">or</span> <span class="n">is_annotation_compatible_with</span>
     <span class="n">default_value_comparator</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">default_value_comparator</span> <span class="ow">or</span> <span class="n">is_default_value_compatible_with</span>
@@ -4388,6 +4390,7 @@
                 <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
+    <span class="c1"># TODO: Consider putting is_param_compatible_with as default instead</span>
     <span class="n">param_comparator</span> <span class="o">=</span> <span class="n">param_comparator</span> <span class="ow">or</span> <span class="n">is_param_compatible_with</span>
 
     <span class="n">pos1</span><span class="p">,</span> <span class="n">pks1</span><span class="p">,</span> <span class="n">vp1</span><span class="p">,</span> <span class="n">kos1</span><span class="p">,</span> <span class="n">vk1</span> <span class="o">=</span> <span class="n">sig1</span><span class="o">.</span><span class="n">detail_names_by_kind</span><span class="p">()</span>

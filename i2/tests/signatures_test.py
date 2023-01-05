@@ -47,20 +47,20 @@ def test_signature_equality_and_hashing():
     sigs = [
         ref_sig,
         Sig(foo),  # another instance of the same Sig(foo)
-        Sig("(x, y, z=3)"),  # signature made explicitly from a string
+        Sig('(x, y, z=3)'),  # signature made explicitly from a string
         Sig('x') + Sig('(y, z=3)'),  # signature made from an add operation
         Sig(bar),  # different function, same signature
-        pickle.loads(pickle.dumps(ref_sig))  # un-pickled signature
+        pickle.loads(pickle.dumps(ref_sig)),  # un-pickled signature
     ]
 
-    assert all(sig==ref_sig for sig in sigs), (
-        "sigs should be equal from a == point of view"
-    )
+    assert all(
+        sig == ref_sig for sig in sigs
+    ), 'sigs should be equal from a == point of view'
 
     # Let's see that
-    assert all(hash(sig) == hash(ref_sig) for sig in sigs), (
-        "sigs should have the same hash"
-    )
+    assert all(
+        hash(sig) == hash(ref_sig) for sig in sigs
+    ), 'sigs should have the same hash'
 
     # ... and if that wasn't convincing, let's see how the sigs behave as dict keys:
     # If sigs were different, the following would add key-value pairs to the base dict.
@@ -77,8 +77,7 @@ def test_signature_equality_and_hashing():
     def baz(x, y, z=3) -> None:
         pass
 
-    assert Sig(baz) != ref_sig, "return annotation of baz should make it different"
-
+    assert Sig(baz) != ref_sig, 'return annotation of baz should make it different'
 
 
 def test_signature_of_partial():
