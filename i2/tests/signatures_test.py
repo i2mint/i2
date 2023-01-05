@@ -31,6 +31,56 @@ from i2.tests.util import (
 )
 
 
+def test_signature_equality_and_hashing():
+
+    import pickle
+
+    def foo(x, y, z=3):
+        pass
+
+    def bar(x, y, z=3):
+        pass
+
+    # different instances of (should be a) same signature
+    ref_sig = Sig(foo)
+
+    sigs = [
+        ref_sig,
+        Sig(foo),  # another instance of the same Sig(foo)
+        Sig("(x, y, z=3)"),  # signature made explicitly from a string
+        Sig('x') + Sig('(y, z=3)'),  # signature made from an add operation
+        Sig(bar),  # different function, same signature
+        pickle.loads(pickle.dumps(ref_sig))  # un-pickled signature
+    ]
+
+    assert all(sig==ref_sig for sig in sigs), (
+        "sigs should be equal from a == point of view"
+    )
+
+    # Let's see that
+    assert all(hash(sig) == hash(ref_sig) for sig in sigs), (
+        "sigs should have the same hash"
+    )
+
+    # ... and if that wasn't convincing, let's see how the sigs behave as dict keys:
+    # If sigs were different, the following would add key-value pairs to the base dict.
+    # But it doesn't. You always get the same one key (same signature) with different
+    # values:
+    t = {ref_sig: 0}
+    assert t == {ref_sig: 0}
+    t[sigs[2]] = 2
+    assert t == {ref_sig: 2}  # same signature with new 2 value
+    t[sigs[3]] = 3
+    assert t == {ref_sig: 3}  # same signature with new 3 value
+
+    # What if we just have a return annotation?
+    def baz(x, y, z=3) -> None:
+        pass
+
+    assert Sig(baz) != ref_sig, "return annotation of baz should make it different"
+
+
+
 def test_signature_of_partial():
     from functools import partial
 

@@ -3152,6 +3152,7 @@ def kind_forgiving_func(func):
     return _func
 
 
+# TODO: Should we protect from misuse with signature compatibility check?
 def use_interface(interface_sig):
     """Use interface_sig as (enforced/validated) signature of the decorated function.
     That is, the decorated function will use the original function has the backend,
@@ -4147,6 +4148,7 @@ def is_param_compatible_with(
     ... )
     False
     """
+    # TODO: Consider using functions as defaults instead of None
     annotation_comparator = annotation_comparator or is_annotation_compatible_with
     default_value_comparator = (
         default_value_comparator or is_default_value_compatible_with
@@ -4288,6 +4290,7 @@ def is_call_compatible_with(
                 return False
         return True
 
+    # TODO: Consider putting is_param_compatible_with as default instead
     param_comparator = param_comparator or is_param_compatible_with
 
     pos1, pks1, vp1, kos1, vk1 = sig1.detail_names_by_kind()
