@@ -21,6 +21,7 @@
    module_docs/i2/scrap/scrap
    module_docs/i2/scrap/scrap_ch_variadics
    module_docs/i2/scrap/scrap_kwargs
+   module_docs/i2/scrap/signature_bops
    module_docs/i2/scrap/simple_pymint
    module_docs/i2/signatures
    module_docs/i2/switch_case_tree
