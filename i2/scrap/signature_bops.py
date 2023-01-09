@@ -4,43 +4,110 @@ See design issue: https://github.com/i2mint/i2/issues/50
 """
 
 from functools import partial
-
-from typing import Callable, TypeVar, Optional, Union
+from collections import defaultdict
+from itertools import tee
+from typing import Callable, TypeVar, Optional, Union, Iterable
 
 B = TypeVar('B')
 B.__doc__ = (
-    "A 'base' type that we are able (example, builtin object) to operate on, as is"
+    "'Base' operand that we are able (example, builtin object) to operate on, as is"
 )
 A = TypeVar('A')
-A.__doc__ = "The 'abstract' type we want to operate on through a key-function"
+A.__doc__ = "'Abstract' type we want to operate on through a key-function"
 KeyFunction = Callable[[A], B]
 KeyFunction.__doc__ = 'Function that transforms an A to a B'
 
-AorB = TypeVar('AorB', A, B)
-AorB.__doc__ = 'An A (abstract) or a B (base)'
-AB = TypeVar('AB', bound=AorB)
-AorB.__doc__ = 'A generic AorB'
 R = TypeVar('R')
 R.__doc__ = 'The return type of a binary operator'
 
-BaseBinaryOperator = Callable[[B, B], R]
+BinaryOperator = Callable[[B, B], R]
 AbstractBinaryOperator = Callable[[A, A], R]
-# BinaryOperator = Union[BaseBinaryOperator, AbstractBinaryOperator]  # equivalent?
-BinaryOperator = Callable[[AB, AB], R]
-KeyEnabledBinaryOperator = Callable[[AB, AB, KeyFunction], R]
 
 
-def key_function_enabled_operator(
-    binary_operator: Union[BaseBinaryOperator, AbstractBinaryOperator],
-    x: AB,
-    y: AB,  # has to be the same as x. If x is A, so should y, if x is B so should y
-    key: Optional[KeyFunction] = None,
+def _key_function_enabled_operator(
+    binary_operator: BinaryOperator,
+    key: KeyFunction,
+    x: A,
+    y: A,
 ) -> R:
+    return binary_operator(key(x), key(y))
+
+
+def _key_function_factory(
+        binary_operator: BinaryOperator,
+        key: KeyFunction,
+):
+    return partial(_key_function_enabled_operator, binary_operator, key)
+
+
+def _key_mappings(x: Iterable, key: Optional[KeyFunction] = None):
     if key is None:
-        return binary_operator(x, y)
-    else:
-        return binary_operator(key(x), key(y))
+        key = lambda x: x
+
+    key_for_item = dict
+    item_for_key = defaultdict(list)
+
+    for item in x:
+        keyed_item = key(item)
+        key_for_item[item] = keyed_item
+        item_for_key[keyed_item].append(item)
+
+    return key_for_item, item_for_key
 
 
-def key_function_factory(binary_operator: BinaryOperator) -> KeyEnabledBinaryOperator:
-    return partial(key_function_enabled_operator, binary_operator)
+    # def _key_item_
+    #     for xi in x:
+    #         yield xi
+def simple_match(x: Iterable, y: Iterable, key=None):
+    key_for_x, x_for_key = _key_mappings(x, key)
+    key_for_y, y_for_key = _key_mappings(y, key)
+    return x_for_key.keys() & y_for_key.keys()
+
+
+def _sig_func(sig1, sig2, params_match, score_param_pair, score_aggreg):
+    params = params_match(sig1, sig2)
+    return score_aggreg(score_param_pair(params))
+
+
+
+# B = TypeVar('B')
+# B.__doc__ = (
+#     "A 'base' type that we are able (example, builtin object) to operate on, as is"
+# )
+# A = TypeVar('A')
+# A.__doc__ = "The 'abstract' type we want to operate on through a key-function"
+# KeyFunction = Callable[[A], B]
+# KeyFunction.__doc__ = 'Function that transforms an A to a B'
+#
+# AorB = TypeVar('AorB', A, B)
+# # AorB = Union[A, B]
+# AorB.__doc__ = 'An A (abstract) or a B (base)'
+# AB = TypeVar('AB', bound=AorB)
+# AorB.__doc__ = 'A generic AorB'
+# R = TypeVar('R')
+# R.__doc__ = 'The return type of a binary operator'
+#
+# BaseBinaryOperator = Callable[[B, B], R]
+# AbstractBinaryOperator = Callable[[A, A], R]
+# # BinaryOperator = Union[BaseBinaryOperator, AbstractBinaryOperator]  # equivalent?
+# BinaryOperator = Callable[[AB, AB], R]
+# KeyEnabledBinaryOperator = Callable[[AB, AB, KeyFunction], R]
+#
+
+# # key is None => x is B => y is B
+# # key is not None => x is A => y is A
+# def key_function_enabled_operator(
+#     binary_operator: Union[BaseBinaryOperator, AbstractBinaryOperator],
+#     x: AB,
+#     y: AB,  # has to be the same as x. If x is A, so should y, if x is B so should y
+#     key: Optional[KeyFunction] = None,
+# ) -> R:
+#     if key is None:
+#         return binary_operator(x, y)
+#     else:
+#         return binary_operator(key(x), key(y))
+#
+#
+# def key_function_factory(binary_operator: BinaryOperator) -> KeyEnabledBinaryOperator:
+#     return partial(key_function_enabled_operator, binary_operator)
+#
