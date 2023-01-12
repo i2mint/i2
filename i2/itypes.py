@@ -8,7 +8,84 @@ from typing import (
     Any,
     runtime_checkable,
     get_args,
+    Literal,
+    get_origin,
 )
+
+
+from inspect import signature
+
+
+# Note: Simplified func-applied version of i2.Sig.kwargs_for_args_and_kwargs
+def _arg_name_and_val_dict(func, *args, **kwargs):
+    """
+
+    :param func:
+    :param args:
+    :param kwargs:
+    :return:
+
+    >>> def foo(x, /, y, *, z=3): ...
+    >>> _arg_name_and_val_dict(foo, 1, 2, z=4)
+    {'x': 1, 'y': 2, 'z': 4}
+
+    """
+    b = signature(func).bind(*args, **kwargs)
+    b.apply_defaults()
+    return b.arguments
+
+
+def _annotation_is_literal(typ):
+    return get_origin(typ) is Literal
+
+
+def _value_is_in_literal(value, literal):
+    return value in literal.__args__
+
+
+def _validate_that_value_is_in_literal(name, value, literal):
+    if not _value_is_in_literal(value, literal):
+        error = ValueError(
+            f'{value} is an invalid value for {name}. '
+            f'Values should be one of the following: {literal.__args__}'
+        )
+        error.allowed_values = literal.__args__
+        error.input_value = value
+        raise error
+
+
+# TODO: Not picklable. Make with wrapper module, or let this module be independent?
+# TODO: Could use Sig. Should we, or let this module be independent?
+# TODO: Add control over error message/type?
+def validate_literal(func):
+    """
+    Decorator to validate (Literal-annotated) argument values at call time.
+
+    Wraps a function to add validation of the input arguments annotated with Literal
+    against the values listed by the literal. If the input argument is not one of the
+    literal values, a ValueError is raised.
+
+    >>> @validate_literal
+    ... def f(x: Literal[1, 2, 3]):
+    ...     return x
+    >>> f(1)
+    1
+    >>> f(4)  # doctest: +NORMALIZE_WHITESPACE
+    Traceback (most recent call last):
+        ...
+    ValueError: 4 is an invalid value for x. Values should be one of the following: (1, 2, 3)
+
+    """
+
+    def wrapper(*args, **kwargs):
+        _kwargs = _arg_name_and_val_dict(func, *args, **kwargs)
+        for arg_name, arg_type in func.__annotations__.items():
+            if _annotation_is_literal(arg_type):
+                arg_val = _kwargs[arg_name]
+                _validate_that_value_is_in_literal(arg_name, arg_val, arg_type)
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 def new_type(
