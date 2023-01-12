@@ -14,6 +14,7 @@ from typing import (
 
 
 from inspect import signature
+from functools import wraps
 
 
 # Note: Simplified func-applied version of i2.Sig.kwargs_for_args_and_kwargs
@@ -77,6 +78,7 @@ def validate_literal(func):
 
     """
 
+    @wraps(func)
     def wrapper(*args, **kwargs):
         _kwargs = _arg_name_and_val_dict(func, *args, **kwargs)
         for arg_name, arg_type in func.__annotations__.items():
