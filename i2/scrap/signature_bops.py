@@ -25,17 +25,13 @@ AbstractBinaryOperator = Callable[[A, A], R]
 
 
 def _key_function_enabled_operator(
-    binary_operator: BinaryOperator,
-    key: KeyFunction,
-    x: A,
-    y: A,
+    binary_operator: BinaryOperator, key: KeyFunction, x: A, y: A,
 ) -> R:
     return binary_operator(key(x), key(y))
 
 
 def _key_function_factory(
-        binary_operator: BinaryOperator,
-        key: KeyFunction,
+    binary_operator: BinaryOperator, key: KeyFunction,
 ):
     return partial(_key_function_enabled_operator, binary_operator, key)
 
@@ -54,10 +50,11 @@ def _key_mappings(x: Iterable, key: Optional[KeyFunction] = None):
 
     return key_for_item, item_for_key
 
-
     # def _key_item_
     #     for xi in x:
     #         yield xi
+
+
 def simple_match(x: Iterable, y: Iterable, key=None):
     key_for_x, x_for_key = _key_mappings(x, key)
     key_for_y, y_for_key = _key_mappings(y, key)
@@ -67,7 +64,6 @@ def simple_match(x: Iterable, y: Iterable, key=None):
 def _sig_func(sig1, sig2, params_match, score_param_pair, score_aggreg):
     params = params_match(sig1, sig2)
     return score_aggreg(score_param_pair(params))
-
 
 
 # B = TypeVar('B')
