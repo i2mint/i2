@@ -40,8 +40,22 @@ def _annotation_is_literal(typ):
     return get_origin(typ) is Literal
 
 
+def _literal_values(literal):
+    """
+    Get the values of a Literal type.
+
+    :param literal:
+    :return:
+
+    >>> from typing import Literal
+    >>> _literal_values(Literal[1, 2, 3])
+    (1, 2, 3)
+    """
+    return literal.__args__
+
+
 def _value_is_in_literal(value, literal):
-    return value in literal.__args__
+    return value in _literal_values(literal)
 
 
 def _validate_that_value_is_in_literal(name, value, literal):
@@ -88,6 +102,17 @@ def validate_literal(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+
+def iterable_to_literal(iterable: Iterable):
+    """
+    Convert an iterable to a Literal type.
+
+    >>> iterable_to_literal([1, 2, 3])
+    typing.Literal[1, 2, 3]
+
+    """
+    return Literal.__getitem__(tuple(iterable))
 
 
 def new_type(
