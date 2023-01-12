@@ -188,10 +188,10 @@ def insert_name_based_objects_in_scope(
             )
 
 
-class Literal:
+class LiteralVal:
     """An object to indicate that the value should be considered literally.
 
-    >>> t = Literal(42)
+    >>> t = LiteralVal(42)
     >>> t.get_val()
     42
     >>> t()
@@ -289,7 +289,7 @@ def path_extractor(tree, path, getter=dflt_idx_preprocessor, *, path_sep='.'):
         idx, *path = path  # extract path[0] as idx & update path to path[1:]
         if isinstance(idx, str) and idx == '*':
             idx = lambda x: True  # use a filter function (but filter everything in)
-        if callable(idx) and not isinstance(idx, Literal):
+        if callable(idx) and not isinstance(idx, LiteralVal):
             # If idx is a non-literal callable, consider it as a filter to be applied
             # to iter(tree)
             # TODO: https://github.com/i2mint/i2/issues/27
@@ -297,7 +297,7 @@ def path_extractor(tree, path, getter=dflt_idx_preprocessor, *, path_sep='.'):
                 path_extractor(sub_tree, path, getter) for sub_tree in filter(idx, tree)
             ]
         else:
-            if isinstance(idx, Literal):
+            if isinstance(idx, LiteralVal):
                 # Use of Literal is meant get out of trouble if we want to use a
                 # callable as an actual index, not as a filter.
                 idx = idx.get_val()

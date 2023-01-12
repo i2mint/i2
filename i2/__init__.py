@@ -49,7 +49,7 @@ from i2.wrapper import (
 )
 
 from i2.util import (
-    Literal,
+    LiteralVal,
     path_extractor,
     get_function_body,
     lazyprop,

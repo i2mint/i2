@@ -142,7 +142,7 @@ could_be_float
 from itertools import chain
 from dataclasses import dataclass
 from typing import Any, Iterable, Callable, Mapping, Tuple
-from i2.util import Literal
+from i2.util import LiteralVal
 
 
 # TODO: Think a bit harder about this mini-language
@@ -151,7 +151,7 @@ def _default_mini_lang(x):
     # TODO: One is really tempted to use CondNode here to define this, right?
     if isinstance(x, (CondNode, RoutingForest, SwitchCaseNode)):
         return x
-    elif isinstance(x, Literal):
+    elif isinstance(x, LiteralVal):
         return x.get_val()
     elif isinstance(x, tuple):
         if len(x) == 2:
@@ -468,12 +468,12 @@ def test_routing_forest():
         [
             (
                 lambda x: x % 5,
-                Literal({0: FinalNode('zero_mod_5'), 1: FinalNode('one_mod_5')}),
+                LiteralVal({0: FinalNode('zero_mod_5'), 1: FinalNode('one_mod_5')}),
                 FinalNode('default_mod_5'),
             ),
             (
                 lambda x: x % 2,
-                Literal({0: FinalNode('even'), 1: FinalNode('odd')}),
+                LiteralVal({0: FinalNode('even'), 1: FinalNode('odd')}),
                 FinalNode('that is not an int'),
             ),
         ]
