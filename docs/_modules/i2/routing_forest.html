@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.routing_forest &mdash; i2 0.0.176 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.routing_forest &mdash; i2 0.0.177 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -243,7 +243,7 @@
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">i2.util</span> <span class="kn">import</span> <span class="n">Literal</span>
+<span class="kn">from</span> <span class="nn">i2.util</span> <span class="kn">import</span> <span class="n">LiteralVal</span>
 
 
 <span class="c1"># TODO: Think a bit harder about this mini-language</span>
@@ -252,7 +252,7 @@
     <span class="c1"># TODO: One is really tempted to use CondNode here to define this, right?</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">CondNode</span><span class="p">,</span> <span class="n">RoutingForest</span><span class="p">,</span> <span class="n">SwitchCaseNode</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">x</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Literal</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">LiteralVal</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">get_val</span><span class="p">()</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -569,12 +569,12 @@
         <span class="p">[</span>
             <span class="p">(</span>
                 <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">5</span><span class="p">,</span>
-                <span class="n">Literal</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;one_mod_5&#39;</span><span class="p">)}),</span>
+                <span class="n">LiteralVal</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;one_mod_5&#39;</span><span class="p">)}),</span>
                 <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;default_mod_5&#39;</span><span class="p">),</span>
             <span class="p">),</span>
             <span class="p">(</span>
                 <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span><span class="p">,</span>
-                <span class="n">Literal</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;even&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;odd&#39;</span><span class="p">)}),</span>
+                <span class="n">LiteralVal</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;even&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;odd&#39;</span><span class="p">)}),</span>
                 <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;that is not an int&#39;</span><span class="p">),</span>
             <span class="p">),</span>
         <span class="p">]</span>
