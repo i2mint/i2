@@ -58,3 +58,5 @@ from i2.util import (
     mk_sentinel,
     ensure_identifiers,
 )
+
+from i2.itypes import validate_literal
