@@ -66,6 +66,68 @@ def _sig_func(sig1, sig2, params_match, score_param_pair, score_aggreg):
     return score_aggreg(score_param_pair(params))
 
 
+from operator import eq
+
+
+def param_binary_func(
+    param1, param2, *, name=eq, kind=eq, default=eq, annotation=eq, aggreg=all
+):
+    """Compare two parameters.
+
+    Note that by default, this function is strict, and will return False if
+    any of the parameters are not equal. This is because the default
+    aggregation function is `all` and the default comparison functions of the
+    parameter's attributes are `eq` (meaning equality, not identity).
+
+    But you can change that by passing different comparison functions and/or
+    aggregation functions.
+
+    In fact, the real purpose of this function is to be used as a factory of parameter
+    binary functions, through parametrizing it with `functools.partial`.
+
+    The parameter binary functions themselves are meant to be used to make signature
+    binary functions.
+
+    :param param1: first parameter
+    :param param2: second parameter
+    :param name: function to compare names
+    :param kind: function to compare kinds
+    :param default: function to compare defaults
+    :param annotation: function to compare annotations
+    :param aggreg: function to aggregate results
+
+    >>> from inspect import Parameter
+    >>> param1 = Parameter('x', Parameter.POSITIONAL_OR_KEYWORD)
+    >>> param2 = Parameter('x', Parameter.POSITIONAL_OR_KEYWORD)
+    >>> param_binary_func(param1, param2)
+    True
+
+    """
+    return aggreg((
+        name(param1.name, param2.name),
+        kind(param1.kind, param2.kind),
+        default(param1.default, param2.default),
+        annotation(param1.annotation, param2.annotation),
+    ))
+
+# from graphviz import Digraph
+#
+#
+# def get_edge_list(graph: Digraph) -> list:
+#     """Gets a list of edges (as node id pairs) from a digraph."""
+#     return [
+#         (node, child)
+#         for node in graph.body
+#         if node.startswith('  ')
+#         for child in graph.body[graph.body.index(node) + 1 :]
+#         if child.startswith('  ')
+#     ]
+# import networkx as nx
+# nx.nx_agraph.read_dot
+
+
+
+
 # B = TypeVar('B')
 # B.__doc__ = (
 #     "A 'base' type that we are able (example, builtin object) to operate on, as is"
