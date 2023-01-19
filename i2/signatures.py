@@ -93,11 +93,13 @@ from typing import (
     Iterable,
     Tuple,
     Iterator,
+    TypeVar,
     Mapping as MappingType,
 )
 from typing import KT, VT
 from types import FunctionType
 from collections import defaultdict
+from operator import eq
 
 from functools import (
     cached_property,
@@ -4105,9 +4107,80 @@ for kind in param_kinds:
         partial(param_for_kind, kind=kind, with_default=True),
     )
 
-###########################
+########################################################################################
 # Signature Compatibility #
-###########################
+########################################################################################
+
+Compared = TypeVar('Compared')
+Comparison = TypeVar('Comparison')
+Comparator = Callable[[Compared, Compared], Comparison]
+# TODO: Make function that makes Comparator types according for different kinds of
+#  compared types? (e.g. for comparing signatures, for comparing parameters, ...)
+SignatureComparator = Callable[[Signature, Signature], Comparison]
+ParamComparator = Callable[[Parameter, Parameter], Comparison]
+
+ComparisonAggreg = Callable[[Iterable[Comparison]], Any]
+
+
+# TODO: Show examples of how this can be used to produce precise error messages.
+#  The way to do this is to have the attribute binary functions produce some info dicts
+#  that can then be aggregated in aggreg to produce a final error message (or even
+#  a final error object, which can even be raised) if there is indeed a mismatch at all.
+#  Further more, we might want to make a function that will take a parametrized
+#  param_binary_func and produce such a error raising function from it, using the
+#  specific functions (extracted by Sig) to produce the error message.
+def param_binary_func(
+    param1: Parameter,
+    param2: Parameter,
+    *,
+    name: Comparator = eq,
+    kind: Comparator = eq,
+    default: Comparator = eq,
+    annotation: Comparator = eq,
+    aggreg: ComparisonAggreg = all,
+):
+    """Compare two parameters.
+
+    Note that by default, this function is strict, and will return False if
+    any of the parameters are not equal. This is because the default
+    aggregation function is `all` and the default comparison functions of the
+    parameter's attributes are `eq` (meaning equality, not identity).
+
+    But you can change that by passing different comparison functions and/or
+    aggregation functions.
+
+    In fact, the real purpose of this function is to be used as a factory of parameter
+    binary functions, through parametrizing it with `functools.partial`.
+
+    The parameter binary functions themselves are meant to be used to make signature
+    binary functions.
+
+    :param param1: first parameter
+    :param param2: second parameter
+    :param name: function to compare names
+    :param kind: function to compare kinds
+    :param default: function to compare defaults
+    :param annotation: function to compare annotations
+    :param aggreg: function to aggregate results
+
+    >>> from inspect import Parameter
+    >>> param1 = Parameter('x', Parameter.POSITIONAL_OR_KEYWORD)
+    >>> param2 = Parameter('x', Parameter.POSITIONAL_OR_KEYWORD)
+    >>> param_binary_func(param1, param2)
+    True
+
+    See https://github.com/i2mint/i2/issues/50#issuecomment-1381686812 for discussion.
+
+    """
+    return aggreg(
+        (
+            name(param1.name, param2.name),
+            kind(param1.kind, param2.kind),
+            default(param1.default, param2.default),
+            annotation(param1.annotation, param2.annotation),
+        )
+    )
+
 
 # TODO: Implement annotation compatibility
 def is_annotation_compatible_with(annot1, annot2):
@@ -4121,8 +4194,8 @@ def is_default_value_compatible_with(dflt1, dflt2):
 def is_param_compatible_with(
     p1: Parameter,
     p2: Parameter,
-    annotation_comparator: Callable = None,
-    default_value_comparator: Callable = None,
+    annotation_comparator: Comparator = None,
+    default_value_comparator: Comparator = None,
 ):
     """Return True if ``p1`` is compatible with ``p2``. Meaning that any value valid
     for ``p1`` is valid for ``p2``.
@@ -4160,7 +4233,7 @@ def is_param_compatible_with(
 
 
 def is_call_compatible_with(
-    sig1: Sig, sig2: Sig, *, param_comparator: Callable = None
+    sig1: Sig, sig2: Sig, *, param_comparator: ParamComparator = None
 ) -> bool:
     """Return True if ``sig1`` is compatible with ``sig2``. Meaning that all valid ways
     to call ``sig1`` are valid for ``sig2``.
