@@ -4115,12 +4115,19 @@ Compared = TypeVar('Compared')
 
 Comparison = TypeVar('Comparison')
 Comparator = Callable[[Compared, Compared], Comparison]
-Comparison.__doc__ = 'The return type of a Comparator'
+Comparison.__doc__ = (
+    'The return type of a Comparator. Typically a bool, or int, but can be anything.'
+    'In that sense it is more of a "collation" than I comparison'
+)
 
 # TODO: Make function that makes Comparator types according for different kinds of
 #  compared types? (e.g. for comparing signatures, for comparing parameters, ...)
+#  See HasAttr in https://github.com/i2mint/i2/blob/feb469acdc0bc8268877b400b9af6dda56de6292/i2/itypes.py#L164
+#  for inspiration.
 SignatureComparator = Callable[[Signature, Signature], Comparison]
 ParamComparator = Callable[[Parameter, Parameter], Comparison]
+CallableComparator = Callable[[Callable, Callable], Comparison]
+
 
 ComparisonAggreg = Callable[[Iterable[Comparison]], Any]
 
@@ -4145,7 +4152,13 @@ def _keyed_comparator(
 
 
 def keyed_comparator(comparator: Comparator, key: KeyFunction,) -> Comparator:
-    """Create a key-function enabled binary operator
+    """Create a key-function enabled binary operator.
+
+    In various places in python functionality is extended by allowing a key function.
+    For example, the ``sorted`` function allows a key function to be passed, which is
+    applied to each element before sorting. The keyed_comparator function allows a
+    comparator to be extended in the same way. The returned comparator will apply the
+    key function toeach input before applying the original comparator.
 
     >>> from operator import eq
     >>> parity = lambda x: x % 2

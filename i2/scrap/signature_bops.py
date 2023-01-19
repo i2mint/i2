@@ -24,19 +24,28 @@ BinaryOperator = Callable[[B, B], R]
 AbstractBinaryOperator = Callable[[A, A], R]
 
 
-def _key_function_enabled_operator(
+def _keyed_comparator(
     binary_operator: BinaryOperator, key: KeyFunction, x: A, y: A,
 ) -> R:
+    """Apply a binary operator to two operands,
+    after transforming them through a key function"""
     return binary_operator(key(x), key(y))
 
 
-def _key_function_factory(
+def keyed_comparator(
     binary_operator: BinaryOperator, key: KeyFunction,
 ):
-    return partial(_key_function_enabled_operator, binary_operator, key)
+    """Create a key-function enabled binary operator"""
+    return partial(_keyed_comparator, binary_operator, key)
+
+
+# For back-compatibility:
+_key_function_enabled_operator = _keyed_comparator
+_key_function_factory = keyed_comparator
 
 
 def _key_mappings(x: Iterable, key: Optional[KeyFunction] = None):
+    """Create a mapping from key to value, and a mapping from value to key"""
     if key is None:
         key = lambda x: x
 
@@ -66,49 +75,13 @@ def _sig_func(sig1, sig2, params_match, score_param_pair, score_aggreg):
     return score_aggreg(score_param_pair(params))
 
 
-from operator import eq
 
 
-def param_binary_func(
-    param1, param2, *, name=eq, kind=eq, default=eq, annotation=eq, aggreg=all
-):
-    """Compare two parameters.
 
-    Note that by default, this function is strict, and will return False if
-    any of the parameters are not equal. This is because the default
-    aggregation function is `all` and the default comparison functions of the
-    parameter's attributes are `eq` (meaning equality, not identity).
+# Moved to i2.signatures (keep import below for back comp
+from i2.signatures import param_binary_func
 
-    But you can change that by passing different comparison functions and/or
-    aggregation functions.
-
-    In fact, the real purpose of this function is to be used as a factory of parameter
-    binary functions, through parametrizing it with `functools.partial`.
-
-    The parameter binary functions themselves are meant to be used to make signature
-    binary functions.
-
-    :param param1: first parameter
-    :param param2: second parameter
-    :param name: function to compare names
-    :param kind: function to compare kinds
-    :param default: function to compare defaults
-    :param annotation: function to compare annotations
-    :param aggreg: function to aggregate results
-
-    >>> from inspect import Parameter
-    >>> param1 = Parameter('x', Parameter.POSITIONAL_OR_KEYWORD)
-    >>> param2 = Parameter('x', Parameter.POSITIONAL_OR_KEYWORD)
-    >>> param_binary_func(param1, param2)
-    True
-
-    """
-    return aggreg((
-        name(param1.name, param2.name),
-        kind(param1.kind, param2.kind),
-        default(param1.default, param2.default),
-        annotation(param1.annotation, param2.annotation),
-    ))
+from pydantic import validate_arguments, ValidationError
 
 # from graphviz import Digraph
 #
