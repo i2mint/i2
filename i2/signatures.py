@@ -4136,6 +4136,17 @@ KeyFunction = Callable[[CT], Compared]
 KeyFunction.__doc__ = 'Function that transforms one compared type to another'
 
 
+def compare_signatures(func1, func2, signature_comparator: SignatureComparator = eq):
+    return signature_comparator(Sig(func1), Sig(func2))
+
+
+# TODO: Look into typing: Why does lint complain about this line of code?
+def mk_func_comparator_based_on_signature_comparator(
+    signature_comparator: SignatureComparator
+) -> CallableComparator:
+    return partial(compare_signatures, signature_comparator=signature_comparator)
+
+
 def _keyed_comparator(
     comparator: Comparator, key: KeyFunction, x: CT, y: CT,
 ) -> Comparison:
