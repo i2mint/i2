@@ -4149,8 +4149,8 @@ def keyed_comparator(comparator: Comparator, key: KeyFunction,) -> Comparator:
 
     >>> from operator import eq
     >>> parity = lambda x: x % 2
-    >>> keyed_comparator(eq, parity)
-    >>> list(map(keyed_comparator(eq, parity), [1, 1, 2, 2], [3, 4, 5, 6]))
+    >>> comparator = keyed_comparator(eq, parity)
+    >>> list(map(comparator, [1, 1, 2, 2], [3, 4, 5, 6]))
     [True, False, False, True]
     """
     return partial(_keyed_comparator, comparator, key)
