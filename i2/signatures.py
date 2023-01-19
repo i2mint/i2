@@ -4112,8 +4112,11 @@ for kind in param_kinds:
 ########################################################################################
 
 Compared = TypeVar('Compared')
+
 Comparison = TypeVar('Comparison')
 Comparator = Callable[[Compared, Compared], Comparison]
+Comparison.__doc__ = 'The return type of a Comparator'
+
 # TODO: Make function that makes Comparator types according for different kinds of
 #  compared types? (e.g. for comparing signatures, for comparing parameters, ...)
 SignatureComparator = Callable[[Signature, Signature], Comparison]
@@ -4121,6 +4124,41 @@ ParamComparator = Callable[[Parameter, Parameter], Comparison]
 
 ComparisonAggreg = Callable[[Iterable[Comparison]], Any]
 
+CT = TypeVar('CT')  # some other Compared type (used to define KeyFunction
+KeyFunction = Callable[[CT], Compared]
+KeyFunction.__doc__ = 'Function that transforms one compared type to another'
+
+
+def _keyed_comparator(
+    comparator: Comparator, key: KeyFunction, x: CT, y: CT,
+) -> Comparison:
+    """Apply a comparator after transforming inputs through a key function.
+
+    >>> from operator import eq
+    >>> parity = lambda x: x % 2
+    >>> _keyed_comparator(eq, parity, 1, 3)
+    True
+    >>> _keyed_comparator(eq, parity, 1, 4)
+    False
+    """
+    return comparator(key(x), key(y))
+
+
+def keyed_comparator(comparator: Comparator, key: KeyFunction,) -> Comparator:
+    """Create a key-function enabled binary operator
+
+    >>> from operator import eq
+    >>> parity = lambda x: x % 2
+    >>> keyed_comparator(eq, parity)
+    >>> list(map(keyed_comparator(eq, parity), [1, 1, 2, 2], [3, 4, 5, 6]))
+    [True, False, False, True]
+    """
+    return partial(_keyed_comparator, comparator, key)
+
+
+# For back-compatibility:
+_key_function_enabled_operator = _keyed_comparator
+_key_function_factory = keyed_comparator
 
 # TODO: Show examples of how this can be used to produce precise error messages.
 #  The way to do this is to have the attribute binary functions produce some info dicts
