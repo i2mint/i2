@@ -4191,7 +4191,7 @@ _key_function_factory = keyed_comparator
 #  Further more, we might want to make a function that will take a parametrized
 #  param_binary_func and produce such a error raising function from it, using the
 #  specific functions (extracted by Sig) to produce the error message.
-def param_binary_func(
+def param_comparator(
     param1: Parameter,
     param2: Parameter,
     *,
@@ -4243,6 +4243,8 @@ def param_binary_func(
         )
     )
 
+
+param_binary_func = param_comparator  # back compatibility alias
 
 # TODO: Implement annotation compatibility
 def is_annotation_compatible_with(annot1, annot2):
