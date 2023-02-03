@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.routing_forest &mdash; i2 0.0.177 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.routing_forest &mdash; i2 0.0.178 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -113,7 +113,7 @@ components.</p>
 <p>Think of the relationship between the for loop (code) and the iterator (object), along
 with iterator tools (itertools).
 This is what we’re trying to explore, but for if/then conditions.</p>
-<p>I said explore. Some more work is needed here to make it easily usable.</p>
+<p>I said explore. Some more work is needed here to make it robust and easily usable.</p>
 <p>Let’s look at an example involving the three main actors of our play.
 Each of these are <code class="docutils literal notranslate"><span class="pre">Iterable</span></code> and <code class="docutils literal notranslate"><span class="pre">Callable</span></code> (<code class="docutils literal notranslate"><span class="pre">Generator</span></code> to be precise).</p>
 <ul class="simple">
@@ -121,6 +121,15 @@ Each of these are <code class="docutils literal notranslate"><span class="pre">I
 <li><p><code class="docutils literal notranslate"><span class="pre">FinalNode</span></code>: Final – yields (both with call and iter) it’s single <cite>.val</cite> attribute.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">RoutingForest</span></code>: An Iterable of <code class="docutils literal notranslate"><span class="pre">CondNode</span></code></p></li>
 </ul>
+<p>You’ll note that instances of these classes are all both callables and iterables,
+and that when called, they return iterables.
+It’s this aspect that makes us be able to nest conditions within conditions,
+and further, control the flow of the iteration from outside.
+A routing node (or forest) called on an object will yield all values that match the
+conditions that were specified for it.
+For example, if you need all matches, you can wrap it with <code class="docutils literal notranslate"><span class="pre">list</span></code>, if you need the
+first match only, you can wrap it with <code class="docutils literal notranslate"><span class="pre">next</span></code>, if you have a default value,
+you can wrap it in <code class="docutils literal notranslate"><span class="pre">next</span></code> with a default value.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">inspect</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">could_be_int</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -245,10 +254,49 @@ Each of these are <code class="docutils literal notranslate"><span class="pre">I
 
 <dl class="py class">
 <dt id="i2.routing_forest.FeatCondNode">
-<em class="property">class </em><code class="sig-prename descclassname">i2.routing_forest.</code><code class="sig-name descname">FeatCondNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">feat_cond_thens</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>Tuple<span class="p">[</span>Callable<span class="p">, </span>Callable<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/routing_forest.html#FeatCondNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.FeatCondNode" title="Permalink to this definition">¶</a></dt>
-<dd><p>A RoutingNode that yields multiple routes, one for each of several conditions met,
-where the condition is computed implements computes a feature of the obj and
-according to an iterable of conditions on the feature</p>
+<em class="property">class </em><code class="sig-prename descclassname">i2.routing_forest.</code><code class="sig-name descname">FeatCondNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat</span><span class="p">:</span> <span class="n">Callable<span class="p">[</span><span class="p">[</span>Obj<span class="p">]</span><span class="p">, </span>Feature<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">feat_cond_thens</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>Tuple<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>Feature<span class="p">]</span><span class="p">, </span>bool<span class="p">]</span><span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/routing_forest.html#FeatCondNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.FeatCondNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>A RoutingNode that yields multiple routes, one for each of several conditions
+met, where the condition is computed implements computes a feature of the obj and
+according to an iterable of conditions on the feature.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fcn</span> <span class="o">=</span> <span class="n">FeatCondNode</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">feat</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">5</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">feat_cond_thens</span><span class="o">=</span><span class="p">[</span>
+<span class="gp">... </span>        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;zero_mod_5&#39;</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;one_mod_5&#39;</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;two_mod_5&#39;</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;three_mod_5&#39;</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;four_mod_5&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">fcn</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">fcn</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;one_mod_5&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">fcn</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;two_mod_5&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">fcn</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;three_mod_5&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">fcn</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;four_mod_5&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">fcn</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">fcn</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;one_mod_5&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="i2.routing_forest.FeatCondNode.from_feature_val_map">
+<em class="property">classmethod </em><code class="sig-name descname">from_feature_val_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat</span></em>, <em class="sig-param"><span class="n">feat_cond_thens</span><span class="p">:</span> <span class="n">Mapping<span class="p">[</span>Feature<span class="p">, </span>Any<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/routing_forest.html#FeatCondNode.from_feature_val_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.FeatCondNode.from_feature_val_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>A FeatCondNode where the conditions are equality checks on the feature value</p>
+<p># &gt;&gt;&gt; fvn = FeatCondNode.from_feature_val_map(
+# …     feat=lambda x: x % 3,
+# …     feat_cond_thens={
+# …         0: lambda x: ‘zero_mod_3’,
+# …         1: lambda x: ‘one_mod_3’,
+# …         2: lambda x: ‘two_mod_3’,
+# …     }
+# … )
+# &gt;&gt;&gt; list(fvn(0))
+#
+# &gt;&gt;&gt; assert list(fvn(0)) == [‘zero_mod_3’]
+# &gt;&gt;&gt; assert list(fvn(1)) == [‘one_mod_3’]
+# &gt;&gt;&gt; assert list(fvn(2)) == [‘two_mod_3’]
+#</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -282,26 +330,36 @@ It yields (both with call and iter) it’s single <cite>.val</cite> attribute.</
 <dl class="py class">
 <dt id="i2.routing_forest.RoutingNode">
 <em class="property">class </em><code class="sig-prename descclassname">i2.routing_forest.</code><code class="sig-name descname">RoutingNode</code><a class="reference internal" href="../../_modules/i2/routing_forest.html#RoutingNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.RoutingNode" title="Permalink to this definition">¶</a></dt>
-<dd><p>A RoutingNode instance needs to be callable on a single object, yielding an iterable or a final value</p>
+<dd><p>A RoutingNode instance needs to be callable on a single object,
+yielding an iterable or a final value</p>
+<dl class="py method">
+<dt id="i2.routing_forest.RoutingNode.from_object">
+<em class="property">static </em><code class="sig-name descname">from_object</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">mini_lang=&lt;function _default_mini_lang&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/routing_forest.html#RoutingNode.from_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.RoutingNode.from_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an object to a RoutingNode instance.
+Enables mini-languages to be developed for defining routing trees.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt id="i2.routing_forest.SwitchCaseNode">
 <em class="property">class </em><code class="sig-prename descclassname">i2.routing_forest.</code><code class="sig-name descname">SwitchCaseNode</code><span class="sig-paren">(</span><em class="sig-param">switch: Callable</em>, <em class="sig-param">cases: Mapping</em>, <em class="sig-param">default: Any = &lt;i2.routing_forest.NoDefault object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/routing_forest.html#SwitchCaseNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.SwitchCaseNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>A RoutingNode that implements the switch/case/else logic.
-It’s just a specialization (enhanced with a “default” option) of the FeatCondNode class to a situation
-where the cond function of feat_cond_thens is equality, therefore the routing can be
-implemented with a {value_to_compare_to_feature: then_node} map.
-:param switch: A function returning the feature of an object we want to switch on
-:param cases: The mapping from feature to RoutingNode that should be yield for that feature.</p>
-<blockquote>
-<div><p>Often is a dict, but only requirement is that it implements the cases.get(val, default) method.</p>
-</div></blockquote>
+It’s just a specialization (enhanced with a “default” option) of the FeatCondNode
+class to a situation where the cond function of feat_cond_thens is equality,
+therefore the routing can be
+implemented with a {value_to_compare_to_feature: then_node} map.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>default</strong> – Default RoutingNode to yield if no</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>switch</strong> – A function returning the feature of an object we want to switch on</p></li>
+<li><p><strong>cases</strong> – The mapping from feature to RoutingNode that should be yield for that</p></li>
+</ul>
 </dd>
 </dl>
+<p>feature. It is often a dict, but only requirement is that it implements the
+<code class="docutils literal notranslate"><span class="pre">cases.get(val,</span> <span class="pre">default)</span></code> method.
+:param default: Default RoutingNode to yield if no</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rf</span> <span class="o">=</span> <span class="n">RoutingForest</span><span class="p">([</span>
 <span class="gp">... </span>    <span class="n">SwitchCaseNode</span><span class="p">(</span><span class="n">switch</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">5</span><span class="p">,</span>
 <span class="gp">... </span>                   <span class="n">cases</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="n">FinalNode</span><span class="p">(</span><span class="s1">&#39;one_mod_5&#39;</span><span class="p">)},</span>

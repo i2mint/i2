@@ -156,7 +156,7 @@ from i2.util import LiteralVal, mk_sentinel
 
 from typing import TypeVar, Tuple, Iterable, Callable
 
-Obj = TypeVar("Obj")
+Obj = TypeVar('Obj')
 Output = TypeVar('Output')
 Cond = Callable[[Obj], bool]
 Then = Callable[[Obj], Output]
@@ -301,6 +301,7 @@ class RoutingForest(RoutingNode):
 
         yield from chain(*self.cond_nodes)
 
+
 Feature = TypeVar('Feature')
 Featurizer = Callable[[Obj], Feature]
 FeatCondThenMap = Mapping[Feature, Any]
@@ -375,15 +376,12 @@ class FeatCondNode(RoutingNode):
         # yield from chain.from_iterable(self.feat_cond_map.values())
         yield from self.feat_cond_thens
 
-
-
     # def __call__(self, obj):
     #     feature = self.feat(obj)
     #     val = self.feat_cond_thens_map.get(feature, no_such_key)
     #     if val is not no_such_key:
     #         yield val
     #
-
 
 
 # class FeatValNode(FeatCondNode):

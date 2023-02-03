@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.routing_forest &mdash; i2 0.0.177 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.routing_forest &mdash; i2 0.0.178 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -115,7 +115,7 @@
 <span class="sd">with iterator tools (itertools).</span>
 <span class="sd">This is what we&#39;re trying to explore, but for if/then conditions.</span>
 
-<span class="sd">I said explore. Some more work is needed here to make it easily usable.</span>
+<span class="sd">I said explore. Some more work is needed here to make it robust and easily usable.</span>
 
 <span class="sd">Let&#39;s look at an example involving the three main actors of our play.</span>
 <span class="sd">Each of these are ``Iterable`` and ``Callable`` (``Generator`` to be precise).</span>
@@ -123,6 +123,16 @@
 <span class="sd">- ``CondNode``: implements the if/then (no else) logic</span>
 <span class="sd">- ``FinalNode``: Final -- yields (both with call and iter) it&#39;s single `.val` attribute.</span>
 <span class="sd">- ``RoutingForest``: An Iterable of ``CondNode``</span>
+
+<span class="sd">You&#39;ll note that instances of these classes are all both callables and iterables,</span>
+<span class="sd">and that when called, they return iterables.</span>
+<span class="sd">It&#39;s this aspect that makes us be able to nest conditions within conditions,</span>
+<span class="sd">and further, control the flow of the iteration from outside.</span>
+<span class="sd">A routing node (or forest) called on an object will yield all values that match the</span>
+<span class="sd">conditions that were specified for it.</span>
+<span class="sd">For example, if you need all matches, you can wrap it with ``list``, if you need the</span>
+<span class="sd">first match only, you can wrap it with ``next``, if you have a default value,</span>
+<span class="sd">you can wrap it in ``next`` with a default value.</span>
 
 <span class="sd">&gt;&gt;&gt; import inspect</span>
 <span class="sd">&gt;&gt;&gt;</span>
@@ -242,12 +252,22 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">i2.util</span> <span class="kn">import</span> <span class="n">LiteralVal</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">i2.util</span> <span class="kn">import</span> <span class="n">LiteralVal</span><span class="p">,</span> <span class="n">mk_sentinel</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="n">Obj</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;Obj&#39;</span><span class="p">)</span>
+<span class="n">Output</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;Output&#39;</span><span class="p">)</span>
+<span class="n">Cond</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Obj</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span>
+<span class="n">Then</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Obj</span><span class="p">],</span> <span class="n">Output</span><span class="p">]</span>
+<span class="n">Rule</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Cond</span><span class="p">,</span> <span class="n">Then</span><span class="p">]</span>
+<span class="n">Rules</span> <span class="o">=</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Rule</span><span class="p">]</span>
 
 
 <span class="c1"># TODO: Think a bit harder about this mini-language</span>
 <span class="c1"># TODO: Right now use has to explicitly declare final nodes. Can do better.</span>
+<span class="c1"># TODO: This mini language can itself be expressed as a routing forest. Do it!</span>
 <span class="k">def</span> <span class="nf">_default_mini_lang</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="c1"># TODO: One is really tempted to use CondNode here to define this, right?</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">CondNode</span><span class="p">,</span> <span class="n">RoutingForest</span><span class="p">,</span> <span class="n">SwitchCaseNode</span><span class="p">)):</span>
@@ -294,14 +314,18 @@
 
 
 <div class="viewcode-block" id="RoutingNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.RoutingNode">[docs]</a><span class="k">class</span> <span class="nc">RoutingNode</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A RoutingNode instance needs to be callable on a single object, yielding an iterable or a final value&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A RoutingNode instance needs to be callable on a single object,</span>
+<span class="sd">    yielding an iterable or a final value&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;You should implement this.&#39;</span><span class="p">)</span>
 
-    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="RoutingNode.from_object"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.RoutingNode.from_object">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_object</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mini_lang</span><span class="o">=</span><span class="n">_default_mini_lang</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">mini_lang</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts an object to a RoutingNode instance.</span>
+<span class="sd">        Enables mini-languages to be developed for defining routing trees.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">mini_lang</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="FinalNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.FinalNode">[docs]</a><span class="nd">@dataclass</span>
@@ -331,9 +355,15 @@
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="c1"># The yield from is important here. It&#39;s what allows us to nest further</span>
+            <span class="c1"># routing nodes.</span>
+            <span class="c1"># as it allows the then node to</span>
+            <span class="c1"># contain</span>
+            <span class="c1"># an iterable (probably a RoutingForest) that is yielded as a single</span>
             <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># TODO: Why `yield from` instead of just `yield`?</span>
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">then</span></div>
 
 
@@ -368,29 +398,124 @@
         <span class="c1">#     yield from cond_node(obj)</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># TODO: Why are we chaining cond_nodes?</span>
+
         <span class="k">yield from</span> <span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_nodes</span><span class="p">)</span></div>
 
 
-<span class="n">FeatCondThens</span> <span class="o">=</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]</span>
+<span class="n">Feature</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;Feature&#39;</span><span class="p">)</span>
+<span class="n">Featurizer</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Obj</span><span class="p">],</span> <span class="n">Feature</span><span class="p">]</span>
+<span class="n">FeatCondThenMap</span> <span class="o">=</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Feature</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="FeatCondNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.FeatCondNode">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">FeatCondNode</span><span class="p">(</span><span class="n">RoutingNode</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A RoutingNode that yields multiple routes, one for each of several conditions met,</span>
-<span class="sd">    where the condition is computed implements computes a feature of the obj and</span>
-<span class="sd">    according to an iterable of conditions on the feature&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A RoutingNode that yields multiple routes, one for each of several conditions</span>
+<span class="sd">    met, where the condition is computed implements computes a feature of the obj and</span>
+<span class="sd">    according to an iterable of conditions on the feature.</span>
 
-    <span class="n">feat</span><span class="p">:</span> <span class="n">Callable</span>
-    <span class="n">feat_cond_thens</span><span class="p">:</span> <span class="n">FeatCondThens</span>
+<span class="sd">    &gt;&gt;&gt; fcn = FeatCondNode(</span>
+<span class="sd">    ...     feat=lambda x: x % 5,</span>
+<span class="sd">    ...     feat_cond_thens=[</span>
+<span class="sd">    ...         (lambda x: x == 0, lambda x: &#39;zero_mod_5&#39;),</span>
+<span class="sd">    ...         (lambda x: x == 1, lambda x: &#39;one_mod_5&#39;),</span>
+<span class="sd">    ...         (lambda x: x == 2, lambda x: &#39;two_mod_5&#39;),</span>
+<span class="sd">    ...         (lambda x: x == 3, lambda x: &#39;three_mod_5&#39;),</span>
+<span class="sd">    ...         (lambda x: x == 4, lambda x: &#39;four_mod_5&#39;),</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; assert list(fcn(0)) == [&#39;zero_mod_5&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; assert list(fcn(1)) == [&#39;one_mod_5&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; assert list(fcn(2)) == [&#39;two_mod_5&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; assert list(fcn(3)) == [&#39;three_mod_5&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; assert list(fcn(4)) == [&#39;four_mod_5&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; assert list(fcn(5)) == [&#39;zero_mod_5&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; assert list(fcn(6)) == [&#39;one_mod_5&#39;]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">feat</span><span class="p">:</span> <span class="n">Featurizer</span>
+    <span class="n">feat_cond_thens</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Feature</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span>
+
+<div class="viewcode-block" id="FeatCondNode.from_feature_val_map"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.FeatCondNode.from_feature_val_map">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_feature_val_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">feat</span><span class="p">,</span> <span class="n">feat_cond_thens</span><span class="p">:</span> <span class="n">FeatCondThenMap</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A FeatCondNode where the conditions are equality checks on the feature value</span>
+
+<span class="sd">        # &gt;&gt;&gt; fvn = FeatCondNode.from_feature_val_map(</span>
+<span class="sd">        # ...     feat=lambda x: x % 3,</span>
+<span class="sd">        # ...     feat_cond_thens={</span>
+<span class="sd">        # ...         0: lambda x: &#39;zero_mod_3&#39;,</span>
+<span class="sd">        # ...         1: lambda x: &#39;one_mod_3&#39;,</span>
+<span class="sd">        # ...         2: lambda x: &#39;two_mod_3&#39;,</span>
+<span class="sd">        # ...     }</span>
+<span class="sd">        # ... )</span>
+<span class="sd">        # &gt;&gt;&gt; list(fvn(0))</span>
+<span class="sd">        #</span>
+<span class="sd">        # &gt;&gt;&gt; assert list(fvn(0)) == [&#39;zero_mod_3&#39;]</span>
+<span class="sd">        # &gt;&gt;&gt; assert list(fvn(1)) == [&#39;one_mod_3&#39;]</span>
+<span class="sd">        # &gt;&gt;&gt; assert list(fvn(2)) == [&#39;two_mod_3&#39;]</span>
+<span class="sd">        #</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">feat_cond_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">feat_cond_thens</span><span class="p">)</span>
+        <span class="n">feat_cond_thens</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="n">feat_val</span><span class="p">,</span> <span class="n">then</span><span class="p">)</span> <span class="k">for</span> <span class="n">feat_val</span><span class="p">,</span> <span class="n">then</span> <span class="ow">in</span> <span class="n">feat_cond_map</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">feat</span><span class="p">,</span> <span class="n">feat_cond_thens</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feat_cond_map</span> <span class="o">=</span> <span class="n">feat_cond_map</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="n">feature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">cond</span><span class="p">,</span> <span class="n">then</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_cond_thens</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">cond</span><span class="p">(</span><span class="n">feature</span><span class="p">):</span>
-                <span class="k">yield from</span> <span class="n">then</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">then</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">yield from</span> <span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">feat_cond_thens</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+        <span class="c1"># yield from chain.from_iterable(self.feat_cond_map.values())</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_cond_thens</span></div>
+
+    <span class="c1"># def __call__(self, obj):</span>
+    <span class="c1">#     feature = self.feat(obj)</span>
+    <span class="c1">#     val = self.feat_cond_thens_map.get(feature, no_such_key)</span>
+    <span class="c1">#     if val is not no_such_key:</span>
+    <span class="c1">#         yield val</span>
+    <span class="c1">#</span>
+
+
+<span class="c1"># class FeatValNode(FeatCondNode):</span>
+<span class="c1">#     &quot;&quot;&quot;A FeatCondNode where the conditions are equality checks on the feature value</span>
+<span class="c1">#</span>
+<span class="c1">#     &gt;&gt;&gt; fvn = FeatValNode(</span>
+<span class="c1">#     ...     feat=lambda x: x % 3,</span>
+<span class="c1">#     ...     feat_cond_thens={</span>
+<span class="c1">#     ...         0: lambda x: &#39;zero_mod_3&#39;,</span>
+<span class="c1">#     ...         1: lambda x: &#39;one_mod_3&#39;,</span>
+<span class="c1">#     ...         2: lambda x: &#39;two_mod_3&#39;,</span>
+<span class="c1">#     ...     }</span>
+<span class="c1">#     ... )</span>
+<span class="c1">#     &gt;&gt;&gt; list(fvn(0))</span>
+<span class="c1">#     [&#39;zero_mod_3&#39;]</span>
+<span class="c1">#     &gt;&gt;&gt; list(fvn(0))</span>
+<span class="c1">#     [&#39;zero_mod_3&#39;]</span>
+<span class="c1">#     #</span>
+<span class="c1">#     # &gt;&gt;&gt; assert list(fvn(0)) == [&#39;zero_mod_3&#39;]</span>
+<span class="c1">#     # &gt;&gt;&gt; assert list(fvn(1)) == [&#39;one_mod_3&#39;]</span>
+<span class="c1">#     # &gt;&gt;&gt; assert list(fvn(2)) == [&#39;two_mod_3&#39;]</span>
+<span class="c1">#     # &gt;&gt;&gt; assert list(fvn(3)) == [&#39;zero_mod_3&#39;]</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     def __init__(self, feat, feat_cond_thens: FeatCondThensMap):</span>
+<span class="c1">#         feat_cond_map = dict(feat_cond_thens)</span>
+<span class="c1">#         feat_cond_thens = (</span>
+<span class="c1">#             (lambda x: x == feat_val, then) for feat_val, then in feat_cond_map.items()</span>
+<span class="c1">#         )</span>
+<span class="c1">#         super().__init__(feat, feat_cond_thens)</span>
+<span class="c1">#         self.feat_cond_map = feat_cond_map</span>
 
 
 <span class="n">NoDefault</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s1">&#39;NoDefault&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">object</span><span class="p">,),</span> <span class="p">{})</span>
@@ -400,12 +525,15 @@
 <div class="viewcode-block" id="SwitchCaseNode"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.SwitchCaseNode">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">SwitchCaseNode</span><span class="p">(</span><span class="n">RoutingNode</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A RoutingNode that implements the switch/case/else logic.</span>
-<span class="sd">    It&#39;s just a specialization (enhanced with a &quot;default&quot; option) of the FeatCondNode class to a situation</span>
-<span class="sd">    where the cond function of feat_cond_thens is equality, therefore the routing can be</span>
+<span class="sd">    It&#39;s just a specialization (enhanced with a &quot;default&quot; option) of the FeatCondNode</span>
+<span class="sd">    class to a situation where the cond function of feat_cond_thens is equality,</span>
+<span class="sd">    therefore the routing can be</span>
 <span class="sd">    implemented with a {value_to_compare_to_feature: then_node} map.</span>
+
 <span class="sd">    :param switch: A function returning the feature of an object we want to switch on</span>
-<span class="sd">    :param cases: The mapping from feature to RoutingNode that should be yield for that feature.</span>
-<span class="sd">        Often is a dict, but only requirement is that it implements the cases.get(val, default) method.</span>
+<span class="sd">    :param cases: The mapping from feature to RoutingNode that should be yield for that</span>
+<span class="sd">    feature. It is often a dict, but only requirement is that it implements the</span>
+<span class="sd">    ``cases.get(val, default)`` method.</span>
 <span class="sd">    :param default: Default RoutingNode to yield if no</span>
 
 <span class="sd">    &gt;&gt;&gt; rf = RoutingForest([</span>
