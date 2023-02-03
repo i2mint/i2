@@ -14,7 +14,7 @@ Think of the relationship between the for loop (code) and the iterator (object),
 with iterator tools (itertools).
 This is what we're trying to explore, but for if/then conditions.
 
-I said explore. Some more work is needed here to make it easily usable.
+I said explore. Some more work is needed here to make it robust and easily usable.
 
 Let's look at an example involving the three main actors of our play.
 Each of these are ``Iterable`` and ``Callable`` (``Generator`` to be precise).
@@ -22,6 +22,16 @@ Each of these are ``Iterable`` and ``Callable`` (``Generator`` to be precise).
 - ``CondNode``: implements the if/then (no else) logic
 - ``FinalNode``: Final -- yields (both with call and iter) it's single `.val` attribute.
 - ``RoutingForest``: An Iterable of ``CondNode``
+
+You'll note that instances of these classes are all both callables and iterables,
+and that when called, they return iterables.
+It's this aspect that makes us be able to nest conditions within conditions,
+and further, control the flow of the iteration from outside.
+A routing node (or forest) called on an object will yield all values that match the
+conditions that were specified for it.
+For example, if you need all matches, you can wrap it with ``list``, if you need the
+first match only, you can wrap it with ``next``, if you have a default value,
+you can wrap it in ``next`` with a default value.
 
 >>> import inspect
 >>>
@@ -141,12 +151,22 @@ could_be_float
 """
 from itertools import chain
 from dataclasses import dataclass
-from typing import Any, Iterable, Callable, Mapping, Tuple
-from i2.util import LiteralVal
+from typing import Any, Iterable, Callable, Mapping, Tuple, TypeVar
+from i2.util import LiteralVal, mk_sentinel
+
+from typing import TypeVar, Tuple, Iterable, Callable
+
+Obj = TypeVar("Obj")
+Output = TypeVar('Output')
+Cond = Callable[[Obj], bool]
+Then = Callable[[Obj], Output]
+Rule = Tuple[Cond, Then]
+Rules = Iterable[Rule]
 
 
 # TODO: Think a bit harder about this mini-language
 # TODO: Right now use has to explicitly declare final nodes. Can do better.
+# TODO: This mini language can itself be expressed as a routing forest. Do it!
 def _default_mini_lang(x):
     # TODO: One is really tempted to use CondNode here to define this, right?
     if isinstance(x, (CondNode, RoutingForest, SwitchCaseNode)):
@@ -193,13 +213,17 @@ def _default_mini_lang(x):
 
 
 class RoutingNode:
-    """A RoutingNode instance needs to be callable on a single object, yielding an iterable or a final value"""
+    """A RoutingNode instance needs to be callable on a single object,
+    yielding an iterable or a final value"""
 
-    def __call__(self, obj):
+    def __call__(self, obj) -> Iterable:
         raise NotImplementedError('You should implement this.')
 
     @staticmethod
     def from_object(x, mini_lang=_default_mini_lang):
+        """Converts an object to a RoutingNode instance.
+        Enables mini-languages to be developed for defining routing trees.
+        """
         return mini_lang(x)
 
 
@@ -230,9 +254,15 @@ class CondNode(RoutingNode):
 
     def __call__(self, obj):
         if self.cond(obj):
+            # The yield from is important here. It's what allows us to nest further
+            # routing nodes.
+            # as it allows the then node to
+            # contain
+            # an iterable (probably a RoutingForest) that is yielded as a single
             yield from self.then(obj)
 
     def __iter__(self):
+        # TODO: Why `yield from` instead of just `yield`?
         yield from self.then
 
 
@@ -267,29 +297,126 @@ class RoutingForest(RoutingNode):
         #     yield from cond_node(obj)
 
     def __iter__(self):
+        # TODO: Why are we chaining cond_nodes?
+
         yield from chain(*self.cond_nodes)
 
-
-FeatCondThens = Iterable[Tuple[Callable, Callable]]
+Feature = TypeVar('Feature')
+Featurizer = Callable[[Obj], Feature]
+FeatCondThenMap = Mapping[Feature, Any]
 
 
 @dataclass
 class FeatCondNode(RoutingNode):
-    """A RoutingNode that yields multiple routes, one for each of several conditions met,
-    where the condition is computed implements computes a feature of the obj and
-    according to an iterable of conditions on the feature"""
+    """A RoutingNode that yields multiple routes, one for each of several conditions
+    met, where the condition is computed implements computes a feature of the obj and
+    according to an iterable of conditions on the feature.
 
-    feat: Callable
-    feat_cond_thens: FeatCondThens
+    >>> fcn = FeatCondNode(
+    ...     feat=lambda x: x % 5,
+    ...     feat_cond_thens=[
+    ...         (lambda x: x == 0, lambda x: 'zero_mod_5'),
+    ...         (lambda x: x == 1, lambda x: 'one_mod_5'),
+    ...         (lambda x: x == 2, lambda x: 'two_mod_5'),
+    ...         (lambda x: x == 3, lambda x: 'three_mod_5'),
+    ...         (lambda x: x == 4, lambda x: 'four_mod_5'),
+    ...     ]
+    ... )
+    >>> assert list(fcn(0)) == ['zero_mod_5']
+    >>> assert list(fcn(1)) == ['one_mod_5']
+    >>> assert list(fcn(2)) == ['two_mod_5']
+    >>> assert list(fcn(3)) == ['three_mod_5']
+    >>> assert list(fcn(4)) == ['four_mod_5']
+    >>> assert list(fcn(5)) == ['zero_mod_5']
+    >>> assert list(fcn(6)) == ['one_mod_5']
+
+    """
+
+    feat: Featurizer
+    feat_cond_thens: Iterable[Tuple[Callable[[Feature], bool], Any]]
+
+    @classmethod
+    def from_feature_val_map(cls, feat, feat_cond_thens: FeatCondThenMap):
+        """
+        A FeatCondNode where the conditions are equality checks on the feature value
+
+        # >>> fvn = FeatCondNode.from_feature_val_map(
+        # ...     feat=lambda x: x % 3,
+        # ...     feat_cond_thens={
+        # ...         0: lambda x: 'zero_mod_3',
+        # ...         1: lambda x: 'one_mod_3',
+        # ...         2: lambda x: 'two_mod_3',
+        # ...     }
+        # ... )
+        # >>> list(fvn(0))
+        #
+        # >>> assert list(fvn(0)) == ['zero_mod_3']
+        # >>> assert list(fvn(1)) == ['one_mod_3']
+        # >>> assert list(fvn(2)) == ['two_mod_3']
+        #
+
+
+        """
+        feat_cond_map = dict(feat_cond_thens)
+        feat_cond_thens = tuple(
+            (lambda x: x == feat_val, then) for feat_val, then in feat_cond_map.items()
+        )
+        self = cls(feat, feat_cond_thens)
+        self.feat_cond_map = feat_cond_map
+        return self
 
     def __call__(self, obj):
         feature = self.feat(obj)
         for cond, then in self.feat_cond_thens:
             if cond(feature):
-                yield from then(obj)
+                yield then(obj)
 
     def __iter__(self):
-        yield from chain(*self.feat_cond_thens.values())
+        # yield from chain.from_iterable(self.feat_cond_map.values())
+        yield from self.feat_cond_thens
+
+
+
+    # def __call__(self, obj):
+    #     feature = self.feat(obj)
+    #     val = self.feat_cond_thens_map.get(feature, no_such_key)
+    #     if val is not no_such_key:
+    #         yield val
+    #
+
+
+
+# class FeatValNode(FeatCondNode):
+#     """A FeatCondNode where the conditions are equality checks on the feature value
+#
+#     >>> fvn = FeatValNode(
+#     ...     feat=lambda x: x % 3,
+#     ...     feat_cond_thens={
+#     ...         0: lambda x: 'zero_mod_3',
+#     ...         1: lambda x: 'one_mod_3',
+#     ...         2: lambda x: 'two_mod_3',
+#     ...     }
+#     ... )
+#     >>> list(fvn(0))
+#     ['zero_mod_3']
+#     >>> list(fvn(0))
+#     ['zero_mod_3']
+#     #
+#     # >>> assert list(fvn(0)) == ['zero_mod_3']
+#     # >>> assert list(fvn(1)) == ['one_mod_3']
+#     # >>> assert list(fvn(2)) == ['two_mod_3']
+#     # >>> assert list(fvn(3)) == ['zero_mod_3']
+#
+#
+#     """
+#
+#     def __init__(self, feat, feat_cond_thens: FeatCondThensMap):
+#         feat_cond_map = dict(feat_cond_thens)
+#         feat_cond_thens = (
+#             (lambda x: x == feat_val, then) for feat_val, then in feat_cond_map.items()
+#         )
+#         super().__init__(feat, feat_cond_thens)
+#         self.feat_cond_map = feat_cond_map
 
 
 NoDefault = type('NoDefault', (object,), {})
@@ -299,12 +426,15 @@ NO_DFLT = NoDefault()
 @dataclass
 class SwitchCaseNode(RoutingNode):
     """A RoutingNode that implements the switch/case/else logic.
-    It's just a specialization (enhanced with a "default" option) of the FeatCondNode class to a situation
-    where the cond function of feat_cond_thens is equality, therefore the routing can be
+    It's just a specialization (enhanced with a "default" option) of the FeatCondNode
+    class to a situation where the cond function of feat_cond_thens is equality,
+    therefore the routing can be
     implemented with a {value_to_compare_to_feature: then_node} map.
+
     :param switch: A function returning the feature of an object we want to switch on
-    :param cases: The mapping from feature to RoutingNode that should be yield for that feature.
-        Often is a dict, but only requirement is that it implements the cases.get(val, default) method.
+    :param cases: The mapping from feature to RoutingNode that should be yield for that
+    feature. It is often a dict, but only requirement is that it implements the
+    ``cases.get(val, default)`` method.
     :param default: Default RoutingNode to yield if no
 
     >>> rf = RoutingForest([
