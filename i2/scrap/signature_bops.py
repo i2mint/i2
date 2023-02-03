@@ -81,7 +81,7 @@ def _sig_func(sig1, sig2, params_match, score_param_pair, score_aggreg):
 # Moved to i2.signatures (keep import below for back comp
 from i2.signatures import param_binary_func
 
-from pydantic import validate_arguments, ValidationError
+# from pydantic import validate_arguments, ValidationError
 
 # from graphviz import Digraph
 #
