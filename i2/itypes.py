@@ -33,7 +33,7 @@ def _arg_name_and_val_dict(func, *args, **kwargs):
     """
     b = signature(func).bind(*args, **kwargs)
     b.apply_defaults()
-    return b.arguments
+    return dict(b.arguments)
 
 
 def _annotation_is_literal(typ):
