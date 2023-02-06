@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.itypes &mdash; i2 0.0.177 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.itypes &mdash; i2 0.0.178 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -182,6 +182,16 @@ you can use Protocols to fill the gap.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="i2.itypes.iterable_to_literal">
+<code class="sig-prename descclassname">i2.itypes.</code><code class="sig-name descname">iterable_to_literal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/itypes.html#iterable_to_literal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.itypes.iterable_to_literal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an iterable to a Literal type.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">iterable_to_literal</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">typing.Literal[1, 2, 3]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt id="i2.itypes.new_type">
 <code class="sig-prename descclassname">i2.itypes.</code><code class="sig-name descname">new_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">tp</span></em>, <em class="sig-param"><span class="n">doc</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">aka</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Iterable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">assign_to_globals</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/itypes.html#new_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.itypes.new_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a new type with (optional) doc and (optional) aka, set of var names it often
@@ -211,6 +221,26 @@ meant to list names the variables of this type often appear as.</p></li>
 <span class="gp">... </span><span class="n">doc</span><span class="o">=</span><span class="s2">&quot;A number or list of numbers.&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Val</span><span class="o">.</span><span class="vm">__doc__</span>
 <span class="go">&#39;A number or list of numbers.&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.itypes.validate_literal">
+<code class="sig-prename descclassname">i2.itypes.</code><code class="sig-name descname">validate_literal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/itypes.html#validate_literal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.itypes.validate_literal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to validate (Literal-annotated) argument values at call time.</p>
+<p>Wraps a function to add validation of the input arguments annotated with Literal
+against the values listed by the literal. If the input argument is not one of the
+literal values, a ValueError is raised.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@validate_literal</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">4 is an invalid value for x. Values should be one of the following: (1, 2, 3)</span>
 </pre></div>
 </div>
 </dd></dl>

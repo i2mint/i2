@@ -75,9 +75,6 @@ def _sig_func(sig1, sig2, params_match, score_param_pair, score_aggreg):
     return score_aggreg(score_param_pair(params))
 
 
-
-
-
 # Moved to i2.signatures (keep import below for back comp
 from i2.signatures import param_binary_func
 
@@ -97,8 +94,6 @@ from i2.signatures import param_binary_func
 #     ]
 # import networkx as nx
 # nx.nx_agraph.read_dot
-
-
 
 
 # B = TypeVar('B')

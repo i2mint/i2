@@ -4142,7 +4142,7 @@ def compare_signatures(func1, func2, signature_comparator: SignatureComparator =
 
 # TODO: Look into typing: Why does lint complain about this line of code?
 def mk_func_comparator_based_on_signature_comparator(
-    signature_comparator: SignatureComparator
+    signature_comparator: SignatureComparator,
 ) -> CallableComparator:
     return partial(compare_signatures, signature_comparator=signature_comparator)
 
