@@ -198,23 +198,46 @@ class KeyFuncMapping(DelegateToMappingAttrMixin, MutableMapping):
     >>> get_extension = lambda x: x.split('.')[-1]
     >>>
     >>> data_type = KeyFuncMapping(
-    ...     {'csv': 'table', 'xls': 'table', 'wav': 'audio'}, get_extension)
+    ...     {'csv': 'table', 'xls': 'table', 'wav': 'audio'}, key=get_extension
+    ... )
+
+    Calling a ``KeyFuncMapping`` instance will call the ``key`` function on the input,
+    then look up the result in the ``mapping``.
+
     >>> data_type('my_file.csv')
     'table'
     >>> data_type('another_file.xls')
     'table'
     >>> data_type('sound.wav')
     'audio'
-    >>> data_type('poem.txt')
-    >>>
+
+    If the key is not found in the mapping, the ``default_factory`` is **called**
+    with the input and the result is returned. The default ``default_factory`` is
+    ``return_sentinel``, which by default returns ``None``
+
+    >>> assert data_type('poem.txt') is None
+
+    Note that instances of ``KeyFuncMapping`` are also ``Mapping``s, so all ``Mapping``
+    methods can be used.
+
     >>> list(data_type)
     ['csv', 'xls', 'wav']
     >>> dict(data_type)
     {'csv': 'table', 'xls': 'table', 'wav': 'audio'}
+
+    Including ``update``, which constitutes a convenient way to extend the mapping.
+
     >>> data_type.update(txt='text')
     >>> data_type('poem.txt')
     'text'
-    >>>
+
+    The ``default_factory`` can be set to any callable, including a
+    ``KeyFuncMapping`` itself, which enables us to define an ``else`` for the
+    switch-case logic that a ``KeyFuncMapping`` implements.
+    Say, for example, if no handled extension is found, we want to check the protocol
+    of the input string instead. This is not only a new mapping, but also a new key
+    function. We can do it as such:
+
     >>> get_protocol = lambda x: x.split('://')[0]
     >>> protocol = KeyFuncMapping({'https': 'url'}, get_protocol)
     >>> new_data_type = KeyFuncMapping(
@@ -224,6 +247,18 @@ class KeyFuncMapping(DelegateToMappingAttrMixin, MutableMapping):
     'text'
     >>> new_data_type('https://www.python.org/')
     'url'
+
+    Given how useful this pattern is, we made the ``+`` operator implement this.
+    Note that here, ``+`` is not associative or commutative (as with numbers).
+    It should be understood to function more like the ``+`` for iterables like ``list``
+    and ``tuple``.
+
+    >>> nested = data_type + protocol
+    >>> nested('https://www.python.org/')
+    'url'
+    >>> nested('jazz.wav')
+    'audio'
+
     """
     def __init__(
         self,
@@ -253,6 +288,8 @@ class KeyFuncMapping(DelegateToMappingAttrMixin, MutableMapping):
         else:
             return self.default_factory(obj)  # ... else call the default function
 
+    # TODO: Is this too hacky? Should we not use __add__ for this? Maybe use
+    #  ``extend`` instead? Maybe another method? Maybe not add this convinience at all?
     def __add__(self, other: Callable):
         """Make a copy of the KeyFuncMapping instance with other as default_factory"""
         self_type = type(self)
