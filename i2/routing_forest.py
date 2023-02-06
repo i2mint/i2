@@ -191,7 +191,10 @@ class DelegateToMappingAttrMixin:
 # Note: KeyFuncMapping is very similar to the SwitchCaseMapping in i2.routing_forest,
 #  but the latter builds on a more extensive framework for routing.
 class KeyFuncMapping(DelegateToMappingAttrMixin, MutableMapping):
-    """Implements a switch-case-like mapping with a callable key function
+    """Implements a switch-case-like mapping with a callable key function.
+
+    The purpose of ``KeyFuncMapping`` is to  allow switch-case logic to be
+    specified as a plugin specification.
 
     >>> from i2.routing_forest import KeyFuncMapping
     >>>
