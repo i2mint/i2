@@ -151,13 +151,121 @@ could_be_float
 """
 from itertools import chain
 from dataclasses import dataclass
-from typing import Any, Iterable, Callable, Mapping, Tuple, TypeVar
 from i2.util import LiteralVal, mk_sentinel
 
-from typing import TypeVar, Tuple, Iterable, Callable
+from typing import TypeVar, Tuple, Iterable, Callable, Mapping, MutableMapping, Any
 
+
+def return_sentinel(obj: Any, sentinel: Any = None):
+    """Return a constanc sentinel value when called. Use partial to set sentinel"""
+    return sentinel
+
+
+def identity(obj: Any):
+    return obj
+
+
+class DelegateToMappingAttrMixin:
+    """
+    A mixin to delegate ``Mapping`` methods to a mapping attribute called ``mapping``
+    """
+
+    mapping = None
+
+    def __getitem__(self, k):
+        return self.mapping[k]
+
+    def __iter__(self):
+        yield from self.mapping
+
+    def __len__(self):
+        return len(self.mapping)
+
+    def __delitem__(self, k):
+        del self.mapping[k]
+
+    def __setitem__(self, k, v):
+        self.mapping[k] = v
+
+
+# Note: KeyFuncMapping is very similar to the SwitchCaseMapping in i2.routing_forest,
+#  but the latter builds on a more extensive framework for routing.
+class KeyFuncMapping(DelegateToMappingAttrMixin, MutableMapping):
+    """Implements a switch-case-like mapping with a callable key function
+
+    >>> from i2.routing_forest import KeyFuncMapping
+    >>>
+    >>> get_extension = lambda x: x.split('.')[-1]
+    >>>
+    >>> data_type = KeyFuncMapping(
+    ...     {'csv': 'table', 'xls': 'table', 'wav': 'audio'}, get_extension)
+    >>> data_type('my_file.csv')
+    'table'
+    >>> data_type('another_file.xls')
+    'table'
+    >>> data_type('sound.wav')
+    'audio'
+    >>> data_type('poem.txt')
+    >>>
+    >>> list(data_type)
+    ['csv', 'xls', 'wav']
+    >>> dict(data_type)
+    {'csv': 'table', 'xls': 'table', 'wav': 'audio'}
+    >>> data_type.update(txt='text')
+    >>> data_type('poem.txt')
+    'text'
+    >>>
+    >>> get_protocol = lambda x: x.split('://')[0]
+    >>> protocol = KeyFuncMapping({'https': 'url'}, get_protocol)
+    >>> new_data_type = KeyFuncMapping(
+    ...     data_type.mapping, data_type.key, default_factory=protocol
+    ... )
+    >>> new_data_type('notes.txt')
+    'text'
+    >>> new_data_type('https://www.python.org/')
+    'url'
+    """
+    def __init__(
+        self,
+        mapping: Mapping,
+        key: Callable = None,
+        default_factory: Callable = return_sentinel,
+    ):
+        self.mapping = mapping
+        self.key = key
+        self.default_factory = default_factory
+
+    # Note: An earlier version used __getitem__ itself instead of __call__ as the
+    #  obj routing method, but the misalignment between the keys listed by __iter__ and
+    #  the values that could be resolved by __getitem__ lead to unintuitive behaviors
+    #  with other mapping methods.
+    # Note: The default_factory is a Callable instead of a value because the former is
+    # more general and enables recursivity: That is, one can define another
+    # KeyFuncMapping to be specified as a default, thus specifying a tree
+    # (or rather forest) of conditionals.
+    # Note: Could use a mapping.get(..., sentinel) instead of the `obj_key in mapping`
+    # check, which would be more efficient, but perhaps less readable/debuggable
+    def __call__(self, obj):
+        obj_key = self.key(obj)
+        if obj_key in self.mapping:  # if the obj_key is in the mapping...
+            # ... return the mapping's value for obj_key...
+            return self.mapping[obj_key]
+        else:
+            return self.default_factory(obj)  # ... else call the default function
+
+    def __add__(self, other: Callable):
+        """Make a copy of the KeyFuncMapping instance with other as default_factory"""
+        self_type = type(self)
+        assert callable(other), (
+            f"Can only add a callable (usually a {self_type} itself) to a {self_type}"
+        )
+        return self_type(self.mapping, self.key, default_factory=other)
+
+
+# --------------------------------------------------------------------------------------
+# A proposal for a routing forest OO backend and convenience mini-language
 Obj = TypeVar("Obj")
-Output = TypeVar('Output')
+Output = TypeVar("Output")
 Cond = Callable[[Obj], bool]
 Then = Callable[[Obj], Output]
 Rule = Tuple[Cond, Then]
@@ -180,18 +288,18 @@ def _default_mini_lang(x):
             return SwitchCaseNode(*map(_default_mini_lang, x))
         else:
             raise ValueError(
-                f'If a tuple, element must be a `(cond, then)` pair, '
-                f'or a (switch, case, default) triple, or a `Literal`. Was: {x}'
+                f"If a tuple, element must be a `(cond, then)` pair, "
+                f"or a (switch, case, default) triple, or a `Literal`. Was: {x}"
             )
     elif isinstance(x, dict):
         keys = set(x)
         if 2 <= len(keys) <= 3:
-            if {'cond', 'then'}.issubset(keys):
+            if {"cond", "then"}.issubset(keys):
                 return CondNode(**{k: _default_mini_lang(v) for k, v in x.items()})
-            elif {'switch', 'case'}.issubset(keys) and keys == {
-                'switch',
-                'case',
-                'default',
+            elif {"switch", "case"}.issubset(keys) and keys == {
+                "switch",
+                "case",
+                "default",
             }:
                 return SwitchCaseNode(
                     **{k: _default_mini_lang(v) for k, v in x.items()}
@@ -199,7 +307,7 @@ def _default_mini_lang(x):
             else:
                 raise ValueError(
                     "keys should be 'switch', 'case' and optionally 'default'. "
-                    f'Were: {keys}'
+                    f"Were: {keys}"
                 )
         else:
             raise ValueError(
@@ -217,7 +325,7 @@ class RoutingNode:
     yielding an iterable or a final value"""
 
     def __call__(self, obj) -> Iterable:
-        raise NotImplementedError('You should implement this.')
+        raise NotImplementedError("You should implement this.")
 
     @staticmethod
     def from_object(x, mini_lang=_default_mini_lang):
@@ -301,7 +409,8 @@ class RoutingForest(RoutingNode):
 
         yield from chain(*self.cond_nodes)
 
-Feature = TypeVar('Feature')
+
+Feature = TypeVar("Feature")
 Featurizer = Callable[[Obj], Feature]
 FeatCondThenMap = Mapping[Feature, Any]
 
@@ -375,15 +484,12 @@ class FeatCondNode(RoutingNode):
         # yield from chain.from_iterable(self.feat_cond_map.values())
         yield from self.feat_cond_thens
 
-
-
     # def __call__(self, obj):
     #     feature = self.feat(obj)
     #     val = self.feat_cond_thens_map.get(feature, no_such_key)
     #     if val is not no_such_key:
     #         yield val
     #
-
 
 
 # class FeatValNode(FeatCondNode):
@@ -419,7 +525,7 @@ class FeatCondNode(RoutingNode):
 #         self.feat_cond_map = feat_cond_map
 
 
-NoDefault = type('NoDefault', (object,), {})
+NoDefault = type("NoDefault", (object,), {})
 NO_DFLT = NoDefault()
 
 
@@ -507,16 +613,16 @@ def test_routing_forest():
 
     assert could_be_int(30)
     assert could_be_int(30.3)
-    assert not could_be_int('30.2')
-    assert not could_be_int('nope')
+    assert not could_be_int("30.2")
+    assert not could_be_int("nope")
 
     assert could_be_float(30)
     assert could_be_float(30.3)
-    assert could_be_float('30.2')
-    assert not could_be_float('nope')
+    assert could_be_float("30.2")
+    assert not could_be_float("nope")
 
-    assert could_be_int('30.2') is False
-    assert could_be_float('30.2') is True
+    assert could_be_int("30.2") is False
+    assert could_be_float("30.2") is True
 
     st = RoutingForest(
         [
@@ -526,7 +632,7 @@ def test_routing_forest():
                     [
                         CondNode(
                             cond=lambda x: int(x) >= 10,
-                            then=FinalNode('More than a digit'),
+                            then=FinalNode("More than a digit"),
                         ),
                         CondNode(
                             cond=lambda x: (int(x) % 2) == 1,
@@ -535,39 +641,39 @@ def test_routing_forest():
                     ]
                 ),
             ),
-            CondNode(cond=could_be_float, then=FinalNode('could be seen as a float')),
+            CondNode(cond=could_be_float, then=FinalNode("could be seen as a float")),
         ]
     )
-    assert list(st('nothing I can do with that')) == []
-    assert list(st(8)) == ['could be seen as a float']
-    assert list(st(9)) == ["That's odd!", 'could be seen as a float']
-    assert list(st(10)) == ['More than a digit', 'could be seen as a float']
+    assert list(st("nothing I can do with that")) == []
+    assert list(st(8)) == ["could be seen as a float"]
+    assert list(st(9)) == ["That's odd!", "could be seen as a float"]
+    assert list(st(10)) == ["More than a digit", "could be seen as a float"]
     assert list(st(11)) == [
-        'More than a digit',
+        "More than a digit",
         "That's odd!",
-        'could be seen as a float',
+        "could be seen as a float",
     ]
 
     rf = RoutingForest(
         [
             SwitchCaseNode(
                 switch=lambda x: x % 5,
-                cases={0: FinalNode('zero_mod_5'), 1: FinalNode('one_mod_5')},
-                default=FinalNode('default_mod_5'),
+                cases={0: FinalNode("zero_mod_5"), 1: FinalNode("one_mod_5")},
+                default=FinalNode("default_mod_5"),
             ),
             SwitchCaseNode(
                 switch=lambda x: x % 2,
-                cases={0: FinalNode('even'), 1: FinalNode('odd')},
-                default=FinalNode('that is not an int'),
+                cases={0: FinalNode("even"), 1: FinalNode("odd")},
+                default=FinalNode("that is not an int"),
             ),
         ]
     )
 
-    assert list(rf(5)) == ['zero_mod_5', 'odd']
-    assert list(rf(6)) == ['one_mod_5', 'even']
-    assert list(rf(7)) == ['default_mod_5', 'odd']
-    assert list(rf(8)) == ['default_mod_5', 'even']
-    assert list(rf(10)) == ['zero_mod_5', 'even']
+    assert list(rf(5)) == ["zero_mod_5", "odd"]
+    assert list(rf(6)) == ["one_mod_5", "even"]
+    assert list(rf(7)) == ["default_mod_5", "odd"]
+    assert list(rf(8)) == ["default_mod_5", "even"]
+    assert list(rf(10)) == ["zero_mod_5", "even"]
 
     # testing default mini-language #####################################################
 
@@ -576,41 +682,41 @@ def test_routing_forest():
             (  # CondNode
                 could_be_int,
                 [  # RoutingForest
-                    (lambda x: int(x) >= 10, FinalNode('More than a digit')),
+                    (lambda x: int(x) >= 10, FinalNode("More than a digit")),
                     (lambda x: (int(x) % 2) == 1, FinalNode("That's odd!")),
                 ],
             ),
-            (could_be_float, FinalNode('could be seen as a float')),
+            (could_be_float, FinalNode("could be seen as a float")),
         ]
     )
 
-    assert list(st2('nothing I can do with that')) == []
-    assert list(st2(8)) == ['could be seen as a float']
-    assert list(st2(9)) == ["That's odd!", 'could be seen as a float']
-    assert list(st2(10)) == ['More than a digit', 'could be seen as a float']
+    assert list(st2("nothing I can do with that")) == []
+    assert list(st2(8)) == ["could be seen as a float"]
+    assert list(st2(9)) == ["That's odd!", "could be seen as a float"]
+    assert list(st2(10)) == ["More than a digit", "could be seen as a float"]
     assert list(st2(11)) == [
-        'More than a digit',
+        "More than a digit",
         "That's odd!",
-        'could be seen as a float',
+        "could be seen as a float",
     ]
 
     rf2 = RoutingForest(
         [
             (
                 lambda x: x % 5,
-                LiteralVal({0: FinalNode('zero_mod_5'), 1: FinalNode('one_mod_5')}),
-                FinalNode('default_mod_5'),
+                LiteralVal({0: FinalNode("zero_mod_5"), 1: FinalNode("one_mod_5")}),
+                FinalNode("default_mod_5"),
             ),
             (
                 lambda x: x % 2,
-                LiteralVal({0: FinalNode('even'), 1: FinalNode('odd')}),
-                FinalNode('that is not an int'),
+                LiteralVal({0: FinalNode("even"), 1: FinalNode("odd")}),
+                FinalNode("that is not an int"),
             ),
         ]
     )
 
-    assert list(rf2(5)) == ['zero_mod_5', 'odd']
-    assert list(rf2(6)) == ['one_mod_5', 'even']
-    assert list(rf2(7)) == ['default_mod_5', 'odd']
-    assert list(rf2(8)) == ['default_mod_5', 'even']
-    assert list(rf2(10)) == ['zero_mod_5', 'even']
+    assert list(rf2(5)) == ["zero_mod_5", "odd"]
+    assert list(rf2(6)) == ["one_mod_5", "even"]
+    assert list(rf2(7)) == ["default_mod_5", "odd"]
+    assert list(rf2(8)) == ["default_mod_5", "even"]
+    assert list(rf2(10)) == ["zero_mod_5", "even"]
