@@ -329,6 +329,8 @@ def get_app_data_folder():
 
     Returns:
         str: The full path of the app data folder.
+
+    See https://github.com/i2mint/i2mint/issues/1.
     """
     if os.name == "nt":
         # Windows
