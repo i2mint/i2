@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.routing_forest &mdash; i2 0.0.178 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.routing_forest &mdash; i2 0.0.179 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -31,11 +31,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> i2
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            i2
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,8 +68,8 @@
 <li class="toctree-l1"><a class="reference internal" href="scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scrap/signature_bops.html">i2.scrap.signature_bops</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/switch_case_tree.html">i2.scrap.switch_case_tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="signatures.html">i2.signatures</a></li>
-<li class="toctree-l1"><a class="reference internal" href="switch_case_tree.html">i2.switch_case_tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">i2.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/footprints_test.html">i2.tests.footprints_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
@@ -90,7 +94,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">i2.routing_forest</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/module_docs/i2/routing_forest.rst.txt" rel="nofollow"> View page source</a>
@@ -253,6 +257,12 @@ you can wrap it in <code class="docutils literal notranslate"><span class="pre">
 </dd></dl>
 
 <dl class="py class">
+<dt id="i2.routing_forest.DelegateToMappingAttrMixin">
+<em class="property">class </em><code class="sig-prename descclassname">i2.routing_forest.</code><code class="sig-name descname">DelegateToMappingAttrMixin</code><a class="reference internal" href="../../_modules/i2/routing_forest.html#DelegateToMappingAttrMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.DelegateToMappingAttrMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mixin to delegate <code class="docutils literal notranslate"><span class="pre">Mapping</span></code> methods to a mapping attribute called <code class="docutils literal notranslate"><span class="pre">mapping</span></code></p>
+</dd></dl>
+
+<dl class="py class">
 <dt id="i2.routing_forest.FeatCondNode">
 <em class="property">class </em><code class="sig-prename descclassname">i2.routing_forest.</code><code class="sig-name descname">FeatCondNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat</span><span class="p">:</span> <span class="n">Callable<span class="p">[</span><span class="p">[</span>Obj<span class="p">]</span><span class="p">, </span>Feature<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">feat_cond_thens</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>Tuple<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>Feature<span class="p">]</span><span class="p">, </span>bool<span class="p">]</span><span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/routing_forest.html#FeatCondNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.FeatCondNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>A RoutingNode that yields multiple routes, one for each of several conditions
@@ -304,6 +314,87 @@ according to an iterable of conditions on the feature.</p>
 <em class="property">class </em><code class="sig-prename descclassname">i2.routing_forest.</code><code class="sig-name descname">FinalNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/routing_forest.html#FinalNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.FinalNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>A RoutingNode that is final.
 It yields (both with call and iter) it’s single <cite>.val</cite> attribute.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="i2.routing_forest.KeyFuncMapping">
+<em class="property">class </em><code class="sig-prename descclassname">i2.routing_forest.</code><code class="sig-name descname">KeyFuncMapping</code><span class="sig-paren">(</span><em class="sig-param">mapping: MutableMapping = None</em>, <em class="sig-param">key: Callable = &lt;function identity&gt;</em>, <em class="sig-param">default_factory: Callable = &lt;function return_sentinel&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/routing_forest.html#KeyFuncMapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.KeyFuncMapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements a switch-case-like mapping with a callable key function.</p>
+<p>The purpose of <code class="docutils literal notranslate"><span class="pre">KeyFuncMapping</span></code> is to  allow switch-case logic to be
+given as a plugin specification.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">i2.routing_forest</span> <span class="kn">import</span> <span class="n">KeyFuncMapping</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_extension</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_type</span> <span class="o">=</span> <span class="n">KeyFuncMapping</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;csv&#39;</span><span class="p">:</span> <span class="s1">&#39;table&#39;</span><span class="p">,</span> <span class="s1">&#39;xls&#39;</span><span class="p">:</span> <span class="s1">&#39;table&#39;</span><span class="p">,</span> <span class="s1">&#39;wav&#39;</span><span class="p">:</span> <span class="s1">&#39;audio&#39;</span><span class="p">},</span> <span class="n">key</span><span class="o">=</span><span class="n">get_extension</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Calling a <code class="docutils literal notranslate"><span class="pre">KeyFuncMapping</span></code> instance will call the <code class="docutils literal notranslate"><span class="pre">key</span></code> function on the input,
+then look up the result in the <code class="docutils literal notranslate"><span class="pre">mapping</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data_type</span><span class="p">(</span><span class="s1">&#39;my_file.csv&#39;</span><span class="p">)</span>
+<span class="go">&#39;table&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_type</span><span class="p">(</span><span class="s1">&#39;another_file.xls&#39;</span><span class="p">)</span>
+<span class="go">&#39;table&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_type</span><span class="p">(</span><span class="s1">&#39;sound.wav&#39;</span><span class="p">)</span>
+<span class="go">&#39;audio&#39;</span>
+</pre></div>
+</div>
+<p>If the key is not found in the mapping, the <code class="docutils literal notranslate"><span class="pre">default_factory</span></code> is <strong>called</strong>
+with the input and the result is returned. The default <code class="docutils literal notranslate"><span class="pre">default_factory</span></code> is
+<code class="docutils literal notranslate"><span class="pre">return_sentinel</span></code>, which by default returns <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">data_type</span><span class="p">(</span><span class="s1">&#39;poem.txt&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>Note that instances of <code class="docutils literal notranslate"><span class="pre">KeyFuncMapping</span></code> are also <code class="docutils literal notranslate"><span class="pre">Mapping``s,</span> <span class="pre">so</span> <span class="pre">all</span> <span class="pre">``Mapping</span></code>
+methods can be used.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">data_type</span><span class="p">)</span>
+<span class="go">[&#39;csv&#39;, &#39;xls&#39;, &#39;wav&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">data_type</span><span class="p">)</span>
+<span class="go">{&#39;csv&#39;: &#39;table&#39;, &#39;xls&#39;: &#39;table&#39;, &#39;wav&#39;: &#39;audio&#39;}</span>
+</pre></div>
+</div>
+<p>Including <code class="docutils literal notranslate"><span class="pre">update</span></code>, which constitutes a convenient way to extend the mapping.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data_type</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">txt</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_type</span><span class="p">(</span><span class="s1">&#39;poem.txt&#39;</span><span class="p">)</span>
+<span class="go">&#39;text&#39;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">default_factory</span></code> can be set to any callable, including a
+<code class="docutils literal notranslate"><span class="pre">KeyFuncMapping</span></code> itself, which enables us to define an <code class="docutils literal notranslate"><span class="pre">else</span></code> for the
+switch-case logic that a <code class="docutils literal notranslate"><span class="pre">KeyFuncMapping</span></code> implements.
+Say, for example, if no handled extension is found, we want to check the protocol
+of the input string instead. This is not only a new mapping, but also a new key
+function. We can do it as such:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_protocol</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;://&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">protocol</span> <span class="o">=</span> <span class="n">KeyFuncMapping</span><span class="p">({</span><span class="s1">&#39;https&#39;</span><span class="p">:</span> <span class="s1">&#39;url&#39;</span><span class="p">},</span> <span class="n">get_protocol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_data_type</span> <span class="o">=</span> <span class="n">KeyFuncMapping</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">data_type</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span> <span class="n">data_type</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">protocol</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_data_type</span><span class="p">(</span><span class="s1">&#39;notes.txt&#39;</span><span class="p">)</span>
+<span class="go">&#39;text&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_data_type</span><span class="p">(</span><span class="s1">&#39;https://www.python.org/&#39;</span><span class="p">)</span>
+<span class="go">&#39;url&#39;</span>
+</pre></div>
+</div>
+<p>Given how useful this pattern is, we made the <code class="docutils literal notranslate"><span class="pre">+</span></code> operator implement this.
+Note that here, <code class="docutils literal notranslate"><span class="pre">+</span></code> is not associative or commutative (as with numbers).
+It should be understood to function more like the <code class="docutils literal notranslate"><span class="pre">+</span></code> for iterables like <code class="docutils literal notranslate"><span class="pre">list</span></code>
+and <code class="docutils literal notranslate"><span class="pre">tuple</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nested</span> <span class="o">=</span> <span class="n">data_type</span> <span class="o">+</span> <span class="n">protocol</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nested</span><span class="p">(</span><span class="s1">&#39;https://www.python.org/&#39;</span><span class="p">)</span>
+<span class="go">&#39;url&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nested</span><span class="p">(</span><span class="s1">&#39;jazz.wav&#39;</span><span class="p">)</span>
+<span class="go">&#39;audio&#39;</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="i2.routing_forest.KeyFuncMapping.default_factory">
+<code class="sig-name descname">default_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sentinel</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#i2.routing_forest.KeyFuncMapping.default_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a constanc sentinel value when called. Use partial to set sentinel</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -376,6 +467,12 @@ implemented with a {value_to_compare_to_feature: then_node} map.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">rf</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;zero_mod_5&#39;</span><span class="p">,</span> <span class="s1">&#39;even&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.routing_forest.return_sentinel">
+<code class="sig-prename descclassname">i2.routing_forest.</code><code class="sig-name descname">return_sentinel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span></em>, <em class="sig-param"><span class="n">sentinel</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/routing_forest.html#return_sentinel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.routing_forest.return_sentinel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a constanc sentinel value when called. Use partial to set sentinel</p>
 </dd></dl>
 
 </section>

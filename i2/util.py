@@ -18,7 +18,7 @@ from typing import (
     TypeVar,
 )
 
-T = TypeVar("T")
+T = TypeVar('T')
 
 
 class OverwritesForbidden(ValueError):
@@ -26,7 +26,7 @@ class OverwritesForbidden(ValueError):
 
 
 def is_lambda(func):
-    return getattr(func, "__name__", None) == "<lambda>"
+    return getattr(func, '__name__', None) == '<lambda>'
 
 
 # TODO: Fragile. Make more robust.
@@ -37,7 +37,7 @@ def lambda_code(lambda_func) -> str:
 
     """
     func_str = str(inspect.getsourcelines(lambda_func)[0])
-    return func_str.strip("['\\n']").split(" = ")[1]
+    return func_str.strip("['\\n']").split(' = ')[1]
 
 
 # TODO: Only works with lambdas so either assert function is a lambda on construction
@@ -61,7 +61,7 @@ class PicklableLambda:
     def __init__(self, func, name=None):
         self.func = func
         self.__signature__ = inspect.signature(self.func)
-        self.__name__ = name or getattr(func, "__name__", type(self).__name__)
+        self.__name__ = name or getattr(func, '__name__', type(self).__name__)
 
     def __getstate__(self):
         return lambda_code(self.func), self.__name__
@@ -75,7 +75,7 @@ class PicklableLambda:
         return self.func(*args, **kwargs)
 
     def __repr__(self):
-        return f"<{type(self).__name__}({self.__name__})>"
+        return f'<{type(self).__name__}({self.__name__})>'
 
 
 def ensure_identifiers(
@@ -185,7 +185,7 @@ def insert_name_based_objects_in_scope(
             scope[name] = factory(name)
         else:
             raise OverwritesForbidden(
-                f"This key already exisited and is not allowed to be overwritten"
+                f'This key already exisited and is not allowed to be overwritten'
             )
 
 
@@ -229,7 +229,7 @@ def dflt_idx_preprocessor(obj, idx):
         raise KeyError(f"Couldn't extract a {idx} from object {obj}")
 
 
-def path_extractor(tree, path, getter=dflt_idx_preprocessor, *, path_sep="."):
+def path_extractor(tree, path, getter=dflt_idx_preprocessor, *, path_sep='.'):
     """Get items from a tree-structured object from a sequence of tree-traversal indices.
 
     :param tree: The object you want to extract values from:
@@ -288,7 +288,7 @@ def path_extractor(tree, path, getter=dflt_idx_preprocessor, *, path_sep="."):
         return tree
     else:
         idx, *path = path  # extract path[0] as idx & update path to path[1:]
-        if isinstance(idx, str) and idx == "*":
+        if isinstance(idx, str) and idx == '*':
             idx = lambda x: True  # use a filter function (but filter everything in)
         if callable(idx) and not isinstance(idx, LiteralVal):
             # If idx is a non-literal callable, consider it as a filter to be applied
@@ -332,15 +332,15 @@ def get_app_data_folder():
 
     See https://github.com/i2mint/i2mint/issues/1.
     """
-    if os.name == "nt":
+    if os.name == 'nt':
         # Windows
-        app_data_folder = os.getenv("APPDATA")
-    elif os.name == "darwin":
+        app_data_folder = os.getenv('APPDATA')
+    elif os.name == 'darwin':
         # macOS
-        app_data_folder = os.path.expanduser("~/.config")
+        app_data_folder = os.path.expanduser('~/.config')
     else:
         # Linux/Unix
-        app_data_folder = os.path.expanduser("~/.config")
+        app_data_folder = os.path.expanduser('~/.config')
 
     return app_data_folder
 
@@ -407,7 +407,7 @@ class FrozenDict(dict):
 
     """
 
-    __slots__ = ("_hash",)
+    __slots__ = ('_hash',)
 
     def updated(self, *a, **kw):
         """Make a copy and add items from a dictionary or iterable (and/or
@@ -425,7 +425,7 @@ class FrozenDict(dict):
 
     def __repr__(self):
         cn = self.__class__.__name__
-        return "%s(%s)" % (cn, dict.__repr__(self))
+        return '%s(%s)' % (cn, dict.__repr__(self))
 
     def __reduce_ex__(self, protocol):
         return type(self), (dict(self),)
@@ -449,8 +449,8 @@ class FrozenDict(dict):
 
     # block everything else
     def _raise_frozen_typeerror(self, *a, **kw):
-        "raises a TypeError, because FrozenDicts are immutable"
-        raise TypeError("%s object is immutable" % self.__class__.__name__)
+        'raises a TypeError, because FrozenDicts are immutable'
+        raise TypeError('%s object is immutable' % self.__class__.__name__)
 
     __setitem__ = __delitem__ = update = _raise_frozen_typeerror
     setdefault = pop = popitem = clear = _raise_frozen_typeerror
@@ -470,7 +470,7 @@ function_type = type(
 
 class NoDefault(object):
     def __repr__(self):
-        return "no_default"
+        return 'no_default'
 
 
 no_default = NoDefault()
@@ -481,7 +481,7 @@ class imdict(dict):
         return id(self)
 
     def _immutable(self, *args, **kws):
-        raise TypeError("object is immutable")
+        raise TypeError('object is immutable')
 
     __setitem__ = _immutable
     __delitem__ = _immutable
@@ -522,20 +522,20 @@ def inject_method(self, method_function, method_name=None):
 
 def get_function_body(func):
     source_lines = inspect.getsourcelines(func)[0]
-    source_lines = itertools.dropwhile(lambda x: x.startswith("@"), source_lines)
+    source_lines = itertools.dropwhile(lambda x: x.startswith('@'), source_lines)
     line = next(source_lines).strip()
-    if not line.startswith("def ") and not line.startswith("class"):
-        return line.rsplit(":")[-1].strip()
-    elif not line.endswith(":"):
+    if not line.startswith('def ') and not line.startswith('class'):
+        return line.rsplit(':')[-1].strip()
+    elif not line.endswith(':'):
         for line in source_lines:
             line = line.strip()
-            if line.endswith(":"):
+            if line.endswith(':'):
                 break
     # Handle functions that are not one-liners
     first_line = next(source_lines)
     # Find the indentation of the first line
     indentation = len(first_line) - len(first_line.lstrip())
-    return "".join(
+    return ''.join(
         [first_line[indentation:]] + [line[indentation:] for line in source_lines]
     )
 
@@ -549,7 +549,7 @@ class MissingArgument(ValueError):
 
 
 def _default_sentinel_repr_method(self):
-    return "%s(%r)" % (self.__class__.__name__, self.__name__)
+    return '%s(%r)' % (self.__class__.__name__, self.__name__)
 
 
 def mk_sentinel(
@@ -693,26 +693,26 @@ def mk_sentinel(
         # TODO: Try to use something else than hidden _getframe
         # TODO: extract this module resolver so can be reused (_getframe(2)?)
         frame = sys._getframe(1)
-        module = frame.f_globals.get("__name__")
+        module = frame.f_globals.get('__name__')
 
     if not module or module not in sys.modules:
         raise ValueError(
-            "Pickleable sentinel objects can only be made from top-level module scopes"
+            'Pickleable sentinel objects can only be made from top-level module scopes'
         )
     Sentinel.__module__ = module
 
     return Sentinel()
 
 
-def _indent(text, margin, newline="\n", key=bool):
-    "based on boltons.strutils.indent"
+def _indent(text, margin, newline='\n', key=bool):
+    'based on boltons.strutils.indent'
     indented_lines = [
         (margin + line if key(line) else line) for line in text.splitlines()
     ]
     return newline.join(indented_lines)
 
 
-NO_DEFAULT = mk_sentinel("NO_DEFAULT", boolean_value=False)
+NO_DEFAULT = mk_sentinel('NO_DEFAULT', boolean_value=False)
 
 
 from inspect import formatannotation
@@ -727,10 +727,10 @@ def inspect_formatargspec(
     kwonlydefaults={},
     annotations={},
     formatarg=str,
-    formatvarargs=lambda name: "*" + name,
-    formatvarkw=lambda name: "**" + name,
-    formatvalue=lambda value: "=" + repr(value),
-    formatreturns=lambda text: " -> " + text,
+    formatvarargs=lambda name: '*' + name,
+    formatvarkw=lambda name: '**' + name,
+    formatvalue=lambda value: '=' + repr(value),
+    formatreturns=lambda text: ' -> ' + text,
     formatannotation=formatannotation,
 ):
     """Copy formatargspec from python 3.7 standard library.
@@ -744,7 +744,7 @@ def inspect_formatargspec(
     def formatargandannotation(arg):
         result = formatarg(arg)
         if arg in annotations:
-            result += ": " + formatannotation(annotations[arg])
+            result += ': ' + formatannotation(annotations[arg])
         return result
 
     specs = []
@@ -759,7 +759,7 @@ def inspect_formatargspec(
         specs.append(formatvarargs(formatargandannotation(varargs)))
     else:
         if kwonlyargs:
-            specs.append("*")
+            specs.append('*')
     if kwonlyargs:
         for kwonlyarg in kwonlyargs:
             spec = formatargandannotation(kwonlyarg)
@@ -768,9 +768,9 @@ def inspect_formatargspec(
             specs.append(spec)
     if varkw is not None:
         specs.append(formatvarkw(formatargandannotation(varkw)))
-    result = "(" + ", ".join(specs) + ")"
-    if "return" in annotations:
-        result += formatreturns(formatannotation(annotations["return"]))
+    result = '(' + ', '.join(specs) + ')'
+    if 'return' in annotations:
+        result += formatreturns(formatannotation(annotations['return']))
     return result
 
 
@@ -841,13 +841,13 @@ class FunctionBuilder(object):
     """
 
     _argspec_defaults = {
-        "args": list,
-        "varargs": lambda: None,
-        "varkw": lambda: None,
-        "defaults": lambda: None,
-        "kwonlyargs": list,
-        "kwonlydefaults": dict,
-        "annotations": dict,
+        'args': list,
+        'varargs': lambda: None,
+        'varkw': lambda: None,
+        'defaults': lambda: None,
+        'kwonlyargs': list,
+        'kwonlydefaults': dict,
+        'annotations': dict,
     }
 
     @classmethod
@@ -856,14 +856,14 @@ class FunctionBuilder(object):
         return dict((attr, getattr(argspec, attr)) for attr in cls._argspec_defaults)
 
     _defaults = {
-        "doc": str,
-        "dict": dict,
-        "is_async": lambda: False,
-        "module": lambda: None,
-        "body": lambda: "pass",
-        "indent": lambda: 4,
-        "annotations": dict,
-        "filename": lambda: "boltons.funcutils.FunctionBuilder",
+        'doc': str,
+        'dict': dict,
+        'is_async': lambda: False,
+        'module': lambda: None,
+        'body': lambda: 'pass',
+        'indent': lambda: 4,
+        'annotations': dict,
+        'filename': lambda: 'boltons.funcutils.FunctionBuilder',
     }
 
     _defaults.update(_argspec_defaults)
@@ -879,7 +879,7 @@ class FunctionBuilder(object):
             setattr(self, a, val)
 
         if kw:
-            raise TypeError("unexpected kwargs: %r" % kw.keys())
+            raise TypeError('unexpected kwargs: %r' % kw.keys())
         return
 
     # def get_argspec(self):  # TODO
@@ -900,12 +900,12 @@ class FunctionBuilder(object):
         )
 
     _KWONLY_MARKER = re.compile(
-        r"""
+        r'''
     \*     # a star
     \s*    # followed by any amount of whitespace
     ,      # followed by a comma
     \s*    # followed by any amount of whitespace
-    """,
+    ''',
         re.VERBOSE,
     )
 
@@ -914,7 +914,7 @@ class FunctionBuilder(object):
         formatters = {}
         if self.kwonlyargs:
             kwonly_pairs = dict((arg, arg) for arg in self.kwonlyargs)
-            formatters["formatvalue"] = lambda value: "=" + value
+            formatters['formatvalue'] = lambda value: '=' + value
 
         sig = inspect_formatargspec(
             self.args,
@@ -926,7 +926,7 @@ class FunctionBuilder(object):
             {},
             **formatters,
         )
-        sig = self._KWONLY_MARKER.sub("", sig)
+        sig = self._KWONLY_MARKER.sub('', sig)
         return sig[1:-1]
 
     @classmethod
@@ -938,21 +938,21 @@ class FunctionBuilder(object):
         # TODO: copy_body? gonna need a good signature regex.
         # TODO: might worry about __closure__?
         if not callable(func):
-            raise TypeError("expected callable object, not %r" % (func,))
+            raise TypeError('expected callable object, not %r' % (func,))
 
         if isinstance(func, functools.partial):
             kwargs = {
-                "name": func.__name__,
-                "doc": func.__doc__,
-                "module": getattr(func, "__module__", None),  # e.g., method_descriptor
-                "annotations": getattr(func, "__annotations__", {}),
-                "dict": getattr(func, "__dict__", {}),
+                'name': func.__name__,
+                'doc': func.__doc__,
+                'module': getattr(func, '__module__', None),  # e.g., method_descriptor
+                'annotations': getattr(func, '__annotations__', {}),
+                'dict': getattr(func, '__dict__', {}),
             }
 
         kwargs.update(cls._argspec_to_dict(func))
 
         if inspect.iscoroutinefunction(func):
-            kwargs["is_async"] = True
+            kwargs['is_async'] = True
 
         return cls(**kwargs)
 
@@ -976,15 +976,15 @@ class FunctionBuilder(object):
         execdict = execdict or {}
         body = self.body or self._default_body
 
-        tmpl = "def {name}{sig_str}:"
-        tmpl += "\n{body}"
+        tmpl = 'def {name}{sig_str}:'
+        tmpl += '\n{body}'
 
         if self.is_async:
-            tmpl = "async " + tmpl
+            tmpl = 'async ' + tmpl
 
-        body = _indent(self.body, " " * self.indent)
+        body = _indent(self.body, ' ' * self.indent)
 
-        name = self.name.replace("<", "_").replace(">", "_")  # lambdas
+        name = self.name.replace('<', '_').replace('>', '_')  # lambdas
         src = tmpl.format(
             name=name,
             sig_str=self.get_sig_str(with_annotations=False),
@@ -1017,13 +1017,13 @@ class FunctionBuilder(object):
         ret = dict(
             reversed(list(zip(reversed(self.args), reversed(self.defaults or []))))
         )
-        kwonlydefaults = getattr(self, "kwonlydefaults", None)
+        kwonlydefaults = getattr(self, 'kwonlydefaults', None)
         if kwonlydefaults:
             ret.update(kwonlydefaults)
         return ret
 
     def get_arg_names(self, only_required=False):
-        arg_names = tuple(self.args) + tuple(getattr(self, "kwonlyargs", ()))
+        arg_names = tuple(self.args) + tuple(getattr(self, 'kwonlyargs', ()))
         if only_required:
             defaults_dict = self.get_defaults_dict()
             arg_names = tuple([an for an in arg_names if an not in defaults_dict])
@@ -1036,11 +1036,11 @@ class FunctionBuilder(object):
         """
         if arg_name in self.args:
             raise ExistingArgument(
-                "arg %r already in func %s arg list" % (arg_name, self.name)
+                'arg %r already in func %s arg list' % (arg_name, self.name)
             )
         if arg_name in self.kwonlyargs:
             raise ExistingArgument(
-                "arg %r already in func %s kwonly arg list" % (arg_name, self.name)
+                'arg %r already in func %s kwonly arg list' % (arg_name, self.name)
             )
         if not kwonly:
             self.args.append(arg_name)
@@ -1073,8 +1073,8 @@ class FunctionBuilder(object):
             except (AttributeError, ValueError):
                 # py2, or py3 and missing from both
                 exc = MissingArgument(
-                    "arg %r not found in %s argument list:"
-                    " %r" % (arg_name, self.name, args)
+                    'arg %r not found in %s argument list:'
+                    ' %r' % (arg_name, self.name, args)
                 )
                 exc.arg_name = arg_name
                 raise exc
@@ -1086,12 +1086,9 @@ class FunctionBuilder(object):
         return
 
     def _compile(self, src, execdict):
-        filename = "<%s-%d>" % (
-            self.filename,
-            next(self._compile_count),
-        )
+        filename = '<%s-%d>' % (self.filename, next(self._compile_count),)
         try:
-            code = compile(src, filename, "single")
+            code = compile(src, filename, 'single')
             exec(code, execdict)
         except Exception:
             raise
