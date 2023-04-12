@@ -49,6 +49,7 @@ from i2.wrapper import (
 )
 
 from i2.util import (
+    copy_func,
     get_app_data_folder,
     LiteralVal,
     path_extractor,

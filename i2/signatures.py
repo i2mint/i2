@@ -996,7 +996,13 @@ class Sig(Signature, Mapping):
     # TODO: Add params for more validation (e.g. arg number/name matching?)
     # TODO: Switch to ignore_incompatible_signatures=False when existing code is
     #   changed accordingly.
-    def wrap(self, func: Callable, ignore_incompatible_signatures=True):
+    def wrap(
+        self,
+        func: Callable,
+        ignore_incompatible_signatures: bool = True,
+        *,
+        copy_function: Union[bool, Callable] = False,
+    ):
         """Gives the input function the signature.
 
         This is similar to the `functools.wraps` function, but parametrized by a
@@ -1076,8 +1082,16 @@ class Sig(Signature, Mapping):
         TODO: Give more explanations why this is.
         """
 
-        # TODO: Should we make a copy/wrap of the function so as to not override
-        #  decorated function itself? Make sure the func remains pickalable!
+        # TODO: Should we make copy_function=False the default,
+        #  so as to not override decorated function itself by default?
+        if copy_function:
+            if isinstance(copy_function, bool):
+                from i2.util import copy_func as copy_function
+            else:
+                assert callable(
+                    copy_function
+                ), f'copy_function must be a callable. This is not: {copy_function}'
+            func = copy_function(func)
 
         # Analyze self and func signature to validate sanity
         _validate_sanity_of_signature_change(func, self, ignore_incompatible_signatures)

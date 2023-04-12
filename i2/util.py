@@ -21,6 +21,71 @@ from typing import (
 T = TypeVar("T")
 
 
+def copy_func(
+        func: Callable, *, copy_dict: bool = True, code=None, globals_: dict = None
+):
+    """Make a (shallow) copy of a function.
+
+    >>> f = lambda x, *, y=2: x * y
+    >>> f.an_attr = 42
+    >>> f_copy = copy_func(f)
+    >>> f_copy(3) == f(3) == 6
+    True
+    >>> f_copy.an_attr == f.an_attr == 42
+    True
+
+    Verify that making an attribute in one won't create an attribute in the other:
+
+    >>> f.another_attr = 42
+    >>> hasattr(f_copy, 'another_attr')
+    False
+    >>> f_copy.yet_another_attr = 84
+    >>> hasattr(f, 'yet_another_attr')
+    False
+
+    :param func: The function to be copied.
+    :param copy_dict: Indicates whether to copy the ``__dict__`` attribute of the
+        function. Defaults to ``True``.
+    :param code: The value to be use as the ``__code__`` attribute of the copy.
+    :param globals_: The value to be use as the ``__globals__`` attribute of the copy.
+    :return: A shallow copy of the function.
+
+    Note that it should always work with proper functions and attempts to do the
+    best job it can with other callables, but there are no guarantees on how
+    ``copy_function`` will behave with custom callables.
+
+    If these custom callables don't have a `__code__` attribute, the copy will fail.
+    Furthermore, if the custom callable  doesn't have ``__globals__``, the empty
+    dictionary will be used as the globals.
+    We provide a ``code`` and ``globals`` argument to allow the user to provide
+    the ``__code__`` and ``__globals__`` attributes of the function to be copied.
+
+    :param func: The function to be copied. Must be a function, not just any method or callable.
+    :param copy_dict: Also copy any attributes set on the function instance. Defaults to ``True``.
+    :return: A shallow copy of the function.
+    """
+    from types import FunctionType
+
+    code = code or getattr(func, "__code__", None)
+    if not isinstance(code, types.CodeType):
+        raise TypeError(
+            f"Expected a types.CodeType object, but got {type(code)=}"
+        )
+    globals_ = globals_ or getattr(func, "__globals__", {})
+    new_func = FunctionType(
+        code,  # if your func doesn't have a __code__ attr, can't make a copy!
+        globals_,
+        name=getattr(func, "__name__", None),
+        argdefs=getattr(func, "__defaults__", None),
+        closure=getattr(func, "__closure__", None)
+    )
+    if hasattr(func, "__kwdefaults__"):
+        new_func.__kwdefaults__ = func.__kwdefaults__
+    if copy_dict:
+        new_func.__dict__.update(func.__dict__)
+    return new_func
+
+
 class OverwritesForbidden(ValueError):
     """Raise when a user is not allowed to overwrite a mapping's key"""
 

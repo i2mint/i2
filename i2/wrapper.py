@@ -190,6 +190,7 @@ class _Wrap:
 
     # To get help(instance.method) to work!
     # TODO: Does this have undesirable side effects?
+    # TODO: Perhaps self.__call__.__code__ is better (since it's actually what runs)?
     @property
     def __code__(self):
         return self.func.__code__
