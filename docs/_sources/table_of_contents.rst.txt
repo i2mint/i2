@@ -23,8 +23,8 @@
    module_docs/i2/scrap/scrap_kwargs
    module_docs/i2/scrap/signature_bops
    module_docs/i2/scrap/simple_pymint
+   module_docs/i2/scrap/switch_case_tree
    module_docs/i2/signatures
-   module_docs/i2/switch_case_tree
    module_docs/i2/tests
    module_docs/i2/tests/footprints_test
    module_docs/i2/tests/objects_for_testing

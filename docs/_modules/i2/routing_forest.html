@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.routing_forest &mdash; i2 0.0.178 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.routing_forest &mdash; i2 0.0.179 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -28,11 +28,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> i2
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            i2
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -61,8 +65,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/signature_bops.html">i2.scrap.signature_bops</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/switch_case_tree.html">i2.scrap.switch_case_tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/signatures.html">i2.signatures</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/switch_case_tree.html">i2.switch_case_tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests.html">i2.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/footprints_test.html">i2.tests.footprints_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
@@ -87,7 +91,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">i2.routing_forest</li>
       <li class="wy-breadcrumbs-aside">
@@ -252,11 +256,158 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span>
 <span class="kn">from</span> <span class="nn">i2.util</span> <span class="kn">import</span> <span class="n">LiteralVal</span><span class="p">,</span> <span class="n">mk_sentinel</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Any</span>
 
+
+<div class="viewcode-block" id="return_sentinel"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.return_sentinel">[docs]</a><span class="k">def</span> <span class="nf">return_sentinel</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">sentinel</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a constanc sentinel value when called. Use partial to set sentinel&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">sentinel</span></div>
+
+
+<span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">obj</span>
+
+
+<div class="viewcode-block" id="DelegateToMappingAttrMixin"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.DelegateToMappingAttrMixin">[docs]</a><span class="k">class</span> <span class="nc">DelegateToMappingAttrMixin</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A mixin to delegate ``Mapping`` methods to a mapping attribute called ``mapping``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span></div>
+
+
+<span class="c1"># Note: KeyFuncMapping is very similar to the SwitchCaseMapping in i2.routing_forest,</span>
+<span class="c1">#  but the latter builds on a more extensive framework for routing.</span>
+<div class="viewcode-block" id="KeyFuncMapping"><a class="viewcode-back" href="../../module_docs/i2/routing_forest.html#i2.routing_forest.KeyFuncMapping">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">KeyFuncMapping</span><span class="p">(</span><span class="n">DelegateToMappingAttrMixin</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements a switch-case-like mapping with a callable key function.</span>
+
+<span class="sd">    The purpose of ``KeyFuncMapping`` is to  allow switch-case logic to be</span>
+<span class="sd">    given as a plugin specification.</span>
+
+<span class="sd">    &gt;&gt;&gt; from i2.routing_forest import KeyFuncMapping</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; get_extension = lambda x: x.split(&#39;.&#39;)[-1]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; data_type = KeyFuncMapping(</span>
+<span class="sd">    ...     {&#39;csv&#39;: &#39;table&#39;, &#39;xls&#39;: &#39;table&#39;, &#39;wav&#39;: &#39;audio&#39;}, key=get_extension</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Calling a ``KeyFuncMapping`` instance will call the ``key`` function on the input,</span>
+<span class="sd">    then look up the result in the ``mapping``.</span>
+
+<span class="sd">    &gt;&gt;&gt; data_type(&#39;my_file.csv&#39;)</span>
+<span class="sd">    &#39;table&#39;</span>
+<span class="sd">    &gt;&gt;&gt; data_type(&#39;another_file.xls&#39;)</span>
+<span class="sd">    &#39;table&#39;</span>
+<span class="sd">    &gt;&gt;&gt; data_type(&#39;sound.wav&#39;)</span>
+<span class="sd">    &#39;audio&#39;</span>
+
+<span class="sd">    If the key is not found in the mapping, the ``default_factory`` is **called**</span>
+<span class="sd">    with the input and the result is returned. The default ``default_factory`` is</span>
+<span class="sd">    ``return_sentinel``, which by default returns ``None``</span>
+
+<span class="sd">    &gt;&gt;&gt; assert data_type(&#39;poem.txt&#39;) is None</span>
+
+<span class="sd">    Note that instances of ``KeyFuncMapping`` are also ``Mapping``s, so all ``Mapping``</span>
+<span class="sd">    methods can be used.</span>
+
+<span class="sd">    &gt;&gt;&gt; list(data_type)</span>
+<span class="sd">    [&#39;csv&#39;, &#39;xls&#39;, &#39;wav&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; dict(data_type)</span>
+<span class="sd">    {&#39;csv&#39;: &#39;table&#39;, &#39;xls&#39;: &#39;table&#39;, &#39;wav&#39;: &#39;audio&#39;}</span>
+
+<span class="sd">    Including ``update``, which constitutes a convenient way to extend the mapping.</span>
+
+<span class="sd">    &gt;&gt;&gt; data_type.update(txt=&#39;text&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; data_type(&#39;poem.txt&#39;)</span>
+<span class="sd">    &#39;text&#39;</span>
+
+<span class="sd">    The ``default_factory`` can be set to any callable, including a</span>
+<span class="sd">    ``KeyFuncMapping`` itself, which enables us to define an ``else`` for the</span>
+<span class="sd">    switch-case logic that a ``KeyFuncMapping`` implements.</span>
+<span class="sd">    Say, for example, if no handled extension is found, we want to check the protocol</span>
+<span class="sd">    of the input string instead. This is not only a new mapping, but also a new key</span>
+<span class="sd">    function. We can do it as such:</span>
+
+<span class="sd">    &gt;&gt;&gt; get_protocol = lambda x: x.split(&#39;://&#39;)[0]</span>
+<span class="sd">    &gt;&gt;&gt; protocol = KeyFuncMapping({&#39;https&#39;: &#39;url&#39;}, get_protocol)</span>
+<span class="sd">    &gt;&gt;&gt; new_data_type = KeyFuncMapping(</span>
+<span class="sd">    ...     data_type.mapping, data_type.key, default_factory=protocol</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; new_data_type(&#39;notes.txt&#39;)</span>
+<span class="sd">    &#39;text&#39;</span>
+<span class="sd">    &gt;&gt;&gt; new_data_type(&#39;https://www.python.org/&#39;)</span>
+<span class="sd">    &#39;url&#39;</span>
+
+<span class="sd">    Given how useful this pattern is, we made the ``+`` operator implement this.</span>
+<span class="sd">    Note that here, ``+`` is not associative or commutative (as with numbers).</span>
+<span class="sd">    It should be understood to function more like the ``+`` for iterables like ``list``</span>
+<span class="sd">    and ``tuple``.</span>
+
+<span class="sd">    &gt;&gt;&gt; nested = data_type + protocol</span>
+<span class="sd">    &gt;&gt;&gt; nested(&#39;https://www.python.org/&#39;)</span>
+<span class="sd">    &#39;url&#39;</span>
+<span class="sd">    &gt;&gt;&gt; nested(&#39;jazz.wav&#39;)</span>
+<span class="sd">    &#39;audio&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">mapping</span><span class="p">:</span> <span class="n">MutableMapping</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">identity</span>  <span class="c1"># TODO: Design: should we default this at all?</span>
+    <span class="n">default_factory</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">return_sentinel</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="si">}</span><span class="s1"> is not callable&#39;</span>
+
+    <span class="c1"># Note: An earlier version used __getitem__ itself instead of __call__ as the</span>
+    <span class="c1">#  obj routing method, but the misalignment between the keys listed by __iter__ and</span>
+    <span class="c1">#  the values that could be resolved by __getitem__ lead to unintuitive behaviors</span>
+    <span class="c1">#  with other mapping methods.</span>
+    <span class="c1"># Note: The default_factory is a Callable instead of a value because the former is</span>
+    <span class="c1"># more general and enables recursivity: That is, one can define another</span>
+    <span class="c1"># KeyFuncMapping to be specified as a default, thus specifying a tree</span>
+    <span class="c1"># (or rather forest) of conditionals.</span>
+    <span class="c1"># Note: Could use a mapping.get(..., sentinel) instead of the `obj_key in mapping`</span>
+    <span class="c1"># check, which would be more efficient, but perhaps less readable/debuggable</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">:</span>  <span class="c1"># if the obj_key is in the mapping...</span>
+            <span class="c1"># ... return the mapping&#39;s value for obj_key...</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">obj_key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>  <span class="c1"># ... else call the default function</span>
+
+    <span class="c1"># TODO: Is this too hacky? Should we not use __add__ for this? Maybe use</span>
+    <span class="c1">#  ``extend`` instead? Maybe another method? Maybe not add this convenience at all?</span>
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a copy of the KeyFuncMapping instance with other as default_factory&quot;&quot;&quot;</span>
+        <span class="n">self_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">callable</span><span class="p">(</span>
+            <span class="n">other</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Can only add a callable (usually a </span><span class="si">{</span><span class="n">self_type</span><span class="si">}</span><span class="s1"> itself) to a </span><span class="si">{</span><span class="n">self_type</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">self_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">other</span><span class="p">)</span></div>
+
+
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># A proposal for a routing forest OO backend and convenience mini-language</span>
 <span class="n">Obj</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;Obj&#39;</span><span class="p">)</span>
 <span class="n">Output</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;Output&#39;</span><span class="p">)</span>
 <span class="n">Cond</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Obj</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span>

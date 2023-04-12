@@ -4,7 +4,7 @@ Experimental Mapping the maps keys using a switch_case structure.
 Development paused while waiting for 3.10's pattern matching that may subsume this.
 
 
->>> from i2.switch_case_tree import *
+>>> from i2.scrap.switch_case_tree import *
 >>> from collections import Counter
 >>>
 >>> special_featurizer = {
