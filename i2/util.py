@@ -22,7 +22,7 @@ T = TypeVar('T')
 
 
 def copy_func(
-        func: Callable, *, copy_dict: bool = True, code=None, globals_: dict = None
+    func: Callable, *, copy_dict: bool = True, code=None, globals_: dict = None
 ):
     """Make a (shallow) copy of a function.
 
@@ -66,20 +66,18 @@ def copy_func(
     """
     from types import FunctionType
 
-    code = code or getattr(func, "__code__", None)
+    code = code or getattr(func, '__code__', None)
     if not isinstance(code, types.CodeType):
-        raise TypeError(
-            f"Expected a types.CodeType object, but got {type(code)=}"
-        )
-    globals_ = globals_ or getattr(func, "__globals__", {})
+        raise TypeError(f'Expected a types.CodeType object, but got {type(code)=}')
+    globals_ = globals_ or getattr(func, '__globals__', {})
     new_func = FunctionType(
         code,  # if your func doesn't have a __code__ attr, can't make a copy!
         globals_,
-        name=getattr(func, "__name__", None),
-        argdefs=getattr(func, "__defaults__", None),
-        closure=getattr(func, "__closure__", None)
+        name=getattr(func, '__name__', None),
+        argdefs=getattr(func, '__defaults__', None),
+        closure=getattr(func, '__closure__', None),
     )
-    if hasattr(func, "__kwdefaults__"):
+    if hasattr(func, '__kwdefaults__'):
         new_func.__kwdefaults__ = func.__kwdefaults__
     if copy_dict:
         new_func.__dict__.update(func.__dict__)

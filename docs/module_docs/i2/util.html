@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.0.179 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.0.180 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -358,6 +358,63 @@ Also, provide it with a name, optionally.</p>
 </div>
 <p>For lambda code-extraction see:
 <a class="reference external" href="https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function">https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.util.copy_func">
+<code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">copy_func</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">copy_dict</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">code</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">globals_</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#copy_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.copy_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a (shallow) copy of a function.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">an_attr</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_copy</span> <span class="o">=</span> <span class="n">copy_func</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_copy</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_copy</span><span class="o">.</span><span class="n">an_attr</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">an_attr</span> <span class="o">==</span> <span class="mi">42</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Verify that making an attribute in one won’t create an attribute in the other:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">another_attr</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">f_copy</span><span class="p">,</span> <span class="s1">&#39;another_attr&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_copy</span><span class="o">.</span><span class="n">yet_another_attr</span> <span class="o">=</span> <span class="mi">84</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;yet_another_attr&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> – The function to be copied.</p></li>
+<li><p><strong>copy_dict</strong> – Indicates whether to copy the <code class="docutils literal notranslate"><span class="pre">__dict__</span></code> attribute of the
+function. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>code</strong> – The value to be use as the <code class="docutils literal notranslate"><span class="pre">__code__</span></code> attribute of the copy.</p></li>
+<li><p><strong>globals</strong> – The value to be use as the <code class="docutils literal notranslate"><span class="pre">__globals__</span></code> attribute of the copy.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A shallow copy of the function.</p>
+</dd>
+</dl>
+<p>Note that it should always work with proper functions and attempts to do the
+best job it can with other callables, but there are no guarantees on how
+<code class="docutils literal notranslate"><span class="pre">copy_function</span></code> will behave with custom callables.</p>
+<p>If these custom callables don’t have a <cite>__code__</cite> attribute, the copy will fail.
+Furthermore, if the custom callable  doesn’t have <code class="docutils literal notranslate"><span class="pre">__globals__</span></code>, the empty
+dictionary will be used as the globals.
+We provide a <code class="docutils literal notranslate"><span class="pre">code</span></code> and <code class="docutils literal notranslate"><span class="pre">globals</span></code> argument to allow the user to provide
+the <code class="docutils literal notranslate"><span class="pre">__code__</span></code> and <code class="docutils literal notranslate"><span class="pre">__globals__</span></code> attributes of the function to be copied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> – The function to be copied. Must be a function, not just any method or callable.</p></li>
+<li><p><strong>copy_dict</strong> – Also copy any attributes set on the function instance. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A shallow copy of the function.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
