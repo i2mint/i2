@@ -1472,12 +1472,15 @@ class Sig(Signature, Mapping):
     #  and switch to single arg signature return (that's consistent, and convenience
     #  of sig[argname] is weak (given sig.params[argname] does it)!)
     def __getitem__(self, k):
+        if isinstance(k, int) or isinstance(k, slice):
+            # TODO: Could extend slice handing to be able to use names as start and stop
+            k = self.names[k]
         if isinstance(k, str):
             names = k.split()  # to handle 'multiple args in a string'
             if len(names) == 1:
                 return self.parameters[k]
         else:
-            assert isinstance(k, Iterable), 'key should be iterable, was: {k}'
+            assert isinstance(k, Iterable), f'key should be iterable, was: {k}'
             names = k
         params = [self[name] for name in names]
         return Sig.from_params(params)
