@@ -61,4 +61,6 @@ from i2.util import (
     ensure_identifiers,
 )
 
+from i2.footprints import MethodTrace
+
 from i2.itypes import validate_literal

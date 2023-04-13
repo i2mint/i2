@@ -1,9 +1,158 @@
 """Analyzing what attributes of an input object a function actually uses"""
 
-import ast
+
+
+# --------------------------------------------------------------------------------------
+# Tools to trace operations on an object.
+# See https://github.com/i2mint/i2/issues/56.
+
+# TODO: Extend trace_class_decorator to take a {name: sig,...} iterable as an input and
+#  MethodTrace to use this to be able to register more dunders (for example, __radd__,
+#  __len__, etc. are not in operator_names).
+
+import operator
+from i2 import Sig
+
+_dunders = lambda x: list(filter(lambda xx: xx.startswith('__'), x))
+
+_operator_dunder_names = set(  # dunders that aren't just dunders of all modules
+    _dunders(dir(operator))
+) - set(_dunders(dir(__import__('typing'))))
+
+
+def _method_sig(func, instance_arg='self'):
+    """Replace the first argument of a function signature with an instance argument"""
+    sig = Sig(func)
+    first_param = sig.names[0]
+    return Sig(func).ch_names(**{first_param: instance_arg})
+
+
+operator_names = {
+    name: _method_sig(getattr(operator, name)) for name in _operator_dunder_names
+}
+
+
+def trace_class_decorator(cls):
+    def create_trace_method(name, signature=None):
+        def method(self, *args):
+            self.trace.append((name, *args))
+            return self
+        if signature is not None:
+            method.__signature__ = signature
+
+        return method
+
+    for name, sig in operator_names.items():
+        setattr(cls, name, create_trace_method(name, sig))
+
+    return cls
+
+
+@trace_class_decorator
+class MethodTrace:
+    """A class that can be used to trace the methods that are called on it.
+
+    See: https://github.com/i2mint/i2/issues/56 for more details.
+
+    >>> t = MethodTrace()
+    >>> ((t + 3) - 2) * 5 / 10  # doctest: +ELLIPSIS
+    <MethodTrace with .trace = ('__add__', 3), ... ('__truediv__', 10)>
+    >>> assert t.trace == [
+    ...     ('__add__', 3), ('__sub__', 2), ('__mul__', 5), ('__truediv__', 10)
+    ... ]
+    >>>
+    >>>
+    >>> w = t[42]
+    >>> t[42] = 'mol'  # an operation with two arguments
+    >>> # ... and now an operation with no arguments:
+    >>> ~t  # doctest: +ELLIPSIS
+    <MethodTrace with .trace = ... ('__setitem__', 42, 'mol'), ('__invert__',)>
+    >>>
+    >>> assert t.trace == [
+    ... ('__add__', 3), ('__sub__', 2), ('__mul__', 5), ('__truediv__', 10),
+    ... ('__getitem__', 42), ('__setitem__', 42, 'mol'), ('__invert__',)
+    ... ]
+    >>>
+
+    """
+    def __init__(self):
+        self.trace = []
+
+    def __repr__(self):
+        trace_str = ', '.join(map(lambda x: f'{x}', self.trace))
+        return f'<{type(self).__name__} with .trace = {trace_str}>'
+
+
+# --------------------------------------------------------------------------------------
+# Tools to statically
+
 import inspect
+
+
+def get_class_that_defined_method(method):
+    """
+    Get class for unbound/bound method.
+    """
+    if inspect.ismethod(method):
+        for cls in inspect.getmro(method.__self__.__class__):
+            if cls.__dict__.get(method.__name__) is method:
+                return cls
+        method = method.__func__  # fallback to __qualname__ parsing
+    if inspect.isfunction(method):
+        cls = getattr(
+            inspect.getmodule(method),
+            method.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0],
+        )
+        if isinstance(cls, type):
+            return cls
+    return getattr(method, '__objclass__', None)
+
+
+def cls_and_method_name_of_method(method):
+    if isinstance(method, property):
+        return get_class_that_defined_method(method.fget), method.fget.__name__
+    return get_class_that_defined_method(method), method.__name__
+
+
+def _process_duplicates(a, remove_duplicates=True):
+    if remove_duplicates:
+        return set(a)
+        ## remove duplicates conserving order
+        # return list(dict.fromkeys(a))
+    else:
+        return a
+
+
+def get_class_that_defined_method(method):
+    """
+    Get class for unbound/bound method.
+    """
+    if inspect.ismethod(method):
+        for cls in inspect.getmro(method.__self__.__class__):
+            if cls.__dict__.get(method.__name__) is method:
+                return cls
+        method = method.__func__  # fallback to __qualname__ parsing
+    if inspect.isfunction(method):
+        cls = getattr(
+            inspect.getmodule(method),
+            method.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0],
+        )
+        if isinstance(cls, type):
+            return cls
+    return getattr(method, '__objclass__', None)
+
+
+def cls_and_method_name_of_method(method):
+    if isinstance(method, property):
+        return get_class_that_defined_method(method.fget), method.fget.__name__
+    return get_class_that_defined_method(method), method.__name__
+
+
+# --------------------------------------------------------------------------------------
+# Static footprints
+
+import ast
 import dis
-from contextlib import contextmanager
 from functools import reduce
 from importlib import import_module
 import os
@@ -11,9 +160,6 @@ from collections import namedtuple
 from inspect import getsource, getsourcefile
 
 Import = namedtuple('Import', ['module', 'name', 'alias'])
-
-
-# TODO: Generalize attrs_used_by_method to attrs_used_by_func.
 
 
 def _get_ast_root_from(o):
@@ -52,40 +198,6 @@ def get_imports_from_obj(o, recursive=False):
     """Getting imports for an object (usually, module)"""
     root = _get_ast_root_from(o)
     yield from _get_imports_from_ast_root(root, recursive)
-
-
-def _process_duplicates(a, remove_duplicates=True):
-    if remove_duplicates:
-        return set(a)
-        ## remove duplicates conserving order
-        # return list(dict.fromkeys(a))
-    else:
-        return a
-
-
-def get_class_that_defined_method(method):
-    """
-    Get class for unbound/bound method.
-    """
-    if inspect.ismethod(method):
-        for cls in inspect.getmro(method.__self__.__class__):
-            if cls.__dict__.get(method.__name__) is method:
-                return cls
-        method = method.__func__  # fallback to __qualname__ parsing
-    if inspect.isfunction(method):
-        cls = getattr(
-            inspect.getmodule(method),
-            method.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0],
-        )
-        if isinstance(cls, type):
-            return cls
-    return getattr(method, '__objclass__', None)
-
-
-def cls_and_method_name_of_method(method):
-    if isinstance(method, property):
-        return get_class_that_defined_method(method.fget), method.fget.__name__
-    return get_class_that_defined_method(method), method.__name__
 
 
 def _alt_cls_and_method_name_of_method(
@@ -137,11 +249,14 @@ def attr_list(root, func_name):
     return atts
 
 
+# TODO: Generalize attrs_used_by_method to attrs_used_by_func.
+
+
 def _attrs_used_by_method(cls, method_name, remove_duplicates=True):
     """
     Util for attrs_used_by_method. Same output as attrs_used_by_method, but intput is (cls, method_name)
     """
-    f = open(inspect.getsourcefile(cls), 'r')
+    f = open(getsourcefile(cls), 'r')
     if f.mode == 'r':
         src = f.read()
     root = ast.parse(src)
@@ -207,7 +322,12 @@ def attrs_used_by_method(method, remove_duplicates=True):
     )
 
 
-########## Dyanamic version #################################################################
+# --------------------------------------------------------------------------------------
+# Dynamic footprints
+
+from contextlib import contextmanager
+
+
 class Tracker:
     """
     Tracks the attribute access right after `start_track` is set to True.
