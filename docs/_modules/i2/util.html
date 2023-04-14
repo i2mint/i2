@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.0.180 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.0.181 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -110,7 +110,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">import</span> <span class="nn">types</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Mapping</span><span class="p">,</span>
@@ -882,6 +882,8 @@
 
 <span class="n">NO_DEFAULT</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;NO_DEFAULT&#39;</span><span class="p">,</span> <span class="n">boolean_value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># FunctionBuilder, vendored and adapted from boltons.funcutils</span>
 
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">formatannotation</span>
 
@@ -1108,7 +1110,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;expected callable object, not </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">func</span><span class="p">,))</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">partial</span><span class="p">):</span>
             <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                 <span class="s1">&#39;doc&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">,</span>

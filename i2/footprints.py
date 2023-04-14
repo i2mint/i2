@@ -1,7 +1,6 @@
 """Analyzing what attributes of an input object a function actually uses"""
 
 
-
 # --------------------------------------------------------------------------------------
 # Tools to trace operations on an object.
 # See https://github.com/i2mint/i2/issues/56.
@@ -37,6 +36,7 @@ def trace_class_decorator(cls):
         def method(self, *args):
             self.trace.append((name, *args))
             return self
+
         if signature is not None:
             method.__signature__ = signature
 
@@ -75,6 +75,7 @@ class MethodTrace:
     >>>
 
     """
+
     def __init__(self):
         self.trace = []
 
