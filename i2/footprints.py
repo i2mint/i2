@@ -5,14 +5,12 @@
 # Tools to trace operations on an object.
 # See https://github.com/i2mint/i2/issues/56.
 
-# TODO: Extend trace_class_decorator to take a {name: sig,...} iterable as an input and
-#  MethodTrace to use this to be able to register more dunders (for example, __radd__,
-#  __len__, etc. are not in operator_names).
-
 import operator
 from functools import partial
 from i2 import Pipe, Sig
 
+# TODO: Maybe we should just use an explicit list of dunders instead of this dynamic
+#  introspective approach.
 dunder_filt = partial(filter, lambda xx: xx.startswith('__'))
 
 _dunders = Pipe(dir, dunder_filt, set)
@@ -49,8 +47,23 @@ _operator_dunders = {
 _dict_dunders = {
     k: _method_sig(getattr(dict, k)) for k in (dunders_diff(dict, object) - exclude)
 }
+_rops = (
+    '__radd__, __rsub__, __rmul__, __rdiv__, __rtruediv__, __rfloordiv__, __rmod__, '
+    '__rdivmod__, __rpow__, __rlshift__, __rrshift__, __rand__, __rxor__, '
+    '__ror__'.split()
+)
+_rops = {k: Sig(lambda self, other: None) for k in _rops}
+_dflt_methods = dict(_operator_dunders, **_dict_dunders, **_rops)
 
-_dflt_methods = dict(_operator_dunders, **_dict_dunders)
+
+def trace_class_decorator(cls):
+    def create_trace_method(name, signature=None):
+        def method(self, *args):
+            self.trace.append((name, *args))
+            return self
+
+        if signature is not None:
+            method.__signature__ = signature
 
 
 # TODO: Handle *args and **kwargs
@@ -59,6 +72,7 @@ def _dflt_method_factory(name, signature=None):
     The methods made here are specifically meant to be operator methods that have only
     positional arguments.
     """
+
     def method(self, *args):
         self.trace.append((name, *args))
         return self
@@ -73,9 +87,9 @@ def _dflt_method_factory(name, signature=None):
 
 # TODO: Add method factory argument
 def trace_class_decorator(
-        cls,
-        names_and_sigs=tuple(_dflt_methods.items()),
-        method_factory=_dflt_method_factory
+    cls,
+    names_and_sigs=tuple(_dflt_methods.items()),
+    method_factory=_dflt_method_factory,
 ):
     """A decorator that adds methods to a class that trace the operations that are
     performed on an instance of that class.

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.footprints &mdash; i2 0.0.180 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.footprints &mdash; i2 0.0.181 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -129,6 +129,34 @@
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt id="i2.footprints.MethodTrace">
+<em class="property">class </em><code class="sig-prename descclassname">i2.footprints.</code><code class="sig-name descname">MethodTrace</code><a class="reference internal" href="../../_modules/i2/footprints.html#MethodTrace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.footprints.MethodTrace" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class that can be used to trace the methods that are called on it.</p>
+<p>See: <a class="reference external" href="https://github.com/i2mint/i2/issues/56">https://github.com/i2mint/i2/issues/56</a> for more details.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">MethodTrace</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">((</span><span class="n">t</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">10</span>  
+<span class="go">&lt;MethodTrace with .trace = (&#39;__add__&#39;, 3), ... (&#39;__truediv__&#39;, 10)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">t</span><span class="o">.</span><span class="n">trace</span> <span class="o">==</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="s1">&#39;__add__&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;__sub__&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;__mul__&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;__truediv__&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">42</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mi">42</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;mol&#39;</span>  <span class="c1"># an operation with two arguments</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ... and now an operation with no arguments:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">~</span><span class="n">t</span>  
+<span class="go">&lt;MethodTrace with .trace = ... (&#39;__setitem__&#39;, 42, &#39;mol&#39;), (&#39;__invert__&#39;,)&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">t</span><span class="o">.</span><span class="n">trace</span> <span class="o">==</span> <span class="p">[</span>
+<span class="gp">... </span><span class="p">(</span><span class="s1">&#39;__add__&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;__sub__&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;__mul__&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;__truediv__&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">(</span><span class="s1">&#39;__getitem__&#39;</span><span class="p">,</span> <span class="mi">42</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;__setitem__&#39;</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;mol&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;__invert__&#39;</span><span class="p">,)</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py class">

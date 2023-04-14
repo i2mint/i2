@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.footprints &mdash; i2 0.0.180 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.footprints &mdash; i2 0.0.181 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -105,10 +105,160 @@
   <h1>Source code for i2.footprints</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Analyzing what attributes of an input object a function actually uses&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">ast</span>
+
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># Tools to trace operations on an object.</span>
+<span class="c1"># See https://github.com/i2mint/i2/issues/56.</span>
+
+<span class="c1"># TODO: Extend trace_class_decorator to take a {name: sig,...} iterable as an input and</span>
+<span class="c1">#  MethodTrace to use this to be able to register more dunders (for example, __radd__,</span>
+<span class="c1">#  __len__, etc. are not in operator_names).</span>
+
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">Sig</span>
+
+<span class="n">_dunders</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">xx</span><span class="p">:</span> <span class="n">xx</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">),</span> <span class="n">x</span><span class="p">))</span>
+
+<span class="n">_operator_dunder_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>  <span class="c1"># dunders that aren&#39;t just dunders of all modules</span>
+    <span class="n">_dunders</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">operator</span><span class="p">))</span>
+<span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">_dunders</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="nb">__import__</span><span class="p">(</span><span class="s1">&#39;typing&#39;</span><span class="p">))))</span>
+
+
+<span class="k">def</span> <span class="nf">_method_sig</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">instance_arg</span><span class="o">=</span><span class="s1">&#39;self&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Replace the first argument of a function signature with an instance argument&quot;&quot;&quot;</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">first_param</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">ch_names</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">first_param</span><span class="p">:</span> <span class="n">instance_arg</span><span class="p">})</span>
+
+
+<span class="n">operator_names</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">_method_sig</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_operator_dunder_names</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">trace_class_decorator</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_trace_method</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="k">if</span> <span class="n">signature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">method</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">signature</span>
+
+        <span class="k">return</span> <span class="n">method</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">operator_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">create_trace_method</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sig</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="bp">cls</span>
+
+
+<div class="viewcode-block" id="MethodTrace"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.MethodTrace">[docs]</a><span class="nd">@trace_class_decorator</span>
+<span class="k">class</span> <span class="nc">MethodTrace</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that can be used to trace the methods that are called on it.</span>
+
+<span class="sd">    See: https://github.com/i2mint/i2/issues/56 for more details.</span>
+
+<span class="sd">    &gt;&gt;&gt; t = MethodTrace()</span>
+<span class="sd">    &gt;&gt;&gt; ((t + 3) - 2) * 5 / 10  # doctest: +ELLIPSIS</span>
+<span class="sd">    &lt;MethodTrace with .trace = (&#39;__add__&#39;, 3), ... (&#39;__truediv__&#39;, 10)&gt;</span>
+<span class="sd">    &gt;&gt;&gt; assert t.trace == [</span>
+<span class="sd">    ...     (&#39;__add__&#39;, 3), (&#39;__sub__&#39;, 2), (&#39;__mul__&#39;, 5), (&#39;__truediv__&#39;, 10)</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; w = t[42]</span>
+<span class="sd">    &gt;&gt;&gt; t[42] = &#39;mol&#39;  # an operation with two arguments</span>
+<span class="sd">    &gt;&gt;&gt; # ... and now an operation with no arguments:</span>
+<span class="sd">    &gt;&gt;&gt; ~t  # doctest: +ELLIPSIS</span>
+<span class="sd">    &lt;MethodTrace with .trace = ... (&#39;__setitem__&#39;, 42, &#39;mol&#39;), (&#39;__invert__&#39;,)&gt;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; assert t.trace == [</span>
+<span class="sd">    ... (&#39;__add__&#39;, 3), (&#39;__sub__&#39;, 2), (&#39;__mul__&#39;, 5), (&#39;__truediv__&#39;, 10),</span>
+<span class="sd">    ... (&#39;__getitem__&#39;, 42), (&#39;__setitem__&#39;, 42, &#39;mol&#39;), (&#39;__invert__&#39;,)</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">trace_str</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">))</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> with .trace = </span><span class="si">{</span><span class="n">trace_str</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
+
+
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># Tools to statically</span>
+
 <span class="kn">import</span> <span class="nn">inspect</span>
+
+
+<span class="k">def</span> <span class="nf">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get class for unbound/bound method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+        <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmro</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="vm">__self__</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="ow">is</span> <span class="n">method</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">cls</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="vm">__func__</span>  <span class="c1"># fallback to __qualname__ parsing</span>
+    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+            <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">method</span><span class="p">),</span>
+            <span class="n">method</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&lt;locals&gt;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s1">&#39;__objclass__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">cls_and_method_name_of_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="vm">__name__</span>
+
+
+<span class="k">def</span> <span class="nf">_process_duplicates</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">remove_duplicates</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="c1">## remove duplicates conserving order</span>
+        <span class="c1"># return list(dict.fromkeys(a))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">a</span>
+
+
+<div class="viewcode-block" id="get_class_that_defined_method"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.get_class_that_defined_method">[docs]</a><span class="k">def</span> <span class="nf">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get class for unbound/bound method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+        <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmro</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="vm">__self__</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="ow">is</span> <span class="n">method</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">cls</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="vm">__func__</span>  <span class="c1"># fallback to __qualname__ parsing</span>
+    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+            <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">method</span><span class="p">),</span>
+            <span class="n">method</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&lt;locals&gt;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s1">&#39;__objclass__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">cls_and_method_name_of_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="vm">__name__</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># Static footprints</span>
+
+<span class="kn">import</span> <span class="nn">ast</span>
 <span class="kn">import</span> <span class="nn">dis</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -116,9 +266,6 @@
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getsource</span><span class="p">,</span> <span class="n">getsourcefile</span>
 
 <span class="n">Import</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Import&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;alias&#39;</span><span class="p">])</span>
-
-
-<span class="c1"># TODO: Generalize attrs_used_by_method to attrs_used_by_func.</span>
 
 
 <span class="k">def</span> <span class="nf">_get_ast_root_from</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
@@ -157,40 +304,6 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Getting imports for an object (usually, module)&quot;&quot;&quot;</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">_get_ast_root_from</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
     <span class="k">yield from</span> <span class="n">_get_imports_from_ast_root</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">recursive</span><span class="p">)</span></div>
-
-
-<span class="k">def</span> <span class="nf">_process_duplicates</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">remove_duplicates</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-        <span class="c1">## remove duplicates conserving order</span>
-        <span class="c1"># return list(dict.fromkeys(a))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">a</span>
-
-
-<div class="viewcode-block" id="get_class_that_defined_method"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.get_class_that_defined_method">[docs]</a><span class="k">def</span> <span class="nf">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get class for unbound/bound method.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
-        <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmro</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="vm">__self__</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="ow">is</span> <span class="n">method</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">cls</span>
-        <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="vm">__func__</span>  <span class="c1"># fallback to __qualname__ parsing</span>
-    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
-        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
-            <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">method</span><span class="p">),</span>
-            <span class="n">method</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&lt;locals&gt;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">cls</span>
-    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s1">&#39;__objclass__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
-
-
-<span class="k">def</span> <span class="nf">cls_and_method_name_of_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="o">.</span><span class="vm">__name__</span>
-    <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="vm">__name__</span>
 
 
 <span class="k">def</span> <span class="nf">_alt_cls_and_method_name_of_method</span><span class="p">(</span>
@@ -242,11 +355,14 @@
     <span class="k">return</span> <span class="n">atts</span></div>
 
 
+<span class="c1"># TODO: Generalize attrs_used_by_method to attrs_used_by_func.</span>
+
+
 <span class="k">def</span> <span class="nf">_attrs_used_by_method</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Util for attrs_used_by_method. Same output as attrs_used_by_method, but intput is (cls, method_name)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsourcefile</span><span class="p">(</span><span class="bp">cls</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">getsourcefile</span><span class="p">(</span><span class="bp">cls</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span>
         <span class="n">src</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
@@ -312,7 +428,12 @@
     <span class="p">)</span></div>
 
 
-<span class="c1">########## Dyanamic version #################################################################</span>
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># Dynamic footprints</span>
+
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+
+
 <div class="viewcode-block" id="Tracker"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.Tracker">[docs]</a><span class="k">class</span> <span class="nc">Tracker</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tracks the attribute access right after `start_track` is set to True.</span>
