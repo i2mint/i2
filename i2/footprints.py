@@ -1,7 +1,6 @@
 """Analyzing what attributes of an input object a function actually uses"""
 
 
-
 # --------------------------------------------------------------------------------------
 # Tools to trace operations on an object.
 # See https://github.com/i2mint/i2/issues/56.
@@ -11,13 +10,26 @@
 #  __len__, etc. are not in operator_names).
 
 import operator
-from i2 import Sig
+from functools import partial
+from i2 import Pipe, Sig
 
-_dunders = lambda x: list(filter(lambda xx: xx.startswith('__'), x))
+dunder_filt = partial(filter, lambda xx: xx.startswith('__'))
 
-_operator_dunder_names = set(  # dunders that aren't just dunders of all modules
-    _dunders(dir(operator))
-) - set(_dunders(dir(__import__('typing'))))
+_dunders = Pipe(dir, dunder_filt, set)
+
+
+def module_if_string(x):
+    if isinstance(x, str):
+        return __import__(x)
+    else:
+        return x
+
+
+dunders = Pipe(module_if_string, _dunders)
+
+
+def dunders_diff(x, y):
+    return dunders(x) - dunders(y)
 
 
 def _method_sig(func, instance_arg='self'):
@@ -27,23 +39,49 @@ def _method_sig(func, instance_arg='self'):
     return Sig(func).ch_names(**{first_param: instance_arg})
 
 
-operator_names = {
-    name: _method_sig(getattr(operator, name)) for name in _operator_dunder_names
+exclude = {'__class_getitem__'}
+
+# operator dunders not dunders of all modules (as represented by `typing` module)
+_operator_dunders = {
+    k: _method_sig(getattr(operator, k)) for k in dunders_diff('operator', 'typing')
+}
+# dict dunders that aren't dunders of all objects (as represented by `object` object)
+_dict_dunders = {
+    k: _method_sig(getattr(dict, k)) for k in (dunders_diff(dict, object) - exclude)
 }
 
+_dflt_methods = dict(_operator_dunders, **_dict_dunders)
 
-def trace_class_decorator(cls):
-    def create_trace_method(name, signature=None):
-        def method(self, *args):
-            self.trace.append((name, *args))
-            return self
-        if signature is not None:
-            method.__signature__ = signature
 
-        return method
+# TODO: Handle *args and **kwargs
+def _dflt_method_factory(name, signature=None):
+    """A factory for methods that trace the operations that are performed on an.
+    The methods made here are specifically meant to be operator methods that have only
+    positional arguments.
+    """
+    def method(self, *args):
+        self.trace.append((name, *args))
+        return self
 
-    for name, sig in operator_names.items():
-        setattr(cls, name, create_trace_method(name, sig))
+    method.__name__ = name
+
+    if signature is not None:
+        method.__signature__ = signature
+
+    return method
+
+
+# TODO: Add method factory argument
+def trace_class_decorator(
+        cls,
+        names_and_sigs=tuple(_dflt_methods.items()),
+        method_factory=_dflt_method_factory
+):
+    """A decorator that adds methods to a class that trace the operations that are
+    performed on an instance of that class.
+    """
+    for name, sig in dict(names_and_sigs).items():
+        setattr(cls, name, method_factory(name, sig))
 
     return cls
 
@@ -75,12 +113,23 @@ class MethodTrace:
     >>>
 
     """
+
     def __init__(self):
         self.trace = []
 
     def __repr__(self):
         trace_str = ', '.join(map(lambda x: f'{x}', self.trace))
         return f'<{type(self).__name__} with .trace = {trace_str}>'
+
+    # TODO: The following is a means to be able to trace all non-dunder methods.
+    #  Not sure if we want this as a default, or an option.
+    #  Make this work (works, but recursion error when unpickling.
+    # def __getattr__(self, operation):
+    #     def traced_operation(*args):
+    #         self.trace.append((operation, *args))
+    #         return self
+    #
+    #     return traced_operation
 
 
 # --------------------------------------------------------------------------------------
