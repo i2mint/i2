@@ -2997,6 +2997,7 @@ def _remove_variadics_from_sig(sig, ch_variadic_keyword_to_keyword=True):
 
     return result_sig
 
+
 # TODO: Might want to make func be a positional-only argument, because if kwargs
 #  contains a func key, we have a problem. But call_forgivingly is used broadly,
 #  so must first test all dependents before making this change.
