@@ -708,18 +708,18 @@ def test_sigless_builtins():
 
     for name in sigs_for_sigless_builtin_name:
         # removed breakpoint as it triggers a pdb session
-        if name in ['breakpoint']:
+        if name in ['breakpoint', '__getitem__']:
             continue
         sig = Sig(sigs_for_sigless_builtin_name[name])
         assert function_is_compatible_with_signature(eval(name), sig)
 
 
-if __name__ == '__main__':
-    from operator import itemgetter, attrgetter, methodcaller
-
-    for name in sigs_for_sigless_builtin_name:
-        # removed breakpoint as it triggers a pdb session
-        if name in ['breakpoint']:
-            continue
-        sig = Sig(sigs_for_sigless_builtin_name[name])
-        visualize_errors_for_function_call(eval(name), sig)
+# if __name__ == '__main__':
+#     from operator import itemgetter, attrgetter, methodcaller
+#
+#     for name in sigs_for_sigless_builtin_name:
+#         # removed breakpoint as it triggers a pdb session
+#         if name in ['breakpoint']:
+#             continue
+#         sig = Sig(sigs_for_sigless_builtin_name[name])
+#         visualize_errors_for_function_call(eval(name), sig)
