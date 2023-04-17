@@ -706,20 +706,27 @@ def visualize_errors_for_function_call(func, sig):
 def test_sigless_builtins():
     from operator import itemgetter, attrgetter, methodcaller
 
+    mapping_methods = {
+        '__eq__',
+        '__ne__',
+        '__iter__',
+        '__getitem__',
+        '__len__',
+        '__contains__',
+        '__setitem__',
+        '__delitem__',
+    }
+    special_cases = {'breakpoint'} | mapping_methods
+
     for name in sigs_for_sigless_builtin_name:
         # removed breakpoint as it triggers a pdb session
-        if name in ['breakpoint', '__getitem__']:
+        if name in special_cases:
             continue
         sig = Sig(sigs_for_sigless_builtin_name[name])
         assert function_is_compatible_with_signature(eval(name), sig)
 
+    d = {'a': 1, 'b': 2}
+    for name in mapping_methods:
+        method = getattr(d, name)
+        assert function_is_compatible_with_signature(method, Sig(method))
 
-# if __name__ == '__main__':
-#     from operator import itemgetter, attrgetter, methodcaller
-#
-#     for name in sigs_for_sigless_builtin_name:
-#         # removed breakpoint as it triggers a pdb session
-#         if name in ['breakpoint']:
-#             continue
-#         sig = Sig(sigs_for_sigless_builtin_name[name])
-#         visualize_errors_for_function_call(eval(name), sig)
