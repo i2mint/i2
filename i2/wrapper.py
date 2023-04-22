@@ -152,7 +152,7 @@ class _Wrap:
         # have had. It should be before anything else so it doesn't overwrite stuff
         # that we may add to self in init (like .func for example!)
         wraps(func)(self)  # TODO: should we really copy everything by default?
-        if name := kwargs.get('name', None) is not None:
+        if (name := kwargs.get('name', None)) is not None:
             self.__name__ = name
         self.func = func  # Note: overwrites self.func that wraps MAY have inserted
         self.__wrapped__ = func
