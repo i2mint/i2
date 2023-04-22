@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.chain_map &mdash; i2 0.0.182 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.chain_map &mdash; i2 0.0.183 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -136,7 +136,7 @@ of the trees will not work.</p>
 <span class="gp">... </span>    <span class="p">},</span>
 <span class="gp">... </span>    <span class="s1">&#39;a4&#39;</span><span class="p">:</span> <span class="s1">&#39;base2.a4&#39;</span><span class="p">,</span>
 <span class="gp">... </span><span class="p">}</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">ChainMapTree</span><span class="p">(</span><span class="n">base1</span><span class="p">,</span> <span class="n">base2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span><span class="p">[</span><span class="s1">&#39;a1&#39;</span><span class="p">]</span>
 <span class="go">&#39;base1.a1&#39;</span>
@@ -163,7 +163,7 @@ of the trees will not work.</p>
 <span class="go">&#39;base2.a3.b2&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span><span class="p">[</span><span class="s1">&#39;a3&#39;</span><span class="p">][</span><span class="s1">&#39;b1&#39;</span><span class="p">]</span>
 <span class="go">&#39;base1.a3.b1&#39;</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Let&#39;s do a ChainMapTree with THREE bases now!</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">base3</span> <span class="o">=</span> <span class="p">{</span>
 <span class="gp">... </span>    <span class="s1">&#39;a2&#39;</span><span class="p">:</span> <span class="s1">&#39;base3.a2&#39;</span><span class="p">,</span>
@@ -196,7 +196,7 @@ of the trees will not work.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compare to normal/flat/not-nested chaining:</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">b</span><span class="p">)</span>   <span class="c1"># Note the precedence is the inverse of ChainMapTree!</span>
 <span class="go">{&#39;a&#39;: {&#39;y&#39;: 222, &#39;z&#39;: 333}, &#39;foo&#39;: &quot;b&#39;s foo&quot;}</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># See what you get if you specify b before a</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ChainMapTree</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 <span class="go">{&#39;a&#39;: {&#39;y&#39;: 222, &#39;z&#39;: 333, &#39;x&#39;: 1}, &#39;foo&#39;: &quot;b&#39;s foo&quot;}</span>

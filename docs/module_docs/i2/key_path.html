@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.key_path &mdash; i2 0.0.182 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.key_path &mdash; i2 0.0.183 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -155,7 +155,7 @@ instead of a nested structure, and do your mapping CRUD with that view.</p>
 <span class="go">4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 <span class="go">[((&#39;a&#39;, &#39;a&#39;), &#39;2a&#39;), ((&#39;a&#39;, &#39;b&#39;, &#39;b&#39;), 3), ((&#39;a&#39;, &#39;new_key&#39;), &#39;new val&#39;), ((&#39;c&#39;,), 3.14)]</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># By default, you can only write on already created nodes. But if auto_node_writes=True, you can do this:</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">KeyPathMap</span><span class="p">(</span><span class="n">auto_node_writes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
@@ -295,7 +295,7 @@ recursively.
 <span class="gp">... </span>    <span class="p">}</span>
 <span class="gp">... </span>  <span class="p">}</span>
 <span class="gp">... </span><span class="p">}</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="o">.</span><span class="n">setitem_recursive</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="s1">&#39;new.key.path&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">input_dict</span>
 <span class="go">{&#39;a&#39;: {&#39;c&#39;: &#39;val of a.c&#39;, &#39;b&#39;: 1}, &#39;10&#39;: 10, &#39;b&#39;: {&#39;B&#39;: {&#39;AA&#39;: 3}}, &#39;new&#39;: {&#39;key&#39;: {&#39;path&#39;: 7}}}</span>
@@ -331,7 +331,7 @@ If sep = ‘.’, then instead of using (‘a’, ‘b’, ‘c’) as a key, yo
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">StrKeyPath</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 <span class="go">[(&#39;http://a/a&#39;, &#39;2a&#39;), (&#39;http://a/b/a&#39;, &#39;aba&#39;), (&#39;http://a/b/b&#39;, 3), (&#39;http://c&#39;, 3.14)]</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Default sep is &#39;.&#39;, so we&#39;ll work with that:</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">StrKeyPath</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
@@ -365,7 +365,7 @@ If sep = ‘.’, then instead of using (‘a’, ‘b’, ‘c’) as a key, yo
 <span class="go">4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 <span class="go">[(&#39;a.a&#39;, &#39;2a&#39;), (&#39;a.b.b&#39;, 3), (&#39;a.new_key&#39;, &#39;new val&#39;), (&#39;c&#39;, 3.14)]</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># By default, you can only write on already created nodes. But if auto_node_writes=True, you can do this:</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">StrKeyPath</span><span class="p">(</span><span class="n">auto_node_writes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
@@ -373,7 +373,7 @@ If sep = ‘.’, then instead of using (‘a’, ‘b’, ‘c’) as a key, yo
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.b.c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;hi world!&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
 <span class="go">{&#39;a&#39;: {&#39;b&#39;: {&#39;c&#39;: &#39;hi world!&#39;}}}</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 </pre></div>
 </div>
 <dl class="py method">
