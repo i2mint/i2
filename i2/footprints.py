@@ -47,11 +47,15 @@ _operator_dunders = {
 _dict_dunders = {
     k: _method_sig(getattr(dict, k)) for k in (dunders_diff(dict, object) - exclude)
 }
-_rops = set(
-    '__radd__, __rsub__, __rmul__, __rdiv__, __rtruediv__, __rfloordiv__, __rmod__, '
-    '__rdivmod__, __rpow__, __rlshift__, __rrshift__, __rand__, __rxor__, '
-    '__ror__'.split()
-) - _dict_dunders.keys() - _operator_dunders.keys()
+_rops = (
+    set(
+        '__radd__, __rsub__, __rmul__, __rdiv__, __rtruediv__, __rfloordiv__, __rmod__, '
+        '__rdivmod__, __rpow__, __rlshift__, __rrshift__, __rand__, __rxor__, '
+        '__ror__'.split()
+    )
+    - _dict_dunders.keys()
+    - _operator_dunders.keys()
+)
 _rops = {k: Sig(lambda self, other: None) for k in _rops}
 _dflt_methods = dict(_operator_dunders, **_dict_dunders, **_rops)
 

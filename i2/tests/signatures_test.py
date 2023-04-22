@@ -729,4 +729,3 @@ def test_sigless_builtins():
     for name in mapping_methods:
         method = getattr(d, name)
         assert function_is_compatible_with_signature(method, Sig(method))
-
