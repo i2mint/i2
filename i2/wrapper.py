@@ -1137,7 +1137,10 @@ def ch_names(func=None, **old_to_new_name):
     7
     """
     old_to_new_name = _only_keep_non_none_values(old_to_new_name)
-    return Ingress.name_map(func, **old_to_new_name).wrap(func)
+    if old_to_new_name:
+        return Ingress.name_map(func, **old_to_new_name).wrap(func)
+    else:
+        return func
 
 
 map_names = ch_names  # back-compatibility alias
