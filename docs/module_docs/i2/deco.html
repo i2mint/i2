@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.0.182 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.deco &mdash; i2 0.0.183 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -252,12 +252,12 @@ problematic (e.g. their not picklable).</p>
 <span class="gp">... </span><span class="k">class</span> <span class="nc">B</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">bar</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">B</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nd">@assert_attrs</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">])</span>
 <span class="gp">... </span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">pass</span>
@@ -289,12 +289,12 @@ This is validated before making the “double up as factory” decorator.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span> <span class="o">=</span> <span class="n">decorator</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">30</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">multiply_by_3</span> <span class="o">=</span> <span class="n">decorator</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span> <span class="o">=</span> <span class="n">multiply_by_3</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">9</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nd">@decorator</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">... </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
@@ -381,7 +381,7 @@ See also: preprocess and postprocess decorators if you need only to pre or post 
 <span class="go">Hello 15.0!</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">))</span>
 <span class="go">Some doc...</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># examples with methods (bounded, class methods, static methods</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">F</span><span class="p">:</span>
 <span class="gp">... </span><span class="w">    </span><span class="sd">&#39;&#39;&#39;This is not what you&#39;d expect: The doc of the class, not the function&#39;&#39;&#39;</span>
@@ -397,7 +397,7 @@ See also: preprocess and postprocess decorators if you need only to pre or post 
 <span class="gp">... </span>    <span class="nd">@classmethod</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">class_method</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> likes </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">F</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">input_output_decorator</span><span class="p">()(</span><span class="n">f</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)))</span>
@@ -522,7 +522,7 @@ the arguments can be handled more uniformly.
 </pre></div>
 </div>
 <p>And now a bit more involved…</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example of use on class method, with a different what_to_log function.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
@@ -535,13 +535,13 @@ the arguments can be handled more uniformly.
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">_name_args_kwargs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="s2">&quot;Calling </span><span class="si">{}</span><span class="s2"> with</span><span class="se">\n</span><span class="s2">  args=</span><span class="si">{}</span><span class="se">\n</span><span class="s2">  kwargs=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
 <span class="gp">...</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">log_calls</span> <span class="o">=</span> <span class="n">mk_call_logger</span><span class="p">(</span><span class="n">what_to_log</span><span class="o">=</span><span class="n">_name_args_kwargs</span><span class="p">,</span> <span class="n">func_is_bounded</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;multiply&#39;</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="n">A_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="nb">setattr</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">mk_call_logger</span><span class="p">(</span><span class="n">what_to_log</span><span class="o">=</span><span class="n">_name_args_kwargs</span><span class="p">,</span> <span class="n">func_is_bounded</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">A_method</span><span class="p">))</span>
 <span class="gp">...</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">Calling add with</span>
@@ -623,7 +623,7 @@ So here, you just write the generator and tag this decorator on top, to get the 
 <span class="go">{&#39;0&#39;: 0, &#39;1&#39;: 1, &#39;2&#39;: 2}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">signature</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
 <span class="go">&lt;Signature (x) -&gt; dict&gt;</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nd">@postprocess</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 <span class="gp">... </span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -690,7 +690,7 @@ For example:</p>
 <span class="gp">... </span>    <span class="k">return</span> <span class="s2">&quot;a=</span><span class="si">{a}</span><span class="s2">, b=</span><span class="si">{b}</span><span class="s2">, c=</span><span class="si">{c}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">prepend_root</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="s1">&#39;ROOT/&#39;</span> <span class="o">+</span> <span class="n">x</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;a=foo, b=bar, c=3&#39;</span>
 <span class="gp">... </span>    <span class="n">ff</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">()(</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># no transformation specification, so function is unchanged</span>
@@ -702,19 +702,19 @@ For example:</p>
 <span class="gp">... </span>    <span class="n">ff</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">prepend_root</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">prepend_root</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># prepend root to a and b</span>
 <span class="gp">... </span>    <span class="k">assert</span> <span class="n">ff</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;a=ROOT/foo, b=ROOT/bar, c=3&#39;</span>
 <span class="gp">... </span>    <span class="k">assert</span> <span class="n">ff</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;a=ROOT/foo, b=ROOT/bar, c=default_c&#39;</span>  <span class="c1"># defaults still work</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example with bounded method, wrapping from instance</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;default_c&#39;</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;a=</span><span class="si">{</span><span class="n">a</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="si">}</span><span class="s2"> b=</span><span class="si">{</span><span class="n">b</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="si">}</span><span class="s2"> c=</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example with bounded method, wrapping from class</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">prepend_root</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">prepend_root</span><span class="p">)(</span><span class="n">A</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
@@ -773,7 +773,7 @@ or change the actual loaded class itself (_return_a_copy_of_the_class=False)</p>
 <span class="go">12</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">20</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">log_calls</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
 <span class="gp">... </span>    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
@@ -841,7 +841,7 @@ We make an Ops class that wraps Counter, allowing one to add items and show the 
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">UserDict</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Ops</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
@@ -856,7 +856,7 @@ We make an Ops class that wraps Counter, allowing one to add items and show the 
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ops</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="go">Counter({&#39;this&#39;: 2, &#39;is&#39;: 2, &#39;that&#39;: 2, &#39;and&#39;: 1})</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># But say we don&#39;t want to count actual words added, but just the first two letters of these words,</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># and say we want to show() to return the dict, not the Counter.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">NewOps</span> <span class="o">=</span> <span class="n">wrap_class_methods_input_and_output</span><span class="p">(</span>
@@ -880,8 +880,8 @@ We make an Ops class that wraps Counter, allowing one to add items and show the 
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ops</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="go">{&#39;th&#39;: 4, &#39;is&#39;: 2, &#39;an&#39;: 1}</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 </pre></div>
 </div>
 <p># SECOND EXAMPLE</p>
@@ -891,16 +891,16 @@ keys and values</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">val_out_trans</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;hi&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>  <span class="c1"># replace &quot;hello&quot; by &quot;hi&quot; in output values</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">key_in_trans</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;__&#39;</span> <span class="o">+</span> <span class="n">x</span>  <span class="c1"># prepend incoming keys with double underscore</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">key_out_trans</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>  <span class="c1"># remove the first two characters (underscores) from keys when output</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span> <span class="o">=</span> <span class="p">{</span>
 <span class="gp">... </span>    <span class="p">(</span><span class="s1">&#39;__contains__&#39;</span><span class="p">,</span> <span class="s1">&#39;__getitem__&#39;</span><span class="p">,</span> <span class="s1">&#39;__setitem__&#39;</span><span class="p">,</span> <span class="s1">&#39;__delitem__&#39;</span><span class="p">):</span> <span class="nb">dict</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key_in_trans</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="s1">&#39;__setitem__&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">val_in_trans</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="s1">&#39;__iter__&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">method_output_trans</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="n">key_out_trans</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span>
 <span class="gp">... </span>    <span class="s1">&#39;__getitem__&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">method_output_trans</span><span class="o">=</span><span class="n">val_out_trans</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">}</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span> <span class="o">=</span> <span class="n">mk_method_trans_spec_from_methods_specs_dict</span><span class="p">(</span><span class="n">methods_specs_dict</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nd">@wrap_class_methods_input_and_output</span><span class="p">(</span><span class="o">**</span><span class="n">methods_specs_dict</span><span class="p">)</span>
 <span class="gp">... </span><span class="k">class</span> <span class="nc">AA</span><span class="p">(</span><span class="n">UserDict</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">pass</span>
@@ -926,8 +926,8 @@ keys and values</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;{&#39;__foo&#39;: &#39;hello bar&#39;, &#39;__star&#39;: &#39;hello wars&#39;}&quot;</span>  <span class="c1"># what is actually stored</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">aa</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span>  <span class="c1"># testing deletion of a key</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;{&#39;__star&#39;: &#39;hello wars&#39;}&quot;</span>  <span class="c1"># it worked!</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 </pre></div>
 </div>
 <p># THIRD EXAMPLE</p>
@@ -942,23 +942,23 @@ Of course, this is just pretend. Don’t use this with real waveforms. It won’
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rel_path_of_abs_path</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.wav&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>  <span class="c1"># transform an absolute path to a relative one</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">list_to_bytes</span> <span class="o">=</span> <span class="nb">bytes</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bytes_to_list</span> <span class="o">=</span> <span class="nb">list</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span> <span class="o">=</span> <span class="p">{</span>
 <span class="gp">... </span>    <span class="p">(</span><span class="s1">&#39;__contains__&#39;</span><span class="p">,</span> <span class="s1">&#39;__getitem__&#39;</span><span class="p">,</span> <span class="s1">&#39;__setitem__&#39;</span><span class="p">,</span> <span class="s1">&#39;__delitem__&#39;</span><span class="p">):</span> <span class="nb">dict</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">abs_path_of_rel_path</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="s1">&#39;__setitem__&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">list_to_bytes</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="s1">&#39;__iter__&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">method_output_trans</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="n">rel_path_of_abs_path</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span>
 <span class="gp">... </span>    <span class="s1">&#39;__getitem__&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">method_output_trans</span><span class="o">=</span><span class="n">bytes_to_list</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">}</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span> <span class="o">=</span> <span class="n">mk_method_trans_spec_from_methods_specs_dict</span><span class="p">(</span><span class="n">methods_specs_dict</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nd">@wrap_class_methods_input_and_output</span><span class="p">(</span><span class="o">**</span><span class="n">methods_specs_dict</span><span class="p">)</span>
 <span class="gp">... </span><span class="k">class</span> <span class="nc">Wf</span><span class="p">(</span><span class="n">UserDict</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">pass</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">year</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">down</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span> <span class="o">=</span> <span class="n">Wf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">year</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">wf</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;b&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">))</span>
