@@ -1114,6 +1114,8 @@ def wrap_from_sig(func, new_sig):
 # ---------------------------------------------------------------------------------------
 # wrap tools
 
+def _only_keep_non_none_values(d: dict):
+    return {k: v for k, v in d.items() if v is not None}
 
 @double_up_as_factory
 def ch_names(func=None, **old_to_new_name):
@@ -1134,6 +1136,7 @@ def ch_names(func=None, **old_to_new_name):
     >>> foo(alpha=1, b=2, gamma=3)
     7
     """
+    old_to_new_name = _only_keep_non_none_values(old_to_new_name)
     return Ingress.name_map(func, **old_to_new_name).wrap(func)
 
 
