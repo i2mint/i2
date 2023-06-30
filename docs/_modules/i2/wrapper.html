@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.0.183 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.wrapper &mdash; i2 0.0.184 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -1220,6 +1220,10 @@
 <span class="c1"># wrap tools</span>
 
 
+<span class="k">def</span> <span class="nf">_only_keep_non_none_values</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+
+
 <span class="nd">@double_up_as_factory</span>
 <span class="k">def</span> <span class="nf">ch_names</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">old_to_new_name</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Change the argument names of a function.</span>
@@ -1239,6 +1243,7 @@
 <span class="sd">    &gt;&gt;&gt; foo(alpha=1, b=2, gamma=3)</span>
 <span class="sd">    7</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">old_to_new_name</span> <span class="o">=</span> <span class="n">_only_keep_non_none_values</span><span class="p">(</span><span class="n">old_to_new_name</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Ingress</span><span class="o">.</span><span class="n">name_map</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">old_to_new_name</span><span class="p">)</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
 
