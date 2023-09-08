@@ -3524,13 +3524,13 @@ def ch_variadics_to_non_variadic_kind(func, *, ch_variadic_keyword_to_keyword=Tr
                 # Note: Changed signature(func) to Sig(func) but don't know if the first
                 #  was on purpose.
                 params,
-                return_annotation=signature(func).return_annotation,
+                return_annotation=Sig(func).return_annotation,
             )
         except ValueError:
             if idx_of_vp is not None:
                 params[idx_of_vp] = params[idx_of_vp].replace(kind=PK)
             variadic_less_func.__signature__ = Sig(
-                params, return_annotation=signature(func).return_annotation
+                params, return_annotation=Sig(func).return_annotation
             )
 
         return variadic_less_func
