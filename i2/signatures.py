@@ -99,7 +99,7 @@ from typing import (
 from typing import KT, VT
 from types import FunctionType
 from collections import defaultdict
-from operator import eq
+from operator import eq, attrgetter
 
 from functools import (
     cached_property,
@@ -192,7 +192,17 @@ def sort_params(params):
     return sorted(params, key=_param_sort_key)
 
 
-def name_of_obj(o: object) -> Union[str, None]:
+def _return_none(o: object) -> None:
+    return None
+ 
+
+def name_of_obj(
+    o: object, 
+    *, 
+    base_name_of_obj: Callable = attrgetter("__name__"), 
+    caught_exceptions: Tuple = (AttributeError,), 
+    default_factory: Callable = _return_none
+) -> Union[str, None]:
     """
     Tries to find the (or "a") name for an object, even if `__name__` doesn't exist.
 
@@ -207,17 +217,32 @@ def name_of_obj(o: object) -> Union[str, None]:
     >>> from functools import partial
     >>> name_of_obj(partial(print, sep=","))
     'print'
+
+    Note that ``name_of_obj`` uses the ``__name__`` attribute as its base way to get 
+    a name. You can customize this behavior though. 
+    For example, see that: 
+
+    >>> from inspect import Signature
+    >>> name_of_obj(Signature.replace)
+    'replace'
+
+    If you want to get the fully qualified name of an object, you can do:
+
+    >>> alt = partial(name_of_obj, base_name_of_obj=attrgetter('__qualname__'))
+    >>> alt(Signature.replace)
+    'Signature.replace'
+    
     """
-    if hasattr(o, "__name__"):
-        return o.__name__
-    elif hasattr(o, "__class__"):
-        name = name_of_obj(o.__class__)
-        if name == "partial":
-            if hasattr(o, "func"):
-                return name_of_obj(o.func)
-        return name
-    else:
-        return None
+    try:
+        return base_name_of_obj(o)
+    except caught_exceptions:
+        if hasattr(o, "__class__"):  # TODO: Should we use type instead?
+            name = name_of_obj(type(o), base_name_of_obj=base_name_of_obj)
+            if name == "partial":
+                if hasattr(o, "func"):
+                    return name_of_obj(o.func, base_name_of_obj=base_name_of_obj)
+            return name
+        return default_factory(o)
 
 
 def ensure_callable(obj: SignatureAble):
