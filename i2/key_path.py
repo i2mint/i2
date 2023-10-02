@@ -8,9 +8,9 @@ from itertools import chain
 def obj_to_str_path(
     obj,
     *,
-    sep=".",
-    name_of_obj=attrgetter("__qualname__"),
-    path_of_module=attrgetter("__module__"),
+    sep='.',
+    name_of_obj=attrgetter('__qualname__'),
+    path_of_module=attrgetter('__module__'),
 ):
     """Get the dotpath reference for an object
 
@@ -43,16 +43,16 @@ def obj_to_str_path(
     return sep.join((path_of_module(obj), name_of_obj(obj)))
 
 
-def str_path_to_obj(str_path: str, *, sep="."):
+def str_path_to_obj(str_path: str, *, sep='.'):
     """Loads and returns the object referenced by the string DOTPATH_TO_MODULE.OBJ_NAME
     """
 
     path_parts = iter(str_path.split(sep))
-    path_parts = chain.from_iterable(map(lambda x: x.split("."), path_parts))
+    path_parts = chain.from_iterable(map(lambda x: x.split('.'), path_parts))
     module_name = next(path_parts)
     obj = importlib.import_module(module_name)  # assume it's a module
     for item in path_parts:
-        new_module_name = module_name + "." + item
+        new_module_name = module_name + '.' + item
         try:
             obj = importlib.import_module(new_module_name)
             module_name = new_module_name
@@ -91,7 +91,7 @@ class NoDefault:
 NO_DFLT = NoDefault()
 
 
-def flatten_dict(d, sep=None, prefix=""):
+def flatten_dict(d, sep=None, prefix=''):
     """
     Computes a "flat" dict from a nested one. A flat dict's keys are the paths of the input dict.
     These paths will be expressed as tuples of the original keys by defaults.
@@ -122,7 +122,7 @@ def flatten_dict(d, sep=None, prefix=""):
     return kp.flat_dict()
 
 
-def rollout_dict(d, sep=None, prefix=""):
+def rollout_dict(d, sep=None, prefix=''):
     """
     Get the nested path of a flat (key path) dict. This is the inverse of flatten_dict.
 
@@ -437,8 +437,8 @@ class StrKeyPath(KeyPathMap):
         key_type: type = None,
         node_type: type = None,
         auto_node_writes=False,
-        sep: str = ".",
-        prefix: str = "",
+        sep: str = '.',
+        prefix: str = '',
     ):
         prefix_length = len(prefix)
         self.sep = sep
@@ -481,7 +481,7 @@ class KeyPathTrans:
     given to the method as input.
     """
 
-    def __init__(self, sep: str = ".", node_type: type = dict, mk_new_node=None):
+    def __init__(self, sep: str = '.', node_type: type = dict, mk_new_node=None):
         """
 
         :param sep:
@@ -612,12 +612,7 @@ class KeyPathTrans:
                 self.setitem_recursive(d[first_key], key_path[1:], val)
 
     def extract_key_paths(
-        self,
-        d,
-        key_paths,
-        field_naming="full",
-        use_default=False,
-        default_val=None,
+        self, d, key_paths, field_naming='full', use_default=False, default_val=None,
     ):
         """
         getting with a key list or "."-separated string
@@ -665,7 +660,7 @@ class KeyPathTrans:
             else:
                 field = self.sep.join(key_path)
 
-            if field_naming == "leaf":
+            if field_naming == 'leaf':
                 field = key_path[-1]
             else:
                 field = field
