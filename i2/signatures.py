@@ -3897,15 +3897,15 @@ def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
         raise
 
 
-def underlying_function(obj: T) -> Union[T, Callable]:
+def resolve_function(obj: T) -> Union[T, Callable]:
     """Get the underlying function of a property or cached_property
 
     Note that if all conditions fail, the object itself is returned.
 
-    The problem this function solves is that sometimes there's a function behind an 
-    object, but it's not always easy to get to it. For example, in a class, you might 
-    want to get the source of the code decorated with ``@property``, a 
-    ``@cached_property``, or a ``partial`` function. 
+    The problem this function solves is that sometimes there's a function behind an
+    object, but it's not always easy to get to it. For example, in a class, you might
+    want to get the source of the code decorated with ``@property``, a
+    ``@cached_property``, or a ``partial`` function.
 
     Consider the following example:
 
@@ -3930,8 +3930,8 @@ def underlying_function(obj: T) -> Union[T, Callable]:
     TypeError: <property object at 0x...> is not a module, class, method, function, traceback, frame, or code object
 
     But if you grab the underlying function, you can get the source:
-    
-    >>> func = underlying_function(C.prop)
+
+    >>> func = resolve_function(C.prop)
     >>> callable(func)
     True
     >>> isinstance(inspect.getsource(func), str)
@@ -3939,9 +3939,9 @@ def underlying_function(obj: T) -> Union[T, Callable]:
 
     Same goes with ``cached_property`` and ``partial``:
 
-    >>> isinstance(inspect.getsource(underlying_function(C.cached_prop)), str)
+    >>> isinstance(inspect.getsource(resolve_function(C.cached_prop)), str)
     True
-    >>> isinstance(inspect.getsource(underlying_function(C.partial_func)), str)
+    >>> isinstance(inspect.getsource(resolve_function(C.partial_func)), str)
     True
 
     """
