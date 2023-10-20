@@ -7,7 +7,8 @@
 
 import operator
 from functools import partial
-from i2 import Pipe, Sig
+from i2.multi_object import Pipe
+from i2.signatures import Sig, name_of_obj
 
 # TODO: Maybe we should just use an explicit list of dunders instead of this dynamic
 #  introspective approach.
@@ -177,8 +178,8 @@ def get_class_that_defined_method(method):
 
 def cls_and_method_name_of_method(method):
     if isinstance(method, property):
-        return get_class_that_defined_method(method.fget), method.fget.__name__
-    return get_class_that_defined_method(method), method.__name__
+        return get_class_that_defined_method(method.fget), name_of_obj(method.fget)
+    return get_class_that_defined_method(method), name_of_obj(method)
 
 
 def _process_duplicates(a, remove_duplicates=True):
