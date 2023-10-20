@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.186 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.187 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -204,7 +204,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">KT</span><span class="p">,</span> <span class="n">VT</span>
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">FunctionType</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">eq</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">eq</span><span class="p">,</span> <span class="n">attrgetter</span>
 
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">cached_property</span><span class="p">,</span>
@@ -297,7 +297,17 @@
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">_param_sort_key</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="name_of_obj"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.name_of_obj">[docs]</a><span class="k">def</span> <span class="nf">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">_return_none</span><span class="p">(</span><span class="n">o</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="name_of_obj"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.name_of_obj">[docs]</a><span class="k">def</span> <span class="nf">name_of_obj</span><span class="p">(</span>
+    <span class="n">o</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">base_name_of_obj</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;__name__&#39;</span><span class="p">),</span>
+    <span class="n">caught_exceptions</span><span class="p">:</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,),</span>
+    <span class="n">default_factory</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">_return_none</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tries to find the (or &quot;a&quot;) name for an object, even if `__name__` doesn&#39;t exist.</span>
 
@@ -312,17 +322,46 @@
 <span class="sd">    &gt;&gt;&gt; from functools import partial</span>
 <span class="sd">    &gt;&gt;&gt; name_of_obj(partial(print, sep=&quot;,&quot;))</span>
 <span class="sd">    &#39;print&#39;</span>
+<span class="sd">    &gt;&gt;&gt; from functools import cached_property</span>
+<span class="sd">    &gt;&gt;&gt; class A:</span>
+<span class="sd">    ...     @property</span>
+<span class="sd">    ...     def prop(self):</span>
+<span class="sd">    ...         return 1.0</span>
+<span class="sd">    ...     @cached_property</span>
+<span class="sd">    ...     def cached_prop(self):</span>
+<span class="sd">    ...         return 2.0</span>
+<span class="sd">    &gt;&gt;&gt; name_of_obj(A.prop)</span>
+<span class="sd">    &#39;prop&#39;</span>
+<span class="sd">    &gt;&gt;&gt; name_of_obj(A.cached_prop)</span>
+<span class="sd">    &#39;cached_prop&#39;</span>
+
+<span class="sd">    Note that ``name_of_obj`` uses the ``__name__`` attribute as its base way to get</span>
+<span class="sd">    a name. You can customize this behavior though.</span>
+<span class="sd">    For example, see that:</span>
+
+<span class="sd">    &gt;&gt;&gt; from inspect import Signature</span>
+<span class="sd">    &gt;&gt;&gt; name_of_obj(Signature.replace)</span>
+<span class="sd">    &#39;replace&#39;</span>
+
+<span class="sd">    If you want to get the fully qualified name of an object, you can do:</span>
+
+<span class="sd">    &gt;&gt;&gt; alt = partial(name_of_obj, base_name_of_obj=attrgetter(&#39;__qualname__&#39;))</span>
+<span class="sd">    &gt;&gt;&gt; alt(Signature.replace)</span>
+<span class="sd">    &#39;Signature.replace&#39;</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="vm">__name__</span>
-    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;__class__&#39;</span><span class="p">):</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;partial&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;func&#39;</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">name</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">base_name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">caught_exceptions</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="p">(</span><span class="n">cached_property</span><span class="p">,</span> <span class="n">partial</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;func&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">base_name_of_obj</span><span class="o">=</span><span class="n">base_name_of_obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">property</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;fget&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">fget</span><span class="p">,</span> <span class="n">base_name_of_obj</span><span class="o">=</span><span class="n">base_name_of_obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;__class__&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">),</span> <span class="n">base_name_of_obj</span><span class="o">=</span><span class="n">base_name_of_obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;fset&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">fset</span><span class="p">,</span> <span class="n">base_name_of_obj</span><span class="o">=</span><span class="n">base_name_of_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_factory</span><span class="p">(</span><span class="n">o</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">ensure_callable</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">SignatureAble</span><span class="p">):</span>

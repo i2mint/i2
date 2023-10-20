@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.footprints &mdash; i2 0.0.186 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.footprints &mdash; i2 0.0.187 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -112,7 +112,8 @@
 
 <span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">Pipe</span><span class="p">,</span> <span class="n">Sig</span>
+<span class="kn">from</span> <span class="nn">i2.multi_object</span> <span class="kn">import</span> <span class="n">Pipe</span>
+<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">name_of_obj</span>
 
 <span class="c1"># TODO: Maybe we should just use an explicit list of dunders instead of this dynamic</span>
 <span class="c1">#  introspective approach.</span>
@@ -282,8 +283,8 @@
 
 <span class="k">def</span> <span class="nf">cls_and_method_name_of_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="o">.</span><span class="vm">__name__</span>
-    <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="p">),</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_process_duplicates</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
