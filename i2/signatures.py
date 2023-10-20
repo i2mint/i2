@@ -96,7 +96,7 @@ from typing import (
     TypeVar,
     Mapping as MappingType,
 )
-from typing import KT, VT
+from typing import KT, VT, T
 from types import FunctionType
 from collections import defaultdict
 from operator import eq, attrgetter
@@ -3895,6 +3895,67 @@ def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
             return sigs_for_type_name[type_name] or DFLT_SIGNATURE
         # if all attempts fail, raise the original error
         raise
+
+
+def underlying_function(obj: T) -> Union[T, Callable]:
+    """Get the underlying function of a property or cached_property
+
+    Note that if all conditions fail, the object itself is returned.
+
+    The problem this function solves is that sometimes there's a function behind an 
+    object, but it's not always easy to get to it. For example, in a class, you might 
+    want to get the source of the code decorated with ``@property``, a 
+    ``@cached_property``, or a ``partial`` function. 
+
+    Consider the following example:
+
+    >>> from functools import cached_property, partial
+    >>> class C:
+    ...     @property
+    ...     def prop(self):
+    ...         pass
+    ...     @cached_property
+    ...     def cached_prop(self):
+    ...         pass
+    ...     partial_func = partial(partial)
+
+    Note that ``prop`` is not callable, and you can't get its source.
+
+    >>> import inspect
+    >>> callable(C.prop)
+    False
+    >>> inspect.getsource(C.prop)  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+    ...
+    TypeError: <property object at 0x...> is not a module, class, method, function, traceback, frame, or code object
+
+    But if you grab the underlying function, you can get the source:
+    
+    >>> func = underlying_function(C.prop)
+    >>> callable(func)
+    True
+    >>> isinstance(inspect.getsource(func), str)
+    True
+
+    Same goes with ``cached_property`` and ``partial``:
+
+    >>> isinstance(inspect.getsource(underlying_function(C.cached_prop)), str)
+    True
+    >>> isinstance(inspect.getsource(underlying_function(C.partial_func)), str)
+    True
+
+    """
+    if isinstance(obj, cached_property):
+        return obj.func
+    elif isinstance(obj, property):
+        return obj.fget
+    elif isinstance(obj, partial):
+        return obj.func
+    elif not callable(obj) and callable(wrapped := getattr(obj, "__wrapped__", None)):
+        # If obj is not callable, but has a __wrapped__ attribute that is, return that
+        return wrapped
+    else:  # if not just return obj
+        return obj
 
 
 def dict_of_attribute_signatures(cls: type) -> Dict[str, Signature]:
