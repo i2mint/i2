@@ -1161,26 +1161,3 @@ class FunctionBuilder(object):
         except Exception:
             raise
         return execdict
-
-
-# Note: Thought I needed this, but found another way. Leaving here in case I need it
-# later, betting on more AI enabled search in the future.
-def _get_containing_class_of_cached_property(obj):
-    """Get containing class of cached_property object.
-
-    >>> from functools import cached_property
-    >>> class A:
-    ...     @cached_property
-    ...     def prop(self):
-    ...         return 1.0
-    >>> prop = A.prop
-    >>> assert _get_containing_class_of_cached_property(prop) == A
-    """
-    from functools import cached_property
-
-    assert isinstance(
-        obj, cached_property
-    ), f"Should only be called on cached_property objects. Was {obj=}"
-    qualname = obj.func.__qualname__
-    class_name = qualname.split(".<locals>", 1)[0].rsplit(".", 1)[0]
-    return globals().get(class_name)
