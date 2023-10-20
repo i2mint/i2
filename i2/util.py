@@ -1168,6 +1168,7 @@ class FunctionBuilder(object):
 def _get_containing_class_of_cached_property(obj):
     """Get containing class of cached_property object.
 
+    >>> from functools import cached_property
     >>> class A:
     ...     @cached_property
     ...     def prop(self):
