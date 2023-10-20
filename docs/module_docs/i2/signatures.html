@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.0.187 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.0.188 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -2728,6 +2728,54 @@ This tool should help making it less annoying.</p>
 <span class="go">&lt;Parameter &quot;KEYWORD_ONLY&quot;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">param_for_kind</span><span class="o">.</span><span class="n">keyword_only</span><span class="p">(</span><span class="s2">&quot;baz&quot;</span><span class="p">,</span> <span class="n">with_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&lt;Parameter &quot;baz=&#39;dflt_keyword_only&#39;&quot;&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.signatures.resolve_function">
+<code class="sig-prename descclassname">i2.signatures.</code><code class="sig-name descname">resolve_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span><span class="p">:</span> <span class="n">T</span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>T<span class="p">, </span>Callable<span class="p">]</span><a class="reference internal" href="../../_modules/i2/signatures.html#resolve_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.signatures.resolve_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the underlying function of a property or cached_property</p>
+<p>Note that if all conditions fail, the object itself is returned.</p>
+<p>The problem this function solves is that sometimes there’s a function behind an
+object, but it’s not always easy to get to it. For example, in a class, you might
+want to get the source of the code decorated with <code class="docutils literal notranslate"><span class="pre">&#64;property</span></code>, a
+<code class="docutils literal notranslate"><span class="pre">&#64;cached_property</span></code>, or a <code class="docutils literal notranslate"><span class="pre">partial</span></code> function.</p>
+<p>Consider the following example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span><span class="p">,</span> <span class="n">partial</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">C</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nd">@property</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">prop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">pass</span>
+<span class="gp">... </span>    <span class="nd">@cached_property</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">cached_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">pass</span>
+<span class="gp">... </span>    <span class="n">partial_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">partial</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">prop</span></code> is not callable, and you can’t get its source.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">callable</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">prop</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">prop</span><span class="p">)</span>  
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">TypeError</span>: <span class="n">&lt;property object at 0x...&gt; is not a module, class, method, function, traceback, frame, or code object</span>
+</pre></div>
+</div>
+<p>But if you grab the underlying function, you can get the source:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">func</span> <span class="o">=</span> <span class="n">resolve_function</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">prop</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">callable</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">func</span><span class="p">),</span> <span class="nb">str</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Same goes with <code class="docutils literal notranslate"><span class="pre">cached_property</span></code> and <code class="docutils literal notranslate"><span class="pre">partial</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">resolve_function</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">cached_prop</span><span class="p">)),</span> <span class="nb">str</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">resolve_function</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">partial_func</span><span class="p">)),</span> <span class="nb">str</span><span class="p">)</span>
+<span class="go">True</span>
 </pre></div>
 </div>
 </dd></dl>

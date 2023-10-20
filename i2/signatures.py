@@ -3948,7 +3948,7 @@ def resolve_function(obj: T) -> Union[T, Callable]:
         return obj.fget
     elif isinstance(obj, partial):
         return obj.func
-    elif not callable(obj) and callable(wrapped := getattr(obj, "__wrapped__", None)):
+    elif not callable(obj) and callable(wrapped := getattr(obj, '__wrapped__', None)):
         # If obj is not callable, but has a __wrapped__ attribute that is, return that
         return wrapped
     else:  # if not just return obj
