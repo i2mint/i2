@@ -405,6 +405,7 @@ def get_source(obj: object) -> str:
 
 
 # TODO: Break into two functions (one doing the work of the loop for a single method)
+# TODO: Routing pattern. Extract conditional logic to make it parametrizable
 def object_dependencies(obj, *, get_source=get_source):
     import ast
     import inspect
@@ -413,7 +414,6 @@ def object_dependencies(obj, *, get_source=get_source):
 
     dependency_dict = {}
 
-    # Get the list of methods and properties
     if inspect.isclass(obj):
         members = inspect.getmembers(obj)
     elif hasattr(obj, "__class__"):
@@ -421,33 +421,176 @@ def object_dependencies(obj, *, get_source=get_source):
     else:
         return "Invalid input. Please provide a class or an instance."
 
-    # Analyze each method or property
     for name, method in members:
         try:
             source_code = get_source(method)
+            first_arg = Sig(resolve_function(method)).names[0]
         except TypeError:
-            continue  # Skip if getsource fails
+            continue
 
-        source_code = textwrap.dedent(source_code)  # Remove leading indentation
+        source_code = textwrap.dedent(source_code)
         tree = ast.parse(source_code)
 
-        first_arg = Sig(resolve_function(method)).names[0]  # Get first argument name
-
         called_methods = []
+        assigned_attributes = set()
 
         for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Attribute):
+                        if getattr(target.value, "id", None) == first_arg:
+                            assigned_attributes.add(target.attr)
+
             if isinstance(node, ast.Call):
                 if isinstance(node.func, ast.Attribute):
-                    if node.func.value.id == first_arg:
+                    if getattr(node.func.value, "id", None) == first_arg:
                         called_methods.append(node.func.attr)
+
             elif isinstance(node, ast.Attribute):
                 if isinstance(node.value, ast.Name):
                     if node.value.id == first_arg:
                         called_methods.append(node.attr)
 
-        dependency_dict[name] = set(set(called_methods))  # Remove duplicates
+        # Remove attributes that are only assigned to
+        called_methods = set(called_methods) - assigned_attributes
+
+        dependency_dict[name] = called_methods
 
     return dependency_dict
+
+
+from typing import Literal, Callable, Union
+
+
+def _dict_to_graph(
+    graph: dict,
+    *,
+    edge_connector: str,
+    graph_template: str,
+    display: Callable = None,
+    indent: str = "    ",
+    prefix: str = "",
+    suffix: str = "",
+) -> str:
+    """Helper for dict_to_graph"""
+    if not display:
+        display = lambda x: x
+    elif display is True:
+        display = print
+    assert callable(display), f"display should be callable, boolean or None: {display=}"
+    lines = []
+    for from_node, to_nodes in graph.items():
+        for to_node in to_nodes:
+            lines.append(f"{indent}{from_node}{edge_connector}{to_node};")
+    graph_code = "\n".join(lines)
+    return display(graph_template.format(code=f"{prefix}{graph_code}{suffix}"))
+
+
+def dict_to_graph(
+    graph: dict,
+    from_key_to_values: bool = True,
+    *,
+    kind: Literal["graphviz", "mermaid"] = "graphviz",
+    indent: str = "    ",
+    prefix: str = "",
+    suffix: str = "",
+    display: Union[bool, Callable] = True,
+) -> str:
+    """A function to convert a dictionary to a graphviz string.
+
+    You privide a graph in the form of a ``{from_node: to_nodes, ...`` or
+    ``{to_node: from_nodes, ...``` dictionary, and will get a graphviz string.
+    You can use this to visualize a graph (e.g. a dependency graph) in a jupyter notebook.
+
+    :param graph: The graph, in the form of a to convert to graphviz.
+    :param from_key_to_values: Whether the keys of the graph are from nodes or to nodes.
+    :param kind: The kind of graphviz string to return. Either "graphviz" or "mermaid".
+    :param indent: The indent to use for the graphviz string.
+    :param graphviz_template: The template to use for the graphviz string.
+    :param display: Whether to display the graphviz string as a graph in a jupyter notebook. Requires graphviz.
+    :return: The graphviz string.
+
+    Example (but bear in mind the order of the nodes in graphviz_str may be different):
+
+    >>> graph_dict = {
+    ...     "A": ["B", "C"],
+    ...     "B": ["D"],  # note that "D" is not mentioned as a key
+    ...     "C": ["D", "E", "F"],
+    ...     "E": [],
+    ... }
+    >>> # Keys are from nodes
+    >>> graphviz_str = dict_to_graph(graph_dict)
+    >>> print(graphviz_str)  # doctest: +SKIP
+    digraph G {
+        "A" -> "B";
+        "A" -> "C";
+        "B" -> "D";
+        "C" -> "D";
+        "C" -> "E";
+        "C" -> "F";
+    }
+
+    >>> # Keys are to nodes
+    >>> graphviz_str = dict_to_graph(graph_dict, from_key_to_values=False)
+    >>> print(graphviz_str)  # doctest: +SKIP
+    digraph G {
+        "B" -> "A";
+        "C" -> "A";
+        "D" -> "B";
+        "D" -> "C";
+        "E" -> "C";
+    }
+
+    The default ``kind`` is graphviz, but you can also use mermaid:
+
+    >>> graphviz_str = dict_to_graph(graph_dict, kind="mermaid")
+    >>> print(graphviz_str)  # doctest: +SKIP
+    graph TD
+        A --> B;
+        A --> C;
+        B --> D;
+        C --> D;
+        C --> E;
+        C --> F;
+
+    """
+    # TODO: Could make these specs open-closed (routing pattern)
+    if kind == "graphviz":
+        graph_template = f"digraph G {{{{\n{{code}}\n}}}}"
+        edge_connector = " -> "
+        if display is True:
+            try:
+                from graphviz import Source
+            except ImportError:
+                ImportError("You need to `pip install graphviz` to display the graph")
+            display = Source
+    elif kind == "mermaid":
+        graph_template = f"graph TD\n{{code}}\n"
+        edge_connector = " --> "
+        if display is True:
+            try:
+                from kroki import diagram_image  # pip install kroki
+            except ImportError:
+                ImportError("You need to `pip install kroki` to display the graph")
+            display = lambda x: diagram_image(x, diagram_type="mermaid")
+    else:
+        raise ValueError(f"Invalid kind specified: {kind}")
+
+    if not from_key_to_values:
+        graph = {
+            to_node: [from_node for from_node in graph if to_node in graph[from_node]]
+            for to_node in set(val for vals in graph.values() for val in vals)
+        }
+
+    return _dict_to_graph(
+        graph,
+        edge_connector=edge_connector,
+        graph_template=graph_template,
+        indent=indent,
+        prefix=prefix,
+        suffix=suffix,
+        display=display,
+    )
 
 
 # --------------------------------------------------------------------------------------
