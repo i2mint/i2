@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.footprints &mdash; i2 0.0.188 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.footprints &mdash; i2 0.0.189 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -510,6 +510,7 @@
 
 
 <span class="c1"># TODO: Break into two functions (one doing the work of the loop for a single method)</span>
+<span class="c1"># TODO: Routing pattern. Extract conditional logic to make it parametrizable</span>
 <span class="k">def</span> <span class="nf">object_dependencies</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">get_source</span><span class="o">=</span><span class="n">get_source</span><span class="p">):</span>
     <span class="kn">import</span> <span class="nn">ast</span>
     <span class="kn">import</span> <span class="nn">inspect</span>
@@ -518,7 +519,6 @@
 
     <span class="n">dependency_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="c1"># Get the list of methods and properties</span>
     <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
         <span class="n">members</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__class__&#39;</span><span class="p">):</span>
@@ -526,33 +526,180 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="s1">&#39;Invalid input. Please provide a class or an instance.&#39;</span>
 
-    <span class="c1"># Analyze each method or property</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">members</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">source_code</span> <span class="o">=</span> <span class="n">get_source</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+            <span class="n">first_arg</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">resolve_function</span><span class="p">(</span><span class="n">method</span><span class="p">))</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="k">continue</span>  <span class="c1"># Skip if getsource fails</span>
+            <span class="k">continue</span>
 
-        <span class="n">source_code</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">source_code</span><span class="p">)</span>  <span class="c1"># Remove leading indentation</span>
+        <span class="n">source_code</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">source_code</span><span class="p">)</span>
         <span class="n">tree</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">source_code</span><span class="p">)</span>
 
-        <span class="n">first_arg</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">resolve_function</span><span class="p">(</span><span class="n">method</span><span class="p">))</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Get first argument name</span>
-
         <span class="n">called_methods</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">assigned_attributes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Assign</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">first_arg</span><span class="p">:</span>
+                            <span class="n">assigned_attributes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Call</span><span class="p">):</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">first_arg</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">first_arg</span><span class="p">:</span>
                         <span class="n">called_methods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
+
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">first_arg</span><span class="p">:</span>
                         <span class="n">called_methods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
 
-        <span class="n">dependency_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">called_methods</span><span class="p">))</span>  <span class="c1"># Remove duplicates</span>
+        <span class="c1"># Remove attributes that are only assigned to</span>
+        <span class="n">called_methods</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">called_methods</span><span class="p">)</span> <span class="o">-</span> <span class="n">assigned_attributes</span>
+
+        <span class="n">dependency_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">called_methods</span>
 
     <span class="k">return</span> <span class="n">dependency_dict</span>
+
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
+
+
+<span class="k">def</span> <span class="nf">_dict_to_graph</span><span class="p">(</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">edge_connector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">graph_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">display</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">indent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;    &#39;</span><span class="p">,</span>
+    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for dict_to_graph&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">display</span><span class="p">:</span>
+        <span class="n">display</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+    <span class="k">elif</span> <span class="n">display</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">display</span> <span class="o">=</span> <span class="nb">print</span>
+    <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">display</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;display should be callable, boolean or None: </span><span class="si">{</span><span class="n">display</span><span class="si">=}</span><span class="s1">&#39;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">from_node</span><span class="p">,</span> <span class="n">to_nodes</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">to_node</span> <span class="ow">in</span> <span class="n">to_nodes</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">from_node</span><span class="si">}{</span><span class="n">edge_connector</span><span class="si">}{</span><span class="n">to_node</span><span class="si">}</span><span class="s1">;&#39;</span><span class="p">)</span>
+    <span class="n">graph_code</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">display</span><span class="p">(</span><span class="n">graph_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">graph_code</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="dict_to_graph"><a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.dict_to_graph">[docs]</a><span class="k">def</span> <span class="nf">dict_to_graph</span><span class="p">(</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">from_key_to_values</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;graphviz&#39;</span><span class="p">,</span> <span class="s1">&#39;mermaid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;graphviz&#39;</span><span class="p">,</span>
+    <span class="n">indent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;    &#39;</span><span class="p">,</span>
+    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">display</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A function to convert a dictionary to a graphviz string.</span>
+
+<span class="sd">    You privide a graph in the form of a ``{from_node: to_nodes, ...`` or</span>
+<span class="sd">    ``{to_node: from_nodes, ...``` dictionary, and will get a graphviz string.</span>
+<span class="sd">    You can use this to visualize a graph (e.g. a dependency graph) in a jupyter notebook.</span>
+
+<span class="sd">    :param graph: The graph, in the form of a to convert to graphviz.</span>
+<span class="sd">    :param from_key_to_values: Whether the keys of the graph are from nodes or to nodes.</span>
+<span class="sd">    :param kind: The kind of graphviz string to return. Either &quot;graphviz&quot; or &quot;mermaid&quot;.</span>
+<span class="sd">    :param indent: The indent to use for the graphviz string.</span>
+<span class="sd">    :param graphviz_template: The template to use for the graphviz string.</span>
+<span class="sd">    :param display: Whether to display the graphviz string as a graph in a jupyter notebook. Requires graphviz.</span>
+<span class="sd">    :return: The graphviz string.</span>
+
+<span class="sd">    Example (but bear in mind the order of the nodes in graphviz_str may be different):</span>
+
+<span class="sd">    &gt;&gt;&gt; graph_dict = {</span>
+<span class="sd">    ...     &quot;A&quot;: [&quot;B&quot;, &quot;C&quot;],</span>
+<span class="sd">    ...     &quot;B&quot;: [&quot;D&quot;],  # note that &quot;D&quot; is not mentioned as a key</span>
+<span class="sd">    ...     &quot;C&quot;: [&quot;D&quot;, &quot;E&quot;, &quot;F&quot;],</span>
+<span class="sd">    ...     &quot;E&quot;: [],</span>
+<span class="sd">    ... }</span>
+<span class="sd">    &gt;&gt;&gt; # Keys are from nodes</span>
+<span class="sd">    &gt;&gt;&gt; graphviz_str = dict_to_graph(graph_dict)</span>
+<span class="sd">    &gt;&gt;&gt; print(graphviz_str)  # doctest: +SKIP</span>
+<span class="sd">    digraph G {</span>
+<span class="sd">        &quot;A&quot; -&gt; &quot;B&quot;;</span>
+<span class="sd">        &quot;A&quot; -&gt; &quot;C&quot;;</span>
+<span class="sd">        &quot;B&quot; -&gt; &quot;D&quot;;</span>
+<span class="sd">        &quot;C&quot; -&gt; &quot;D&quot;;</span>
+<span class="sd">        &quot;C&quot; -&gt; &quot;E&quot;;</span>
+<span class="sd">        &quot;C&quot; -&gt; &quot;F&quot;;</span>
+<span class="sd">    }</span>
+
+<span class="sd">    &gt;&gt;&gt; # Keys are to nodes</span>
+<span class="sd">    &gt;&gt;&gt; graphviz_str = dict_to_graph(graph_dict, from_key_to_values=False)</span>
+<span class="sd">    &gt;&gt;&gt; print(graphviz_str)  # doctest: +SKIP</span>
+<span class="sd">    digraph G {</span>
+<span class="sd">        &quot;B&quot; -&gt; &quot;A&quot;;</span>
+<span class="sd">        &quot;C&quot; -&gt; &quot;A&quot;;</span>
+<span class="sd">        &quot;D&quot; -&gt; &quot;B&quot;;</span>
+<span class="sd">        &quot;D&quot; -&gt; &quot;C&quot;;</span>
+<span class="sd">        &quot;E&quot; -&gt; &quot;C&quot;;</span>
+<span class="sd">    }</span>
+
+<span class="sd">    The default ``kind`` is graphviz, but you can also use mermaid:</span>
+
+<span class="sd">    &gt;&gt;&gt; graphviz_str = dict_to_graph(graph_dict, kind=&quot;mermaid&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; print(graphviz_str)  # doctest: +SKIP</span>
+<span class="sd">    graph TD</span>
+<span class="sd">        A --&gt; B;</span>
+<span class="sd">        A --&gt; C;</span>
+<span class="sd">        B --&gt; D;</span>
+<span class="sd">        C --&gt; D;</span>
+<span class="sd">        C --&gt; E;</span>
+<span class="sd">        C --&gt; F;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: Could make these specs open-closed (routing pattern)</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;graphviz&#39;</span><span class="p">:</span>
+        <span class="n">graph_template</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;digraph G </span><span class="se">{{{{\n{{</span><span class="s1">code</span><span class="se">}}\n}}}}</span><span class="s1">&#39;</span>
+        <span class="n">edge_connector</span> <span class="o">=</span> <span class="s1">&#39; -&gt; &#39;</span>
+        <span class="k">if</span> <span class="n">display</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">graphviz</span> <span class="kn">import</span> <span class="n">Source</span>
+
+                <span class="n">display</span> <span class="o">=</span> <span class="n">Source</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;You need to `pip install graphviz` to display the graph&#39;</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;mermaid&#39;</span><span class="p">:</span>
+        <span class="n">graph_template</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;graph TD</span><span class="se">\n{{</span><span class="s1">code</span><span class="se">}}\n</span><span class="s1">&#39;</span>
+        <span class="n">edge_connector</span> <span class="o">=</span> <span class="s1">&#39; --&gt; &#39;</span>
+        <span class="k">if</span> <span class="n">display</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">kroki</span> <span class="kn">import</span> <span class="n">diagram_image</span>  <span class="c1"># pip install kroki</span>
+
+                <span class="n">display</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">diagram_image</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">diagram_type</span><span class="o">=</span><span class="s1">&#39;mermaid&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;You need to `pip install kroki` to display the graph&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid kind specified: </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">from_key_to_values</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">to_node</span><span class="p">:</span> <span class="p">[</span><span class="n">from_node</span> <span class="k">for</span> <span class="n">from_node</span> <span class="ow">in</span> <span class="n">graph</span> <span class="k">if</span> <span class="n">to_node</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">from_node</span><span class="p">]]</span>
+            <span class="k">for</span> <span class="n">to_node</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">val</span> <span class="k">for</span> <span class="n">vals</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">_dict_to_graph</span><span class="p">(</span>
+        <span class="n">graph</span><span class="p">,</span>
+        <span class="n">edge_connector</span><span class="o">=</span><span class="n">edge_connector</span><span class="p">,</span>
+        <span class="n">graph_template</span><span class="o">=</span><span class="n">graph_template</span><span class="p">,</span>
+        <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+        <span class="n">display</span><span class="o">=</span><span class="n">display</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 <span class="c1"># --------------------------------------------------------------------------------------</span>
