@@ -494,7 +494,7 @@ def dict_to_graph(
     indent: str = "    ",
     prefix: str = "",
     suffix: str = "",
-    display: Union[bool, Callable] = True,
+    display: Union[bool, Callable] = False,
 ) -> str:
     """A function to convert a dictionary to a graphviz string.
 
