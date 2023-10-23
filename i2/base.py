@@ -47,9 +47,16 @@ def _property_names_of(obj):
             yield attr_name
 
 
+# Note: For a more powerful, and customizable implementation, 
+#  see `i2.signatures.name_of_obj`.
+# TODO: Analyse usages and reroute to i2.signatures.name_of_obj instead.
 def name_of_obj(o):
     """
     Tries to find the (or "a") name for an object, even if `__name__` doesn't exist.
+
+    This is a basic implementation, and it's not guaranteed to work for all objects.
+    For a more powerful, and customizable implementation, 
+    see `i2.signatures.name_of_obj`.
 
     >>> name_of_obj(map)
     'map'
