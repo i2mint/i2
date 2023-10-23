@@ -12,7 +12,7 @@ from i2.signatures import Sig, name_of_obj
 
 # TODO: Maybe we should just use an explicit list of dunders instead of this dynamic
 #  introspective approach.
-dunder_filt = partial(filter, lambda xx: xx.startswith("__"))
+dunder_filt = partial(filter, lambda xx: xx.startswith('__'))
 
 _dunders = Pipe(dir, dunder_filt, set)
 
@@ -31,18 +31,18 @@ def dunders_diff(x, y):
     return dunders(x) - dunders(y)
 
 
-def _method_sig(func, instance_arg="self"):
+def _method_sig(func, instance_arg='self'):
     """Replace the first argument of a function signature with an instance argument"""
     sig = Sig(func)
     first_param = sig.names[0]
     return Sig(func).ch_names(**{first_param: instance_arg})
 
 
-exclude = {"__class_getitem__"}
+exclude = {'__class_getitem__'}
 
 # operator dunders not dunders of all modules (as represented by `typing` module)
 _operator_dunders = {
-    k: _method_sig(getattr(operator, k)) for k in dunders_diff("operator", "typing")
+    k: _method_sig(getattr(operator, k)) for k in dunders_diff('operator', 'typing')
 }
 # dict dunders that aren't dunders of all objects (as represented by `object` object)
 _dict_dunders = {
@@ -50,9 +50,9 @@ _dict_dunders = {
 }
 _rops = (
     set(
-        "__radd__, __rsub__, __rmul__, __rdiv__, __rtruediv__, __rfloordiv__, __rmod__, "
-        "__rdivmod__, __rpow__, __rlshift__, __rrshift__, __rand__, __rxor__, "
-        "__ror__".split()
+        '__radd__, __rsub__, __rmul__, __rdiv__, __rtruediv__, __rfloordiv__, __rmod__, '
+        '__rdivmod__, __rpow__, __rlshift__, __rrshift__, __rand__, __rxor__, '
+        '__ror__'.split()
     )
     - _dict_dunders.keys()
     - _operator_dunders.keys()
@@ -137,8 +137,8 @@ class MethodTrace:
         self.trace = []
 
     def __repr__(self):
-        trace_str = ", ".join(map(lambda x: f"{x}", self.trace))
-        return f"<{type(self).__name__} with .trace = {trace_str}>"
+        trace_str = ', '.join(map(lambda x: f'{x}', self.trace))
+        return f'<{type(self).__name__} with .trace = {trace_str}>'
 
     # TODO: The following is a means to be able to trace all non-dunder methods.
     #  Not sure if we want this as a default, or an option.
@@ -169,11 +169,11 @@ def get_class_that_defined_method(method):
     if inspect.isfunction(method):
         cls = getattr(
             inspect.getmodule(method),
-            method.__qualname__.split(".<locals>", 1)[0].rsplit(".", 1)[0],
+            method.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0],
         )
         if isinstance(cls, type):
             return cls
-    return getattr(method, "__objclass__", None)
+    return getattr(method, '__objclass__', None)
 
 
 def cls_and_method_name_of_method(method):
@@ -203,11 +203,11 @@ def get_class_that_defined_method(method):
     if inspect.isfunction(method):
         cls = getattr(
             inspect.getmodule(method),
-            method.__qualname__.split(".<locals>", 1)[0].rsplit(".", 1)[0],
+            method.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0],
         )
         if isinstance(cls, type):
             return cls
-    return getattr(method, "__objclass__", None)
+    return getattr(method, '__objclass__', None)
 
 
 def cls_and_method_name_of_method(method):
@@ -227,7 +227,7 @@ import os
 from collections import namedtuple
 from inspect import getsource, getsourcefile
 
-Import = namedtuple("Import", ["module", "name", "alias"])
+Import = namedtuple('Import', ['module', 'name', 'alias'])
 
 
 def _get_ast_root_from(o):
@@ -241,7 +241,7 @@ def _get_ast_root_from(o):
         source_filepath = getsourcefile(o)
         source_str = getsource(o)
         if not isinstance(source_filepath, str) and isinstance(source_str, str):
-            raise ValueError("Unrecognized object format")
+            raise ValueError('Unrecognized object format')
 
     return ast.parse(source=source_str, filename=source_filepath)
 
@@ -252,11 +252,11 @@ def _get_imports_from_ast_root(ast_root, recursive=False):
         if isinstance(node, ast.Import):
             module = []
         elif isinstance(node, ast.ImportFrom):
-            module = node.module.split(".")
+            module = node.module.split('.')
 
         if module is not None:
             for n in node.names:
-                yield Import(module, n.name.split("."), n.asname)
+                yield Import(module, n.name.split('.'), n.asname)
 
         if recursive:
             yield from _get_imports_from_ast_root(node, recursive=recursive)
@@ -271,7 +271,7 @@ def get_imports_from_obj(o, recursive=False):
 def _alt_cls_and_method_name_of_method(
     method,
 ):  # TODO: Delete when determined to be of no additional value
-    method_path = method.__qualname__.split(".")
+    method_path = method.__qualname__.split('.')
     name = method_path[-1]
     cls = reduce(getattr, method_path[:-1], import_module(method.__module__))
     return cls, name
@@ -287,7 +287,7 @@ def list_func_calls(fn):
     bytecode = dis.Bytecode(fn)
     instrs = list(reversed([instr for instr in bytecode]))
     for ix, instr in enumerate(instrs):
-        if instr.opname == "CALL_FUNCTION" or instr.opname == "CALL_METHOD":
+        if instr.opname == 'CALL_FUNCTION' or instr.opname == 'CALL_METHOD':
             load_func_instr = instrs[ix + instr.arg + 1]
             funcs.append(load_func_instr.argval)
     return [funcname for funcname in reversed(funcs)]
@@ -324,8 +324,8 @@ def _attrs_used_by_method(cls, method_name, remove_duplicates=True):
     """
     Util for attrs_used_by_method. Same output as attrs_used_by_method, but intput is (cls, method_name)
     """
-    f = open(getsourcefile(cls), "r")
-    if f.mode == "r":
+    f = open(getsourcefile(cls), 'r')
+    if f.mode == 'r':
         src = f.read()
     root = ast.parse(src)
     funcs = list_func_calls(getattr(cls, method_name))
@@ -416,10 +416,10 @@ def object_dependencies(obj, *, get_source=get_source):
 
     if inspect.isclass(obj):
         members = inspect.getmembers(obj)
-    elif hasattr(obj, "__class__"):
+    elif hasattr(obj, '__class__'):
         members = inspect.getmembers(obj.__class__)
     else:
-        return "Invalid input. Please provide a class or an instance."
+        return 'Invalid input. Please provide a class or an instance.'
 
     for name, method in members:
         try:
@@ -438,12 +438,12 @@ def object_dependencies(obj, *, get_source=get_source):
             if isinstance(node, ast.Assign):
                 for target in node.targets:
                     if isinstance(target, ast.Attribute):
-                        if getattr(target.value, "id", None) == first_arg:
+                        if getattr(target.value, 'id', None) == first_arg:
                             assigned_attributes.add(target.attr)
 
             if isinstance(node, ast.Call):
                 if isinstance(node.func, ast.Attribute):
-                    if getattr(node.func.value, "id", None) == first_arg:
+                    if getattr(node.func.value, 'id', None) == first_arg:
                         called_methods.append(node.func.attr)
 
             elif isinstance(node, ast.Attribute):
@@ -468,32 +468,32 @@ def _dict_to_graph(
     edge_connector: str,
     graph_template: str,
     display: Callable = None,
-    indent: str = "    ",
-    prefix: str = "",
-    suffix: str = "",
+    indent: str = '    ',
+    prefix: str = '',
+    suffix: str = '',
 ) -> str:
     """Helper for dict_to_graph"""
     if not display:
         display = lambda x: x
     elif display is True:
         display = print
-    assert callable(display), f"display should be callable, boolean or None: {display=}"
+    assert callable(display), f'display should be callable, boolean or None: {display=}'
     lines = []
     for from_node, to_nodes in graph.items():
         for to_node in to_nodes:
-            lines.append(f"{indent}{from_node}{edge_connector}{to_node};")
-    graph_code = "\n".join(lines)
-    return display(graph_template.format(code=f"{prefix}{graph_code}{suffix}"))
+            lines.append(f'{indent}{from_node}{edge_connector}{to_node};')
+    graph_code = '\n'.join(lines)
+    return display(graph_template.format(code=f'{prefix}{graph_code}{suffix}'))
 
 
 def dict_to_graph(
     graph: dict,
     from_key_to_values: bool = True,
     *,
-    kind: Literal["graphviz", "mermaid"] = "graphviz",
-    indent: str = "    ",
-    prefix: str = "",
-    suffix: str = "",
+    kind: Literal['graphviz', 'mermaid'] = 'graphviz',
+    indent: str = '    ',
+    prefix: str = '',
+    suffix: str = '',
     display: Union[bool, Callable] = False,
 ) -> str:
     """A function to convert a dictionary to a graphviz string.
@@ -555,30 +555,30 @@ def dict_to_graph(
 
     """
     # TODO: Could make these specs open-closed (routing pattern)
-    if kind == "graphviz":
-        graph_template = f"digraph G {{{{\n{{code}}\n}}}}"
-        edge_connector = " -> "
+    if kind == 'graphviz':
+        graph_template = f'digraph G {{{{\n{{code}}\n}}}}'
+        edge_connector = ' -> '
         if display is True:
             try:
                 from graphviz import Source
 
                 display = Source
             except ImportError:
-                ImportError("You need to `pip install graphviz` to display the graph")
+                ImportError('You need to `pip install graphviz` to display the graph')
 
-    elif kind == "mermaid":
-        graph_template = f"graph TD\n{{code}}\n"
-        edge_connector = " --> "
+    elif kind == 'mermaid':
+        graph_template = f'graph TD\n{{code}}\n'
+        edge_connector = ' --> '
         if display is True:
             try:
                 from kroki import diagram_image  # pip install kroki
 
-                display = lambda x: diagram_image(x, diagram_type="mermaid")
+                display = lambda x: diagram_image(x, diagram_type='mermaid')
             except ImportError:
-                ImportError("You need to `pip install kroki` to display the graph")
+                ImportError('You need to `pip install kroki` to display the graph')
 
     else:
-        raise ValueError(f"Invalid kind specified: {kind}")
+        raise ValueError(f'Invalid kind specified: {kind}')
 
     if not from_key_to_values:
         graph = {
@@ -622,7 +622,7 @@ class Tracker:
         """
         Inspect getter for tracking the attributes accessed.
         """
-        if item not in ["on_access"]:
+        if item not in ['on_access']:
             self.on_access(item)
         return super().__getattribute__(item)
 
@@ -641,7 +641,7 @@ class Tracker:
         core attribute or `attrs_to_ignore` set to class.
         """
         if (
-            key in ["start_track", "attr_used", "on_access", "attrs_to_ignore"]
+            key in ['start_track', 'attr_used', 'on_access', 'attrs_to_ignore']
             or key in self.attrs_to_ignore
         ):
             return
@@ -672,7 +672,7 @@ def attrs_used_by_method_computation(
 
     method_class, method_name = cls_and_method_name_of_method(cls_method)
     tracker = type(
-        "Tracker",
+        'Tracker',
         (Tracker, method_class),
         dict(method_class.__dict__, **Tracker.__dict__),
     )(**init_kwargs)
