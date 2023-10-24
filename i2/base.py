@@ -54,7 +54,7 @@ def name_of_obj(o):
     from warnings import warn
 
     warn(
-        "Deprecated: Use i2.name_of_obj or i2.signatures.name_of_object instead",
+        'Deprecated: Use i2.name_of_obj or i2.signatures.name_of_object instead',
         DeprecationWarning,
     )
 

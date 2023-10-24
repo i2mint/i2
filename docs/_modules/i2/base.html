@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.base &mdash; i2 0.0.189 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.base &mdash; i2 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -152,32 +152,20 @@
             <span class="k">yield</span> <span class="n">attr_name</span>
 
 
-<div class="viewcode-block" id="name_of_obj"><a class="viewcode-back" href="../../module_docs/i2/base.html#i2.base.name_of_obj">[docs]</a><span class="k">def</span> <span class="nf">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Tries to find the (or &quot;a&quot;) name for an object, even if `__name__` doesn&#39;t exist.</span>
+<span class="c1"># Note: For a more powerful, and customizable implementation,</span>
+<span class="c1">#  see `i2.signatures.name_of_obj`.</span>
+<span class="c1"># TODO: Analyse usages and reroute to i2.signatures.name_of_obj instead.</span>
+<span class="k">def</span> <span class="nf">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
-<span class="sd">    &gt;&gt;&gt; name_of_obj(map)</span>
-<span class="sd">    &#39;map&#39;</span>
-<span class="sd">    &gt;&gt;&gt; name_of_obj([1, 2, 3])</span>
-<span class="sd">    &#39;list&#39;</span>
-<span class="sd">    &gt;&gt;&gt; name_of_obj(print)</span>
-<span class="sd">    &#39;print&#39;</span>
-<span class="sd">    &gt;&gt;&gt; name_of_obj(lambda x: x)</span>
-<span class="sd">    &#39;&lt;lambda&gt;&#39;</span>
-<span class="sd">    &gt;&gt;&gt; from functools import partial</span>
-<span class="sd">    &gt;&gt;&gt; name_of_obj(partial(print, sep=&#39;,&#39;))</span>
-<span class="sd">    &#39;print&#39;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="vm">__name__</span>
-    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;__class__&#39;</span><span class="p">):</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;partial&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;func&#39;</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">name</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">no_name</span></div>
+    <span class="n">warn</span><span class="p">(</span>
+        <span class="s1">&#39;Deprecated: Use i2.name_of_obj or i2.signatures.name_of_object instead&#39;</span><span class="p">,</span>
+        <span class="ne">DeprecationWarning</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">name_of_obj</span> <span class="k">as</span> <span class="n">signatures_name_of_obj</span>
+
+    <span class="k">return</span> <span class="n">signatures_name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">AttrFromKey</span><span class="p">:</span>
