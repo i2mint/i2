@@ -17,8 +17,37 @@ from typing import (
     Iterable,
     TypeVar,
 )
+import contextlib
+import io
 
 T = TypeVar('T')
+
+
+@contextlib.contextmanager
+def FileLikeObject(file, *, io_cls=io.BytesIO, open_mode='rb'):
+    """Context manager for file-like objects.
+
+    The purpose of this context manager is to be able to ensure we have a file-like 
+    object interface to work with, regardless of whether we are given a file path,
+    bytes of a file, or an open file pointer.
+
+    Args:
+        file (str, bytes, io.IOBase): The file path, bytes of a file, or an open file pointer.
+
+    Yields:
+        io.IOBase: A file-like object.
+    """
+    if isinstance(file, str):
+        # If file is a string, open the file and yield the file pointer
+        with open(file, open_mode) as f:
+            yield f  # TODO: Is f protected by the open context?
+    elif isinstance(file, bytes):
+        # If file is bytes, create a BytesIO object and yield it
+        with io.BytesIO(file) as f:
+            yield f
+    else:
+        # Otherwise, assume file is already a file-like object and yield it
+        yield file
 
 
 def copy_func(
@@ -1151,7 +1180,10 @@ class FunctionBuilder(object):
         return
 
     def _compile(self, src, execdict):
-        filename = '<%s-%d>' % (self.filename, next(self._compile_count),)
+        filename = '<%s-%d>' % (
+            self.filename,
+            next(self._compile_count),
+        )
         try:
             code = compile(src, filename, 'single')
             exec(code, execdict)
