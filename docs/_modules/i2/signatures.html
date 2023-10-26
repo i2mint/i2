@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.1.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.1.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -210,6 +210,7 @@
     <span class="n">cached_property</span><span class="p">,</span>
     <span class="n">update_wrapper</span><span class="p">,</span>
     <span class="n">partial</span><span class="p">,</span>
+    <span class="n">partialmethod</span><span class="p">,</span>
     <span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span>
     <span class="n">wraps</span> <span class="k">as</span> <span class="n">_wraps</span><span class="p">,</span>
     <span class="n">update_wrapper</span> <span class="k">as</span> <span class="n">_update_wrapper</span><span class="p">,</span>
@@ -358,7 +359,9 @@
             <span class="n">caught_exceptions</span><span class="o">=</span><span class="n">caught_exceptions</span><span class="p">,</span>
             <span class="n">default_factory</span><span class="o">=</span><span class="n">default_factory</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="p">(</span><span class="n">cached_property</span><span class="p">,</span> <span class="n">partial</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;func&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="p">(</span><span class="n">cached_property</span><span class="p">,</span> <span class="n">partial</span><span class="p">,</span> <span class="n">partialmethod</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="n">o</span><span class="p">,</span> <span class="s1">&#39;func&#39;</span>
+        <span class="p">):</span>
             <span class="k">return</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">property</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;fget&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">fget</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -4056,7 +4059,7 @@
         <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">func</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">fget</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">partial</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">partial</span><span class="p">,</span> <span class="n">partialmethod</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">func</span>
     <span class="k">elif</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">wrapped</span> <span class="o">:=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__wrapped__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
         <span class="c1"># If obj is not callable, but has a __wrapped__ attribute that is, return that</span>
@@ -4291,6 +4294,9 @@
     <span class="k">def</span> <span class="nf">partial</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;``partial(func, *args, **keywords)`` - new function with partial application</span>
 <span class="sd">        of the given arguments and keywords.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">partialmethod</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``functools.partialmethod(func, *args, **keywords)``&quot;&quot;&quot;</span>
 
 
 <span class="c1"># Merge sigs_for_builtin_modules and sigs_for_builtins</span>
