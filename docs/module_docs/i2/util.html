@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>i2.util &mdash; i2 0.1.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -112,6 +112,23 @@
 <dt id="i2.util.ExistingArgument">
 <em class="property">exception </em><code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">ExistingArgument</code><a class="reference internal" href="../../_modules/i2/util.html#ExistingArgument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.ExistingArgument" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt id="i2.util.FileLikeObject">
+<code class="sig-prename descclassname">i2.util.</code><code class="sig-name descname">FileLikeObject</code><span class="sig-paren">(</span><em class="sig-param">file</em>, <em class="sig-param">*</em>, <em class="sig-param">io_cls=&lt;class '_io.BytesIO'&gt;</em>, <em class="sig-param">open_mode='rb'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#FileLikeObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.util.FileLikeObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager for file-like objects.</p>
+<p>The purpose of this context manager is to be able to ensure we have a file-like
+object interface to work with, regardless of whether we are given a file path,
+bytes of a file, or an open file pointer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em><em>, </em><em>bytes</em><em>, </em><em>io.IOBase</em>) – The file path, bytes of a file, or an open file pointer.</p>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><em>io.IOBase</em> – A file-like object.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py class">
 <dt id="i2.util.FrozenDict">
