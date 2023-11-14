@@ -209,7 +209,7 @@ def mk_func_from_params(
 
     @sig
     def arg_str_func(*args, **kwargs):
-        _call_kwargs = sig.kwargs_from_args_and_kwargs(
+        _call_kwargs = sig.map_arguments(
             args, kwargs, apply_defaults=True
         )
         return callback(_call_kwargs)

@@ -111,6 +111,8 @@ from functools import (
     update_wrapper as _update_wrapper,
 )
 
+from i2.util import FrozenDict
+
 # monkey patching WRAPPER_ASSIGNMENTS to get "proper" wrapping (adding defaults and
 # kwdefaults
 
@@ -136,6 +138,7 @@ VP, VK = Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD
 PO, KO = Parameter.POSITIONAL_ONLY, Parameter.KEYWORD_ONLY
 var_param_kinds = frozenset({VP, VK})
 var_param_types = var_param_kinds  # Deprecate: for back-compatibility. Delete in 2021
+var_param_kind_dflts = FrozenDict({VP: (), VK: {}})
 
 DFLT_DEFAULT_CONFLICT_METHOD = 'strict'
 param_attributes = {'name', 'kind', 'default', 'annotation'}
@@ -165,7 +168,7 @@ class IncompatibleSignatures(ValueError):
 
 
 def _param_sort_key(param):
-    return (param.kind, param.default is not empty)
+    return (param.kind, param.kind == KO or param.default is not empty)
 
 
 def sort_params(params):
@@ -835,20 +838,20 @@ class Sig(Signature, Mapping):
 
     Two of the base methods for dealing with positional (args) and keyword (kwargs)
     inputs are:
-        - `kwargs_from_args_and_kwargs`: Map some args/kwargs input to a keyword-only
+        - `map_arguments`: Map some args/kwargs input to a keyword-only
             expression of the inputs. This is useful if you need to do some processing
             based on the argument names.
-        - `args_and_kwargs_from_kwargs`: Translate a fully keyword expression of some
+        - `mk_args_and_kwargs`: Translate a fully keyword expression of some
             inputs into an (args, kwargs) pair that can be used to call the function.
             (Remember, your function can have constraints, so you may need to do this.
 
-    The usual pattern of use of these methods is to use `kwargs_from_args_and_kwargs`
+    The usual pattern of use of these methods is to use `map_arguments`
     to map all the inputs to their corresponding name, do what needs to be done with
     that (example, validation, transformation, decoration...) and then map back to an
     (args, kwargs) pair than can actually be used to call the function.
 
     Examples of methods and functions using these:
-    `call_forgivingly`, `tuple_the_args`, `extract_kwargs`, `extract_args_and_kwargs`,
+    `call_forgivingly`, `tuple_the_args`, `map_arguments_from_variadics`, `extract_args_and_kwargs`,
     `source_kwargs`, and `source_args_and_kwargs`.
 
     # Making a signature
@@ -2206,6 +2209,7 @@ class Sig(Signature, Mapping):
         argname_to_default=None,
         allow_reordering=False,
     ):
+        except_kinds = except_kinds or set()
         if add_defaults_if_necessary:
             if argname_to_default is None:
 
@@ -2216,7 +2220,6 @@ class Sig(Signature, Mapping):
             there_was_a_default = False
             for p in self.parameters.values():
                 if p.kind not in except_kinds:
-                    # print(p.name)
                     if add_defaults_if_necessary:
                         if there_was_a_default and p.default is _empty:
                             p = p.replace(kind=kind, default=argname_to_default(p.name))
@@ -2236,27 +2239,25 @@ class Sig(Signature, Mapping):
             else:
                 raise
 
-    def kwargs_from_args_and_kwargs(
+    def map_arguments(
         self,
-        args,
-        kwargs,
+        args: tuple = None,
+        kwargs: dict = None,
         *,
         apply_defaults=False,
         allow_partial=False,
         allow_excess=False,
         ignore_kind=False,
-        debug=False,
-    ):
-        """Extracts a dict of input argument values for target signature, from args
-        and kwargs.
+    ) -> dict:
+        """Map arguments (args and kwargs) to the parameters of function's signature.
 
         When you need to manage how the arguments of a function are specified,
         you need to take care of
         multiple cases depending on whether they were specified as positional arguments
         (`args`) or keyword arguments (`kwargs`).
 
-        The `kwargs_from_args_and_kwargs` (and it's sorta-inverse inverse,
-        `args_and_kwargs_from_kwargs`)
+        The `map_arguments` (and it's sorta-inverse inverse,
+        `mk_args_and_kwargs`)
         are there to help you manage this.
 
         If you could rely on the the fact that only `kwargs` were given it would
@@ -2271,7 +2272,7 @@ class Sig(Signature, Mapping):
         Yet sometimes we'd like to have a `dict` that services several functions that
         will extract their needs from it.
 
-        That's where  `Sig.extract_kwargs(*args, **kwargs)` is needed.
+        That's where  `Sig.map_arguments_from_variadics(*args, **kwargs)` is needed.
         :param args: The args the function will be called with.
         :param kwargs: The kwargs the function will be called with.
         :param apply_defaults: (bool) Whether to apply signature defaults to the
@@ -2286,29 +2287,29 @@ class Sig(Signature, Mapping):
             be cross-over
             (args that are supposed to be keyword only, and kwargs that are supposed
             to be positional only)
-        :return: An {argname: argval, ...} dict
+        :return: An {param_name: arg_val, ...} dict
 
-        See also the sorta-inverse of this function: args_and_kwargs_from_kwargs
+        See also the sorta-inverse of this function: mk_args_and_kwargs
 
         >>> def foo(w, /, x: float, y="YY", *, z: str = "ZZ"):
         ...     ...
         >>> sig = Sig(foo)
         >>> assert (
-        ...     sig.kwargs_from_args_and_kwargs((11, 22, "you"), dict(z="zoo"))
-        ...     == sig.kwargs_from_args_and_kwargs((11, 22), dict(y="you", z="zoo"))
+        ...     sig.map_arguments((11, 22, "you"), dict(z="zoo"))
+        ...     == sig.map_arguments((11, 22), dict(y="you", z="zoo"))
         ...     == {"w": 11, "x": 22, "y": "you", "z": "zoo"}
         ... )
 
         By default, `apply_defaults=False`, which will lead to only get those
         arguments you input.
 
-        >>> sig.kwargs_from_args_and_kwargs(args=(11,), kwargs={"x": 22})
+        >>> sig.map_arguments(args=(11,), kwargs={"x": 22})
         {'w': 11, 'x': 22}
 
         But if you specify `apply_defaults=True` non-specified non-require arguments
         will be returned with their defaults:
 
-        >>> sig.kwargs_from_args_and_kwargs(
+        >>> sig.map_arguments(
         ...     args=(11,), kwargs={"x": 22}, apply_defaults=True
         ... )
         {'w': 11, 'x': 22, 'y': 'YY', 'z': 'ZZ'}
@@ -2316,17 +2317,17 @@ class Sig(Signature, Mapping):
         By default, `ignore_excess=False`, so specifying kwargs that are not in the
         signature will lead to an exception.
 
-        >>> sig.kwargs_from_args_and_kwargs(
+        >>> sig.map_arguments(
         ...     args=(11,), kwargs={"x": 22, "not_in_sig": -1}
         ... )
         Traceback (most recent call last):
             ...
-        TypeError: Got unexpected keyword arguments: not_in_sig
+        TypeError: got an unexpected keyword argument 'not_in_sig'
 
         Specifying `allow_excess=True` will ignore such excess fields of kwargs.
         This is useful when you want to source several functions from a same dict.
 
-        >>> sig.kwargs_from_args_and_kwargs(
+        >>> sig.map_arguments(
         ...     args=(11,), kwargs={"x": 22, "not_in_sig": -1}, allow_excess=True
         ... )
         {'w': 11, 'x': 22}
@@ -2336,14 +2337,14 @@ class Sig(Signature, Mapping):
         set to `True`, to underspecify the params of a function (in view of being
         completed later).
 
-        >>> sig.kwargs_from_args_and_kwargs(args=(), kwargs={"x": 22})
+        >>> sig.map_arguments(args=(), kwargs={"x": 22})
         Traceback (most recent call last):
         ...
         TypeError: missing a required argument: 'w'
 
         But if you specify `allow_partial=True`...
 
-        >>> sig.kwargs_from_args_and_kwargs(
+        >>> sig.map_arguments(
         ...     args=(), kwargs={"x": 22}, allow_partial=True
         ... )
         {'x': 22}
@@ -2352,80 +2353,76 @@ class Sig(Signature, Mapping):
         controllable here:
         Position only and keyword only kinds need to be respected:
 
-        >>> sig.kwargs_from_args_and_kwargs(args=(1, 2, 3, 4), kwargs={})
+        >>> sig.map_arguments(args=(1, 2, 3, 4), kwargs={})
         Traceback (most recent call last):
         ...
         TypeError: too many positional arguments
-        >>> sig.kwargs_from_args_and_kwargs(args=(), kwargs=dict(w=1, x=2, y=3, z=4))
+        >>> sig.map_arguments(args=(), kwargs=dict(w=1, x=2, y=3, z=4))
         Traceback (most recent call last):
         ...
         TypeError: 'w' parameter is positional only, but was passed as a keyword
 
         But if you want to ignore the kind of parameter, just say so:
 
-        >>> sig.kwargs_from_args_and_kwargs(
+        >>> sig.map_arguments(
         ...     args=(1, 2, 3, 4), kwargs={}, ignore_kind=True
         ... )
         {'w': 1, 'x': 2, 'y': 3, 'z': 4}
-        >>> sig.kwargs_from_args_and_kwargs(
+        >>> sig.map_arguments(
         ...     args=(), kwargs=dict(w=1, x=2, y=3, z=4), ignore_kind=True
         ... )
         {'w': 1, 'x': 2, 'y': 3, 'z': 4}
         """
+        def get_var_dflts():
+            if self.has_var_positional:
+                yield self.var_positional_name, ()
+            if self.has_var_keyword:
+                yield self.var_keyword_name, {}
 
-        vk_name = self.var_keyword_name
-
+        _args = args or ()
+        _kwargs = kwargs or {}
+        
         if ignore_kind:
-            sig = self.normalize_kind()
+            var_dflts = dict(get_var_dflts())
+            sig = self.normalize_kind(kind=KO, except_kinds=None)
+            sig = sig.ch_defaults(**var_dflts)
+            for arg, p in zip(_args, sig.params):
+                if p.name in _kwargs:
+                    raise TypeError(f"multiple values for argument '{p.name}'")
+                _kwargs[p.name] = arg
+            _args = ()
         else:
             sig = self
 
-        if not vk_name:  # has no var keyword kinds
-            sig_relevant_kwargs = {
-                name: kwargs[name] for name in sig if name in kwargs
-            }  # take only what you need
-        else:
-            sig_relevant_kwargs = dict(
-                {k: v for k, v in kwargs.items() if k != vk_name},
-                **kwargs.get(vk_name, {}),
-            )
-        binder = sig.bind_partial if allow_partial else sig.bind
-        if not self.has_var_positional and allow_excess:
+        if not sig.has_var_positional and allow_excess:
             max_allowed_num_of_posisional_args = sum(
-                k <= PK for k in self.kinds.values()
+                k <= PK for k in sig.kinds.values()
             )
-            args = args[:max_allowed_num_of_posisional_args]
+            _args = _args[:max_allowed_num_of_posisional_args]
+        if not sig.has_var_keyword and allow_excess:
+            _kwargs = {k: v for k, v in _kwargs.items() if k in sig}
 
-        b = binder(*args, **sig_relevant_kwargs)
+        binder = sig.bind_partial if allow_partial else sig.bind
+        b = binder(*_args, **_kwargs)
         if apply_defaults:
             b.apply_defaults()
 
-        if not vk_name and not allow_excess:  # don't ignore excess kwargs
-            excess = kwargs.keys() - b.arguments
-            if excess:
-                excess_str = ', '.join(excess)
-                raise TypeError(f'Got unexpected keyword arguments: {excess_str}')
+        return b.arguments
 
-        var_kw_name = name_of_var_kw_argument(self)
-
-        flattened_kvs = expand_nested_key(b.arguments, var_kw_name)
-        result = dict(flattened_kvs)
-
-        return result
-
-    def args_and_kwargs_from_kwargs(
+    def mk_args_and_kwargs(
         self,
-        kwargs,
+        arguments: dict,
+        *,
         apply_defaults=False,
         allow_partial=False,
         allow_excess=False,
         ignore_kind=False,
         args_limit: Union[int, None] = 0,
-    ):
+    ) -> Tuple[tuple, dict]:
         """Extract args and kwargs such that func(*args, **kwargs) can be called,
         where func has instance's signature.
 
-        :param kwargs: The {argname: argval,...} dict to process
+        :param arguments: The {param_name: arg_val,...} dict to process
         :param args_limit: How "far" in the params should args (positional arguments)
             be searched for.
             - args_limit==0: Take the minimum number possible of args (positional
@@ -2439,11 +2436,27 @@ class Sig(Signature, Mapping):
         >>> def foo(w, /, x: float, y=1, *, z: int = 1):
         ...     return ((w + x) * y) ** z
         >>> foo_sig = Sig(foo)
-        >>> args, kwargs = foo_sig.args_and_kwargs_from_kwargs(
+        >>> args, kwargs = foo_sig.mk_args_and_kwargs(
         ...     dict(w=4, x=3, y=2, z=1)
         ... )
         >>> assert (args, kwargs) == ((4,), {"x": 3, "y": 2, "z": 1})
         >>> assert foo(*args, **kwargs) == foo(4, 3, 2, z=1) == 14
+
+        What about variadics?
+
+        >>> def bar(a, /, b, *args, c=2, **kwargs):
+        ...     pass
+        >>> Sig(bar).mk_args_and_kwargs(
+        ...     dict(a=1, b=2, args=(3,4), c=5, kwargs=dict(d=6, e=7))
+        ... )
+        ((1, 2, 3, 4), {'c': 5, 'd': 6, 'e': 7})
+
+        You can also give the arguments in a different order:
+
+        >>> Sig(bar).mk_args_and_kwargs(
+        ...     dict(args=(3,4), kwargs=dict(d=6, e=7), b=2, c=5, a=1)
+        ... )
+        ((1, 2, 3, 4), {'c': 5, 'd': 6, 'e': 7})
 
         The `args_limit` begs explanation.
         Consider the signature of `def foo(w, /, x: float, y=1, *, z: int = 1): ...`
@@ -2460,23 +2473,29 @@ class Sig(Signature, Mapping):
         If `args_limit == 0`, the least args (positional arguments) will be returned.
         It's the default.
 
-        >>> kwargs = dict(w=4, x=3, y=2, z=1)
-        >>> foo_sig.args_and_kwargs_from_kwargs(kwargs, args_limit=0)
+        >>> arguments = dict(w=4, x=3, y=2, z=1)
+        >>> foo_sig.mk_args_and_kwargs(arguments, args_limit=0)
         ((4,), {'x': 3, 'y': 2, 'z': 1})
 
         If `args_limit is None`, the least kwargs (keyword arguments) will be returned.
 
-        >>> foo_sig.args_and_kwargs_from_kwargs(kwargs, args_limit=None)
+        >>> foo_sig.mk_args_and_kwargs(arguments, args_limit=None)
         ((4, 3, 2), {'z': 1})
 
-        If `args_limit` is a positive integer, the first `args_limit` arguments
+        If `args_limit` is a positive integer, the first `[args_limit]` arguments
         will be returned (not checking at all if this is valid!).
 
-        >>> foo_sig.args_and_kwargs_from_kwargs(kwargs, args_limit=1)
+        >>> foo_sig.mk_args_and_kwargs(arguments, args_limit=1)
         ((4,), {'x': 3, 'y': 2, 'z': 1})
-        >>> foo_sig.args_and_kwargs_from_kwargs(kwargs, args_limit=2)
+        >>> foo_sig.mk_args_and_kwargs(arguments, args_limit=2)
         ((4, 3), {'y': 2, 'z': 1})
-        >>> foo_sig.args_and_kwargs_from_kwargs(kwargs, args_limit=3)
+        >>> foo_sig.mk_args_and_kwargs(arguments, args_limit=3)
+        ((4, 3, 2), {'z': 1})
+
+        Note that if you specify `args_limit` to be greater than the maximum of 
+        positional arguments, it behaves as if `args_limit` was `None`:
+
+        >>> foo_sig.mk_args_and_kwargs(arguments, args_limit=4)
         ((4, 3, 2), {'z': 1})
 
         Note that 'args_limit''s behavior is consistent with list behvior in the sense
@@ -2490,25 +2509,34 @@ class Sig(Signature, Mapping):
         >>> args[2]
         2
 
-        By default, only the arguments that were given in the kwargs input will be
+        If variable positional arguments are present, `args_limit` is ignored and
+        all positional arguments are returned as args.
+
+        >>> Sig(bar).mk_args_and_kwargs(
+        ...     dict(a=1, b=2, args=(3,4), c=5, kwargs=dict(d=6, e=7)),
+        ...     args_limit=1
+        ... )
+        ((1, 2, 3, 4), {'c': 5, 'd': 6, 'e': 7})
+
+        By default, only the arguments that were given in the `arguments` input will be
         returned in the (args, kwargs) output.
         If you also want to get those that have defaults (according to signature),
         you need to specify it with the `apply_defaults=True` argument.
 
-        >>> foo_sig.args_and_kwargs_from_kwargs(dict(w=4, x=3))
+        >>> foo_sig.mk_args_and_kwargs(dict(w=4, x=3))
         ((4,), {'x': 3})
-        >>> foo_sig.args_and_kwargs_from_kwargs(dict(w=4, x=3), apply_defaults=True)
+        >>> foo_sig.mk_args_and_kwargs(dict(w=4, x=3), apply_defaults=True)
         ((4,), {'x': 3, 'y': 1, 'z': 1})
 
         By default, all required arguments must be given.
         Not doing so will lead to a `TypeError`.
         If you want to process your arguments anyway, specify `allow_partial=True`.
 
-        >>> foo_sig.args_and_kwargs_from_kwargs(dict(w=4))
+        >>> foo_sig.mk_args_and_kwargs(dict(w=4))
         Traceback (most recent call last):
           ...
         TypeError: missing a required argument: 'x'
-        >>> foo_sig.args_and_kwargs_from_kwargs(dict(w=4), allow_partial=True)
+        >>> foo_sig.mk_args_and_kwargs(dict(w=4), allow_partial=True)
         ((4,), {})
 
         Specifying argument names that are not recognized by the signature will
@@ -2516,79 +2544,122 @@ class Sig(Signature, Mapping):
         If you want to avoid this (and just take from the input `kwargs` what ever you
         can), specify this with `allow_excess=True`.
 
-        >>> foo_sig.args_and_kwargs_from_kwargs(dict(w=4, x=3, extra='stuff'))
+        >>> foo_sig.mk_args_and_kwargs(dict(w=4, x=3, extra='stuff'))
         Traceback (most recent call last):
             ...
         TypeError: Got unexpected keyword arguments: extra
-        >>> foo_sig.args_and_kwargs_from_kwargs(dict(w=4, x=3, extra='stuff'),
+        >>> foo_sig.mk_args_and_kwargs(dict(w=4, x=3, extra='stuff'),
         ...     allow_excess=True)
         ((4,), {'x': 3})
 
-        An edge case: When a `VAR_POSITIONAL` follows a `POSITION_OR_KEYWORD`...
-
-        >>> Sig(lambda a, *b, c=2: None).args_and_kwargs_from_kwargs(
-        ...     {"a": 1, "b": [2, 3], "c": 4}
-        ... )
-        ((1, [2, 3]), {'c': 4})
-
-        See `kwargs_from_args_and_kwargs` (namely for the description of the arguments.
+        See `map_arguments` (namely for the description of the arguments).
         """
+        arguments = arguments or {}
+        extra_arguments = set(arguments) - set(self.names)
+        if extra_arguments and not allow_excess:
+            raise TypeError(
+                f"Got unexpected keyword arguments: {', '.join(extra_arguments)}"
+            )
+        _arguments = {p: arguments[p] for p in self.names if p in arguments}
+        vp_args = _arguments.get(self.var_positional_name, ())
+        vk_args = _arguments.get(self.var_keyword_name, {})
+        if vp_args:
+            # If there are var positional arguments, we ignore the args_limit
+            args_limit = None
 
+        pos, pks, kos = self.names_of_kind[PO], self.names_of_kind[PK], self.names_of_kind[KO]
+        names_for_args = pos
+        names_for_kwargs = kos
         if args_limit is None:
-            # Take the maximum number of args (positional arguments).
-            # The only kwargs (keyword arguments) you should have are keyword-only
-            # and var-keyword arguments.
-            idx = next((i for i, p in enumerate(self.params) if p.kind > VP), None)
-            names_for_args = self.names[:idx]
-        elif args_limit == 0:
-            # Take the minimum number possible of args (positional arguments)
-            # Only those that are position only or before a var-positional.
-            vp_idx = self.index_of_var_positional
-            if vp_idx is None:
-                names_for_args = self.names_of_kind[PO]
-            else:
-                # When there's a VP present, all arguments before it can only be
-                # expressed positionally if the VP argument is non-empty.
-                # So, here we just consider all arguments positionally up to the VP arg.
-                names_for_args = self.names[: (vp_idx + 1)]
+            # All the PKs go to args, so we have:
+            # names_for_args == POs + PKs
+            # names_for_kwargs == KOs
+            names_for_args += pks
         else:
-            names_for_args = self.names[:args_limit]
+            # Take the [args_limit] first arguments (of signature) as args. The minimum
+            # number of args is the number of POs. The maximum number of args is the
+            # number of POs + PKs. The rest are kwargs.
+            nb_of_positional_pks = min(
+                max(args_limit - len(pos), 0),
+                len(pks)
+            )
+            names_for_args += pks[:nb_of_positional_pks]
+            names_for_kwargs = pks[nb_of_positional_pks:] + names_for_kwargs
 
-        args = tuple(kwargs[name] for name in names_for_args if name in kwargs)
-        kwargs = {name: kwargs[name] for name in kwargs if name not in names_for_args}
+        args = tuple(
+            _arguments[name]
+            for name in names_for_args
+            if name in _arguments
+        )
+        kwargs = {
+            name: _arguments[name]
+            for name in names_for_kwargs
+            if name in _arguments
+        }
 
-        kwargs = self.kwargs_from_args_and_kwargs(
+        # Note that, at this stage, the variadics arguments are not yet in the args and 
+        # kwargs variables.
+        # We first call map_arguments with the args and kwargs with no variadics to 
+        # validate that all the explicit arguments are valid and there is no missing
+        # required argument.
+
+        # In fact, imagine the following:
+
+        # >>> def foo(a, *args):
+        # ...     ...
+        # >>> foo_sig = Sig(foo)
+        # >>> foo_sig.mk_args_and_kwargs(arguments=dict(args=(1,)))
+
+        # This should fail because `a` is missing in the arguments.
+        # But if we included the variadics in the args, the value '1' would have been
+        # mapped to `a` by `map_arguments` and the error would not have been caught.
+        # Same logic for kwargs.
+        
+        __arguments = self.map_arguments(
             args,
             kwargs,
             apply_defaults=apply_defaults,
             allow_partial=allow_partial,
-            allow_excess=allow_excess,
-            ignore_kind=ignore_kind,
+            # allow_excess=allow_excess,
+            # ignore_kind=ignore_kind,
         )
-        kwargs = {name: kwargs[name] for name in kwargs if name not in names_for_args}
+
+        # Let's retrieve the args and kwargs from the output of `map_arguments`, because
+        # some extra stuff might have been added (defaults). And let's also add the 
+        # variadics.
+        pos_arguments = {name: arg for name, arg in __arguments.items() if name in names_for_args}
+        kw_arguments = {name: arg for name, arg in __arguments.items() if name in names_for_kwargs}
+
+        if ignore_kind:
+            # If ignore_kind is True, return all arguments as kwargs
+            args = ()
+            d_vp_args = {self.var_positional_name: vp_args} if self.has_var_positional else {}
+            d_vk_args = {self.var_keyword_name: vk_args} if self.has_var_keyword else {}
+            kwargs = {**pos_arguments, **d_vp_args, **kw_arguments, **d_vk_args}
+        else:
+            args = tuple(pos_arguments.values()) + vp_args
+            kwargs = dict(kw_arguments, **vk_args)
 
         return args, kwargs
 
-    def extract_kwargs(
+
+    def map_arguments_from_variadics(
         self,
         *args,
-        _ignore_kind=True,
-        _allow_partial=False,
         _apply_defaults=False,
+        _allow_partial=False,
+        _allow_excess=False,
+        _ignore_kind=False,
         **kwargs,
     ):
-        """Convenience method that calls kwargs_from_args_and_kwargs with defaults,
-        and ignore_kind=True.
-
-        Strict in the sense that the kwargs cannot contain any arguments that are not
-        valid argument names (as per the signature).
+        """Convenience method that calls map_arguments from variadics
 
         >>> def foo(w, /, x: float, y="YY", *, z: str = "ZZ"):
         ...     ...
         >>> sig = Sig(foo)
         >>> assert (
-        ...     sig.extract_kwargs(1, 2, 3, z=4)
-        ...     == sig.extract_kwargs(1, 2, y=3, z=4)
+        ...     sig.map_arguments_from_variadics(1, 2, 3, z=4)
+        ...     == sig.map_arguments_from_variadics(1, 2, y=3, z=4)
         ...     == {"w": 1, "x": 2, "y": 3, "z": 4}
         ... )
 
@@ -2597,54 +2668,47 @@ class Sig(Signature, Mapping):
         >>> def bar(*args, **kwargs):
         ...     ...
         ...
-        >>> Sig(bar).extract_kwargs(1, 2, y=3, z=4)
+        >>> Sig(bar).map_arguments_from_variadics(1, 2, y=3, z=4)
         {'args': (1, 2), 'kwargs': {'y': 3, 'z': 4}}
 
         Note that though `w` is a position only argument, you can specify `w=11` as
-        a keyword argument too (by default):
+        a keyword argument too, using `_ignore_kind=True`:
 
-        >>> Sig(foo).extract_kwargs(w=11, x=22)
+        >>> Sig(foo).map_arguments_from_variadics(w=11, x=22, _ignore_kind=True)
         {'w': 11, 'x': 22}
-
-        If you don't want to allow that, you can say `_ignore_kind=False`
-
-        >>> Sig(foo).extract_kwargs(w=11, x=22, _ignore_kind=False)
-        Traceback (most recent call last):
-          ...
-        TypeError: 'w' parameter is positional only, but was passed as a keyword
 
         You can use `_allow_partial` that will allow you, if
         set to `True`, to underspecify the params of a function
         (in view of being completed later).
 
-        >>> Sig(foo).extract_kwargs(x=3, y=2)
+        >>> Sig(foo).map_arguments_from_variadics(x=3, y=2)
         Traceback (most recent call last):
           ...
         TypeError: missing a required argument: 'w'
 
         But if you specify `_allow_partial=True`...
 
-        >>> Sig(foo).extract_kwargs(x=3, y=2, _allow_partial=True)
+        >>> Sig(foo).map_arguments_from_variadics(x=3, y=2, _allow_partial=True)
         {'x': 3, 'y': 2}
 
         By default, `_apply_defaults=False`, which will lead to only get those arguments
         you input.
 
-        >>> Sig(foo).extract_kwargs(4, x=3, y=2)
+        >>> Sig(foo).map_arguments_from_variadics(4, x=3, y=2)
         {'w': 4, 'x': 3, 'y': 2}
 
         But if you specify `_apply_defaults=True` non-specified non-require arguments
         will be returned with their defaults:
 
-        >>> Sig(foo).extract_kwargs(4, x=3, y=2, _apply_defaults=True)
+        >>> Sig(foo).map_arguments_from_variadics(4, x=3, y=2, _apply_defaults=True)
         {'w': 4, 'x': 3, 'y': 2, 'z': 'ZZ'}
         """
-        return self.kwargs_from_args_and_kwargs(
+        return self.map_arguments(
             args,
             kwargs,
             apply_defaults=_apply_defaults,
             allow_partial=_allow_partial,
-            allow_excess=False,
+            allow_excess=_allow_excess,
             ignore_kind=_ignore_kind,
         )
 
@@ -2666,11 +2730,9 @@ class Sig(Signature, Mapping):
         >>> (args, kwargs) == ((4,), {"x": 3, "y": 2})
         True
 
-        The difference with extract_kwargs is that here the output is ready to be
-        called by the
-        function whose signature we have, since the position-only arguments will be
-        returned as
-        args.
+        The difference with map_arguments_from_variadics is that here the output is 
+        ready to be called by the function whose signature we have, since the 
+        position-only arguments will be returned as args.
 
         >>> foo(*args, **kwargs)
         10
@@ -2722,14 +2784,14 @@ class Sig(Signature, Mapping):
         >>> (args, kwargs) == ((4,), {"x": 3, "y": 2, "z": 1})
         True
         """
-        kwargs = self.extract_kwargs(
+        kwargs = self.map_arguments_from_variadics(
             *args,
             _ignore_kind=_ignore_kind,
             _allow_partial=_allow_partial,
             _apply_defaults=_apply_defaults,
             **kwargs,
         )
-        return self.args_and_kwargs_from_kwargs(
+        return self.mk_args_and_kwargs(
             kwargs,
             allow_partial=_allow_partial,
             apply_defaults=_apply_defaults,
@@ -2796,7 +2858,7 @@ class Sig(Signature, Mapping):
         ... )
         {'w': 4, 'x': 3, 'y': 2, 'z': 'ZZ'}
         """
-        return self.kwargs_from_args_and_kwargs(
+        return self.map_arguments(
             args,
             kwargs,
             apply_defaults=_apply_defaults,
@@ -2885,7 +2947,7 @@ class Sig(Signature, Mapping):
         >>> (args, kwargs) == ((4,), {"x": 3, "y": 2, "z": 1})
         True
         """
-        kwargs = self.kwargs_from_args_and_kwargs(
+        kwargs = self.map_arguments(
             args,
             kwargs,
             allow_excess=True,
@@ -2893,12 +2955,12 @@ class Sig(Signature, Mapping):
             allow_partial=_allow_partial,
             apply_defaults=_apply_defaults,
         )
-        return self.args_and_kwargs_from_kwargs(
+        return self.mk_args_and_kwargs(
             kwargs,
             allow_excess=True,
-            ignore_kind=_ignore_kind,
+            ignore_kind=False,
             allow_partial=_allow_partial,
-            apply_defaults=_apply_defaults,
+            apply_defaults=False,
         )
 
 
@@ -3105,7 +3167,7 @@ def _call_forgivingly(func, args, kwargs):
         _kwargs = kwargs
     else:
         new_sig = sig - variadic_kinds.keys()
-        _args, _kwargs = new_sig.source_args_and_kwargs(*args, **kwargs)
+        _args, _kwargs = new_sig.source_args_and_kwargs(*args, _ignore_kind=False, **kwargs)
         for k, v in _kwargs.items():
             if k not in kwargs:
                 _args = _args + (v,)
@@ -3521,8 +3583,14 @@ def ch_variadics_to_non_variadic_kind(func, *, ch_variadic_keyword_to_keyword=Tr
         @wraps(func)
         def variadic_less_func(*args, **kwargs):
             # extract from kwargs those inputs that need to be expressed positionally
-            _args, _kwargs = sig.args_and_kwargs_from_kwargs(kwargs, allow_partial=True)
-            # print(sig, kwargs, _args, _kwargs)
+            if ch_variadic_keyword_to_keyword:
+                arguments = kwargs
+            else:
+                arguments = {k: v for k, v in kwargs.items() if k in sig}
+                if sig.has_var_keyword:
+                    arguments[sig.var_keyword_name] = {k: v for k, v in kwargs.items() if k not in sig}
+            _args, _kwargs = sig.mk_args_and_kwargs(arguments, allow_partial=True)
+            # print('COUCOU', kwargs, arguments)
             # add these to the existing args
             args = args + _args
 

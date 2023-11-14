@@ -37,7 +37,7 @@ if __name__ == '__main__':
     #     new_foo(1, (2, 3), ko=4, vk=dict(hello="world"))
     #     == "po=1, vp=(2, 3), ko=4, vk={'hello': 'world'}"
     # )
-    # args, kwargs = foo_sig.args_and_kwargs_from_kwargs(dict(w=4, x=3, y=2, z=1, t=12))
+    # args, kwargs = foo_sig.mk_args_and_kwargs(dict(w=4, x=3, y=2, z=1, t=12))
 
     # print(f"args:{args}, kwargs: {kwargs}")
     # print(new_foo(1, (2, 3), ko=4, vk=dict(hello="world")))

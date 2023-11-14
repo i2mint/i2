@@ -178,12 +178,12 @@ class FuncFactory:
         return partial(cls, include=include, exclude=exclude)
 
     def _process_args_and_kwargs(self, args, kwargs):
-        _kwargs = self.factory_sig.kwargs_from_args_and_kwargs(
+        _kwargs = self.factory_sig.map_arguments(
             args, kwargs, allow_partial=True, ignore_kind=True
         )
         # Uncomment below to resolved https://github.com/i2mint/i2/issues/48)
         # _kwargs = {k: v for k, v in _kwargs.items() if v is not NotSet}
-        __args, __kwargs = self.func_sig.args_and_kwargs_from_kwargs(
+        __args, __kwargs = self.func_sig.mk_args_and_kwargs(
             _kwargs, allow_partial=True, ignore_kind=False
         )
         return __args, __kwargs
@@ -305,12 +305,12 @@ def _conditional_arg_trans(func=None, **condition_and_trans_of_argname):
     @wraps(func)
     def _func(*args, **kwargs):
         sig = Sig(func)
-        kwargs = sig.kwargs_from_args_and_kwargs(args, kwargs)
+        kwargs = sig.map_arguments(args, kwargs)
         for argname, (condition, trans) in condition_and_trans_of_argname.items():
             if argname in kwargs and condition(kwargs[argname]):
                 # Note: Using tuple instead of list because quicker & safer (non-mutable)
                 kwargs[argname] = trans(kwargs[argname])
-        args, kwargs = sig.args_and_kwargs_from_kwargs(kwargs)
+        args, kwargs = sig.mk_args_and_kwargs(kwargs)
         return func(*args, **kwargs)
 
     return _func

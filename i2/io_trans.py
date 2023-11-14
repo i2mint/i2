@@ -68,12 +68,12 @@ class IoTrans:
             func
         )  # Todo: Want empty mapping as default (use frozendict or __post_init__?)
         def wrapped_func(*args, **kwargs):
-            original_kwargs = sig.extract_kwargs(*args, **kwargs)
+            original_kwargs = sig.map_arguments_from_variadics(*args, **kwargs)
             new_kwargs = {
                 argname: self.in_val_trans(argval, argname, func)
                 for argname, argval in original_kwargs.items()
             }
-            new_args, new_kwargs = sig.args_and_kwargs_from_kwargs(new_kwargs)
+            new_args, new_kwargs = sig.mk_args_and_kwargs(new_kwargs)
             return self.out_trans(func(*new_args, **new_kwargs), func)
 
         return wrapped_func
