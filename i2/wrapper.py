@@ -91,10 +91,12 @@ from i2.signatures import (
     parameter_to_dict,
     call_forgivingly,
     _call_forgivingly,
+    kind_forgiving_func
 )
 from i2.errors import OverwritesNotAllowed
 from i2.multi_object import Pipe
 from i2.deco import double_up_as_factory
+from i2.util import deprecation_of
 
 # ---------------------------------------------------------------------------------------
 # Wrap
@@ -642,8 +644,8 @@ class Ingress:
         ``inner_sig``, ``kwargs_trans`` and ``outer_sig`` are aligned.
 
         Namely, ``kwargs_trans`` must be able to handle outputs of
-        ``outer_sig.kwargs_from_args_and_kwargs`` and itself output kwargs that
-        can be handled by ``inner_sig.args_and_kwargs_from_kwargs``.
+        ``outer_sig.map_arguments`` and itself output kwargs that
+        can be handled by ``inner_sig.mk_args_and_kwargs``.
 
         """
         self.inner_sig = Sig(inner_sig)
@@ -666,7 +668,7 @@ class Ingress:
 
     def __call__(self, *ingress_args, **ingress_kwargs):
         # Get the all-keywords version of the arguments (args,kwargs->kwargs)
-        func_kwargs = self.outer_sig.kwargs_from_args_and_kwargs(
+        func_kwargs = self.outer_sig.map_arguments(
             ingress_args, ingress_kwargs, apply_defaults=self.apply_defaults
         )
 
@@ -678,7 +680,7 @@ class Ingress:
         # Return an (args, kwargs) pair that respects the inner function's
         # argument kind restrictions.
         # TODO: Reflect on pros/cons of allow_excess=True
-        return self.inner_sig.args_and_kwargs_from_kwargs(
+        return self.inner_sig.mk_args_and_kwargs(
             func_kwargs,
             apply_defaults=True,
             allow_excess=self.allow_excess,
@@ -929,7 +931,7 @@ class InnerMapIngress:
 
     def __call__(self, *ingress_args, **ingress_kwargs):
         # Get the all-keywords version of the arguments (args,kwargs->kwargs)
-        func_kwargs = self.outer_sig.kwargs_from_args_and_kwargs(
+        func_kwargs = self.outer_sig.map_arguments(
             ingress_args, ingress_kwargs, apply_defaults=True
         )
 
@@ -946,7 +948,7 @@ class InnerMapIngress:
         # TODO: See Ingress: Has allow_partial etc.
         # Return an (args, kwargs) pair the respects the inner function's
         # argument kind restrictions.
-        return self.inner_sig.args_and_kwargs_from_kwargs(func_kwargs)
+        return self.inner_sig.mk_args_and_kwargs(func_kwargs)
 
     # TODO: Use/test annotations of outer_sig
     @classmethod
@@ -1012,7 +1014,7 @@ class ArgNameMappingIngress:
 
     def __call__(self, *ingress_args, **ingress_kwargs):
         # Get the all-keywords version of the arguments (args,kwargs->kwargs)
-        func_kwargs = self.outer_sig.kwargs_from_args_and_kwargs(
+        func_kwargs = self.outer_sig.map_arguments(
             ingress_args, ingress_kwargs
         )
         # Modify the keys of func_kwargs so they reflect the inner signature's names
@@ -1023,7 +1025,7 @@ class ArgNameMappingIngress:
 
         # Return an (args,kwargs) pair the respects the inner function's
         # argument kind restrictions.
-        return self.inner_sig.args_and_kwargs_from_kwargs(func_kwargs)
+        return self.inner_sig.mk_args_and_kwargs(func_kwargs)
 
 
 def mk_ingress_from_name_mapper(func, name_mapper: Mapping, *, conserve_kind=False):
@@ -1045,10 +1047,6 @@ def modify_dict_on_cond(d, cond, func):
     return {k: apply_func_on_cond(func, cond, k, v) for k, v in d.items()}
 
 
-def convert_to_PK(kinds):
-    return {name: PK for name in kinds}
-
-
 def convert_VK_to_KO(kinds):
     cond = lambda k, v: v == VK
     func = lambda v: KO
@@ -1056,47 +1054,7 @@ def convert_VK_to_KO(kinds):
     return modify_dict_on_cond(kinds, cond, func)
 
 
-def nice_kinds(func, kinds_modifier=convert_to_PK):
-    """Wraps the func, changing the argument kinds according to kinds_modifier.
-    The default behaviour is to change all kinds to POSITIONAL_OR_KEYWORD kinds.
-    The original purpose of this function is to remove argument-kind restriction
-    annoyances when doing functional manipulations such as:
-
-    >>> from functools import partial
-    >>> isinstance_of_str = partial(isinstance, class_or_tuple=str)
-    >>> isinstance_of_str('I am a string')
-    Traceback (most recent call last):
-      ...
-    TypeError: isinstance() takes no keyword arguments
-
-    Here, instead, we can just get a kinder version of the function and do what we
-    want to do:
-
-    >>> _isinstance = nice_kinds(isinstance)
-    >>> isinstance_of_str = partial(_isinstance, class_or_tuple=str)
-    >>> isinstance_of_str('I am a string')
-    True
-    >>> isinstance_of_str(42)
-    False
-
-    See also: ``i2.signatures.all_pk_signature``
-
-    """
-    from i2 import Sig, call_somewhat_forgivingly
-
-    sig = Sig(func)
-    kinds_modif = kinds_modifier(sig.kinds)
-
-    sig = sig.ch_kinds(**kinds_modif)
-
-    # sig = sig.ch_kinds(**{name: Sig.POSITIONAL_OR_KEYWORD for name in sig.names})
-
-    @wraps(func)
-    def _func(*args, **kwargs):
-        return call_somewhat_forgivingly(func, args, kwargs, enforce_sig=sig)
-
-    _func.__signature__ = sig
-    return _func
+nice_kinds = deprecation_of(kind_forgiving_func, 'nice_kinds')
 
 
 def wrap_from_sig(func, new_sig):
@@ -1266,9 +1224,9 @@ def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
     @sig
     def ingress(*args, **kwargs):
         # TODO: Make a helper function for this ak -> k -> proc -> ak pattern
-        kwargs = sig.kwargs_from_args_and_kwargs(args, kwargs)
+        kwargs = sig.map_arguments(args, kwargs)
         kwargs = dict(convert_dict_values(kwargs, conversion_for_arg))
-        args, kwargs = sig.args_and_kwargs_from_kwargs(kwargs)
+        args, kwargs = sig.mk_args_and_kwargs(kwargs)
         return args, kwargs
 
     return ingress
@@ -1292,9 +1250,9 @@ class ArgValConverterIngress:
 
     def __call__(self, *args, **kwargs):
         # TODO: Make a helper function for this ak -> k -> proc -> ak pattern
-        kwargs = self.sig.kwargs_from_args_and_kwargs(args, kwargs)
+        kwargs = self.sig.map_arguments(args, kwargs)
         kwargs = dict(convert_dict_values(kwargs, self.conversion_for_arg))
-        args, kwargs = self.sig.args_and_kwargs_from_kwargs(kwargs)
+        args, kwargs = self.sig.mk_args_and_kwargs(kwargs)
         return args, kwargs
 
 
@@ -1973,7 +1931,7 @@ class Wrapx(_Wrap):
 
     def __call__(self, *args, **kwargs):
         try:
-            _kwargs = self.sig.kwargs_from_args_and_kwargs(args, kwargs)
+            _kwargs = self.sig.map_arguments(args, kwargs)
             # TODO: Consider call_forgivingly(self.ingress, *args, **kwargs)
             #  because call_forgivingly(self.ingress, **_kwargs) doesn't allow
             #  same ingress functions to be used for Wrap and Wrapx
@@ -1987,7 +1945,7 @@ class Wrapx(_Wrap):
             # more specific error messages
             # We don't do this in the first run so that we don't incur the validation
             # overhead on every call.
-            _kwargs = self.sig.kwargs_from_args_and_kwargs(args, kwargs)
+            _kwargs = self.sig.map_arguments(args, kwargs)
             func_args, func_kwargs = _validate_ingress_output(
                 call_forgivingly(self.ingress, **_kwargs)
             )
@@ -2123,7 +2081,7 @@ def partialx(
     if _rm_partialize:
         sig = Sig(func)
         partialized = list(
-            sig.kwargs_from_args_and_kwargs(args, kwargs, allow_partial=True)
+            sig.map_arguments(args, kwargs, allow_partial=True)
         )
         sig = sig - partialized
         f = sig(partial(f, *args, **kwargs))

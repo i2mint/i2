@@ -287,9 +287,8 @@ def list_func_calls(fn):
     bytecode = dis.Bytecode(fn)
     instrs = list(reversed([instr for instr in bytecode]))
     for ix, instr in enumerate(instrs):
-        if instr.opname == 'CALL_FUNCTION' or instr.opname == 'CALL_METHOD':
-            load_func_instr = instrs[ix + instr.arg + 1]
-            funcs.append(load_func_instr.argval)
+        if instr.opname == 'LOAD_METHOD' or instr.opname == 'LOAD_GLOBAL':
+            funcs.append(instr.argval)
     return [funcname for funcname in reversed(funcs)]
 
 

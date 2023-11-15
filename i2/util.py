@@ -5,7 +5,7 @@ import re
 import os
 import itertools
 import sys
-from functools import partial
+from functools import partial, wraps
 import types
 from typing import (
     Mapping,
@@ -1187,3 +1187,17 @@ class FunctionBuilder(object):
         except Exception:
             raise
         return execdict
+
+
+def deprecation_of(func, old_name):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        from warnings import warn
+
+        warn(
+            f'`{old_name}` is deprecated. Use `{func.__module__}.{func.__qualname__}` instead.',
+            DeprecationWarning,
+        )
+        return func(*args, **kwargs)
+    
+    return wrapper

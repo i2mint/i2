@@ -176,8 +176,19 @@ def mk_func_from_params(
     >>> f = mk_func_from_params(params="00111234")
     >>> str(Sig(f))
     '(a00, a01, /, a12, a13, a14, *a25, a36, **a47)'
+
+    The next one is convoluted on purpose, to try to break the tools with name clashing,
+    using the name a47 several times. 
+    The ``a47=...`` in the input could have been any name, but is bound to be caught in 
+    the ``**a47`` variadic argument. 
+    Therefore, the first ``a47=...`` of the output is saying "I'm the variadic that caught 
+    that input". The ``{'a47': ...`` following it is saying "the user input an extra 
+    keyword argument that they called `a47`. Then the ``{"a47": 7, "a47_": -7}`` is just 
+    the value of that keyword argument.
+
     >>> f(0, 1, 2, 3, 4, 5, -5, a36=6, a47={"a47": 7, "a47_": -7})
-    "a00=0, a01=1, a12=2, a13=3, a14=4, a25=(5, -5), a36=6, a47={'a47': 7, 'a47_': -7}"
+    "a00=0, a01=1, a12=2, a13=3, a14=4, a25=(5, -5), a36=6, a47={'a47': {'a47': 7, 'a47_': -7}}"
+    
     >>> f(0, 1, 2, a13=3, a14=4, a36=6)
     'a00=0, a01=1, a12=2, a13=3, a14=4, a25=(), a36=6, a47={}'
 
@@ -209,7 +220,7 @@ def mk_func_from_params(
 
     @sig
     def arg_str_func(*args, **kwargs):
-        _call_kwargs = sig.kwargs_from_args_and_kwargs(
+        _call_kwargs = sig.map_arguments(
             args, kwargs, apply_defaults=True
         )
         return callback(_call_kwargs)
@@ -217,7 +228,6 @@ def mk_func_from_params(
     arg_str_func.__name__ = name or _params_to_name(params)
 
     return arg_str_func
-
 
 def _sig_to_str_of_call_args_code_str(sig: Sig):
     return (

@@ -150,26 +150,26 @@ class Wrapx2(Wrap):
 
 # from i2.deco import double_up_as_factory
 #
-# # TODO: Other design options? Example making an Egress class that has extract_kwargs meth
-# # TODO: Make "copy" of function before adding extract_kwargs attr, or let user do it
+# # TODO: Other design options? Example making an Egress class that has map_arguments_from_variadics meth
+# # TODO: Make "copy" of function before adding map_arguments_from_variadics attr, or let user do it
 # #  if it matters? (I vote let user)
 # # TODO: Add ability to not pop extracted
-# # TODO: Postelize extract_kwargs further?
+# # TODO: Postelize map_arguments_from_variadics further?
 # @double_up_as_factory
-# def add_extract_kwargs(func=None, *, extract_kwargs):
-#     if isinstance(extract_kwargs, Iterable):
-#         keys_to_extract = tuple(extract_kwargs)
-#         extract_kwargs = partial(_extract_kwargs, keys_to_extract=keys_to_extract)
-#     if callable(extract_kwargs) and Sig(extract_kwargs).n_required <= 1:
-#         setattr(func, 'extract_kwargs', extract_kwargs)
+# def add_extract_kwargs(func=None, *, map_arguments_from_variadics):
+#     if isinstance(map_arguments_from_variadics, Iterable):
+#         keys_to_extract = tuple(map_arguments_from_variadics)
+#         map_arguments_from_variadics = partial(_extract_kwargs, keys_to_extract=keys_to_extract)
+#     if callable(map_arguments_from_variadics) and Sig(map_arguments_from_variadics).n_required <= 1:
+#         setattr(func, 'map_arguments_from_variadics', map_arguments_from_variadics)
 #     else:
-#         setattr(func, 'extract_kwargs', _return_empty_dict)
+#         setattr(func, 'map_arguments_from_variadics', _return_empty_dict)
 #
 #     return func
 #
 #
 # def _return_empty_dict(kwargs):
-#     """Used when we want to have an 'empty' extract_kwargs on an egress or caller"""
+#     """Used when we want to have an 'empty' map_arguments_from_variadics on an egress or caller"""
 #     return dict()
 #
 #
@@ -177,7 +177,7 @@ class Wrapx2(Wrap):
 #     return {k: kwargs.pop(k) for k in keys_to_extract}
 #
 #
-# @add_extract_kwargs(extract_kwargs=_return_empty_dict)
+# @add_extract_kwargs(map_arguments_from_variadics=_return_empty_dict)
 # def default_caller(
 #     func: Callable, func_args: tuple, func_kwargs: dict, caller_kwargs
 # ):
@@ -185,7 +185,7 @@ class Wrapx2(Wrap):
 #     return func(*func_args, **func_kwargs)
 #
 #
-# # TODO: Better have an egress that always has a (potentially empty) extract_kwargs or
+# # TODO: Better have an egress that always has a (potentially empty) map_arguments_from_variadics or
 # #  check for existence at runtime?
 # class Wrapxx(Wrap):
 #     def __init__(
@@ -201,9 +201,9 @@ class Wrapx2(Wrap):
 #
 #     def __call__(self, *user_args, **user_kwargs):
 #         # extract the kwargs the egress needs from user input
-#         egress_kwargs = self.egress.extract_kwargs(user_kwargs)
+#         egress_kwargs = self.egress.map_arguments_from_variadics(user_kwargs)
 #         # extract the kwargs the caller needs from user input
-#         caller_kwargs = self.caller.extract_kwargs(user_kwargs)
+#         caller_kwargs = self.caller.map_arguments_from_variadics(user_kwargs)
 #         # prepare function inputs
 #         func_args, func_kwargs = self.ingress(*user_args, **user_kwargs)
 #         # call the function
