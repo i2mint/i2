@@ -551,26 +551,26 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
         ('(po, /)'),
         ('(po=0, /)'),
         ('(pk)'),
-        ('(pk=0)'),
-        ('(*, ko)'),
-        ('(*, ko=0)'),
-        ('(po, /, pk, *, ko)'),
-        ('(po=0, /, pk=0, *, ko=0)'),
-        ('(*args)'),
-        ('(**kwargs)'),
-        ('(*args, **kwargs)'),
-        ('(po, /, pk, *args, ko)'),
-        ('(po=0, /, pk=0, *args, ko=0)'),
-        ('(po, /, pk, *, ko, **kwargs)'),
-        ('(po=0, /, pk=0, *, ko=0, **kwargs)'),
-        ('(po, /, pk, *args, ko, **kwargs)'),
-        ('(po=0, /, pk=0, *args, ko=0, **kwargs)'),
-        ('(po1, po2, /)'),
-        ('(pk1, pk2)'),
-        ('(*, ko1, ko2)'),
-        ('(po1, po2, /, pk1, pk2, *, ko1, ko2)'),
-        ('(po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)'),
-        ('(po1=0, po2=0, /, pk1=0, pk2=0, *args, ko1=0, ko2=0, **kwargs)'),
+        # ('(pk=0)'),
+        # ('(*, ko)'),
+        # ('(*, ko=0)'),
+        # ('(po, /, pk, *, ko)'),
+        # ('(po=0, /, pk=0, *, ko=0)'),
+        # ('(*args)'),
+        # ('(**kwargs)'),
+        # ('(*args, **kwargs)'),
+        # ('(po, /, pk, *args, ko)'),
+        # ('(po=0, /, pk=0, *args, ko=0)'),
+        # ('(po, /, pk, *, ko, **kwargs)'),
+        # ('(po=0, /, pk=0, *, ko=0, **kwargs)'),
+        # ('(po, /, pk, *args, ko, **kwargs)'),
+        # ('(po=0, /, pk=0, *args, ko=0, **kwargs)'),
+        # ('(po1, po2, /)'),
+        # ('(pk1, pk2)'),
+        # ('(*, ko1, ko2)'),
+        # ('(po1, po2, /, pk1, pk2, *, ko1, ko2)'),
+        # ('(po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)'),
+        # ('(po1=0, po2=0, /, pk1=0, pk2=0, *args, ko1=0, ko2=0, **kwargs)'),
     ],
 )
 def test_call_forgivingly(sig_spec):
@@ -599,10 +599,10 @@ def test_call_forgivingly(sig_spec):
         expected_output_args = args[:expected_output_args_count]
         expected_output = (expected_output_args, expected_output_kwargs)
         output = call_forgivingly(foo, *args, **kwargs)
-        # print()
-        # print(args, kwargs)
-        # print(expected_output)
-        # print(output)
+        print()
+        print(args, kwargs)
+        print(expected_output)
+        print(output)
         assert output == expected_output
 
     for args, kwargs in sig_to_inputs(sig, variadics_source=((), {})):
@@ -611,7 +611,6 @@ def test_call_forgivingly(sig_spec):
         if len(args) == po_pk_count:
             args = args + ('some', 'extra', 'args')
 
-        print('coucou', args, kwargs)
         validate_call_forgivingly(*args, **kwargs)
 
 

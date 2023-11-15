@@ -416,7 +416,7 @@ def kwargs_for_func(*funcs, **kwargs):
      'formula1': {'w': 1, 'x': 2, 'z': 3},
      'mult': {'x': 2}}
     """
-    return dict((func, Sig(func).source_kwargs(**kwargs)) for func in funcs)
+    return dict((func, Sig(func).source_arguments(**kwargs)) for func in funcs)
 
 
 def assert_attrs(attrs):

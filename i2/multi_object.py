@@ -673,14 +673,7 @@ class FlexFuncFanout(MultiFunc):
     ... 'formula1': {'w': 1, 'x': 2, 'z': 3},
     ... 'mult': {'x': 2},
     ... 'addition': {'a': 4, 'b': 5},
-    ... 'mysum':
-    ...     {'kwargs': {'w': 1,
-    ...                 'x': 2,
-    ...                 'z': 3,
-    ...                 'a': 42,
-    ...                 'b': 5,
-    ...                 'args': (7, 8),
-    ...                 'extra_stuff': 'ignore'}}}
+    ... 'mysum': {'args': (7, 8), 'kwargs': {'a': 42}}}
 
     """
 
@@ -707,7 +700,7 @@ class FlexFuncFanout(MultiFunc):
 
     def kwargs_for_func(self, *args, **kwargs):
         return dict(
-            (name, self.sigs[name].source_kwargs(**kwargs))
+            (name, self.sigs[name].source_arguments(**kwargs))
             for name, func in self.funcs.items()
         )
 
@@ -715,7 +708,7 @@ class FlexFuncFanout(MultiFunc):
     # TODO: Validation of inputs
     def __call__(self, *args, **kwargs):
         return dict(
-            (name, self.sigs[name].source_kwargs(**kwargs))
+            (name, self.sigs[name].source_arguments(**kwargs))
             for name, func in self.funcs.items()
         )
 

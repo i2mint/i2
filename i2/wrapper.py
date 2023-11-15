@@ -91,10 +91,12 @@ from i2.signatures import (
     parameter_to_dict,
     call_forgivingly,
     _call_forgivingly,
+    kind_forgiving_func
 )
 from i2.errors import OverwritesNotAllowed
 from i2.multi_object import Pipe
 from i2.deco import double_up_as_factory
+from i2.util import deprecation_of
 
 # ---------------------------------------------------------------------------------------
 # Wrap
@@ -1045,10 +1047,6 @@ def modify_dict_on_cond(d, cond, func):
     return {k: apply_func_on_cond(func, cond, k, v) for k, v in d.items()}
 
 
-def convert_to_PK(kinds):
-    return {name: PK for name in kinds}
-
-
 def convert_VK_to_KO(kinds):
     cond = lambda k, v: v == VK
     func = lambda v: KO
@@ -1056,47 +1054,7 @@ def convert_VK_to_KO(kinds):
     return modify_dict_on_cond(kinds, cond, func)
 
 
-def nice_kinds(func, kinds_modifier=convert_to_PK):
-    """Wraps the func, changing the argument kinds according to kinds_modifier.
-    The default behaviour is to change all kinds to POSITIONAL_OR_KEYWORD kinds.
-    The original purpose of this function is to remove argument-kind restriction
-    annoyances when doing functional manipulations such as:
-
-    >>> from functools import partial
-    >>> isinstance_of_str = partial(isinstance, class_or_tuple=str)
-    >>> isinstance_of_str('I am a string')
-    Traceback (most recent call last):
-      ...
-    TypeError: isinstance() takes no keyword arguments
-
-    Here, instead, we can just get a kinder version of the function and do what we
-    want to do:
-
-    >>> _isinstance = nice_kinds(isinstance)
-    >>> isinstance_of_str = partial(_isinstance, class_or_tuple=str)
-    >>> isinstance_of_str('I am a string')
-    True
-    >>> isinstance_of_str(42)
-    False
-
-    See also: ``i2.signatures.all_pk_signature``
-
-    """
-    from i2 import Sig, call_somewhat_forgivingly
-
-    sig = Sig(func)
-    kinds_modif = kinds_modifier(sig.kinds)
-
-    sig = sig.ch_kinds(**kinds_modif)
-
-    # sig = sig.ch_kinds(**{name: Sig.POSITIONAL_OR_KEYWORD for name in sig.names})
-
-    @wraps(func)
-    def _func(*args, **kwargs):
-        return call_somewhat_forgivingly(func, args, kwargs, enforce_sig=sig)
-
-    _func.__signature__ = sig
-    return _func
+nice_kinds = deprecation_of(kind_forgiving_func, 'nice_kinds')
 
 
 def wrap_from_sig(func, new_sig):

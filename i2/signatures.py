@@ -111,7 +111,7 @@ from functools import (
     update_wrapper as _update_wrapper,
 )
 
-from i2.util import FrozenDict
+from i2.util import FrozenDict, deprecation_of
 
 # monkey patching WRAPPER_ASSIGNMENTS to get "proper" wrapping (adding defaults and
 # kwdefaults
@@ -852,7 +852,7 @@ class Sig(Signature, Mapping):
 
     Examples of methods and functions using these:
     `call_forgivingly`, `tuple_the_args`, `map_arguments_from_variadics`, `extract_args_and_kwargs`,
-    `source_kwargs`, and `source_args_and_kwargs`.
+    `source_arguments`, and `source_args_and_kwargs`.
 
     # Making a signature
 
@@ -2408,6 +2408,8 @@ class Sig(Signature, Mapping):
             b.apply_defaults()
 
         return b.arguments
+    
+    kwargs_from_args_and_kwargs = deprecation_of(map_arguments, 'kwargs_from_args_and_kwargs')
 
     def mk_args_and_kwargs(
         self,
@@ -2642,6 +2644,7 @@ class Sig(Signature, Mapping):
 
         return args, kwargs
 
+    args_and_kwargs_from_kwargs = deprecation_of(mk_args_and_kwargs, 'args_and_kwargs_from_kwargs')
 
     def map_arguments_from_variadics(
         self,
@@ -2711,12 +2714,15 @@ class Sig(Signature, Mapping):
             allow_excess=_allow_excess,
             ignore_kind=_ignore_kind,
         )
+    
+    extract_kwargs = deprecation_of(map_arguments_from_variadics, 'extract_kwargs')
 
     def extract_args_and_kwargs(
         self,
         *args,
         _ignore_kind=True,
         _allow_partial=False,
+        _allow_excess=True,
         _apply_defaults=False,
         _args_limit=0,
         **kwargs,
@@ -2784,44 +2790,44 @@ class Sig(Signature, Mapping):
         >>> (args, kwargs) == ((4,), {"x": 3, "y": 2, "z": 1})
         True
         """
-        kwargs = self.map_arguments_from_variadics(
-            *args,
-            _ignore_kind=_ignore_kind,
-            _allow_partial=_allow_partial,
-            _apply_defaults=_apply_defaults,
-            **kwargs,
+        arguments = self.map_arguments(
+            args,
+            kwargs,
+            apply_defaults=_apply_defaults,
+            allow_partial=_allow_partial,
+            allow_excess=_allow_excess,
+            ignore_kind=_ignore_kind,
         )
         return self.mk_args_and_kwargs(
-            kwargs,
+            arguments,
             allow_partial=_allow_partial,
-            apply_defaults=_apply_defaults,
             args_limit=_args_limit,
         )
 
-    def source_kwargs(
+    def source_arguments(
         self,
         *args,
-        _ignore_kind=True,
-        _allow_partial=False,
         _apply_defaults=False,
+        _allow_partial=False,
+        _ignore_kind=True,
         **kwargs,
     ):
-        """Source the kwargs for the signature instance, ignoring excess arguments.
+        """Source the arguments for the signature instance, ignoring excess arguments.
 
         >>> def foo(w, /, x: float, y="YY", *, z: str = "ZZ"):
         ...     ...
-        >>> Sig(foo).source_kwargs(11, x=22, extra="keywords", are="ignored")
+        >>> Sig(foo).source_arguments(11, x=22, extra="keywords", are="ignored")
         {'w': 11, 'x': 22}
 
         Note that though `w` is a position only argument, you can specify `w=11` as a
         keyword argument too (by default):
 
-        >>> Sig(foo).source_kwargs(w=11, x=22, extra="keywords", are="ignored")
+        >>> Sig(foo).source_arguments(w=11, x=22, extra="keywords", are="ignored")
         {'w': 11, 'x': 22}
 
         If you don't want to allow that, you can say `_ignore_kind=False`
 
-        >>> Sig(foo).source_kwargs(
+        >>> Sig(foo).source_arguments(
         ...     w=11, x=22, extra="keywords", are="ignored", _ignore_kind=False
         ... )
         Traceback (most recent call last):
@@ -2832,14 +2838,14 @@ class Sig(Signature, Mapping):
         set to `True`, to underspecify the params of a function (in view of being
         completed later).
 
-        >>> Sig(foo).source_kwargs(x=3, y=2, extra="keywords", are="ignored")
+        >>> Sig(foo).source_arguments(x=3, y=2, extra="keywords", are="ignored")
         Traceback (most recent call last):
           ...
         TypeError: missing a required argument: 'w'
 
         But if you specify `_allow_partial=True`...
 
-        >>> Sig(foo).source_kwargs(
+        >>> Sig(foo).source_arguments(
         ...     x=3, y=2, extra="keywords", are="ignored", _allow_partial=True
         ... )
         {'x': 3, 'y': 2}
@@ -2847,16 +2853,18 @@ class Sig(Signature, Mapping):
         By default, `_apply_defaults=False`, which will lead to only get those
         arguments you input.
 
-        >>> Sig(foo).source_kwargs(4, x=3, y=2, extra="keywords", are="ignored")
+        >>> Sig(foo).source_arguments(4, x=3, y=2, extra="keywords", are="ignored")
         {'w': 4, 'x': 3, 'y': 2}
 
         But if you specify `_apply_defaults=True` non-specified non-require arguments
         will be returned with their defaults:
 
-        >>> Sig(foo).source_kwargs(
+        >>> Sig(foo).source_arguments(
         ...     4, x=3, y=2, extra="keywords", are="ignored", _apply_defaults=True
         ... )
         {'w': 4, 'x': 3, 'y': 2, 'z': 'ZZ'}
+
+
         """
         return self.map_arguments(
             args,
@@ -2867,12 +2875,15 @@ class Sig(Signature, Mapping):
             ignore_kind=_ignore_kind,
         )
 
+    source_kwargs = deprecation_of(source_arguments, 'source_kwargs')
+
     def source_args_and_kwargs(
         self,
         *args,
         _ignore_kind=True,
         _allow_partial=False,
         _apply_defaults=False,
+        _args_limit=0,
         **kwargs,
     ):
         """Source the (args, kwargs) for the signature instance, ignoring excess
@@ -2883,10 +2894,10 @@ class Sig(Signature, Mapping):
         >>> args, kwargs = Sig(foo).source_args_and_kwargs(
         ...     4, x=3, y=2, extra="keywords", are="ignored"
         ... )
-        >>> assert (args, kwargs) == ((4,), {"x": 3, "y": 2})
-        >>>
+        >>> args, kwargs
+        ((4,), {'x': 3, 'y': 2})
 
-        The difference with source_kwargs is that here the output is ready to be
+        The difference with source_arguments is that here the output is ready to be
         called by the
         function whose signature we have, since the position-only arguments will be
         returned as
@@ -2947,20 +2958,17 @@ class Sig(Signature, Mapping):
         >>> (args, kwargs) == ((4,), {"x": 3, "y": 2, "z": 1})
         True
         """
-        kwargs = self.map_arguments(
-            args,
-            kwargs,
-            allow_excess=True,
-            ignore_kind=_ignore_kind,
-            allow_partial=_allow_partial,
-            apply_defaults=_apply_defaults,
+        arguments = self.source_arguments(
+            *args,
+            _apply_defaults=_apply_defaults,
+            _allow_partial=_allow_partial,
+            _ignore_kind=_ignore_kind,
+            **kwargs,
         )
         return self.mk_args_and_kwargs(
-            kwargs,
-            allow_excess=True,
-            ignore_kind=False,
+            arguments,
             allow_partial=_allow_partial,
-            apply_defaults=False,
+            args_limit=_args_limit,
         )
 
 
@@ -3159,24 +3167,30 @@ def _call_forgivingly(func, args, kwargs):
     """
 
     sig = Sig(func)
-    variadic_kinds = {
-        name: kind for name, kind in sig.kinds.items() if kind in [VP, VK]
-    }
-    if VP in variadic_kinds.values() and VK in variadic_kinds.values():
-        _args = args
-        _kwargs = kwargs
-    else:
-        new_sig = sig - variadic_kinds.keys()
-        _args, _kwargs = new_sig.source_args_and_kwargs(*args, _ignore_kind=False, **kwargs)
-        for k, v in _kwargs.items():
-            if k not in kwargs:
-                _args = _args + (v,)
-        _kwargs = {k: v for k, v in _kwargs.items() if k in kwargs}
-        if VP in variadic_kinds.values():
-            _args = args
-        elif VK in variadic_kinds.values():
-            _kwargs = dict(_kwargs, **kwargs)
+    arguments = sig.map_arguments(args, kwargs, allow_excess=True)
+    _args, _kwargs = sig.mk_args_and_kwargs(arguments, args_limit=len(args))
     return func(*_args, **_kwargs)
+
+
+    # sig = Sig(func)
+    # variadic_kinds = {
+    #     name: kind for name, kind in sig.kinds.items() if kind in [VP, VK]
+    # }
+    # if VP in variadic_kinds.values() and VK in variadic_kinds.values():
+    #     _args = args
+    #     _kwargs = kwargs
+    # else:
+    #     new_sig = sig - variadic_kinds.keys()
+    #     _args, _kwargs = new_sig.source_args_and_kwargs(*args, _ignore_kind=False, **kwargs)
+    #     for k, v in _kwargs.items():
+    #         if k not in kwargs:
+    #             _args = _args + (v,)
+    #     _kwargs = {k: v for k, v in _kwargs.items() if k in kwargs}
+    #     if VP in variadic_kinds.values():
+    #         _args = args
+    #     elif VK in variadic_kinds.values():
+    #         _kwargs = dict(_kwargs, **kwargs)
+    # return func(*_args, **_kwargs)
 
 
 def call_somewhat_forgivingly(
@@ -3241,44 +3255,53 @@ def call_somewhat_forgivingly(
     TypeError: got an unexpected keyword argument 'this_argname'
 
     """
-    if enforce_sig:
-        if enforce_sig is True:
-            enforce_sig = Sig(func)  # enforce the func's signature
-            # this should be the same constraint level as calling the function itself.
-        else:
-            enforce_sig = Sig(enforce_sig)
-        _kwargs = enforce_sig.bind(*args, **kwargs).arguments
-        return _call_forgivingly(func, (), _kwargs)
-    else:
-        return _call_forgivingly(func, args, kwargs)
+    enforce_sig = Sig(enforce_sig or func)
+    # Validate that args and kwargs are compatible with enforce_sig
+    enforce_sig.bind(*args, **kwargs)
+    return _call_forgivingly(func, args, kwargs)
 
 
-def kind_forgiving_func(func):
-    """Make a version of the function that has all POSITIONAL_OR_KEYWORD kinds
+def convert_to_PK(kinds):
+    return {name: PK for name in kinds}
 
-    The inspiring use case: Many builtins have restrictive parameter kinds which makes it hard to
-    curry, amongst other such annoyances. For instance, say you want to curry
-    `isinstance` to make a boolean function that detects string types.
-    You can't with partial, because you can't access the position only
-    `class_or_tuple` argument to fix it.
 
-    Well, make a `kind_forgiving_func` version, and partial to your heart's content!
+def kind_forgiving_func(func, kinds_modifier=convert_to_PK):
+    """Wraps the func, changing the argument kinds according to kinds_modifier.
+    The default behaviour is to change all kinds to POSITIONAL_OR_KEYWORD kinds.
+    The original purpose of this function is to remove argument-kind restriction
+    annoyances when doing functional manipulations such as:
 
     >>> from functools import partial
+    >>> isinstance_of_str = partial(isinstance, class_or_tuple=str)
+    >>> isinstance_of_str('I am a string')
+    Traceback (most recent call last):
+      ...
+    TypeError: isinstance() takes no keyword arguments
+
+    Here, instead, we can just get a kinder version of the function and do what we
+    want to do:
+
     >>> _isinstance = kind_forgiving_func(isinstance)
     >>> isinstance_of_str = partial(_isinstance, class_or_tuple=str)
-    >>> isinstance_of_str('asdf')
+    >>> isinstance_of_str('I am a string')
     True
+    >>> isinstance_of_str(42)
+    False
+
+    See also: ``i2.signatures.all_pk_signature``
 
     """
     sig = Sig(func)
-    sig = sig.ch_kinds(**{name: Sig.POSITIONAL_OR_KEYWORD for name in sig.names})
+    kinds_modif = kinds_modifier(sig.kinds)
+    _sig = sig.ch_kinds(**kinds_modif)
 
+    @_sig
     @wraps(func)
     def _func(*args, **kwargs):
-        return call_somewhat_forgivingly(func, args, kwargs, enforce_sig=sig)
+        _args, _kwargs = sig.extract_args_and_kwargs(*args, _allow_excess=False, **kwargs)
+        return func(*_args, **_kwargs)
 
-    _func.__signature__ = sig
+    # _func.__signature__ = sig
     return _func
 
 
@@ -3414,7 +3437,7 @@ def all_pk_signature(callable_or_signature: Union[Callable, Signature]):
     >>> sig.name
     'bar'
 
-    See also: ``i2.wrappers.nice_kinds``
+    See also: ``i2.signatures.kind_forgiving_func``
 
     """
 
