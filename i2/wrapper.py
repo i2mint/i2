@@ -91,7 +91,7 @@ from i2.signatures import (
     parameter_to_dict,
     call_forgivingly,
     _call_forgivingly,
-    kind_forgiving_func
+    kind_forgiving_func,
 )
 from i2.errors import OverwritesNotAllowed
 from i2.multi_object import Pipe
@@ -1014,9 +1014,7 @@ class ArgNameMappingIngress:
 
     def __call__(self, *ingress_args, **ingress_kwargs):
         # Get the all-keywords version of the arguments (args,kwargs->kwargs)
-        func_kwargs = self.outer_sig.map_arguments(
-            ingress_args, ingress_kwargs
-        )
+        func_kwargs = self.outer_sig.map_arguments(ingress_args, ingress_kwargs)
         # Modify the keys of func_kwargs so they reflect the inner signature's names
         # That is, map outer names to inner names.
         func_kwargs = dict(
@@ -2080,9 +2078,7 @@ def partialx(
     f = partial(func, *args, **kwargs)
     if _rm_partialize:
         sig = Sig(func)
-        partialized = list(
-            sig.map_arguments(args, kwargs, allow_partial=True)
-        )
+        partialized = list(sig.map_arguments(args, kwargs, allow_partial=True))
         sig = sig - partialized
         f = sig(partial(f, *args, **kwargs))
     if _allow_reordering:

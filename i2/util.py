@@ -1199,5 +1199,5 @@ def deprecation_of(func, old_name):
             DeprecationWarning,
         )
         return func(*args, **kwargs)
-    
+
     return wrapper

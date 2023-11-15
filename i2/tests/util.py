@@ -220,14 +220,13 @@ def mk_func_from_params(
 
     @sig
     def arg_str_func(*args, **kwargs):
-        _call_kwargs = sig.map_arguments(
-            args, kwargs, apply_defaults=True
-        )
+        _call_kwargs = sig.map_arguments(args, kwargs, apply_defaults=True)
         return callback(_call_kwargs)
 
     arg_str_func.__name__ = name or _params_to_name(params)
 
     return arg_str_func
+
 
 def _sig_to_str_of_call_args_code_str(sig: Sig):
     return (

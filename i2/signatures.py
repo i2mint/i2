@@ -2373,6 +2373,7 @@ class Sig(Signature, Mapping):
         ... )
         {'w': 1, 'x': 2, 'y': 3, 'z': 4}
         """
+
         def get_var_dflts():
             if self.has_var_positional:
                 yield self.var_positional_name, ()
@@ -2381,7 +2382,7 @@ class Sig(Signature, Mapping):
 
         _args = args or ()
         _kwargs = kwargs or {}
-        
+
         if ignore_kind:
             var_dflts = dict(get_var_dflts())
             sig = self.normalize_kind(kind=KO, except_kinds=None)
@@ -2408,8 +2409,10 @@ class Sig(Signature, Mapping):
             b.apply_defaults()
 
         return b.arguments
-    
-    kwargs_from_args_and_kwargs = deprecation_of(map_arguments, 'kwargs_from_args_and_kwargs')
+
+    kwargs_from_args_and_kwargs = deprecation_of(
+        map_arguments, 'kwargs_from_args_and_kwargs'
+    )
 
     def mk_args_and_kwargs(
         self,
@@ -2569,7 +2572,11 @@ class Sig(Signature, Mapping):
             # If there are var positional arguments, we ignore the args_limit
             args_limit = None
 
-        pos, pks, kos = self.names_of_kind[PO], self.names_of_kind[PK], self.names_of_kind[KO]
+        pos, pks, kos = (
+            self.names_of_kind[PO],
+            self.names_of_kind[PK],
+            self.names_of_kind[KO],
+        )
         names_for_args = pos
         names_for_kwargs = kos
         if args_limit is None:
@@ -2581,27 +2588,18 @@ class Sig(Signature, Mapping):
             # Take the [args_limit] first arguments (of signature) as args. The minimum
             # number of args is the number of POs. The maximum number of args is the
             # number of POs + PKs. The rest are kwargs.
-            nb_of_positional_pks = min(
-                max(args_limit - len(pos), 0),
-                len(pks)
-            )
+            nb_of_positional_pks = min(max(args_limit - len(pos), 0), len(pks))
             names_for_args += pks[:nb_of_positional_pks]
             names_for_kwargs = pks[nb_of_positional_pks:] + names_for_kwargs
 
-        args = tuple(
-            _arguments[name]
-            for name in names_for_args
-            if name in _arguments
-        )
+        args = tuple(_arguments[name] for name in names_for_args if name in _arguments)
         kwargs = {
-            name: _arguments[name]
-            for name in names_for_kwargs
-            if name in _arguments
+            name: _arguments[name] for name in names_for_kwargs if name in _arguments
         }
 
-        # Note that, at this stage, the variadics arguments are not yet in the args and 
+        # Note that, at this stage, the variadics arguments are not yet in the args and
         # kwargs variables.
-        # We first call map_arguments with the args and kwargs with no variadics to 
+        # We first call map_arguments with the args and kwargs with no variadics to
         # validate that all the explicit arguments are valid and there is no missing
         # required argument.
 
@@ -2616,7 +2614,7 @@ class Sig(Signature, Mapping):
         # But if we included the variadics in the args, the value '1' would have been
         # mapped to `a` by `map_arguments` and the error would not have been caught.
         # Same logic for kwargs.
-        
+
         __arguments = self.map_arguments(
             args,
             kwargs,
@@ -2627,15 +2625,21 @@ class Sig(Signature, Mapping):
         )
 
         # Let's retrieve the args and kwargs from the output of `map_arguments`, because
-        # some extra stuff might have been added (defaults). And let's also add the 
+        # some extra stuff might have been added (defaults). And let's also add the
         # variadics.
-        pos_arguments = {name: arg for name, arg in __arguments.items() if name in names_for_args}
-        kw_arguments = {name: arg for name, arg in __arguments.items() if name in names_for_kwargs}
+        pos_arguments = {
+            name: arg for name, arg in __arguments.items() if name in names_for_args
+        }
+        kw_arguments = {
+            name: arg for name, arg in __arguments.items() if name in names_for_kwargs
+        }
 
         if ignore_kind:
             # If ignore_kind is True, return all arguments as kwargs
             args = ()
-            d_vp_args = {self.var_positional_name: vp_args} if self.has_var_positional else {}
+            d_vp_args = (
+                {self.var_positional_name: vp_args} if self.has_var_positional else {}
+            )
             d_vk_args = {self.var_keyword_name: vk_args} if self.has_var_keyword else {}
             kwargs = {**pos_arguments, **d_vp_args, **kw_arguments, **d_vk_args}
         else:
@@ -2644,7 +2648,9 @@ class Sig(Signature, Mapping):
 
         return args, kwargs
 
-    args_and_kwargs_from_kwargs = deprecation_of(mk_args_and_kwargs, 'args_and_kwargs_from_kwargs')
+    args_and_kwargs_from_kwargs = deprecation_of(
+        mk_args_and_kwargs, 'args_and_kwargs_from_kwargs'
+    )
 
     def map_arguments_from_variadics(
         self,
@@ -2714,7 +2720,7 @@ class Sig(Signature, Mapping):
             allow_excess=_allow_excess,
             ignore_kind=_ignore_kind,
         )
-    
+
     extract_kwargs = deprecation_of(map_arguments_from_variadics, 'extract_kwargs')
 
     def extract_args_and_kwargs(
@@ -2799,9 +2805,7 @@ class Sig(Signature, Mapping):
             ignore_kind=_ignore_kind,
         )
         return self.mk_args_and_kwargs(
-            arguments,
-            allow_partial=_allow_partial,
-            args_limit=_args_limit,
+            arguments, allow_partial=_allow_partial, args_limit=_args_limit,
         )
 
     def source_arguments(
@@ -2966,9 +2970,7 @@ class Sig(Signature, Mapping):
             **kwargs,
         )
         return self.mk_args_and_kwargs(
-            arguments,
-            allow_partial=_allow_partial,
-            args_limit=_args_limit,
+            arguments, allow_partial=_allow_partial, args_limit=_args_limit,
         )
 
 
@@ -3171,7 +3173,6 @@ def _call_forgivingly(func, args, kwargs):
     _args, _kwargs = sig.mk_args_and_kwargs(arguments, args_limit=len(args))
     return func(*_args, **_kwargs)
 
-
     # sig = Sig(func)
     # variadic_kinds = {
     #     name: kind for name, kind in sig.kinds.items() if kind in [VP, VK]
@@ -3298,7 +3299,9 @@ def kind_forgiving_func(func, kinds_modifier=convert_to_PK):
     @_sig
     @wraps(func)
     def _func(*args, **kwargs):
-        _args, _kwargs = sig.extract_args_and_kwargs(*args, _allow_excess=False, **kwargs)
+        _args, _kwargs = sig.extract_args_and_kwargs(
+            *args, _allow_excess=False, **kwargs
+        )
         return func(*_args, **_kwargs)
 
     # _func.__signature__ = sig
@@ -3611,7 +3614,9 @@ def ch_variadics_to_non_variadic_kind(func, *, ch_variadic_keyword_to_keyword=Tr
             else:
                 arguments = {k: v for k, v in kwargs.items() if k in sig}
                 if sig.has_var_keyword:
-                    arguments[sig.var_keyword_name] = {k: v for k, v in kwargs.items() if k not in sig}
+                    arguments[sig.var_keyword_name] = {
+                        k: v for k, v in kwargs.items() if k not in sig
+                    }
             _args, _kwargs = sig.mk_args_and_kwargs(arguments, allow_partial=True)
             # print('COUCOU', kwargs, arguments)
             # add these to the existing args
