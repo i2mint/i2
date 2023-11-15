@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>i2.tests.objects_for_testing &mdash; i2 0.1.3 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/toggleprompt.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            i2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/_deprecated.html">i2._deprecated</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/examples.html">i2.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/footprints.html">i2.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/itypes.html">i2.itypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/key_path.html">i2.key_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/multi_object.html">i2.multi_object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/scrap_ch_variadics.html">i2.scrap.scrap_ch_variadics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/signature_bops.html">i2.scrap.signature_bops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/switch_case_tree.html">i2.scrap.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/footprints_test.html">i2.tests.footprints_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">i2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">i2.tests.objects_for_testing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for i2.tests.objects_for_testing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A module containing a bunch of objects for testing.</span>
+
+<span class="sd">See also: https://github.com/i2mint/py2http/blob/master/py2http/tests/objects_for_testing.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1">###############################################################################</span>
+<span class="c1"># Empty callables, meant to give an example of different kinds of callables ###</span>
+<span class="c1"># Note that x can be applied to a number, string, or list #####################</span>
+<div class="viewcode-block" id="f"><a class="viewcode-back" href="../../../module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.f">[docs]</a><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Note that x can be applied to a number, string, or list&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span></div>
+
+
+<span class="k">class</span> <span class="nc">C</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">s</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># instance method</span>
+    <span class="k">def</span> <span class="nf">i</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># making an instance itself callable</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<span class="c1">###############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">times_2</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
+
+
+<span class="k">def</span> <span class="nf">plus_1</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">z</span> <span class="o">+</span> <span class="mi">1</span>
+
+
+<div class="viewcode-block" id="add"><a class="viewcode-back" href="../../../module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.add">[docs]</a><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds numbers&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span></div>
+
+
+<span class="k">def</span> <span class="nf">mult</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+
+
+<div class="viewcode-block" id="formula1"><a class="viewcode-back" href="../../../module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.formula1">[docs]</a><span class="k">def</span> <span class="nf">formula1</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Has 3 kinds &amp; every of the 4 combinations of (default y/n, annotated y/n)&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">w</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span> <span class="o">**</span> <span class="n">z</span></div>
+
+
+<div class="viewcode-block" id="formula2"><a class="viewcode-back" href="../../../module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.formula2">[docs]</a><span class="k">def</span> <span class="nf">formula2</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Has 3 kinds &amp; every of the 4 combinations of (default y/n, annotated y/n)</span>
+
+<span class="sd">    &gt;&gt;&gt; formula2(0, 1, 2)</span>
+<span class="sd">    &#39;(w:=0) + (x:=1) * (y:=2) ** (z:=3) == 8&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;(w:=</span><span class="si">{</span><span class="n">w</span><span class="si">}</span><span class="s1">) + (x:=</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">) * (y:=</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">) ** (z:=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s1">) == </span><span class="si">{</span><span class="n">w</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="n">z</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+
+<span class="c1"># Only *args and **kwargs. Also has a doc with a doc test</span>
+<div class="viewcode-block" id="sum_of_args"><a class="viewcode-back" href="../../../module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.sum_of_args">[docs]</a><span class="k">def</span> <span class="nf">sum_of_args</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sums the args, and returns a copy of kwargs with the sum of args added to each value.</span>
+
+<span class="sd">    &gt;&gt;&gt; sum_of_args(1,2,3, a=0, b=10)</span>
+<span class="sd">    {&#39;a&#39;: 6, &#39;b&#39;: 16}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">t</span> <span class="o">+</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="test_func_1"><a class="viewcode-back" href="../../../module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.test_func_1">[docs]</a><span class="k">def</span> <span class="nf">test_func_1</span><span class="p">(</span>
+    <span class="n">any_var</span><span class="p">,</span>
+    <span class="n">a_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">a_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">an_int</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">a_float</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.14</span><span class="p">,</span>
+    <span class="n">a_bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">a_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the first line,</span>
+<span class="sd">    continued on the next.</span>
+
+<span class="sd">    This function is meant to demo several combinations of type declaration (in signature or/and in docs),</span>
+<span class="sd">    as well as with or without defaults.</span>
+
+<span class="sd">    :param any_var: no type declared in either signature of doc</span>
+<span class="sd">    :param list a_list: type declared in signature AND doc</span>
+<span class="sd">    :param a_dict: type declared in signature but NOT in doc</span>
+<span class="sd">    :param int an_int: type declared in doc but NOT in signature</span>
+<span class="sd">    :param float a_float: type declared in signature AND doc, and has a default of the desired type</span>
+<span class="sd">    :param a_bool: type declared in signature but NOT in doc, and has a default of the desired type</span>
+<span class="sd">    :param str a_str: type declared in signature AND doc, but has a default that is not of that type</span>
+<span class="sd">    line description</span>
+<span class="sd">    :return str: Will just return the &#39;test_func_1 returned&#39; string</span>
+<span class="sd">    :tags foo, bar</span>
+
+<span class="sd">    &gt;&gt;&gt; # here are sometests</span>
+<span class="sd">    &gt;&gt;&gt; test_func_1(&#39;anything&#39;, [1, 2], {&#39;this&#39;: 0, &#39;that&#39;: &#39;foo&#39;}, 1, 1.1, a_bool=True, a_str=&#39;hello&#39;)</span>
+<span class="sd">    &#39;test_func_1 returned&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># This is the first comment</span>
+    <span class="k">return</span> <span class="s1">&#39;test_func_1 returned&#39;</span>  <span class="c1"># this is a comment on the same line as some code</span></div>
+
+
+<span class="k">class</span> <span class="nc">SomeClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">SomeOtherClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="test_func_2"><a class="viewcode-back" href="../../../module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.test_func_2">[docs]</a><span class="k">def</span> <span class="nf">test_func_2</span><span class="p">(</span>
+    <span class="n">any_var</span><span class="p">,</span>
+    <span class="n">an_int</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">a_float</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">a_tuple</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(),</span>
+    <span class="n">an_obj</span><span class="p">:</span> <span class="n">SomeClass</span> <span class="o">=</span> <span class="n">SomeClass</span><span class="p">(),</span>
+    <span class="n">another_obj</span><span class="o">=</span><span class="n">SomeOtherClass</span><span class="p">(),</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the first line,</span>
+<span class="sd">    continued on the next.</span>
+
+<span class="sd">    And this is some more information about the function:</span>
+<span class="sd">    Blah</span>
+<span class="sd">    Blah</span>
+<span class="sd">    Bloo</span>
+
+<span class="sd">    :param any_var: foo</span>
+<span class="sd">    :param an_int: you again?!</span>
+<span class="sd">    :param a_float:</span>
+<span class="sd">    :param a_tuple: For real</span>
+<span class="sd">    :param an_obj: Does nothing</span>
+<span class="sd">    :param another_obj: Multi-</span>
+<span class="sd">    line</span>
+<span class="sd">    :return: Just pi</span>
+<span class="sd">    :tags any, old, tag</span>
+<span class="sd">    :keyword one_keyword</span>
+<span class="sd">    :keyword keyword1, keyword2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the first line,</span>
+<span class="sd">    continued on the next.</span>
+
+<span class="sd">    And this is some more information about the function:</span>
+<span class="sd">    Blah</span>
+<span class="sd">    Blah</span>
+<span class="sd">    Bloo</span>
+
+<span class="sd">    :param any_var: this can be of any type</span>
+<span class="sd">    :param an_int: an int</span>
+<span class="sd">    :param a_float: a float</span>
+<span class="sd">    :param a_bool: a bool</span>
+<span class="sd">    :param a_str: a str</span>
+<span class="sd">    :param a_list:</span>
+<span class="sd">    :param a_dict: An example of a continued</span>
+<span class="sd">    line description</span>
+<span class="sd">    :return:</span>
+
+<span class="sd">    &gt;&gt;&gt; # here are sometests</span>
+<span class="sd">    &gt;&gt;&gt; test_func_1(&#39;anything&#39;, 1, 1.1, True, &#39;hello&#39;, [1, 2], {&#39;this&#39;: 0, &#39;that&#39;: &#39;foo&#39;})</span>
+<span class="sd">    &#39;returned&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mf">3.14</span></div>
+
+
+<span class="k">class</span> <span class="nc">AClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The doc of the __init__&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The actual callable&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+
+
+<span class="k">class</span> <span class="nc">TestObj</span><span class="p">:</span>
+    <span class="n">constarg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constarg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">constarg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constarg</span> <span class="o">=</span> <span class="n">constarg</span>
+
+    <span class="k">def</span> <span class="nf">methodnum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">methodarg1</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">methodarg1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">methodarg1</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">methodstr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">methodarg2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hi&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">methodarg2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">methodarg2</span> <span class="o">+</span> <span class="s1">&#39; test &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">constarg</span>
+
+
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+
+<span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">ModuleNotFoundError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">matrix</span>
+    <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">Series</span>
+
+    <span class="k">def</span> <span class="nf">a_func_with_df_in_and_sr_out</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">a_func_with_np_and_df</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">sr</span><span class="p">:</span> <span class="n">Series</span><span class="p">,</span> <span class="n">arr</span><span class="p">:</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">mat</span><span class="p">:</span> <span class="n">matrix</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">matrix</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">sr</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">arr</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">*</span> <span class="n">mat</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright OtoSense 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

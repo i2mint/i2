@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>i2.key_path &mdash; i2 0.1.3 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="i2.multi_object" href="multi_object.html" />
+    <link rel="prev" title="i2.itypes" href="itypes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            i2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_deprecated.html">i2._deprecated</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">i2.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="footprints.html">i2.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="itypes.html">i2.itypes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">i2.key_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_object.html">i2.multi_object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap_ch_variadics.html">i2.scrap.scrap_ch_variadics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/signature_bops.html">i2.scrap.signature_bops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/switch_case_tree.html">i2.scrap.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/footprints_test.html">i2.tests.footprints_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/signatures_test.html">i2.tests.signatures_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/util.html">i2.tests.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wrapper.html">i2.wrapper</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">i2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">i2.key_path</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/i2/key_path.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-i2.key_path">
+<span id="i2-key-path"></span><h1>i2.key_path<a class="headerlink" href="#module-i2.key_path" title="Permalink to this headline">¶</a></h1>
+<p>Flattening maps and manipulating key paths</p>
+<dl class="py class">
+<dt id="i2.key_path.KeyPathMap">
+<em class="property">class </em><code class="sig-prename descclassname">i2.key_path.</code><code class="sig-name descname">KeyPathMap</code><span class="sig-paren">(</span><em class="sig-param">store=&lt;class 'dict'&gt;</em>, <em class="sig-param">key_type: type = None</em>, <em class="sig-param">node_type: type = None</em>, <em class="sig-param">auto_node_writes=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#KeyPathMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.KeyPathMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a key-path view to a nested mapping (by default, a dict).
+A nested mapping can be see as a tree, where if a value is itself a mapping, it is a non-terminal node,
+leaves (or terminal) holding the “actual values”.</p>
+<p>When wrapping a mapping in KeyPathMap, you can pretend that you have a flat mapping from (root to leaf) paths
+instead of a nested structure, and do your mapping CRUD with that view.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;2a&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;aba&#39;</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>     <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mf">3.14</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">KeyPathMap</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[((&#39;a&#39;, &#39;a&#39;), &#39;2a&#39;), ((&#39;a&#39;, &#39;b&#39;, &#39;a&#39;), &#39;aba&#39;), ((&#39;a&#39;, &#39;b&#39;, &#39;b&#39;), 3), ((&#39;c&#39;,), 3.14)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">[(&#39;a&#39;, &#39;a&#39;), (&#39;a&#39;, &#39;b&#39;, &#39;a&#39;), (&#39;a&#39;, &#39;b&#39;, &#39;b&#39;), (&#39;c&#39;,)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="go">[&#39;2a&#39;, &#39;aba&#39;, 3, 3.14]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>
+<span class="go">{&#39;a&#39;: &#39;2a&#39;, &#39;b&#39;: {&#39;a&#39;: &#39;aba&#39;, &#39;b&#39;: 3}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[(</span><span class="s1">&#39;a&#39;</span><span class="p">,)]</span>
+<span class="go">{&#39;a&#39;: &#39;2a&#39;, &#39;b&#39;: {&#39;a&#39;: &#39;aba&#39;, &#39;b&#39;: 3}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">]</span>
+<span class="go">&#39;2a&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;new_key&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kp</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;new_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;new val&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;new_key&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kp</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;new_key&#39;</span><span class="p">]</span>
+<span class="go">&#39;new val&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[((&#39;a&#39;, &#39;a&#39;), &#39;2a&#39;), ((&#39;a&#39;, &#39;b&#39;, &#39;b&#39;), 3), ((&#39;a&#39;, &#39;new_key&#39;), &#39;new val&#39;), ((&#39;c&#39;,), 3.14)]</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># By default, you can only write on already created nodes. But if auto_node_writes=True, you can do this:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">KeyPathMap</span><span class="p">(</span><span class="n">auto_node_writes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
+<span class="go">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;hi world!&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
+<span class="go">{&#39;a&#39;: {&#39;b&#39;: {&#39;c&#39;: &#39;hi world!&#39;}}}</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="i2.key_path.KeyPathMap.items">
+<code class="sig-name descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; a set-like object providing a view on D’s items<a class="reference internal" href="../../_modules/i2/key_path.html#KeyPathMap.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.KeyPathMap.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="i2.key_path.KeyPathTrans">
+<em class="property">class </em><code class="sig-prename descclassname">i2.key_path.</code><code class="sig-name descname">KeyPathTrans</code><span class="sig-paren">(</span><em class="sig-param">sep: str = '.'</em>, <em class="sig-param">node_type: type = &lt;class 'dict'&gt;</em>, <em class="sig-param">mk_new_node=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#KeyPathTrans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.KeyPathTrans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Doing what StrKeyPath but where the store that is being operated on is not included in the object, but
+given to the method as input.</p>
+<dl class="py method">
+<dt id="i2.key_path.KeyPathTrans.extract_key_paths">
+<code class="sig-name descname">extract_key_paths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">key_paths</span></em>, <em class="sig-param"><span class="n">field_naming</span><span class="o">=</span><span class="default_value">'full'</span></em>, <em class="sig-param"><span class="n">use_default</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">default_val</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#KeyPathTrans.extract_key_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.KeyPathTrans.extract_key_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>getting with a key list or “.”-separated string
+:param d: dict-like
+:param key_path: list or “.”-separated string of keys
+:param field_naming: ‘full’ (default) will use key_path strings as is, leaf will only use the last dot item</p>
+<blockquote>
+<div><p>(i.e. this.is.a.key.path will result in “path” being used)</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">KeyPathTrans</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;a.a&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;a.b&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>            <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;a.c.a&#39;</span>
+<span class="gp">... </span>        <span class="p">}</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span>    <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">3</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="o">.</span><span class="n">extract_key_paths</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="go">{&#39;a&#39;: {&#39;a&#39;: &#39;a.a&#39;, &#39;b&#39;: &#39;a.b&#39;, &#39;c&#39;: {&#39;a&#39;: &#39;a.c.a&#39;}}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="o">.</span><span class="n">extract_key_paths</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;a.a&#39;</span><span class="p">)</span>
+<span class="go">{&#39;a.a&#39;: &#39;a.a&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="o">.</span><span class="n">extract_key_paths</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;a.c&#39;</span><span class="p">)</span>
+<span class="go">{&#39;a.c&#39;: {&#39;a&#39;: &#39;a.c.a&#39;}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="o">.</span><span class="n">extract_key_paths</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;a.a&#39;</span><span class="p">,</span> <span class="s1">&#39;a.c&#39;</span><span class="p">])</span>
+<span class="go">{&#39;a.a&#39;: &#39;a.a&#39;, &#39;a.c&#39;: {&#39;a&#39;: &#39;a.c.a&#39;}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="o">.</span><span class="n">extract_key_paths</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;a.a&#39;</span><span class="p">,</span> <span class="s1">&#39;something.thats.not.there&#39;</span><span class="p">])</span>  <span class="c1"># missing key just won&#39;t be included</span>
+<span class="go">{&#39;a.a&#39;: &#39;a.a&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="o">.</span><span class="n">extract_key_paths</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;a.a&#39;</span><span class="p">,</span> <span class="s1">&#39;something.thats.not.there&#39;</span><span class="p">],</span> <span class="n">use_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default_val</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="go">{&#39;a.a&#39;: &#39;a.a&#39;, &#39;something.thats.not.there&#39;: 42}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="i2.key_path.KeyPathTrans.getitem">
+<code class="sig-name descname">getitem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">key_path</span></em>, <em class="sig-param"><span class="n">default_val</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#KeyPathTrans.getitem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.KeyPathTrans.getitem" title="Permalink to this definition">¶</a></dt>
+<dd><p>getting with a key list or “.”-separated string
+:param d: dict-like
+:param key_path: list or “.”-separated string of keys
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="i2.key_path.KeyPathTrans.items">
+<code class="sig-name descname">items</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">key_path_prefix</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#KeyPathTrans.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.KeyPathTrans.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>iterate through items of store recursively, yielding (key_path, val) pairs for all nested values that are not
+store types.
+That is, if a value is a store_type, it won’t generate a yield, but rather, will be iterated through
+recursively.
+:param d: input store
+:param key_path_so_far: string to be prepended to all key paths (for use in recursion, not meant for direct use)
+:return: a (key_path, val) iterator</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">KeyPathTrans</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">input_dict</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;a.a&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;a.b&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>            <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;a.c.a&#39;</span>
+<span class="gp">... </span>        <span class="p">}</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span>    <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">3</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">input_dict</span><span class="p">))</span>
+<span class="go">[(&#39;a.a&#39;, &#39;a.a&#39;), (&#39;a.b&#39;, &#39;a.b&#39;), (&#39;a.c.a&#39;, &#39;a.c.a&#39;), (&#39;b&#39;, &#39;b&#39;), (&#39;c&#39;, 3)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="i2.key_path.KeyPathTrans.setitem">
+<code class="sig-name descname">setitem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">key_path</span></em>, <em class="sig-param"><span class="n">val</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#KeyPathTrans.setitem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.KeyPathTrans.setitem" title="Permalink to this definition">¶</a></dt>
+<dd><p>setting with a key list or “.”-separated string
+:param d: dict
+:param key_path: list or “.”-separated string of keys
+:param val: value to assign
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="i2.key_path.KeyPathTrans.setitem_recursive">
+<code class="sig-name descname">setitem_recursive</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">key_path</span></em>, <em class="sig-param"><span class="n">val</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#KeyPathTrans.setitem_recursive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.KeyPathTrans.setitem_recursive" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d</strong> – </p></li>
+<li><p><strong>key_path</strong> – </p></li>
+<li><p><strong>val</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">KeyPathTrans</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">input_dict</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>  <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="s2">&quot;val of a.c&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>  <span class="p">},</span>
+<span class="gp">... </span>  <span class="s2">&quot;10&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+<span class="gp">... </span>  <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>      <span class="s2">&quot;AA&quot;</span><span class="p">:</span> <span class="mi">3</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span>  <span class="p">}</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="o">.</span><span class="n">setitem_recursive</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="s1">&#39;new.key.path&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">input_dict</span>
+<span class="go">{&#39;a&#39;: {&#39;c&#39;: &#39;val of a.c&#39;, &#39;b&#39;: 1}, &#39;10&#39;: 10, &#39;b&#39;: {&#39;B&#39;: {&#39;AA&#39;: 3}}, &#39;new&#39;: {&#39;key&#39;: {&#39;path&#39;: 7}}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="o">.</span><span class="n">setitem_recursive</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="s1">&#39;new.key.old.path&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">input_dict</span>
+<span class="go">{&#39;a&#39;: {&#39;c&#39;: &#39;val of a.c&#39;, &#39;b&#39;: 1}, &#39;10&#39;: 10, &#39;b&#39;: {&#39;B&#39;: {&#39;AA&#39;: 3}}, &#39;new&#39;: {&#39;key&#39;: {&#39;path&#39;: 7, &#39;old&#39;: {&#39;path&#39;: 8}}}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="o">.</span><span class="n">setitem_recursive</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="s1">&#39;new.key&#39;</span><span class="p">,</span> <span class="s1">&#39;new val&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">input_dict</span>
+<span class="go">{&#39;a&#39;: {&#39;c&#39;: &#39;val of a.c&#39;, &#39;b&#39;: 1}, &#39;10&#39;: 10, &#39;b&#39;: {&#39;B&#39;: {&#39;AA&#39;: 3}}, &#39;new&#39;: {&#39;key&#39;: &#39;new val&#39;}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="i2.key_path.StrKeyPath">
+<em class="property">class </em><code class="sig-prename descclassname">i2.key_path.</code><code class="sig-name descname">StrKeyPath</code><span class="sig-paren">(</span><em class="sig-param">store=&lt;class 'dict'&gt;</em>, <em class="sig-param">key_type: type = None</em>, <em class="sig-param">node_type: type = None</em>, <em class="sig-param">auto_node_writes=False</em>, <em class="sig-param">sep: str = '.'</em>, <em class="sig-param">prefix: str = ''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#StrKeyPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.StrKeyPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>A KeyPathMap, but where the key paths are expressed as string with a separator.
+If sep = ‘.’, then instead of using (‘a’, ‘b’, ‘c’) as a key, you can use ‘a.b.c’.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;2a&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;aba&#39;</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>     <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mf">3.14</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example with sep=&#39;/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">StrKeyPath</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;a/a&#39;, &#39;2a&#39;), (&#39;a/b/a&#39;, &#39;aba&#39;), (&#39;a/b/b&#39;, 3), (&#39;c&#39;, 3.14)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># You can also add a prefix to the keys</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">StrKeyPath</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;http://a/a&#39;, &#39;2a&#39;), (&#39;http://a/b/a&#39;, &#39;aba&#39;), (&#39;http://a/b/b&#39;, 3), (&#39;http://c&#39;, 3.14)]</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Default sep is &#39;.&#39;, so we&#39;ll work with that:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">StrKeyPath</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
+<span class="go">{&#39;a&#39;: {&#39;a&#39;: &#39;2a&#39;, &#39;b&#39;: {&#39;a&#39;: &#39;aba&#39;, &#39;b&#39;: 3}}, &#39;c&#39;: 3.14}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;a.a&#39;, &#39;2a&#39;), (&#39;a.b.a&#39;, &#39;aba&#39;), (&#39;a.b.b&#39;, 3), (&#39;c&#39;, 3.14)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">[&#39;a.a&#39;, &#39;a.b.a&#39;, &#39;a.b.b&#39;, &#39;c&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="go">[&#39;2a&#39;, &#39;aba&#39;, 3, 3.14]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>
+<span class="go">{&#39;a&#39;: &#39;2a&#39;, &#39;b&#39;: {&#39;a&#39;: &#39;aba&#39;, &#39;b&#39;: 3}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.a&#39;</span><span class="p">]</span>
+<span class="go">&#39;2a&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.b.b&#39;</span><span class="p">]</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="s1">&#39;a.new_key&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kp</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.new_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;new val&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;a.new_key&#39;</span> <span class="ow">in</span> <span class="n">kp</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.new_key&#39;</span><span class="p">]</span>
+<span class="go">&#39;new val&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.b.a&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;a.a&#39;, &#39;2a&#39;), (&#39;a.b.b&#39;, 3), (&#39;a.new_key&#39;, &#39;new val&#39;), (&#39;c&#39;, 3.14)]</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># By default, you can only write on already created nodes. But if auto_node_writes=True, you can do this:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span> <span class="o">=</span> <span class="n">StrKeyPath</span><span class="p">(</span><span class="n">auto_node_writes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
+<span class="go">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span><span class="p">[</span><span class="s1">&#39;a.b.c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;hi world!&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kp</span>
+<span class="go">{&#39;a&#39;: {&#39;b&#39;: {&#39;c&#39;: &#39;hi world!&#39;}}}</span>
+<span class="gp">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="i2.key_path.StrKeyPath.items">
+<code class="sig-name descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; a set-like object providing a view on D’s items<a class="reference internal" href="../../_modules/i2/key_path.html#StrKeyPath.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.StrKeyPath.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.key_path.flatten_dict">
+<code class="sig-prename descclassname">i2.key_path.</code><code class="sig-name descname">flatten_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#flatten_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.flatten_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a “flat” dict from a nested one. A flat dict’s keys are the paths of the input dict.
+These paths will be expressed as tuples of the original keys by defaults.
+If these keys are strings though, you can use sep and prefix to get string representations of the paths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d</strong> – a nested dict</p></li>
+<li><p><strong>sep</strong> – The separator character (or string) in a string representation of the paths.</p></li>
+<li><p><strong>prefix</strong> – A string to prepend on all the paths</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A flat dict</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;2a&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;aca&#39;</span><span class="p">,</span> <span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>     <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">3</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">{(&#39;a&#39;, &#39;a&#39;): &#39;2a&#39;, (&#39;a&#39;, &#39;c&#39;, &#39;a&#39;): &#39;aca&#39;, (&#39;a&#39;, &#39;c&#39;, &#39;u&#39;): 4, (&#39;c&#39;,): 3}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+<span class="go">{&#39;a.a&#39;: &#39;2a&#39;, &#39;a.c.a&#39;: &#39;aca&#39;, &#39;a.c.u&#39;: 4, &#39;c&#39;: 3}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;/ROOT/&#39;</span><span class="p">)</span>
+<span class="go">{&#39;/ROOT/a/a&#39;: &#39;2a&#39;, &#39;/ROOT/a/c/a&#39;: &#39;aca&#39;, &#39;/ROOT/a/c/u&#39;: 4, &#39;/ROOT/c&#39;: 3}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.key_path.obj_to_str_path">
+<code class="sig-prename descclassname">i2.key_path.</code><code class="sig-name descname">obj_to_str_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">name_of_obj</span><span class="o">=</span><span class="default_value">operator.attrgetter('__qualname__')</span></em>, <em class="sig-param"><span class="n">path_of_module</span><span class="o">=</span><span class="default_value">operator.attrgetter('__module__')</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#obj_to_str_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.obj_to_str_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dotpath reference for an object</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Signature</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj_to_str_path</span><span class="p">(</span><span class="n">Signature</span><span class="o">.</span><span class="n">replace</span><span class="p">)</span>
+<span class="go">&#39;inspect.Signature.replace&#39;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">obj_to_str_path</span></code> is the inverse of <code class="docutils literal notranslate"><span class="pre">str_path_to_obj</span></code></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">str_path_to_obj</span><span class="p">(</span><span class="n">obj_to_str_path</span><span class="p">(</span><span class="n">Signature</span><span class="o">.</span><span class="n">replace</span><span class="p">))</span> <span class="o">==</span> <span class="n">Signature</span><span class="o">.</span><span class="n">replace</span>
+</pre></div>
+</div>
+<p>Let’s try with a different separator.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">obj_to_str_path</span><span class="p">(</span><span class="n">Signature</span><span class="o">.</span><span class="n">replace</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span>
+<span class="go">&#39;inspect/Signature.replace&#39;</span>
+</pre></div>
+</div>
+<p>Remember to specify the same <code class="docutils literal notranslate"><span class="pre">sep</span></code> when you do the inverse!</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">str_path_to_obj</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">Signature</span><span class="o">.</span><span class="n">replace</span>
+</pre></div>
+</div>
+<p>You can also pass in your own <code class="docutils literal notranslate"><span class="pre">name_of_obj</span></code> and <code class="docutils literal notranslate"><span class="pre">path_of_module</span></code> functions.
+For example you want a more permissive version of <cite>name_of_obj</cite> you may consider
+<code class="docutils literal notranslate"><span class="pre">i2.name_of_obj</span></code>.
+Note, thought, that <code class="docutils literal notranslate"><span class="pre">str_path_to_obj</span></code> might not work as an inverse for
+custom <code class="docutils literal notranslate"><span class="pre">name_of_obj</span></code> and <code class="docutils literal notranslate"><span class="pre">path_of_module</span></code> functions.
+You may have to write your own inverse function in this case.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.key_path.rollout_dict">
+<code class="sig-prename descclassname">i2.key_path.</code><code class="sig-name descname">rollout_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#rollout_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.rollout_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the nested path of a flat (key path) dict. This is the inverse of flatten_dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d</strong> – a flat dict (i.e. one whose keys are paths of a nested dict)</p></li>
+<li><p><strong>sep</strong> – If None (default), the paths should be key tuples. If a string, it it assumed to be
+the separator of string representations of the path</p></li>
+<li><p><strong>prefix</strong> – A string that has be prepended to all each key (path) of the input dict
+(and therefore should be removed)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The corresponding nested path</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">flat_d</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">):</span> <span class="s1">&#39;2a&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">):</span> <span class="s1">&#39;aca&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;u&#39;</span><span class="p">):</span> <span class="mi">4</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,):</span> <span class="mi">3</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rollout_dict</span><span class="p">(</span><span class="n">flat_d</span><span class="p">)</span>
+<span class="go">{&#39;a&#39;: {&#39;a&#39;: &#39;2a&#39;, &#39;c&#39;: {&#39;a&#39;: &#39;aca&#39;, &#39;u&#39;: 4}}, &#39;c&#39;: 3}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flat_d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a.a&#39;</span><span class="p">:</span> <span class="s1">&#39;2a&#39;</span><span class="p">,</span> <span class="s1">&#39;a.c.a&#39;</span><span class="p">:</span> <span class="s1">&#39;aca&#39;</span><span class="p">,</span> <span class="s1">&#39;a.c.u&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rollout_dict</span><span class="p">(</span><span class="n">flat_d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+<span class="go">{&#39;a&#39;: {&#39;a&#39;: &#39;2a&#39;, &#39;c&#39;: {&#39;a&#39;: &#39;aca&#39;, &#39;u&#39;: 4}}, &#39;c&#39;: 3}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flat_d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;/ROOT/a/a&#39;</span><span class="p">:</span> <span class="s1">&#39;2a&#39;</span><span class="p">,</span> <span class="s1">&#39;/ROOT/a/c/a&#39;</span><span class="p">:</span> <span class="s1">&#39;aca&#39;</span><span class="p">,</span> <span class="s1">&#39;/ROOT/a/c/u&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;/ROOT/c&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rollout_dict</span><span class="p">(</span><span class="n">flat_d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;/ROOT/&#39;</span><span class="p">)</span>
+<span class="go">{&#39;a&#39;: {&#39;a&#39;: &#39;2a&#39;, &#39;c&#39;: {&#39;a&#39;: &#39;aca&#39;, &#39;u&#39;: 4}}, &#39;c&#39;: 3}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.key_path.str_path_to_obj">
+<code class="sig-prename descclassname">i2.key_path.</code><code class="sig-name descname">str_path_to_obj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">str_path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/key_path.html#str_path_to_obj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.key_path.str_path_to_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads and returns the object referenced by the string DOTPATH_TO_MODULE.OBJ_NAME</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="itypes.html" class="btn btn-neutral float-left" title="i2.itypes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="multi_object.html" class="btn btn-neutral float-right" title="i2.multi_object" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright OtoSense 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

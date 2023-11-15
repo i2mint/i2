@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>i2.tests.util &mdash; i2 0.1.3 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/toggleprompt.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="i2.util" href="../util.html" />
+    <link rel="prev" title="i2.tests.test_wrapper" href="test_wrapper.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            i2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_deprecated.html">i2._deprecated</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">i2.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../footprints.html">i2.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../itypes.html">i2.itypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../key_path.html">i2.key_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multi_object.html">i2.multi_object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/scrap_ch_variadics.html">i2.scrap.scrap_ch_variadics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/signature_bops.html">i2.scrap.signature_bops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/switch_case_tree.html">i2.scrap.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="footprints_test.html">i2.tests.footprints_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signatures_test.html">i2.tests.signatures_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_wrapper.html">i2.tests.test_wrapper</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">i2.tests.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wrapper.html">i2.wrapper</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">i2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">i2.tests.util</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/module_docs/i2/tests/util.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-i2.tests.util">
+<span id="i2-tests-util"></span><h1>i2.tests.util<a class="headerlink" href="#module-i2.tests.util" title="Permalink to this headline">¶</a></h1>
+<p>Utils for testing</p>
+<dl class="py function">
+<dt id="i2.tests.util.builtin_signatureless_callables">
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">builtin_signatureless_callables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#builtin_signatureless_callables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.builtin_signatureless_callables" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generator of builtin callables that don’t have signatures.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.tests.util.function_is_compatible_with_signature">
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">function_is_compatible_with_signature</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">sig</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#function_is_compatible_with_signature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.function_is_compatible_with_signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs through all combinations of positional and keyword arguments,</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">function_is_compatible_with_signature</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">,</span> <span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="o">...</span><span class="p">))</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">function_is_compatible_with_signature</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">,</span> <span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">/</span><span class="p">:</span> <span class="o">...</span><span class="p">))</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.tests.util.generate_params">
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">generate_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Iterable<span class="p">[</span>inspect.Parameter<span class="p">]</span><span class="p">, </span>inspect.Signature<span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Callable<span class="p">, </span>str<span class="p">, </span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#generate_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.generate_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate inspect.Parameter instances quickly.</p>
+<p>Example: Generate params solely from a list of their kinds</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">generate_params</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])))</span>
+<span class="go">&#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">generate_params</span><span class="p">(</span><span class="s2">&quot;00111234&quot;</span><span class="p">)))</span>
+<span class="go">&#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.tests.util.inject_defaults">
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">inject_defaults</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Iterable<span class="p">[</span>inspect.Parameter<span class="p">]</span><span class="p">, </span>inspect.Signature<span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Callable<span class="p">, </span>str<span class="p">, </span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">defaults</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#inject_defaults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.inject_defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields params with defaults ({argname: default_val,…}) edited.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="nb">str</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">Sig</span><span class="p">(</span>
+<span class="gp">... </span>            <span class="n">inject_defaults</span><span class="p">(</span>
+<span class="gp">... </span>                <span class="n">generate_params</span><span class="p">(</span><span class="s2">&quot;00111234&quot;</span><span class="p">),</span> <span class="n">defaults</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;a14&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;a36&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">}</span>
+<span class="gp">... </span>            <span class="p">)</span>
+<span class="gp">... </span>        <span class="p">)</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span>    <span class="o">==</span> <span class="s2">&quot;(a00, a01, /, a12, a13, a14=40, *a25, a36=60, **a47)&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.tests.util.mk_func_from_params">
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">mk_func_from_params</code><span class="sig-paren">(</span><em class="sig-param">params: Union[Iterable[inspect.Parameter], inspect.Signature, Mapping[str, inspect.Parameter], Callable, str] = '00111234', *, defaults=None, name=None, callback: Callable[[dict], Any] = &lt;function _str_of_call_args&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#mk_func_from_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.mk_func_from_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a function (that actually returns something based on args) from params.</p>
+<p>See Also: <code class="docutils literal notranslate"><span class="pre">sig_to_func</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> – params (arguments) of the function (can be expressed in many ways!)</p></li>
+<li><p><strong>defaults</strong> – Optional {argname: default,…} dict to inject defaults</p></li>
+<li><p><strong>name</strong> – Optional name to give the function</p></li>
+<li><p><strong>callback</strong> – The function defining what the function actually does.
+Must be a function taking a single dict input encapsulating the all arguments.
+The default will return a string representation of this dict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A function with the specified params, returning a string of it’s (call) args</p>
+</dd>
+</dl>
+<p>There’s many ways you can express the <cite>params</cite> input.
+Any of the ways understood by the <cite>signatures.ensure_params</cite> function, for one;
+plus a few more.</p>
+<p>One nice way to express the params is through an actual function.
+Note that the code of the function isn’t even looked out.
+Only it’s signature is taken into consideration.
+The returned function will have the same signature.
+Instead, the callback function will be acalled on the infered _call_kwargs
+dict of {argname: argval} pairs.
+The default callaback is a string exhibiting these argname/argval pairs.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">mk_func_from_params</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}{</span><span class="n">Sig</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">f(x, /, y, *, z)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">&#39;x=1, y=2, z=3&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">&#39;x=1, y=2, z=3&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">mk_func_from_params</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="s1">&#39;ZZZ&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}{</span><span class="n">Sig</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">f(x, /, y=42, *, z=&#39;ZZZ&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mf">3.14</span><span class="p">)</span>
+<span class="go">&#39;x=3.14, y=42, z=ZZZ&#39;</span>
+</pre></div>
+</div>
+<p>If you’re not interested in having that level of control, but are just
+interested in the number and kinds of the arguments, you can specify only that;
+a sequence of kinds.
+These must be a non-decreasing sequence of integers between
+0 and 4 inclusive. These integers represent kinds of parameters.
+See <a class="reference external" href="https://docs.python.org/3/library/inspect.html#inspect.Parameter.kind">https://docs.python.org/3/library/inspect.html#inspect.Parameter.kind</a>
+to see what each integer value means.
+You can also specify this integer sequence as a single string, as shown below.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">mk_func_from_params</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="s2">&quot;00111234&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+<span class="go">&#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
+</pre></div>
+</div>
+<p>The next one is convoluted on purpose, to try to break the tools with name clashing,
+using the name a47 several times.
+The <code class="docutils literal notranslate"><span class="pre">a47=...</span></code> in the input could have been any name, but is bound to be caught in
+the <code class="docutils literal notranslate"><span class="pre">**a47</span></code> variadic argument.
+Therefore, the first <code class="docutils literal notranslate"><span class="pre">a47=...</span></code> of the output is saying “I’m the variadic that caught
+that input”. The <code class="docutils literal notranslate"><span class="pre">{'a47':</span> <span class="pre">...</span></code> following it is saying “the user input an extra
+keyword argument that they called <cite>a47</cite>. Then the <code class="docutils literal notranslate"><span class="pre">{&quot;a47&quot;:</span> <span class="pre">7,</span> <span class="pre">&quot;a47_&quot;:</span> <span class="pre">-7}</span></code> is just
+the value of that keyword argument.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">a36</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">a47</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;a47&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;a47_&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">7</span><span class="p">})</span>
+<span class="go">&quot;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(5, -5), a36=6, a47={&#39;a47&#39;: {&#39;a47&#39;: 7, &#39;a47_&#39;: -7}}&quot;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">a13</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">a14</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">a36</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="go">&#39;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(), a36=6, a47={}&#39;</span>
+</pre></div>
+</div>
+<p>What just happened?
+Well, <cite>params=”00111234”</cite> was transformed to <cite>params=[0, 0, 1, 1, 1, 2, 3, 4]</cite>,
+which was transformed to a list of the same size, using</p>
+<p>Now, if you really want full control over those params, you can specify them
+completely using the <cite>inspect.Parameter</cite> class.
+You can also decide what level of control you want, and mix and match all kinds of
+specifications, as below.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">mk_func_from_params</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;blah&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">kind</span><span class="o">=</span><span class="n">Parameter</span><span class="o">.</span><span class="n">POSITIONAL_OR_KEYWORD</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">default</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}{</span><span class="n">Sig</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">f(a00, /, blah, hello=&#39;world&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;a00=11, blah=22, hello=world&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.tests.util.params_to_arg_name_and_val">
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">params_to_arg_name_and_val</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Iterable<span class="p">[</span>inspect.Parameter<span class="p">]</span><span class="p">, </span>inspect.Signature<span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Callable<span class="p">, </span>str<span class="p">, </span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#params_to_arg_name_and_val"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.params_to_arg_name_and_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a <cite>{argname: argval, …}</cite> dictionary from an iterable of params.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params_to_arg_name_and_val</span><span class="p">(</span><span class="n">generate_params</span><span class="p">(</span><span class="s2">&quot;00111234&quot;</span><span class="p">)))</span> <span class="o">==</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;a00&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a01&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a12&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a13&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a14&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a25&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="s2">&quot;a36&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;a47&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;a47&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;a47_&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">7</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.tests.util.sig_to_func">
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">sig_to_func</code><span class="sig-paren">(</span><em class="sig-param">sig: Union[Iterable[inspect.Parameter], inspect.Signature, Mapping[str, inspect.Parameter], Callable, str] = '00111234', code_lines: Union[str, Iterable, Callable[[i2.signatures.Sig], str]] = &lt;function _sig_to_str_of_call_args_code_str&gt;, *, name: Optional[str, None] = None, globals: Optional[dict, None] = None, locals: Optional[Mapping, None] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#sig_to_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.sig_to_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a function from a signature</p>
+<p>See Also: <code class="docutils literal notranslate"><span class="pre">mk_func_from_params</span></code></p>
+<p>More information: <a class="reference external" href="https://github.com/i2mint/i2/issues/34">https://github.com/i2mint/i2/issues/34</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sig</strong> – Signature (or something that can be made into a signature) the func</p>
+</dd>
+</dl>
+<p>should have
+:param name: Name the function should have
+:param code_lines: The code lines</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">globals</span></code> must be a dictionary and <code class="docutils literal notranslate"><span class="pre">locals</span></code> can be any mapping, defaulting
+to the current globals and locals. If only <code class="docutils literal notranslate"><span class="pre">globals</span></code> is given, <code class="docutils literal notranslate"><span class="pre">locals</span></code>
+defaults to it.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="s1">&#39;(a, /, b=2)&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">sig_to_func</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+<span class="go">&#39;(a, /, b=2)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">&#39;a=2, b=3&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span>
+<span class="go">&#39;f01&#39;</span>
+</pre></div>
+</div>
+<p>See how the function was given a name automatically? This name was created by
+appending the kind number
+(see <a class="reference external" href="https://docs.python.org/3/library/inspect.html#inspect.Parameter.kind">https://docs.python.org/3/library/inspect.html#inspect.Parameter.kind</a>)
+to ‘f’.</p>
+<p>Let’s demo how we can</p>
+<ul class="simple">
+<li><p>use kind numbers (see <cite>inspect</cite> module) to specify the signature</p></li>
+<li><p>give an explicit name to the function</p></li>
+<li><p>specify <code class="docutils literal notranslate"><span class="pre">locals()</span></code> so that <code class="docutils literal notranslate"><span class="pre">sig_to_func</span></code> can insert the new function there</p></li>
+</ul>
+<p>(which makes it picklable, for instances)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">sig_to_func</span><span class="p">(</span><span class="s1">&#39;012&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="o">=</span><span class="nb">locals</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># and now `foo` is in local name space, and has signature:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">))</span>
+<span class="go">&#39;(a00, /, a11, *a22)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">&#39;a00=1, a11=2, a22=(3, 4, 5)&#39;</span>
+</pre></div>
+</div>
+<p>In the examples above, the function body was was created from the input <code class="docutils literal notranslate"><span class="pre">sig</span></code>
+through the <code class="docutils literal notranslate"><span class="pre">_sig_to_str_of_call_args_code_str</span></code> function which outputs a string
+formed from the input argument names and values.</p>
+<p>But you can specify your own function. This function should take a <code class="docutils literal notranslate"><span class="pre">Sig</span></code> object
+and return the string or lines (iterable of strings) of the function’s body.
+You can also specify a string or lines directly.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">sig_to_func</span><span class="p">(</span><span class="s1">&#39;(x, y=2)&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">g</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">sig_to_func</span><span class="p">(</span><span class="s1">&#39;(x, y=2)&#39;</span><span class="p">,</span> <span class="s1">&#39;return x * y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">30</span>
+</pre></div>
+</div>
+<p>You can even omit the return instruction if, as in <code class="docutils literal notranslate"><span class="pre">lambda</span></code> functions, the body is
+a simple expression (not <cite>pass</cite>, <cite>…</cite>, or starting something with quotes).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">sig_to_func</span><span class="p">(</span><span class="s1">&#39;(x, y=2)&#39;</span><span class="p">,</span> <span class="s1">&#39;x / y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="go">2.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="i2.tests.util.sig_to_inputs">
+<code class="sig-prename descclassname">i2.tests.util.</code><code class="sig-name descname">sig_to_inputs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sig</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>inspect.Signature<span class="p">, </span>Iterable<span class="p">[</span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>inspect.Parameter<span class="p">]</span><span class="p">, </span>Callable<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">argument_vals</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Iterable<span class="p">, </span>None<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">variadics_source</span><span class="p">:</span> <span class="n">Tuple<span class="p">[</span>tuple<span class="p">, </span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">(('args1', 'args2'), {'kwargs1': 'kwargs1_val'})</span></em><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span>Tuple<span class="p">[</span>tuple<span class="p">, </span>dict<span class="p">]</span><span class="p">]</span><a class="reference internal" href="../../../_modules/i2/tests/util.html#sig_to_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#i2.tests.util.sig_to_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate all kind-valid (arg, kwargs) input combinations for a function with a
+given signature <code class="docutils literal notranslate"><span class="pre">sig</span></code>, with argument values taken from the <code class="docutils literal notranslate"><span class="pre">argument_vals</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sig</strong> – A signature or anything that <code class="docutils literal notranslate"><span class="pre">i2.Sig</span></code> can use to create one (e.g.
+function, string, list of dicts etc.)</p></li>
+<li><p><strong>argument_vals</strong> – An interable from which the argument values will be drawn.
+Defaults to <code class="docutils literal notranslate"><span class="pre">list(range(n_args))</span></code>.</p></li>
+<li><p><strong>variadics_source</strong> – The <code class="docutils literal notranslate"><span class="pre">(tuple,</span> <span class="pre">dict)</span></code> pair that will be used to extract
+variadics’ inputs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A generator of <code class="docutils literal notranslate"><span class="pre">(args:</span> <span class="pre">tuple,</span> <span class="pre">kwargs:</span> <span class="pre">dict)</span></code> pairs</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">sig_to_inputs</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}),</span>
+<span class="gp">... </span>    <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}),</span>
+<span class="gp">... </span>    <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
+<span class="gp">... </span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">sig_to_inputs</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="s1">&#39;(a, *args, b, **kwargs)&#39;</span><span class="p">)))</span>  
+<span class="go">[((), {&#39;a&#39;: 0, &#39;b&#39;: 1}),</span>
+<span class="go"> ((), {&#39;a&#39;: 0, &#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;}),</span>
+<span class="go"> ((&#39;args1&#39;,), {&#39;a&#39;: 0, &#39;b&#39;: 1}),</span>
+<span class="go"> ((&#39;args1&#39;,), {&#39;a&#39;: 0, &#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;}),</span>
+<span class="go"> ((&#39;args1&#39;, &#39;args2&#39;), {&#39;a&#39;: 0, &#39;b&#39;: 1}),</span>
+<span class="go"> ((&#39;args1&#39;, &#39;args2&#39;), {&#39;a&#39;: 0, &#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;}),</span>
+<span class="go"> ((0,), {&#39;b&#39;: 1}),</span>
+<span class="go"> ((0,), {&#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;}),</span>
+<span class="go"> ((0, &#39;args1&#39;), {&#39;b&#39;: 1}),</span>
+<span class="go"> ((0, &#39;args1&#39;), {&#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;}),</span>
+<span class="go"> ((0, &#39;args1&#39;, &#39;args2&#39;), {&#39;b&#39;: 1}),</span>
+<span class="go"> ((0, &#39;args1&#39;, &#39;args2&#39;), {&#39;b&#39;: 1, &#39;kwargs1&#39;: &#39;kwargs1_val&#39;})]</span>
+</pre></div>
+</div>
+<p>Tip: To ignore variadics all together, you can specify <code class="docutils literal notranslate"><span class="pre">variadics_source=((),</span> <span class="pre">{})</span></code>.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="test_wrapper.html" class="btn btn-neutral float-left" title="i2.tests.test_wrapper" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../util.html" class="btn btn-neutral float-right" title="i2.util" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright OtoSense 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

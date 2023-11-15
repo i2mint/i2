@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>i2.scrap.switch_case_tree &mdash; i2 0.1.3 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/toggleprompt.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            i2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/_deprecated.html">i2._deprecated</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/examples.html">i2.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/footprints.html">i2.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/itypes.html">i2.itypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/key_path.html">i2.key_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/multi_object.html">i2.multi_object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/scrap_ch_variadics.html">i2.scrap.scrap_ch_variadics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/signature_bops.html">i2.scrap.signature_bops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/scrap/switch_case_tree.html">i2.scrap.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/footprints_test.html">i2.tests.footprints_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">i2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">i2.scrap.switch_case_tree</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for i2.scrap.switch_case_tree</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Experimental Mapping the maps keys using a switch_case structure.</span>
+
+<span class="sd">Development paused while waiting for 3.10&#39;s pattern matching that may subsume this.</span>
+
+
+<span class="sd">&gt;&gt;&gt; from i2.scrap.switch_case_tree import *</span>
+<span class="sd">&gt;&gt;&gt; from collections import Counter</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; special_featurizer = {</span>
+<span class="sd">...     &#39;len&#39;: len,</span>
+<span class="sd">...     &#39;cols&#39;: lambda df: df.columns,</span>
+<span class="sd">...     &#39;sum&#39;: lambda df: df.sum().sum(),</span>
+<span class="sd">... }</span>
+<span class="sd">&gt;&gt;&gt; special_comparison = {</span>
+<span class="sd">...     &#39;alleq&#39;: lambda x, y: all(x == y),</span>
+<span class="sd">...     &#39;isin&#39;: lambda x, y: x in y,</span>
+<span class="sd">...     &#39;eq&#39;: operator.eq,</span>
+<span class="sd">... }</span>
+<span class="sd">&gt;&gt;&gt; featurizer = ChainMap(</span>
+<span class="sd">...     special_featurizer,</span>
+<span class="sd">...     special_comparison,</span>
+<span class="sd">...     {&#39;some_local_func&#39;: lambda x: list(map(str, x))}</span>
+<span class="sd">... )</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; comparison = ChainMap(</span>
+<span class="sd">...     special_comparison, AttrMap(operator, is_valid_val=is_valid_comparision),</span>
+<span class="sd">... )</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; assert comparison[&#39;contains&#39;] == operator.contains</span>
+<span class="sd">&gt;&gt;&gt;</span>
+
+<span class="sd">Let&#39;s have a look at the &quot;featurizers&quot; (where we purposely injected 3 functions that</span>
+<span class="sd">were in fact not featurizers!</span>
+
+<span class="sd">&gt;&gt;&gt; sorted(featurizer)  # doctest: +NORMALIZE_WHITESPACE</span>
+<span class="sd">[&#39;alleq&#39;, &#39;cols&#39;, &#39;eq&#39;, &#39;isin&#39;, &#39;len&#39;, &#39;some_local_func&#39;, &#39;sum&#39;]</span>
+<span class="sd">&gt;&gt;&gt; Counter(map(is_valid_featurizer, featurizer.values()))</span>
+<span class="sd">Counter({True: 4, False: 3})</span>
+<span class="sd">&gt;&gt;&gt; Counter(map(is_valid_comparision, featurizer.values()))</span>
+<span class="sd">Counter({False: 4, True: 3})</span>
+
+<span class="sd">Let&#39;s have a look at the comparison functions...</span>
+
+<span class="sd">&gt;&gt;&gt; Counter(map(is_valid_comparision, comparison.values()))</span>
+<span class="sd">Counter({True: 81})</span>
+<span class="sd">&gt;&gt;&gt; Counter(map(is_valid_featurizer, comparison.values()))</span>
+<span class="sd">Counter({False: 80, True: 1})</span>
+
+<span class="sd">What&#39;s that single comparison function that&#39;s also a featurizer?</span>
+
+<span class="sd">&gt;&gt;&gt; next(filter(is_valid_featurizer, comparison.values())).__name__</span>
+<span class="sd">&#39;length_hint&#39;</span>
+
+
+<span class="sd">&gt;&gt;&gt; from contextlib import suppress</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; with suppress(ModuleNotFoundError, ImportError):</span>
+<span class="sd">...     import pandas as pd</span>
+<span class="sd">...     from collections import namedtuple</span>
+<span class="sd">...     Condition = namedtuple(&#39;Condition&#39;, [&#39;feat&#39;, &#39;comp&#39;])</span>
+<span class="sd">...     condition = {</span>
+<span class="sd">...         feat + &#39;_&#39; + comp: Condition(featurizer[feat], comparison[comp])</span>
+<span class="sd">...         for feat, comp in [(&#39;len&#39;, &#39;lt&#39;), (&#39;cols&#39;, &#39;isin&#39;), (&#39;cols&#39;, &#39;contains&#39;),]</span>
+<span class="sd">...     }</span>
+<span class="sd">...     assert all(</span>
+<span class="sd">...         is_valid_feat_and_comp(feat, comp) for feat, comp in condition.values()</span>
+<span class="sd">...     )</span>
+<span class="sd">...</span>
+<span class="sd">...     df = pd.DataFrame({&#39;a&#39;: [1, 2, 3], &#39;b&#39;: [10, 20, 30]})</span>
+<span class="sd">...     filt = mk_filt(df, *condition[&#39;len_lt&#39;])</span>
+<span class="sd">...     result = list(filter(filt, [2, 3, 4, 5]))</span>
+<span class="sd">...     assert result == [4, 5]</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">ChainMap</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+
+
+<span class="k">class</span> <span class="nc">AsIsMap</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_valid_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_valid_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">is_valid_key</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_key</span> <span class="o">=</span> <span class="n">is_valid_key</span>
+
+    <span class="k">def</span> <span class="nf">_validate_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_key</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> wasn&#39;t a valid key&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">k</span>
+
+
+<div class="viewcode-block" id="AttrMap"><a class="viewcode-back" href="../../../module_docs/i2/scrap/switch_case_tree.html#i2.scrap.switch_case_tree.AttrMap">[docs]</a><span class="k">class</span> <span class="nc">AttrMap</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">is_valid_val</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="k">if</span> <span class="n">is_valid_val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">is_valid_val</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_val</span> <span class="o">=</span> <span class="n">is_valid_val</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_validate_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;key should be a string&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_validate_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_val</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;key was valid and value found, but value wasn&#39;t valid&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_getitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_val_of_key_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getitem</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getitem</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_val</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">v</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val_of_key_is_valid</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val_of_key_is_valid</span><span class="p">,</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">():</span>
+            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">c</span></div>
+
+
+<span class="k">def</span> <span class="nf">n_args_and_n_args_with_no_defaults</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># happens because some builtins don&#39;t have signatures (!?!?)</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">default</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">empty</span><span class="p">,</span> <span class="n">args</span><span class="p">)))</span>
+
+
+<span class="k">def</span> <span class="nf">is_valid_featurizer</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">n_args</span><span class="p">,</span> <span class="n">n_no_dflt_args</span> <span class="o">=</span> <span class="n">n_args_and_n_args_with_no_defaults</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">n_args</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">n_no_dflt_args</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">is_valid_comparision</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">n_args</span><span class="p">,</span> <span class="n">n_no_dflt_args</span> <span class="o">=</span> <span class="n">n_args_and_n_args_with_no_defaults</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">n_args</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">n_no_dflt_args</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">is_valid_feat_and_comp</span><span class="p">(</span><span class="n">feat</span><span class="p">,</span> <span class="n">comp</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">is_valid_featurizer</span><span class="p">(</span><span class="n">feat</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_valid_comparision</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">values_are_valid_feat_and_comp</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_valid_feat_and_comp</span><span class="p">(</span><span class="n">feat</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span> <span class="k">for</span> <span class="n">feat</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+
+<span class="k">def</span> <span class="nf">mk_filt</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">featurizer</span><span class="p">,</span> <span class="n">comparison</span><span class="p">):</span>
+    <span class="n">feature</span> <span class="o">=</span> <span class="n">featurizer</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">filt</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">comparison</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filt</span>
+
+
+<span class="k">def</span> <span class="nf">test_switch_case_tree</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+    <span class="n">special_featurizer</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;len&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">,</span>
+        <span class="s1">&#39;cols&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+        <span class="s1">&#39;sum&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+    <span class="p">}</span>
+
+    <span class="n">some_local_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+
+    <span class="n">featurizer</span> <span class="o">=</span> <span class="n">ChainMap</span><span class="p">(</span>
+        <span class="n">special_featurizer</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">is_valid_featurizer</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;__module__&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;i2.&#39;</span><span class="p">)</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="n">special_comparison</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;alleq&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">),</span>
+        <span class="s1">&#39;isin&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span><span class="p">,</span>
+        <span class="s1">&#39;eq&#39;</span><span class="p">:</span> <span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">comparison</span> <span class="o">=</span> <span class="n">ChainMap</span><span class="p">(</span>
+        <span class="n">special_comparison</span><span class="p">,</span> <span class="n">AttrMap</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">is_valid_val</span><span class="o">=</span><span class="n">is_valid_comparision</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">comparison</span><span class="p">[</span><span class="s1">&#39;contains&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">operator</span><span class="o">.</span><span class="n">contains</span>
+
+    <span class="k">assert</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">is_valid_featurizer</span><span class="p">,</span> <span class="n">featurizer</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">==</span> <span class="n">Counter</span><span class="p">({</span><span class="kc">True</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+
+    <span class="k">assert</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">is_valid_comparision</span><span class="p">,</span> <span class="n">featurizer</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">==</span> <span class="n">Counter</span><span class="p">(</span>
+        <span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">is_valid_featurizer</span><span class="p">,</span> <span class="n">comparison</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">==</span> <span class="n">Counter</span><span class="p">(</span>
+        <span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">is_valid_comparision</span><span class="p">,</span> <span class="n">comparison</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">==</span> <span class="n">Counter</span><span class="p">(</span>
+        <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="mi">81</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="n">featurizer_kvs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">featurizer</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">assert</span> <span class="n">featurizer_kvs</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;len&#39;</span><span class="p">:</span> <span class="s1">&#39;len&#39;</span><span class="p">,</span> <span class="s1">&#39;cols&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;lambda&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;lambda&gt;&#39;</span><span class="p">}</span>
+
+    <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+
+    <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">ModuleNotFoundError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+        <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+        <span class="n">Condition</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Condition&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;feat&#39;</span><span class="p">,</span> <span class="s1">&#39;comp&#39;</span><span class="p">])</span>
+        <span class="n">condition</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">feat</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">comp</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">featurizer</span><span class="p">[</span><span class="n">feat</span><span class="p">],</span> <span class="n">comparison</span><span class="p">[</span><span class="n">comp</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">feat</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;len&#39;</span><span class="p">,</span> <span class="s1">&#39;lt&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;cols&#39;</span><span class="p">,</span> <span class="s1">&#39;isin&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;cols&#39;</span><span class="p">,</span> <span class="s1">&#39;contains&#39;</span><span class="p">),]</span>
+        <span class="p">}</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="n">is_valid_feat_and_comp</span><span class="p">(</span><span class="n">feat</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span> <span class="k">for</span> <span class="n">feat</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">condition</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]})</span>
+        <span class="n">filt</span> <span class="o">=</span> <span class="n">mk_filt</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">*</span><span class="n">condition</span><span class="p">[</span><span class="s1">&#39;len_lt&#39;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">filt</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]))</span> <span class="o">==</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+
+
+<span class="c1">##########################################################################################################</span>
+<span class="c1"># from anytree import Node, AnyNode, RenderTree, ContStyle, NodeMixin</span>
+<span class="c1">#</span>
+<span class="c1"># NodeMixin.separator = &#39;.&#39;</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># def get_attr_and_vals(obj):</span>
+<span class="c1">#     for k in dir(obj):</span>
+<span class="c1">#         v = getattr(obj, k)</span>
+<span class="c1">#         yield k, v</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># def attr_and_vals_dict(obj, filt=None):</span>
+<span class="c1">#     return {k: v for k, v in filter(filt, get_attr_and_vals(obj))}</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># # Filters</span>
+<span class="c1"># def value_not_callable(kv):</span>
+<span class="c1">#     return not callable(kv[1])</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># class AttrTreeImporter:</span>
+<span class="c1">#     _base_types = (int, float, str, bytes, bool, list)</span>
+<span class="c1">#</span>
+<span class="c1">#     def __init__(self, val_types=()):</span>
+<span class="c1">#         self.val_types = tuple(set(val_types).union(self._base_types))</span>
+<span class="c1">#</span>
+<span class="c1">#     def dict_of_obj(self, obj):</span>
+<span class="c1">#         d = dict()</span>
+<span class="c1">#         for k, v in obj.__dict__.items():</span>
+<span class="c1">#             if isinstance(v, self.val_types):</span>
+<span class="c1">#                 d[k] = v</span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 d[k] = self.dict_of_obj(v)</span>
+<span class="c1">#         return d</span>
+<span class="c1">#</span>
+<span class="c1">#     def tree_of_dict(self, d, parent=None, root_name=&#39;root&#39;):</span>
+<span class="c1">#         if parent is None:</span>
+<span class="c1">#             parent = Node(root_name)</span>
+<span class="c1">#         for k, v in d.items():</span>
+<span class="c1">#             if isinstance(v, dict):</span>
+<span class="c1">#                 n = Node(k, parent=parent)</span>
+<span class="c1">#                 self.tree_of_dict(v, parent=n)</span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 n = Node(k, parent=parent, val=v)</span>
+<span class="c1">#         return parent</span>
+<span class="c1">#</span>
+<span class="c1">#     def tree_of_obj(self, obj, root_name=None):</span>
+<span class="c1">#         if root_name is None:</span>
+<span class="c1">#             if hasattr(obj, &#39;__name__&#39;):</span>
+<span class="c1">#                 root_name = obj.__name__</span>
+<span class="c1">#             elif hasattr(obj, &#39;__class__&#39;):</span>
+<span class="c1">#                 root_name = obj.__class__.__name__</span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 root_name = &#39;root&#39;</span>
+<span class="c1">#         return self.tree_of_dict(self.dict_of_obj(obj), root_name=root_name)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright OtoSense 2020.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
