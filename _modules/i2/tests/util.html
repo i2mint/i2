@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.util &mdash; i2 0.1.3 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>i2.tests.util &mdash; i2 0.1.4 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -325,14 +325,13 @@
 
     <span class="nd">@sig</span>
     <span class="k">def</span> <span class="nf">arg_str_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">_call_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span>
-            <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
+        <span class="n">_call_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">callback</span><span class="p">(</span><span class="n">_call_kwargs</span><span class="p">)</span>
 
     <span class="n">arg_str_func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">_params_to_name</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">arg_str_func</span></div>
+
 
 <span class="k">def</span> <span class="nf">_sig_to_str_of_call_args_code_str</span><span class="p">(</span><span class="n">sig</span><span class="p">:</span> <span class="n">Sig</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span>
