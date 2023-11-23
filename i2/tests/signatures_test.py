@@ -31,8 +31,49 @@ from i2.tests.util import (
 )
 
 
-def test_signature_equality_and_hashing():
+def test_add_optional_keywords():
+    @Sig.add_optional_keywords({"c": 2, "d": 3}, {"c": int})
+    def foo(a, *, b=1, **kwargs):
+        return f"{a=}, {b=}, {kwargs=}"
 
+    assert str(Sig(foo)) == '(a, *, c: int = 2, d=3, b=1, **kwargs)'
+    assert foo(0, d=10) == "a=0, b=1, kwargs={'d': 10}"
+
+    # Testing when kwarg_annotations is used with keyword argument
+    @Sig.add_optional_keywords({"c": 2, "d": 3}, kwarg_annotations={"c": int})
+    def foo(a, *, b=1, **kwargs):
+        pass
+
+    assert str(Sig(foo)) == '(a, *, c: int = 2, d=3, b=1, **kwargs)'
+
+    # Testing when both kwarg_and_defaults and kwarg_annotations are used
+    # with keyword argument
+    @Sig.add_optional_keywords(
+        kwarg_and_defaults={"c": 2, "d": 3}, kwarg_annotations={"c": int}
+    )
+    def foo(a, *, b=1, **kwargs):
+        pass
+
+    assert str(Sig(foo)) == '(a, *, c: int = 2, d=3, b=1, **kwargs)'
+
+    # Testing when add_optional_keywords is used as instance method
+    def foo(a, *, b=1, **kwargs):
+        return f"{a=}, {b=}, {kwargs=}"
+
+    assert foo(0, d=10) == "a=0, b=1, kwargs={'d': 10}"
+
+    sig = Sig(foo)
+    new_sig = sig.add_optional_keywords({"c": 2, "d": 3}, {"c": int})
+
+    assert str(new_sig) == ('(a, *, c: int = 2, d=3, b=1, **kwargs)')
+
+    sig(foo)  # decorate foo, and see that it still works
+    assert foo(0, d=10) == "a=0, b=1, kwargs={'d': 10}"
+    f = sig(foo)  # decorate foo, returning a pointer to foo called f
+    assert f(0, d=10) == "a=0, b=1, kwargs={'d': 10}"
+
+
+def test_signature_equality_and_hashing():
     import pickle
 
     def foo(x, y, z=3):
@@ -352,7 +393,10 @@ def mk_sig(
         for name, annotation in annotations.items():
             p = params[name]
             params[name] = Parameter(
-                name=name, kind=p.kind, default=p.default, annotation=annotation,
+                name=name,
+                kind=p.kind,
+                default=p.default,
+                annotation=annotation,
             )
         return Signature(params.values(), return_annotation=return_annotations)
 
@@ -632,13 +676,25 @@ def test_call_forgivingly(sig_spec):
         ('(a, /, b, *, c)', '(a, /, *, b, c)'),
         ('(a, /, b, *, c)', '(a, b, /, c)'),
         ('(a, /, b, *, c)', '(a, *, b, c)'),
-        ('(a, /, b, *, c)', '(x, /, b, *, c)',),
-        ('(a, /, b, *, c)', '(a, /, x, *, c)',),
-        ('(a, /, b, *, c)', '(a, /, b, *, x)',),
+        (
+            '(a, /, b, *, c)',
+            '(x, /, b, *, c)',
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(a, /, x, *, c)',
+        ),
+        (
+            '(a, /, b, *, c)',
+            '(a, /, b, *, x)',
+        ),
         ('(a, /, b, *, c)', '(a=0, b=0, c=0)'),
         ('(a=0, /, b=0, *, c=0)', '(a, b, c)'),
         ('(a, b, /, c, d, *, e, f)', '(b, a, /, d, c, *, f, e)'),
-        ('(a, b, /, c, d, *, e, f)', '(a, c, /, b, e, *, d, f)',),
+        (
+            '(a, b, /, c, d, *, e, f)',
+            '(a, c, /, b, e, *, d, f)',
+        ),
         ('()', '(*args)'),
         ('()', '(**kwargs)'),
         ('()', '(*args, **kwargs)'),

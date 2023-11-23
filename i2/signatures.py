@@ -339,10 +339,62 @@ def _params_from_mapping(mapping: MappingType):
                 else:
                     yield dict(name=k, **v)
             else:
-                assert isinstance(v, Parameter) and v.name == k
+                assert isinstance(v, Parameter) and v.name == k, (
+                    f"In a mapping specification of a params, "
+                    f"either the val should be a Parameter with the same name as the "
+                    f"key ({k}), or it should be a mapping with a 'name' key "
+                    f"with the same value as the key: {dict(mapping)}"
+                )
                 yield v
 
     return list(gen())
+
+
+def _add_optional_keywords(sig, kwarg_and_defaults, kwarg_annotations=None):
+    """
+    Enhances a given signature with additional optional keyword-only arguments.
+
+    Args:
+        sig (Signature): The original function signature.
+        kwarg_and_defaults (dict): A dictionary of keyword arguments and their default values.
+        kwarg_annotations (dict, optional): A dictionary of keyword arguments and their type annotations.
+
+    Returns:
+        Signature: The enhanced function signature with additional keyword-only arguments.
+
+    >>> from inspect import signature
+    >>> def example_func(x, y): pass
+    >>> original_sig = signature(example_func)
+    >>> enhanced_sig = _add_optional_keywords(
+    ...     original_sig, {'z': 3, 'verbose': False}, {'verbose': bool}
+    ... )
+    >>> str(enhanced_sig)
+    '(x, y, *, z=3, verbose: bool = False)'
+
+    Note:
+        - Annotations for the additional keywords are optional.
+        - All additional keywords are added as keyword-only arguments.
+    """
+    if isinstance(sig, Signature):
+        sig = Sig(sig).merge_with_sig(
+            Sig.from_objs(**kwarg_and_defaults), ch_to_all_pk=False
+        )
+        sig = sig.ch_kinds(**{k: Sig.KEYWORD_ONLY for k in kwarg_and_defaults})
+
+        kwarg_annotations = kwarg_annotations or {}
+        assert all(name in kwarg_and_defaults for name in kwarg_annotations), (
+            "Some annotations were given for arguments that were not in kwarg_and_defaults:"
+            f"\n{kwarg_and_defaults=}\n{kwarg_annotations=}"
+        )
+        sig = sig.ch_annotations(**kwarg_annotations)
+        return sig
+    else:
+        func = sig  # assume it's a function
+        # apply _add_optional_keywords to that function
+        sig = Sig(func)
+        sig = _add_optional_keywords(sig, kwarg_and_defaults, kwarg_annotations)
+        # and inject the new signature into the function
+        return sig(func)
 
 
 def ensure_params(obj: ParamsAble = None):
@@ -640,7 +692,10 @@ def extract_arguments(
 
     if include_all_when_var_keywords_in_params:
         if (
-            next((p.name for p in params if p.kind == Parameter.VAR_KEYWORD), None,)
+            next(
+                (p.name for p in params if p.kind == Parameter.VAR_KEYWORD),
+                None,
+            )
             is not None
         ):
             param_kwargs.update(remaining_kwargs)
@@ -1846,6 +1901,50 @@ class Sig(Signature, Mapping):
     def ch_annotations(self, /, **changes_for_name):
         return self.ch_param_attrs('annotation', **changes_for_name)
 
+    def add_optional_keywords(
+        self=None, /, kwarg_and_defaults=None, kwarg_annotations=None
+    ):
+        """Add optional keyword arguments to a signature.
+
+        >>> @Sig.add_optional_keywords({"c": 2, "d": 3}, {"c": int})
+        ... def foo(a, *, b=1, **kwargs):
+        ...     return f"{a=}, {b=}, {kwargs=}"
+        ...
+
+        You can still call the function as before, and like before, any "extra" keyword
+        arguments will be passed to kwargs:
+
+        >>> foo(0, d=10)
+        "a=0, b=1, kwargs={'d': 10}"
+
+        The difference is that now the signature of `foo` now has `c` and `d`:
+
+        >>> str(Sig(foo))
+        '(a, *, c: int = 2, d=3, b=1, **kwargs)'
+
+        """
+
+        # Resolve arguments ( to be able to use this method as a decorator)
+        if isinstance(self, dict):
+            if kwarg_and_defaults is not None:
+                kwarg_annotations = kwarg_and_defaults
+                kwarg_and_defaults = None
+            if kwarg_and_defaults is None:
+                kwarg_and_defaults = self
+            self = None
+
+        # If self is None, a factory is returned
+        if self is None:
+            return partial(
+                _add_optional_keywords,
+                kwarg_and_defaults=kwarg_and_defaults,
+                kwarg_annotations=kwarg_annotations,
+            )
+        else:  # if not, apply _add_optional_keywords to self
+            return _add_optional_keywords(
+                self, kwarg_and_defaults, kwarg_annotations=kwarg_annotations
+            )
+
     # TODO: Make default_conflict_method be able to be a callable and get rid of string
     #  mapping complexity in merge_with_sig code
     def merge_with_sig(
@@ -2497,7 +2596,7 @@ class Sig(Signature, Mapping):
         >>> foo_sig.mk_args_and_kwargs(arguments, args_limit=3)
         ((4, 3, 2), {'z': 1})
 
-        Note that if you specify `args_limit` to be greater than the maximum of 
+        Note that if you specify `args_limit` to be greater than the maximum of
         positional arguments, it behaves as if `args_limit` was `None`:
 
         >>> foo_sig.mk_args_and_kwargs(arguments, args_limit=4)
@@ -2742,8 +2841,8 @@ class Sig(Signature, Mapping):
         >>> (args, kwargs) == ((4,), {"x": 3, "y": 2})
         True
 
-        The difference with map_arguments_from_variadics is that here the output is 
-        ready to be called by the function whose signature we have, since the 
+        The difference with map_arguments_from_variadics is that here the output is
+        ready to be called by the function whose signature we have, since the
         position-only arguments will be returned as args.
 
         >>> foo(*args, **kwargs)
@@ -2805,7 +2904,9 @@ class Sig(Signature, Mapping):
             ignore_kind=_ignore_kind,
         )
         return self.mk_args_and_kwargs(
-            arguments, allow_partial=_allow_partial, args_limit=_args_limit,
+            arguments,
+            allow_partial=_allow_partial,
+            args_limit=_args_limit,
         )
 
     def source_arguments(
@@ -2970,7 +3071,9 @@ class Sig(Signature, Mapping):
             **kwargs,
         )
         return self.mk_args_and_kwargs(
-            arguments, allow_partial=_allow_partial, args_limit=_args_limit,
+            arguments,
+            allow_partial=_allow_partial,
+            args_limit=_args_limit,
         )
 
 
@@ -4355,7 +4458,9 @@ for kind in param_kinds:
     lower_kind = kind.lower()
     setattr(param_for_kind, lower_kind, partial(param_for_kind, kind=kind))
     setattr(
-        param_for_kind, 'with_default', partial(param_for_kind, with_default=True),
+        param_for_kind,
+        'with_default',
+        partial(param_for_kind, with_default=True),
     )
     setattr(
         getattr(param_for_kind, lower_kind),
@@ -4409,7 +4514,10 @@ def mk_func_comparator_based_on_signature_comparator(
 
 
 def _keyed_comparator(
-    comparator: Comparator, key: KeyFunction, x: CT, y: CT,
+    comparator: Comparator,
+    key: KeyFunction,
+    x: CT,
+    y: CT,
 ) -> Comparison:
     """Apply a comparator after transforming inputs through a key function.
 
@@ -4423,7 +4531,10 @@ def _keyed_comparator(
     return comparator(key(x), key(y))
 
 
-def keyed_comparator(comparator: Comparator, key: KeyFunction,) -> Comparator:
+def keyed_comparator(
+    comparator: Comparator,
+    key: KeyFunction,
+) -> Comparator:
     """Create a key-function enabled binary operator.
 
     In various places in python functionality is extended by allowing a key function.
