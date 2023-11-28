@@ -111,7 +111,19 @@ from functools import (
     update_wrapper as _update_wrapper,
 )
 
-from i2.util import FrozenDict, deprecation_of
+
+def deprecation_of(func, old_name):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        from warnings import warn
+
+        warn(
+            f'`{old_name}` is deprecated. Use `{func.__module__}.{func.__qualname__}` instead.',
+            DeprecationWarning,
+        )
+        return func(*args, **kwargs)
+
+    return wrapper
 
 # monkey patching WRAPPER_ASSIGNMENTS to get "proper" wrapping (adding defaults and
 # kwdefaults
@@ -138,7 +150,7 @@ VP, VK = Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD
 PO, KO = Parameter.POSITIONAL_ONLY, Parameter.KEYWORD_ONLY
 var_param_kinds = frozenset({VP, VK})
 var_param_types = var_param_kinds  # Deprecate: for back-compatibility. Delete in 2021
-var_param_kind_dflts = FrozenDict({VP: (), VK: {}})
+var_param_kind_dflts_items = tuple({VP: (), VK: {}}.items())
 
 DFLT_DEFAULT_CONFLICT_METHOD = 'strict'
 param_attributes = {'name', 'kind', 'default', 'annotation'}
@@ -692,7 +704,10 @@ def extract_arguments(
 
     if include_all_when_var_keywords_in_params:
         if (
-            next((p.name for p in params if p.kind == Parameter.VAR_KEYWORD), None,)
+            next(
+                (p.name for p in params if p.kind == Parameter.VAR_KEYWORD),
+                None,
+            )
             is not None
         ):
             param_kwargs.update(remaining_kwargs)
@@ -2906,7 +2921,9 @@ class Sig(Signature, Mapping):
             ignore_kind=_ignore_kind,
         )
         return self.mk_args_and_kwargs(
-            arguments, allow_partial=_allow_partial, args_limit=_args_limit,
+            arguments,
+            allow_partial=_allow_partial,
+            args_limit=_args_limit,
         )
 
     def source_arguments(
@@ -3071,7 +3088,9 @@ class Sig(Signature, Mapping):
             **kwargs,
         )
         return self.mk_args_and_kwargs(
-            arguments, allow_partial=_allow_partial, args_limit=_args_limit,
+            arguments,
+            allow_partial=_allow_partial,
+            args_limit=_args_limit,
         )
 
 
@@ -4456,7 +4475,9 @@ for kind in param_kinds:
     lower_kind = kind.lower()
     setattr(param_for_kind, lower_kind, partial(param_for_kind, kind=kind))
     setattr(
-        param_for_kind, 'with_default', partial(param_for_kind, with_default=True),
+        param_for_kind,
+        'with_default',
+        partial(param_for_kind, with_default=True),
     )
     setattr(
         getattr(param_for_kind, lower_kind),
@@ -4510,7 +4531,10 @@ def mk_func_comparator_based_on_signature_comparator(
 
 
 def _keyed_comparator(
-    comparator: Comparator, key: KeyFunction, x: CT, y: CT,
+    comparator: Comparator,
+    key: KeyFunction,
+    x: CT,
+    y: CT,
 ) -> Comparison:
     """Apply a comparator after transforming inputs through a key function.
 
@@ -4524,7 +4548,10 @@ def _keyed_comparator(
     return comparator(key(x), key(y))
 
 
-def keyed_comparator(comparator: Comparator, key: KeyFunction,) -> Comparator:
+def keyed_comparator(
+    comparator: Comparator,
+    key: KeyFunction,
+) -> Comparator:
     """Create a key-function enabled binary operator.
 
     In various places in python functionality is extended by allowing a key function.
