@@ -1,23 +1,27 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.1.7 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <title>i2.signatures &mdash; i2 0.1.8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/toggleprompt.js"></script>
-        <script src="../../_static/clipboard.min.js"></script>
-        <script src="../../_static/copybutton.js"></script>
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=22607128"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -42,7 +46,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2.html">i2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/_deprecated.html">i2._deprecated</a></li>
@@ -262,14 +266,20 @@
 <span class="n">param_attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;kind&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="s1">&#39;annotation&#39;</span><span class="p">}</span>
 
 
-<div class="viewcode-block" id="FuncCallNotMatchingSignature"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.FuncCallNotMatchingSignature">[docs]</a><span class="k">class</span> <span class="nc">FuncCallNotMatchingSignature</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
+<div class="viewcode-block" id="FuncCallNotMatchingSignature">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.FuncCallNotMatchingSignature">[docs]</a>
+<span class="k">class</span> <span class="nc">FuncCallNotMatchingSignature</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise when the call signature is not valid&quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="IncompatibleSignatures"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.IncompatibleSignatures">[docs]</a><span class="k">class</span> <span class="nc">IncompatibleSignatures</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IncompatibleSignatures">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.IncompatibleSignatures">[docs]</a>
+<span class="k">class</span> <span class="nc">IncompatibleSignatures</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise when two signatures are not compatible.</span>
 <span class="sd">    (see https://github.com/i2mint/i2/issues/16 for more information on signature</span>
 <span class="sd">    compatibility)&quot;&quot;&quot;</span></div>
+
 
 
 <span class="c1"># TODO: Couldn&#39;t make this work. See https://www.python.org/dev/peps/pep-0562/</span>
@@ -289,7 +299,9 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">KO</span> <span class="ow">or</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">empty</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="sort_params"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.sort_params">[docs]</a><span class="k">def</span> <span class="nf">sort_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="sort_params">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.sort_params">[docs]</a>
+<span class="k">def</span> <span class="nf">sort_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :param params: An iterable of `Parameter` instances</span>
@@ -314,11 +326,14 @@
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">_param_sort_key</span><span class="p">)</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">_return_none</span><span class="p">(</span><span class="n">o</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">return</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="name_of_obj"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.name_of_obj">[docs]</a><span class="k">def</span> <span class="nf">name_of_obj</span><span class="p">(</span>
+<div class="viewcode-block" id="name_of_obj">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.name_of_obj">[docs]</a>
+<span class="k">def</span> <span class="nf">name_of_obj</span><span class="p">(</span>
     <span class="n">o</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">base_name_of_obj</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;__name__&#39;</span><span class="p">),</span>
@@ -386,6 +401,7 @@
         <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s1">&#39;fset&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">fset</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">default_factory</span><span class="p">(</span><span class="n">o</span><span class="p">)</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">ensure_callable</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">SignatureAble</span><span class="p">):</span>
@@ -515,7 +531,9 @@
         <span class="k">return</span> <span class="n">sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="ensure_params"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.ensure_params">[docs]</a><span class="k">def</span> <span class="nf">ensure_params</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">ParamsAble</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ensure_params">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.ensure_params">[docs]</a>
+<span class="k">def</span> <span class="nf">ensure_params</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">ParamsAble</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get an interable of Parameter instances from an object.</span>
 
 <span class="sd">    :param obj:</span>
@@ -601,10 +619,13 @@
             <span class="p">)</span></div>
 
 
+
 <span class="n">assure_params</span> <span class="o">=</span> <span class="n">ensure_params</span>  <span class="c1"># alias for backcompatibility</span>
 
 
-<div class="viewcode-block" id="MissingArgValFor"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.MissingArgValFor">[docs]</a><span class="k">class</span> <span class="nc">MissingArgValFor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="MissingArgValFor">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.MissingArgValFor">[docs]</a>
+<span class="k">class</span> <span class="nc">MissingArgValFor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple class to wrap an argument name, indicating that it was missing somewhere.</span>
 
 <span class="sd">    &gt;&gt;&gt; MissingArgValFor(&quot;argname&quot;)</span>
@@ -619,8 +640,11 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;MissingArgValFor(&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">argname</span><span class="si">}</span><span class="s1">&quot;)&#39;</span></div>
 
 
+
 <span class="c1"># TODO: Look into the handling of the Parameter.VAR_KEYWORD kind in params</span>
-<div class="viewcode-block" id="extract_arguments"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.extract_arguments">[docs]</a><span class="k">def</span> <span class="nf">extract_arguments</span><span class="p">(</span>
+<div class="viewcode-block" id="extract_arguments">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.extract_arguments">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_arguments</span><span class="p">(</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">what_to_do_with_remainding</span><span class="o">=</span><span class="s1">&#39;return&#39;</span><span class="p">,</span>
@@ -835,6 +859,7 @@
         <span class="k">return</span> <span class="n">param_args</span><span class="p">,</span> <span class="n">param_kwargs</span></div>
 
 
+
 <span class="n">extract_arguments_ignoring_remainder</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
     <span class="n">extract_arguments</span><span class="p">,</span> <span class="n">what_to_do_with_remainding</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span>
 <span class="p">)</span>
@@ -850,7 +875,9 @@
     <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="Param"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Param">[docs]</a><span class="k">class</span> <span class="nc">Param</span><span class="p">(</span><span class="n">Parameter</span><span class="p">):</span>
+<div class="viewcode-block" id="Param">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Param">[docs]</a>
+<span class="k">class</span> <span class="nc">Param</span><span class="p">(</span><span class="n">Parameter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A thin wrap of Parameters: Adds shorter aliases to argument kinds and</span>
 <span class="sd">    a POSITIONAL_OR_KEYWORD default to the argument kind to make it faster to make</span>
 <span class="sd">    Parameter objects</span>
@@ -903,6 +930,7 @@
             <span class="n">other</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
             <span class="n">other</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">empty</span><span class="p">,</span>
         <span class="p">)</span></div>
+
 
 
 <span class="n">P</span> <span class="o">=</span> <span class="n">Param</span>  <span class="c1"># useful shorthand alias</span>
@@ -982,7 +1010,9 @@
 <span class="c1"># TODO: See other signature operating functions below in this module:</span>
 <span class="c1">#   Do we need them now that we have Sig?</span>
 <span class="c1">#   Do we want to keep them and have Sig use them?</span>
-<div class="viewcode-block" id="Sig"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig">[docs]</a><span class="k">class</span> <span class="nc">Sig</span><span class="p">(</span><span class="n">Signature</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+<div class="viewcode-block" id="Sig">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig">[docs]</a>
+<span class="k">class</span> <span class="nc">Sig</span><span class="p">(</span><span class="n">Signature</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A subclass of inspect.Signature that has a lot of extra api sugar,</span>
 <span class="sd">    such as</span>
 <span class="sd">        - making a signature for a variety of input types (callable,</span>
@@ -1216,7 +1246,9 @@
     <span class="c1"># TODO: Add params for more validation (e.g. arg number/name matching?)</span>
     <span class="c1"># TODO: Switch to ignore_incompatible_signatures=False when existing code is</span>
     <span class="c1">#   changed accordingly.</span>
-<div class="viewcode-block" id="Sig.wrap"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.wrap">[docs]</a>    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span>
+<div class="viewcode-block" id="Sig.wrap">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.wrap">[docs]</a>
+    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="n">ignore_incompatible_signatures</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1333,6 +1365,7 @@
 
         <span class="k">return</span> <span class="n">func</span></div>
 
+
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Gives the input function the signature.</span>
 <span class="sd">        Just calls Sig.wrap so see docs of Sig.wrap (which contains examples and</span>
@@ -1340,7 +1373,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Sig.sig_or_default"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.sig_or_default">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Sig.sig_or_default">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.sig_or_default">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">sig_or_default</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">default_signature</span><span class="o">=</span><span class="n">DFLT_SIGNATURE</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a Sig instance, or a default signature if there was a ValueError</span>
 <span class="sd">        trying to construct it.</span>
@@ -1381,7 +1416,10 @@
             <span class="c1"># if a ValueError is raised, return the default_signature</span>
             <span class="k">return</span> <span class="n">Sig</span><span class="p">(</span><span class="n">default_signature</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Sig.sig_or_none"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.sig_or_none">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="Sig.sig_or_none">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.sig_or_none">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">sig_or_none</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a Sig instance, or None if there was a ValueError trying to</span>
 <span class="sd">        construct it.</span>
@@ -1408,6 +1446,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">sig_or_default</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">default_signature</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">True</span>
@@ -1451,7 +1490,9 @@
             <span class="n">kw_defaults</span><span class="p">,</span>  <span class="c1"># as known as __kwdefaults__ in python callables</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Sig.to_signature_kwargs"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.to_signature_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">to_signature_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Sig.to_signature_kwargs">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.to_signature_kwargs">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_signature_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The dict of keyword arguments to make this signature instance.</span>
 
 <span class="sd">        &gt;&gt;&gt; def f(w, /, x: float = 2, y=1, *, z: int = 0) -&gt; float:</span>
@@ -1481,7 +1522,10 @@
             <span class="s1">&#39;return_annotation&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_annotation</span><span class="p">,</span>
         <span class="p">}</span></div>
 
-<div class="viewcode-block" id="Sig.to_simple_signature"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.to_simple_signature">[docs]</a>    <span class="k">def</span> <span class="nf">to_simple_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Sig.to_simple_signature">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.to_simple_signature">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_simple_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A builtin ``inspect.Signature`` instance equivalent (i.e. without the extra</span>
 <span class="sd">        properties and methods)</span>
 
@@ -1493,13 +1537,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Signature</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">to_signature_kwargs</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="Sig.is_call_compatible_with"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.is_call_compatible_with">[docs]</a>    <span class="k">def</span> <span class="nf">is_call_compatible_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_sig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">param_comparator</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Sig.is_call_compatible_with">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.is_call_compatible_with">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_call_compatible_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_sig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">param_comparator</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if the signature is compatible with ``other_sig``. Meaning that</span>
 <span class="sd">        all valid ways to call the signature are valid for ``other_sig``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">is_call_compatible_with</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">other_sig</span><span class="p">,</span> <span class="n">param_comparator</span><span class="o">=</span><span class="n">param_comparator</span>
         <span class="p">)</span></div>
+
 
     <span class="c1"># TODO: Make these dunders open/close</span>
     <span class="c1"># def __le__(self, other_sig):</span>
@@ -1609,7 +1657,9 @@
         <span class="p">)</span>
 
     <span class="c1"># TODO: Can be cleaned and generalized (include/exclude, function filter etc.)</span>
-<div class="viewcode-block" id="Sig.get_names"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.get_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_sig_order</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_excess</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Sig.get_names">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.get_names">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_sig_order</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_excess</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a tuple of names corresponding to the given spec.</span>
 
 <span class="sd">        :param spec: An integer, string, or iterable of intergers and strings</span>
@@ -1679,6 +1729,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown spec type: </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
+
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
 
@@ -1706,7 +1757,9 @@
         <span class="k">return</span> <span class="n">Sig</span><span class="o">.</span><span class="n">from_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
     <span class="c1"># TODO: Deprecate. Should use names_of_kind directly</span>
-<div class="viewcode-block" id="Sig.names_for_kind"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.names_for_kind">[docs]</a>    <span class="k">def</span> <span class="nf">names_for_kind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
+<div class="viewcode-block" id="Sig.names_for_kind">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.names_for_kind">[docs]</a>
+    <span class="k">def</span> <span class="nf">names_for_kind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the arg names tuple for a given kind.</span>
 <span class="sd">        Note, if you need to do this several times, or for several kinds, use</span>
 <span class="sd">        ``names_of_kind`` property (a tuple) instead: It groups all names of kinds once,</span>
@@ -1716,6 +1769,7 @@
 
         <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Deprecated&#39;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">names_of_kind</span><span class="p">[</span><span class="n">kind</span><span class="p">]</span></div>
+
 
     <span class="c1"># TODO: Consider using names_of_kind in other methods/properties</span>
 
@@ -1849,7 +1903,9 @@
                 <span class="c1"># if name is not in params, just use existing param</span>
                 <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
-<div class="viewcode-block" id="Sig.modified"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.modified">[docs]</a>    <span class="k">def</span> <span class="nf">modified</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">):</span>
+<div class="viewcode-block" id="Sig.modified">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.modified">[docs]</a>
+    <span class="k">def</span> <span class="nf">modified</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a modified (new) signature object.</span>
 
 <span class="sd">        Note: This function doesn&#39;t modify the signature, but creates a modified copy</span>
@@ -1905,14 +1961,20 @@
 
         <span class="k">return</span> <span class="n">Sig</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">new_return_annotation</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Sig.sort_params"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.sort_params">[docs]</a>    <span class="k">def</span> <span class="nf">sort_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Sig.sort_params">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.sort_params">[docs]</a>
+    <span class="k">def</span> <span class="nf">sort_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a signature with the parameters sorted by kind and default presence.&quot;&quot;&quot;</span>
         <span class="n">sorted_params</span> <span class="o">=</span> <span class="n">sort_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span>
             <span class="n">sorted_params</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">return_annotation</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Sig.ch_param_attrs"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.ch_param_attrs">[docs]</a>    <span class="k">def</span> <span class="nf">ch_param_attrs</span><span class="p">(</span>
+
+<div class="viewcode-block" id="Sig.ch_param_attrs">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.ch_param_attrs">[docs]</a>
+    <span class="k">def</span> <span class="nf">ch_param_attrs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">param_attr</span><span class="p">,</span> <span class="o">*</span><span class="n">arg_new_vals</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_new_vals</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Change a specific attribute of the params, returning a modified signature.</span>
@@ -1991,6 +2053,7 @@
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified</span><span class="p">(</span><span class="n">_allow_reordering</span><span class="o">=</span><span class="n">_allow_reordering</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">)</span></div>
 
+
     <span class="c1"># Note: Oh, functools, why do you make currying so limited!</span>
     <span class="c1"># ch_names = partialmethod(ch_param_attrs, param_attr=&quot;name&quot;)</span>
     <span class="c1"># ch_kinds = partialmethod(ch_param_attrs, param_attr=&quot;kind&quot;, _allow_reordering=True)</span>
@@ -2023,7 +2086,9 @@
     <span class="k">def</span> <span class="nf">ch_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_param_attrs</span><span class="p">(</span><span class="s1">&#39;annotation&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">changes_for_name</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Sig.add_optional_keywords"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.add_optional_keywords">[docs]</a>    <span class="k">def</span> <span class="nf">add_optional_keywords</span><span class="p">(</span>
+<div class="viewcode-block" id="Sig.add_optional_keywords">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.add_optional_keywords">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_optional_keywords</span><span class="p">(</span>
         <span class="bp">self</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">kwarg_and_defaults</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kwarg_annotations</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add optional keyword arguments to a signature.</span>
@@ -2067,9 +2132,12 @@
                 <span class="bp">self</span><span class="p">,</span> <span class="n">kwarg_and_defaults</span><span class="p">,</span> <span class="n">kwarg_annotations</span><span class="o">=</span><span class="n">kwarg_annotations</span>
             <span class="p">)</span></div>
 
+
     <span class="c1"># TODO: Make default_conflict_method be able to be a callable and get rid of string</span>
     <span class="c1">#  mapping complexity in merge_with_sig code</span>
-<div class="viewcode-block" id="Sig.merge_with_sig"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.merge_with_sig">[docs]</a>    <span class="k">def</span> <span class="nf">merge_with_sig</span><span class="p">(</span>
+<div class="viewcode-block" id="Sig.merge_with_sig">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.merge_with_sig">[docs]</a>
+    <span class="k">def</span> <span class="nf">merge_with_sig</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sig</span><span class="p">:</span> <span class="n">ParamsAble</span><span class="p">,</span>
         <span class="n">ch_to_all_pk</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -2196,6 +2264,7 @@
         <span class="p">)</span>
         <span class="n">params</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">kind</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">params</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sig</span><span class="p">:</span> <span class="n">ParamsAble</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge two signatures (casting all non-VAR kinds to POSITIONAL_OR_KEYWORD</span>
@@ -2351,7 +2420,9 @@
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">new_params</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">return_annotation</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Sig.add_params"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.add_params">[docs]</a>    <span class="k">def</span> <span class="nf">add_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">):</span>
+<div class="viewcode-block" id="Sig.add_params">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.add_params">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a new instance of Sig after merging the parameters of this signature</span>
 <span class="sd">        with a list of new parameters. The new list of parameters is automatically</span>
 <span class="sd">        sorted based on signature constraints given by kinds and default values.</span>
@@ -2374,6 +2445,7 @@
         <span class="n">new_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">+</span> <span class="p">[</span><span class="n">ensure_param</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
         <span class="n">new_params</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">new_params</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">comparator</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">new_params</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sig</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_names</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
@@ -2458,7 +2530,9 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span>
 
-<div class="viewcode-block" id="Sig.map_arguments"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.map_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">map_arguments</span><span class="p">(</span>
+<div class="viewcode-block" id="Sig.map_arguments">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.map_arguments">[docs]</a>
+    <span class="k">def</span> <span class="nf">map_arguments</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2629,11 +2703,14 @@
 
         <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">arguments</span></div>
 
+
     <span class="n">kwargs_from_args_and_kwargs</span> <span class="o">=</span> <span class="n">deprecation_of</span><span class="p">(</span>
         <span class="n">map_arguments</span><span class="p">,</span> <span class="s1">&#39;kwargs_from_args_and_kwargs&#39;</span>
     <span class="p">)</span>
 
-<div class="viewcode-block" id="Sig.mk_args_and_kwargs"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.mk_args_and_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">mk_args_and_kwargs</span><span class="p">(</span>
+<div class="viewcode-block" id="Sig.mk_args_and_kwargs">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.mk_args_and_kwargs">[docs]</a>
+    <span class="k">def</span> <span class="nf">mk_args_and_kwargs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">arguments</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -2867,11 +2944,14 @@
 
         <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span></div>
 
+
     <span class="n">args_and_kwargs_from_kwargs</span> <span class="o">=</span> <span class="n">deprecation_of</span><span class="p">(</span>
         <span class="n">mk_args_and_kwargs</span><span class="p">,</span> <span class="s1">&#39;args_and_kwargs_from_kwargs&#39;</span>
     <span class="p">)</span>
 
-<div class="viewcode-block" id="Sig.map_arguments_from_variadics"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.map_arguments_from_variadics">[docs]</a>    <span class="k">def</span> <span class="nf">map_arguments_from_variadics</span><span class="p">(</span>
+<div class="viewcode-block" id="Sig.map_arguments_from_variadics">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.map_arguments_from_variadics">[docs]</a>
+    <span class="k">def</span> <span class="nf">map_arguments_from_variadics</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="n">_apply_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -2940,9 +3020,12 @@
             <span class="n">ignore_kind</span><span class="o">=</span><span class="n">_ignore_kind</span><span class="p">,</span>
         <span class="p">)</span></div>
 
+
     <span class="n">extract_kwargs</span> <span class="o">=</span> <span class="n">deprecation_of</span><span class="p">(</span><span class="n">map_arguments_from_variadics</span><span class="p">,</span> <span class="s1">&#39;extract_kwargs&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Sig.extract_args_and_kwargs"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.extract_args_and_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">extract_args_and_kwargs</span><span class="p">(</span>
+<div class="viewcode-block" id="Sig.extract_args_and_kwargs">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.extract_args_and_kwargs">[docs]</a>
+    <span class="k">def</span> <span class="nf">extract_args_and_kwargs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="n">_ignore_kind</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -3027,7 +3110,10 @@
             <span class="n">arguments</span><span class="p">,</span> <span class="n">allow_partial</span><span class="o">=</span><span class="n">_allow_partial</span><span class="p">,</span> <span class="n">args_limit</span><span class="o">=</span><span class="n">_args_limit</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Sig.source_arguments"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.source_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">source_arguments</span><span class="p">(</span>
+
+<div class="viewcode-block" id="Sig.source_arguments">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.source_arguments">[docs]</a>
+    <span class="k">def</span> <span class="nf">source_arguments</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="n">_apply_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -3098,9 +3184,12 @@
             <span class="n">ignore_kind</span><span class="o">=</span><span class="n">_ignore_kind</span><span class="p">,</span>
         <span class="p">)</span></div>
 
+
     <span class="n">source_kwargs</span> <span class="o">=</span> <span class="n">deprecation_of</span><span class="p">(</span><span class="n">source_arguments</span><span class="p">,</span> <span class="s1">&#39;source_kwargs&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Sig.source_args_and_kwargs"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.source_args_and_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">source_args_and_kwargs</span><span class="p">(</span>
+<div class="viewcode-block" id="Sig.source_args_and_kwargs">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.source_args_and_kwargs">[docs]</a>
+    <span class="k">def</span> <span class="nf">source_args_and_kwargs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="n">_ignore_kind</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -3190,7 +3279,9 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mk_args_and_kwargs</span><span class="p">(</span>
             <span class="n">arguments</span><span class="p">,</span> <span class="n">allow_partial</span><span class="o">=</span><span class="n">_allow_partial</span><span class="p">,</span> <span class="n">args_limit</span><span class="o">=</span><span class="n">_args_limit</span><span class="p">,</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
+</div>
+
 
 
 <span class="k">def</span> <span class="nf">_fill_defaults_and_annotations</span><span class="p">(</span><span class="n">sig1</span><span class="p">:</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">sig2</span><span class="p">:</span> <span class="n">Sig</span><span class="p">):</span>
@@ -3261,7 +3352,9 @@
 <span class="c1"># Recipes</span>
 
 
-<div class="viewcode-block" id="mk_sig_from_args"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.mk_sig_from_args">[docs]</a><span class="k">def</span> <span class="nf">mk_sig_from_args</span><span class="p">(</span><span class="o">*</span><span class="n">args_without_default</span><span class="p">,</span> <span class="o">**</span><span class="n">args_with_defaults</span><span class="p">):</span>
+<div class="viewcode-block" id="mk_sig_from_args">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.mk_sig_from_args">[docs]</a>
+<span class="k">def</span> <span class="nf">mk_sig_from_args</span><span class="p">(</span><span class="o">*</span><span class="n">args_without_default</span><span class="p">,</span> <span class="o">**</span><span class="n">args_with_defaults</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a Signature instance by specifying args_without_default and</span>
 <span class="sd">    args_with_defaults.</span>
 
@@ -3274,6 +3367,7 @@
     <span class="k">return</span> <span class="n">Sig</span><span class="o">.</span><span class="n">from_objs</span><span class="p">(</span>
         <span class="o">*</span><span class="n">args_without_default</span><span class="p">,</span> <span class="o">**</span><span class="n">args_with_defaults</span>
     <span class="p">)</span><span class="o">.</span><span class="n">to_simple_signature</span><span class="p">()</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_remove_variadics_from_sig</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">ch_variadic_keyword_to_keyword</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -3338,7 +3432,9 @@
 <span class="c1"># TODO: Might want to make func be a positional-only argument, because if kwargs</span>
 <span class="c1">#  contains a func key, we have a problem. But call_forgivingly is used broadly,</span>
 <span class="c1">#  so must first test all dependents before making this change.</span>
-<div class="viewcode-block" id="call_forgivingly"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.call_forgivingly">[docs]</a><span class="k">def</span> <span class="nf">call_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="call_forgivingly">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.call_forgivingly">[docs]</a>
+<span class="k">def</span> <span class="nf">call_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Call function on given args and kwargs, but only taking what the function needs</span>
 <span class="sd">    (not choking if they&#39;re extras variables)</span>
@@ -3381,6 +3477,7 @@
     <span class="k">return</span> <span class="n">_call_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span></div>
 
 
+
 <span class="c1"># TODO: See if there&#39;s a more elegant way to do this</span>
 <span class="k">def</span> <span class="nf">_call_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -3413,7 +3510,9 @@
     <span class="c1"># return func(*_args, **_kwargs)</span>
 
 
-<div class="viewcode-block" id="call_somewhat_forgivingly"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.call_somewhat_forgivingly">[docs]</a><span class="k">def</span> <span class="nf">call_somewhat_forgivingly</span><span class="p">(</span>
+<div class="viewcode-block" id="call_somewhat_forgivingly">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.call_somewhat_forgivingly">[docs]</a>
+<span class="k">def</span> <span class="nf">call_somewhat_forgivingly</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">enforce_sig</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SignatureAble</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Call function on given args and kwargs, but with controllable argument leniency.</span>
@@ -3481,11 +3580,14 @@
     <span class="k">return</span> <span class="n">_call_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">convert_to_PK</span><span class="p">(</span><span class="n">kinds</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">PK</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kinds</span><span class="p">}</span>
 
 
-<div class="viewcode-block" id="kind_forgiving_func"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.kind_forgiving_func">[docs]</a><span class="k">def</span> <span class="nf">kind_forgiving_func</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">kinds_modifier</span><span class="o">=</span><span class="n">convert_to_PK</span><span class="p">):</span>
+<div class="viewcode-block" id="kind_forgiving_func">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.kind_forgiving_func">[docs]</a>
+<span class="k">def</span> <span class="nf">kind_forgiving_func</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">kinds_modifier</span><span class="o">=</span><span class="n">convert_to_PK</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps the func, changing the argument kinds according to kinds_modifier.</span>
 <span class="sd">    The default behaviour is to change all kinds to POSITIONAL_OR_KEYWORD kinds.</span>
 <span class="sd">    The original purpose of this function is to remove argument-kind restriction</span>
@@ -3527,8 +3629,11 @@
     <span class="k">return</span> <span class="n">_func</span></div>
 
 
+
 <span class="c1"># TODO: Should we protect from misuse with signature compatibility check?</span>
-<div class="viewcode-block" id="use_interface"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.use_interface">[docs]</a><span class="k">def</span> <span class="nf">use_interface</span><span class="p">(</span><span class="n">interface_sig</span><span class="p">):</span>
+<div class="viewcode-block" id="use_interface">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.use_interface">[docs]</a>
+<span class="k">def</span> <span class="nf">use_interface</span><span class="p">(</span><span class="n">interface_sig</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Use interface_sig as (enforced/validated) signature of the decorated function.</span>
 <span class="sd">    That is, the decorated function will use the original function has the backend,</span>
 <span class="sd">    the function actually doing the work, but with a frontend specified</span>
@@ -3585,10 +3690,13 @@
     <span class="k">return</span> <span class="n">interface_wrapped_decorator</span></div>
 
 
+
 <span class="kn">import</span> <span class="nn">inspect</span>
 
 
-<div class="viewcode-block" id="has_signature"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.has_signature">[docs]</a><span class="k">def</span> <span class="nf">has_signature</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="has_signature">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.has_signature">[docs]</a>
+<span class="k">def</span> <span class="nf">has_signature</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if an object has a signature -- i.e. is callable and inspect.signature(</span>
 <span class="sd">    obj) returns something.</span>
 
@@ -3622,9 +3730,12 @@
             <span class="k">return</span> <span class="kc">False</span></div>
 
 
+
 <span class="c1"># TODO: Need to define and use this function more carefully.</span>
 <span class="c1">#   Is the goal to remove positional? Remove variadics? Normalize the signature?</span>
-<div class="viewcode-block" id="all_pk_signature"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.all_pk_signature">[docs]</a><span class="k">def</span> <span class="nf">all_pk_signature</span><span class="p">(</span><span class="n">callable_or_signature</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Signature</span><span class="p">]):</span>
+<div class="viewcode-block" id="all_pk_signature">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.all_pk_signature">[docs]</a>
+<span class="k">def</span> <span class="nf">all_pk_signature</span><span class="p">(</span><span class="n">callable_or_signature</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Signature</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Changes all (non-variadic) arguments to be of the PK (POSITION_OR_KEYWORD) kind.</span>
 
 <span class="sd">    Wrapping a function with the resulting signature doesn&#39;t make that function callable</span>
@@ -3685,6 +3796,7 @@
         <span class="k">return</span> <span class="n">sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></div>
 
 
+
 <span class="c1"># Changed ch_signature_to_all_pk to all_pk_signature because ch_signature_to_all_pk</span>
 <span class="c1"># was misleading: It doesn&#39;t change anything at all, it returns a constructed signature.</span>
 <span class="c1"># It doesn&#39;t change all kinds to PK -- just the non-variadic ones.</span>
@@ -3732,7 +3844,9 @@
     <span class="k">return</span> <span class="n">_func</span>
 
 
-<div class="viewcode-block" id="ch_variadics_to_non_variadic_kind"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.ch_variadics_to_non_variadic_kind">[docs]</a><span class="k">def</span> <span class="nf">ch_variadics_to_non_variadic_kind</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ch_variadic_keyword_to_keyword</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="ch_variadics_to_non_variadic_kind">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.ch_variadics_to_non_variadic_kind">[docs]</a>
+<span class="k">def</span> <span class="nf">ch_variadics_to_non_variadic_kind</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ch_variadic_keyword_to_keyword</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator that will change a VAR_POSITIONAL (*args) argument to a tuple (args)</span>
 <span class="sd">    argument of the same name.</span>
 
@@ -3899,6 +4013,7 @@
         <span class="k">return</span> <span class="n">func</span></div>
 
 
+
 <span class="n">tuple_the_args</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
     <span class="n">ch_variadics_to_non_variadic_kind</span><span class="p">,</span> <span class="n">ch_variadic_keyword_to_keyword</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
@@ -3909,7 +4024,9 @@
 <span class="s1">&#39;&#39;&#39;</span>
 
 
-<div class="viewcode-block" id="ch_func_to_all_pk"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.ch_func_to_all_pk">[docs]</a><span class="k">def</span> <span class="nf">ch_func_to_all_pk</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<div class="viewcode-block" id="ch_func_to_all_pk">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.ch_func_to_all_pk">[docs]</a>
+<span class="k">def</span> <span class="nf">ch_func_to_all_pk</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a decorated function where all arguments are of the PK kind.</span>
 <span class="sd">    (PK: Positional_or_keyword)</span>
 
@@ -3974,7 +4091,10 @@
     <span class="k">return</span> <span class="n">__func</span></div>
 
 
-<div class="viewcode-block" id="copy_func"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.copy_func">[docs]</a><span class="k">def</span> <span class="nf">copy_func</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+
+<div class="viewcode-block" id="copy_func">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.copy_func">[docs]</a>
+<span class="k">def</span> <span class="nf">copy_func</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy a function (not sure it works with all types of callables)&quot;&quot;&quot;</span>
     <span class="n">g</span> <span class="o">=</span> <span class="n">FunctionType</span><span class="p">(</span>
         <span class="n">f</span><span class="o">.</span><span class="vm">__code__</span><span class="p">,</span>
@@ -3988,6 +4108,7 @@
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;__signature__&#39;</span><span class="p">):</span>
         <span class="n">g</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">__signature__</span>
     <span class="k">return</span> <span class="n">g</span></div>
+
 
 
 <span class="c1"># TODO: Similar to other function in this module -- merge.</span>
@@ -4006,7 +4127,9 @@
 
 <span class="c1">########################################################################################################################</span>
 <span class="c1"># TODO: Encorporate in Sig</span>
-<div class="viewcode-block" id="insert_annotations"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.insert_annotations">[docs]</a><span class="k">def</span> <span class="nf">insert_annotations</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">Signature</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">empty</span><span class="p">,</span> <span class="o">**</span><span class="n">annotations</span><span class="p">):</span>
+<div class="viewcode-block" id="insert_annotations">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.insert_annotations">[docs]</a>
+<span class="k">def</span> <span class="nf">insert_annotations</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">Signature</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">empty</span><span class="p">,</span> <span class="o">**</span><span class="n">annotations</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Insert annotations in a signature.</span>
 <span class="sd">    (Note: not really insert but returns a copy of input signature)</span>
 
@@ -4035,7 +4158,10 @@
     <span class="k">return</span> <span class="n">Signature</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotation</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="common_and_diff_argnames"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.common_and_diff_argnames">[docs]</a><span class="k">def</span> <span class="nf">common_and_diff_argnames</span><span class="p">(</span><span class="n">func1</span><span class="p">:</span> <span class="nb">callable</span><span class="p">,</span> <span class="n">func2</span><span class="p">:</span> <span class="nb">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="common_and_diff_argnames">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.common_and_diff_argnames">[docs]</a>
+<span class="k">def</span> <span class="nf">common_and_diff_argnames</span><span class="p">(</span><span class="n">func1</span><span class="p">:</span> <span class="nb">callable</span><span class="p">,</span> <span class="n">func2</span><span class="p">:</span> <span class="nb">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get list of argument names that are common to two functions, as well as the two</span>
 <span class="sd">    lists of names that are different</span>
 
@@ -4065,6 +4191,7 @@
     <span class="p">}</span></div>
 
 
+
 <span class="n">dflt_name_for_kind</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_POSITIONAL</span><span class="p">:</span> <span class="s1">&#39;args&#39;</span><span class="p">,</span>
     <span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">:</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">,</span>
@@ -4073,7 +4200,9 @@
 <span class="n">arg_order_for_param_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="s1">&#39;annotation&#39;</span><span class="p">,</span> <span class="s1">&#39;kind&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="set_signature_of_func"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.set_signature_of_func">[docs]</a><span class="k">def</span> <span class="nf">set_signature_of_func</span><span class="p">(</span>
+<div class="viewcode-block" id="set_signature_of_func">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.set_signature_of_func">[docs]</a>
+<span class="k">def</span> <span class="nf">set_signature_of_func</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">empty</span><span class="p">,</span> <span class="n">__validate_parameters__</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the signature of a function, with sugar.</span>
@@ -4124,12 +4253,15 @@
         <span class="n">__validate_parameters__</span><span class="o">=</span><span class="n">__validate_parameters__</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">to_simple_signature</span><span class="p">()</span></div>
+
     <span class="c1"># Not returning func so it&#39;s clear(er) that the function is transformed in place</span>
 
 
 <span class="c1"># Pattern: (rewiring) wrapper of make_dataclass</span>
 <span class="c1"># TODO: Is there a clean way for module to be populated by __name__ of caller module?</span>
-<div class="viewcode-block" id="sig_to_dataclass"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.sig_to_dataclass">[docs]</a><span class="k">def</span> <span class="nf">sig_to_dataclass</span><span class="p">(</span>
+<div class="viewcode-block" id="sig_to_dataclass">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.sig_to_dataclass">[docs]</a>
+<span class="k">def</span> <span class="nf">sig_to_dataclass</span><span class="p">(</span>
     <span class="n">sig</span><span class="p">:</span> <span class="n">SignatureAble</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">cls_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bases</span><span class="o">=</span><span class="p">(),</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -4177,6 +4309,7 @@
     <span class="k">return</span> <span class="bp">cls</span></div>
 
 
+
 <span class="c1">#########################################################################################</span>
 <span class="c1"># Manual construction of missing signatures</span>
 <span class="c1"># ############################################################################</span>
@@ -4217,7 +4350,9 @@
         <span class="k">raise</span>
 
 
-<div class="viewcode-block" id="resolve_function"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.resolve_function">[docs]</a><span class="k">def</span> <span class="nf">resolve_function</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
+<div class="viewcode-block" id="resolve_function">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.resolve_function">[docs]</a>
+<span class="k">def</span> <span class="nf">resolve_function</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the underlying function of a property or cached_property</span>
 
 <span class="sd">    Note that if all conditions fail, the object itself is returned.</span>
@@ -4278,7 +4413,10 @@
         <span class="k">return</span> <span class="n">obj</span></div>
 
 
-<div class="viewcode-block" id="dict_of_attribute_signatures"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.dict_of_attribute_signatures">[docs]</a><span class="k">def</span> <span class="nf">dict_of_attribute_signatures</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Signature</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="dict_of_attribute_signatures">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.dict_of_attribute_signatures">[docs]</a>
+<span class="k">def</span> <span class="nf">dict_of_attribute_signatures</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Signature</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function that extracts the signatures of all callable attributes of a class.</span>
 
@@ -4305,6 +4443,7 @@
                     <span class="k">yield</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">signature</span><span class="p">(</span><span class="n">attr_val</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">gen</span><span class="p">())</span></div>
+
 
 
 <span class="nd">@dict_of_attribute_signatures</span>
@@ -4534,7 +4673,9 @@
 <span class="c1">############# Tools for testing #########################################################</span>
 
 
-<div class="viewcode-block" id="param_for_kind"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.param_for_kind">[docs]</a><span class="k">def</span> <span class="nf">param_for_kind</span><span class="p">(</span>
+<div class="viewcode-block" id="param_for_kind">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.param_for_kind">[docs]</a>
+<span class="k">def</span> <span class="nf">param_for_kind</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;positional_or_keyword&#39;</span><span class="p">,</span>
     <span class="n">with_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -4565,6 +4706,7 @@
         <span class="k">else</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind_obj</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">)</span></div>
+
 
 
 <span class="n">param_kinds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">x</span><span class="p">,</span> <span class="n">Parameter</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">))</span>
@@ -4641,7 +4783,9 @@
     <span class="k">return</span> <span class="n">comparator</span><span class="p">(</span><span class="n">key</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">key</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="keyed_comparator"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.keyed_comparator">[docs]</a><span class="k">def</span> <span class="nf">keyed_comparator</span><span class="p">(</span><span class="n">comparator</span><span class="p">:</span> <span class="n">Comparator</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">KeyFunction</span><span class="p">,)</span> <span class="o">-&gt;</span> <span class="n">Comparator</span><span class="p">:</span>
+<div class="viewcode-block" id="keyed_comparator">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.keyed_comparator">[docs]</a>
+<span class="k">def</span> <span class="nf">keyed_comparator</span><span class="p">(</span><span class="n">comparator</span><span class="p">:</span> <span class="n">Comparator</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">KeyFunction</span><span class="p">,)</span> <span class="o">-&gt;</span> <span class="n">Comparator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a key-function enabled binary operator.</span>
 
 <span class="sd">    In various places in python functionality is extended by allowing a key function.</span>
@@ -4659,6 +4803,7 @@
     <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">_keyed_comparator</span><span class="p">,</span> <span class="n">comparator</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span></div>
 
 
+
 <span class="c1"># For back-compatibility:</span>
 <span class="n">_key_function_enabled_operator</span> <span class="o">=</span> <span class="n">_keyed_comparator</span>
 <span class="n">_key_function_factory</span> <span class="o">=</span> <span class="n">keyed_comparator</span>
@@ -4671,7 +4816,9 @@
 <span class="c1">#  Further more, we might want to make a function that will take a parametrized</span>
 <span class="c1">#  param_binary_func and produce such a error raising function from it, using the</span>
 <span class="c1">#  specific functions (extracted by Sig) to produce the error message.</span>
-<div class="viewcode-block" id="param_comparator"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.param_comparator">[docs]</a><span class="k">def</span> <span class="nf">param_comparator</span><span class="p">(</span>
+<div class="viewcode-block" id="param_comparator">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.param_comparator">[docs]</a>
+<span class="k">def</span> <span class="nf">param_comparator</span><span class="p">(</span>
     <span class="n">param1</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">,</span>
     <span class="n">param2</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -4724,6 +4871,7 @@
     <span class="p">)</span></div>
 
 
+
 <span class="n">param_binary_func</span> <span class="o">=</span> <span class="n">param_comparator</span>  <span class="c1"># back compatibility alias</span>
 
 
@@ -4736,7 +4884,9 @@
     <span class="k">return</span> <span class="n">dflt1</span> <span class="ow">is</span> <span class="n">empty</span> <span class="ow">or</span> <span class="n">dflt2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">empty</span>
 
 
-<div class="viewcode-block" id="is_param_compatible_with"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.is_param_compatible_with">[docs]</a><span class="k">def</span> <span class="nf">is_param_compatible_with</span><span class="p">(</span>
+<div class="viewcode-block" id="is_param_compatible_with">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.is_param_compatible_with">[docs]</a>
+<span class="k">def</span> <span class="nf">is_param_compatible_with</span><span class="p">(</span>
     <span class="n">p1</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">,</span>
     <span class="n">p2</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">,</span>
     <span class="n">annotation_comparator</span><span class="p">:</span> <span class="n">Comparator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4777,7 +4927,10 @@
     <span class="p">)</span> <span class="ow">and</span> <span class="n">default_value_comparator</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">p2</span><span class="o">.</span><span class="n">default</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="is_call_compatible_with"><a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.is_call_compatible_with">[docs]</a><span class="k">def</span> <span class="nf">is_call_compatible_with</span><span class="p">(</span>
+
+<div class="viewcode-block" id="is_call_compatible_with">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.is_call_compatible_with">[docs]</a>
+<span class="k">def</span> <span class="nf">is_call_compatible_with</span><span class="p">(</span>
     <span class="n">sig1</span><span class="p">:</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">sig2</span><span class="p">:</span> <span class="n">Sig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">param_comparator</span><span class="p">:</span> <span class="n">ParamComparator</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return True if ``sig1`` is compatible with ``sig2``. Meaning that all valid ways</span>
@@ -4934,6 +5087,7 @@
         <span class="ow">and</span> <span class="n">validate_param_positions</span><span class="p">()</span>
         <span class="ow">and</span> <span class="n">validate_param_compatibility</span><span class="p">()</span>
     <span class="p">)</span></div>
+
 </pre></div>
 
            </div>
