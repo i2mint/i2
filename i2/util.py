@@ -54,7 +54,7 @@ class Namespace(SimpleNamespace, MutableMapping):
 
     >>> s['appartment'] = 3
     >>> s
-    namespace(apple=1, apps=2, appartment=3)
+    Namespace(apple=1, apps=2, appartment=3)
     >>> s.appartment
     3
 
