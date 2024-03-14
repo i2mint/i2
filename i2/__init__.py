@@ -1,4 +1,5 @@
 """Meta-programming tools to build declarative frameworks"""
+
 from i2.deco import (
     FuncFactory,
     preprocess,
@@ -49,6 +50,7 @@ from i2.wrapper import (
 )
 
 from i2.util import (
+    Namespace,
     copy_func,
     get_app_data_folder,
     LiteralVal,

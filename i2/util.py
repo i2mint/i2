@@ -1,4 +1,5 @@
 """Misc util objects"""
+
 from operator import attrgetter, itemgetter
 import inspect
 import re
@@ -7,6 +8,7 @@ import itertools
 import sys
 from functools import partial, wraps
 import types
+from types import SimpleNamespace
 from typing import (
     Mapping,
     Callable,
@@ -23,11 +25,62 @@ import io
 T = TypeVar('T')
 
 
+class Namespace(SimpleNamespace, MutableMapping):
+    """
+    A namespace that is also a mutable mapping.
+
+    Example:
+
+    >>> s = Namespace(apple=1, apps=2)
+
+    Get your values via attributes:
+
+    >>> s.apple
+    1
+
+    Get your values via keys:
+
+    >>> s['apple']
+    1
+
+    Do the stuff Mappings do:
+
+    >>> list(s)
+    ['apple', 'apps']
+    >>> 'apps' in s
+    True
+
+    Or even MutableMappings do:
+
+    >>> s['appartment'] = 3
+    >>> s
+    namespace(apple=1, apps=2, appartment=3)
+    >>> s.appartment
+    3
+
+    """
+
+    def __getitem__(self, k):
+        return getattr(self, k)
+
+    def __setitem__(self, k, v):
+        setattr(self, k, v)
+
+    def __delitem__(self, k):
+        delattr(self, k)
+
+    def __iter__(self):
+        return iter(self.__dict__)
+
+    def __len__(self):
+        return len(self.__dict__)
+
+
 @contextlib.contextmanager
 def FileLikeObject(file, *, io_cls=io.BytesIO, open_mode='rb'):
     """Context manager for file-like objects.
 
-    The purpose of this context manager is to be able to ensure we have a file-like 
+    The purpose of this context manager is to be able to ensure we have a file-like
     object interface to work with, regardless of whether we are given a file path,
     bytes of a file, or an open file pointer.
 
@@ -1180,7 +1233,10 @@ class FunctionBuilder(object):
         return
 
     def _compile(self, src, execdict):
-        filename = '<%s-%d>' % (self.filename, next(self._compile_count),)
+        filename = '<%s-%d>' % (
+            self.filename,
+            next(self._compile_count),
+        )
         try:
             code = compile(src, filename, 'single')
             exec(code, execdict)
