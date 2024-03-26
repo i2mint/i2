@@ -138,7 +138,7 @@ class MethodTrace:
 
     def __repr__(self):
         trace_str = ', '.join(map(lambda x: f'{x}', self.trace))
-        return f'<{type(self).__name__} with .trace = {trace_str}>'
+        return f'<{name_of_obj(type(self))} with .trace = {trace_str}>'
 
     # TODO: The following is a means to be able to trace all non-dunder methods.
     #  Not sure if we want this as a default, or an option.
@@ -163,7 +163,7 @@ def get_class_that_defined_method(method):
     """
     if inspect.ismethod(method):
         for cls in inspect.getmro(method.__self__.__class__):
-            if cls.__dict__.get(method.__name__) is method:
+            if cls.__dict__.get(name_of_obj(method)) is method:
                 return cls
         method = method.__func__  # fallback to __qualname__ parsing
     if inspect.isfunction(method):
@@ -197,7 +197,7 @@ def get_class_that_defined_method(method):
     """
     if inspect.ismethod(method):
         for cls in inspect.getmro(method.__self__.__class__):
-            if cls.__dict__.get(method.__name__) is method:
+            if cls.__dict__.get(name_of_obj(method)) is method:
                 return cls
         method = method.__func__  # fallback to __qualname__ parsing
     if inspect.isfunction(method):
@@ -212,8 +212,8 @@ def get_class_that_defined_method(method):
 
 def cls_and_method_name_of_method(method):
     if isinstance(method, property):
-        return get_class_that_defined_method(method.fget), method.fget.__name__
-    return get_class_that_defined_method(method), method.__name__
+        return get_class_that_defined_method(method.fget), name_of_obj(method.fget)
+    return get_class_that_defined_method(method), name_of_obj(method)
 
 
 # --------------------------------------------------------------------------------------
