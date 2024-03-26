@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.footprints &mdash; i2 0.1.10 documentation</title>
+  <title>i2.footprints &mdash; i2 0.1.11 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=bafade30"></script>
+        <script src="../../_static/documentation_options.js?v=1e825a29"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -252,7 +252,7 @@
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">trace_str</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">))</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> with .trace = </span><span class="si">{</span><span class="n">trace_str</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="n">name_of_obj</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s1"> with .trace = </span><span class="si">{</span><span class="n">trace_str</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
 
 
     <span class="c1"># TODO: The following is a means to be able to trace all non-dunder methods.</span>
@@ -278,7 +278,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
         <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmro</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="vm">__self__</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="ow">is</span> <span class="n">method</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name_of_obj</span><span class="p">(</span><span class="n">method</span><span class="p">))</span> <span class="ow">is</span> <span class="n">method</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">cls</span>
         <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="vm">__func__</span>  <span class="c1"># fallback to __qualname__ parsing</span>
     <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
@@ -314,7 +314,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
         <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmro</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="vm">__self__</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="ow">is</span> <span class="n">method</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name_of_obj</span><span class="p">(</span><span class="n">method</span><span class="p">))</span> <span class="ow">is</span> <span class="n">method</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">cls</span>
         <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="vm">__func__</span>  <span class="c1"># fallback to __qualname__ parsing</span>
     <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
@@ -330,8 +330,8 @@
 
 <span class="k">def</span> <span class="nf">cls_and_method_name_of_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="o">.</span><span class="vm">__name__</span>
-    <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">method</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="p">),</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">fget</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">get_class_that_defined_method</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
 
 
 <span class="c1"># --------------------------------------------------------------------------------------</span>
