@@ -1081,6 +1081,12 @@ class Sig(Signature, Mapping):
                 obj = exec_env['f']
             else:
                 obj = obj.split()
+
+        if isinstance(obj, property):
+            obj = obj.fget
+        elif isinstance(obj, cached_property):
+            obj = obj.func
+            
         if (
             not isinstance(obj, Signature)
             and callable(obj)

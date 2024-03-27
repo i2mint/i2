@@ -31,6 +31,32 @@ from i2.tests.util import (
 )
 
 
+def test_class_attribute_signatures():
+    class Klass:
+        def leave(self): ...
+
+        @property
+        def no(self): ...
+
+        @cached_property
+        def stone(self): ...
+
+        unturned = partial(lambda self: self)
+
+
+    assert str(Sig(Klass.leave)) == '(self)'
+    assert str(Sig(Klass.no)) == '(self)'
+    assert str(Sig(Klass.stone)) == '(self)'
+    assert str(Sig(Klass.unturned)) == '(self)'
+
+    instance = Klass()
+
+    assert str(Sig(instance.leave)) == '()'
+    assert str(Sig(instance.no)) == '()'
+    assert str(Sig(instance.stone)) == '()'
+    assert str(Sig(instance.unturned)) == '(self)'
+
+
 def test_add_optional_keywords():
     @Sig.add_optional_keywords({'c': 2, 'd': 3}, {'c': int})
     def foo(a, *, b=1, **kwargs):
