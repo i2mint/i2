@@ -348,7 +348,7 @@ class _DefinitionFinder(ast.NodeVisitor):
 
 
 def _get_definition_node(object_name, src_code):
-    tree = ast.parse(src_code)
+    tree = ast.parse(dedent(src_code))
     finder = _DefinitionFinder(object_name)
     finder.visit(tree)
     return finder.definition_node
@@ -515,7 +515,8 @@ class AttributeVisitor(ast.NodeVisitor):
         # Continue traversing to find more attributes
         self.generic_visit(node)
 
-
+# TODO: Clean this all up, it's horrible!
+# TODO: Write teests for accessed_attributes using i2.tests.footprints_test -> A, B
 def accessed_attributes(func, object_name=None):
     """
     Extracts the attributes accessed by a function or method.
@@ -555,6 +556,27 @@ def accessed_attributes(func, object_name=None):
     return visitor.attributes
 
 
+def _is_method_like(name, obj, *, no_dunders=True):
+    if no_dunders and name.startswith('__') and name.endswith('__'):
+        return False
+    return isinstance(obj, (property, cached_property, Callable, partial))
+
+
+def _get_class_attributes(cls, filt=_is_method_like):
+    for name, obj in cls.__dict__.items():
+        if filt(name, obj):
+            yield obj
+
+
+def attribute_dependencies(obj, filt=_is_method_like, *, name_of_obj=name_of_obj):
+    """
+    Extracts (method_name, accessed_attributes) pairs for a class or instance thereof.
+
+    """
+    for func in _get_class_attributes(obj, filt=filt):
+        yield name_of_obj(func), accessed_attributes(func)
+
+
 def _attrs_used_by_method(cls, method_name, *, src_code=None):
     """
     Util for attrs_used_by_method. Same output as attrs_used_by_method, but intput is (cls, method_name)
@@ -575,7 +597,7 @@ def attrs_used_by_method(method, *, src_code=None):
     Extracts a list of cls attributes which are used by a method or method_name function
 
     Note: The function tries to analyzed the source code deeply, gathering indirect
-    references to the instance attributes. As a result, it is not very robust. 
+    references to the instance attributes. As a result, it is not very robust.
     You may want to check out the simpler (but narrow) function: `accessed_attributes`.
 
     Args:
