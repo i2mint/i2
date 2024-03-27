@@ -1,12 +1,13 @@
 """Analyzing what attributes of an input object a function actually uses"""
 
-
 # --------------------------------------------------------------------------------------
 # Tools to trace operations on an object.
 # See https://github.com/i2mint/i2/issues/56.
 
 import operator
 from functools import partial
+import ast
+from textwrap import dedent
 from i2.multi_object import Pipe
 from i2.signatures import Sig, name_of_obj
 
@@ -284,6 +285,8 @@ def list_func_calls(fn):
     :return: a list of functions or methods names
     """
     funcs = []
+    if isinstance(fn, cached_property):
+        fn = fn.func
     bytecode = dis.Bytecode(fn)
     instrs = list(reversed([instr for instr in bytecode]))
     for ix, instr in enumerate(instrs):
@@ -319,14 +322,244 @@ def attr_list(root, func_name):
 # TODO: Generalize attrs_used_by_method to attrs_used_by_func.
 
 
-def _attrs_used_by_method(cls, method_name, remove_duplicates=True):
+class _DefinitionFinder(ast.NodeVisitor):
+    def __init__(self, object_name):
+        self.object_name = object_name
+        self.definition_node = None
+
+    # def visit_Assign(self, node):
+    #     # Check if the target of assignment matches the object name
+    #     for target in node.targets:
+    #         if isinstance(target, ast.Name) and target.id == self.object_name:
+    #             self.definition_node = node
+    #     self.generic_visit(node)
+
+    def visit_FunctionDef(self, node):
+        # Check if the function name matches the object name
+        if node.name == self.object_name:
+            self.definition_node = node
+        self.generic_visit(node)
+
+    def visit_ClassDef(self, node):
+        # Check if the class name matches the object name
+        if node.name == self.object_name:
+            self.definition_node = node
+        self.generic_visit(node)
+
+
+def _get_definition_node(object_name, src_code):
+    tree = ast.parse(src_code)
+    finder = _DefinitionFinder(object_name)
+    finder.visit(tree)
+    return finder.definition_node
+
+
+def _get_source_segment_from_node(node, src_code):
+    """
+    Extracts the source code segment for a given AST node from the source code string.
+    """
+    if not node:
+        return None
+
+    # Extract start and end line numbers from the node
+    start_line = node.lineno
+    end_line = node.end_lineno if hasattr(node, 'end_lineno') else start_line
+
+    # Split the source code into lines
+    lines = src_code.splitlines()
+
+    # Extract the lines corresponding to the node (adjusting for 0-based indexing)
+    segment_lines = lines[start_line - 1 : end_line]
+
+    # Join the lines back into a single string
+    return '\n'.join(segment_lines)
+
+
+def _get_definition_source(object_name: str, src_code: str):
+    """
+    Returns the source code string for the definition of the specified object within
+    the given source code.
+
+    >>> src_code = '''
+    ... class MyClass:
+    ...     x = 1
+    ...     def my_method(self):
+    ...         return self.x + 1
+    ...
+    ... def my_function():
+    ...     pass
+    ...
+    ... a = 10
+    ... '''
+    >>> object_name = "MyClass"
+    >>> assert _get_definition_source('MyClass', src_code).strip() == (
+    ... '''
+    ... class MyClass:
+    ...     x = 1
+    ...     def my_method(self):
+    ...         return self.x + 1
+    ... '''.strip()
+    ... )
+    """
+    object_name, *more_names = object_name.split('.')
+
+    node = _get_definition_node(object_name, src_code)
+    if node is None:
+        raise ValueError(f'Could not find definition for object {object_name}')
+    src = _get_source_segment_from_node(node, src_code)
+    src = dedent(src)
+
+    if not more_names:
+        return src
+    else:
+        return _get_definition_source('.'.join(more_names), src)
+
+
+def _unwrap_object(o):
+    if isinstance(o, cached_property):
+        return o.func
+    return o
+
+
+from operator import attrgetter
+
+qualname_of_obj = partial(name_of_obj, base_name_of_obj=attrgetter('__qualname__'))
+
+
+def _get_source(o, src_code=None) -> str:
+    if src_code is None:
+        if isinstance(o, str):
+            if os.path.isfile(o):
+                with open(o) as f:
+                    source_str = f.read()
+            else:
+                source_str = o  # consider the string to be the source code
+            return source_str
+        else:  # it's an object
+            o = _unwrap_object(o)
+            # get's it's source code
+            try:
+                with open(getsourcefile(o), 'r') as f:
+                    source_str = f.read()
+                return source_str
+                # TODO: (somehow, simply return getsource(o) doesn't lead to passing tests)
+            except OSError as e:
+                try:
+                    return getsource(o)
+                except Exception as e:
+
+                    raise ValueError(
+                        f'Could not get source code for object {o}. '
+                        '(This can happen if your object was defined in jupyter notebooks, '
+                        'for example.)'
+                        'Please provide the source code explicitly via the '
+                        'src_code argument. '
+                        'For example, if you are in a jupyter notebook or ipython, '
+                        'you can specify `src_code=In[cell_index]` where `cell_index` '
+                        'is the index of the cell where the object was defined.'
+                    )
+    else:
+        # The reason for this case is that the source code of an object is not always
+        # accessible via normal means (for example, in jupyter notebooks) so we need to pass it in.
+        if isinstance(o, str):
+            object_name = o
+        else:
+            object_name = qualname_of_obj(o)
+        source_str = _get_definition_source(object_name, src_code)
+        return source_str
+
+
+def ensure_ast(o, src_code=None) -> ast.AST:
+    """
+    Casts input object `o` to a AST node.
+
+    If the input is an AST node, it is returned as is.
+    If the input is a filepath, the file is read and parsed as source code.
+    If the input is a string, it is parsed as source code.
+    If the input is an object, the source code is extracted and parsed.
+
+    Let's get an AST for the ensure_ast function itself:
+
+    >>> assert isinstance(ensure_ast(ensure_ast), ast.AST)
+
+    Note that sometimes the source code of an object cannot be accessed via normal
+    means (for example, in REPLs like jupyter notebooks) so we need to pass it in.
+
+    >>> src_code = '''
+    ... class MyClass:
+    ...     x = 1
+    ...     def my_method(self):
+    ...         return self.x + 1
+    ... a = 10
+    ... '''
+    >>> assert isinstance(ensure_ast('MyClass', src_code), ast.AST)
+
+    """
+
+    if isinstance(o, ast.AST):
+        return o
+    else:
+        source_str = _get_source(o, src_code)
+        return ast.parse(dedent(source_str))
+
+
+class AttributeVisitor(ast.NodeVisitor):
+    def __init__(self, object_name):
+        self.object_name = object_name
+        self.attributes = set()
+
+    def visit_Attribute(self, node):
+        # Check if the attribute access is for the target object
+        if isinstance(node.value, ast.Name) and node.value.id == self.object_name:
+            self.attributes.add(node.attr)
+        # Continue traversing to find more attributes
+        self.generic_visit(node)
+
+
+def accessed_attributes(func, object_name=None):
+    """
+    Extracts the attributes accessed by a function or method.
+
+    (This is a simpler, but narrow, version of `attrs_used_by_method`).
+
+    >>> def func(a, b, c):
+    ...     return a + b.bar + c
+    ...
+    >>> # Commenting out the testing code, as execution is not performed in the PCI
+    >>> def foo(self):
+    ...     a = 2
+    ...     self.method(x)
+    ...     y = self.prop
+    ...     return a + func(x, self, y)
+    ...
+    >>> assert accessed_attributes(foo, 'self') == {'method', 'prop'}
+
+    """
+    if object_name is None:
+        object_name = next(iter(Sig(func)), None)
+        if object_name is None:
+            raise ValueError(
+                'Could not determine the object name. Please provide it explicitly.'
+            )
+
+    # Convert the function source to an AST
+    func_name = qualname_of_obj(func)
+    src = _get_definition_source(func_name, _get_source(func))
+    node = ensure_ast(src)
+    # func_src = ast.parse(inspect.getsource(func))
+    # Initialize the visitor with the target object name
+    visitor = AttributeVisitor(object_name)
+    # Visit the AST to find accessed attributes
+    visitor.visit(node)
+    # Return the set of accessed attributes
+    return visitor.attributes
+
+
+def _attrs_used_by_method(cls, method_name, *, src_code=None):
     """
     Util for attrs_used_by_method. Same output as attrs_used_by_method, but intput is (cls, method_name)
     """
-    f = open(getsourcefile(cls), 'r')
-    if f.mode == 'r':
-        src = f.read()
-    root = ast.parse(src)
+    root = ensure_ast(cls, src_code)
     funcs = list_func_calls(getattr(cls, method_name))
     attrs = []
     for func in funcs:
@@ -337,9 +570,14 @@ def _attrs_used_by_method(cls, method_name, remove_duplicates=True):
     )
 
 
-def attrs_used_by_method(method, remove_duplicates=True):
+def attrs_used_by_method(method, *, src_code=None):
     """
     Extracts a list of cls attributes which are used by a method or method_name function
+
+    Note: The function tries to analyzed the source code deeply, gathering indirect
+    references to the instance attributes. As a result, it is not very robust. 
+    You may want to check out the simpler (but narrow) function: `accessed_attributes`.
+
     Args:
         method: The method (object) to analyze
 
@@ -385,7 +623,7 @@ def attrs_used_by_method(method, remove_duplicates=True):
     >>> assert attrs_used_by_method(A.target_method) == {'a', 'b', 'c', 'e'}
     """
     return _attrs_used_by_method(
-        *cls_and_method_name_of_method(method), remove_duplicates=remove_duplicates
+        *cls_and_method_name_of_method(method), src_code=src_code
     )
 
 
