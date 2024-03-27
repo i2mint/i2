@@ -515,6 +515,7 @@ class AttributeVisitor(ast.NodeVisitor):
         # Continue traversing to find more attributes
         self.generic_visit(node)
 
+
 # TODO: Clean this all up, it's horrible!
 # TODO: Write teests for accessed_attributes using i2.tests.footprints_test -> A, B
 def accessed_attributes(func, object_name=None):

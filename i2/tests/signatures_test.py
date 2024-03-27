@@ -33,16 +33,18 @@ from i2.tests.util import (
 
 def test_class_attribute_signatures():
     class Klass:
-        def leave(self): ...
+        def leave(self):
+            ...
 
         @property
-        def no(self): ...
+        def no(self):
+            ...
 
         @cached_property
-        def stone(self): ...
+        def stone(self):
+            ...
 
         unturned = partial(lambda self: self)
-
 
     assert str(Sig(Klass.leave)) == '(self)'
     assert str(Sig(Klass.no)) == '(self)'

@@ -1086,7 +1086,7 @@ class Sig(Signature, Mapping):
             obj = obj.fget
         elif isinstance(obj, cached_property):
             obj = obj.func
-            
+
         if (
             not isinstance(obj, Signature)
             and callable(obj)
