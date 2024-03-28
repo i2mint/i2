@@ -8,6 +8,8 @@ import operator
 from functools import partial
 import ast
 from textwrap import dedent
+from typing import List, Callable, Literal, Union, Container
+
 from i2.multi_object import Pipe
 from i2.signatures import Sig, name_of_obj
 
@@ -560,21 +562,63 @@ def accessed_attributes(func, object_name=None):
 def _is_method_like(name, obj, *, no_dunders=True):
     if no_dunders and name.startswith('__') and name.endswith('__'):
         return False
-    return isinstance(obj, (property, cached_property, Callable, partial))
+    return isinstance(obj, (Callable, property, cached_property))
 
 
-def _get_class_attributes(cls, filt=_is_method_like):
+def init_argument_names(cls) -> List[str]:
+    """
+    Get the list of argument names
+
+    >>> from dataclasses import dataclass
+    >>> @dataclass
+    ... class DataClass:
+    ...     x: str
+    ...     y: float = 2
+    ...     z = 3
+    ...
+    >>> init_argument_names(DataClass)
+    ['x', 'y']
+
+    """
+    return Sig(cls).names
+
+
+ExcludeNames = Union[Container, Callable]
+
+
+def _get_class_attributes(
+    cls: type,
+    filt=_is_method_like,
+    *,
+    exclude_names: ExcludeNames = init_argument_names,
+):
+    if isinstance(exclude_names, Callable):
+        exclude_names = exclude_names(cls)
+
     for name, obj in cls.__dict__.items():
-        if filt(name, obj):
+        if filt(name, obj) and name not in exclude_names:
             yield obj
 
 
-def attribute_dependencies(obj, filt=_is_method_like, *, name_of_obj=name_of_obj):
+def attribute_dependencies(
+    cls: type,
+    filt=_is_method_like,
+    *,
+    name_of_obj=name_of_obj,
+    exclude_names: ExcludeNames = init_argument_names,
+):
     """
     Extracts (method_name, accessed_attributes) pairs for a class or instance thereof.
 
+    :param cls: The class or instance to analyze
+    :param filt: A function that filters the attributes to consider
+    :param name_of_obj: A function that returns the name of an object
+    :param exclude_names: A list of names to exclude from the analysis or a function that
+        returns such a list given the class
+    :return: A generator of (method_name, accessed_attributes) pairs
+
     """
-    for func in _get_class_attributes(obj, filt=filt):
+    for func in _get_class_attributes(cls, filt=filt, exclude_names=exclude_names):
         yield name_of_obj(func), accessed_attributes(func)
 
 
@@ -717,9 +761,6 @@ def object_dependencies(obj, *, get_source=get_source):
         dependency_dict[name] = called_methods
 
     return dependency_dict
-
-
-from typing import Literal, Callable, Union
 
 
 def _dict_to_graph(
