@@ -420,6 +420,8 @@ def _get_definition_source(object_name: str, src_code: str):
 def _unwrap_object(o):
     if isinstance(o, cached_property):
         return o.func
+    elif isinstance(o, property):
+        return o.fget
     return o
 
 
