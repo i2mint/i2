@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.1.13 documentation</title>
+  <title>i2.util &mdash; i2 0.1.14 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=8d02545a"></script>
+        <script src="../../_static/documentation_options.js?v=468bc497"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -113,12 +113,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.Namespace"><code class="docutils literal notranslate"><span class="pre">Namespace</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.OverwritesForbidden"><code class="docutils literal notranslate"><span class="pre">OverwritesForbidden</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.PicklableLambda"><code class="docutils literal notranslate"><span class="pre">PicklableLambda</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.util.asis"><code class="docutils literal notranslate"><span class="pre">asis()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.copy_func"><code class="docutils literal notranslate"><span class="pre">copy_func()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.dp_get"><code class="docutils literal notranslate"><span class="pre">dp_get()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.ensure_identifiers"><code class="docutils literal notranslate"><span class="pre">ensure_identifiers()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.frozendict"><code class="docutils literal notranslate"><span class="pre">frozendict</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.get_app_data_folder"><code class="docutils literal notranslate"><span class="pre">get_app_data_folder()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.get_function_body"><code class="docutils literal notranslate"><span class="pre">get_function_body()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.util.ignore_exception"><code class="docutils literal notranslate"><span class="pre">ignore_exception()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.imdict"><code class="docutils literal notranslate"><span class="pre">imdict</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#i2.util.imdict.clear"><code class="docutils literal notranslate"><span class="pre">imdict.clear()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#i2.util.imdict.pop"><code class="docutils literal notranslate"><span class="pre">imdict.pop()</span></code></a></li>
@@ -134,6 +136,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.lazyprop"><code class="docutils literal notranslate"><span class="pre">lazyprop</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.mk_sentinel"><code class="docutils literal notranslate"><span class="pre">mk_sentinel()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.path_extractor"><code class="docutils literal notranslate"><span class="pre">path_extractor()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.util.return_false"><code class="docutils literal notranslate"><span class="pre">return_false()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.util.return_true"><code class="docutils literal notranslate"><span class="pre">return_true()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="wrapper.html">i2.wrapper</a></li>
@@ -168,7 +172,7 @@
 <p>Misc util objects</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.util.ConditionalExceptionCatcher">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">ConditionalExceptionCatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">exception_types:</span> <span class="pre">BaseException</span> <span class="pre">|</span> <span class="pre">~typing.Tuple[BaseException],</span> <span class="pre">exception_condition:</span> <span class="pre">~typing.Callable[[BaseException],</span> <span class="pre">bool],</span> <span class="pre">handler:</span> <span class="pre">~typing.Callable[[BaseException],</span> <span class="pre">None]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">asis&gt;,</span> <span class="pre">*,</span> <span class="pre">prevent_propagation=True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#ConditionalExceptionCatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.util.ConditionalExceptionCatcher" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">ConditionalExceptionCatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">exception_types:</span> <span class="pre">BaseException</span> <span class="pre">|</span> <span class="pre">~typing.Tuple[BaseException],</span> <span class="pre">exception_condition:</span> <span class="pre">~typing.Callable[[BaseException],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">return_true&gt;,</span> <span class="pre">handlers:</span> <span class="pre">~typing.Callable[[BaseException],</span> <span class="pre">None]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">asis&gt;,</span> <span class="pre">*,</span> <span class="pre">prevent_propagation=True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#ConditionalExceptionCatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.util.ConditionalExceptionCatcher" title="Link to this definition"></a></dt>
 <dd><p>Context manager to catch exceptions of a certain type and instance condition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -176,27 +180,40 @@
 <li><p><strong>exception_types</strong> – The type of exception to catch. Can be a single exception
 type or a tuple of exception types.</p></li>
 <li><p><strong>exception_condition</strong> – A function that takes an exception instance and returns
-a boolean indicating whether the exception should be caught.</p></li>
-<li><p><strong>handler</strong> – The function to run when an exception of the specified type is caught.</p></li>
+a “key” value indicating whether the exception should be caught.
+If the bool(key) is True, the exception is caught.
+If the bool(key) is False, the exception is not caught.
+The key can further be used to determine the handler to use, when the handlers
+argument is a mapping.
+The default is to catch all exceptions of the specified type(s).</p></li>
+<li><p><strong>handlers</strong> – Specification of how to handle the exceptions. Can be a single
+function to run on the exception object when an exception of the specified
+type is caught, or a mapping (e.g. dict) of handler functions, keyed by the
+key returned by the exception_condition function.</p></li>
 <li><p><strong>prevent_propagation</strong> – Whether to prevent the exception from propagating. Defaults
 to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ConditionalExceptionCatcher</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="ne">ValueError</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="nb">print</span>
-<span class="gp">... </span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">exception_catcher</span> <span class="o">=</span> <span class="n">ConditionalExceptionCatcher</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="ne">ValueError</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">handlers</span><span class="o">=</span><span class="nb">print</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">exception_catcher</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
 <span class="go">foo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">exception_catcher</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">TypeError</span>: <span class="n">foo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">exception_catcher</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">bar</span>
 </pre></div>
 </div>
-<p>Note: There is a more general way to handle exceptions, used by meshed.slabs
-(<a class="reference external" href="https://github.com/i2mint/meshed/blob/61a5633cc8e1d4b4b26f31d3bf70d744aab327c4/meshed/slabs.py#L145">https://github.com/i2mint/meshed/blob/61a5633cc8e1d4b4b26f31d3bf70d744aab327c4/meshed/slabs.py#L145</a>)
-which allows you to specify a condition for the exception to be caught, and a handler
-to run when the exception is caught. The current implementation of
-<code class="docutils literal notranslate"><span class="pre">MyExceptionCatcher</span></code> is a simplified version of this more general exception
-handling mechanism, but made as a context manager.</p>
 </dd></dl>
 
 <dl class="py exception">
@@ -504,6 +521,12 @@ Also, provide it with a name, optionally.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.util.asis">
+<span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">asis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="../../_modules/i2/util.html#asis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.util.asis" title="Link to this definition"></a></dt>
+<dd><p>the identity function: f(x) := x (takes only one argument, and returns it)</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.util.copy_func">
 <span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">copy_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">globals_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#copy_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.util.copy_func" title="Link to this definition"></a></dt>
 <dd><p>Make a (shallow) copy of a function.</p>
@@ -646,6 +669,12 @@ On Linux, this is typically ~/.config.</p>
 <dd class="field-even"><p>The body of the function as a string.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.util.ignore_exception">
+<span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">ignore_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#i2.util.ignore_exception" title="Link to this definition"></a></dt>
+<dd><p>the identity function: f(x) := x (takes only one argument, and returns it)</p>
 </dd></dl>
 
 <dl class="py class">
@@ -994,6 +1023,18 @@ a filter function.</p>
 <span class="go">[1, 3, 4]</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.util.return_false">
+<span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">return_false</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#return_false"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.util.return_false" title="Link to this definition"></a></dt>
+<dd><p>a function that returns True (takes any number of arguments)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.util.return_true">
+<span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">return_true</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#return_true"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.util.return_true" title="Link to this definition"></a></dt>
+<dd><p>a function that returns False (takes any number of arguments)</p>
 </dd></dl>
 
 </section>
