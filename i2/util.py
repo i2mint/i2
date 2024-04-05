@@ -12,6 +12,7 @@ from types import SimpleNamespace
 from typing import (
     Mapping,
     Callable,
+    Tuple,
     Any,
     MutableMapping,
     Union,
@@ -23,6 +24,65 @@ import contextlib
 import io
 
 T = TypeVar('T')
+
+ExceptionTypes = Union[BaseException, Tuple[BaseException]]
+
+
+def asis(x):
+    return x
+
+
+class ConditionalExceptionCatcher:
+    """
+    Context manager to catch exceptions of a certain type and instance condition.
+
+    :param exception_types: The type of exception to catch. Can be a single exception
+        type or a tuple of exception types.
+    :param exception_condition: A function that takes an exception instance and returns
+        a boolean indicating whether the exception should be caught.
+    :param handler: The function to run when an exception of the specified type is caught.
+    :param prevent_propagation: Whether to prevent the exception from propagating. Defaults
+        to ``True``.
+
+    Example:
+
+    >>> with ConditionalExceptionCatcher(
+    ...     ValueError, lambda e: e.args[0] == 'foo', handler=print
+    ... ):
+    ...     raise ValueError('foo')
+    foo
+
+
+    Note: There is a more general way to handle exceptions, used by meshed.slabs
+    (https://github.com/i2mint/meshed/blob/61a5633cc8e1d4b4b26f31d3bf70d744aab327c4/meshed/slabs.py#L145)
+    which allows you to specify a condition for the exception to be caught, and a handler
+    to run when the exception is caught. The current implementation of
+    ``MyExceptionCatcher`` is a simplified version of this more general exception
+    handling mechanism, but made as a context manager.
+    """
+
+    def __init__(
+        self,
+        exception_types: ExceptionTypes,
+        exception_condition: Callable[[BaseException], bool],
+        handler: Callable[[BaseException], None] = asis,
+        *,
+        prevent_propagation=True,
+    ):
+        self.exception_types = exception_types
+        self.exception_condition = exception_condition
+        self.handler = handler
+        self.prevent_propagation = prevent_propagation
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        # TODO: Could extend exception_condition and/or handler to use traceback
+        if exc_type is ValueError and self.exception_condition(exc_value):
+            self.handler(exc_value)
+            return self.prevent_propagation
+        return False  # Allows other exceptions to propagate
 
 
 class Namespace(SimpleNamespace, MutableMapping):
@@ -639,6 +699,8 @@ class imdict(dict):
 
 def inject_method(self, method_function, method_name=None):
     """
+    Inject a method into an object instance.
+    
     method_function could be:
         * a function
         * a {method_name: function, ...} dict (for multiple injections)
@@ -666,6 +728,14 @@ def inject_method(self, method_function, method_name=None):
 
 
 def get_function_body(func):
+    """
+    Get the body of a function as a string.
+
+    :param func: The function to get the body of.
+
+    :return: The body of the function as a string.
+
+    """
     source_lines = inspect.getsourcelines(func)[0]
     source_lines = itertools.dropwhile(lambda x: x.startswith('@'), source_lines)
     line = next(source_lines).strip()
@@ -1233,7 +1303,10 @@ class FunctionBuilder(object):
         return
 
     def _compile(self, src, execdict):
-        filename = '<%s-%d>' % (self.filename, next(self._compile_count),)
+        filename = '<%s-%d>' % (
+            self.filename,
+            next(self._compile_count),
+        )
         try:
             code = compile(src, filename, 'single')
             exec(code, execdict)
