@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.1.12 documentation</title>
+  <title>i2.util &mdash; i2 0.1.13 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=297ad043"></script>
+        <script src="../../_static/documentation_options.js?v=8d02545a"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -121,6 +121,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Mapping</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Tuple</span><span class="p">,</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">MutableMapping</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
@@ -132,6 +133,68 @@
 <span class="kn">import</span> <span class="nn">io</span>
 
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+
+<span class="n">ExceptionTypes</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="ne">BaseException</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="ne">BaseException</span><span class="p">]]</span>
+
+
+<span class="k">def</span> <span class="nf">asis</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+
+<div class="viewcode-block" id="ConditionalExceptionCatcher">
+<a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.ConditionalExceptionCatcher">[docs]</a>
+<span class="k">class</span> <span class="nc">ConditionalExceptionCatcher</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Context manager to catch exceptions of a certain type and instance condition.</span>
+
+<span class="sd">    :param exception_types: The type of exception to catch. Can be a single exception</span>
+<span class="sd">        type or a tuple of exception types.</span>
+<span class="sd">    :param exception_condition: A function that takes an exception instance and returns</span>
+<span class="sd">        a boolean indicating whether the exception should be caught.</span>
+<span class="sd">    :param handler: The function to run when an exception of the specified type is caught.</span>
+<span class="sd">    :param prevent_propagation: Whether to prevent the exception from propagating. Defaults</span>
+<span class="sd">        to ``True``.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    &gt;&gt;&gt; with ConditionalExceptionCatcher(</span>
+<span class="sd">    ...     ValueError, lambda e: e.args[0] == &#39;foo&#39;, handler=print</span>
+<span class="sd">    ... ):</span>
+<span class="sd">    ...     raise ValueError(&#39;foo&#39;)</span>
+<span class="sd">    foo</span>
+
+
+<span class="sd">    Note: There is a more general way to handle exceptions, used by meshed.slabs</span>
+<span class="sd">    (https://github.com/i2mint/meshed/blob/61a5633cc8e1d4b4b26f31d3bf70d744aab327c4/meshed/slabs.py#L145)</span>
+<span class="sd">    which allows you to specify a condition for the exception to be caught, and a handler</span>
+<span class="sd">    to run when the exception is caught. The current implementation of</span>
+<span class="sd">    ``MyExceptionCatcher`` is a simplified version of this more general exception</span>
+<span class="sd">    handling mechanism, but made as a context manager.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">exception_types</span><span class="p">:</span> <span class="n">ExceptionTypes</span><span class="p">,</span>
+        <span class="n">exception_condition</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="ne">BaseException</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span>
+        <span class="n">handler</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="ne">BaseException</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">asis</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">prevent_propagation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exception_types</span> <span class="o">=</span> <span class="n">exception_types</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exception_condition</span> <span class="o">=</span> <span class="n">exception_condition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prevent_propagation</span> <span class="o">=</span> <span class="n">prevent_propagation</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="c1"># TODO: Could extend exception_condition and/or handler to use traceback</span>
+        <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="ne">ValueError</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">exception_condition</span><span class="p">(</span><span class="n">exc_value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">exc_value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prevent_propagation</span>
+        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># Allows other exceptions to propagate</span></div>
+
 
 
 <div class="viewcode-block" id="Namespace">
@@ -807,6 +870,8 @@
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.inject_method">[docs]</a>
 <span class="k">def</span> <span class="nf">inject_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_function</span><span class="p">,</span> <span class="n">method_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inject a method into an object instance.</span>
+<span class="sd">    </span>
 <span class="sd">    method_function could be:</span>
 <span class="sd">        * a function</span>
 <span class="sd">        * a {method_name: function, ...} dict (for multiple injections)</span>
@@ -834,7 +899,17 @@
 <span class="c1">########################################################################################################################</span>
 
 
+<div class="viewcode-block" id="get_function_body">
+<a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.get_function_body">[docs]</a>
 <span class="k">def</span> <span class="nf">get_function_body</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the body of a function as a string.</span>
+
+<span class="sd">    :param func: The function to get the body of.</span>
+
+<span class="sd">    :return: The body of the function as a string.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">source_lines</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsourcelines</span><span class="p">(</span><span class="n">func</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">source_lines</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">dropwhile</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">),</span> <span class="n">source_lines</span><span class="p">)</span>
     <span class="n">line</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">source_lines</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -851,7 +926,8 @@
     <span class="n">indentation</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_line</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">())</span>
     <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
         <span class="p">[</span><span class="n">first_line</span><span class="p">[</span><span class="n">indentation</span><span class="p">:]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="n">indentation</span><span class="p">:]</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">source_lines</span><span class="p">]</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="ExistingArgument">
@@ -1434,7 +1510,10 @@
 
 
     <span class="k">def</span> <span class="nf">_compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">execdict</span><span class="p">):</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_compile_count</span><span class="p">),)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+            <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_compile_count</span><span class="p">),</span>
+        <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;single&#39;</span><span class="p">)</span>
             <span class="n">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">execdict</span><span class="p">)</span>

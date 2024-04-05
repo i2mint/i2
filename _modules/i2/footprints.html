@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.footprints &mdash; i2 0.1.12 documentation</title>
+  <title>i2.footprints &mdash; i2 0.1.13 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=297ad043"></script>
+        <script src="../../_static/documentation_options.js?v=8d02545a"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -117,6 +117,8 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">import</span> <span class="nn">ast</span>
 <span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Container</span>
+
 <span class="kn">from</span> <span class="nn">i2.multi_object</span> <span class="kn">import</span> <span class="n">Pipe</span>
 <span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">name_of_obj</span>
 
@@ -545,6 +547,8 @@
 <span class="k">def</span> <span class="nf">_unwrap_object</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">cached_property</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">func</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">fget</span>
     <span class="k">return</span> <span class="n">o</span>
 
 
@@ -648,6 +652,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">generic_visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
 
 
+
 <span class="c1"># TODO: Clean this all up, it&#39;s horrible!</span>
 <span class="c1"># TODO: Write teests for accessed_attributes using i2.tests.footprints_test -&gt; A, B</span>
 <div class="viewcode-block" id="accessed_attributes">
@@ -695,23 +700,90 @@
 <span class="k">def</span> <span class="nf">_is_method_like</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">no_dunders</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">no_dunders</span> <span class="ow">and</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="n">cached_property</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">partial</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">property</span><span class="p">,</span> <span class="n">cached_property</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_get_class_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="n">_is_method_like</span><span class="p">):</span>
+<div class="viewcode-block" id="init_argument_names">
+<a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.init_argument_names">[docs]</a>
+<span class="k">def</span> <span class="nf">init_argument_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">no_error_action</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the list of argument names</span>
+
+<span class="sd">    &gt;&gt;&gt; from dataclasses import dataclass</span>
+<span class="sd">    &gt;&gt;&gt; @dataclass</span>
+<span class="sd">    ... class DataClass:</span>
+<span class="sd">    ...     x: str</span>
+<span class="sd">    ...     y: float = 2</span>
+<span class="sd">    ...     z = 3</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; init_argument_names(DataClass)</span>
+<span class="sd">    [&#39;x&#39;, &#39;y&#39;]</span>
+
+<span class="sd">    Note: Some builtin types don&#39;t have signatures, so we get:</span>
+<span class="sd">    </span>
+<span class="sd">    ```</span>
+<span class="sd">    ValueError: no signature found for builtin type ...</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    By default, we handle this by returning an empty list, but a callable </span>
+<span class="sd">    no_error_action will call that function and return its result.</span>
+<span class="sd">    Anything else will result in raising the error.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Sig</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">names</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Some builtin types don&#39;t have signatures, so we get:</span>
+        <span class="c1">#   ValueError: no signature found for builtin type ...</span>
+        <span class="c1"># By default, we handle this by returning an empty list.</span>
+        <span class="k">if</span> <span class="n">no_error_action</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">no_error_action</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">no_error_action</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span></div>
+
+
+
+<span class="n">ExcludeNames</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Container</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_get_class_attributes</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
+    <span class="n">filt</span><span class="o">=</span><span class="n">_is_method_like</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exclude_names</span><span class="p">:</span> <span class="n">ExcludeNames</span> <span class="o">=</span> <span class="n">init_argument_names</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_names</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+        <span class="n">exclude_names</span> <span class="o">=</span> <span class="n">exclude_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">filt</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">filt</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_names</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">obj</span>
 
 
 <div class="viewcode-block" id="attribute_dependencies">
 <a class="viewcode-back" href="../../module_docs/i2/footprints.html#i2.footprints.attribute_dependencies">[docs]</a>
-<span class="k">def</span> <span class="nf">attribute_dependencies</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="n">_is_method_like</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name_of_obj</span><span class="o">=</span><span class="n">name_of_obj</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">attribute_dependencies</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
+    <span class="n">filt</span><span class="o">=</span><span class="n">_is_method_like</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name_of_obj</span><span class="o">=</span><span class="n">name_of_obj</span><span class="p">,</span>
+    <span class="n">exclude_names</span><span class="p">:</span> <span class="n">ExcludeNames</span> <span class="o">=</span> <span class="n">init_argument_names</span><span class="p">,</span>
+
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts (method_name, accessed_attributes) pairs for a class or instance thereof.</span>
 
+<span class="sd">    :param cls: The class or instance to analyze</span>
+<span class="sd">    :param filt: A function that filters the attributes to consider</span>
+<span class="sd">    :param name_of_obj: A function that returns the name of an object</span>
+<span class="sd">    :param exclude_names: A list of names to exclude from the analysis or a function that</span>
+<span class="sd">        returns such a list given the class</span>
+<span class="sd">    :return: A generator of (method_name, accessed_attributes) pairs</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">_get_class_attributes</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="n">filt</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">_get_class_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="n">filt</span><span class="p">,</span> <span class="n">exclude_names</span><span class="o">=</span><span class="n">exclude_names</span><span class="p">):</span>
         <span class="k">yield</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">func</span><span class="p">),</span> <span class="n">accessed_attributes</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></div>
 
 
@@ -861,9 +933,6 @@
         <span class="n">dependency_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">called_methods</span>
 
     <span class="k">return</span> <span class="n">dependency_dict</span>
-
-
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
 
 
 <span class="k">def</span> <span class="nf">_dict_to_graph</span><span class="p">(</span>
