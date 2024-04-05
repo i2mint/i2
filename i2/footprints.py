@@ -629,7 +629,6 @@ def attribute_dependencies(
     *,
     name_of_obj=name_of_obj,
     exclude_names: ExcludeNames = init_argument_names,
-
 ):
     """
     Extracts (method_name, accessed_attributes) pairs for a class or instance thereof.

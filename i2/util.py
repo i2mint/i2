@@ -1303,10 +1303,7 @@ class FunctionBuilder(object):
         return
 
     def _compile(self, src, execdict):
-        filename = '<%s-%d>' % (
-            self.filename,
-            next(self._compile_count),
-        )
+        filename = '<%s-%d>' % (self.filename, next(self._compile_count),)
         try:
             code = compile(src, filename, 'single')
             exec(code, execdict)
