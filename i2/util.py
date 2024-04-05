@@ -46,6 +46,8 @@ ExceptionTypes = Union[BaseException, Tuple[BaseException]]
 Handler = Callable[[BaseException], None]
 Handlers = Union[Handler, Mapping[KT, Handler]]
 
+ignore_exception = asis  # an alias of asis, to make it clear in context where used
+
 
 # Note: Similar functionality in meshed.slabs
 #       (https://github.com/i2mint/meshed/blob/61a5633cc8e1d4b4b26f31d3bf70d744aab327c4/meshed/slabs.py#L145)
@@ -94,7 +96,7 @@ class ConditionalExceptionCatcher:
         self,
         exception_types: ExceptionTypes,
         exception_condition: Callable[[BaseException], bool] = return_true,
-        handlers: Callable[[BaseException], None] = asis,
+        handlers: Callable[[BaseException], None] = ignore_exception,
         *,
         prevent_propagation=True,
     ):

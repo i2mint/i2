@@ -10,8 +10,9 @@ import ast
 from textwrap import dedent
 from typing import List, Callable, Literal, Union, Container
 
+from i2.util import ConditionalExceptionCatcher
 from i2.multi_object import Pipe
-from i2.signatures import Sig, name_of_obj
+from i2.signatures import Sig, name_of_obj, is_signature_error
 
 # TODO: Maybe we should just use an explicit list of dunders instead of this dynamic
 #  introspective approach.
@@ -582,12 +583,12 @@ def init_argument_names(cls, *, no_error_action=None) -> List[str]:
     ['x', 'y']
 
     Note: Some builtin types don't have signatures, so we get:
-    
+
     ```
     ValueError: no signature found for builtin type ...
     ```
 
-    By default, we handle this by returning an empty list, but a callable 
+    By default, we handle this by returning an empty list, but a callable
     no_error_action will call that function and return its result.
     Anything else will result in raising the error.
 
@@ -623,13 +624,15 @@ def _get_class_attributes(
             yield obj
 
 
+skip_signature_errors = ConditionalExceptionCatcher(ValueError, is_signature_error)
+
+
 def attribute_dependencies(
     cls: type,
     filt=_is_method_like,
     *,
     name_of_obj=name_of_obj,
     exclude_names: ExcludeNames = init_argument_names,
-
 ):
     """
     Extracts (method_name, accessed_attributes) pairs for a class or instance thereof.
@@ -643,7 +646,8 @@ def attribute_dependencies(
 
     """
     for func in _get_class_attributes(cls, filt=filt, exclude_names=exclude_names):
-        yield name_of_obj(func), accessed_attributes(func)
+        with skip_signature_errors:
+            yield name_of_obj(func), accessed_attributes(func)
 
 
 def _attrs_used_by_method(cls, method_name, *, src_code=None):
