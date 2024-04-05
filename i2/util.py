@@ -19,16 +19,15 @@ from typing import (
     Optional,
     Iterable,
     TypeVar,
+    KT,
 )
 import contextlib
 import io
 
 T = TypeVar('T')
 
-ExceptionTypes = Union[BaseException, Tuple[BaseException]]
 
-
-def asis(x):
+def asis(x: T) -> T:
     """the identity function: f(x) := x (takes only one argument, and returns it)"""
     return x
 
@@ -43,6 +42,13 @@ def return_true(*args, **kwargs):
     return False
 
 
+ExceptionTypes = Union[BaseException, Tuple[BaseException]]
+Handler = Callable[[BaseException], None]
+Handlers = Union[Handler, Mapping[KT, Handler]]
+
+
+# Note: Similar functionality in meshed.slabs
+#       (https://github.com/i2mint/meshed/blob/61a5633cc8e1d4b4b26f31d3bf70d744aab327c4/meshed/slabs.py#L145)
 class ConditionalExceptionCatcher:
     """
     Context manager to catch exceptions of a certain type and instance condition.
@@ -50,48 +56,73 @@ class ConditionalExceptionCatcher:
     :param exception_types: The type of exception to catch. Can be a single exception
         type or a tuple of exception types.
     :param exception_condition: A function that takes an exception instance and returns
-        a boolean indicating whether the exception should be caught.
-    :param handler: The function to run when an exception of the specified type is caught.
+        a "key" value indicating whether the exception should be caught.
+        If the bool(key) is True, the exception is caught.
+        If the bool(key) is False, the exception is not caught.
+        The key can further be used to determine the handler to use, when the handlers
+        argument is a mapping.
+        The default is to catch all exceptions of the specified type(s).
+    :param handlers: Specification of how to handle the exceptions. Can be a single
+        function to run on the exception object when an exception of the specified
+        type is caught, or a mapping (e.g. dict) of handler functions, keyed by the
+        key returned by the exception_condition function.
     :param prevent_propagation: Whether to prevent the exception from propagating. Defaults
         to ``True``.
 
     Example:
 
-    >>> with ConditionalExceptionCatcher(
-    ...     ValueError, lambda e: e.args[0] == 'foo', handler=print
-    ... ):
+    >>> exception_catcher = ConditionalExceptionCatcher(
+    ...     ValueError, lambda e: e.args[0] == 'foo', handlers=print
+    ... )
+    >>> with exception_catcher:
     ...     raise ValueError('foo')
     foo
+    >>> with exception_catcher:
+    ...     raise TypeError('foo')
+    Traceback (most recent call last):
+        ...
+    TypeError: foo
+    >>> with exception_catcher:
+    ...     raise ValueError('bar')
+    Traceback (most recent call last):
+        ...
+    ValueError: bar
 
-
-    Note: There is a more general way to handle exceptions, used by meshed.slabs
-    (https://github.com/i2mint/meshed/blob/61a5633cc8e1d4b4b26f31d3bf70d744aab327c4/meshed/slabs.py#L145)
-    which allows you to specify a condition for the exception to be caught, and a handler
-    to run when the exception is caught. The current implementation of
-    ``MyExceptionCatcher`` is a simplified version of this more general exception
-    handling mechanism, but made as a context manager.
     """
 
     def __init__(
         self,
         exception_types: ExceptionTypes,
-        exception_condition: Callable[[BaseException], bool],
-        handler: Callable[[BaseException], None] = asis,
+        exception_condition: Callable[[BaseException], bool] = return_true,
+        handlers: Callable[[BaseException], None] = asis,
         *,
         prevent_propagation=True,
     ):
         self.exception_types = exception_types
         self.exception_condition = exception_condition
-        self.handler = handler
+        self.handlers = handlers
         self.prevent_propagation = prevent_propagation
+
+        assert callable(
+            self.exception_condition
+        ), f"Expected a callable for {self.exception_condition=}"
+        assert callable(self.handlers) or isinstance(
+            self.handlers, Mapping
+        ), f"Expected a callable or a mapping for {self.handlers=}"
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         # TODO: Could extend exception_condition and/or handler to use traceback
-        if exc_type is ValueError and self.exception_condition(exc_value):
-            self.handler(exc_value)
+        if exc_type is self.exception_types and (
+            key := self.exception_condition(exc_value)
+        ):
+            if isinstance(self.handlers, Mapping):
+                handler = self.handlers[key]
+            else:
+                handler = self.handlers
+            handler(exc_value)
             return self.prevent_propagation
         return False  # Allows other exceptions to propagate
 
