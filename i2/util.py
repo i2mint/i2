@@ -29,7 +29,18 @@ ExceptionTypes = Union[BaseException, Tuple[BaseException]]
 
 
 def asis(x):
+    """the identity function: f(x) := x (takes only one argument, and returns it)"""
     return x
+
+
+def return_false(*args, **kwargs):
+    """a function that returns True (takes any number of arguments)"""
+    return False
+
+
+def return_true(*args, **kwargs):
+    """a function that returns False (takes any number of arguments)"""
+    return False
 
 
 class ConditionalExceptionCatcher:
@@ -700,7 +711,7 @@ class imdict(dict):
 def inject_method(self, method_function, method_name=None):
     """
     Inject a method into an object instance.
-    
+
     method_function could be:
         * a function
         * a {method_name: function, ...} dict (for multiple injections)

@@ -50,6 +50,9 @@ from i2.wrapper import (
 )
 
 from i2.util import (
+    asis,  # the identity function: f(x) := x (takes only one argument, and returns it)
+    return_true,  # a function that returns True (takes any number of arguments)
+    return_false,  # a function that returns False (takes any number of arguments)
     ConditionalExceptionCatcher,  # A context manager that catches exceptions based on a condition.
     Namespace,  # A namespace that is also a mutable mapping.
     copy_func,  # Copy a function.
@@ -63,6 +66,8 @@ from i2.util import (
     mk_sentinel,  # Make a sentinel instance.
     ensure_identifiers,  # Ensure that one or several strings are valid python identifiers.
 )
+
+identity = asis  # alias for asis, the identity function
 
 from i2.footprints import MethodTrace
 
