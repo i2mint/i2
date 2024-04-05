@@ -567,7 +567,7 @@ def _is_method_like(name, obj, *, no_dunders=True):
     return isinstance(obj, (Callable, property, cached_property))
 
 
-def init_argument_names(cls) -> List[str]:
+def init_argument_names(cls, *, no_error_action=None) -> List[str]:
     """
     Get the list of argument names
 
@@ -581,8 +581,29 @@ def init_argument_names(cls) -> List[str]:
     >>> init_argument_names(DataClass)
     ['x', 'y']
 
+    Note: Some builtin types don't have signatures, so we get:
+    
+    ```
+    ValueError: no signature found for builtin type ...
+    ```
+
+    By default, we handle this by returning an empty list, but a callable 
+    no_error_action will call that function and return its result.
+    Anything else will result in raising the error.
+
     """
-    return Sig(cls).names
+    try:
+        return Sig(cls).names
+    except ValueError as e:
+        # Some builtin types don't have signatures, so we get:
+        #   ValueError: no signature found for builtin type ...
+        # By default, we handle this by returning an empty list.
+        if no_error_action is None:
+            return []
+        elif callable(no_error_action):
+            return no_error_action()
+        else:
+            raise e
 
 
 ExcludeNames = Union[Container, Callable]
@@ -608,6 +629,7 @@ def attribute_dependencies(
     *,
     name_of_obj=name_of_obj,
     exclude_names: ExcludeNames = init_argument_names,
+
 ):
     """
     Extracts (method_name, accessed_attributes) pairs for a class or instance thereof.

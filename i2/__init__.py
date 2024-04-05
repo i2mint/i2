@@ -50,17 +50,18 @@ from i2.wrapper import (
 )
 
 from i2.util import (
-    Namespace,
-    copy_func,
-    get_app_data_folder,
-    LiteralVal,
-    path_extractor,
+    ConditionalExceptionCatcher,  # A context manager that catches exceptions based on a condition.
+    Namespace,  # A namespace that is also a mutable mapping.
+    copy_func,  # Copy a function.
+    get_app_data_folder,  # Get the application data folder of the current system.
+    LiteralVal,  # An object to indicate that the value should be considered literally.
+    path_extractor,  # Get items from a tree-structured object from a sequence of tree-traversal indices.
     get_function_body,
-    lazyprop,
-    frozendict,
-    inject_method,
-    mk_sentinel,
-    ensure_identifiers,
+    lazyprop,  # Like functools.cached_property, but with a bit more.
+    frozendict,  # A hashable dictionary.
+    inject_method,  # Inject a method into an object instance
+    mk_sentinel,  # Make a sentinel instance.
+    ensure_identifiers,  # Ensure that one or several strings are valid python identifiers.
 )
 
 from i2.footprints import MethodTrace

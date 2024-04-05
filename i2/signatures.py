@@ -179,6 +179,9 @@ class IncompatibleSignatures(ValueError):
 #         DeprecationWarning)
 #     raise AttributeError(f"module {__name__} has no attribute {name}")
 
+def is_signature_error(e):
+    pass
+    # ValueError: no signature found for builtin <method 'append' of 'collections.deque' objects>
 
 def _param_sort_key(param):
     return (param.kind, param.kind == KO or param.default is not empty)
