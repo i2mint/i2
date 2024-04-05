@@ -107,10 +107,10 @@ class ConditionalExceptionCatcher:
 
         assert callable(
             self.exception_condition
-        ), f"Expected a callable for {self.exception_condition=}"
+        ), f'Expected a callable for {self.exception_condition=}'
         assert callable(self.handlers) or isinstance(
             self.handlers, Mapping
-        ), f"Expected a callable or a mapping for {self.handlers=}"
+        ), f'Expected a callable or a mapping for {self.handlers=}'
 
     def __enter__(self):
         return self
