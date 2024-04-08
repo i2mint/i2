@@ -319,7 +319,6 @@ class Wrap(_Wrap):
         else:
 
             if isinstance(ingress, MakeFromFunc):
-                self.ingress = ingress  # the ingress function is
                 func_to_ingress = ingress  # it's not the ingress function itself
                 # ... but an ingress factory: Should make the ingress in function of func
                 self.ingress = func_to_ingress(func)
