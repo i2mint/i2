@@ -562,8 +562,16 @@ def accessed_attributes(func, object_name=None):
     return visitor.attributes
 
 
-def _is_method_like(name, obj, *, no_dunders=True):
-    if no_dunders and name.startswith('__') and name.endswith('__'):
+def _is_method_like(
+    name,
+    obj,
+    *,
+    no_dunders=True,
+    include=('__post_init__',),
+):
+    if name in include:
+        return True
+    elif no_dunders and name.startswith('__') and name.endswith('__'):
         return False
     return isinstance(obj, (Callable, property, cached_property))
 
