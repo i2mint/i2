@@ -563,11 +563,7 @@ def accessed_attributes(func, object_name=None):
 
 
 def _is_method_like(
-    name,
-    obj,
-    *,
-    no_dunders=True,
-    include=('__post_init__',),
+    name, obj, *, no_dunders=True, include=('__post_init__',),
 ):
     if name in include:
         return True
