@@ -5,7 +5,7 @@
 # See https://github.com/i2mint/i2/issues/56.
 
 import operator
-from functools import partial
+from functools import partial, cached_property
 import ast
 from textwrap import dedent
 from typing import List, Callable, Literal, Union, Container
@@ -563,13 +563,19 @@ def accessed_attributes(func, object_name=None):
 
 
 def _is_method_like(
-    name, obj, *, no_dunders=True, include=('__post_init__',),
+    name,
+    obj,
+    *,
+    no_dunders=True,
+    include=('__post_init__',),
+    include_types=(Callable, property, cached_property),
+    exclude_types=(staticmethod,),
 ):
     if name in include:
         return True
     elif no_dunders and name.startswith('__') and name.endswith('__'):
         return False
-    return isinstance(obj, (Callable, property, cached_property))
+    return isinstance(obj, include_types) and not isinstance(obj, exclude_types)
 
 
 def init_argument_names(cls, *, no_error_action=None) -> List[str]:
@@ -731,7 +737,6 @@ def attrs_used_by_method(method, *, src_code=None):
 # TODO: Merge with older attrs_used_by_method one above
 
 import inspect
-from functools import cached_property
 from i2.signatures import Sig, resolve_function
 
 
