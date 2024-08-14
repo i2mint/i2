@@ -11,13 +11,14 @@ from i2.deco import (
 )
 
 from i2.signatures import (
-    Sig,
+    Sig,  # An extended Signature object
     Param,
     sort_params,
-    call_forgivingly,
-    call_somewhat_forgivingly,
-    name_of_obj,
+    call_forgivingly,  # Call a function extracting the arguments from a pool of arguments
+    call_somewhat_forgivingly,  # call_forgivingly with a bit more control
+    name_of_obj,  # Get the name of an object, and control how it's done
     empty as empty_param_attr,
+    SigComparison,  # Compare two signatures
 )
 
 from i2.multi_object import (
