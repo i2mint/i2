@@ -4917,3 +4917,148 @@ def is_call_compatible_with(
         and validate_param_positions()
         and validate_param_compatibility()
     )
+
+
+from dataclasses import dataclass
+
+from functools import cached_property
+from dataclasses import dataclass
+from i2.signatures import (
+    Sig,
+    SignatureAble,
+    is_call_compatible_with,
+    param_comparator,
+    ParamComparator,
+    ComparisonAggreg,
+    param_differences_dict,
+)
+from inspect import Parameter
+
+
+@dataclass
+class SigComparison:
+    """
+    Class to compare two signatures.
+
+    :param sig1: First signature or signature-able object.
+    :param sig2: Second signature or signature-able object.
+    """
+
+    sig1: Union[Callable, Sig]
+    sig2: Union[Callable, Sig]
+
+    def __post_init__(self):
+        self.sig1 = Sig(self.sig1)
+        self.sig2 = Sig(self.sig2)
+
+    @cached_property
+    def shared_names(self):
+        """
+        List of names that are common to both signatures, in the order of sig1.
+
+        >>> sig1 = Sig(lambda a, b, c: None)
+        >>> sig2 = Sig(lambda b, c, d: None)
+        >>> comp = SigComparison(sig1, sig2)
+        >>> comp.shared_names
+        ['b', 'c']
+        """
+        return [name for name in self.sig1.names if name in self.sig2.names]
+
+    @cached_property
+    def names_missing_in_sig2(self):
+        """
+        List of names that are in the sig1 signature but not in sig2.
+
+        >>> sig1 = Sig(lambda a, b, c: None)
+        >>> sig2 = Sig(lambda b, c, d: None)
+        >>> comp = SigComparison(sig1, sig2)
+        >>> comp.names_missing_in_sig2
+        ['a']
+        """
+        return [name for name in self.sig1.names if name not in self.sig2.names]
+
+    @cached_property
+    def names_missing_in_sig1(self):
+        """
+        List of names that are in the sig2 signature but not in sig1.
+
+        >>> sig1 = Sig(lambda a, b, c: None)
+        >>> sig2 = Sig(lambda b, c, d: None)
+        >>> comp = SigComparison(sig1, sig2)
+        >>> comp.names_missing_in_sig1
+        ['d']
+        """
+        return [name for name in self.sig2.names if name not in self.sig1.names]
+
+    # TODO: Verify that the doctests are correct!
+    def are_call_compatible(self, param_comparator = None) -> bool:
+        """
+        Check if the signatures are call-compatible.
+
+        Returns True if sig1 can be used to call sig2 or vice versa.
+
+        >>> sig1 = Sig(lambda a, b, c=3: None)
+        >>> sig2 = Sig(lambda a, b: None)
+        >>> comp = SigComparison(sig1, sig2)
+        >>> comp.are_call_compatible()
+        False
+
+        >>> comp = SigComparison(sig2, sig1)
+        >>> comp.are_call_compatible()
+        True
+        """
+        return is_call_compatible_with(
+            self.sig1, self.sig2, param_comparator=param_comparator
+        )
+
+    def param_comparison(
+        self,
+        comparator = param_comparator,
+        aggregation = all,
+    ) -> bool:
+        """
+        Compare parameters between the two signatures using the provided comparator function.
+
+        :param comparator: A function to compare two parameters.
+        :param aggregation: A function to aggregate the results of the comparisons.
+        :return: Boolean result of the aggregated comparisons.
+
+        >>> sig1 = Sig('(a, b: int, c=3)')
+        >>> sig2 = Sig('(a, *, b=2, d=4)')
+        >>> comp = SigComparison(sig1, sig2)
+        >>> comp.param_comparison()
+        False
+        """
+        results = [
+            comparator(self.sig1.parameters[name], self.sig2.parameters[name])
+            for name in self.shared_names
+        ]
+        return aggregation(results)
+
+    def param_differences(self) -> dict:
+        """
+        Get a dictionary of parameter differences between the two signatures.
+
+        :return: A dictionary containing differences for each parameter.
+
+        >>> sig1 = Sig('(a, b: int, c=3)')
+        >>> sig2 = Sig('(a, *, b=2, d=4)')
+        >>> comp = SigComparison(sig1, sig2)
+        >>> result = comp.param_differences()
+        >>> expected = {
+        ...     'a': {},
+        ...     'b': {
+        ...         'kind': (Parameter.POSITIONAL_OR_KEYWORD, Parameter.KEYWORD_ONLY),
+        ...         'default': (Parameter.empty, 2),
+        ...         'annotation': (int, Parameter.empty),
+        ...     },
+        ... }
+        >>> result == expected
+        True
+        """
+        return {
+            name: param_differences_dict(
+                self.sig1.parameters[name], self.sig2.parameters[name]
+            )
+            for name in self.shared_names
+        }
