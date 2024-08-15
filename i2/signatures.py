@@ -4762,7 +4762,10 @@ def dflt1_is_empty_or_dflt2_is_not(dflt1, dflt2):
 #   The code of is_call_compatible_with should be reviwed and refactored to use general
 #   tools.
 def is_call_compatible_with(
-    sig1: Sig, sig2: Sig, *, param_comparator: ParamComparator = None
+    sig1: Sig,
+    sig2: Sig,
+    *,
+    param_comparator: ParamComparator = None,
 ) -> bool:
     """Return True if ``sig1`` is compatible with ``sig2``. Meaning that all valid ways
     to call ``sig1`` are valid for ``sig2``.
@@ -4892,6 +4895,8 @@ def is_call_compatible_with(
                 return False
         return True
 
+    # TODO: I'd like to have dflt1_is_empty_or_dflt2_is_not be a default instead of None
+    #   --> But tests fail when I do so. Why? Do they specify None explicitly. Repair.
     param_comparator = param_comparator or dflt1_is_empty_or_dflt2_is_not
 
     pos1, pks1, vp1, kos1, vk1 = sig1.detail_names_by_kind()
@@ -4991,7 +4996,7 @@ class SigComparison:
         return [name for name in self.sig2.names if name not in self.sig1.names]
 
     # TODO: Verify that the doctests are correct!
-    def are_call_compatible(self, param_comparator = None) -> bool:
+    def are_call_compatible(self, param_comparator=None) -> bool:
         """
         Check if the signatures are call-compatible.
 
@@ -5013,8 +5018,8 @@ class SigComparison:
 
     def param_comparison(
         self,
-        comparator = param_comparator,
-        aggregation = all,
+        comparator=param_comparator,
+        aggregation=all,
     ) -> bool:
         """
         Compare parameters between the two signatures using the provided comparator function.
