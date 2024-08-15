@@ -715,10 +715,7 @@ def extract_arguments(
 
     if include_all_when_var_keywords_in_params:
         if (
-            next(
-                (p.name for p in params if p.kind == Parameter.VAR_KEYWORD),
-                None,
-            )
+            next((p.name for p in params if p.kind == Parameter.VAR_KEYWORD), None,)
             is not None
         ):
             param_kwargs.update(remaining_kwargs)
@@ -2057,7 +2054,7 @@ class Sig(Signature, Mapping):
         )
 
         assert default_conflict_method in get_args(SigMergeOptions), (
-            'default_conflict_method should be one of: ' f"{get_args(SigMergeOptions)}"
+            'default_conflict_method should be one of: ' f'{get_args(SigMergeOptions)}'
         )
 
         if default_conflict_method == 'take_first':
@@ -2932,9 +2929,7 @@ class Sig(Signature, Mapping):
             ignore_kind=_ignore_kind,
         )
         return self.mk_args_and_kwargs(
-            arguments,
-            allow_partial=_allow_partial,
-            args_limit=_args_limit,
+            arguments, allow_partial=_allow_partial, args_limit=_args_limit,
         )
 
     def source_arguments(
@@ -3099,9 +3094,7 @@ class Sig(Signature, Mapping):
             **kwargs,
         )
         return self.mk_args_and_kwargs(
-            arguments,
-            allow_partial=_allow_partial,
-            args_limit=_args_limit,
+            arguments, allow_partial=_allow_partial, args_limit=_args_limit,
         )
 
 
@@ -4238,23 +4231,32 @@ class sigs_for_builtins:
         zip(*iterables) --> A zip object yielding tuples until an input is exhausted.
         """
 
-    def bool(x: Any, /) -> bool: ...
+    def bool(x: Any, /) -> bool:
+        ...
 
-    def bytearray(iterable_of_ints: Iterable[int], /): ...
+    def bytearray(iterable_of_ints: Iterable[int], /):
+        ...
 
-    def classmethod(function: Callable, /): ...
+    def classmethod(function: Callable, /):
+        ...
 
-    def int(x, base=10, /): ...
+    def int(x, base=10, /):
+        ...
 
-    def iter(callable: Callable, sentinel=None, /): ...
+    def iter(callable: Callable, sentinel=None, /):
+        ...
 
-    def next(iterator: Iterator, default=None, /): ...
+    def next(iterator: Iterator, default=None, /):
+        ...
 
-    def staticmethod(function: Callable, /): ...
+    def staticmethod(function: Callable, /):
+        ...
 
-    def str(bytes_or_buffer, encoding=None, errors=None, /): ...
+    def str(bytes_or_buffer, encoding=None, errors=None, /):
+        ...
 
-    def super(type_, obj=None, /): ...
+    def super(type_, obj=None, /):
+        ...
 
     # def type(name, bases=None, dict=None, /):
     #     ...
@@ -4424,11 +4426,14 @@ class sigs_for_type_name:
     signatures (through ``inspect.signature``),
     """
 
-    def itemgetter(iterable: Iterable[VT], /) -> Union[VT, Tuple[VT]]: ...
+    def itemgetter(iterable: Iterable[VT], /) -> Union[VT, Tuple[VT]]:
+        ...
 
-    def attrgetter(iterable: Iterable[VT], /) -> Union[VT, Tuple[VT]]: ...
+    def attrgetter(iterable: Iterable[VT], /) -> Union[VT, Tuple[VT]]:
+        ...
 
-    def methodcaller(obj: Any) -> Any: ...
+    def methodcaller(obj: Any) -> Any:
+        ...
 
 
 ############# Tools for testing #########################################################
@@ -4473,9 +4478,7 @@ for kind in param_kinds:
     lower_kind = kind.lower()
     setattr(param_for_kind, lower_kind, partial(param_for_kind, kind=kind))
     setattr(
-        param_for_kind,
-        'with_default',
-        partial(param_for_kind, with_default=True),
+        param_for_kind, 'with_default', partial(param_for_kind, with_default=True),
     )
     setattr(
         getattr(param_for_kind, lower_kind),
@@ -4529,10 +4532,7 @@ def mk_func_comparator_based_on_signature_comparator(
 
 
 def _keyed_comparator(
-    comparator: Comparator,
-    key: KeyFunction,
-    x: CT,
-    y: CT,
+    comparator: Comparator, key: KeyFunction, x: CT, y: CT,
 ) -> Comparison:
     """Apply a comparator after transforming inputs through a key function.
 
@@ -4546,10 +4546,7 @@ def _keyed_comparator(
     return comparator(key(x), key(y))
 
 
-def keyed_comparator(
-    comparator: Comparator,
-    key: KeyFunction,
-) -> Comparator:
+def keyed_comparator(comparator: Comparator, key: KeyFunction,) -> Comparator:
     """Create a key-function enabled binary operator.
 
     In various places in python functionality is extended by allowing a key function.
@@ -4648,13 +4645,13 @@ permissive_param_comparator = partial(
     default=ignore_any_differences,
     annotation=ignore_any_differences,
 )
-permissive_param_comparator.__doc__ = """
+permissive_param_comparator.__doc__ = '''
 Permissive version of param_comparator that ignores any differences of parameter 
 attributes.
 
 It is meant to be used with partial, but with a permissive base, contrary to the 
 base param_comparator which requires strict equality (`eq`) for all attributes.
-"""
+'''
 
 
 def return_tuple(x, y):
@@ -4678,14 +4675,14 @@ param_comparison_dict = partial(
     aggreg=param_attribute_dict,
 )
 
-param_comparison_dict.__doc__ = """
+param_comparison_dict.__doc__ = '''
 A ParamComparator that returns a dictionary with pairs parameter attributes.
 
 >>> param1 = Sig('(a: int = 1)')['a']
 >>> param2 = Sig('(a: str = 2)')['a']
 >>> param_comparison_dict(param1, param2)  # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
 {'name': ('a', 'a'), 'kind': ..., 'default': (1, 2), 'annotation': (<class 'int'>, <class 'str'>)}
-"""
+'''
 
 
 def param_differences_dict(
@@ -4762,10 +4759,7 @@ def dflt1_is_empty_or_dflt2_is_not(dflt1, dflt2):
 #   The code of is_call_compatible_with should be reviwed and refactored to use general
 #   tools.
 def is_call_compatible_with(
-    sig1: Sig,
-    sig2: Sig,
-    *,
-    param_comparator: ParamComparator = None,
+    sig1: Sig, sig2: Sig, *, param_comparator: ParamComparator = None,
 ) -> bool:
     """Return True if ``sig1`` is compatible with ``sig2``. Meaning that all valid ways
     to call ``sig1`` are valid for ``sig2``.
@@ -5016,11 +5010,7 @@ class SigComparison:
             self.sig1, self.sig2, param_comparator=param_comparator
         )
 
-    def param_comparison(
-        self,
-        comparator=param_comparator,
-        aggregation=all,
-    ) -> bool:
+    def param_comparison(self, comparator=param_comparator, aggregation=all,) -> bool:
         """
         Compare parameters between the two signatures using the provided comparator function.
 
