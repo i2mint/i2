@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.1.21 documentation</title>
+  <title>i2.signatures &mdash; i2 0.1.22 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=b3d22ae5"></script>
+        <script src="../../_static/documentation_options.js?v=842aa08f"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -1575,6 +1575,16 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Signature</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">to_signature_kwargs</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="Sig.pair_with">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.Sig.pair_with">[docs]</a>
+    <span class="k">def</span> <span class="nf">pair_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_sig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;SigPair&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an object that pairs with another signature for comparison, merging, etc.</span>
+
+<span class="sd">        See `SigPair` for more details.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">SigPair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_sig</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Sig.is_call_compatible_with">
@@ -5192,12 +5202,14 @@
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span>
 
 
-<div class="viewcode-block" id="SigComparison">
-<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.SigComparison">[docs]</a>
+<div class="viewcode-block" id="SigPair">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.SigPair">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">SigComparison</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">SigPair</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to compare two signatures.</span>
+<span class="sd">    Class that operates on a pair of signatures.</span>
+
+<span class="sd">    For example, offers methods to compare two signatures in various ways.</span>
 
 <span class="sd">    :param sig1: First signature or signature-able object.</span>
 <span class="sd">    :param sig2: Second signature or signature-able object.</span>
@@ -5217,7 +5229,7 @@
 
 <span class="sd">        &gt;&gt;&gt; sig1 = Sig(lambda a, b, c: None)</span>
 <span class="sd">        &gt;&gt;&gt; sig2 = Sig(lambda b, c, d: None)</span>
-<span class="sd">        &gt;&gt;&gt; comp = SigComparison(sig1, sig2)</span>
+<span class="sd">        &gt;&gt;&gt; comp = SigPair(sig1, sig2)</span>
 <span class="sd">        &gt;&gt;&gt; comp.shared_names</span>
 <span class="sd">        [&#39;b&#39;, &#39;c&#39;]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -5230,7 +5242,7 @@
 
 <span class="sd">        &gt;&gt;&gt; sig1 = Sig(lambda a, b, c: None)</span>
 <span class="sd">        &gt;&gt;&gt; sig2 = Sig(lambda b, c, d: None)</span>
-<span class="sd">        &gt;&gt;&gt; comp = SigComparison(sig1, sig2)</span>
+<span class="sd">        &gt;&gt;&gt; comp = SigPair(sig1, sig2)</span>
 <span class="sd">        &gt;&gt;&gt; comp.names_missing_in_sig2</span>
 <span class="sd">        [&#39;a&#39;]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -5243,15 +5255,15 @@
 
 <span class="sd">        &gt;&gt;&gt; sig1 = Sig(lambda a, b, c: None)</span>
 <span class="sd">        &gt;&gt;&gt; sig2 = Sig(lambda b, c, d: None)</span>
-<span class="sd">        &gt;&gt;&gt; comp = SigComparison(sig1, sig2)</span>
+<span class="sd">        &gt;&gt;&gt; comp = SigPair(sig1, sig2)</span>
 <span class="sd">        &gt;&gt;&gt; comp.names_missing_in_sig1</span>
 <span class="sd">        [&#39;d&#39;]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sig2</span><span class="o">.</span><span class="n">names</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sig1</span><span class="o">.</span><span class="n">names</span><span class="p">]</span>
 
     <span class="c1"># TODO: Verify that the doctests are correct!</span>
-<div class="viewcode-block" id="SigComparison.are_call_compatible">
-<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.SigComparison.are_call_compatible">[docs]</a>
+<div class="viewcode-block" id="SigPair.are_call_compatible">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.SigPair.are_call_compatible">[docs]</a>
     <span class="k">def</span> <span class="nf">are_call_compatible</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">param_comparator</span><span class="o">=</span><span class="n">dflt1_is_empty_or_dflt2_is_not</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -5262,11 +5274,11 @@
 
 <span class="sd">        &gt;&gt;&gt; sig1 = Sig(lambda a, b, c=3: None)</span>
 <span class="sd">        &gt;&gt;&gt; sig2 = Sig(lambda a, b: None)</span>
-<span class="sd">        &gt;&gt;&gt; comp = SigComparison(sig1, sig2)</span>
+<span class="sd">        &gt;&gt;&gt; comp = SigPair(sig1, sig2)</span>
 <span class="sd">        &gt;&gt;&gt; comp.are_call_compatible()</span>
 <span class="sd">        False</span>
 
-<span class="sd">        &gt;&gt;&gt; comp = SigComparison(sig2, sig1)</span>
+<span class="sd">        &gt;&gt;&gt; comp = SigPair(sig2, sig1)</span>
 <span class="sd">        &gt;&gt;&gt; comp.are_call_compatible()</span>
 <span class="sd">        True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -5275,8 +5287,8 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="SigComparison.param_comparison">
-<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.SigComparison.param_comparison">[docs]</a>
+<div class="viewcode-block" id="SigPair.param_comparison">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.SigPair.param_comparison">[docs]</a>
     <span class="k">def</span> <span class="nf">param_comparison</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">comparator</span><span class="o">=</span><span class="n">param_comparator</span><span class="p">,</span>
@@ -5291,7 +5303,7 @@
 
 <span class="sd">        &gt;&gt;&gt; sig1 = Sig(&#39;(a, b: int, c=3)&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; sig2 = Sig(&#39;(a, *, b=2, d=4)&#39;)</span>
-<span class="sd">        &gt;&gt;&gt; comp = SigComparison(sig1, sig2)</span>
+<span class="sd">        &gt;&gt;&gt; comp = SigPair(sig1, sig2)</span>
 <span class="sd">        &gt;&gt;&gt; comp.param_comparison()</span>
 <span class="sd">        False</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -5302,8 +5314,8 @@
         <span class="k">return</span> <span class="n">aggregation</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="SigComparison.param_differences">
-<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.SigComparison.param_differences">[docs]</a>
+<div class="viewcode-block" id="SigPair.param_differences">
+<a class="viewcode-back" href="../../module_docs/i2/signatures.html#i2.signatures.SigPair.param_differences">[docs]</a>
     <span class="k">def</span> <span class="nf">param_differences</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a dictionary of parameter differences between the two signatures.</span>
@@ -5312,7 +5324,7 @@
 
 <span class="sd">        &gt;&gt;&gt; sig1 = Sig(&#39;(a, b: int, c=3)&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; sig2 = Sig(&#39;(a, *, b=2, d=4)&#39;)</span>
-<span class="sd">        &gt;&gt;&gt; comp = SigComparison(sig1, sig2)</span>
+<span class="sd">        &gt;&gt;&gt; comp = SigPair(sig1, sig2)</span>
 <span class="sd">        &gt;&gt;&gt; result = comp.param_differences()</span>
 <span class="sd">        &gt;&gt;&gt; expected = {</span>
 <span class="sd">        ...     &#39;a&#39;: {},</span>
