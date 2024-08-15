@@ -18,7 +18,6 @@ from i2.signatures import (
     call_somewhat_forgivingly,  # call_forgivingly with a bit more control
     name_of_obj,  # Get the name of an object, and control how it's done
     empty as empty_param_attr,
-    SigPair,  # Compare two signatures
 )
 
 from i2.multi_object import (
