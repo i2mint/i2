@@ -140,9 +140,6 @@ wraps = partial(_wraps, assigned=wrapper_assignments)
 _empty = Parameter.empty
 empty = _empty
 
-_ParameterKind = type(
-    Parameter(name='param_kind', kind=Parameter.POSITIONAL_OR_KEYWORD)
-)
 ParamsType = Iterable[Parameter]
 ParamsAble = Union[ParamsType, Signature, MappingType[str, Parameter], Callable, str]
 SignatureAble = Union[Signature, ParamsAble]
@@ -4496,7 +4493,6 @@ for kind in param_kinds:
 ########################################################################################
 
 Compared = TypeVar('Compared')
-
 Comparison = TypeVar('Comparison')
 Comparator = Callable[[Compared, Compared], Comparison]
 Comparison.__doc__ = (
@@ -4511,7 +4507,6 @@ Comparison.__doc__ = (
 SignatureComparator = Callable[[Signature, Signature], Comparison]
 ParamComparator = Callable[[Parameter, Parameter], Comparison]
 CallableComparator = Callable[[Callable, Callable], Comparison]
-
 
 ComparisonAggreg = Callable[[Iterable[Comparison]], Any]
 
