@@ -747,7 +747,10 @@ def test_call_compatibility(sig_spec1, sig_spec2):
                 raise
             else:
                 return
-    assert is_compatible, f'sig1 is not compatible with sig2, when it should: {sig1} and {sig2}'
+    assert (
+        is_compatible
+    ), f'sig1 is not compatible with sig2, when it should: {sig1} and {sig2}'
+
 
 def test_bool():
     name = 'bool'
