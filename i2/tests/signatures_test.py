@@ -705,7 +705,7 @@ def test_call_forgivingly(sig_spec):
         ('(a, /, b, *, c)', '(a, /, x, *, c)',),
         ('(a, /, b, *, c)', '(a, /, b, *, x)',),
         ('(a, /, b, *, c)', '(a=0, b=0, c=0)'),
-        # ('(a=0, /, b=0, *, c=0)', '(a, b, c)'),  # TODO: See if this should pass
+        ('(a=0, /, b=0, *, c=0)', '(a, b, c)'),  # TODO: See if this should pass
         ('(a, b, /, c, d, *, e, f)', '(b, a, /, d, c, *, f, e)'),
         ('(a, b, /, c, d, *, e, f)', '(a, c, /, b, e, *, d, f)',),
         ('()', '(*args)'),
@@ -747,9 +747,7 @@ def test_call_compatibility(sig_spec1, sig_spec2):
                 raise
             else:
                 return
-    if not is_compatible:
-        raise AssertionError('sig1 is not compatible with sig2, when it should.')
-
+    assert is_compatible, f'sig1 is not compatible with sig2, when it should: {sig1} and {sig2}'
 
 def test_bool():
     name = 'bool'
