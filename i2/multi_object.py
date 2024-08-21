@@ -21,6 +21,7 @@ together)
 ![image](https://user-images.githubusercontent.com/1906276/138004878-bfe17115-c25f-4d22-9740-0fef983507c0.png)
 
 """
+
 from typing import Mapping, Iterable, Union, Callable, Any, TypeVar
 from inspect import Signature, signature
 
@@ -30,7 +31,7 @@ from inspect import Signature, signature
 # TODO: Analyse usages and reroute to i2.signatures.name_of_obj instead.
 #   Reason this duplicate exists might be because we wanted to keep multi_object
 #   completely independent from other modules (self-contained).
-def name_of_obj(o: object) -> Union[str, None]:
+def name_of_obj(o: object, default=None) -> Union[str, None]:
     """
     Tries to find the (or "a") name for an object, even if `__name__` doesn't exist.
 
@@ -59,7 +60,54 @@ def name_of_obj(o: object) -> Union[str, None]:
                 return name_of_obj(o.func)
         return name
     else:
-        return None
+        return default
+
+
+# Note: Vendored in dol.util and lkj.strings
+def truncate_string_with_marker(
+    s, *, left_limit=15, right_limit=15, middle_marker='...'
+):
+    """
+    Return a string with a limited length.
+
+    If the string is longer than the sum of the left_limit and right_limit,
+    the string is truncated and the middle_marker is inserted in the middle.
+
+    If the string is shorter than the sum of the left_limit and right_limit,
+    the string is returned as is.
+
+    >>> truncate_string_with_marker('1234567890')
+    '1234567890'
+
+    But if the string is longer than the sum of the limits, it is truncated:
+
+    >>> truncate_string_with_marker('1234567890', left_limit=3, right_limit=3)
+    '123...890'
+    >>> truncate_string_with_marker('1234567890', left_limit=3, right_limit=0)
+    '123...'
+    >>> truncate_string_with_marker('1234567890', left_limit=0, right_limit=3)
+    '...890'
+
+    If you're using a specific parametrization of the function often, you can
+    create a partial function with the desired parameters:
+
+    >>> from functools import partial
+    >>> truncate_string = partial(truncate_string_with_marker, left_limit=2, right_limit=2, middle_marker='---')
+    >>> truncate_string('1234567890')
+    '12---90'
+    >>> truncate_string('supercalifragilisticexpialidocious')
+    'su---us'
+
+    """
+    middle_marker_len = len(middle_marker)
+    if len(s) <= left_limit + right_limit:
+        return s
+    elif right_limit == 0:
+        return s[:left_limit] + middle_marker
+    elif left_limit == 0:
+        return middle_marker + s[-right_limit:]
+    else:
+        return s[:left_limit] + middle_marker + s[-right_limit:]
 
 
 def ensure_iterable_of_callables(x):
@@ -368,6 +416,7 @@ def _signature_from_first_and_last_func(first_func, last_func):
     return Signature(input_params, return_annotation=return_annotation)
 
 
+# Note: There is a similar function in dol.util and meshed, of the same name
 class Pipe(MultiFunc):
     """Simple function composition. That is, gives you a callable that implements
 
@@ -441,9 +490,41 @@ class Pipe(MultiFunc):
 
     def __call__(self, *args, **kwargs):
         out = self.first_func(*args, **kwargs)
-        for func in self.other_funcs:
-            out = func(out)
+        for i, func in enumerate(self.other_funcs, 1):
+            try:
+                out = func(out)
+            except Exception as original_error:
+                new_error = self._mk_pipe_call_error(original_error, i, out, args, kwargs)
+                raise new_error from original_error
         return out
+
+    def _mk_pipe_call_error(self, error_obj, i, out, args, kwargs):
+        msg = f'Error calling function {self._func_info_str(i)}\n'
+        out_str = f"{out}"
+        msg += f'on input {truncate_string_with_marker(out_str)}\n'
+        msg += 'which was the output of previous function'
+        msg += f'{self._func_info_str(i - 1)}\n'
+        args_str = ', '.join(map(str, args))
+        kwargs_str = ', '.join(f'{k}={v}' for k, v in kwargs.items())
+        msg += f'The error was cause by calling {self} on ({args_str}, {kwargs_str})\n'
+        msg += f'Error was: {error_obj}'
+        new_error_obj = type(error_obj)(msg)
+        new_error_obj.error_context = {
+            'Pipe': self,
+            'args': args,
+            'kwargs': kwargs,
+            'func_index': i,
+            'func_key': list(self.funcs.keys())[i],
+            'func': list(self.funcs.values())[i],
+            'func_input': out,
+        }
+        return new_error_obj
+
+    def _func_info_str(self, i):
+        key = list(self.funcs.keys())[i]
+        func = self.funcs[key]
+        func_name = name_of_obj(func, default=f'')
+        return f'(name={func_name}, key={key}, index={i})'
 
     def __len__(self):
         return len(self.funcs)
