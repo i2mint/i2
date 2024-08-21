@@ -494,13 +494,15 @@ class Pipe(MultiFunc):
             try:
                 out = func(out)
             except Exception as original_error:
-                new_error = self._mk_pipe_call_error(original_error, i, out, args, kwargs)
+                new_error = self._mk_pipe_call_error(
+                    original_error, i, out, args, kwargs
+                )
                 raise new_error from original_error
         return out
 
     def _mk_pipe_call_error(self, error_obj, i, out, args, kwargs):
         msg = f'Error calling function {self._func_info_str(i)}\n'
-        out_str = f"{out}"
+        out_str = f'{out}'
         msg += f'on input {truncate_string_with_marker(out_str)}\n'
         msg += 'which was the output of previous function'
         msg += f'{self._func_info_str(i - 1)}\n'
