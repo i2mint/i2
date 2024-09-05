@@ -302,6 +302,7 @@ def dot_strings_of_callable_types(*typs, func_shape='box'):
         yield dot_string_of_callable_typ(typ)
         yield f'{typ_name(typ)} [shape="{func_shape}"]'
 
+
 # --------------------------------------------------------------------------------------
 # Misc
 
@@ -412,7 +413,7 @@ class ObjectClassifier:
         """
         matches = list(self.matching_kinds(obj))
         if assert_unique and len(matches) > 1:
-            raise ValueError(f"Multiple matches found: {matches}")
+            raise ValueError(f'Multiple matches found: {matches}')
         return matches[0] if matches else None
 
     def matching_kinds(self, obj: ObjectType) -> Iterator[KT]:
