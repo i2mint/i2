@@ -71,4 +71,4 @@ identity = asis  # alias for asis, the identity function
 
 from i2.footprints import MethodTrace
 
-from i2.itypes import validate_literal
+from i2.itypes import validate_literal, ObjectClassifier
