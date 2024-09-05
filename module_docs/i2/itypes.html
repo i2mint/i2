@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.itypes &mdash; i2 0.1.30 documentation</title>
+  <title>i2.itypes &mdash; i2 0.1.31 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=73657eb8"></script>
+        <script src="../../_static/documentation_options.js?v=d71dfaa1"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -64,6 +64,13 @@
 <li class="toctree-l1"><a class="reference internal" href="io_trans.html">i2.io_trans</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">i2.itypes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#i2.itypes.HasAttrs"><code class="docutils literal notranslate"><span class="pre">HasAttrs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.itypes.ObjectClassifier"><code class="docutils literal notranslate"><span class="pre">ObjectClassifier</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#i2.itypes.ObjectClassifier.all_matches"><code class="docutils literal notranslate"><span class="pre">ObjectClassifier.all_matches()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.itypes.ObjectClassifier.matches"><code class="docutils literal notranslate"><span class="pre">ObjectClassifier.matches()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.itypes.ObjectClassifier.matching_kind"><code class="docutils literal notranslate"><span class="pre">ObjectClassifier.matching_kind()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.itypes.ObjectClassifier.matching_kinds"><code class="docutils literal notranslate"><span class="pre">ObjectClassifier.matching_kinds()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.itypes.input_and_output_types"><code class="docutils literal notranslate"><span class="pre">input_and_output_types()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.itypes.is_callable_kind"><code class="docutils literal notranslate"><span class="pre">is_callable_kind()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.itypes.iterable_to_literal"><code class="docutils literal notranslate"><span class="pre">iterable_to_literal()</span></code></a></li>
@@ -154,6 +161,124 @@ you can use Protocols to fill the gap.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">HasAttrs</span><span class="p">[</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;prop&quot;</span><span class="p">,</span> <span class="s2">&quot;this_attr_does_not_exist&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.itypes.ObjectClassifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.itypes.</span></span><span class="sig-name descname"><span class="pre">ObjectClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verifiers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">KT</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/itypes.html#ObjectClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.itypes.ObjectClassifier" title="Link to this definition"></a></dt>
+<dd><p>A general-purpose classifier for objects based on a set of verifying functions.</p>
+<p>Each “verifier” checks whether an object belongs to a certain kind (category).</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isa</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">typ</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">typ</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">verifiers</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="n">isa</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="s1">&#39;mapping&#39;</span><span class="p">:</span> <span class="n">isa</span><span class="p">(</span><span class="n">Mapping</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="s1">&#39;iterable&#39;</span><span class="p">:</span> <span class="n">isa</span><span class="p">(</span><span class="n">Iterable</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">classifier</span> <span class="o">=</span> <span class="n">ObjectClassifier</span><span class="p">(</span><span class="n">verifiers</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check if the object matches any kind</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">classifier</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Check if the object matches a specific kind</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">classifier</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;str&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">classifier</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Get all matches</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">classifier</span><span class="o">.</span><span class="n">all_matches</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="go">{&#39;str&#39;: True, &#39;mapping&#39;: False, &#39;iterable&#39;: True}</span>
+</pre></div>
+</div>
+<p>Find all matching kinds</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">classifier</span><span class="o">.</span><span class="n">matching_kinds</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+<span class="go">[&#39;str&#39;, &#39;iterable&#39;]</span>
+</pre></div>
+</div>
+<p>Find the first matching kind (default is to ensure uniqueness, which will fail here)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">classifier</span><span class="o">.</span><span class="n">matching_kind</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">  </span><span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">Multiple matches found: [&#39;str&#39;, &#39;iterable&#39;]</span>
+</pre></div>
+</div>
+<p>Find the first matching kind without uniqueness check</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">classifier</span><span class="o">.</span><span class="n">matching_kind</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">assert_unique</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&#39;str&#39;</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.itypes.ObjectClassifier.all_matches">
+<span class="sig-name descname"><span class="pre">all_matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">KT</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/i2/itypes.html#ObjectClassifier.all_matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.itypes.ObjectClassifier.all_matches" title="Link to this definition"></a></dt>
+<dd><p>Returns a dictionary indicating if the object matches each kind.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> – The object to classify.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with kind names as keys and True/False as values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.itypes.ObjectClassifier.matches">
+<span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KT</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/i2/itypes.html#ObjectClassifier.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.itypes.ObjectClassifier.matches" title="Link to this definition"></a></dt>
+<dd><p>Returns True if the object matches the given kind, or matches any kind
+if kind is None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – The object to classify.</p></li>
+<li><p><strong>kind</strong> – The specific kind (verifier key) to check.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the object matches the given or any kind.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.itypes.ObjectClassifier.matching_kind">
+<span class="sig-name descname"><span class="pre">matching_kind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assert_unique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">KT</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/i2/itypes.html#ObjectClassifier.matching_kind"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.itypes.ObjectClassifier.matching_kind" title="Link to this definition"></a></dt>
+<dd><p>Returns the first kind that matches the object. If assert_unique is True,
+it asserts that only one match exists. Optionally, it can return the value instead of the key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – The object to classify.</p></li>
+<li><p><strong>assert_unique</strong> – Ensures only one kind matches, if True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The key of the first matching kind, or None if no match.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.itypes.ObjectClassifier.matching_kinds">
+<span class="sig-name descname"><span class="pre">matching_kinds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span></span></span><a class="reference internal" href="../../_modules/i2/itypes.html#ObjectClassifier.matching_kinds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.itypes.ObjectClassifier.matching_kinds" title="Link to this definition"></a></dt>
+<dd><p>Returns an iterator of kinds that match the object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> – The object to classify.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An iterator of matching kinds.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
