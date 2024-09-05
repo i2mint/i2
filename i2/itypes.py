@@ -301,3 +301,127 @@ def dot_strings_of_callable_types(*typs, func_shape='box'):
     for typ in typs:
         yield dot_string_of_callable_typ(typ)
         yield f'{typ_name(typ)} [shape="{func_shape}"]'
+
+# --------------------------------------------------------------------------------------
+# Misc
+
+from typing import Callable, Any, Dict, Optional, Iterator, Iterable, KT
+
+# Define a type alias for clarity in the code
+ObjectType = Any
+
+
+class ObjectClassifier:
+    """
+    A general-purpose classifier for objects based on a set of verifying functions.
+
+    Each "verifier" checks whether an object belongs to a certain kind (category).
+
+    Example usage:
+
+    >>> from typing import Mapping, Iterable
+    >>>
+    >>> obj = "test"
+    >>> isa = lambda typ: lambda obj: isinstance(obj, typ)
+    >>> verifiers = {
+    ...     'str': isa(str),
+    ...     'mapping': isa(Mapping),
+    ...     'iterable': isa(Iterable)
+    ... }
+    >>> classifier = ObjectClassifier(verifiers)
+
+    Check if the object matches any kind
+
+    >>> classifier.matches(obj)
+    True
+
+    Check if the object matches a specific kind
+
+    >>> classifier.matches(obj, 'str')
+    True
+    >>> classifier.matches(obj, 'mapping')
+    False
+
+    Get all matches
+
+    >>> classifier.all_matches(obj)
+    {'str': True, 'mapping': False, 'iterable': True}
+
+    Find all matching kinds
+
+    >>> list(classifier.matching_kinds(obj))
+    ['str', 'iterable']
+
+    Find the first matching kind (default is to ensure uniqueness, which will fail here)
+
+    >>> classifier.matching_kind(obj)
+    Traceback (most recent call last):
+      ...
+    ValueError: Multiple matches found: ['str', 'iterable']
+
+    Find the first matching kind without uniqueness check
+
+    >>> classifier.matching_kind(obj, assert_unique=False)
+    'str'
+
+    """
+
+    def __init__(self, verifiers: Dict[KT, Callable[[ObjectType], bool]]):
+        """
+        Initialize with a dictionary of verifiers. Each verifier is a function
+        that returns True or False based on the object's classification.
+
+        :param verifiers: A dictionary mapping kind names (keys) to verifying functions (values).
+        """
+        self.verifiers = verifiers
+
+    def matches(self, obj: ObjectType, kind: Optional[KT] = None) -> bool:
+        """
+        Returns True if the object matches the given kind, or matches any kind
+        if kind is None.
+
+        :param obj: The object to classify.
+        :param kind: The specific kind (verifier key) to check.
+        :return: True if the object matches the given or any kind.
+        """
+        if kind is None:
+            # Check against all kinds if kind is not specified
+            return any(verifier(obj) for verifier in self.verifiers.values())
+        # Check for the specific kind
+        return self.verifiers.get(kind, lambda x: False)(obj)
+
+    def all_matches(self, obj: ObjectType) -> Dict[KT, bool]:
+        """
+        Returns a dictionary indicating if the object matches each kind.
+
+        :param obj: The object to classify.
+        :return: A dictionary with kind names as keys and True/False as values.
+        """
+        return {kind: verifier(obj) for kind, verifier in self.verifiers.items()}
+
+    def matching_kind(
+        self, obj: ObjectType, *, assert_unique: bool = True
+    ) -> Optional[KT]:
+        """
+        Returns the first kind that matches the object. If assert_unique is True,
+        it asserts that only one match exists. Optionally, it can return the value instead of the key.
+
+        :param obj: The object to classify.
+        :param assert_unique: Ensures only one kind matches, if True.
+        :return: The key of the first matching kind, or None if no match.
+        """
+        matches = list(self.matching_kinds(obj))
+        if assert_unique and len(matches) > 1:
+            raise ValueError(f"Multiple matches found: {matches}")
+        return matches[0] if matches else None
+
+    def matching_kinds(self, obj: ObjectType) -> Iterator[KT]:
+        """
+        Returns an iterator of kinds that match the object.
+
+        :param obj: The object to classify.
+        :return: An iterator of matching kinds.
+        """
+        for kind, verifier in self.verifiers.items():
+            if verifier(obj):
+                yield kind
