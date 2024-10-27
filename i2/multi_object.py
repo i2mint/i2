@@ -51,12 +51,12 @@ def name_of_obj(o: object, default=None) -> Union[str, None]:
     >>> name_of_obj(partial(print, sep=","))
     'print'
     """
-    if hasattr(o, '__name__'):
+    if hasattr(o, "__name__"):
         return o.__name__
-    elif hasattr(o, '__class__'):
+    elif hasattr(o, "__class__"):
         name = name_of_obj(o.__class__)
-        if name == 'partial':
-            if hasattr(o, 'func'):
+        if name == "partial":
+            if hasattr(o, "func"):
                 return name_of_obj(o.func)
         return name
     else:
@@ -65,7 +65,7 @@ def name_of_obj(o: object, default=None) -> Union[str, None]:
 
 # Note: Vendored in dol.util and lkj.strings
 def truncate_string_with_marker(
-    s, *, left_limit=15, right_limit=15, middle_marker='...'
+    s, *, left_limit=15, right_limit=15, middle_marker="..."
 ):
     """
     Return a string with a limited length.
@@ -117,14 +117,14 @@ def ensure_iterable_of_callables(x):
     if isinstance(x, Iterable):
         if not all(callable(xx) for xx in x):
             non_callables = filter(lambda xx: not callable(xx), x)
-            raise TypeError(f'These were not callable: {list(non_callables)}')
+            raise TypeError(f"These were not callable: {list(non_callables)}")
         return x
     else:
         assert callable(x)
         return (x,)
 
 
-Obj = TypeVar('Obj')
+Obj = TypeVar("Obj")
 
 
 def uniquely_named_objects(
@@ -215,10 +215,10 @@ def uniquely_named_objects(
         # if name == '<lambda>':
         # name = f'lambda_{i}'
         if name is None or not name.isidentifier() or name in _exclude_names:
-            name = f'_{i}'
+            name = f"_{i}"
             assert (
                 name not in _exclude_names
-            ), '{name} already used in {_exclude_names}!'
+            ), "{name} already used in {_exclude_names}!"
         yield name, obj
         _exclude_names.add(name)
 
@@ -231,11 +231,11 @@ def merge_unnamed_and_named(*unnamed, **named) -> dict:
     """
     # TODO: Could do what is done in meshed (try to get names of actual functions)
     #  and use _0, _1, _2... as fallback only?
-    named_unnamed = {f'_{i}': obj for i, obj in enumerate(unnamed)}
+    named_unnamed = {f"_{i}": obj for i, obj in enumerate(unnamed)}
     if not named_unnamed.keys().isdisjoint(named):
         raise ValueError(
             f"Some of your objects' names clashed: "
-            f'{named_unnamed.keys() & named.keys()}'
+            f"{named_unnamed.keys() & named.keys()}"
         )
     return dict(named_unnamed, **named)
 
@@ -250,8 +250,8 @@ def _multi_func_init(self, *unnamed_funcs, **named_funcs) -> None:
         self.funcs = merge_unnamed_and_named(*unnamed_funcs, **named_funcs)
     if len(self.funcs) != expected_n_funcs:
         raise ValueError(
-            'Some of your func names clashed. Your unnamed funcs were: '
-            f'{unnamed_funcs} and your named ones were: {named_funcs}'
+            "Some of your func names clashed. Your unnamed funcs were: "
+            f"{unnamed_funcs} and your named ones were: {named_funcs}"
         )
     ensure_iterable_of_callables(self.funcs.values())
 
@@ -338,12 +338,12 @@ class MultiObj(Mapping):
             if not named_unnamed.keys().isdisjoint(named):
                 raise ValueError(
                     f"Some of your objects' names clashed: "
-                    f'{named_unnamed.keys() & named.keys()}'
+                    f"{named_unnamed.keys() & named.keys()}"
                 )
             # Merge these
             self.objects = dict(named_unnamed, **named)
 
-    _reserved_names = ('__name__', '__doc__')
+    _reserved_names = ("__name__", "__doc__")
 
     def _process_reserved_names(self, named_funcs):
         for name in self._reserved_names:
@@ -368,7 +368,7 @@ class MultiObj(Mapping):
         if item in self and item.isidentifier():
             return self.objects[item]
         else:
-            raise AttributeError(f'Not an attribute: {item}')
+            raise AttributeError(f"Not an attribute: {item}")
 
     def __repr__(self):
         return f"<{type(self).__name__} containing: {', '.join(self)}>"
@@ -383,10 +383,10 @@ class MultiObj(Mapping):
 
 def iterable_of_callables_validation(funcs: Iterable[Callable]):
     if not isinstance(funcs, Iterable):
-        raise TypeError(f'Not an iterable: {funcs}')
+        raise TypeError(f"Not an iterable: {funcs}")
     elif not all(callable(xx) for xx in funcs):
         non_callables = filter(lambda f: not callable(f), funcs)
-        raise TypeError(f'These were not callable: {list(non_callables)}')
+        raise TypeError(f"These were not callable: {list(non_callables)}")
 
 
 class MultiFunc(MultiObj):
@@ -475,7 +475,7 @@ class Pipe(MultiFunc):
         callables = list(self.funcs.values())
         n_funcs = len(callables)
         if n_funcs == 0:
-            raise ValueError('You need to specify at least one function!')
+            raise ValueError("You need to specify at least one function!")
 
         elif n_funcs == 1:
             other_funcs = ()
@@ -501,32 +501,32 @@ class Pipe(MultiFunc):
         return out
 
     def _mk_pipe_call_error(self, error_obj, i, out, args, kwargs):
-        msg = f'Error calling function {self._func_info_str(i)}\n'
-        out_str = f'{out}'
-        msg += f'on input {truncate_string_with_marker(out_str)}\n'
-        msg += 'which was the output of previous function '
-        msg += f'\t{self._func_info_str(i - 1)}\n'
-        args_str = ', '.join(map(str, args))
-        kwargs_str = ', '.join(f'{k}={v}' for k, v in kwargs.items())
-        msg += f'The error was cause by calling {self} on ({args_str}, {kwargs_str})\n'
-        msg += f'Error was: {error_obj}'
+        msg = f"Error calling function {self._func_info_str(i)}\n"
+        out_str = f"{out}"
+        msg += f"on input {truncate_string_with_marker(out_str)}\n"
+        msg += "which was the output of previous function "
+        msg += f"\t{self._func_info_str(i - 1)}\n"
+        args_str = ", ".join(map(str, args))
+        kwargs_str = ", ".join(f"{k}={v}" for k, v in kwargs.items())
+        msg += f"The error was cause by calling {self} on ({args_str}, {kwargs_str})\n"
+        msg += f"Error was: {error_obj}"
         new_error_obj = type(error_obj)(msg)
         new_error_obj.error_context = {
-            'Pipe': self,
-            'args': args,
-            'kwargs': kwargs,
-            'func_index': i,
-            'func_key': list(self.funcs.keys())[i],
-            'func': list(self.funcs.values())[i],
-            'func_input': out,
+            "Pipe": self,
+            "args": args,
+            "kwargs": kwargs,
+            "func_index": i,
+            "func_key": list(self.funcs.keys())[i],
+            "func": list(self.funcs.values())[i],
+            "func_input": out,
         }
         return new_error_obj
 
     def _func_info_str(self, i):
         key = list(self.funcs.keys())[i]
         func = self.funcs[key]
-        func_name = name_of_obj(func, default=f'')
-        return f'(name={func_name}, key={key}, index={i})'
+        func_name = name_of_obj(func, default=f"")
+        return f"(name={func_name}, key={key}, index={i})"
 
     def __len__(self):
         return len(self.funcs)
@@ -612,15 +612,15 @@ def pipes_are_equal(p1, p2, *, func_equality=eq, verbose=False):
     if len(p1) != len(p2):
         if verbose:
             print(
-                f'--> Flattened pipes do not have the same number of functions:'
-                f' {len(p1)=} != {len(p2)=}'
+                f"--> Flattened pipes do not have the same number of functions:"
+                f" {len(p1)=} != {len(p2)=}"
             )
         return False  # if not same number of keys or keys different, not equality
     else:
         for func1, func2 in zip(p1.funcs.values(), p2.funcs.values()):
             if not func_equality(func1, func2):
                 if verbose:
-                    print(f'--> func1 and func2 are not equal: {func1=} != {func2=}')
+                    print(f"--> func1 and func2 are not equal: {func1=} != {func2=}")
                 return False  # these two funcs are not equal
             # else continue
     return True
@@ -968,11 +968,11 @@ class ContextFanout(MultiObj):
 
     def __enter__(self):
         for name, obj in self.items():
-            if hasattr(obj, '__enter__'):
+            if hasattr(obj, "__enter__"):
                 obj.__enter__()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         for name, obj in self.items():
-            if hasattr(obj, '__exit__'):
+            if hasattr(obj, "__exit__"):
                 obj.__exit__(exc_type, exc_val, exc_tb)

@@ -8,24 +8,27 @@ from collections import defaultdict
 from itertools import tee
 from typing import Callable, TypeVar, Optional, Union, Iterable
 
-B = TypeVar('B')
+B = TypeVar("B")
 B.__doc__ = (
     "'Base' operand that we are able (example, builtin object) to operate on, as is"
 )
-A = TypeVar('A')
+A = TypeVar("A")
 A.__doc__ = "'Abstract' type we want to operate on through a key-function"
 KeyFunction = Callable[[A], B]
-KeyFunction.__doc__ = 'Function that transforms an A to a B'
+KeyFunction.__doc__ = "Function that transforms an A to a B"
 
-R = TypeVar('R')
-R.__doc__ = 'The return type of a binary operator'
+R = TypeVar("R")
+R.__doc__ = "The return type of a binary operator"
 
 BinaryOperator = Callable[[B, B], R]
 AbstractBinaryOperator = Callable[[A, A], R]
 
 
 def _keyed_comparator(
-    binary_operator: BinaryOperator, key: KeyFunction, x: A, y: A,
+    binary_operator: BinaryOperator,
+    key: KeyFunction,
+    x: A,
+    y: A,
 ) -> R:
     """Apply a binary operator to two operands,
     after transforming them through a key function"""
@@ -33,7 +36,8 @@ def _keyed_comparator(
 
 
 def keyed_comparator(
-    binary_operator: BinaryOperator, key: KeyFunction,
+    binary_operator: BinaryOperator,
+    key: KeyFunction,
 ):
     """Create a key-function enabled binary operator"""
     return partial(_keyed_comparator, binary_operator, key)

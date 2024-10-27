@@ -1,4 +1,5 @@
 """Scrap"""
+
 from functools import wraps
 from typing import Iterable, Callable, Tuple
 from i2.wrapper import Wrap
@@ -22,16 +23,16 @@ def _extract_params(ingress_output) -> Tuple[tuple, dict, dict, dict]:
     elif isinstance(ingress_output, dict):
         # This is the extended ingress protocol
         return (
-            ingress_output.get('inner_args', ()),
-            ingress_output.get('inner_kwargs', {}),
-            ingress_output.get('caller_kwargs', {}),
-            ingress_output.get('egress_kwargs', {}),
+            ingress_output.get("inner_args", ()),
+            ingress_output.get("inner_kwargs", {}),
+            ingress_output.get("caller_kwargs", {}),
+            ingress_output.get("egress_kwargs", {}),
         )
         # TODO: Consider making a ingress_output object to avoid key-typo errors
         # TODO: Should we assert those were the only keys to mitigate key-typo errors?
     else:
         raise ValueError(
-            f'ingress_output should be a 2-tuple or a dict. Was {ingress_output}'
+            f"ingress_output should be a 2-tuple or a dict. Was {ingress_output}"
         )
 
 

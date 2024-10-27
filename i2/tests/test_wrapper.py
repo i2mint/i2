@@ -6,8 +6,8 @@ from i2.deco import FuncFactory
 from i2.signatures import Sig
 
 
-def _test_ingress(a, b: str, c='hi'):
-    return (a + len(b) % 2,), dict(string=f'{c} {b}')
+def _test_ingress(a, b: str, c="hi"):
+    return (a + len(b) % 2,), dict(string=f"{c} {b}")
 
 
 def _test_func(times, string):
@@ -22,7 +22,7 @@ def test_wrap():
 
     # Just wrapping the func gives you a sort of copy of the func.
     wrapped_func = wrap(func)  # no transformations
-    assert wrapped_func(2, 'co') == 'coco' == func(2, 'co')
+    assert wrapped_func(2, "co") == "coco" == func(2, "co")
 
     # If you give the wrap an ingress function
     ingress = _test_ingress
@@ -32,25 +32,25 @@ def test_wrap():
         str(signature(wrapped_func)) == "(a, b: str, c='hi')"
     )  # "(a, b: str, c='hi')"
     # and (2) to map inputs
-    assert wrapped_func(2, 'world! ', 'Hi') == 'Hi world! Hi world! Hi world! '
+    assert wrapped_func(2, "world! ", "Hi") == "Hi world! Hi world! Hi world! "
 
     # An egress function can be used to transform outputs
     wrapped_func = wrap(func, egress=len)
-    assert wrapped_func(2, 'co') == 4 == len('coco') == len(func(2, 'co'))
+    assert wrapped_func(2, "co") == 4 == len("coco") == len(func(2, "co"))
 
     # Both ingress and egress can be used in combination
     wrapped_func = wrap(func, ingress=ingress, egress=len)
     assert (
-        wrapped_func(2, 'world! ', 'Hi') == 30 == len('Hi world! Hi world! Hi world! ')
+        wrapped_func(2, "world! ", "Hi") == 30 == len("Hi world! Hi world! Hi world! ")
     )
 
     # A wrapped function is pickle-able (unlike the usual way decorators are written)
 
     unpickled_wrapped_func = pickle.loads(pickle.dumps(wrapped_func))
     assert (
-        unpickled_wrapped_func(2, 'world! ', 'Hi')
+        unpickled_wrapped_func(2, "world! ", "Hi")
         == 30
-        == len('Hi world! Hi world! Hi world! ')
+        == len("Hi world! Hi world! Hi world! ")
     )
 
 
@@ -68,14 +68,14 @@ def test_mk_ingress_from_name_mapper():
 
     foo = _test_foo
     # Define the mapping (keys are inner and values are outer names)
-    name_mapper = dict(a='aa', c='cc')
+    name_mapper = dict(a="aa", c="cc")
     # Make an ingress function with that mapping
     ingress = mk_ingress_from_name_mapper(foo, name_mapper)
     # Use the ingress function to wrap a function
     wrapped_foo = wrap(foo, ingress=ingress)
     # See that the signature of the wrapped func uses the mapped arg names
     assert (
-        str(signature(wrapped_foo)) == str(signature(ingress)) == '(aa, b: int, cc=7)'
+        str(signature(wrapped_foo)) == str(signature(ingress)) == "(aa, b: int, cc=7)"
     )
     # And that wrapped function does compute correctly
     assert (
@@ -85,19 +85,19 @@ def test_mk_ingress_from_name_mapper():
         == wrapped_foo(1, 2, cc=4)
     )
     # The ingress function returns args and kwargs for wrapped function
-    assert ingress('i was called aa', b='i am b', cc=42) == (
+    assert ingress("i was called aa", b="i am b", cc=42) == (
         (),
-        {'a': 'i was called aa', 'b': 'i am b', 'c': 42},
+        {"a": "i was called aa", "b": "i am b", "c": 42},
     )
     # See above that the args is empty. That will be the case most of the time.
     # Keyword arguments will be favored when there's a choice. If wrapped
     # function uses position-only arguments though, ingress will have to use them
     bar = _test_bar
-    assert str(signature(bar)) == '(a, /, b: int, *, c=7)'
+    assert str(signature(bar)) == "(a, /, b: int, *, c=7)"
     ingress_for_bar = mk_ingress_from_name_mapper(bar, name_mapper)
-    assert ingress_for_bar('i was called aa', b='i am b', cc=42) == (
-        ('i was called aa',),
-        {'b': 'i am b', 'c': 42},
+    assert ingress_for_bar("i was called aa", b="i am b", cc=42) == (
+        ("i was called aa",),
+        {"b": "i am b", "c": 42},
     )
     wrapped_bar = wrap(bar, ingress=ingress_for_bar)
     assert (
@@ -110,21 +110,21 @@ def test_mk_ingress_from_name_mapper():
     # Note that though bar had a positional only and a keyword only argument,
     # we are (by default) free of argument kind constraints in the wrapped function:
     # We can can use a positional args on `cc` and keyword args on `aa`
-    assert str(signature(wrapped_bar)) == '(aa, b: int, cc=7)'
+    assert str(signature(wrapped_bar)) == "(aa, b: int, cc=7)"
     assert wrapped_bar(1, 2, 4) == wrapped_bar(aa=1, b=2, cc=4)
 
     # If you want to conserve the argument kinds of the wrapped function, you can
     # specify this with `conserve_kind=True`:
     ingress_for_bar = mk_ingress_from_name_mapper(bar, name_mapper, conserve_kind=True)
     wrapped_bar = wrap(bar, ingress=ingress_for_bar)
-    assert str(signature(wrapped_bar)) == '(aa, /, b: int, *, cc=7)'
+    assert str(signature(wrapped_bar)) == "(aa, /, b: int, *, cc=7)"
 
     # A wrapped function is pickle-able (unlike the usual way decorators are written)
     unpickled_wrapped_foo = pickle.loads(pickle.dumps(wrapped_foo))
     assert (
         str(signature(unpickled_wrapped_foo))
         == str(signature(ingress))
-        == '(aa, b: int, cc=7)'
+        == "(aa, b: int, cc=7)"
     )
     assert (
         foo(1, 2, c=4)
@@ -172,7 +172,7 @@ def test_wrapx():
 
     wrapped_func = Wrapx(func)
     assert (
-        str(signature(wrapped_func)) == '(x: int, y=1) -> int' == str(signature(func))
+        str(signature(wrapped_func)) == "(x: int, y=1) -> int" == str(signature(func))
     )
 
     # Test egress that has a single param z
@@ -188,7 +188,7 @@ def test_wrapx():
     assert func(1, 2) == 3
 
     # TODO: should be '(x, y=1, *, z)' --> Need to work on the merge for this.
-    assert str(signature(wrapped_func)) == '(x, y, z)'
+    assert str(signature(wrapped_func)) == "(x, y, z)"
     assert wrapped_func(1, 2, z=3) == 9 == func(1, 2) * 3
 
     # A more realistic application: Saving outputs to a specific location on output
@@ -202,12 +202,12 @@ def test_wrapx():
 
     save_on_output = Wrapx(func, egress=save_on_output_egress)
     # TODO: should be `(x, y, *, k, s)` --> Need to work on the merge for this.
-    assert str(signature(save_on_output)) == '(x, y, k, s)'
+    assert str(signature(save_on_output)) == "(x, y, k, s)"
 
     store = dict()
-    save_on_output(1, 2, k='save_here', s=store)
-    assert save_on_output(1, 2, k='save_here', s=store) == 3 == func(1, 2)
-    assert store == {'save_here': 3}
+    save_on_output(1, 2, k="save_here", s=store)
+    assert save_on_output(1, 2, k="save_here", s=store) == 3 == func(1, 2)
+    assert store == {"save_here": 3}
 
     # Trying out a caller: Here, we want to wrap the function so it will apply to an
     # iterable of inputs, returning a list of results
@@ -254,22 +254,22 @@ def test_rm_params():
     # ----------------------------------------------------------------------------
     # Edge case of rm_params with FuncFactory: https://github.com/i2mint/i2/issues/44
     wf = range(7)
-    mk_chunker = FuncFactory(simple_chunker, exclude='a')
+    mk_chunker = FuncFactory(simple_chunker, exclude="a")
     chunker = mk_chunker(chk_size=3)
-    assert str(Sig(chunker)) == '(a: Iterable, *, chk_size: int = 3)'
+    assert str(Sig(chunker)) == "(a: Iterable, *, chk_size: int = 3)"
     assert list(chunker(wf)) == [(0, 1, 2), (3, 4, 5)]
 
     mk_chunker = rm_params(
         FuncFactory(simple_chunker),
-        params_to_remove=['a'],
+        params_to_remove=["a"],
         allow_removal_of_non_defaulted_params=True,
         allow_partial=True,  # wouldn't work without this
     )
 
-    assert str(Sig(mk_chunker)) == '(chk_size: int)'
+    assert str(Sig(mk_chunker)) == "(chk_size: int)"
 
     wf = range(7)
     chunker = mk_chunker(chk_size=3)
-    assert str(Sig(chunker)) == '(a: Iterable, *, chk_size: int = 3)'
+    assert str(Sig(chunker)) == "(a: Iterable, *, chk_size: int = 3)"
     assert list(chunker(wf)) == [(0, 1, 2), (3, 4, 5)]
     # ----------------------------------------------------------------------------

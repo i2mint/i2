@@ -3,29 +3,29 @@ from i2.signatures import ch_variadics_to_non_variadic_kind
 
 
 def foo(a, *args, bar, **kwargs):
-    return f'{a=}, {args=}, {bar=}, {kwargs=}'
+    return f"{a=}, {args=}, {bar=}, {kwargs=}"
 
 
-assert str(Sig(foo)) == '(a, *args, bar, **kwargs)'
+assert str(Sig(foo)) == "(a, *args, bar, **kwargs)"
 wfoo = ch_variadics_to_non_variadic_kind(foo)
 str(Sig(wfoo))
 #'(a, args=(), *, bar, kwargs={})'
 
 # And now to do this:
 
-foo(1, 2, 3, bar=4, hello='world')
+foo(1, 2, 3, bar=4, hello="world")
 # "a=1, args=(2, 3), bar=4, kwargs={'hello': 'world'}"
 
 # We can do it like this instead:
 
-wfoo(1, (2, 3), bar=4, kwargs=dict(hello='world'))
+wfoo(1, (2, 3), bar=4, kwargs=dict(hello="world"))
 # "a=1, args=(2, 3), bar=4, kwargs={'hello': 'world'}"
 
 # Note, the outputs are the same. It's just the way we call our function that has
 # changed.
 
-assert wfoo(1, (2, 3), bar=4, kwargs=dict(hello='world')) == foo(
-    1, 2, 3, bar=4, hello='world'
+assert wfoo(1, (2, 3), bar=4, kwargs=dict(hello="world")) == foo(
+    1, 2, 3, bar=4, hello="world"
 )
 assert wfoo(1, (2, 3), bar=4) == foo(1, 2, 3, bar=4)
 assert wfoo(1, (), bar=4) == foo(1, bar=4)
@@ -36,13 +36,13 @@ assert wfoo(1, (), bar=4) == foo(1, bar=4)
 
 @ch_variadics_to_non_variadic_kind
 def func(a, bar=None, **kwargs):
-    return f'{a=}, {bar=}, {kwargs=}'
+    return f"{a=}, {bar=}, {kwargs=}"
 
 
 str(Sig(func))
 #'(a, bar=None, *, kwargs={})'
 assert (
-    func(1, bar=4, kwargs=dict(hello='world'))
+    func(1, bar=4, kwargs=dict(hello="world"))
     == "a=1, bar=4, kwargs={'hello': 'world'}"
 )
 
@@ -72,10 +72,10 @@ tuple_the_args = partial(
 
 @tuple_the_args
 def foo(a, *args, bar=None, **kwargs):
-    return f'{a=}, {args=}, {bar=}, {kwargs=}'
+    return f"{a=}, {args=}, {bar=}, {kwargs=}"
 
 
 Sig(foo)
 # <Sig (a, args=(), *, bar=None, **kwargs)>
-foo(1, (2, 3), bar=4, hello='world')
+foo(1, (2, 3), bar=4, hello="world")
 # "a=1, args=(2, 3), bar=4, kwargs={'hello': 'world'}"

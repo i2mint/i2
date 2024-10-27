@@ -61,8 +61,8 @@ def _value_is_in_literal(value, literal):
 def _validate_that_value_is_in_literal(name, value, literal):
     if not _value_is_in_literal(value, literal):
         error = ValueError(
-            f'{value} is an invalid value for {name}. '
-            f'Values should be one of the following: {literal.__args__}'
+            f"{value} is an invalid value for {name}. "
+            f"Values should be one of the following: {literal.__args__}"
         )
         error.allowed_values = literal.__args__
         error.input_value = value
@@ -151,9 +151,9 @@ def new_type(
     """
     new_tp = NewType(name, tp)
     if doc is not None:
-        setattr(new_tp, '__doc__', doc)
+        setattr(new_tp, "__doc__", doc)
     if aka is not None:
-        setattr(new_tp, '_aka', set(aka))
+        setattr(new_tp, "_aka", set(aka))
     if assign_to_globals:
         globals()[
             name
@@ -228,8 +228,8 @@ class HasAttrs:
 def is_a_new_type(typ):
     return (
         callable(typ)
-        and getattr(typ, '__qualname__', '').startswith('NewType')
-        and hasattr(typ, '__supertype__')
+        and getattr(typ, "__qualname__", "").startswith("NewType")
+        and hasattr(typ, "__supertype__")
     )
 
 
@@ -252,7 +252,7 @@ def is_callable_kind(typ):
     """
     if is_a_new_type(typ):
         return is_callable_kind(typ.__supertype__)
-    return typ_name(typ) == 'Callable'
+    return typ_name(typ) == "Callable"
     # Also possible: typ.mro()[0] == __import__('collections.abc').Callable
 
 
@@ -282,22 +282,22 @@ def input_and_output_types(typ: type):
     """
     if is_a_new_type(typ):
         return input_and_output_types(typ.__supertype__)
-    assert is_callable_kind(typ), f'Is not a typing.Callable kind: {typ}'
+    assert is_callable_kind(typ), f"Is not a typing.Callable kind: {typ}"
     typ_args = get_args(typ)
-    assert len(typ_args) > 0, f'Can only be used on a Callable[[...],...] kind: {typ}'
+    assert len(typ_args) > 0, f"Can only be used on a Callable[[...],...] kind: {typ}"
     return typ_args[0], typ_args[1]
 
 
 def dot_string_of_callable_typ(typ):
     input_types, output_type = input_and_output_types(typ)
     return (
-        ','.join(map(typ_name, input_types))
-        + f' -> {typ_name(typ)} -> '
+        ",".join(map(typ_name, input_types))
+        + f" -> {typ_name(typ)} -> "
         + typ_name(output_type)
     )
 
 
-def dot_strings_of_callable_types(*typs, func_shape='box'):
+def dot_strings_of_callable_types(*typs, func_shape="box"):
     for typ in typs:
         yield dot_string_of_callable_typ(typ)
         yield f'{typ_name(typ)} [shape="{func_shape}"]'
@@ -413,7 +413,7 @@ class ObjectClassifier:
         """
         matches = list(self.matching_kinds(obj))
         if assert_unique and len(matches) > 1:
-            raise ValueError(f'Multiple matches found: {matches}')
+            raise ValueError(f"Multiple matches found: {matches}")
         return matches[0] if matches else None
 
     def matching_kinds(self, obj: ObjectType) -> Iterator[KT]:

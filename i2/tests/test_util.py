@@ -13,22 +13,22 @@ from i2.util import FileLikeObject
 def test_file_pointer():
     # Create a temporary file and write some content to it
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        temp_file.write(b'Test content')
+        temp_file.write(b"Test content")
         temp_file_path = temp_file.name
 
     try:
         # Case 1: file is a string (file path)
         with FileLikeObject(temp_file_path) as f:
-            assert f.read() == b'Test content'
+            assert f.read() == b"Test content"
 
         # Case 2: file is bytes
-        with FileLikeObject(b'Test content') as f:
-            assert f.read() == b'Test content'
+        with FileLikeObject(b"Test content") as f:
+            assert f.read() == b"Test content"
 
         # Case 3: file is an open file pointer
-        with open(temp_file_path, 'rb') as file:
+        with open(temp_file_path, "rb") as file:
             with FileLikeObject(file) as f:
-                assert f.read() == b'Test content'
+                assert f.read() == b"Test content"
     finally:
         # Clean up the temporary file
         os.remove(temp_file_path)

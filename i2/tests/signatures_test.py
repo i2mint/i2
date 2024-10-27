@@ -11,6 +11,7 @@ Both in the code and in the docs, we'll use short hands for parameter (argument)
     KO = Parameter.KEYWORD_ONLY
 
 """
+
 import pytest
 from functools import reduce
 from typing import Any
@@ -33,67 +34,64 @@ from i2.tests.util import (
 
 def test_class_attribute_signatures():
     class Klass:
-        def leave(self):
-            ...
+        def leave(self): ...
 
         @property
-        def no(self):
-            ...
+        def no(self): ...
 
         @cached_property
-        def stone(self):
-            ...
+        def stone(self): ...
 
         unturned = partial(lambda self: self)
 
-    assert str(Sig(Klass.leave)) == '(self)'
-    assert str(Sig(Klass.no)) == '(self)'
-    assert str(Sig(Klass.stone)) == '(self)'
-    assert str(Sig(Klass.unturned)) == '(self)'
+    assert str(Sig(Klass.leave)) == "(self)"
+    assert str(Sig(Klass.no)) == "(self)"
+    assert str(Sig(Klass.stone)) == "(self)"
+    assert str(Sig(Klass.unturned)) == "(self)"
 
     instance = Klass()
 
-    assert str(Sig(instance.leave)) == '()'
-    assert str(Sig(instance.no)) == '()'
-    assert str(Sig(instance.stone)) == '()'
-    assert str(Sig(instance.unturned)) == '(self)'
+    assert str(Sig(instance.leave)) == "()"
+    assert str(Sig(instance.no)) == "()"
+    assert str(Sig(instance.stone)) == "()"
+    assert str(Sig(instance.unturned)) == "(self)"
 
 
 def test_add_optional_keywords():
-    @Sig.add_optional_keywords({'c': 2, 'd': 3}, {'c': int})
+    @Sig.add_optional_keywords({"c": 2, "d": 3}, {"c": int})
     def foo(a, *, b=1, **kwargs):
-        return f'{a=}, {b=}, {kwargs=}'
+        return f"{a=}, {b=}, {kwargs=}"
 
-    assert str(Sig(foo)) == '(a, *, c: int = 2, d=3, b=1, **kwargs)'
+    assert str(Sig(foo)) == "(a, *, c: int = 2, d=3, b=1, **kwargs)"
     assert foo(0, d=10) == "a=0, b=1, kwargs={'d': 10}"
 
     # Testing when kwarg_annotations is used with keyword argument
-    @Sig.add_optional_keywords({'c': 2, 'd': 3}, kwarg_annotations={'c': int})
+    @Sig.add_optional_keywords({"c": 2, "d": 3}, kwarg_annotations={"c": int})
     def foo(a, *, b=1, **kwargs):
         pass
 
-    assert str(Sig(foo)) == '(a, *, c: int = 2, d=3, b=1, **kwargs)'
+    assert str(Sig(foo)) == "(a, *, c: int = 2, d=3, b=1, **kwargs)"
 
     # Testing when both kwarg_and_defaults and kwarg_annotations are used
     # with keyword argument
     @Sig.add_optional_keywords(
-        kwarg_and_defaults={'c': 2, 'd': 3}, kwarg_annotations={'c': int}
+        kwarg_and_defaults={"c": 2, "d": 3}, kwarg_annotations={"c": int}
     )
     def foo(a, *, b=1, **kwargs):
         pass
 
-    assert str(Sig(foo)) == '(a, *, c: int = 2, d=3, b=1, **kwargs)'
+    assert str(Sig(foo)) == "(a, *, c: int = 2, d=3, b=1, **kwargs)"
 
     # Testing when add_optional_keywords is used as instance method
     def foo(a, *, b=1, **kwargs):
-        return f'{a=}, {b=}, {kwargs=}'
+        return f"{a=}, {b=}, {kwargs=}"
 
     assert foo(0, d=10) == "a=0, b=1, kwargs={'d': 10}"
 
     sig = Sig(foo)
-    new_sig = sig.add_optional_keywords({'c': 2, 'd': 3}, {'c': int})
+    new_sig = sig.add_optional_keywords({"c": 2, "d": 3}, {"c": int})
 
-    assert str(new_sig) == ('(a, *, c: int = 2, d=3, b=1, **kwargs)')
+    assert str(new_sig) == ("(a, *, c: int = 2, d=3, b=1, **kwargs)")
 
     sig(foo)  # decorate foo, and see that it still works
     assert foo(0, d=10) == "a=0, b=1, kwargs={'d': 10}"
@@ -116,20 +114,20 @@ def test_signature_equality_and_hashing():
     sigs = [
         ref_sig,
         Sig(foo),  # another instance of the same Sig(foo)
-        Sig('(x, y, z=3)'),  # signature made explicitly from a string
-        Sig('x') + Sig('(y, z=3)'),  # signature made from an add operation
+        Sig("(x, y, z=3)"),  # signature made explicitly from a string
+        Sig("x") + Sig("(y, z=3)"),  # signature made from an add operation
         Sig(bar),  # different function, same signature
         pickle.loads(pickle.dumps(ref_sig)),  # un-pickled signature
     ]
 
     assert all(
         sig == ref_sig for sig in sigs
-    ), 'sigs should be equal from a == point of view'
+    ), "sigs should be equal from a == point of view"
 
     # Let's see that
     assert all(
         hash(sig) == hash(ref_sig) for sig in sigs
-    ), 'sigs should have the same hash'
+    ), "sigs should have the same hash"
 
     # ... and if that wasn't convincing, let's see how the sigs behave as dict keys:
     # If sigs were different, the following would add key-value pairs to the base dict.
@@ -146,7 +144,7 @@ def test_signature_equality_and_hashing():
     def baz(x, y, z=3) -> None:
         pass
 
-    assert Sig(baz) != ref_sig, 'return annotation of baz should make it different'
+    assert Sig(baz) != ref_sig, "return annotation of baz should make it different"
 
 
 def test_signature_of_partial():
@@ -155,23 +153,23 @@ def test_signature_of_partial():
     def foo(a, b, c=3) -> int:
         return a + b * c
 
-    assert str(Sig(foo)) == '(a, b, c=3) -> int'
-    assert str(Sig(partial(foo, 1))) == '(b, c=3) -> int'
-    assert str(Sig(partial(foo, a=1, b=2))) == '(*, a=1, b=2, c=3) -> int'
-    assert str(Sig(partial(foo, 1, 2))) == '(c=3) -> int'
-    assert str(Sig(partial(foo, 1, b=2))) == '(*, b=2, c=3) -> int'
+    assert str(Sig(foo)) == "(a, b, c=3) -> int"
+    assert str(Sig(partial(foo, 1))) == "(b, c=3) -> int"
+    assert str(Sig(partial(foo, a=1, b=2))) == "(*, a=1, b=2, c=3) -> int"
+    assert str(Sig(partial(foo, 1, 2))) == "(c=3) -> int"
+    assert str(Sig(partial(foo, 1, b=2))) == "(*, b=2, c=3) -> int"
 
 
 def test_some_edge_cases_of_sig():
     from operator import itemgetter, attrgetter, methodcaller
 
-    assert Sig(itemgetter).names == ['key', 'keys']
-    assert Sig(itemgetter(1)).names == ['iterable']
-    assert Sig(itemgetter(1, 2)).names == ['iterable']
-    assert Sig(attrgetter).names == ['key', 'keys']
-    assert Sig(attrgetter('foo')).names == ['iterable']
-    assert Sig(attrgetter('foo', 'bar')).names == ['iterable']
-    assert Sig(methodcaller).names == ['name', 'args', 'kwargs']
+    assert Sig(itemgetter).names == ["key", "keys"]
+    assert Sig(itemgetter(1)).names == ["iterable"]
+    assert Sig(itemgetter(1, 2)).names == ["iterable"]
+    assert Sig(attrgetter).names == ["key", "keys"]
+    assert Sig(attrgetter("foo")).names == ["iterable"]
+    assert Sig(attrgetter("foo", "bar")).names == ["iterable"]
+    assert Sig(methodcaller).names == ["name", "args", "kwargs"]
     # assert Sig(methodcaller('foo')).names == []  # fix!!
 
 
@@ -216,9 +214,9 @@ def test_sig_wrap_edge_cases():
     assert foo(1, 2) == 7
     #    works because Sig also changed __defaults__ and __kwdefaults__:
     assert foo.__defaults__ == ()
-    assert foo.__kwdefaults__ == {'z': 3}
+    assert foo.__kwdefaults__ == {"z": 3}
     assert Sig(foo)._defaults_ == ()
-    assert Sig(foo)._kwdefaults_ == {'z': 3}
+    assert Sig(foo)._kwdefaults_ == {"z": 3}
 
     # The following (where we go from a (same kind) param not having a default,
     # to having one, also work
@@ -237,7 +235,7 @@ def test_sig_wrap_edge_cases():
     assert foo(1, 2) == 7
     assert foo(1, 2, z=10) == 21
     assert Sig(foo)._defaults_ == ()
-    assert Sig(foo)._kwdefaults_ == {'z': 3}
+    assert Sig(foo)._kwdefaults_ == {"z": 3}
 
 
 def test_tuple_the_args():
@@ -246,20 +244,20 @@ def test_tuple_the_args():
     def func(a, *args, bar):
         return trace_call(func, locals())
 
-    assert func(1, 2, 3, bar=4) == 'func(a=1, args=(2, 3), bar=4)'
+    assert func(1, 2, 3, bar=4) == "func(a=1, args=(2, 3), bar=4)"
 
     wfunc = tuple_the_args(func)
 
     # here, not that (1) args is specified as one iterable ([2, 3] instead of 2,
     # 3) and (2) the function name is the same as the wrapped (func)
-    assert wfunc(1, [2, 3], bar=4) == 'func(a=1, args=(2, 3), bar=4)'
+    assert wfunc(1, [2, 3], bar=4) == "func(a=1, args=(2, 3), bar=4)"
 
     # See the func itself hasn't changed
-    assert func(1, 2, 3, bar=4) == 'func(a=1, args=(2, 3), bar=4)'
+    assert func(1, 2, 3, bar=4) == "func(a=1, args=(2, 3), bar=4)"
 
-    assert str(Sig(func)) == '(a, *args, bar)'
+    assert str(Sig(func)) == "(a, *args, bar)"
     # See that args is now a PK kind with a default of (). Also, bar became KO.
-    assert str(Sig(wfunc)) == '(a, args=(), *, bar)'
+    assert str(Sig(wfunc)) == "(a, args=(), *, bar)"
 
     # -----------------------------------------------------------------------------------
     # Let's see what happens when we give bar a default value
@@ -268,8 +266,8 @@ def test_tuple_the_args():
         return trace_call(func2, locals())
 
     wfunc = tuple_the_args(func2)
-    assert wfunc(1, [2, 3]) == 'func2(a=1, args=(2, 3), bar=10)'
-    assert wfunc(1, [2, 3], bar=4) == 'func2(a=1, args=(2, 3), bar=4)'
+    assert wfunc(1, [2, 3]) == "func2(a=1, args=(2, 3), bar=10)"
+    assert wfunc(1, [2, 3], bar=4) == "func2(a=1, args=(2, 3), bar=4)"
 
     # On the other hand, specifying bar as a positional won't work.
     # The reason is: args was a variadic, so everything after it should be KO or VK
@@ -278,8 +276,8 @@ def test_tuple_the_args():
     with pytest.raises(FuncCallNotMatchingSignature) as e_info:
         wfunc(1, [2, 3], 4)
         assert e_info.value == (
-            'There should be only keyword arguments after the Variadic args. '
-            'Function was called with (positional=(1, [2, 3], 4), keywords={})'
+            "There should be only keyword arguments after the Variadic args. "
+            "Function was called with (positional=(1, [2, 3], 4), keywords={})"
         )
 
     # pytest.raises()
@@ -289,7 +287,7 @@ def test_tuple_the_args():
 def test_normalize_func_simply(function_normalizer=normalized_func):
     # -----------------------------------------------------------------------------------
     def p0113(po1, /, pk1, pk2, *, ko1):
-        return f'{po1=}, {pk1=}, {pk2=}, {ko1=}'
+        return f"{po1=}, {pk1=}, {pk2=}, {ko1=}"
 
     func = p0113
     po1, pk1, pk2, ko1 = 1, 2, 3, 4
@@ -312,9 +310,9 @@ def test_normalize_func_simply(function_normalizer=normalized_func):
 
     # -----------------------------------------------------------------------------------
     def p1234(pka, *vpa, koa, **vka):
-        return f'{pka=}, {vpa=}, {koa=}, {vka=}'
+        return f"{pka=}, {vpa=}, {koa=}, {vka=}"
 
-    pka, vpa, koa, vka = 1, (2, 3), 4, {'a': 'b', 'c': 'd'}
+    pka, vpa, koa, vka = 1, (2, 3), 4, {"a": "b", "c": "d"}
 
     func = p1234
     norm_func = function_normalizer(func)
@@ -329,22 +327,22 @@ def test_normalize_func_simply(function_normalizer=normalized_func):
 
 
 def p1234(pka, *vpa, koa, **vka):
-    return f'{pka=}, {vpa=}, {koa=}, {vka=}'
+    return f"{pka=}, {vpa=}, {koa=}, {vka=}"
 
 
 @pytest.mark.xfail
 def test_normalize_func_combinatorially(function_normalizer=normalized_func):
     # -----------------------------------------------------------------------------------
     def p0113(po1, /, pk1, pk2, *, ko1):
-        return f'{po1=}, {pk1=}, {pk2=}, {ko1=}'
+        return f"{po1=}, {pk1=}, {pk2=}, {ko1=}"
 
     func = p0113
     po1, pk1, pk2, ko1 = 1, 2, 3, 4
 
     poa = [po1]
-    ppka, kpka = [pk1], {'pk2': pk2}
+    ppka, kpka = [pk1], {"pk2": pk2}
     vpa = []  # no VP argument
-    koa = {'ko1': ko1}
+    koa = {"ko1": ko1}
     vka = {}  # no VK argument
 
     norm_func = function_normalizer(func)
@@ -363,9 +361,9 @@ def test_normalize_func_combinatorially(function_normalizer=normalized_func):
 
     # -----------------------------------------------------------------------------------
     def p1234(pka, *vpa, koa, **vka):
-        return f'{pka=}, {vpa=}, {koa=}, {vka=}'
+        return f"{pka=}, {vpa=}, {koa=}, {vka=}"
 
-    pka, vpa, koa, vka = 1, (2, 3), 4, {'a': 'b', 'c': 'd'}
+    pka, vpa, koa, vka = 1, (2, 3), 4, {"a": "b", "c": "d"}
 
     func = p1234
     norm_func = function_normalizer(func)
@@ -421,7 +419,10 @@ def mk_sig(
         for name, annotation in annotations.items():
             p = params[name]
             params[name] = Parameter(
-                name=name, kind=p.kind, default=p.default, annotation=annotation,
+                name=name,
+                kind=p.kind,
+                default=p.default,
+                annotation=annotation,
             )
         return Signature(params.values(), return_annotation=return_annotations)
 
@@ -465,8 +466,8 @@ def signature_to_dict(sig: Signature):
     # warn("Use Sig instead", DeprecationWarning)
     # return Sig(sig).to_simple_signature()
     return {
-        'parameters': sig.parameters,
-        'return_annotation': sig.return_annotation,
+        "parameters": sig.parameters,
+        "return_annotation": sig.return_annotation,
     }
 
 
@@ -477,9 +478,9 @@ def _merge_sig_dicts(sig1_dict, sig2_dict):
     sig2_dict decides on what the output is.
     """
     return {
-        'parameters': dict(sig1_dict['parameters'], **sig2_dict['parameters']),
-        'return_annotation': sig2_dict['return_annotation']
-        or sig1_dict['return_annotation'],
+        "parameters": dict(sig1_dict["parameters"], **sig2_dict["parameters"]),
+        "return_annotation": sig2_dict["return_annotation"]
+        or sig1_dict["return_annotation"],
     }
 
 
@@ -506,13 +507,13 @@ def _merge_signatures(sig1, sig2):
     # return Sig(**_merge_sig_dicts(sig1_dict, Sig(sig2).to_simple_dict()))
     sig1_dict = signature_to_dict(sig1)
     # remove variadic kinds from sig1
-    sig1_dict['parameters'] = {
+    sig1_dict["parameters"] = {
         k: v
-        for k, v in sig1_dict['parameters'].items()
+        for k, v in sig1_dict["parameters"].items()
         if v.kind not in var_param_kinds
     }
     kws = _merge_sig_dicts(sig1_dict, signature_to_dict(sig2))
-    kws['obj'] = kws.pop('parameters')
+    kws["obj"] = kws.pop("parameters")
     return Sig(**kws).to_simple_signature()
 
 
@@ -565,7 +566,7 @@ def _merged_signatures_of_func_list(funcs, return_annotation: Any = empty):
 
 
 # TODO: will we need more options for the priority argument? Like position?
-def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
+def update_signature_with_signatures_from_funcs(*funcs, priority: str = "last"):
     """Make a decorator that will merge the signatures of given funcs to the signature of the wrapped func.
     By default, the funcs signatures will be placed last, but can be given priority by asking priority = 'first'
 
@@ -592,16 +593,16 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
     <Signature (b: int = 0, d: str = 'hi', a='a', c=None, y=10)>
     """
     if not isinstance(priority, str):
-        raise TypeError('priority should be a string')
+        raise TypeError("priority should be a string")
 
-    if priority == 'last':
+    if priority == "last":
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(func, *funcs).to_simple_signature()
             func.__signature__ = _merged_signatures_of_func_list([func] + list(funcs))
             return func
 
-    elif priority == 'first':
+    elif priority == "first":
 
         def transform_signature(func):
             # func.__signature__ = Sig.from_objs(*funcs, func).to_simple_signature()
@@ -615,31 +616,31 @@ def update_signature_with_signatures_from_funcs(*funcs, priority: str = 'last'):
 
 
 @pytest.mark.parametrize(
-    'sig_spec',
+    "sig_spec",
     [
-        ('(po, /)'),
-        ('(po=0, /)'),
-        ('(pk)'),
-        ('(pk=0)'),
-        ('(*, ko)'),
-        ('(*, ko=0)'),
-        ('(po, /, pk, *, ko)'),
-        ('(po=0, /, pk=0, *, ko=0)'),
-        ('(*args)'),
-        ('(**kwargs)'),
-        ('(*args, **kwargs)'),
-        ('(po, /, pk, *args, ko)'),
-        ('(po=0, /, pk=0, *args, ko=0)'),
-        ('(po, /, pk, *, ko, **kwargs)'),
-        ('(po=0, /, pk=0, *, ko=0, **kwargs)'),
-        ('(po, /, pk, *args, ko, **kwargs)'),
-        ('(po=0, /, pk=0, *args, ko=0, **kwargs)'),
-        ('(po1, po2, /)'),
-        ('(pk1, pk2)'),
-        ('(*, ko1, ko2)'),
-        ('(po1, po2, /, pk1, pk2, *, ko1, ko2)'),
-        ('(po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)'),
-        ('(po1=0, po2=0, /, pk1=0, pk2=0, *args, ko1=0, ko2=0, **kwargs)'),
+        ("(po, /)"),
+        ("(po=0, /)"),
+        ("(pk)"),
+        ("(pk=0)"),
+        ("(*, ko)"),
+        ("(*, ko=0)"),
+        ("(po, /, pk, *, ko)"),
+        ("(po=0, /, pk=0, *, ko=0)"),
+        ("(*args)"),
+        ("(**kwargs)"),
+        ("(*args, **kwargs)"),
+        ("(po, /, pk, *args, ko)"),
+        ("(po=0, /, pk=0, *args, ko=0)"),
+        ("(po, /, pk, *, ko, **kwargs)"),
+        ("(po=0, /, pk=0, *, ko=0, **kwargs)"),
+        ("(po, /, pk, *args, ko, **kwargs)"),
+        ("(po=0, /, pk=0, *args, ko=0, **kwargs)"),
+        ("(po1, po2, /)"),
+        ("(pk1, pk2)"),
+        ("(*, ko1, ko2)"),
+        ("(po1, po2, /, pk1, pk2, *, ko1, ko2)"),
+        ("(po1, po2, /, pk1, pk2, *args, ko1, ko2, **kwargs)"),
+        ("(po1=0, po2=0, /, pk1=0, pk2=0, *args, ko1=0, ko2=0, **kwargs)"),
     ],
 )
 def test_call_forgivingly(sig_spec):
@@ -675,49 +676,61 @@ def test_call_forgivingly(sig_spec):
         assert output == expected_output
 
     for args, kwargs in sig_to_inputs(sig, variadics_source=((), {})):
-        kwargs = dict(kwargs, **{'some': 'extra', 'added': 'kwargs'})
+        kwargs = dict(kwargs, **{"some": "extra", "added": "kwargs"})
         po_pk_count = sum(kind <= PK for kind in sig.kinds.values())
         if len(args) == po_pk_count:
-            args = args + ('some', 'extra', 'args')
+            args = args + ("some", "extra", "args")
 
         validate_call_forgivingly(*args, **kwargs)
 
 
 @pytest.mark.parametrize(
-    'sig_spec1, sig_spec2',
+    "sig_spec1, sig_spec2",
     [
-        ('()', '(a)'),
-        ('()', '(a=0)'),
-        ('(a, /, *, c)', '(a, /, b, *, c)'),
-        ('(a, /, *, c)', '(a, /, b=0, *, c)'),
-        ('(a, /, b)', '(a, /, b, *, c)'),
-        ('(a, /, b)', '(a, /, b, *, c=0)'),
-        ('(a, /, b, *, c)', '(*args)'),
-        ('(a, /, b, *, c)', '(**kwargs)'),
-        ('(a, /, b, *, c)', '(*args, **kwargs)'),
-        ('(a, /, b, *, c)', '(a, /, b, *args, c, **kwargs)'),
-        ('(a, /, b, *, c)', '(a, b, c)'),
-        ('(a, /, b, *, c)', '(a, b, /, *, c)'),
-        ('(a, /, b, *, c)', '(a, /, *, b, c)'),
-        ('(a, /, b, *, c)', '(a, b, /, c)'),
-        ('(a, /, b, *, c)', '(a, *, b, c)'),
-        ('(a, /, b, *, c)', '(x, /, b, *, c)',),
-        ('(a, /, b, *, c)', '(a, /, x, *, c)',),
-        ('(a, /, b, *, c)', '(a, /, b, *, x)',),
-        ('(a, /, b, *, c)', '(a=0, b=0, c=0)'),
-        ('(a=0, /, b=0, *, c=0)', '(a, b, c)'),  # TODO: See if this should pass
-        ('(a, b, /, c, d, *, e, f)', '(b, a, /, d, c, *, f, e)'),
-        ('(a, b, /, c, d, *, e, f)', '(a, c, /, b, e, *, d, f)',),
-        ('()', '(*args)'),
-        ('()', '(**kwargs)'),
-        ('()', '(*args, **kwargs)'),
-        ('(*args)', '()'),
-        ('(*args)', '(**kwargs)'),
-        ('(*args)', '(*args, **kwargs)'),
-        ('(**kwargs)', '()'),
-        ('(**kwargs)', '(*args)'),
-        ('(**kwargs)', '(*args, **kwargs)'),
-        ('(*args, **kwargs)', '(*args, **kwargs)'),
+        ("()", "(a)"),
+        ("()", "(a=0)"),
+        ("(a, /, *, c)", "(a, /, b, *, c)"),
+        ("(a, /, *, c)", "(a, /, b=0, *, c)"),
+        ("(a, /, b)", "(a, /, b, *, c)"),
+        ("(a, /, b)", "(a, /, b, *, c=0)"),
+        ("(a, /, b, *, c)", "(*args)"),
+        ("(a, /, b, *, c)", "(**kwargs)"),
+        ("(a, /, b, *, c)", "(*args, **kwargs)"),
+        ("(a, /, b, *, c)", "(a, /, b, *args, c, **kwargs)"),
+        ("(a, /, b, *, c)", "(a, b, c)"),
+        ("(a, /, b, *, c)", "(a, b, /, *, c)"),
+        ("(a, /, b, *, c)", "(a, /, *, b, c)"),
+        ("(a, /, b, *, c)", "(a, b, /, c)"),
+        ("(a, /, b, *, c)", "(a, *, b, c)"),
+        (
+            "(a, /, b, *, c)",
+            "(x, /, b, *, c)",
+        ),
+        (
+            "(a, /, b, *, c)",
+            "(a, /, x, *, c)",
+        ),
+        (
+            "(a, /, b, *, c)",
+            "(a, /, b, *, x)",
+        ),
+        ("(a, /, b, *, c)", "(a=0, b=0, c=0)"),
+        ("(a=0, /, b=0, *, c=0)", "(a, b, c)"),  # TODO: See if this should pass
+        ("(a, b, /, c, d, *, e, f)", "(b, a, /, d, c, *, f, e)"),
+        (
+            "(a, b, /, c, d, *, e, f)",
+            "(a, c, /, b, e, *, d, f)",
+        ),
+        ("()", "(*args)"),
+        ("()", "(**kwargs)"),
+        ("()", "(*args, **kwargs)"),
+        ("(*args)", "()"),
+        ("(*args)", "(**kwargs)"),
+        ("(*args)", "(*args, **kwargs)"),
+        ("(**kwargs)", "()"),
+        ("(**kwargs)", "(*args)"),
+        ("(**kwargs)", "(*args, **kwargs)"),
+        ("(*args, **kwargs)", "(*args, **kwargs)"),
     ],
 )
 def test_call_compatibility(sig_spec1, sig_spec2):
@@ -726,9 +739,9 @@ def test_call_compatibility(sig_spec1, sig_spec2):
     is_compatible = sig1.is_call_compatible_with(sig2)
 
     exec_env = dict()
-    f_def = f'def f{sig_spec2}: pass'
+    f_def = f"def f{sig_spec2}: pass"
     exec(f_def, exec_env)
-    foo = exec_env['f']
+    foo = exec_env["f"]
 
     # @sig2
     # def foo(*args, **kwargs):
@@ -737,9 +750,9 @@ def test_call_compatibility(sig_spec1, sig_spec2):
     pos1, pks1, vp1, kos1, vk1 = sig1.detail_names_by_kind()
     for args, kwargs in sig_to_inputs(sig1, variadics_source=((), {})):
         if vp1 is not None and len(args) == len(pos1) + len(pks1):
-            args += ('extra_arg',)
+            args += ("extra_arg",)
         if vk1 is not None:
-            kwargs['extra_kwarg_key'] = 'extra_kwarg_value'
+            kwargs["extra_kwarg_key"] = "extra_kwarg_value"
         try:
             foo(*args, **kwargs)
         except TypeError:
@@ -749,11 +762,11 @@ def test_call_compatibility(sig_spec1, sig_spec2):
                 return
     assert (
         is_compatible
-    ), f'sig1 is not compatible with sig2, when it should: {sig1} and {sig2}'
+    ), f"sig1 is not compatible with sig2, when it should: {sig1} and {sig2}"
 
 
 def test_bool():
-    name = 'bool'
+    name = "bool"
 
     sig = Sig(sigs_for_sigless_builtin_name[name])
 
@@ -765,11 +778,11 @@ def visualize_errors_for_function_call(func, sig):
     Calls func on sig_to_inputs and prints error if any
     """
 
-    print(f'============================================================{str(func)}')
+    print(f"============================================================{str(func)}")
     for args, kwargs in sig_to_inputs(sig):
         result = call_and_return_error(func, *args, **kwargs)
         if result is not None:
-            print(f'{args=} , {kwargs=}')
+            print(f"{args=} , {kwargs=}")
             print(result)
 
 
@@ -777,16 +790,16 @@ def test_sigless_builtins():
     from operator import itemgetter, attrgetter, methodcaller
 
     mapping_methods = {
-        '__eq__',
-        '__ne__',
-        '__iter__',
-        '__getitem__',
-        '__len__',
-        '__contains__',
-        '__setitem__',
-        '__delitem__',
+        "__eq__",
+        "__ne__",
+        "__iter__",
+        "__getitem__",
+        "__len__",
+        "__contains__",
+        "__setitem__",
+        "__delitem__",
     }
-    special_cases = {'breakpoint'} | mapping_methods
+    special_cases = {"breakpoint"} | mapping_methods
 
     for name in sigs_for_sigless_builtin_name:
         # removed breakpoint as it triggers a pdb session
@@ -795,136 +808,136 @@ def test_sigless_builtins():
         sig = Sig(sigs_for_sigless_builtin_name[name])
         assert function_is_compatible_with_signature(eval(name), sig)
 
-    d = {'a': 1, 'b': 2}
+    d = {"a": 1, "b": 2}
     for name in mapping_methods:
         method = getattr(d, name)
         assert function_is_compatible_with_signature(method, Sig(method))
 
 
 @pytest.mark.parametrize(
-    'sig_spec, args, kwargs, map_arguments_kwargs, expected_output',
+    "sig_spec, args, kwargs, map_arguments_kwargs, expected_output",
     [
         # ------------------------------------------------------------------------------
         # PO
         # ------------------------------------------------------------------------------
-        ('(a, /)', (1,), None, None, {'a': 1}),
-        ('(a, /)', None, None, None, (TypeError, "missing a required argument: 'a'")),
-        ('(a, /)', None, None, dict(allow_partial=True), {}),
-        ('(a=0, /)', None, None, dict(apply_defaults=True), {'a': 0}),
+        ("(a, /)", (1,), None, None, {"a": 1}),
+        ("(a, /)", None, None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(a, /)", None, None, dict(allow_partial=True), {}),
+        ("(a=0, /)", None, None, dict(apply_defaults=True), {"a": 0}),
         (
-            '(a=0, /)',
+            "(a=0, /)",
             None,
             None,
             dict(allow_partial=True, apply_defaults=True),
-            {'a': 0},
+            {"a": 0},
         ),
-        ('(a, /)', (1, 2), None, None, (TypeError, 'too many positional arguments')),
-        ('(a, /)', (1, 2), None, dict(allow_excess=True), {'a': 1}),
+        ("(a, /)", (1, 2), None, None, (TypeError, "too many positional arguments")),
+        ("(a, /)", (1, 2), None, dict(allow_excess=True), {"a": 1}),
         (
-            '(a, /)',
+            "(a, /)",
             (1,),
-            {'b': 2},
+            {"b": 2},
             None,
             (TypeError, "got an unexpected keyword argument 'b'"),
         ),
-        ('(a, /)', (1,), {'b': 2}, dict(allow_excess=True), {'a': 1}),
+        ("(a, /)", (1,), {"b": 2}, dict(allow_excess=True), {"a": 1}),
         (
-            '(a, /)',
+            "(a, /)",
             None,
-            {'a': 1},
+            {"a": 1},
             None,
             (
                 TypeError,
                 "'a' parameter is positional only, but was passed as a keyword",
             ),
         ),
-        ('(a, /)', None, {'a': 1}, dict(ignore_kind=True), {'a': 1}),
+        ("(a, /)", None, {"a": 1}, dict(ignore_kind=True), {"a": 1}),
         (
-            '(a, /)',
+            "(a, /)",
             None,
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
             dict(allow_excess=True, ignore_kind=True),
-            {'a': 1},
+            {"a": 1},
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
         # PK
         # ------------------------------------------------------------------------------
-        ('(a)', (1,), None, None, {'a': 1}),
-        ('(a)', None, {'a': 1}, None, {'a': 1}),
-        ('(a)', None, None, None, (TypeError, "missing a required argument: 'a'")),
-        ('(a)', None, None, dict(allow_partial=True), {}),
-        ('(a=0)', None, None, dict(apply_defaults=True), {'a': 0}),
-        ('(a=0)', None, None, dict(apply_defaults=True, allow_partial=True), {'a': 0}),
-        ('(a)', (1, 2), None, None, (TypeError, 'too many positional arguments')),
-        ('(a)', (1, 2), None, dict(allow_excess=True), {'a': 1}),
+        ("(a)", (1,), None, None, {"a": 1}),
+        ("(a)", None, {"a": 1}, None, {"a": 1}),
+        ("(a)", None, None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(a)", None, None, dict(allow_partial=True), {}),
+        ("(a=0)", None, None, dict(apply_defaults=True), {"a": 0}),
+        ("(a=0)", None, None, dict(apply_defaults=True, allow_partial=True), {"a": 0}),
+        ("(a)", (1, 2), None, None, (TypeError, "too many positional arguments")),
+        ("(a)", (1, 2), None, dict(allow_excess=True), {"a": 1}),
         (
-            '(a)',
+            "(a)",
             (1,),
-            {'b': 2},
+            {"b": 2},
             None,
             (TypeError, "got an unexpected keyword argument 'b'"),
         ),
-        ('(a)', (1,), {'b': 2}, dict(allow_excess=True), {'a': 1}),
+        ("(a)", (1,), {"b": 2}, dict(allow_excess=True), {"a": 1}),
         (
-            '(a)',
+            "(a)",
             None,
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
             None,
             (TypeError, "got an unexpected keyword argument 'b'"),
         ),
-        ('(a)', None, {'a': 1, 'b': 2}, dict(allow_excess=True), {'a': 1}),
+        ("(a)", None, {"a": 1, "b": 2}, dict(allow_excess=True), {"a": 1}),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
         # VP
         # ------------------------------------------------------------------------------
-        ('(*args)', (1, 2), None, None, {'args': (1, 2)}),
-        ('(*args)', None, None, None, {}),
-        ('(*args)', None, None, dict(allow_partial=True), {}),
-        ('(*args)', None, None, dict(apply_defaults=True), {'args': ()}),
+        ("(*args)", (1, 2), None, None, {"args": (1, 2)}),
+        ("(*args)", None, None, None, {}),
+        ("(*args)", None, None, dict(allow_partial=True), {}),
+        ("(*args)", None, None, dict(apply_defaults=True), {"args": ()}),
         (
-            '(*args)',
+            "(*args)",
             None,
             None,
             dict(allow_partial=True, apply_defaults=True),
-            {'args': ()},
+            {"args": ()},
         ),
-        ('(*args)', (1, 2), None, dict(allow_excess=True), {'args': (1, 2)}),
+        ("(*args)", (1, 2), None, dict(allow_excess=True), {"args": (1, 2)}),
         (
-            '(*args)',
+            "(*args)",
             (1, 2),
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
             None,
             (TypeError, "got an unexpected keyword argument 'a'"),
         ),
         (
-            '(*args)',
+            "(*args)",
             (1, 2),
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
             dict(allow_excess=True),
-            {'args': (1, 2)},
+            {"args": (1, 2)},
         ),
-        ('(*args)', ((1, 2),), None, None, {'args': ((1, 2),)}),
-        ('(*args)', ((1, 2),), None, dict(ignore_kind=True), {'args': (1, 2)}),
+        ("(*args)", ((1, 2),), None, None, {"args": ((1, 2),)}),
+        ("(*args)", ((1, 2),), None, dict(ignore_kind=True), {"args": (1, 2)}),
         (
-            '(*args)',
+            "(*args)",
             None,
-            {'args': (1, 2)},
+            {"args": (1, 2)},
             None,
             (TypeError, "got an unexpected keyword argument 'args'"),
         ),
-        ('(*args)', None, {'args': (1, 2)}, dict(ignore_kind=True), {'args': (1, 2)}),
+        ("(*args)", None, {"args": (1, 2)}, dict(ignore_kind=True), {"args": (1, 2)}),
         (
-            '(*args)',
+            "(*args)",
             ((1, 2), 3),
-            {'a': 4, 'b': 5},
+            {"a": 4, "b": 5},
             dict(allow_excess=True, ignore_kind=True),
-            {'args': (1, 2)},
+            {"args": (1, 2)},
         ),
         (
-            '(*args)',
+            "(*args)",
             (1, 2),
-            {'args': (1, 2)},
+            {"args": (1, 2)},
             dict(allow_excess=True, ignore_kind=True),
             (TypeError, "multiple values for argument 'args'"),
         ),
@@ -933,99 +946,99 @@ def test_sigless_builtins():
         # KO
         # def foo(*, a): ...
         # ------------------------------------------------------------------------------
-        ('(*, a)', None, {'a': 1}, None, {'a': 1}),
-        ('(*, a)', None, None, None, (TypeError, "missing a required argument: 'a'")),
-        ('(*, a)', None, None, dict(allow_partial=True), {}),
-        ('(*, a=0)', None, None, dict(apply_defaults=True), {'a': 0}),
+        ("(*, a)", None, {"a": 1}, None, {"a": 1}),
+        ("(*, a)", None, None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(*, a)", None, None, dict(allow_partial=True), {}),
+        ("(*, a=0)", None, None, dict(apply_defaults=True), {"a": 0}),
         (
-            '(*, a=0)',
+            "(*, a=0)",
             None,
             None,
             dict(allow_partial=True, apply_defaults=True),
-            {'a': 0},
+            {"a": 0},
         ),
-        ('(*, a)', (2,), {'a': 1}, None, (TypeError, 'too many positional arguments')),
-        ('(*, a)', (2,), {'a': 1}, dict(allow_excess=True), {'a': 1}),
+        ("(*, a)", (2,), {"a": 1}, None, (TypeError, "too many positional arguments")),
+        ("(*, a)", (2,), {"a": 1}, dict(allow_excess=True), {"a": 1}),
         (
-            '(*, a)',
+            "(*, a)",
             None,
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
             None,
             (TypeError, "got an unexpected keyword argument 'b'"),
         ),
-        ('(*, a)', None, {'a': 1, 'b': 2}, dict(allow_excess=True), {'a': 1}),
-        ('(*, a)', (1,), None, None, (TypeError, 'too many positional arguments')),
-        ('(*, a)', (1,), None, dict(ignore_kind=True), {'a': 1}),
-        ('(*, a)', (1, 2), None, dict(allow_excess=True, ignore_kind=True), {'a': 1}),
+        ("(*, a)", None, {"a": 1, "b": 2}, dict(allow_excess=True), {"a": 1}),
+        ("(*, a)", (1,), None, None, (TypeError, "too many positional arguments")),
+        ("(*, a)", (1,), None, dict(ignore_kind=True), {"a": 1}),
+        ("(*, a)", (1, 2), None, dict(allow_excess=True, ignore_kind=True), {"a": 1}),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
         # VK
         # def foo(**kwargs): ...
         # ------------------------------------------------------------------------------
-        ('(**kwargs)', None, {'a': 1, 'b': 2}, None, {'kwargs': {'a': 1, 'b': 2}}),
-        ('(**kwargs)', None, None, None, {}),
-        ('(**kwargs)', None, None, dict(allow_partial=True), {}),
-        ('(**kwargs)', None, None, dict(apply_defaults=True), {'kwargs': {}}),
+        ("(**kwargs)", None, {"a": 1, "b": 2}, None, {"kwargs": {"a": 1, "b": 2}}),
+        ("(**kwargs)", None, None, None, {}),
+        ("(**kwargs)", None, None, dict(allow_partial=True), {}),
+        ("(**kwargs)", None, None, dict(apply_defaults=True), {"kwargs": {}}),
         (
-            '(**kwargs)',
+            "(**kwargs)",
             None,
             None,
             dict(allow_partial=True, apply_defaults=True),
-            {'kwargs': {}},
+            {"kwargs": {}},
         ),
         (
-            '(**kwargs)',
+            "(**kwargs)",
             None,
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
             dict(allow_excess=True),
-            {'kwargs': {'a': 1, 'b': 2}},
+            {"kwargs": {"a": 1, "b": 2}},
         ),
         (
-            '(**kwargs)',
+            "(**kwargs)",
             (1, 2),
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
             None,
-            (TypeError, 'too many positional arguments'),
+            (TypeError, "too many positional arguments"),
         ),
         (
-            '(**kwargs)',
+            "(**kwargs)",
             (1, 2),
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
             dict(allow_excess=True),
-            {'kwargs': {'a': 1, 'b': 2}},
+            {"kwargs": {"a": 1, "b": 2}},
         ),
         (
-            '(**kwargs)',
+            "(**kwargs)",
             None,
-            {'kwargs': {'a': 1, 'b': 2}},
+            {"kwargs": {"a": 1, "b": 2}},
             None,
-            {'kwargs': {'kwargs': {'a': 1, 'b': 2}}},
+            {"kwargs": {"kwargs": {"a": 1, "b": 2}}},
         ),
         (
-            '(**kwargs)',
+            "(**kwargs)",
             None,
-            {'kwargs': {'a': 1, 'b': 2}},
+            {"kwargs": {"a": 1, "b": 2}},
             dict(ignore_kind=True),
-            {'kwargs': {'a': 1, 'b': 2}},
+            {"kwargs": {"a": 1, "b": 2}},
         ),
         (
-            '(**kwargs)',
-            ({'a': 1, 'b': 2},),
+            "(**kwargs)",
+            ({"a": 1, "b": 2},),
             None,
             None,
-            (TypeError, 'too many positional arguments'),
+            (TypeError, "too many positional arguments"),
         ),
         (
-            '(**kwargs)',
-            ({'a': 1, 'b': 2},),
+            "(**kwargs)",
+            ({"a": 1, "b": 2},),
             None,
             dict(ignore_kind=True),
-            {'kwargs': {'a': 1, 'b': 2}},
+            {"kwargs": {"a": 1, "b": 2}},
         ),
         (
-            '(**kwargs)',
-            ({'a': 1, 'b': 2},),
-            {'kwargs': {'a': 1, 'b': 2}},
+            "(**kwargs)",
+            ({"a": 1, "b": 2},),
+            {"kwargs": {"a": 1, "b": 2}},
             dict(allow_excess=True, ignore_kind=True),
             (TypeError, "multiple values for argument 'kwargs'"),
         ),
@@ -1034,156 +1047,156 @@ def test_sigless_builtins():
         # PO + PK + KO
         # def foo(a, /, b, *, c): ...
         # ------------------------------------------------------------------------------
-        ('(a, /, b, *, c)', (1, 2), {'c': 3}, None, {'a': 1, 'b': 2, 'c': 3}),
-        ('(a, /, b, *, c)', (1,), {'b': 2, 'c': 3}, None, {'a': 1, 'b': 2, 'c': 3}),
+        ("(a, /, b, *, c)", (1, 2), {"c": 3}, None, {"a": 1, "b": 2, "c": 3}),
+        ("(a, /, b, *, c)", (1,), {"b": 2, "c": 3}, None, {"a": 1, "b": 2, "c": 3}),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1, 2),
-            {'b': 2, 'c': 3},
+            {"b": 2, "c": 3},
             None,
             (TypeError, "multiple values for argument 'b'"),
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             None,
             None,
             None,
             (TypeError, "missing a required argument: 'a'"),
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1,),
             None,
             None,
             (TypeError, "missing a required argument: 'b'"),
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1, 2),
             None,
             None,
             (TypeError, "missing a required argument: 'c'"),
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1,),
-            {'b': 2},
+            {"b": 2},
             None,
             (TypeError, "missing a required argument: 'c'"),
         ),
-        ('(a, /, b, *, c)', None, None, dict(allow_partial=True), {}),
-        ('(a, /, b, *, c)', (1,), None, dict(allow_partial=True), {'a': 1}),
-        ('(a, /, b, *, c)', (1, 2), None, dict(allow_partial=True), {'a': 1, 'b': 2}),
-        ('(a, /, b, *, c)', (1,), {'b': 2}, dict(allow_partial=True), {'a': 1, 'b': 2}),
+        ("(a, /, b, *, c)", None, None, dict(allow_partial=True), {}),
+        ("(a, /, b, *, c)", (1,), None, dict(allow_partial=True), {"a": 1}),
+        ("(a, /, b, *, c)", (1, 2), None, dict(allow_partial=True), {"a": 1, "b": 2}),
+        ("(a, /, b, *, c)", (1,), {"b": 2}, dict(allow_partial=True), {"a": 1, "b": 2}),
         (
-            '(a=0, /, b=0, *, c=0)',
+            "(a=0, /, b=0, *, c=0)",
             None,
             None,
             dict(apply_defaults=True),
-            {'a': 0, 'b': 0, 'c': 0},
+            {"a": 0, "b": 0, "c": 0},
         ),
         (
-            '(a=0, /, b=0, *, c=0)',
+            "(a=0, /, b=0, *, c=0)",
             (1,),
             None,
             dict(apply_defaults=True),
-            {'a': 1, 'b': 0, 'c': 0},
+            {"a": 1, "b": 0, "c": 0},
         ),
         (
-            '(a=0, /, b=0, *, c=0)',
+            "(a=0, /, b=0, *, c=0)",
             (1, 2),
             None,
             dict(apply_defaults=True),
-            {'a': 1, 'b': 2, 'c': 0},
+            {"a": 1, "b": 2, "c": 0},
         ),
         (
-            '(a=0, /, b=0, *, c=0)',
+            "(a=0, /, b=0, *, c=0)",
             (1,),
-            {'b': 2},
+            {"b": 2},
             dict(apply_defaults=True),
-            {'a': 1, 'b': 2, 'c': 0},
+            {"a": 1, "b": 2, "c": 0},
         ),
         (
-            '(a=0, /, b=0, *, c=0)',
+            "(a=0, /, b=0, *, c=0)",
             None,
-            {'b': 2},
+            {"b": 2},
             dict(apply_defaults=True),
-            {'a': 0, 'b': 2, 'c': 0},
+            {"a": 0, "b": 2, "c": 0},
         ),
         (
-            '(a=0, /, b=0, *, c=0)',
+            "(a=0, /, b=0, *, c=0)",
             None,
-            {'c': 3},
+            {"c": 3},
             dict(apply_defaults=True),
-            {'a': 0, 'b': 0, 'c': 3},
+            {"a": 0, "b": 0, "c": 3},
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1, 2, 3),
-            {'c': 3},
+            {"c": 3},
             None,
-            (TypeError, 'too many positional arguments'),
+            (TypeError, "too many positional arguments"),
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1, 2, 3),
-            {'c': 3},
+            {"c": 3},
             dict(allow_excess=True),
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1, 2),
-            {'c': 3, 'd': 4},
+            {"c": 3, "d": 4},
             None,
             (TypeError, "got an unexpected keyword argument 'd'"),
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1, 2),
-            {'c': 3, 'd': 4},
+            {"c": 3, "d": 4},
             dict(allow_excess=True),
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1, 2, 3),
-            {'c': 3, 'd': 4},
+            {"c": 3, "d": 4},
             None,
-            (TypeError, 'too many positional arguments'),
+            (TypeError, "too many positional arguments"),
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1, 2, 3),
-            {'c': 3, 'd': 4},
+            {"c": 3, "d": 4},
             dict(allow_excess=True),
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1, 2),
-            {'b': 2, 'c': 3},
+            {"b": 2, "c": 3},
             dict(allow_excess=True),
             (TypeError, "multiple values for argument 'b'"),
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1, 2, 3),
             None,
             None,
-            (TypeError, 'too many positional arguments'),
+            (TypeError, "too many positional arguments"),
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             (1, 2, 3),
             None,
             dict(ignore_kind=True),
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             None,
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
             None,
             (
                 TypeError,
@@ -1191,18 +1204,18 @@ def test_sigless_builtins():
             ),
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             None,
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
             dict(ignore_kind=True),
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
         ),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             None,
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
             dict(allow_excess=True, ignore_kind=True),
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
@@ -1210,84 +1223,84 @@ def test_sigless_builtins():
         # def foo(*args, **kwargs): ...
         # ------------------------------------------------------------------------------
         (
-            '(*args, **kwargs)',
+            "(*args, **kwargs)",
             (1, 2, 3),
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
             None,
-            {'args': (1, 2, 3), 'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"args": (1, 2, 3), "kwargs": {"a": 1, "b": 2, "c": 3}},
         ),
-        ('(*args, **kwargs)', (1, 2, 3), None, None, {'args': (1, 2, 3)}),
+        ("(*args, **kwargs)", (1, 2, 3), None, None, {"args": (1, 2, 3)}),
         (
-            '(*args, **kwargs)',
+            "(*args, **kwargs)",
             None,
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
             None,
-            {'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"kwargs": {"a": 1, "b": 2, "c": 3}},
         ),
-        ('(*args, **kwargs)', None, None, None, {}),
-        ('(*args, **kwargs)', None, None, dict(allow_partial=True), {}),
+        ("(*args, **kwargs)", None, None, None, {}),
+        ("(*args, **kwargs)", None, None, dict(allow_partial=True), {}),
         (
-            '(*args, **kwargs)',
+            "(*args, **kwargs)",
             None,
             None,
             dict(apply_defaults=True),
-            {'args': (), 'kwargs': {}},
+            {"args": (), "kwargs": {}},
         ),
         (
-            '(*args, **kwargs)',
+            "(*args, **kwargs)",
             None,
             None,
             dict(allow_partial=True, apply_defaults=True),
-            {'args': (), 'kwargs': {}},
+            {"args": (), "kwargs": {}},
         ),
         (
-            '(*args, **kwargs)',
+            "(*args, **kwargs)",
             (1, 2, 3),
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
             dict(allow_excess=True),
-            {'args': (1, 2, 3), 'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"args": (1, 2, 3), "kwargs": {"a": 1, "b": 2, "c": 3}},
         ),
         (
-            '(*args, **kwargs)',
-            ((1, 2, 3), {'a': 1, 'b': 2, 'c': 3}),
+            "(*args, **kwargs)",
+            ((1, 2, 3), {"a": 1, "b": 2, "c": 3}),
             None,
             dict(ignore_kind=True),
-            {'args': (1, 2, 3), 'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"args": (1, 2, 3), "kwargs": {"a": 1, "b": 2, "c": 3}},
         ),
         (
-            '(*args, **kwargs)',
+            "(*args, **kwargs)",
             ((1, 2, 3),),
-            {'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"kwargs": {"a": 1, "b": 2, "c": 3}},
             dict(ignore_kind=True),
-            {'args': (1, 2, 3), 'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"args": (1, 2, 3), "kwargs": {"a": 1, "b": 2, "c": 3}},
         ),
         (
-            '(*args, **kwargs)',
+            "(*args, **kwargs)",
             None,
-            {'args': (1, 2, 3), 'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"args": (1, 2, 3), "kwargs": {"a": 1, "b": 2, "c": 3}},
             dict(ignore_kind=True),
-            {'args': (1, 2, 3), 'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"args": (1, 2, 3), "kwargs": {"a": 1, "b": 2, "c": 3}},
         ),
         (
-            '(*args, **kwargs)',
-            ((1, 2, 3), {'a': 1, 'b': 2, 'c': 3}),
+            "(*args, **kwargs)",
+            ((1, 2, 3), {"a": 1, "b": 2, "c": 3}),
             None,
             dict(allow_excess=True, ignore_kind=True),
-            {'args': (1, 2, 3), 'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"args": (1, 2, 3), "kwargs": {"a": 1, "b": 2, "c": 3}},
         ),
         (
-            '(*args, **kwargs)',
+            "(*args, **kwargs)",
             ((1, 2, 3),),
-            {'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"kwargs": {"a": 1, "b": 2, "c": 3}},
             dict(allow_excess=True, ignore_kind=True),
-            {'args': (1, 2, 3), 'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"args": (1, 2, 3), "kwargs": {"a": 1, "b": 2, "c": 3}},
         ),
         (
-            '(*args, **kwargs)',
+            "(*args, **kwargs)",
             None,
-            {'args': (1, 2, 3), 'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"args": (1, 2, 3), "kwargs": {"a": 1, "b": 2, "c": 3}},
             dict(allow_excess=True, ignore_kind=True),
-            {'args': (1, 2, 3), 'kwargs': {'a': 1, 'b': 2, 'c': 3}},
+            {"args": (1, 2, 3), "kwargs": {"a": 1, "b": 2, "c": 3}},
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
@@ -1295,158 +1308,158 @@ def test_sigless_builtins():
         # def foo(a, /, b, *args, c): ...
         # ------------------------------------------------------------------------------
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1, 2, 3, 4),
-            {'c': 5},
+            {"c": 5},
             None,
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5},
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1, 2, 3, 4),
-            {'b': 2, 'c': 5},
+            {"b": 2, "c": 5},
             None,
             (TypeError, "multiple values for argument 'b'"),
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             None,
             None,
             None,
             (TypeError, "missing a required argument: 'a'"),
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1,),
             None,
             None,
             (TypeError, "missing a required argument: 'b'"),
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1, 2),
             None,
             None,
             (TypeError, "missing a required argument: 'c'"),
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1, 2, 3, 4),
             None,
             None,
             (TypeError, "missing a required argument: 'c'"),
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1,),
-            {'b': 2},
+            {"b": 2},
             None,
             (TypeError, "missing a required argument: 'c'"),
         ),
-        ('(a, /, b, *args, c)', None, None, dict(allow_partial=True), {}),
-        ('(a, /, b, *args, c)', (1,), None, dict(allow_partial=True), {'a': 1}),
+        ("(a, /, b, *args, c)", None, None, dict(allow_partial=True), {}),
+        ("(a, /, b, *args, c)", (1,), None, dict(allow_partial=True), {"a": 1}),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1, 2),
             None,
             dict(allow_partial=True),
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1, 2, 3, 4),
             None,
             dict(allow_partial=True),
-            {'a': 1, 'b': 2, 'args': (3, 4)},
+            {"a": 1, "b": 2, "args": (3, 4)},
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1,),
-            {'b': 2},
+            {"b": 2},
             dict(allow_partial=True),
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
         ),
         (
-            '(a=0, /, b=0, *args, c=0)',
+            "(a=0, /, b=0, *args, c=0)",
             None,
             None,
             dict(apply_defaults=True),
-            {'a': 0, 'b': 0, 'args': (), 'c': 0},
+            {"a": 0, "b": 0, "args": (), "c": 0},
         ),
         (
-            '(a=0, /, b=0, *args, c=0)',
+            "(a=0, /, b=0, *args, c=0)",
             (1,),
             None,
             dict(apply_defaults=True),
-            {'a': 1, 'b': 0, 'args': (), 'c': 0},
+            {"a": 1, "b": 0, "args": (), "c": 0},
         ),
         (
-            '(a=0, /, b=0, *args, c=0)',
+            "(a=0, /, b=0, *args, c=0)",
             (1, 2),
             None,
             dict(apply_defaults=True),
-            {'a': 1, 'b': 2, 'args': (), 'c': 0},
+            {"a": 1, "b": 2, "args": (), "c": 0},
         ),
         (
-            '(a=0, /, b=0, *args, c=0)',
+            "(a=0, /, b=0, *args, c=0)",
             (1, 2, 3, 4),
             None,
             dict(apply_defaults=True),
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 0},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 0},
         ),
         (
-            '(a=0, /, b=0, *args, c=0)',
+            "(a=0, /, b=0, *args, c=0)",
             (1,),
-            {'b': 2},
+            {"b": 2},
             dict(apply_defaults=True),
-            {'a': 1, 'b': 2, 'args': (), 'c': 0},
+            {"a": 1, "b": 2, "args": (), "c": 0},
         ),
         (
-            '(a=0, /, b=0, *args, c=0)',
+            "(a=0, /, b=0, *args, c=0)",
             None,
-            {'b': 2},
+            {"b": 2},
             dict(apply_defaults=True),
-            {'a': 0, 'b': 2, 'args': (), 'c': 0},
+            {"a": 0, "b": 2, "args": (), "c": 0},
         ),
         (
-            '(a=0, /, b=0, *args, c=0)',
+            "(a=0, /, b=0, *args, c=0)",
             None,
-            {'c': 3},
+            {"c": 3},
             dict(apply_defaults=True),
-            {'a': 0, 'b': 0, 'args': (), 'c': 3},
+            {"a": 0, "b": 0, "args": (), "c": 3},
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1, 2, 3, 4, 5),
-            {'c': 5},
+            {"c": 5},
             dict(allow_excess=True),
-            {'a': 1, 'b': 2, 'args': (3, 4, 5), 'c': 5},
+            {"a": 1, "b": 2, "args": (3, 4, 5), "c": 5},
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1, 2, 3, 4),
-            {'c': 5, 'd': 6},
+            {"c": 5, "d": 6},
             None,
             (TypeError, "got an unexpected keyword argument 'd'"),
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1, 2, 3, 4),
-            {'c': 5, 'd': 6},
+            {"c": 5, "d": 6},
             dict(allow_excess=True),
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5},
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (1, 2, (3, 4), 5),
             None,
             dict(ignore_kind=True),
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5},
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (),
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5},
             None,
             (
                 TypeError,
@@ -1454,37 +1467,37 @@ def test_sigless_builtins():
             ),
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (),
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5},
             dict(ignore_kind=True),
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5},
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (),
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'd': 6},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "d": 6},
             dict(allow_excess=True, ignore_kind=True),
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5},
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (3, 4),
-            {'a': 1, 'b': 2, 'c': 5},
+            {"a": 1, "b": 2, "c": 5},
             None,
             (TypeError, "multiple values for argument 'b'"),
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (3, 4),
-            {'a': 1, 'b': 2, 'c': 5},
+            {"a": 1, "b": 2, "c": 5},
             dict(ignore_kind=True),
             (TypeError, "multiple values for argument 'a'"),
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             (3, 4),
-            {'a': 1, 'b': 2, 'c': 5},
+            {"a": 1, "b": 2, "c": 5},
             dict(allow_excess=True, ignore_kind=True),
             (TypeError, "multiple values for argument 'a'"),
         ),
@@ -1494,270 +1507,270 @@ def test_sigless_builtins():
         # def foo(a, /, b, *, c, **kwargs): ...
         # ------------------------------------------------------------------------------
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2),
-            {'c': 3, 'd': 4, 'e': 5},
+            {"c": 3, "d": 4, "e": 5},
             None,
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1,),
-            {'b': 2, 'c': 3, 'd': 4, 'e': 5},
+            {"b": 2, "c": 3, "d": 4, "e": 5},
             None,
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             None,
             None,
             None,
             (TypeError, "missing a required argument: 'a'"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1,),
             None,
             None,
             (TypeError, "missing a required argument: 'b'"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2),
             None,
             None,
             (TypeError, "missing a required argument: 'c'"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1,),
-            {'b': 2},
+            {"b": 2},
             None,
             (TypeError, "missing a required argument: 'c'"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             None,
-            {'d': 4, 'e': 5},
+            {"d": 4, "e": 5},
             None,
             (TypeError, "missing a required argument: 'a'"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1,),
-            {'d': 4, 'e': 5},
+            {"d": 4, "e": 5},
             None,
             (TypeError, "missing a required argument: 'b'"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2),
-            {'d': 4, 'e': 5},
+            {"d": 4, "e": 5},
             None,
             (TypeError, "missing a required argument: 'c'"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1,),
-            {'b': 2, 'd': 4, 'e': 5},
+            {"b": 2, "d": 4, "e": 5},
             None,
             (TypeError, "missing a required argument: 'c'"),
         ),
-        ('(a, /, b, *, c, **kwargs)', None, None, dict(allow_partial=True), {}),
-        ('(a, /, b, *, c, **kwargs)', (1,), None, dict(allow_partial=True), {'a': 1}),
+        ("(a, /, b, *, c, **kwargs)", None, None, dict(allow_partial=True), {}),
+        ("(a, /, b, *, c, **kwargs)", (1,), None, dict(allow_partial=True), {"a": 1}),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2),
             None,
             dict(allow_partial=True),
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1,),
-            {'b': 2},
+            {"b": 2},
             dict(allow_partial=True),
-            {'a': 1, 'b': 2},
+            {"a": 1, "b": 2},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             None,
-            {'d': 4, 'e': 5},
+            {"d": 4, "e": 5},
             dict(allow_partial=True),
-            {'kwargs': {'d': 4, 'e': 5}},
+            {"kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1,),
-            {'d': 4, 'e': 5},
+            {"d": 4, "e": 5},
             dict(allow_partial=True),
-            {'a': 1, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2),
-            {'d': 4, 'e': 5},
+            {"d": 4, "e": 5},
             dict(allow_partial=True),
-            {'a': 1, 'b': 2, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1,),
-            {'b': 2, 'd': 4, 'e': 5},
+            {"b": 2, "d": 4, "e": 5},
             dict(allow_partial=True),
-            {'a': 1, 'b': 2, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             None,
             None,
             dict(apply_defaults=True),
-            {'a': 0, 'b': 0, 'c': 0, 'kwargs': {}},
+            {"a": 0, "b": 0, "c": 0, "kwargs": {}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             (1,),
             None,
             dict(apply_defaults=True),
-            {'a': 1, 'b': 0, 'c': 0, 'kwargs': {}},
+            {"a": 1, "b": 0, "c": 0, "kwargs": {}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             (1, 2),
             None,
             dict(apply_defaults=True),
-            {'a': 1, 'b': 2, 'c': 0, 'kwargs': {}},
+            {"a": 1, "b": 2, "c": 0, "kwargs": {}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             (1,),
-            {'b': 2},
+            {"b": 2},
             dict(apply_defaults=True),
-            {'a': 1, 'b': 2, 'c': 0, 'kwargs': {}},
+            {"a": 1, "b": 2, "c": 0, "kwargs": {}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             None,
-            {'b': 2},
+            {"b": 2},
             dict(apply_defaults=True),
-            {'a': 0, 'b': 2, 'c': 0, 'kwargs': {}},
+            {"a": 0, "b": 2, "c": 0, "kwargs": {}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             None,
-            {'c': 3},
+            {"c": 3},
             dict(apply_defaults=True),
-            {'a': 0, 'b': 0, 'c': 3, 'kwargs': {}},
+            {"a": 0, "b": 0, "c": 3, "kwargs": {}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             None,
-            {'d': 4, 'e': 5},
+            {"d": 4, "e": 5},
             dict(apply_defaults=True),
-            {'a': 0, 'b': 0, 'c': 0, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 0, "b": 0, "c": 0, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             (1,),
-            {'d': 4, 'e': 5},
+            {"d": 4, "e": 5},
             dict(apply_defaults=True),
-            {'a': 1, 'b': 0, 'c': 0, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 0, "c": 0, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             (1, 2),
-            {'d': 4, 'e': 5},
+            {"d": 4, "e": 5},
             dict(apply_defaults=True),
-            {'a': 1, 'b': 2, 'c': 0, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "c": 0, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             (1,),
-            {'b': 2, 'd': 4, 'e': 5},
+            {"b": 2, "d": 4, "e": 5},
             dict(apply_defaults=True),
-            {'a': 1, 'b': 2, 'c': 0, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "c": 0, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             None,
-            {'b': 2, 'd': 4, 'e': 5},
+            {"b": 2, "d": 4, "e": 5},
             dict(apply_defaults=True),
-            {'a': 0, 'b': 2, 'c': 0, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 0, "b": 2, "c": 0, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             None,
-            {'c': 3, 'd': 4, 'e': 5},
+            {"c": 3, "d": 4, "e": 5},
             dict(apply_defaults=True),
-            {'a': 0, 'b': 0, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 0, "b": 0, "c": 3, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2, 3),
-            {'c': 3},
+            {"c": 3},
             None,
-            (TypeError, 'too many positional arguments'),
+            (TypeError, "too many positional arguments"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2, 3),
-            {'c': 3},
+            {"c": 3},
             dict(allow_excess=True),
-            {'a': 1, 'b': 2, 'c': 3},
+            {"a": 1, "b": 2, "c": 3},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2),
-            {'c': 3, 'd': 4},
+            {"c": 3, "d": 4},
             dict(allow_excess=True),
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4}},
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4}},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2, 3),
-            {'c': 3, 'd': 4},
+            {"c": 3, "d": 4},
             None,
-            (TypeError, 'too many positional arguments'),
+            (TypeError, "too many positional arguments"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2, 3),
-            {'c': 3, 'd': 4},
+            {"c": 3, "d": 4},
             dict(allow_excess=True),
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4}},
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4}},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2),
-            {'b': 2, 'c': 3},
+            {"b": 2, "c": 3},
             dict(allow_excess=True),
             (TypeError, "multiple values for argument 'b'"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2),
-            {'b': 2, 'c': 3, 'd': 4, 'e': 5},
+            {"b": 2, "c": 3, "d": 4, "e": 5},
             dict(allow_excess=True),
             (TypeError, "multiple values for argument 'b'"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
-            (1, 2, 3, {'d': 4, 'e': 5}),
+            "(a, /, b, *, c, **kwargs)",
+            (1, 2, 3, {"d": 4, "e": 5}),
             None,
             None,
-            (TypeError, 'too many positional arguments'),
+            (TypeError, "too many positional arguments"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
-            (1, 2, 3, {'d': 4, 'e': 5}),
+            "(a, /, b, *, c, **kwargs)",
+            (1, 2, 3, {"d": 4, "e": 5}),
             None,
             dict(ignore_kind=True),
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             None,
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}},
             None,
             (
                 TypeError,
@@ -1765,32 +1778,32 @@ def test_sigless_builtins():
             ),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             None,
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}},
             dict(ignore_kind=True),
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             None,
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}, 'f': 6},
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}, "f": 6},
             dict(allow_excess=True, ignore_kind=True),
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}},
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2, 3),
-            {'kwargs': {'d': 4, 'e': 5}},
+            {"kwargs": {"d": 4, "e": 5}},
             None,
-            (TypeError, 'too many positional arguments'),
+            (TypeError, "too many positional arguments"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             (1, 2, 3),
-            {'kwargs': {'d': 4, 'e': 5}},
+            {"kwargs": {"d": 4, "e": 5}},
             dict(ignore_kind=True),
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}},
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
@@ -1798,59 +1811,59 @@ def test_sigless_builtins():
         # def foo(a, /, b, *args, c, **kwargs): ...
         # ------------------------------------------------------------------------------
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             (1, 2, 3, 4),
-            {'c': 5, 'd': 6, 'e': 7},
+            {"c": 5, "d": 6, "e": 7},
             None,
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'kwargs': {'d': 6, 'e': 7}},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "kwargs": {"d": 6, "e": 7}},
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             (1,),
-            {'b': 2, 'c': 5, 'd': 6, 'e': 7},
+            {"b": 2, "c": 5, "d": 6, "e": 7},
             None,
-            {'a': 1, 'b': 2, 'c': 5, 'kwargs': {'d': 6, 'e': 7}},
+            {"a": 1, "b": 2, "c": 5, "kwargs": {"d": 6, "e": 7}},
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             (1, 2),
-            {'c': 5},
+            {"c": 5},
             None,
-            {'a': 1, 'b': 2, 'c': 5},
+            {"a": 1, "b": 2, "c": 5},
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             None,
             None,
             None,
             (TypeError, "missing a required argument: 'a'"),
         ),
-        ('(a, /, b, *args, c, **kwargs)', None, None, dict(allow_partial=True), {}),
+        ("(a, /, b, *args, c, **kwargs)", None, None, dict(allow_partial=True), {}),
         (
-            '(a=0, /, b=0, *args, c=0, **kwargs)',
+            "(a=0, /, b=0, *args, c=0, **kwargs)",
             None,
             None,
             dict(apply_defaults=True),
-            {'a': 0, 'args': (), 'b': 0, 'c': 0, 'kwargs': {}},
+            {"a": 0, "args": (), "b": 0, "c": 0, "kwargs": {}},
         ),
         (
-            '(a=0, /, b=0, *args, c=0, **kwargs)',
+            "(a=0, /, b=0, *args, c=0, **kwargs)",
             None,
             None,
             dict(apply_defaults=True, allow_partial=True),
-            {'a': 0, 'args': (), 'b': 0, 'c': 0, 'kwargs': {}},
+            {"a": 0, "args": (), "b": 0, "c": 0, "kwargs": {}},
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             (1, 2, 3, 4),
-            {'c': 5, 'd': 6, 'e': 7},
+            {"c": 5, "d": 6, "e": 7},
             dict(allow_excess=True),
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'kwargs': {'d': 6, 'e': 7}},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "kwargs": {"d": 6, "e": 7}},
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             None,
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'kwargs': {'d': 6, 'e': 7}},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "kwargs": {"d": 6, "e": 7}},
             None,
             (
                 TypeError,
@@ -1858,25 +1871,25 @@ def test_sigless_builtins():
             ),
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             None,
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'kwargs': {'d': 6, 'e': 7}},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "kwargs": {"d": 6, "e": 7}},
             dict(ignore_kind=True),
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'kwargs': {'d': 6, 'e': 7}},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "kwargs": {"d": 6, "e": 7}},
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             None,
             {
-                'a': 1,
-                'b': 2,
-                'args': (3, 4),
-                'c': 5,
-                'kwargs': {'d': 6, 'e': 7},
-                'f': 8,
+                "a": 1,
+                "b": 2,
+                "args": (3, 4),
+                "c": 5,
+                "kwargs": {"d": 6, "e": 7},
+                "f": 8,
             },
             dict(allow_excess=True, ignore_kind=True),
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'kwargs': {'d': 6, 'e': 7}},
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "kwargs": {"d": 6, "e": 7}},
         ),
         # ------------------------------------------------------------------------------
     ],
@@ -1889,215 +1902,215 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
 
 
 @pytest.mark.parametrize(
-    'sig_spec, arguments, mk_args_and_kwargs_kw, expected_output',
+    "sig_spec, arguments, mk_args_and_kwargs_kw, expected_output",
     [
         # ------------------------------------------------------------------------------
         # PO
         # ------------------------------------------------------------------------------
-        ('(a, /)', {'a': 1}, None, ((1,), {})),
-        ('(a, /)', None, None, (TypeError, "missing a required argument: 'a'")),
-        ('(a, /)', None, dict(allow_partial=True), ((), {})),
-        ('(a=0, /)', None, dict(apply_defaults=True), ((0,), {})),
-        ('(a=0, /)', None, dict(allow_partial=True, apply_defaults=True), ((0,), {})),
-        ('(a=0, /)', None, dict(ignore_kind=True, apply_defaults=True), ((), {'a': 0})),
+        ("(a, /)", {"a": 1}, None, ((1,), {})),
+        ("(a, /)", None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(a, /)", None, dict(allow_partial=True), ((), {})),
+        ("(a=0, /)", None, dict(apply_defaults=True), ((0,), {})),
+        ("(a=0, /)", None, dict(allow_partial=True, apply_defaults=True), ((0,), {})),
+        ("(a=0, /)", None, dict(ignore_kind=True, apply_defaults=True), ((), {"a": 0})),
         (
-            '(a, /)',
-            {'a': 1, 'b': 2},
+            "(a, /)",
+            {"a": 1, "b": 2},
             None,
-            (TypeError, 'Got unexpected keyword arguments: b'),
+            (TypeError, "Got unexpected keyword arguments: b"),
         ),
-        ('(a, /)', {'a': 1, 'b': 2}, dict(allow_excess=True), ((1,), {})),
-        ('(a, /)', {'a': 1}, dict(ignore_kind=True), ((), {'a': 1})),
+        ("(a, /)", {"a": 1, "b": 2}, dict(allow_excess=True), ((1,), {})),
+        ("(a, /)", {"a": 1}, dict(ignore_kind=True), ((), {"a": 1})),
         (
-            '(a, /)',
-            {'a': 1, 'b': 2},
+            "(a, /)",
+            {"a": 1, "b": 2},
             dict(allow_excess=True, ignore_kind=True),
-            ((), {'a': 1}),
+            ((), {"a": 1}),
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
         # PK
         # ------------------------------------------------------------------------------
-        ('(a)', {'a': 1}, None, ((), {'a': 1})),
-        ('(a)', None, None, (TypeError, "missing a required argument: 'a'")),
-        ('(a)', None, dict(allow_partial=True), ((), {})),
-        ('(a=0)', None, dict(apply_defaults=True), ((), {'a': 0})),
-        ('(a=0)', None, dict(allow_partial=True, apply_defaults=True), ((), {'a': 0})),
-        ('(a=0)', None, dict(ignore_kind=True, apply_defaults=True), ((), {'a': 0})),
+        ("(a)", {"a": 1}, None, ((), {"a": 1})),
+        ("(a)", None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(a)", None, dict(allow_partial=True), ((), {})),
+        ("(a=0)", None, dict(apply_defaults=True), ((), {"a": 0})),
+        ("(a=0)", None, dict(allow_partial=True, apply_defaults=True), ((), {"a": 0})),
+        ("(a=0)", None, dict(ignore_kind=True, apply_defaults=True), ((), {"a": 0})),
         (
-            '(a)',
-            {'a': 1, 'b': 2},
+            "(a)",
+            {"a": 1, "b": 2},
             None,
-            (TypeError, 'Got unexpected keyword arguments: b'),
+            (TypeError, "Got unexpected keyword arguments: b"),
         ),
-        ('(a)', {'a': 1, 'b': 2}, dict(allow_excess=True), ((), {'a': 1})),
-        ('(a)', {'a': 1}, dict(ignore_kind=True), ((), {'a': 1})),
+        ("(a)", {"a": 1, "b": 2}, dict(allow_excess=True), ((), {"a": 1})),
+        ("(a)", {"a": 1}, dict(ignore_kind=True), ((), {"a": 1})),
         (
-            '(a)',
-            {'a': 1, 'b': 2},
+            "(a)",
+            {"a": 1, "b": 2},
             dict(allow_excess=True, ignore_kind=True),
-            ((), {'a': 1}),
+            ((), {"a": 1}),
         ),
-        ('(a)', {'a': 1}, dict(args_limit=None), ((1,), {})),
+        ("(a)", {"a": 1}, dict(args_limit=None), ((1,), {})),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
         # VP
         # ------------------------------------------------------------------------------
-        ('(*args)', {'args': (1, 2)}, None, ((1, 2), {})),
-        ('(*args)', None, None, ((), {})),
-        ('(*args)', None, dict(allow_partial=True), ((), {})),
-        ('(*args)', None, dict(apply_defaults=True), ((), {})),
-        ('(*args)', None, dict(allow_partial=True, apply_defaults=True), ((), {})),
+        ("(*args)", {"args": (1, 2)}, None, ((1, 2), {})),
+        ("(*args)", None, None, ((), {})),
+        ("(*args)", None, dict(allow_partial=True), ((), {})),
+        ("(*args)", None, dict(apply_defaults=True), ((), {})),
+        ("(*args)", None, dict(allow_partial=True, apply_defaults=True), ((), {})),
         (
-            '(*args)',
+            "(*args)",
             None,
             dict(ignore_kind=True, apply_defaults=True),
-            ((), {'args': ()}),
+            ((), {"args": ()}),
         ),
         (
-            '(*args)',
-            {'args': (1, 2), 'a': 3},
+            "(*args)",
+            {"args": (1, 2), "a": 3},
             None,
-            (TypeError, 'Got unexpected keyword arguments: a'),
+            (TypeError, "Got unexpected keyword arguments: a"),
         ),
-        ('(*args)', {'args': (1, 2), 'a': 3}, dict(allow_excess=True), ((1, 2), {})),
-        ('(*args)', {'args': (1, 2)}, dict(ignore_kind=True), ((), {'args': (1, 2)})),
+        ("(*args)", {"args": (1, 2), "a": 3}, dict(allow_excess=True), ((1, 2), {})),
+        ("(*args)", {"args": (1, 2)}, dict(ignore_kind=True), ((), {"args": (1, 2)})),
         (
-            '(*args)',
-            {'args': (1, 2), 'a': 3},
+            "(*args)",
+            {"args": (1, 2), "a": 3},
             dict(allow_excess=True, ignore_kind=True),
-            ((), {'args': (1, 2)}),
+            ((), {"args": (1, 2)}),
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
         # KO
         # def foo(*, a): ...
         # ------------------------------------------------------------------------------
-        ('(*, a)', {'a': 1}, None, ((), {'a': 1})),
-        ('(*, a)', None, None, (TypeError, "missing a required argument: 'a'")),
-        ('(*, a)', None, dict(allow_partial=True), ((), {})),
-        ('(*, a=0)', None, dict(apply_defaults=True), ((), {'a': 0})),
+        ("(*, a)", {"a": 1}, None, ((), {"a": 1})),
+        ("(*, a)", None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(*, a)", None, dict(allow_partial=True), ((), {})),
+        ("(*, a=0)", None, dict(apply_defaults=True), ((), {"a": 0})),
         (
-            '(*, a=0)',
+            "(*, a=0)",
             None,
             dict(allow_partial=True, apply_defaults=True),
-            ((), {'a': 0}),
+            ((), {"a": 0}),
         ),
-        ('(*, a=0)', None, dict(ignore_kind=True, apply_defaults=True), ((), {'a': 0})),
+        ("(*, a=0)", None, dict(ignore_kind=True, apply_defaults=True), ((), {"a": 0})),
         (
-            '(*, a)',
-            {'a': 1, 'b': 2},
+            "(*, a)",
+            {"a": 1, "b": 2},
             None,
-            (TypeError, 'Got unexpected keyword arguments: b'),
+            (TypeError, "Got unexpected keyword arguments: b"),
         ),
-        ('(*, a)', {'a': 1, 'b': 2}, dict(allow_excess=True), ((), {'a': 1})),
-        ('(*, a)', {'a': 1}, dict(ignore_kind=True), ((), {'a': 1})),
+        ("(*, a)", {"a": 1, "b": 2}, dict(allow_excess=True), ((), {"a": 1})),
+        ("(*, a)", {"a": 1}, dict(ignore_kind=True), ((), {"a": 1})),
         (
-            '(*, a)',
-            {'a': 1, 'b': 2},
+            "(*, a)",
+            {"a": 1, "b": 2},
             dict(allow_excess=True, ignore_kind=True),
-            ((), {'a': 1}),
+            ((), {"a": 1}),
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
         # VK
         # def foo(**kwargs): ...
         # ------------------------------------------------------------------------------
-        ('(**kwargs)', {'kwargs': {'a': 1, 'b': 2}}, None, ((), {'a': 1, 'b': 2})),
-        ('(**kwargs)', None, None, ((), {})),
-        ('(**kwargs)', None, dict(allow_partial=True), ((), {})),
-        ('(**kwargs)', None, dict(apply_defaults=True), ((), {})),
-        ('(**kwargs)', None, dict(allow_partial=True, apply_defaults=True), ((), {})),
+        ("(**kwargs)", {"kwargs": {"a": 1, "b": 2}}, None, ((), {"a": 1, "b": 2})),
+        ("(**kwargs)", None, None, ((), {})),
+        ("(**kwargs)", None, dict(allow_partial=True), ((), {})),
+        ("(**kwargs)", None, dict(apply_defaults=True), ((), {})),
+        ("(**kwargs)", None, dict(allow_partial=True, apply_defaults=True), ((), {})),
         (
-            '(**kwargs)',
+            "(**kwargs)",
             None,
             dict(ignore_kind=True, apply_defaults=True),
-            ((), {'kwargs': {}}),
+            ((), {"kwargs": {}}),
         ),
         (
-            '(**kwargs)',
-            {'kwargs': {'a': 1, 'b': 2}, 'c': 3},
+            "(**kwargs)",
+            {"kwargs": {"a": 1, "b": 2}, "c": 3},
             None,
-            (TypeError, 'Got unexpected keyword arguments: c'),
+            (TypeError, "Got unexpected keyword arguments: c"),
         ),
         (
-            '(**kwargs)',
-            {'kwargs': {'a': 1, 'b': 2}, 'c': 3},
+            "(**kwargs)",
+            {"kwargs": {"a": 1, "b": 2}, "c": 3},
             dict(allow_excess=True),
-            ((), {'a': 1, 'b': 2}),
+            ((), {"a": 1, "b": 2}),
         ),
         (
-            '(**kwargs)',
-            {'kwargs': {'a': 1, 'b': 2}},
+            "(**kwargs)",
+            {"kwargs": {"a": 1, "b": 2}},
             dict(ignore_kind=True),
-            ((), {'kwargs': {'a': 1, 'b': 2}}),
+            ((), {"kwargs": {"a": 1, "b": 2}}),
         ),
         (
-            '(**kwargs)',
-            {'kwargs': {'a': 1, 'b': 2}, 'c': 3},
+            "(**kwargs)",
+            {"kwargs": {"a": 1, "b": 2}, "c": 3},
             dict(allow_excess=True, ignore_kind=True),
-            ((), {'kwargs': {'a': 1, 'b': 2}}),
+            ((), {"kwargs": {"a": 1, "b": 2}}),
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
         # PO + PK + KO
         # def foo(a, /, b, *, c): ...
         # ------------------------------------------------------------------------------
-        ('(a, /, b, *, c)', {'a': 1, 'b': 2, 'c': 3}, None, ((1,), {'b': 2, 'c': 3})),
+        ("(a, /, b, *, c)", {"a": 1, "b": 2, "c": 3}, None, ((1,), {"b": 2, "c": 3})),
         (
-            '(a, /, b, *, c)',
+            "(a, /, b, *, c)",
             None,
             None,
             (TypeError, "missing a required argument: 'a'"),
         ),
-        ('(a, /, b, *, c)', None, dict(allow_partial=True), ((), {})),
+        ("(a, /, b, *, c)", None, dict(allow_partial=True), ((), {})),
         (
-            '(a=0, /, b=0, *, c=0)',
+            "(a=0, /, b=0, *, c=0)",
             None,
             dict(apply_defaults=True),
-            ((0,), {'b': 0, 'c': 0}),
+            ((0,), {"b": 0, "c": 0}),
         ),
         (
-            '(a=0, /, b=0, *, c=0)',
+            "(a=0, /, b=0, *, c=0)",
             None,
             dict(allow_partial=True, apply_defaults=True),
-            ((0,), {'b': 0, 'c': 0}),
+            ((0,), {"b": 0, "c": 0}),
         ),
         (
-            '(a=0, /, b=0, *, c=0)',
+            "(a=0, /, b=0, *, c=0)",
             None,
             dict(ignore_kind=True, apply_defaults=True),
-            ((), {'a': 0, 'b': 0, 'c': 0}),
+            ((), {"a": 0, "b": 0, "c": 0}),
         ),
         (
-            '(a, /, b, *, c)',
-            {'a': 1, 'b': 2, 'c': 3, 'd': 4},
+            "(a, /, b, *, c)",
+            {"a": 1, "b": 2, "c": 3, "d": 4},
             None,
-            (TypeError, 'Got unexpected keyword arguments: d'),
+            (TypeError, "Got unexpected keyword arguments: d"),
         ),
         (
-            '(a, /, b, *, c)',
-            {'a': 1, 'b': 2, 'c': 3, 'd': 4},
+            "(a, /, b, *, c)",
+            {"a": 1, "b": 2, "c": 3, "d": 4},
             dict(allow_excess=True),
-            ((1,), {'b': 2, 'c': 3}),
+            ((1,), {"b": 2, "c": 3}),
         ),
         (
-            '(a, /, b, *, c)',
-            {'a': 1, 'b': 2, 'c': 3},
+            "(a, /, b, *, c)",
+            {"a": 1, "b": 2, "c": 3},
             dict(ignore_kind=True),
-            ((), {'a': 1, 'b': 2, 'c': 3}),
+            ((), {"a": 1, "b": 2, "c": 3}),
         ),
         (
-            '(a, /, b, *, c)',
-            {'a': 1, 'b': 2, 'c': 3, 'd': 4},
+            "(a, /, b, *, c)",
+            {"a": 1, "b": 2, "c": 3, "d": 4},
             dict(allow_excess=True, ignore_kind=True),
-            ((), {'a': 1, 'b': 2, 'c': 3}),
+            ((), {"a": 1, "b": 2, "c": 3}),
         ),
         (
-            '(a, /, b, *, c)',
-            {'a': 1, 'b': 2, 'c': 3},
+            "(a, /, b, *, c)",
+            {"a": 1, "b": 2, "c": 3},
             dict(args_limit=None),
-            ((1, 2), {'c': 3}),
+            ((1, 2), {"c": 3}),
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
@@ -2105,49 +2118,49 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
         # def foo(*args, **kwargs): ...
         # ------------------------------------------------------------------------------
         (
-            '(*args, **kwargs)',
-            {'args': (1, 2), 'kwargs': {'a': 1, 'b': 2}},
+            "(*args, **kwargs)",
+            {"args": (1, 2), "kwargs": {"a": 1, "b": 2}},
             None,
-            ((1, 2), {'a': 1, 'b': 2}),
+            ((1, 2), {"a": 1, "b": 2}),
         ),
-        ('(*args, **kwargs)', None, None, ((), {})),
-        ('(*args, **kwargs)', None, dict(allow_partial=True), ((), {})),
-        ('(*args, **kwargs)', None, dict(apply_defaults=True), ((), {})),
+        ("(*args, **kwargs)", None, None, ((), {})),
+        ("(*args, **kwargs)", None, dict(allow_partial=True), ((), {})),
+        ("(*args, **kwargs)", None, dict(apply_defaults=True), ((), {})),
         (
-            '(*args, **kwargs)',
+            "(*args, **kwargs)",
             None,
             dict(allow_partial=True, apply_defaults=True),
             ((), {}),
         ),
         (
-            '(*args, **kwargs)',
+            "(*args, **kwargs)",
             None,
             dict(ignore_kind=True, apply_defaults=True),
-            ((), {'args': (), 'kwargs': {}}),
+            ((), {"args": (), "kwargs": {}}),
         ),
         (
-            '(*args, **kwargs)',
-            {'args': (1, 2), 'kwargs': {'a': 1, 'b': 2}, 'c': 3},
+            "(*args, **kwargs)",
+            {"args": (1, 2), "kwargs": {"a": 1, "b": 2}, "c": 3},
             None,
-            (TypeError, 'Got unexpected keyword arguments: c'),
+            (TypeError, "Got unexpected keyword arguments: c"),
         ),
         (
-            '(*args, **kwargs)',
-            {'args': (1, 2), 'kwargs': {'a': 1, 'b': 2}, 'c': 3},
+            "(*args, **kwargs)",
+            {"args": (1, 2), "kwargs": {"a": 1, "b": 2}, "c": 3},
             dict(allow_excess=True),
-            ((1, 2), {'a': 1, 'b': 2}),
+            ((1, 2), {"a": 1, "b": 2}),
         ),
         (
-            '(*args, **kwargs)',
-            {'args': (1, 2), 'kwargs': {'a': 1, 'b': 2}},
+            "(*args, **kwargs)",
+            {"args": (1, 2), "kwargs": {"a": 1, "b": 2}},
             dict(ignore_kind=True),
-            ((), {'args': (1, 2), 'kwargs': {'a': 1, 'b': 2}}),
+            ((), {"args": (1, 2), "kwargs": {"a": 1, "b": 2}}),
         ),
         (
-            '(*args, **kwargs)',
-            {'args': (1, 2), 'kwargs': {'a': 1, 'b': 2}, 'c': 3},
+            "(*args, **kwargs)",
+            {"args": (1, 2), "kwargs": {"a": 1, "b": 2}, "c": 3},
             dict(allow_excess=True, ignore_kind=True),
-            ((), {'args': (1, 2), 'kwargs': {'a': 1, 'b': 2}}),
+            ((), {"args": (1, 2), "kwargs": {"a": 1, "b": 2}}),
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
@@ -2155,59 +2168,59 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
         # def foo(a, /, b, *args, c): ...
         # ------------------------------------------------------------------------------
         (
-            '(a, /, b, *args, c)',
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5},
+            "(a, /, b, *args, c)",
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5},
             None,
-            ((1, 2, 3, 4), {'c': 5}),
+            ((1, 2, 3, 4), {"c": 5}),
         ),
         (
-            '(a, /, b, *args, c)',
+            "(a, /, b, *args, c)",
             None,
             None,
             (TypeError, "missing a required argument: 'a'"),
         ),
-        ('(a, /, b, *args, c)', None, dict(allow_partial=True), ((), {})),
+        ("(a, /, b, *args, c)", None, dict(allow_partial=True), ((), {})),
         (
-            '(a=0, /, b=0, *args, c=0)',
+            "(a=0, /, b=0, *args, c=0)",
             None,
             dict(apply_defaults=True),
-            ((0,), {'b': 0, 'c': 0}),
+            ((0,), {"b": 0, "c": 0}),
         ),
         (
-            '(a=0, /, b=0, *args, c=0)',
+            "(a=0, /, b=0, *args, c=0)",
             None,
             dict(allow_partial=True, apply_defaults=True),
-            ((0,), {'b': 0, 'c': 0}),
+            ((0,), {"b": 0, "c": 0}),
         ),
         (
-            '(a=0, /, b=0, *args, c=0)',
+            "(a=0, /, b=0, *args, c=0)",
             None,
             dict(ignore_kind=True, apply_defaults=True),
-            ((), {'a': 0, 'b': 0, 'args': (), 'c': 0}),
+            ((), {"a": 0, "b": 0, "args": (), "c": 0}),
         ),
         (
-            '(a, /, b, *args, c)',
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'd': 6},
+            "(a, /, b, *args, c)",
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "d": 6},
             None,
-            (TypeError, 'Got unexpected keyword arguments: d'),
+            (TypeError, "Got unexpected keyword arguments: d"),
         ),
         (
-            '(a, /, b, *args, c)',
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'd': 6},
+            "(a, /, b, *args, c)",
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "d": 6},
             dict(allow_excess=True),
-            ((1, 2, 3, 4), {'c': 5}),
+            ((1, 2, 3, 4), {"c": 5}),
         ),
         (
-            '(a, /, b, *args, c)',
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5},
+            "(a, /, b, *args, c)",
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5},
             dict(ignore_kind=True),
-            ((), {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5}),
+            ((), {"a": 1, "b": 2, "args": (3, 4), "c": 5}),
         ),
         (
-            '(a, /, b, *args, c)',
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'd': 6},
+            "(a, /, b, *args, c)",
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "d": 6},
             dict(allow_excess=True, ignore_kind=True),
-            ((), {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5}),
+            ((), {"a": 1, "b": 2, "args": (3, 4), "c": 5}),
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
@@ -2215,65 +2228,65 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
         # def foo(a, /, b, *, c, **kwargs): ...
         # ------------------------------------------------------------------------------
         (
-            '(a, /, b, *, c, **kwargs)',
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            "(a, /, b, *, c, **kwargs)",
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}},
             None,
-            ((1,), {'b': 2, 'c': 3, 'd': 4, 'e': 5}),
+            ((1,), {"b": 2, "c": 3, "d": 4, "e": 5}),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
+            "(a, /, b, *, c, **kwargs)",
             None,
             None,
             (TypeError, "missing a required argument: 'a'"),
         ),
-        ('(a, /, b, *, c, **kwargs)', None, dict(allow_partial=True), ((), {})),
+        ("(a, /, b, *, c, **kwargs)", None, dict(allow_partial=True), ((), {})),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             None,
             dict(apply_defaults=True),
-            ((0,), {'b': 0, 'c': 0}),
+            ((0,), {"b": 0, "c": 0}),
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             None,
             dict(allow_partial=True, apply_defaults=True),
-            ((0,), {'b': 0, 'c': 0}),
+            ((0,), {"b": 0, "c": 0}),
         ),
         (
-            '(a=0, /, b=0, *, c=0, **kwargs)',
+            "(a=0, /, b=0, *, c=0, **kwargs)",
             None,
             dict(ignore_kind=True, apply_defaults=True),
-            ((), {'a': 0, 'b': 0, 'c': 0, 'kwargs': {}}),
+            ((), {"a": 0, "b": 0, "c": 0, "kwargs": {}}),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}, 'f': 6},
+            "(a, /, b, *, c, **kwargs)",
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}, "f": 6},
             None,
-            (TypeError, 'Got unexpected keyword arguments: f'),
+            (TypeError, "Got unexpected keyword arguments: f"),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}, 'f': 6},
+            "(a, /, b, *, c, **kwargs)",
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}, "f": 6},
             dict(allow_excess=True),
-            ((1,), {'b': 2, 'c': 3, 'd': 4, 'e': 5}),
+            ((1,), {"b": 2, "c": 3, "d": 4, "e": 5}),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            "(a, /, b, *, c, **kwargs)",
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}},
             dict(ignore_kind=True),
-            ((), {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}}),
+            ((), {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}}),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}, 'f': 6},
+            "(a, /, b, *, c, **kwargs)",
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}, "f": 6},
             dict(allow_excess=True, ignore_kind=True),
-            ((), {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}}),
+            ((), {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}}),
         ),
         (
-            '(a, /, b, *, c, **kwargs)',
-            {'a': 1, 'b': 2, 'c': 3, 'kwargs': {'d': 4, 'e': 5}},
+            "(a, /, b, *, c, **kwargs)",
+            {"a": 1, "b": 2, "c": 3, "kwargs": {"d": 4, "e": 5}},
             dict(args_limit=None),
-            ((1, 2), {'c': 3, 'd': 4, 'e': 5}),
+            ((1, 2), {"c": 3, "d": 4, "e": 5}),
         ),
         # ------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------
@@ -2281,80 +2294,80 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
         # def foo(a, /, b, *args, c, **kwargs): ...
         # ------------------------------------------------------------------------------
         (
-            '(a, /, b, *args, c, **kwargs)',
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'kwargs': {'d': 6, 'e': 7}},
+            "(a, /, b, *args, c, **kwargs)",
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "kwargs": {"d": 6, "e": 7}},
             None,
-            ((1, 2, 3, 4), {'c': 5, 'd': 6, 'e': 7}),
+            ((1, 2, 3, 4), {"c": 5, "d": 6, "e": 7}),
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             None,
             None,
             (TypeError, "missing a required argument: 'a'"),
         ),
-        ('(a, /, b, *args, c, **kwargs)', None, dict(allow_partial=True), ((), {})),
+        ("(a, /, b, *args, c, **kwargs)", None, dict(allow_partial=True), ((), {})),
         (
-            '(a=0, /, b=0, *args, c=0, **kwargs)',
+            "(a=0, /, b=0, *args, c=0, **kwargs)",
             None,
             dict(apply_defaults=True),
-            ((0,), {'b': 0, 'c': 0}),
+            ((0,), {"b": 0, "c": 0}),
         ),
         (
-            '(a=0, /, b=0, *args, c=0, **kwargs)',
+            "(a=0, /, b=0, *args, c=0, **kwargs)",
             None,
             dict(allow_partial=True, apply_defaults=True),
-            ((0,), {'b': 0, 'c': 0}),
+            ((0,), {"b": 0, "c": 0}),
         ),
         (
-            '(a=0, /, b=0, *args, c=0, **kwargs)',
+            "(a=0, /, b=0, *args, c=0, **kwargs)",
             None,
             dict(ignore_kind=True, apply_defaults=True),
-            ((), {'a': 0, 'b': 0, 'args': (), 'c': 0, 'kwargs': {}}),
+            ((), {"a": 0, "b": 0, "args": (), "c": 0, "kwargs": {}}),
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             {
-                'a': 1,
-                'b': 2,
-                'args': (3, 4),
-                'c': 5,
-                'kwargs': {'d': 6, 'e': 7},
-                'f': 8,
+                "a": 1,
+                "b": 2,
+                "args": (3, 4),
+                "c": 5,
+                "kwargs": {"d": 6, "e": 7},
+                "f": 8,
             },
             None,
-            (TypeError, 'Got unexpected keyword arguments: f'),
+            (TypeError, "Got unexpected keyword arguments: f"),
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             {
-                'a': 1,
-                'b': 2,
-                'args': (3, 4),
-                'c': 5,
-                'kwargs': {'d': 6, 'e': 7},
-                'f': 8,
+                "a": 1,
+                "b": 2,
+                "args": (3, 4),
+                "c": 5,
+                "kwargs": {"d": 6, "e": 7},
+                "f": 8,
             },
             dict(allow_excess=True),
-            ((1, 2, 3, 4), {'c': 5, 'd': 6, 'e': 7}),
+            ((1, 2, 3, 4), {"c": 5, "d": 6, "e": 7}),
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
-            {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'kwargs': {'d': 6, 'e': 7}},
+            "(a, /, b, *args, c, **kwargs)",
+            {"a": 1, "b": 2, "args": (3, 4), "c": 5, "kwargs": {"d": 6, "e": 7}},
             dict(ignore_kind=True),
-            ((), {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'kwargs': {'d': 6, 'e': 7}}),
+            ((), {"a": 1, "b": 2, "args": (3, 4), "c": 5, "kwargs": {"d": 6, "e": 7}}),
         ),
         (
-            '(a, /, b, *args, c, **kwargs)',
+            "(a, /, b, *args, c, **kwargs)",
             {
-                'a': 1,
-                'b': 2,
-                'args': (3, 4),
-                'c': 5,
-                'kwargs': {'d': 6, 'e': 7},
-                'f': 8,
+                "a": 1,
+                "b": 2,
+                "args": (3, 4),
+                "c": 5,
+                "kwargs": {"d": 6, "e": 7},
+                "f": 8,
             },
             dict(allow_excess=True, ignore_kind=True),
-            ((), {'a': 1, 'b': 2, 'args': (3, 4), 'c': 5, 'kwargs': {'d': 6, 'e': 7}}),
+            ((), {"a": 1, "b": 2, "args": (3, 4), "c": 5, "kwargs": {"d": 6, "e": 7}}),
         ),
         # ------------------------------------------------------------------------------
     ],
