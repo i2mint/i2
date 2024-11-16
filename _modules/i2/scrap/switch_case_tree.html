@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.scrap.switch_case_tree &mdash; i2 0.1.32 documentation</title>
+  <title>i2.scrap.switch_case_tree &mdash; i2 0.1.34 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=e0e570cb"></script>
+      <script src="../../../_static/documentation_options.js?v=8f14641f"></script>
       <script src="../../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -181,6 +181,7 @@
 <span class="sd">...     assert result == [4, 5]</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">ChainMap</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
 <span class="kn">import</span> <span class="nn">operator</span>
@@ -220,7 +221,7 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_validate_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;key should be a string&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;key should be a string&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_validate_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_val</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
@@ -296,9 +297,9 @@
     <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 
     <span class="n">special_featurizer</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;len&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">,</span>
-        <span class="s1">&#39;cols&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
-        <span class="s1">&#39;sum&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+        <span class="s2">&quot;len&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">,</span>
+        <span class="s2">&quot;cols&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+        <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
     <span class="p">}</span>
 
     <span class="n">some_local_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
@@ -308,21 +309,22 @@
         <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">is_valid_featurizer</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;__module__&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;i2.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">is_valid_featurizer</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s2">&quot;__module__&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;i2.&quot;</span><span class="p">)</span>
         <span class="p">},</span>
     <span class="p">)</span>
 
     <span class="n">special_comparison</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;alleq&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">),</span>
-        <span class="s1">&#39;isin&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span><span class="p">,</span>
-        <span class="s1">&#39;eq&#39;</span><span class="p">:</span> <span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">,</span>
+        <span class="s2">&quot;alleq&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">),</span>
+        <span class="s2">&quot;isin&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span><span class="p">,</span>
+        <span class="s2">&quot;eq&quot;</span><span class="p">:</span> <span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="n">comparison</span> <span class="o">=</span> <span class="n">ChainMap</span><span class="p">(</span>
-        <span class="n">special_comparison</span><span class="p">,</span> <span class="n">AttrMap</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">is_valid_val</span><span class="o">=</span><span class="n">is_valid_comparision</span><span class="p">),</span>
+        <span class="n">special_comparison</span><span class="p">,</span>
+        <span class="n">AttrMap</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">is_valid_val</span><span class="o">=</span><span class="n">is_valid_comparision</span><span class="p">),</span>
     <span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">comparison</span><span class="p">[</span><span class="s1">&#39;contains&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">operator</span><span class="o">.</span><span class="n">contains</span>
+    <span class="k">assert</span> <span class="n">comparison</span><span class="p">[</span><span class="s2">&quot;contains&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">operator</span><span class="o">.</span><span class="n">contains</span>
 
     <span class="k">assert</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">is_valid_featurizer</span><span class="p">,</span> <span class="n">featurizer</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">==</span> <span class="n">Counter</span><span class="p">({</span><span class="kc">True</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
 
@@ -337,7 +339,7 @@
     <span class="p">)</span>
 
     <span class="n">featurizer_kvs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">featurizer</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-    <span class="k">assert</span> <span class="n">featurizer_kvs</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;len&#39;</span><span class="p">:</span> <span class="s1">&#39;len&#39;</span><span class="p">,</span> <span class="s1">&#39;cols&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;lambda&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;lambda&gt;&#39;</span><span class="p">}</span>
+    <span class="k">assert</span> <span class="n">featurizer_kvs</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;len&quot;</span><span class="p">:</span> <span class="s2">&quot;len&quot;</span><span class="p">,</span> <span class="s2">&quot;cols&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;lambda&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;lambda&gt;&quot;</span><span class="p">}</span>
 
     <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
 
@@ -345,17 +347,21 @@
         <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
         <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 
-        <span class="n">Condition</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Condition&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;feat&#39;</span><span class="p">,</span> <span class="s1">&#39;comp&#39;</span><span class="p">])</span>
+        <span class="n">Condition</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Condition&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;feat&quot;</span><span class="p">,</span> <span class="s2">&quot;comp&quot;</span><span class="p">])</span>
         <span class="n">condition</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">feat</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">comp</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">featurizer</span><span class="p">[</span><span class="n">feat</span><span class="p">],</span> <span class="n">comparison</span><span class="p">[</span><span class="n">comp</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">feat</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;len&#39;</span><span class="p">,</span> <span class="s1">&#39;lt&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;cols&#39;</span><span class="p">,</span> <span class="s1">&#39;isin&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;cols&#39;</span><span class="p">,</span> <span class="s1">&#39;contains&#39;</span><span class="p">),]</span>
+            <span class="n">feat</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">comp</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">featurizer</span><span class="p">[</span><span class="n">feat</span><span class="p">],</span> <span class="n">comparison</span><span class="p">[</span><span class="n">comp</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">feat</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="p">(</span><span class="s2">&quot;len&quot;</span><span class="p">,</span> <span class="s2">&quot;lt&quot;</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;cols&quot;</span><span class="p">,</span> <span class="s2">&quot;isin&quot;</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;cols&quot;</span><span class="p">,</span> <span class="s2">&quot;contains&quot;</span><span class="p">),</span>
+            <span class="p">]</span>
         <span class="p">}</span>
         <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
             <span class="n">is_valid_feat_and_comp</span><span class="p">(</span><span class="n">feat</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span> <span class="k">for</span> <span class="n">feat</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">condition</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
         <span class="p">)</span>
 
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]})</span>
-        <span class="n">filt</span> <span class="o">=</span> <span class="n">mk_filt</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">*</span><span class="n">condition</span><span class="p">[</span><span class="s1">&#39;len_lt&#39;</span><span class="p">])</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]})</span>
+        <span class="n">filt</span> <span class="o">=</span> <span class="n">mk_filt</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">*</span><span class="n">condition</span><span class="p">[</span><span class="s2">&quot;len_lt&quot;</span><span class="p">])</span>
         <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">filt</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]))</span> <span class="o">==</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
 
 

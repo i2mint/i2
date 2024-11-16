@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.util &mdash; i2 0.1.32 documentation</title>
+  <title>i2.tests.util &mdash; i2 0.1.34 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=e0e570cb"></script>
+      <script src="../../../_static/documentation_options.js?v=8f14641f"></script>
       <script src="../../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -134,8 +134,8 @@
     <span class="k">return</span> <span class="p">(</span>
         <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Signature</span><span class="p">))</span>
         <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)</span>
-        <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">)</span>
     <span class="p">)</span>
 
 
@@ -159,13 +159,13 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
                 <span class="n">kind</span> <span class="o">=</span> <span class="n">spec</span>
-                <span class="k">yield</span> <span class="n">Parameter</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;a</span><span class="si">{</span><span class="n">kind</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">Parameter</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a</span><span class="si">{</span><span class="n">kind</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">):</span>
                 <span class="n">param</span> <span class="o">=</span> <span class="n">spec</span>
                 <span class="k">yield</span> <span class="n">param</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">spec</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
                 <span class="n">kind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-                <span class="k">yield</span> <span class="n">Parameter</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;a</span><span class="si">{</span><span class="n">kind</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">Parameter</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a</span><span class="si">{</span><span class="n">kind</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="k">yield</span> <span class="n">ensure_param</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
@@ -197,7 +197,7 @@
         <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_POSITIONAL</span><span class="p">:</span>
             <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="o">-</span><span class="n">i</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">param</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">:</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="p">:</span> <span class="o">-</span><span class="n">i</span><span class="p">}</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="p">:</span> <span class="o">-</span><span class="n">i</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">val</span> <span class="o">=</span> <span class="n">i</span>
         <span class="k">yield</span> <span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span></div>
@@ -229,17 +229,17 @@
 
 
 <span class="k">def</span> <span class="nf">_str_of_call_args</span><span class="p">(</span><span class="n">_call_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_call_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+    <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_call_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 
 
 <span class="k">def</span> <span class="nf">_params_to_name</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s1">&#39;f&#39;</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">kind</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;f&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">kind</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="mk_func_from_params">
 <a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.mk_func_from_params">[docs]</a>
 <span class="k">def</span> <span class="nf">mk_func_from_params</span><span class="p">(</span>
-    <span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble</span> <span class="o">=</span> <span class="s1">&#39;00111234&#39;</span><span class="p">,</span>
+    <span class="n">params</span><span class="p">:</span> <span class="n">ParamsAble</span> <span class="o">=</span> <span class="s2">&quot;00111234&quot;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">defaults</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -296,17 +296,17 @@
 <span class="sd">    &#39;(a00, a01, /, a12, a13, a14, *a25, a36, **a47)&#39;</span>
 
 <span class="sd">    The next one is convoluted on purpose, to try to break the tools with name clashing,</span>
-<span class="sd">    using the name a47 several times. </span>
-<span class="sd">    The ``a47=...`` in the input could have been any name, but is bound to be caught in </span>
-<span class="sd">    the ``**a47`` variadic argument. </span>
-<span class="sd">    Therefore, the first ``a47=...`` of the output is saying &quot;I&#39;m the variadic that caught </span>
-<span class="sd">    that input&quot;. The ``{&#39;a47&#39;: ...`` following it is saying &quot;the user input an extra </span>
-<span class="sd">    keyword argument that they called `a47`. Then the ``{&quot;a47&quot;: 7, &quot;a47_&quot;: -7}`` is just </span>
+<span class="sd">    using the name a47 several times.</span>
+<span class="sd">    The ``a47=...`` in the input could have been any name, but is bound to be caught in</span>
+<span class="sd">    the ``**a47`` variadic argument.</span>
+<span class="sd">    Therefore, the first ``a47=...`` of the output is saying &quot;I&#39;m the variadic that caught</span>
+<span class="sd">    that input&quot;. The ``{&#39;a47&#39;: ...`` following it is saying &quot;the user input an extra</span>
+<span class="sd">    keyword argument that they called `a47`. Then the ``{&quot;a47&quot;: 7, &quot;a47_&quot;: -7}`` is just</span>
 <span class="sd">    the value of that keyword argument.</span>
 
 <span class="sd">    &gt;&gt;&gt; f(0, 1, 2, 3, 4, 5, -5, a36=6, a47={&quot;a47&quot;: 7, &quot;a47_&quot;: -7})</span>
 <span class="sd">    &quot;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(5, -5), a36=6, a47={&#39;a47&#39;: {&#39;a47&#39;: 7, &#39;a47_&#39;: -7}}&quot;</span>
-<span class="sd">    </span>
+
 <span class="sd">    &gt;&gt;&gt; f(0, 1, 2, a13=3, a14=4, a36=6)</span>
 <span class="sd">    &#39;a00=0, a01=1, a12=2, a13=3, a14=4, a25=(), a36=6, a47={}&#39;</span>
 
@@ -349,7 +349,7 @@
 
 <span class="k">def</span> <span class="nf">_sig_to_str_of_call_args_code_str</span><span class="p">(</span><span class="n">sig</span><span class="p">:</span> <span class="n">Sig</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span>
-        <span class="s1">&#39;return &#39;</span> <span class="o">+</span> <span class="s1">&#39;f&quot;&#39;</span> <span class="o">+</span> <span class="n">_str_of_call_args</span><span class="p">({</span><span class="n">p</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">{{</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="se">}}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="p">})</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+        <span class="s2">&quot;return &quot;</span> <span class="o">+</span> <span class="s1">&#39;f&quot;&#39;</span> <span class="o">+</span> <span class="n">_str_of_call_args</span><span class="p">({</span><span class="n">p</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="p">})</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
     <span class="p">)</span>
 
 
@@ -357,8 +357,8 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">code_lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">code_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
-            <span class="n">line</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span> <span class="s1">&#39;...&#39;</span><span class="p">}</span>
-            <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;return&#39;</span><span class="p">)</span>
+            <span class="n">line</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;pass&quot;</span><span class="p">,</span> <span class="s2">&quot;...&quot;</span><span class="p">}</span>
+            <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;return&quot;</span><span class="p">)</span>
             <span class="ow">or</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">))</span>
         <span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -369,7 +369,7 @@
 <div class="viewcode-block" id="sig_to_func">
 <a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.sig_to_func">[docs]</a>
 <span class="k">def</span> <span class="nf">sig_to_func</span><span class="p">(</span>
-    <span class="n">sig</span><span class="p">:</span> <span class="n">ParamsAble</span> <span class="o">=</span> <span class="s1">&#39;00111234&#39;</span><span class="p">,</span>
+    <span class="n">sig</span><span class="p">:</span> <span class="n">ParamsAble</span> <span class="o">=</span> <span class="s2">&quot;00111234&quot;</span><span class="p">,</span>
     <span class="n">code_lines</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
         <span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Sig</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="n">_sig_to_str_of_call_args_code_str</span><span class="p">,</span>
@@ -453,12 +453,12 @@
     <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">code_lines</span><span class="p">):</span>
         <span class="n">code_lines</span> <span class="o">=</span> <span class="n">code_lines</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>  <span class="c1"># call the function on sig to get lines</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code_lines</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">code_lines</span> <span class="o">=</span> <span class="n">code_lines</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">code_lines</span> <span class="o">=</span> <span class="n">code_lines</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">_is_simple_expression</span><span class="p">(</span><span class="n">code_lines</span><span class="p">):</span>
         <span class="c1"># If code_lines has only one line and it seems it&#39;s an expression, prepend return</span>
-        <span class="n">code_lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;return </span><span class="si">{</span><span class="n">code_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
-    <span class="n">code_string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">code_lines</span><span class="p">)</span>
-    <span class="n">func_def_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;def </span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">sig</span><span class="si">}</span><span class="s1">:</span><span class="se">\n\t</span><span class="si">{</span><span class="n">code_string</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">code_lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;return </span><span class="si">{</span><span class="n">code_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+    <span class="n">code_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">code_lines</span><span class="p">)</span>
+    <span class="n">func_def_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">sig</span><span class="si">}</span><span class="s2">:</span><span class="se">\n\t</span><span class="si">{</span><span class="n">code_string</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">_locals</span> <span class="o">=</span> <span class="nb">locals</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="n">exec</span><span class="p">(</span><span class="n">func_def_string</span><span class="p">,</span> <span class="nb">globals</span><span class="p">,</span> <span class="n">_locals</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_locals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
@@ -502,24 +502,24 @@
 <span class="k">def</span> <span class="nf">variadic_type</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">variadics</span><span class="p">):</span>
     <span class="n">var_kinds</span> <span class="o">=</span> <span class="p">[</span><span class="n">sig</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">variadics</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">variadics</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;no_var&#39;</span>
+        <span class="k">return</span> <span class="s2">&quot;no_var&quot;</span>
     <span class="k">if</span> <span class="n">VP</span> <span class="ow">in</span> <span class="n">var_kinds</span> <span class="ow">and</span> <span class="n">VK</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">var_kinds</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;vp_only&#39;</span>
+        <span class="k">return</span> <span class="s2">&quot;vp_only&quot;</span>
     <span class="k">if</span> <span class="n">VK</span> <span class="ow">in</span> <span class="n">var_kinds</span> <span class="ow">and</span> <span class="n">VP</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">var_kinds</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;vk_only&#39;</span>
+        <span class="k">return</span> <span class="s2">&quot;vk_only&quot;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;vp_vk&#39;</span>
+        <span class="k">return</span> <span class="s2">&quot;vp_vk&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">create_variadic_source</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">variadics</span><span class="p">,</span> <span class="n">dflt_source</span><span class="p">):</span>
     <span class="n">var_type</span> <span class="o">=</span> <span class="n">variadic_type</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">variadics</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s1">&#39;no_var&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s2">&quot;no_var&quot;</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">((),</span> <span class="p">{})</span>
-    <span class="k">elif</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s1">&#39;vp_only&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s2">&quot;vp_only&quot;</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">dflt_source</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">{})</span>
-    <span class="k">elif</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s1">&#39;vk_only&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s2">&quot;vk_only&quot;</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">((),</span> <span class="n">dflt_source</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="k">elif</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s1">&#39;vp_vk&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s2">&quot;vp_vk&quot;</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">dflt_source</span>
     <span class="k">return</span> <span class="n">result</span>
 
@@ -532,8 +532,8 @@
     <span class="n">argument_vals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">variadics_source</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">(</span><span class="s1">&#39;args1&#39;</span><span class="p">,</span> <span class="s1">&#39;args2&#39;</span><span class="p">),</span>
-        <span class="p">{</span><span class="s1">&#39;kwargs1&#39;</span><span class="p">:</span> <span class="s1">&#39;kwargs1_val&#39;</span><span class="p">},</span>
+        <span class="p">(</span><span class="s2">&quot;args1&quot;</span><span class="p">,</span> <span class="s2">&quot;args2&quot;</span><span class="p">),</span>
+        <span class="p">{</span><span class="s2">&quot;kwargs1&quot;</span><span class="p">:</span> <span class="s2">&quot;kwargs1_val&quot;</span><span class="p">},</span>
     <span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate all kind-valid (arg, kwargs) input combinations for a function with a</span>
@@ -694,15 +694,15 @@
 <span class="kn">import</span> <span class="nn">re</span>
 
 <span class="n">_signature_msg_patterns</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;keyword arguments$&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;invalid keyword argument&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;expected at most&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;keyword argument&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;got some positional\-only arguments passed as keyword arguments&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;no signature found&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;keyword arguments$&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;invalid keyword argument&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;expected at most&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;keyword argument&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;got some positional\-only arguments passed as keyword arguments&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;no signature found&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
-<span class="n">_signature_msg_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="s1">&#39;(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="n">_signature_msg_patterns</span><span class="p">)))</span>
+<span class="n">_signature_msg_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="s2">&quot;(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="n">_signature_msg_patterns</span><span class="p">)))</span>
 <span class="n">is_signature_msg</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">_signature_msg_regex</span><span class="o">.</span><span class="n">search</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
 
 
@@ -734,12 +734,13 @@
 
 <span class="n">call_raises_signature_error</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">call_and_return_error</span><span class="p">,</span> <span class="n">_is_signature_error</span><span class="p">)</span>
 
-<span class="n">call_raises_signature_error</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">&gt;&gt;&gt; call_raises_signature_error(lambda x, /, y: None, 1, y=2)</span>
-<span class="s1">False</span>
-<span class="s1">&gt;&gt;&gt; call_raises_signature_error(lambda x, /, y: None, x=1, y=2)</span>
-<span class="s1">True</span>
-<span class="s1">&#39;&#39;&#39;</span>
+<span class="n">call_raises_signature_error</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&gt;&gt;&gt; call_raises_signature_error(lambda x, /, y: None, 1, y=2)</span>
+<span class="s2">False</span>
+<span class="s2">&gt;&gt;&gt; call_raises_signature_error(lambda x, /, y: None, x=1, y=2)</span>
+<span class="s2">True</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
 
 <span class="c1"># Yes, I too see that this can be made into yet another Pipe!</span>
 <div class="viewcode-block" id="function_is_compatible_with_signature">
@@ -851,9 +852,9 @@
     <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
     <span class="k">return</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">(&#39;</span>
-        <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">argname</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">local_vars</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">argname</span> <span class="ow">in</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
-        <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">(&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">argname</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">local_vars</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">argname</span> <span class="ow">in</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
     <span class="p">)</span>
 
 

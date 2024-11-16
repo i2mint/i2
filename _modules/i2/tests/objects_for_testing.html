@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.objects_for_testing &mdash; i2 0.1.32 documentation</title>
+  <title>i2.tests.objects_for_testing &mdash; i2 0.1.34 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=e0e570cb"></script>
+      <script src="../../../_static/documentation_options.js?v=8f14641f"></script>
       <script src="../../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -180,7 +180,7 @@
 <span class="sd">    &gt;&gt;&gt; formula2(0, 1, 2)</span>
 <span class="sd">    &#39;(w:=0) + (x:=1) * (y:=2) ** (z:=3) == 8&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;(w:=</span><span class="si">{</span><span class="n">w</span><span class="si">}</span><span class="s1">) + (x:=</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">) * (y:=</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">) ** (z:=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s1">) == </span><span class="si">{</span><span class="n">w</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="n">z</span><span class="si">}</span><span class="s1">&#39;</span></div>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;(w:=</span><span class="si">{</span><span class="n">w</span><span class="si">}</span><span class="s2">) + (x:=</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">) * (y:=</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2">) ** (z:=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2">) == </span><span class="si">{</span><span class="n">w</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="n">z</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 
@@ -232,7 +232,7 @@
 <span class="sd">    &#39;test_func_1 returned&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># This is the first comment</span>
-    <span class="k">return</span> <span class="s1">&#39;test_func_1 returned&#39;</span>  <span class="c1"># this is a comment on the same line as some code</span></div>
+    <span class="k">return</span> <span class="s2">&quot;test_func_1 returned&quot;</span>  <span class="c1"># this is a comment on the same line as some code</span></div>
 
 
 
@@ -315,7 +315,7 @@
 
 
 <span class="k">class</span> <span class="nc">TestObj</span><span class="p">:</span>
-    <span class="n">constarg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">constarg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constarg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">constarg</span><span class="p">)</span>
@@ -325,9 +325,9 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">methodarg1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">methodarg1</span> <span class="o">+</span> <span class="mi">1</span>
 
-    <span class="k">def</span> <span class="nf">methodstr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">methodarg2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hi&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">methodstr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">methodarg2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hi&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">methodarg2</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">methodarg2</span> <span class="o">+</span> <span class="s1">&#39; test &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">constarg</span>
+        <span class="k">return</span> <span class="n">methodarg2</span> <span class="o">+</span> <span class="s2">&quot; test &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">constarg</span>
 
 
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>

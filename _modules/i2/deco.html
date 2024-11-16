@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.1.32 documentation</title>
+  <title>i2.deco &mdash; i2 0.1.34 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e0e570cb"></script>
+      <script src="../../_static/documentation_options.js?v=8f14641f"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -106,6 +106,7 @@
              
   <h1>Source code for i2.deco</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Decorator tools&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
@@ -121,7 +122,7 @@
 <span class="c1"># keep the imports below here because might be referenced (or take care of refs)</span>
 <span class="c1"># from i2.signatures import ch_signature_to_all_pk, params_of, copy_func</span>
 
-<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>  <span class="c1"># Can be anything</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>  <span class="c1"># Can be anything</span>
 
 
 <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
@@ -154,10 +155,11 @@
 
 
 <span class="k">def</span> <span class="nf">_not_set_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s1">&#39;NotSet&#39;</span>
+    <span class="k">return</span> <span class="s2">&quot;NotSet&quot;</span>
 
 
-<span class="n">NotSet</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;NotSet&#39;</span><span class="p">,</span> <span class="n">repr_</span><span class="o">=</span><span class="n">_not_set_repr</span><span class="p">)</span>
+<span class="n">NotSet</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s2">&quot;NotSet&quot;</span><span class="p">,</span> <span class="n">repr_</span><span class="o">=</span><span class="n">_not_set_repr</span><span class="p">)</span>
+
 
 <span class="c1"># ---------------------------------------------------------------------------------------</span>
 <span class="c1"># TODO: https://github.com/i2mint/i2/issues/48</span>
@@ -302,14 +304,14 @@
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;FuncFactory(</span><span class="si">{</span><span class="n">name_of_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span><span class="si">}</span><span class="s1">)&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;FuncFactory(</span><span class="si">{</span><span class="n">name_of_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span><span class="si">}</span><span class="s2">)&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">func_returning_obj</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">identity</span><span class="p">)(</span><span class="n">obj</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">to_jdict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">}</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_jdict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">jdict</span><span class="p">):</span>
@@ -321,8 +323,8 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Util for double_up_as_factory, ``__decorator_func`` to be partialized&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;You need to specify decorator arguments as keyword-only.&#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;You specified positional arguments: </span><span class="si">{</span><span class="n">args</span><span class="si">=}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s2">&quot;You need to specify decorator arguments as keyword-only.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;You specified positional arguments: </span><span class="si">{</span><span class="n">args</span><span class="si">=}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">wrapped</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># then we want a factory</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">__decorator_func</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -389,12 +391,12 @@
     <span class="k">def</span> <span class="nf">validate_decorator_func</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">):</span>
         <span class="n">first_param</span><span class="p">,</span> <span class="o">*</span><span class="n">other_params</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">first_param</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;First argument of the decorator function needs to default to None. &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;Was </span><span class="si">{</span><span class="n">first_param</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s2">&quot;First argument of the decorator function needs to default to None. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Was </span><span class="si">{</span><span class="n">first_param</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
             <span class="n">p</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">}</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">other_params</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;All arguments (besides the first) need to be keyword-only&#39;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;All arguments (besides the first) need to be keyword-only&quot;</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="n">validate_decorator_func</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)</span>
@@ -582,7 +584,7 @@
             <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-                        <span class="s1">&#39;class </span><span class="si">{}</span><span class="s1"> needs to have a </span><span class="si">{}</span><span class="s1"> attribute:&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="s2">&quot;class </span><span class="si">{}</span><span class="s2"> needs to have a </span><span class="si">{}</span><span class="s2"> attribute:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                             <span class="n">klass</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">attr</span>
                         <span class="p">)</span>
                     <span class="p">)</span>
@@ -648,8 +650,7 @@
 
 <div class="viewcode-block" id="OutputPostProcessingError">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.OutputPostProcessingError">[docs]</a>
-<span class="k">class</span> <span class="nc">OutputPostProcessingError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
-    <span class="o">...</span></div>
+<span class="k">class</span> <span class="nc">OutputPostProcessingError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span> <span class="o">...</span></div>
 
 
 
@@ -718,21 +719,21 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">post</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">caught_post_errors</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Error when postprocessing output with post func: </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error when postprocessing output with post func: </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="k">if</span> <span class="n">verbose_error_message</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;  output=</span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;  output=</span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="k">if</span> <span class="p">(</span>
                         <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose_error_message</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
                         <span class="ow">and</span> <span class="n">verbose_error_message</span> <span class="o">&gt;</span> <span class="mi">1</span>
                     <span class="p">):</span>
                         <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
-                            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-                            <span class="o">+</span> <span class="s1">&#39;  which was obtained by func(*args, **kwargs) where:&#39;</span>
+                            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                            <span class="o">+</span> <span class="s2">&quot;  which was obtained by func(*args, **kwargs) where:&quot;</span>
                         <span class="p">)</span>
                         <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
-                            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;    args: </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;    kwargs: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s1">&#39;</span>
+                            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;    args: </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;    kwargs: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span>
                         <span class="p">)</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;Error is: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Error is: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="k">raise</span> <span class="n">OutputPostProcessingError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="n">return_annot</span> <span class="o">=</span> <span class="n">_return_annotation_of</span><span class="p">(</span><span class="n">post</span><span class="p">)</span>
@@ -741,7 +742,8 @@
         <span class="p">):</span>  <span class="c1"># intended to catch cases where wrapper doesn&#39;t have a signature</span>
             <span class="n">wrapper_signature</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">wrapper</span><span class="p">)</span>
             <span class="n">sig</span> <span class="o">=</span> <span class="n">Signature</span><span class="p">(</span>
-                <span class="n">wrapper_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annot</span><span class="p">,</span>
+                <span class="n">wrapper_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annot</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">wrapper</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">sig</span>
 
@@ -909,7 +911,7 @@
         <span class="k">elif</span> <span class="n">dflt_trans_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span>
                 <span class="n">dflt_trans_func</span>
-            <span class="p">),</span> <span class="s1">&#39;The dflt_trans_func needs to be a callable&#39;</span>
+            <span class="p">),</span> <span class="s2">&quot;The dflt_trans_func needs to be a callable&quot;</span>
 
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="k">def</span> <span class="nf">transform_args_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1028,7 +1030,7 @@
 
     <span class="k">def</span> <span class="nf">class_wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">_return_a_copy_of_the_class</span><span class="p">:</span>
-            <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">))</span>
+            <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">))</span>
             <span class="c1"># class _cls(cls):</span>
             <span class="c1">#     pass</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1063,7 +1065,9 @@
     <span class="n">wrapped_method</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="o">**</span><span class="n">arg_trans</span><span class="p">)(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">method_output_trans</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">setattr</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">wrap_method_output</span><span class="p">(</span><span class="n">method_output_trans</span><span class="p">)(</span><span class="n">wrapped_method</span><span class="p">),</span>
+            <span class="bp">cls</span><span class="p">,</span>
+            <span class="n">method</span><span class="p">,</span>
+            <span class="n">wrap_method_output</span><span class="p">(</span><span class="n">method_output_trans</span><span class="p">)(</span><span class="n">wrapped_method</span><span class="p">),</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">wrapped_method</span><span class="p">)</span>
@@ -1333,7 +1337,7 @@
     <span class="n">bases_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">bases</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">class_name</span> <span class="ow">in</span> <span class="n">bases_names</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
-            <span class="n">class_name</span> <span class="o">+=</span> <span class="s1">&#39;_&#39;</span>
+            <span class="n">class_name</span> <span class="o">+=</span> <span class="s2">&quot;_&quot;</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">class_name</span> <span class="ow">in</span> <span class="n">bases_names</span><span class="p">:</span>
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1355,7 +1359,7 @@
 <span class="p">):</span>
     <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
-    <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Not sure transform_instance_method_input_and_output works yet&#39;</span><span class="p">)</span>
+    <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Not sure transform_instance_method_input_and_output works yet&quot;</span><span class="p">)</span>
     <span class="n">wrapped_method</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="o">**</span><span class="n">arg_trans</span><span class="p">)(</span><span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">method</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">method_output_trans</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">add_method</span><span class="p">(</span>
@@ -1380,7 +1384,7 @@
                     <span class="n">obj</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">**</span><span class="n">method_trans</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="n">_raise_error_if_non_existent_method</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">):</span>
                     <span class="n">class_name</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__name__</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">class_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -1434,12 +1438,12 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">x_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_len</span><span class="p">:</span>
-            <span class="n">type_str</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;__repr__&#39;</span><span class="p">):</span>
+            <span class="n">type_str</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;__repr__&quot;</span><span class="p">):</span>
                 <span class="n">value_str</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">value_str</span> <span class="o">=</span> <span class="n">x_str</span>
-            <span class="n">x_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">...)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">type_str</span><span class="p">,</span> <span class="n">value_str</span><span class="p">[:</span><span class="mi">20</span><span class="p">])</span>
+            <span class="n">x_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">...)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">type_str</span><span class="p">,</span> <span class="n">value_str</span><span class="p">[:</span><span class="mi">20</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">x_str</span>
 
 
@@ -1457,13 +1461,13 @@
 <span class="sd">    &gt;&gt;&gt; print(_call_signature(_call_signature, args, kwargs))</span>
 <span class="sd">    _call_signature(2, &#39;sdf&#39;, list([0, 1, 2, 3, 4, 5, 6...), z=&#39;boo&#39;, zzz=10)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">args_signature</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_special_str</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
-    <span class="n">kwargs_signature</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-        <span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">_special_str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+    <span class="n">args_signature</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_special_str</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
+    <span class="n">kwargs_signature</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">_special_str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{func_name}</span><span class="s1">(</span><span class="si">{signature}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{func_name}</span><span class="s2">(</span><span class="si">{signature}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">func_name</span><span class="o">=</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-        <span class="n">signature</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">args_signature</span><span class="p">,</span> <span class="n">kwargs_signature</span><span class="p">]),</span>
+        <span class="n">signature</span><span class="o">=</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">args_signature</span><span class="p">,</span> <span class="n">kwargs_signature</span><span class="p">]),</span>
     <span class="p">)</span>
 
 
@@ -1536,7 +1540,7 @@
 <span class="sd">    20</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">log_output</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">log_output</span> <span class="o">=</span> <span class="s1">&#39;-&gt; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span>
+        <span class="n">log_output</span> <span class="o">=</span> <span class="s2">&quot;-&gt; </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span>
     <span class="k">assert</span> <span class="n">log_output</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">or</span> <span class="nb">callable</span><span class="p">(</span><span class="n">log_output</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">func_is_bounded</span><span class="p">:</span>
@@ -1579,14 +1583,14 @@
 <span class="sd">    callable object that the user presumably is seeking to get&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span>
         <span class="n">func_or_factory_thereof</span>
-    <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">func_or_factory_thereof</span><span class="si">}</span><span class="s1"> needs to be callable&#39;</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func_or_factory_thereof</span><span class="si">}</span><span class="s2"> needs to be callable&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">func_or_factory_thereof</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># if func_or_factory_thereof has no arguments, assume it&#39;s a factory</span>
         <span class="n">func</span> <span class="o">=</span> <span class="n">func_or_factory_thereof</span><span class="p">()</span>
         <span class="c1"># and make sure that now we have arguments</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;Your func_or_factory_thereof had no arguments, so I assumed it &#39;</span>
+                <span class="s2">&quot;Your func_or_factory_thereof had no arguments, so I assumed it &quot;</span>
                 <span class="s2">&quot;was a factory, called it, but that didn&#39;t produce a &quot;</span>
                 <span class="s2">&quot;callable with at least one argument. So I don&#39;t know what to do.&quot;</span>
             <span class="p">)</span>

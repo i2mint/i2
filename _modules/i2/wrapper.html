@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.1.32 documentation</title>
+  <title>i2.wrapper &mdash; i2 0.1.34 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e0e570cb"></script>
+      <script src="../../_static/documentation_options.js?v=8f14641f"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -273,7 +273,7 @@
         <span class="c1"># have had. It should be before anything else so it doesn&#39;t overwrite stuff</span>
         <span class="c1"># that we may add to self in init (like .func for example!)</span>
         <span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># TODO: should we really copy everything by default?</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">name</span> <span class="o">:=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">name</span> <span class="o">:=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>  <span class="c1"># Note: overwrites self.func that wraps MAY have inserted</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span> <span class="o">=</span> <span class="n">func</span>
@@ -296,8 +296,8 @@
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># TODO: Replace i2.Wrap with dynamic (Wrap or Wrapx)</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;Wrap&#39;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;i2.Wrap </span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;Wrap&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;i2.Wrap </span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
     <span class="c1"># TODO: Don&#39;t know exactly what I&#39;m doing below. Review with someone!</span>
     <span class="k">def</span> <span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -444,7 +444,7 @@
                 <span class="c1"># ... but an ingress factory: Should make the ingress in function of func</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span> <span class="o">=</span> <span class="n">func_to_ingress</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">ingress</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Should be callable: </span><span class="si">{</span><span class="n">ingress</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">ingress</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Should be callable: </span><span class="si">{</span><span class="n">ingress</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span> <span class="o">=</span> <span class="n">ingress</span>
 
             <span class="n">ingress_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingress</span><span class="p">)</span>
@@ -814,7 +814,7 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Ingress signature: </span><span class="si">{</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Ingress signature: </span><span class="si">{</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
 <div class="viewcode-block" id="Ingress.wrap">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Ingress.wrap">[docs]</a>
@@ -844,7 +844,7 @@
         <span class="n">new_to_old_name</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">old_to_new_name</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_to_old_name</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
             <span class="n">old_to_new_name</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Inversion is not possible since </span><span class="si">{</span><span class="n">old_to_new_name</span><span class="si">=}</span><span class="s1"> has duplicate values.&#39;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Inversion is not possible since </span><span class="si">{</span><span class="n">old_to_new_name</span><span class="si">=}</span><span class="s2"> has duplicate values.&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">wrapped</span><span class="p">,</span>
             <span class="n">partial</span><span class="p">(</span><span class="n">Pipe</span><span class="p">(</span><span class="n">items_with_mapped_keys</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="n">key_mapper</span><span class="o">=</span><span class="n">new_to_old_name</span><span class="p">),</span>
@@ -896,7 +896,7 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_d</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">new_d</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;There are duplicate keys so I can invert map: </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There are duplicate keys so I can invert map: </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">parameters_to_dict</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
@@ -1060,9 +1060,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">kwargs_trans</span> <span class="o">=</span> <span class="n">kwargs_trans</span>
 
         <span class="n">outer_name_for_inner_name</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">inner_name</span><span class="p">:</span> <span class="n">change</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="n">inner_name</span><span class="p">:</span> <span class="n">change</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">inner_name</span><span class="p">,</span> <span class="n">change</span> <span class="ow">in</span> <span class="n">changes_for_name</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">change</span>
+            <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">change</span>
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inner_name_for_outer_name</span> <span class="o">=</span> <span class="n">invert_map</span><span class="p">(</span><span class="n">outer_name_for_inner_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -1194,7 +1194,7 @@
     <span class="k">return</span> <span class="n">modify_dict_on_cond</span><span class="p">(</span><span class="n">kinds</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
 
 
-<span class="n">nice_kinds</span> <span class="o">=</span> <span class="n">deprecation_of</span><span class="p">(</span><span class="n">kind_forgiving_func</span><span class="p">,</span> <span class="s1">&#39;nice_kinds&#39;</span><span class="p">)</span>
+<span class="n">nice_kinds</span> <span class="o">=</span> <span class="n">deprecation_of</span><span class="p">(</span><span class="n">kind_forgiving_func</span><span class="p">,</span> <span class="s2">&quot;nice_kinds&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">wrap_from_sig</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">new_sig</span><span class="p">):</span>
@@ -1336,7 +1336,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_removal_of_non_defaulted_params</span><span class="p">:</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">params_to_remove_that_do_not_have_defaults</span><span class="p">,</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Some of the params you want to remove don&#39;t have defaults: &quot;</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">params_to_remove_that_do_not_have_defaults</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">params_to_remove_that_do_not_have_defaults</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">wrap</span><span class="p">(</span>
@@ -1360,8 +1360,8 @@
     <span class="k">if</span> <span class="n">__strict</span><span class="p">:</span>
         <span class="n">conversion_names_that_are_not_func_args</span> <span class="o">=</span> <span class="n">conversion_for_arg</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">conversion_names_that_are_not_func_args</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s1">&#39;Some of the arguments you want to convert are not argument names &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;for the function: </span><span class="si">{</span><span class="n">conversion_names_that_are_not_func_args</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="s2">&quot;Some of the arguments you want to convert are not argument names &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;for the function: </span><span class="si">{</span><span class="n">conversion_names_that_are_not_func_args</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
     <span class="nd">@sig</span>
@@ -1384,8 +1384,8 @@
                 <span class="n">conversion_for_arg</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span>
             <span class="p">)</span>
             <span class="k">assert</span> <span class="ow">not</span> <span class="n">conversion_names_that_are_not_func_args</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s1">&#39;Some of the arguments you want to convert are not argument names &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;for the function: </span><span class="si">{</span><span class="n">conversion_names_that_are_not_func_args</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="s2">&quot;Some of the arguments you want to convert are not argument names &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;for the function: </span><span class="si">{</span><span class="n">conversion_names_that_are_not_func_args</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sig</span> <span class="o">=</span> <span class="n">sig</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conversion_for_arg</span> <span class="o">=</span> <span class="n">conversion_for_arg</span>
@@ -1528,12 +1528,12 @@
 <span class="sd">    &gt;&gt;&gt; camelize(&#39;camel_case&#39;)</span>
 <span class="sd">    &#39;CamelCase&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ele</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ele</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">))</span></div>
 
 
 
 <span class="k">def</span> <span class="nf">kwargs_trans_to_extract_args_from_attrs</span><span class="p">(</span>
-    <span class="n">outer_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">attr_names</span><span class="o">=</span><span class="p">(),</span> <span class="n">obj_param</span><span class="o">=</span><span class="s1">&#39;self&#39;</span>
+    <span class="n">outer_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">attr_names</span><span class="o">=</span><span class="p">(),</span> <span class="n">obj_param</span><span class="o">=</span><span class="s2">&quot;self&quot;</span>
 <span class="p">):</span>
     <span class="bp">self</span> <span class="o">=</span> <span class="n">outer_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">obj_param</span><span class="p">)</span>
     <span class="n">arguments_extracted_from_obj</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">attr_names</span><span class="p">}</span>
@@ -1558,7 +1558,7 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">method_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">method_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">instance_arg_name</span><span class="o">=</span><span class="s1">&#39;self&#39;</span><span class="p">,</span>
+    <span class="n">instance_arg_name</span><span class="o">=</span><span class="s2">&quot;self&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MethodFunc</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a &#39;method function&#39; from a &#39;normal function&#39;. Also known as &quot;methodize&quot;.</span>
 
@@ -1735,10 +1735,10 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_params</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">init_params</span> <span class="o">=</span> <span class="n">init_params</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
 
-    <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="s1">&#39;FuncsUnion&#39;</span>
+    <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="s2">&quot;FuncsUnion&quot;</span>
     <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">funcs</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">funcs</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
         <span class="n">single_func</span> <span class="o">=</span> <span class="n">funcs</span>
-        <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="n">camelize</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">single_func</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="n">dflt_cls_name</span><span class="p">))</span>
+        <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="n">camelize</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">single_func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="n">dflt_cls_name</span><span class="p">))</span>
         <span class="n">funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">single_func</span><span class="p">]</span>
 
     <span class="c1"># If cls not given, make one from the funcs and init_params</span>
@@ -1788,7 +1788,7 @@
             <span class="p">)</span>
             <span class="n">class_init_sig</span> <span class="o">=</span> <span class="n">class_init_sig</span><span class="o">.</span><span class="n">merge_with_sig</span><span class="p">(</span>
                 <span class="n">init_params_in_func_sig</span><span class="p">,</span>
-                <span class="n">default_conflict_method</span><span class="o">=</span><span class="s1">&#39;fill_defaults_and_annotations&#39;</span><span class="p">,</span>
+                <span class="n">default_conflict_method</span><span class="o">=</span><span class="s2">&quot;fill_defaults_and_annotations&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
     <span class="n">dataclass_fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">param_to_dataclass_field_tuple</span><span class="p">,</span> <span class="n">class_init_sig</span><span class="o">.</span><span class="n">params</span><span class="p">))</span>
@@ -1800,7 +1800,10 @@
 <div class="viewcode-block" id="bind_funcs_object_attrs_old">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.bind_funcs_object_attrs_old">[docs]</a>
 <span class="k">def</span> <span class="nf">bind_funcs_object_attrs_old</span><span class="p">(</span>
-    <span class="n">funcs</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="p">(),</span> <span class="o">*</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">funcs</span><span class="p">,</span>
+    <span class="n">init_params</span><span class="o">=</span><span class="p">(),</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform one or several functions into a class that contains them as methods</span>
 <span class="sd">    sourcing specific arguments from the instance&#39;s attributes.</span>
@@ -1855,10 +1858,10 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_params</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">init_params</span> <span class="o">=</span> <span class="n">init_params</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
 
-    <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="s1">&#39;FuncsUnion&#39;</span>
+    <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="s2">&quot;FuncsUnion&quot;</span>
     <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">funcs</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">funcs</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
         <span class="n">single_func</span> <span class="o">=</span> <span class="n">funcs</span>
-        <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="n">camelize</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">single_func</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="n">dflt_cls_name</span><span class="p">))</span>
+        <span class="n">dflt_cls_name</span> <span class="o">=</span> <span class="n">camelize</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">single_func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="n">dflt_cls_name</span><span class="p">))</span>
         <span class="n">funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">single_func</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
@@ -2134,8 +2137,8 @@
         <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ingress_output</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span>
     <span class="p">):</span>
         <span class="k">raise</span> <span class="n">IngressValidationError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;An ingress function should return a (tuple, dict) pair. &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;This ingress function returned: </span><span class="si">{</span><span class="n">ingress_output</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s2">&quot;An ingress function should return a (tuple, dict) pair. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;This ingress function returned: </span><span class="si">{</span><span class="n">ingress_output</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">ingress_output</span>
 
@@ -2164,18 +2167,18 @@
 <span class="k">def</span> <span class="nf">_init_caller</span><span class="p">(</span><span class="n">caller</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">caller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">caller</span> <span class="o">=</span> <span class="n">_default_caller</span>
-        <span class="n">caller_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="s1">&#39;func args kwargs&#39;</span><span class="p">)</span>  <span class="c1"># sig with three inputs</span>
+        <span class="n">caller_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="s2">&quot;func args kwargs&quot;</span><span class="p">)</span>  <span class="c1"># sig with three inputs</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">caller_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">caller</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">caller_sig</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">CallerValidationError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;A caller must have at least three arguments: &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">caller</span><span class="si">}</span><span class="s1"> signature was </span><span class="si">{</span><span class="n">caller_sig</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="sa">f</span><span class="s2">&quot;A caller must have at least three arguments: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">caller</span><span class="si">}</span><span class="s2"> signature was </span><span class="si">{</span><span class="n">caller_sig</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_all_kinds_are_keyword_only_or_variadic_keyword</span><span class="p">(</span><span class="n">caller_sig</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">CallerValidationError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;A caller must have at least three arguments&#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">caller</span><span class="si">}</span><span class="s1"> signature was </span><span class="si">{</span><span class="n">caller_sig</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="sa">f</span><span class="s2">&quot;A caller must have at least three arguments&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">caller</span><span class="si">}</span><span class="s2"> signature was </span><span class="si">{</span><span class="n">caller_sig</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
     <span class="k">return</span> <span class="n">caller</span><span class="p">,</span> <span class="n">caller_sig</span>
 
@@ -2184,7 +2187,7 @@
     <span class="k">if</span> <span class="n">egress</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">egress</span> <span class="o">=</span> <span class="n">_default_egress</span>
         <span class="c1"># signature with a single &#39;output&#39; arg and func_sig&#39;s return_annotation</span>
-        <span class="n">egress_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">func_sig</span><span class="o">.</span><span class="n">return_annotation</span><span class="p">)</span>
+        <span class="n">egress_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">func_sig</span><span class="o">.</span><span class="n">return_annotation</span><span class="p">)</span>
         <span class="n">return_annotation</span> <span class="o">=</span> <span class="n">func_sig</span><span class="o">.</span><span class="n">return_annotation</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">egress_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span>
@@ -2290,8 +2293,8 @@
     <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">names_to_move</span><span class="p">):</span>
         <span class="n">names_to_move</span> <span class="o">=</span> <span class="n">names_to_move</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names_to_move</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">),</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s1">&#39;names_to_move must be an iterable of names &#39;</span>
-        <span class="sa">f</span><span class="s1">&#39;or a callable producing one from a function. Was </span><span class="si">{</span><span class="n">names_to_move</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="sa">f</span><span class="s2">&quot;names_to_move must be an iterable of names &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;or a callable producing one from a function. Was </span><span class="si">{</span><span class="n">names_to_move</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="p">)</span>
 
     <span class="n">names</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">names</span>
@@ -2329,6 +2332,7 @@
 <span class="c1"># --------------------------------------------------------------------------------------</span>
 <span class="c1"># smart defaults</span>
 
+
 <span class="c1"># IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode</span>
 <div class="viewcode-block" id="SmartDefault">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.SmartDefault">[docs]</a>
@@ -2339,15 +2343,15 @@
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_computing_default</span>
-        <span class="n">func_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_default</span> <span class="ow">is</span> <span class="n">empty</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s1">)&#39;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">)&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dflt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_default</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dflt</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">, &#39;</span><span class="si">{</span><span class="n">dflt</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">dflt</span><span class="si">}</span><span class="s1">)&#39;</span></div>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">dflt</span><span class="si">}</span><span class="s2">)&quot;</span></div>
 
 
 
@@ -2434,7 +2438,11 @@
 
 <span class="nd">@double_up_as_factory</span>
 <span class="k">def</span> <span class="nf">add_smart_defaults</span><span class="p">(</span>
-    <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">smart_defaults</span><span class="p">,</span>
+    <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">smart_defaults</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add smart defaults to function.</span>
 

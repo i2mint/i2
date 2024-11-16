@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.key_path &mdash; i2 0.1.32 documentation</title>
+  <title>i2.key_path &mdash; i2 0.1.34 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e0e570cb"></script>
+      <script src="../../_static/documentation_options.js?v=8f14641f"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -117,9 +117,9 @@
 <span class="k">def</span> <span class="nf">obj_to_str_path</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span>
-    <span class="n">name_of_obj</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;__qualname__&#39;</span><span class="p">),</span>
-    <span class="n">path_of_module</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;__module__&#39;</span><span class="p">),</span>
+    <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="n">name_of_obj</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;__qualname__&quot;</span><span class="p">),</span>
+    <span class="n">path_of_module</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;__module__&quot;</span><span class="p">),</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the dotpath reference for an object</span>
 
@@ -155,16 +155,15 @@
 
 <div class="viewcode-block" id="str_path_to_obj">
 <a class="viewcode-back" href="../../module_docs/i2/key_path.html#i2.key_path.str_path_to_obj">[docs]</a>
-<span class="k">def</span> <span class="nf">str_path_to_obj</span><span class="p">(</span><span class="n">str_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads and returns the object referenced by the string DOTPATH_TO_MODULE.OBJ_NAME</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">str_path_to_obj</span><span class="p">(</span><span class="n">str_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads and returns the object referenced by the string DOTPATH_TO_MODULE.OBJ_NAME&quot;&quot;&quot;</span>
 
     <span class="n">path_parts</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">str_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="p">))</span>
-    <span class="n">path_parts</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">),</span> <span class="n">path_parts</span><span class="p">))</span>
+    <span class="n">path_parts</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span> <span class="n">path_parts</span><span class="p">))</span>
     <span class="n">module_name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">path_parts</span><span class="p">)</span>
     <span class="n">obj</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>  <span class="c1"># assume it&#39;s a module</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">path_parts</span><span class="p">:</span>
-        <span class="n">new_module_name</span> <span class="o">=</span> <span class="n">module_name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">item</span>
+        <span class="n">new_module_name</span> <span class="o">=</span> <span class="n">module_name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">item</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">obj</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">new_module_name</span><span class="p">)</span>
             <span class="n">module_name</span> <span class="o">=</span> <span class="n">new_module_name</span>
@@ -206,7 +205,7 @@
 
 <div class="viewcode-block" id="flatten_dict">
 <a class="viewcode-back" href="../../module_docs/i2/key_path.html#i2.key_path.flatten_dict">[docs]</a>
-<span class="k">def</span> <span class="nf">flatten_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">flatten_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes a &quot;flat&quot; dict from a nested one. A flat dict&#39;s keys are the paths of the input dict.</span>
 <span class="sd">    These paths will be expressed as tuples of the original keys by defaults.</span>
@@ -240,7 +239,7 @@
 
 <div class="viewcode-block" id="rollout_dict">
 <a class="viewcode-back" href="../../module_docs/i2/key_path.html#i2.key_path.rollout_dict">[docs]</a>
-<span class="k">def</span> <span class="nf">rollout_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">rollout_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the nested path of a flat (key path) dict. This is the inverse of flatten_dict.</span>
 
@@ -564,8 +563,8 @@
         <span class="n">key_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">node_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">auto_node_writes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">prefix_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span>
@@ -614,7 +613,7 @@
 <span class="sd">    given to the method as input.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">node_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">mk_new_node</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">node_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">mk_new_node</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param sep:</span>
@@ -759,7 +758,12 @@
 <div class="viewcode-block" id="KeyPathTrans.extract_key_paths">
 <a class="viewcode-back" href="../../module_docs/i2/key_path.html#i2.key_path.KeyPathTrans.extract_key_paths">[docs]</a>
     <span class="k">def</span> <span class="nf">extract_key_paths</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_paths</span><span class="p">,</span> <span class="n">field_naming</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">,</span> <span class="n">use_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default_val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">d</span><span class="p">,</span>
+        <span class="n">key_paths</span><span class="p">,</span>
+        <span class="n">field_naming</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span>
+        <span class="n">use_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">default_val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        getting with a key list or &quot;.&quot;-separated string</span>
@@ -807,7 +811,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key_path</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">field_naming</span> <span class="o">==</span> <span class="s1">&#39;leaf&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">field_naming</span> <span class="o">==</span> <span class="s2">&quot;leaf&quot;</span><span class="p">:</span>
                 <span class="n">field</span> <span class="o">=</span> <span class="n">key_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">field</span> <span class="o">=</span> <span class="n">field</span>
