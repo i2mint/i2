@@ -7,7 +7,7 @@ import re
 def params_to_docstring(
     params: list[dict],
     *,
-    doc_style: Literal['numpy', 'google', 'rest'] = 'numpy',
+    doc_style: Literal["numpy", "google", "rest"] = "numpy",
 ) -> str:
     """
     Generate a docstring from a list of parameter specifications.
@@ -47,69 +47,69 @@ def params_to_docstring(
     :type y: str
     <BLANKLINE>
     """
-    if doc_style == 'numpy':
-        docstring_lines = ['Parameters', '----------']
+    if doc_style == "numpy":
+        docstring_lines = ["Parameters", "----------"]
         for param in params:
-            name = param['name']
-            annotation = param.get('annotation', '')
-            description = param.get('description', '')
-            default = param.get('default')
+            name = param["name"]
+            annotation = param.get("annotation", "")
+            description = param.get("description", "")
+            default = param.get("default")
 
             param_line = name
             if annotation:
-                param_line += f' : {annotation}'
-            if 'default' in param:
-                param_line += f', default={default}'
+                param_line += f" : {annotation}"
+            if "default" in param:
+                param_line += f", default={default}"
 
             docstring_lines.append(param_line)
-            docstring_lines.append(f'    {description}')
+            docstring_lines.append(f"    {description}")
 
-        docstring = '\n'.join(docstring_lines)
-        return docstring + '\n'
+        docstring = "\n".join(docstring_lines)
+        return docstring + "\n"
 
-    elif doc_style == 'google':
-        docstring_lines = ['Args:']
+    elif doc_style == "google":
+        docstring_lines = ["Args:"]
         for param in params:
-            name = param['name']
-            annotation = param.get('annotation', '')
-            description = param.get('description', '')
-            default = param.get('default')
+            name = param["name"]
+            annotation = param.get("annotation", "")
+            description = param.get("description", "")
+            default = param.get("default")
 
             param_line = f"    {name}"
             if annotation:
                 param_line += f" ({annotation}"
-                if 'default' in param:
+                if "default" in param:
                     param_line += ", optional"
                 param_line += ")"
-            elif 'default' in param:
+            elif "default" in param:
                 param_line += " (optional)"
 
-            if 'default' in param:
+            if "default" in param:
                 description += f" Defaults to {default}."
 
             param_line += f": {description}"
             docstring_lines.append(param_line)
 
-        docstring = '\n'.join(docstring_lines)
-        return docstring + '\n'
+        docstring = "\n".join(docstring_lines)
+        return docstring + "\n"
 
-    elif doc_style == 'rest':
+    elif doc_style == "rest":
         docstring_lines = []
         for param in params:
-            name = param['name']
-            annotation = param.get('annotation', '')
-            description = param.get('description', '')
-            default = param.get('default')
+            name = param["name"]
+            annotation = param.get("annotation", "")
+            description = param.get("description", "")
+            default = param.get("default")
 
-            if 'default' in param:
+            if "default" in param:
                 description += f" (Default: {default})"
 
             docstring_lines.append(f":param {name}: {description}")
             if annotation:
                 docstring_lines.append(f":type {name}: {annotation}")
 
-        docstring = '\n'.join(docstring_lines)
-        return docstring + '\n'
+        docstring = "\n".join(docstring_lines)
+        return docstring + "\n"
 
     else:
         raise ValueError(f"Unsupported doc_style: {doc_style}")
@@ -118,7 +118,7 @@ def params_to_docstring(
 def docstring_to_params(
     docstring: str,
     *,
-    doc_style: Literal['numpy', 'google', 'rest'] = 'numpy',
+    doc_style: Literal["numpy", "google", "rest"] = "numpy",
 ) -> List[Dict]:
     """
     Parse a docstring and extract parameter specifications.
@@ -177,11 +177,11 @@ def docstring_to_params(
     param_lines = _extract_params_section(docstring, doc_style)
 
     # Parse parameter lines
-    if doc_style == 'numpy':
+    if doc_style == "numpy":
         params = _parse_numpy_param_lines(param_lines)
-    elif doc_style == 'google':
+    elif doc_style == "google":
         params = _parse_google_param_lines(param_lines)
-    elif doc_style == 'rest':
+    elif doc_style == "rest":
         params = _parse_rest_param_lines(param_lines)
     else:
         raise ValueError(f"Unsupported doc_style: {doc_style}")
@@ -190,14 +190,14 @@ def docstring_to_params(
 
 
 def _extract_params_section(docstring: str, doc_style: str) -> List[str]:
-    lines = docstring.strip().split('\n')
-    if doc_style == 'numpy':
+    lines = docstring.strip().split("\n")
+    if doc_style == "numpy":
         # Find "Parameters" section
         try:
-            param_index = lines.index('Parameters')
+            param_index = lines.index("Parameters")
             # Next line should be a separator like '----------'
             separator_line = lines[param_index + 1]
-            if not re.match(r'-{3,}', separator_line.strip()):
+            if not re.match(r"-{3,}", separator_line.strip()):
                 raise ValueError(
                     "Expected a separator after 'Parameters' in Numpy docstring"
                 )
@@ -205,15 +205,15 @@ def _extract_params_section(docstring: str, doc_style: str) -> List[str]:
         except ValueError:
             # "Parameters" section not found
             return []
-    elif doc_style == 'google':
+    elif doc_style == "google":
         # Find "Args:" section
         try:
-            param_index = lines.index('Args:')
+            param_index = lines.index("Args:")
             param_lines = lines[param_index + 1 :]
         except ValueError:
             # "Args:" section not found
             return []
-    elif doc_style == 'rest':
+    elif doc_style == "rest":
         param_lines = lines
     else:
         raise ValueError(f"Unsupported doc_style: {doc_style}")
@@ -226,11 +226,11 @@ def _collect_indented_lines(
     description_lines = []
     i = start_index
     while i < len(param_lines) and (
-        param_lines[i].startswith(' ' * indent_level) or param_lines[i].strip() == ''
+        param_lines[i].startswith(" " * indent_level) or param_lines[i].strip() == ""
     ):
         description_lines.append(param_lines[i].strip())
         i += 1
-    description = ' '.join(description_lines).strip()
+    description = " ".join(description_lines).strip()
     return description, i
 
 
@@ -244,7 +244,7 @@ def _parse_numpy_param_lines(param_lines: List[str]) -> List[Dict]:
             continue
         # Match parameter line: name : type, default=value
         param_match = re.match(
-            r'^(\w+)\s*:\s*([^,]+)(?:,\s*default=(.+))?', line.strip()
+            r"^(\w+)\s*:\s*([^,]+)(?:,\s*default=(.+))?", line.strip()
         )
         if param_match:
             name = param_match.group(1)
@@ -254,10 +254,10 @@ def _parse_numpy_param_lines(param_lines: List[str]) -> List[Dict]:
             # Collect description lines
             description, i = _collect_indented_lines(param_lines, i, indent_level=4)
             param = {
-                'name': name,
-                'default': default,
-                'annotation': annotation,
-                'description': description,
+                "name": name,
+                "default": default,
+                "annotation": annotation,
+                "description": description,
             }
             params.append(param)
         else:
@@ -274,7 +274,7 @@ def _parse_google_param_lines(param_lines: List[str]) -> List[Dict]:
             i += 1
             continue
         # Match parameter line: name (type, optional): description
-        param_match = re.match(r'^ {4}(\w+)\s*(?:\(([^)]+)\))?:\s*(.+)', line)
+        param_match = re.match(r"^ {4}(\w+)\s*(?:\(([^)]+)\))?:\s*(.+)", line)
         if param_match:
             name = param_match.group(1)
             type_default = param_match.group(2)
@@ -283,15 +283,15 @@ def _parse_google_param_lines(param_lines: List[str]) -> List[Dict]:
             default = None
             if type_default:
                 # Parse type and optional
-                type_parts = type_default.split(',')
+                type_parts = type_default.split(",")
                 annotation = type_parts[0].strip()
-                if 'optional' in [part.strip() for part in type_parts[1:]]:
+                if "optional" in [part.strip() for part in type_parts[1:]]:
                     # Extract default from description if present
-                    default_match = re.search(r'Defaults to (.+)\.', description)
+                    default_match = re.search(r"Defaults to (.+)\.", description)
                     if default_match:
                         default = default_match.group(1).strip()
                         description = re.sub(
-                            r'Defaults to .+\.', '', description
+                            r"Defaults to .+\.", "", description
                         ).strip()
             i += 1
             # Collect additional description lines
@@ -299,12 +299,12 @@ def _parse_google_param_lines(param_lines: List[str]) -> List[Dict]:
                 param_lines, i, indent_level=8
             )
             if extra_description:
-                description += ' ' + extra_description
+                description += " " + extra_description
             param = {
-                'name': name,
-                'default': default,
-                'annotation': annotation,
-                'description': description.strip(),
+                "name": name,
+                "default": default,
+                "annotation": annotation,
+                "description": description.strip(),
             }
             params.append(param)
         else:
@@ -318,38 +318,38 @@ def _parse_rest_param_lines(param_lines: List[str]) -> List[Dict]:
     while i < len(param_lines):
         line = param_lines[i].strip()
         # Match ':param name: description'
-        param_match = re.match(r'^:param (\w+):\s*(.+)', line)
+        param_match = re.match(r"^:param (\w+):\s*(.+)", line)
         if param_match:
             name = param_match.group(1)
             description = param_match.group(2)
             # Check for default value in description
-            default_match = re.search(r'\(Default:\s*(.+)\)', description)
+            default_match = re.search(r"\(Default:\s*(.+)\)", description)
             default = default_match.group(1).strip() if default_match else None
             if default:
-                description = re.sub(r'\(Default:\s*.+\)', '', description).strip()
+                description = re.sub(r"\(Default:\s*.+\)", "", description).strip()
             # Initialize parameter entry
             params_dict[name] = {
-                'name': name,
-                'default': default,
-                'annotation': None,
-                'description': description,
+                "name": name,
+                "default": default,
+                "annotation": None,
+                "description": description,
             }
             i += 1
         # Match ':type name: type'
-        elif line.startswith(':type'):
-            type_match = re.match(r'^:type (\w+):\s*(.+)', line)
+        elif line.startswith(":type"):
+            type_match = re.match(r"^:type (\w+):\s*(.+)", line)
             if type_match:
                 name = type_match.group(1)
                 annotation = type_match.group(2).strip()
                 if name in params_dict:
-                    params_dict[name]['annotation'] = annotation
+                    params_dict[name]["annotation"] = annotation
                 else:
                     # Type without param, create entry
                     params_dict[name] = {
-                        'name': name,
-                        'default': None,
-                        'annotation': annotation,
-                        'description': '',
+                        "name": name,
+                        "default": None,
+                        "annotation": annotation,
+                        "description": "",
                     }
                 i += 1
             else:
