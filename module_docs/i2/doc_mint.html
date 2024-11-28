@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.doc_mint &mdash; i2 0.1.36 documentation</title>
+  <title>i2.doc_mint &mdash; i2 0.1.37 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=1c946a6c"></script>
+      <script src="../../_static/documentation_options.js?v=b8ecee75"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -57,10 +57,12 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">i2.doc_mint</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.DoctestBlock"><code class="docutils literal notranslate"><span class="pre">DoctestBlock</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.ExampleX"><code class="docutils literal notranslate"><span class="pre">ExampleX</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.docstring_to_params"><code class="docutils literal notranslate"><span class="pre">docstring_to_params()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.doctest_string"><code class="docutils literal notranslate"><span class="pre">doctest_string()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.doctest_string_print"><code class="docutils literal notranslate"><span class="pre">doctest_string_print()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.non_doctest_lines"><code class="docutils literal notranslate"><span class="pre">non_doctest_lines()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.old_doctest_string"><code class="docutils literal notranslate"><span class="pre">old_doctest_string()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.params_to_docstring"><code class="docutils literal notranslate"><span class="pre">params_to_docstring()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.split_text_and_doctests"><code class="docutils literal notranslate"><span class="pre">split_text_and_doctests()</span></code></a></li>
 </ul>
 </li>
@@ -132,6 +134,69 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.doc_mint.docstring_to_params">
+<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">docstring_to_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">docstring</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doc_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'numpy'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'google'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'rest'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'numpy'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/i2/doc_mint.html#docstring_to_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.doc_mint.docstring_to_params" title="Link to this definition"></a></dt>
+<dd><p>Parse a docstring and extract parameter specifications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>docstring</strong> – The docstring to parse.</p></li>
+<li><p><strong>doc_style</strong> – The style of the docstring to parse. One of ‘numpy’, ‘google’, or ‘rest’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of parameter specifications, where each specification is a dictionary containing:
+- name: The name of the parameter (str).
+- default: The default value of the parameter (str, optional).
+- annotation: The type annotation for the parameter (str, optional).
+- description: A description of the parameter (str).</p>
+</dd>
+</dl>
+<p>Examples:
+&gt;&gt;&gt; docstring = ‘’’
+… Parameters
+… ———-
+… x : int, default=1
+…     An integer value.
+… y : str, default=None
+…     An optional string.
+… ‘’’
+&gt;&gt;&gt; params = docstring_to_params(docstring)
+&gt;&gt;&gt; params == [
+…     {“name”: “x”, “default”: “1”, “annotation”: “int”, “description”: “An integer value.”},
+…     {“name”: “y”, “default”: “None”, “annotation”: “str”, “description”: “An optional string.”},
+… ]
+True</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">docstring</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">... </span><span class="s1">Args:</span>
+<span class="gp">... </span><span class="s1">    x (int, optional): An integer value. Defaults to 1.</span>
+<span class="gp">... </span><span class="s1">    y (str, optional): An optional string. Defaults to None.</span>
+<span class="gp">... </span><span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">docstring_to_params</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="n">doc_style</span><span class="o">=</span><span class="s1">&#39;google&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">==</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An integer value.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An optional string.&quot;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">docstring</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">... </span><span class="s1">:param x: An integer value. (Default: 1)</span>
+<span class="gp">... </span><span class="s1">:type x: int</span>
+<span class="gp">... </span><span class="s1">:param y: An optional string. (Default: None)</span>
+<span class="gp">... </span><span class="s1">:type y: str</span>
+<span class="gp">... </span><span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">docstring_to_params</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="n">doc_style</span><span class="o">=</span><span class="s1">&#39;rest&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">==</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An integer value.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An optional string.&quot;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.doc_mint.doctest_string">
 <span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">doctest_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_callback=&lt;function</span> <span class="pre">mk_example_wants_callback.&lt;locals&gt;.example_wants_callback&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse=True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/doc_mint.html#doctest_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.doc_mint.doctest_string" title="Link to this definition"></a></dt>
 <dd><p>Extract the doctests found in given object.</p>
@@ -199,6 +264,70 @@
 :param output_prefix:
 :param recurse: Whether the process should find doctests in the attributes of the object, recursively.
 :return: A string containing the doctests, with output lines prefixed by ‘# Output:’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.doc_mint.params_to_docstring">
+<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">params_to_docstring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doc_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'numpy'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'google'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'rest'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'numpy'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/i2/doc_mint.html#params_to_docstring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.doc_mint.params_to_docstring" title="Link to this definition"></a></dt>
+<dd><p>Generate a docstring from a list of parameter specifications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> – <p>A list of dictionaries where each dictionary specifies a parameter.
+Each dictionary should contain:</p>
+<blockquote>
+<div><ul>
+<li><p>name: The name of the parameter (str).</p></li>
+<li><p>default: The default value of the parameter (any, optional).</p></li>
+<li><p>annotation: The type annotation for the parameter (str, optional).</p></li>
+<li><p>description: A description of the parameter (str).</p></li>
+</ul>
+</div></blockquote>
+</p></li>
+<li><p><strong>doc_style</strong> – The style of the docstring to generate. One of ‘numpy’, ‘google’, or ‘rest’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A formatted docstring (str).</p>
+</dd>
+</dl>
+<p>Examples:
+&gt;&gt;&gt; params = [
+…     {“name”: “x”, “default”: 1, “annotation”: “int”, “description”: “An integer value.”},
+…     {“name”: “y”, “default”: None, “annotation”: “str”, “description”: “An optional string.”},
+… ]
+&gt;&gt;&gt; print(params_to_docstring(params))  # doctest: +NORMALIZE_WHITESPACE
+:param x: An integer value.
+:type x: int, default=1
+:param y: An optional string.
+:type y: str, default=None
+:param &lt;BLANKLINE&gt;:
+:param &gt;&gt;&gt; print(params_to_docstring(params:
+:type &gt;&gt;&gt; print(params_to_docstring(params: +NORMALIZE_WHITESPACE
+:param doc_style=’google’))  # doctest:
+:type doc_style=’google’))  # doctest: +NORMALIZE_WHITESPACE
+:param Args: x (int, optional): An integer value. Defaults to 1.</p>
+<blockquote>
+<div><p>y (str, optional): An optional string. Defaults to None.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>&lt;BLANKLINE&gt;</strong></p></li>
+<li><p><strong>print</strong><strong>(</strong><strong>params_to_docstring</strong><strong>(</strong><strong>params</strong> (<em>&gt;&gt;&gt;</em>)</p></li>
+<li><p><strong>doctest</strong> (<em>doc_style='rest'</em><em>)</em><em>)  </em><em>#</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:type : param x: An integer value. (Default: 1)
+:param :
+:type : type x: int
+:param :
+:type : param y: An optional string. (Default: None)
+:param :
+:type : type y: str
+:param &lt;BLANKLINE&gt;:</p>
 </dd></dl>
 
 <dl class="py function">
