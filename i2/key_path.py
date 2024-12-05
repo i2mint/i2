@@ -89,6 +89,7 @@ class NoDefault:
 
 NO_DFLT = NoDefault()
 
+
 # TODO: Could move this functionality to dol.paths, using the tools that are there.
 def flatten_dict(d, sep=None, prefix=""):
     """
