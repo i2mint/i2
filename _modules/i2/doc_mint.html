@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.doc_mint &mdash; i2 0.1.43 documentation</title>
+  <title>i2.doc_mint &mdash; i2 0.1.44 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=a183c34f"></script>
+      <script src="../../_static/documentation_options.js?v=6a0a5382"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -107,12 +107,56 @@
   <h1>Source code for i2.doc_mint</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Meta-interfaces &quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">ast</span>
 
 <span class="n">nan</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
 
 <span class="c1"># --------------------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="find_in_params">
+<a class="viewcode-back" href="../../module_docs/i2/doc_mint.html#i2.doc_mint.find_in_params">[docs]</a>
+<span class="k">def</span> <span class="nf">find_in_params</span><span class="p">(</span>
+    <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">search_in</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">)</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find parameters in a list of parameter specifications.</span>
+
+<span class="sd">    :param query: The query to search for.</span>
+<span class="sd">    :param params: The list of parameter specifications.</span>
+<span class="sd">        Params can be provided in two formats:</span>
+<span class="sd">        - A function, from which the params will be extracted from the docstring.</span>
+<span class="sd">        - A list of dictionaries where each dictionary specifies a parameter, containing:</span>
+<span class="sd">            - name: The name of the parameter (str).</span>
+<span class="sd">            - default: The default value of the parameter (any, optional).</span>
+<span class="sd">            - annotation: The type annotation for the parameter (str, optional).</span>
+<span class="sd">            - description: A description of the parameter (str).</span>
+<span class="sd">        If a callable is provided, it will be used to generate the list of parameter specifications.</span>
+<span class="sd">    :param search_in: The fields to search in each parameter specification.</span>
+<span class="sd">    :return: A list of parameter specifications that match the query.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; params = [</span>
+<span class="sd">    ...     {&quot;name&quot;: &quot;x&quot;, &quot;default&quot;: 1, &quot;annotation&quot;: &quot;int&quot;, &quot;description&quot;: &quot;An integer value.&quot;},</span>
+<span class="sd">    ...     {&quot;name&quot;: &quot;y&quot;, &quot;default&quot;: None, &quot;annotation&quot;: &quot;str&quot;, &quot;description&quot;: &quot;An optional string.&quot;},</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; find_in_params(&#39;int&#39;, params)</span>
+<span class="sd">    [{&#39;name&#39;: &#39;x&#39;, &#39;default&#39;: 1, &#39;annotation&#39;: &#39;int&#39;, &#39;description&#39;: &#39;An integer value.&#39;}]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">search_in</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">search_in</span> <span class="o">=</span> <span class="p">(</span><span class="n">search_in</span><span class="p">,)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">callable</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">docstring_to_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">search_in</span><span class="p">),</span> <span class="n">params</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="indent_lines">
@@ -142,8 +186,8 @@
 <span class="sd">    Find the most common indentation in a string.</span>
 
 <span class="sd">    :param string: The string to analyze.</span>
-<span class="sd">    :param ignore_first_line: Whether to ignore the first line when determining the </span>
-<span class="sd">        indentation. Default is True since the first line often has no indentation </span>
+<span class="sd">    :param ignore_first_line: Whether to ignore the first line when determining the</span>
+<span class="sd">        indentation. Default is True since the first line often has no indentation</span>
 <span class="sd">        because of the way python strings appear in code.</span>
 <span class="sd">    :return: The most common indentation string.</span>
 
@@ -154,7 +198,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">indents</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^( *)\S&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
     <span class="n">n_lines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indents</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ignore_first_line</span> <span class="ow">and</span> <span class="n">n_lines</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  
+    <span class="k">if</span> <span class="n">ignore_first_line</span> <span class="ow">and</span> <span class="n">n_lines</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="c1"># if there&#39;s more than one line, ignore the indent of the first</span>
         <span class="c1"># (This is is because of the way docstrings are often formatted)</span>
         <span class="n">indents</span> <span class="o">=</span> <span class="n">indents</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
@@ -371,12 +415,127 @@
 
 
 
+<div class="viewcode-block" id="string_param_to_obj">
+<a class="viewcode-back" href="../../module_docs/i2/doc_mint.html#i2.doc_mint.string_param_to_obj">[docs]</a>
+<span class="k">def</span> <span class="nf">string_param_to_obj</span><span class="p">(</span><span class="n">string_to_object_mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">string</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a string representation of a parameter to an object.</span>
+
+<span class="sd">    Use Case: When parsing a docstring, you get values as strings, but these values</span>
+<span class="sd">    may need to be converted to their actual object types</span>
+<span class="sd">    (in the case of default and annotatios for example).</span>
+<span class="sd">    This is a helper function to do that conversion.</span>
+
+<span class="sd">    :param string: The string representation of the parameter.</span>
+<span class="sd">    :param string_to_object_mapping: A mapping from string representations to objects.</span>
+<span class="sd">    :return: The object corresponding to the string representation.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; string_to_object_mapping = {</span>
+<span class="sd">    ...     &#39;None&#39;: None,</span>
+<span class="sd">    ...     &#39;list&#39;: list,</span>
+<span class="sd">    ...     &#39;int&#39;: int,</span>
+<span class="sd">    ... }</span>
+<span class="sd">    &gt;&gt;&gt; string_to_obj = string_param_to_obj(string_to_object_mapping)</span>
+<span class="sd">    &gt;&gt;&gt; string_to_obj(&#39;None&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; string_to_obj(&#39;list&#39;)</span>
+<span class="sd">    &lt;class &#39;list&#39;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; string_to_obj(&#39;int&#39;)</span>
+<span class="sd">    &lt;class &#39;int&#39;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; string_to_obj(&#39;not something listed&#39;)</span>
+<span class="sd">    &#39;not something listed&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">string</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">string_param_to_obj</span><span class="p">,</span> <span class="n">string_to_object_mapping</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">string_to_object_mapping</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">string_to_object_mapping</span><span class="p">[</span><span class="n">string</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># TODO: Should handle strings that are numeric values...</span>
+
+        <span class="c1"># if all else fails, return the string itself</span>
+        <span class="k">return</span> <span class="n">string</span></div>
+
+
+
+<span class="n">dflt_str_to_obj_mapping</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;None&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s2">&quot;True&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;False&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;list&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="s2">&quot;int&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="s2">&quot;str&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="s2">&quot;dict&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="s2">&quot;tuple&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
+    <span class="s2">&quot;set&quot;</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span>
+    <span class="s2">&quot;bool&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="s2">&quot;complex&quot;</span><span class="p">:</span> <span class="nb">complex</span><span class="p">,</span>
+    <span class="s2">&quot;nan&quot;</span><span class="p">:</span> <span class="n">nan</span><span class="p">,</span>
+    <span class="s2">&quot;inf&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;-inf&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">_MAX_LENGTH_FOR_LITERAL_EVAL</span> <span class="o">=</span> <span class="mi">1000</span>
+
+
+<span class="k">def</span> <span class="nf">literal_eval_converter</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">_MAX_LENGTH_FOR_LITERAL_EVAL</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_length</span><span class="p">:</span>  <span class="c1"># Restrict long strings for extra safety</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">or</span> <span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">or</span> <span class="s1">&#39;;&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>  <span class="c1"># extra safety</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">SyntaxError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="register_converter">
+<a class="viewcode-back" href="../../module_docs/i2/doc_mint.html#i2.doc_mint.register_converter">[docs]</a>
+<span class="k">def</span> <span class="nf">register_converter</span><span class="p">(</span><span class="n">converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register a new converter. A converter can be:</span>
+<span class="sd">      - A dict: { &quot;None&quot;: None, &quot;int&quot;: int, ... }</span>
+<span class="sd">      - A callable: lambda s: attempt to parse s and return object or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dflt_str_to_obj_converters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">converter</span><span class="p">)</span></div>
+
+
+
+<span class="n">dflt_str_to_obj_converters</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">register_converter</span><span class="p">(</span><span class="n">dflt_str_to_obj_mapping</span><span class="p">)</span>
+<span class="n">register_converter</span><span class="p">(</span><span class="n">literal_eval_converter</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">convert_string</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">converters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">converter</span> <span class="ow">in</span> <span class="n">converters</span><span class="p">:</span>
+        <span class="c1"># If converter is a dict</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">converter</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">converter</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">converter</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+
+        <span class="c1"># If converter is a callable</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">converter</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">result</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="c1"># If a callable fails, just skip it</span>
+                <span class="k">pass</span>
+
+    <span class="c1"># If no converter matched</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+
 <div class="viewcode-block" id="docstring_to_params">
 <a class="viewcode-back" href="../../module_docs/i2/doc_mint.html#i2.doc_mint.docstring_to_params">[docs]</a>
 <span class="k">def</span> <span class="nf">docstring_to_params</span><span class="p">(</span>
     <span class="n">docstring</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">doc_style</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;google&quot;</span><span class="p">,</span> <span class="s2">&quot;rest&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;numpy&quot;</span><span class="p">,</span>
+    <span class="n">converters</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="n">dflt_str_to_obj_converters</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse a docstring and extract parameter specifications.</span>
@@ -401,11 +560,12 @@
 <span class="sd">    ...     An optional string.</span>
 <span class="sd">    ... &#39;&#39;&#39;</span>
 <span class="sd">    &gt;&gt;&gt; params = docstring_to_params(docstring)</span>
-<span class="sd">    &gt;&gt;&gt; params == [</span>
-<span class="sd">    ...     {&quot;name&quot;: &quot;x&quot;, &quot;default&quot;: &quot;1&quot;, &quot;annotation&quot;: &quot;int&quot;, &quot;description&quot;: &quot;An integer value.&quot;},</span>
-<span class="sd">    ...     {&quot;name&quot;: &quot;y&quot;, &quot;default&quot;: &quot;None&quot;, &quot;annotation&quot;: &quot;str&quot;, &quot;description&quot;: &quot;An optional string.&quot;},</span>
+<span class="sd">    &gt;&gt;&gt; params  == [</span>
+<span class="sd">    ...     {&#39;name&#39;: &#39;x&#39;, &#39;default&#39;: 1, &#39;annotation&#39;: int, &#39;description&#39;: &#39;An integer value.&#39;},</span>
+<span class="sd">    ...     {&#39;name&#39;: &#39;y&#39;, &#39;default&#39;: None, &#39;annotation&#39;: str, &#39;description&#39;: &#39;An optional string.&#39;}</span>
 <span class="sd">    ... ]</span>
 <span class="sd">    True</span>
+
 
 <span class="sd">    &gt;&gt;&gt; docstring = &#39;&#39;&#39;</span>
 <span class="sd">    ... Args:</span>
@@ -414,8 +574,8 @@
 <span class="sd">    ... &#39;&#39;&#39;</span>
 <span class="sd">    &gt;&gt;&gt; params = docstring_to_params(docstring, doc_style=&#39;google&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; params == [</span>
-<span class="sd">    ...     {&quot;name&quot;: &quot;x&quot;, &quot;default&quot;: &quot;1&quot;, &quot;annotation&quot;: &quot;int&quot;, &quot;description&quot;: &quot;An integer value.&quot;},</span>
-<span class="sd">    ...     {&quot;name&quot;: &quot;y&quot;, &quot;default&quot;: &quot;None&quot;, &quot;annotation&quot;: &quot;str&quot;, &quot;description&quot;: &quot;An optional string.&quot;},</span>
+<span class="sd">    ...     {&quot;name&quot;: &quot;x&quot;, &quot;default&quot;: 1, &quot;annotation&quot;: int, &quot;description&quot;: &quot;An integer value.&quot;},</span>
+<span class="sd">    ...     {&quot;name&quot;: &quot;y&quot;, &quot;default&quot;: None, &quot;annotation&quot;: str, &quot;description&quot;: &quot;An optional string.&quot;},</span>
 <span class="sd">    ... ]</span>
 <span class="sd">    True</span>
 
@@ -427,11 +587,14 @@
 <span class="sd">    ... &#39;&#39;&#39;</span>
 <span class="sd">    &gt;&gt;&gt; params = docstring_to_params(docstring, doc_style=&#39;rest&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; params == [</span>
-<span class="sd">    ...     {&quot;name&quot;: &quot;x&quot;, &quot;default&quot;: &quot;1&quot;, &quot;annotation&quot;: &quot;int&quot;, &quot;description&quot;: &quot;An integer value.&quot;},</span>
-<span class="sd">    ...     {&quot;name&quot;: &quot;y&quot;, &quot;default&quot;: &quot;None&quot;, &quot;annotation&quot;: &quot;str&quot;, &quot;description&quot;: &quot;An optional string.&quot;},</span>
+<span class="sd">    ...     {&quot;name&quot;: &quot;x&quot;, &quot;default&quot;: 1, &quot;annotation&quot;: int, &quot;description&quot;: &quot;An integer value.&quot;},</span>
+<span class="sd">    ...     {&quot;name&quot;: &quot;y&quot;, &quot;default&quot;: None, &quot;annotation&quot;: str, &quot;description&quot;: &quot;An optional string.&quot;},</span>
 <span class="sd">    ... ]</span>
 <span class="sd">    True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">docstring</span><span class="p">):</span>
+        <span class="n">docstring</span> <span class="o">=</span> <span class="n">docstring</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+
     <span class="c1"># Extract parameter lines</span>
     <span class="n">param_lines</span> <span class="o">=</span> <span class="n">_extract_params_section</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="n">doc_style</span><span class="p">)</span>
 
@@ -444,6 +607,13 @@
         <span class="n">params</span> <span class="o">=</span> <span class="n">_parse_rest_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported doc_style: </span><span class="si">{</span><span class="n">doc_style</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">convert_param</span><span class="p">(</span><span class="n">param</span><span class="p">):</span>
+        <span class="n">param</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_string</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">],</span> <span class="n">converters</span><span class="p">)</span>
+        <span class="n">param</span><span class="p">[</span><span class="s2">&quot;annotation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_string</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="s2">&quot;annotation&quot;</span><span class="p">],</span> <span class="n">converters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">param</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">convert_param</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">params</span></div>
 

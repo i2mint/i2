@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.doc_mint &mdash; i2 0.1.43 documentation</title>
+  <title>i2.doc_mint &mdash; i2 0.1.44 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=a183c34f"></script>
+      <script src="../../_static/documentation_options.js?v=6a0a5382"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -60,13 +60,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.docstring_to_params"><code class="docutils literal notranslate"><span class="pre">docstring_to_params()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.doctest_string"><code class="docutils literal notranslate"><span class="pre">doctest_string()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.doctest_string_print"><code class="docutils literal notranslate"><span class="pre">doctest_string_print()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.find_in_params"><code class="docutils literal notranslate"><span class="pre">find_in_params()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.indent_lines"><code class="docutils literal notranslate"><span class="pre">indent_lines()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.inject_docstring_content"><code class="docutils literal notranslate"><span class="pre">inject_docstring_content()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.most_common_indent"><code class="docutils literal notranslate"><span class="pre">most_common_indent()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.non_doctest_lines"><code class="docutils literal notranslate"><span class="pre">non_doctest_lines()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.old_doctest_string"><code class="docutils literal notranslate"><span class="pre">old_doctest_string()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.params_to_docstring"><code class="docutils literal notranslate"><span class="pre">params_to_docstring()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.register_converter"><code class="docutils literal notranslate"><span class="pre">register_converter()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.split_text_and_doctests"><code class="docutils literal notranslate"><span class="pre">split_text_and_doctests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.doc_mint.string_param_to_obj"><code class="docutils literal notranslate"><span class="pre">string_param_to_obj()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="errors.html">i2.errors</a></li>
@@ -138,7 +141,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.doc_mint.docstring_to_params">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">docstring_to_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">docstring</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doc_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'numpy'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'google'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'rest'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'numpy'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/i2/doc_mint.html#docstring_to_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.doc_mint.docstring_to_params" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">docstring_to_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">docstring:</span> <span class="pre">str,</span> <span class="pre">*,</span> <span class="pre">doc_style:</span> <span class="pre">~typing.Literal['numpy',</span> <span class="pre">'google',</span> <span class="pre">'rest']</span> <span class="pre">=</span> <span class="pre">'numpy',</span> <span class="pre">converters:</span> <span class="pre">~typing.List</span> <span class="pre">=</span> <span class="pre">[{'-inf':</span> <span class="pre">-inf,</span> <span class="pre">'False':</span> <span class="pre">False,</span> <span class="pre">'None':</span> <span class="pre">None,</span> <span class="pre">'True':</span> <span class="pre">True,</span> <span class="pre">'bool':</span> <span class="pre">&lt;class</span> <span class="pre">'bool'&gt;,</span> <span class="pre">'complex':</span> <span class="pre">&lt;class</span> <span class="pre">'complex'&gt;,</span> <span class="pre">'dict':</span> <span class="pre">&lt;class</span> <span class="pre">'dict'&gt;,</span> <span class="pre">'float':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'inf':</span> <span class="pre">inf,</span> <span class="pre">'int':</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;,</span> <span class="pre">'list':</span> <span class="pre">&lt;class</span> <span class="pre">'list'&gt;,</span> <span class="pre">'nan':</span> <span class="pre">nan,</span> <span class="pre">'set':</span> <span class="pre">&lt;class</span> <span class="pre">'set'&gt;,</span> <span class="pre">'str':</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">'tuple':</span> <span class="pre">&lt;class</span> <span class="pre">'tuple'&gt;},</span> <span class="pre">&lt;function</span> <span class="pre">literal_eval_converter&gt;]</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/i2/doc_mint.html#docstring_to_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.doc_mint.docstring_to_params" title="Link to this definition"></a></dt>
 <dd><p>Parse a docstring and extract parameter specifications.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -165,9 +168,9 @@
 <span class="gp">... </span><span class="s1">    An optional string.</span>
 <span class="gp">... </span><span class="s1">&#39;&#39;&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">docstring_to_params</span><span class="p">(</span><span class="n">docstring</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">==</span> <span class="p">[</span>
-<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An integer value.&quot;</span><span class="p">},</span>
-<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An optional string.&quot;</span><span class="p">},</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span>  <span class="o">==</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;annotation&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;An integer value.&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;annotation&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;An optional string.&#39;</span><span class="p">}</span>
 <span class="gp">... </span><span class="p">]</span>
 <span class="go">True</span>
 </pre></div>
@@ -179,8 +182,8 @@
 <span class="gp">... </span><span class="s1">&#39;&#39;&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">docstring_to_params</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="n">doc_style</span><span class="o">=</span><span class="s1">&#39;google&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">==</span> <span class="p">[</span>
-<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An integer value.&quot;</span><span class="p">},</span>
-<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An optional string.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An integer value.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An optional string.&quot;</span><span class="p">},</span>
 <span class="gp">... </span><span class="p">]</span>
 <span class="go">True</span>
 </pre></div>
@@ -193,8 +196,8 @@
 <span class="gp">... </span><span class="s1">&#39;&#39;&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">docstring_to_params</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="n">doc_style</span><span class="o">=</span><span class="s1">&#39;rest&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">==</span> <span class="p">[</span>
-<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An integer value.&quot;</span><span class="p">},</span>
-<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An optional string.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An integer value.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An optional string.&quot;</span><span class="p">},</span>
 <span class="gp">... </span><span class="p">]</span>
 <span class="go">True</span>
 </pre></div>
@@ -227,6 +230,46 @@
 :param obj: Object (module, class, function, etc.) you want to extract doctests from.
 :param recurse: Whether the process should find doctests in the attributes of the object, recursively.
 :return: A string containing the doctests, with output lines prefixed by ‘# Output:’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.doc_mint.find_in_params">
+<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">find_in_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('name',</span> <span class="pre">'description')</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/i2/doc_mint.html#find_in_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.doc_mint.find_in_params" title="Link to this definition"></a></dt>
+<dd><p>Find parameters in a list of parameter specifications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> – The query to search for.</p></li>
+<li><p><strong>params</strong> – <p>The list of parameter specifications.
+Params can be provided in two formats:
+- A function, from which the params will be extracted from the docstring.
+- A list of dictionaries where each dictionary specifies a parameter, containing:</p>
+<blockquote>
+<div><ul>
+<li><p>name: The name of the parameter (str).</p></li>
+<li><p>default: The default value of the parameter (any, optional).</p></li>
+<li><p>annotation: The type annotation for the parameter (str, optional).</p></li>
+<li><p>description: A description of the parameter (str).</p></li>
+</ul>
+</div></blockquote>
+<p>If a callable is provided, it will be used to generate the list of parameter specifications.</p>
+</p></li>
+<li><p><strong>search_in</strong> – The fields to search in each parameter specification.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of parameter specifications that match the query.</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An integer value.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An optional string.&quot;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_in_params</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+<span class="go">[{&#39;name&#39;: &#39;x&#39;, &#39;default&#39;: 1, &#39;annotation&#39;: &#39;int&#39;, &#39;description&#39;: &#39;An integer value.&#39;}]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -424,6 +467,18 @@ Each dictionary should contain:</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.doc_mint.register_converter">
+<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">register_converter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">converter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/doc_mint.html#register_converter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.doc_mint.register_converter" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Register a new converter. A converter can be:</dt><dd><ul class="simple">
+<li><p>A dict: { “None”: None, “int”: int, … }</p></li>
+<li><p>A callable: lambda s: attempt to parse s and return object or None</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.doc_mint.split_text_and_doctests">
 <span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">split_text_and_doctests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/doc_mint.html#split_text_and_doctests"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.doc_mint.split_text_and_doctests" title="Link to this definition"></a></dt>
 <dd><p>Generates alternating blocks of “text” (string) and “doctest blocks”
@@ -480,6 +535,43 @@ Each dictionary should contain:</p>
 <p>If you ask for the string representation of this block, you’ll get a doctest string:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
 <span class="go">&#39;    &gt;&gt;&gt; 2 + 3\n    5\n    &gt;&gt;&gt; t = 5\n    &gt;&gt;&gt; tt = 10\n&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.doc_mint.string_param_to_obj">
+<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">string_param_to_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string_to_object_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/doc_mint.html#string_param_to_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.doc_mint.string_param_to_obj" title="Link to this definition"></a></dt>
+<dd><p>Convert a string representation of a parameter to an object.</p>
+<p>Use Case: When parsing a docstring, you get values as strings, but these values
+may need to be converted to their actual object types
+(in the case of default and annotatios for example).
+This is a helper function to do that conversion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string</strong> – The string representation of the parameter.</p></li>
+<li><p><strong>string_to_object_mapping</strong> – A mapping from string representations to objects.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The object corresponding to the string representation.</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">string_to_object_mapping</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">&#39;None&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;list&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">string_to_obj</span> <span class="o">=</span> <span class="n">string_param_to_obj</span><span class="p">(</span><span class="n">string_to_object_mapping</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">string_to_obj</span><span class="p">(</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">string_to_obj</span><span class="p">(</span><span class="s1">&#39;list&#39;</span><span class="p">)</span>
+<span class="go">&lt;class &#39;list&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">string_to_obj</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+<span class="go">&lt;class &#39;int&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">string_to_obj</span><span class="p">(</span><span class="s1">&#39;not something listed&#39;</span><span class="p">)</span>
+<span class="go">&#39;not something listed&#39;</span>
 </pre></div>
 </div>
 </dd></dl>
