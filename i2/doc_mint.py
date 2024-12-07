@@ -17,6 +17,7 @@ def indent_lines(string: str, indent: str) -> str:
     :return: The indented string.
 
     Examples:
+
     >>> print(indent_lines('This is a test.\nAnother line.', ' ' * 8))
             This is a test.
             Another line.
@@ -32,6 +33,7 @@ def most_common_indent(string: str) -> str:
     :return: The most common indentation string.
 
     Examples:
+
     >>> most_common_indent('    This is a test.\n    Another line.')
     '    '
     """
@@ -57,6 +59,7 @@ def inject_docstring_content(to_inject, *, position=-1, indent=True):
     :return: A decorator that injects the content into the docstring of the decorated function.
 
     Examples:
+    
     >>> @inject_docstring_content('This is a test.')
     ... def test_func():
     ...     '''This is the docstring.'''
@@ -137,6 +140,7 @@ def params_to_docstring(
     :return: A formatted docstring (str).
 
     Examples:
+
     >>> params = [
     ...     {"name": "x", "default": 1, "annotation": "int", "description": "An integer value."},
     ...     {"name": "y", "default": None, "annotation": "str", "description": "An optional string."},
@@ -258,6 +262,7 @@ def docstring_to_params(
         - description: A description of the parameter (str).
 
     Examples:
+
     >>> docstring = '''
     ... Parameters
     ... ----------
