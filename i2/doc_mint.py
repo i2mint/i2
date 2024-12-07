@@ -7,12 +7,14 @@ nan = float("nan")
 
 # --------------------------------------------------------------------------------------
 
+
 # TODO: params_to_docstring and docstring_to_params are a parse/generate pair, with echoes of embody and routing techniques.
 def params_to_docstring(
     params: list[dict],
     *,
     doc_style: str = "numpy",
     take_name_of_types: bool = False,
+    quote_string_defaults: bool = True,
 ) -> str:
     """
     Generate a docstring from a list of parameter specifications.
@@ -24,6 +26,8 @@ def params_to_docstring(
           - annotation: The type annotation for the parameter (str, optional).
           - description: A description of the parameter (str).
     :param doc_style: The style of the docstring to generate. One of 'numpy', 'google', or 'rest'.
+    :param take_name_of_types: Whether to use the name of the type as the annotation (bool).
+    :param quote_string_defaults: Whether to quote string defaults (bool).
 
     :return: A formatted docstring (str).
 
@@ -68,6 +72,8 @@ def params_to_docstring(
             if not description or isinstance(description, float):  # float to catch nans
                 description = ""
             default = p.get("default", None)
+            if quote_string_defaults and isinstance(default, str):
+                default = f'"{default}"'
             optional = "default" in p
 
             yield {
