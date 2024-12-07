@@ -77,7 +77,7 @@ def inject_docstring_content(to_inject, *, position=-1, indent=True):
     if indent is True:
         indent = most_common_indent(to_inject)
     else:
-        indent = indent or ''
+        indent = indent or ""
 
     def decorator(func):
         input_was_docstr_itself = False
