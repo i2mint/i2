@@ -59,7 +59,7 @@ def inject_docstring_content(to_inject, *, position=-1, indent=True):
     :return: A decorator that injects the content into the docstring of the decorated function.
 
     Examples:
-    
+
     >>> @inject_docstring_content('This is a test.')
     ... def test_func():
     ...     '''This is the docstring.'''
