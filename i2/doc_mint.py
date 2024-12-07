@@ -1,11 +1,52 @@
 """Meta-interfaces """
 
-from typing import Literal, List, Dict, Tuple
+from typing import Literal, List, Dict, Tuple, Callable, Union
 import re
+import ast
 
 nan = float("nan")
 
 # --------------------------------------------------------------------------------------
+
+
+def find_in_params(
+    query: str, params: Union[Callable, str], *, search_in=("name", "description")
+) -> List[Dict]:
+    """
+    Find parameters in a list of parameter specifications.
+
+    :param query: The query to search for.
+    :param params: The list of parameter specifications.
+        Params can be provided in two formats:
+        - A function, from which the params will be extracted from the docstring.
+        - A list of dictionaries where each dictionary specifies a parameter, containing:
+            - name: The name of the parameter (str).
+            - default: The default value of the parameter (any, optional).
+            - annotation: The type annotation for the parameter (str, optional).
+            - description: A description of the parameter (str).
+        If a callable is provided, it will be used to generate the list of parameter specifications.
+    :param search_in: The fields to search in each parameter specification.
+    :return: A list of parameter specifications that match the query.
+
+    Examples:
+
+    >>> params = [
+    ...     {"name": "x", "default": 1, "annotation": "int", "description": "An integer value."},
+    ...     {"name": "y", "default": None, "annotation": "str", "description": "An optional string."},
+    ... ]
+    >>> find_in_params('int', params)
+    [{'name': 'x', 'default': 1, 'annotation': 'int', 'description': 'An integer value.'}]
+
+    """
+    if isinstance(search_in, str):
+        search_in = (search_in,)
+    if isinstance(params, str) or callable(params):
+        params = docstring_to_params(params)
+    if isinstance(query, str):
+        query = re.compile(query, re.IGNORECASE)
+    return list(
+        filter(lambda x: any(query.search(x.get(key, '')) for key in search_in), params)
+    )
 
 
 def indent_lines(string: str, indent: str) -> str:
@@ -30,8 +71,8 @@ def most_common_indent(string: str, ignore_first_line=True) -> str:
     Find the most common indentation in a string.
 
     :param string: The string to analyze.
-    :param ignore_first_line: Whether to ignore the first line when determining the 
-        indentation. Default is True since the first line often has no indentation 
+    :param ignore_first_line: Whether to ignore the first line when determining the
+        indentation. Default is True since the first line often has no indentation
         because of the way python strings appear in code.
     :return: The most common indentation string.
 
@@ -42,7 +83,7 @@ def most_common_indent(string: str, ignore_first_line=True) -> str:
     """
     indents = re.findall(r"^( *)\S", string, re.MULTILINE)
     n_lines = len(indents)
-    if ignore_first_line and n_lines > 1:  
+    if ignore_first_line and n_lines > 1:
         # if there's more than one line, ignore the indent of the first
         # (This is is because of the way docstrings are often formatted)
         indents = indents[1:]
@@ -252,10 +293,119 @@ def params_to_docstring(
     return "\n".join(lines) + "\n"
 
 
+def string_param_to_obj(string_to_object_mapping: dict, string=None):
+    """
+    Convert a string representation of a parameter to an object.
+
+    Use Case: When parsing a docstring, you get values as strings, but these values
+    may need to be converted to their actual object types
+    (in the case of default and annotatios for example).
+    This is a helper function to do that conversion.
+
+    :param string: The string representation of the parameter.
+    :param string_to_object_mapping: A mapping from string representations to objects.
+    :return: The object corresponding to the string representation.
+
+    Examples:
+
+    >>> string_to_object_mapping = {
+    ...     'None': None,
+    ...     'list': list,
+    ...     'int': int,
+    ... }
+    >>> string_to_obj = string_param_to_obj(string_to_object_mapping)
+    >>> string_to_obj('None')
+    >>> string_to_obj('list')
+    <class 'list'>
+    >>> string_to_obj('int')
+    <class 'int'>
+    >>> string_to_obj('not something listed')
+    'not something listed'
+    """
+    if string is None:
+        return partial(string_param_to_obj, string_to_object_mapping)
+
+    if string in string_to_object_mapping:
+        return string_to_object_mapping[string]
+    else:
+        # TODO: Should handle strings that are numeric values...
+
+        # if all else fails, return the string itself
+        return string
+
+
+dflt_str_to_obj_mapping = {
+    "None": None,
+    "True": True,
+    "False": False,
+    "list": list,
+    "int": int,
+    "float": float,
+    "str": str,
+    "dict": dict,
+    "tuple": tuple,
+    "set": set,
+    "bool": bool,
+    "complex": complex,
+    "nan": nan,
+    "inf": float("inf"),
+    "-inf": float("-inf"),
+}
+
+_MAX_LENGTH_FOR_LITERAL_EVAL = 1000
+
+
+def literal_eval_converter(s: str, max_length=_MAX_LENGTH_FOR_LITERAL_EVAL):
+    if len(s) > max_length:  # Restrict long strings for extra safety
+        return None
+    elif '\n' in s or '\r' in s or ';' in s:  # extra safety
+        return None
+    try:
+        return ast.literal_eval(s)
+    except (ValueError, SyntaxError):
+        return None
+
+
+def register_converter(converter):
+    """
+    Register a new converter. A converter can be:
+      - A dict: { "None": None, "int": int, ... }
+      - A callable: lambda s: attempt to parse s and return object or None
+    """
+    dflt_str_to_obj_converters.append(converter)
+
+
+dflt_str_to_obj_converters = []
+register_converter(dflt_str_to_obj_mapping)
+register_converter(literal_eval_converter)
+
+
+def convert_string(s: str, converters: List[Union[dict, Callable]]) -> object:
+    for converter in converters:
+        # If converter is a dict
+        if isinstance(converter, dict):
+            if s in converter:
+                return converter[s]
+
+        # If converter is a callable
+        else:
+            try:
+                result = converter(s)
+                if result is not None:
+                    return result
+            except Exception:
+                # If a callable fails, just skip it
+                pass
+
+    # If no converter matched
+    return s
+
+
 def docstring_to_params(
     docstring: str,
     *,
     doc_style: Literal["numpy", "google", "rest"] = "numpy",
+    converters: List = dflt_str_to_obj_converters,
 ) -> List[Dict]:
     """
     Parse a docstring and extract parameter specifications.
@@ -280,11 +430,12 @@ def docstring_to_params(
     ...     An optional string.
     ... '''
     >>> params = docstring_to_params(docstring)
-    >>> params == [
-    ...     {"name": "x", "default": "1", "annotation": "int", "description": "An integer value."},
-    ...     {"name": "y", "default": "None", "annotation": "str", "description": "An optional string."},
+    >>> params  == [
+    ...     {'name': 'x', 'default': 1, 'annotation': int, 'description': 'An integer value.'},
+    ...     {'name': 'y', 'default': None, 'annotation': str, 'description': 'An optional string.'}
     ... ]
     True
+
 
     >>> docstring = '''
     ... Args:
@@ -293,8 +444,8 @@ def docstring_to_params(
     ... '''
     >>> params = docstring_to_params(docstring, doc_style='google')
     >>> params == [
-    ...     {"name": "x", "default": "1", "annotation": "int", "description": "An integer value."},
-    ...     {"name": "y", "default": "None", "annotation": "str", "description": "An optional string."},
+    ...     {"name": "x", "default": 1, "annotation": int, "description": "An integer value."},
+    ...     {"name": "y", "default": None, "annotation": str, "description": "An optional string."},
     ... ]
     True
 
@@ -306,11 +457,14 @@ def docstring_to_params(
     ... '''
     >>> params = docstring_to_params(docstring, doc_style='rest')
     >>> params == [
-    ...     {"name": "x", "default": "1", "annotation": "int", "description": "An integer value."},
-    ...     {"name": "y", "default": "None", "annotation": "str", "description": "An optional string."},
+    ...     {"name": "x", "default": 1, "annotation": int, "description": "An integer value."},
+    ...     {"name": "y", "default": None, "annotation": str, "description": "An optional string."},
     ... ]
     True
     """
+    if not isinstance(docstring, str) and callable(docstring):
+        docstring = docstring.__doc__ or ""
+
     # Extract parameter lines
     param_lines = _extract_params_section(docstring, doc_style)
 
@@ -323,6 +477,13 @@ def docstring_to_params(
         params = _parse_rest_param_lines(param_lines)
     else:
         raise ValueError(f"Unsupported doc_style: {doc_style}")
+
+    def convert_param(param):
+        param["default"] = convert_string(param["default"], converters)
+        param["annotation"] = convert_string(param["annotation"], converters)
+        return param
+
+    params = list(map(convert_param, params))
 
     return params
 

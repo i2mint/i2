@@ -76,4 +76,5 @@ from i2.itypes import validate_literal, ObjectClassifier
 from i2.doc_mint import (
     params_to_docstring,  # make the params-info part of the docstring
     docstring_to_params,  # extract the params from a docstring
+    find_in_params,  # find a substring in the params-info part of the docstring
 )
