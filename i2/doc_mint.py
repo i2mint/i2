@@ -45,7 +45,7 @@ def find_in_params(
     if isinstance(query, str):
         query = re.compile(query, re.IGNORECASE)
     return list(
-        filter(lambda x: any(query.search(x.get(key, '')) for key in search_in), params)
+        filter(lambda x: any(query.search(x.get(key, "")) for key in search_in), params)
     )
 
 
@@ -358,7 +358,7 @@ _MAX_LENGTH_FOR_LITERAL_EVAL = 1000
 def literal_eval_converter(s: str, max_length=_MAX_LENGTH_FOR_LITERAL_EVAL):
     if len(s) > max_length:  # Restrict long strings for extra safety
         return None
-    elif '\n' in s or '\r' in s or ';' in s:  # extra safety
+    elif "\n" in s or "\r" in s or ";" in s:  # extra safety
         return None
     try:
         return ast.literal_eval(s)
