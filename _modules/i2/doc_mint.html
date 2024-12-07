@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.doc_mint &mdash; i2 0.1.42 documentation</title>
+  <title>i2.doc_mint &mdash; i2 0.1.43 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=05fb4756"></script>
+      <script src="../../_static/documentation_options.js?v=a183c34f"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -137,11 +137,14 @@
 
 <div class="viewcode-block" id="most_common_indent">
 <a class="viewcode-back" href="../../module_docs/i2/doc_mint.html#i2.doc_mint.most_common_indent">[docs]</a>
-<span class="k">def</span> <span class="nf">most_common_indent</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">most_common_indent</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ignore_first_line</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find the most common indentation in a string.</span>
 
 <span class="sd">    :param string: The string to analyze.</span>
+<span class="sd">    :param ignore_first_line: Whether to ignore the first line when determining the </span>
+<span class="sd">        indentation. Default is True since the first line often has no indentation </span>
+<span class="sd">        because of the way python strings appear in code.</span>
 <span class="sd">    :return: The most common indentation string.</span>
 
 <span class="sd">    Examples:</span>
@@ -150,6 +153,11 @@
 <span class="sd">    &#39;    &#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">indents</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^( *)\S&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
+    <span class="n">n_lines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indents</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ignore_first_line</span> <span class="ow">and</span> <span class="n">n_lines</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  
+        <span class="c1"># if there&#39;s more than one line, ignore the indent of the first</span>
+        <span class="c1"># (This is is because of the way docstrings are often formatted)</span>
+        <span class="n">indents</span> <span class="o">=</span> <span class="n">indents</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
     <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">indents</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">indents</span><span class="o">.</span><span class="n">count</span><span class="p">)</span></div>
 
 
@@ -174,7 +182,7 @@
 <span class="sd">    :return: A decorator that injects the content into the docstring of the decorated function.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">    </span>
+
 <span class="sd">    &gt;&gt;&gt; @inject_docstring_content(&#39;This is a test.&#39;)</span>
 <span class="sd">    ... def test_func():</span>
 <span class="sd">    ...     &#39;&#39;&#39;This is the docstring.&#39;&#39;&#39;</span>
