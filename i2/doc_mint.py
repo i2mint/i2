@@ -3,11 +3,16 @@
 from typing import Literal, List, Dict, Tuple
 import re
 
+nan = float("nan")
 
+# --------------------------------------------------------------------------------------
+
+# TODO: params_to_docstring and docstring_to_params are a parse/generate pair, with echoes of embody and routing techniques.
 def params_to_docstring(
     params: list[dict],
     *,
-    doc_style: Literal["numpy", "google", "rest"] = "numpy",
+    doc_style: str = "numpy",
+    take_name_of_types: bool = False,
 ) -> str:
     """
     Generate a docstring from a list of parameter specifications.
@@ -47,72 +52,81 @@ def params_to_docstring(
     :type y: str
     <BLANKLINE>
     """
-    if doc_style == "numpy":
-        docstring_lines = ["Parameters", "----------"]
+
+    # Preprocess parameters to a uniform structure
+    def processed_params():
+        for p in params:
+            name = p["name"]
+            annotation = p.get("annotation", "")
+            if (
+                take_name_of_types
+                and isinstance(annotation, type)
+                and hasattr(annotation, "__name__")
+            ):
+                annotation = annotation.__name__
+            description = p.get("description", "")
+            if not description or isinstance(description, float):  # float to catch nans
+                description = ""
+            default = p.get("default", None)
+            optional = "default" in p
+
+            yield {
+                "name": name,
+                "annotation": annotation,
+                "description": description,
+                "default": default,
+                "optional": optional,
+            }
+
+    def numpy_lines(params):
+        yield "Parameters"
+        yield "----------"
         for param in params:
-            name = param["name"]
-            annotation = param.get("annotation", "")
-            description = param.get("description", "")
-            default = param.get("default")
+            line = param["name"]
+            if param["annotation"]:
+                line += f" : {param['annotation']}"
+            if param["optional"]:
+                line += f", default={param['default']}"
+            yield line
+            yield f"    {param['description']}"
 
-            param_line = name
-            if annotation:
-                param_line += f" : {annotation}"
-            if "default" in param:
-                param_line += f", default={default}"
-
-            docstring_lines.append(param_line)
-            docstring_lines.append(f"    {description}")
-
-        docstring = "\n".join(docstring_lines)
-        return docstring + "\n"
-
-    elif doc_style == "google":
-        docstring_lines = ["Args:"]
+    def google_lines(params):
+        yield "Args:"
         for param in params:
-            name = param["name"]
-            annotation = param.get("annotation", "")
-            description = param.get("description", "")
-            default = param.get("default")
+            line = f"    {param['name']}"
+            if param["annotation"]:
+                line += f" ({param['annotation']}"
+                if param["optional"]:
+                    line += ", optional"
+                line += ")"
+            elif param["optional"]:
+                line += " (optional)"
+            desc = param["description"]
+            if param["optional"]:
+                desc += f" Defaults to {param['default']}."
+            line += f": {desc}"
+            yield line
 
-            param_line = f"    {name}"
-            if annotation:
-                param_line += f" ({annotation}"
-                if "default" in param:
-                    param_line += ", optional"
-                param_line += ")"
-            elif "default" in param:
-                param_line += " (optional)"
-
-            if "default" in param:
-                description += f" Defaults to {default}."
-
-            param_line += f": {description}"
-            docstring_lines.append(param_line)
-
-        docstring = "\n".join(docstring_lines)
-        return docstring + "\n"
-
-    elif doc_style == "rest":
-        docstring_lines = []
+    def rest_lines(params):
         for param in params:
-            name = param["name"]
-            annotation = param.get("annotation", "")
-            description = param.get("description", "")
-            default = param.get("default")
+            desc = param["description"]
+            if param["optional"]:
+                desc += f" (Default: {param['default']})"
+            yield f":param {param['name']}: {desc}"
+            if param["annotation"]:
+                yield f":type {param['name']}: {param['annotation']}"
 
-            if "default" in param:
-                description += f" (Default: {default})"
+    formatters = {
+        "numpy": numpy_lines,
+        "google": google_lines,
+        "rest": rest_lines,
+    }
 
-            docstring_lines.append(f":param {name}: {description}")
-            if annotation:
-                docstring_lines.append(f":type {name}: {annotation}")
-
-        docstring = "\n".join(docstring_lines)
-        return docstring + "\n"
-
-    else:
+    if doc_style not in formatters:
         raise ValueError(f"Unsupported doc_style: {doc_style}")
+
+    lines = formatters[doc_style](processed_params())
+    return "\n".join(lines) + "\n"
 
 
 def docstring_to_params(
