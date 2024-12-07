@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.doc_mint &mdash; i2 0.1.39 documentation</title>
+  <title>i2.doc_mint &mdash; i2 0.1.40 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=f48ec9ae"></script>
+      <script src="../../_static/documentation_options.js?v=967b4925"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -114,6 +114,7 @@
 
 <span class="c1"># --------------------------------------------------------------------------------------</span>
 
+
 <span class="c1"># TODO: params_to_docstring and docstring_to_params are a parse/generate pair, with echoes of embody and routing techniques.</span>
 <div class="viewcode-block" id="params_to_docstring">
 <a class="viewcode-back" href="../../module_docs/i2/doc_mint.html#i2.doc_mint.params_to_docstring">[docs]</a>
@@ -122,6 +123,7 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">doc_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;numpy&quot;</span><span class="p">,</span>
     <span class="n">take_name_of_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">quote_string_defaults</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a docstring from a list of parameter specifications.</span>
@@ -133,6 +135,8 @@
 <span class="sd">          - annotation: The type annotation for the parameter (str, optional).</span>
 <span class="sd">          - description: A description of the parameter (str).</span>
 <span class="sd">    :param doc_style: The style of the docstring to generate. One of &#39;numpy&#39;, &#39;google&#39;, or &#39;rest&#39;.</span>
+<span class="sd">    :param take_name_of_types: Whether to use the name of the type as the annotation (bool).</span>
+<span class="sd">    :param quote_string_defaults: Whether to quote string defaults (bool).</span>
 
 <span class="sd">    :return: A formatted docstring (str).</span>
 
@@ -177,6 +181,8 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">description</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">description</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>  <span class="c1"># float to catch nans</span>
                 <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="n">default</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">quote_string_defaults</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">default</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
             <span class="n">optional</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span> <span class="ow">in</span> <span class="n">p</span>
 
             <span class="k">yield</span> <span class="p">{</span>
