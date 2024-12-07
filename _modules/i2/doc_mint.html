@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.doc_mint &mdash; i2 0.1.41 documentation</title>
+  <title>i2.doc_mint &mdash; i2 0.1.42 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3203cd3c"></script>
+      <script src="../../_static/documentation_options.js?v=05fb4756"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -126,6 +126,7 @@
 <span class="sd">    :return: The indented string.</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">    &gt;&gt;&gt; print(indent_lines(&#39;This is a test.\nAnother line.&#39;, &#39; &#39; * 8))</span>
 <span class="sd">            This is a test.</span>
 <span class="sd">            Another line.</span>
@@ -144,6 +145,7 @@
 <span class="sd">    :return: The most common indentation string.</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">    &gt;&gt;&gt; most_common_indent(&#39;    This is a test.\n    Another line.&#39;)</span>
 <span class="sd">    &#39;    &#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -172,6 +174,7 @@
 <span class="sd">    :return: A decorator that injects the content into the docstring of the decorated function.</span>
 
 <span class="sd">    Examples:</span>
+<span class="sd">    </span>
 <span class="sd">    &gt;&gt;&gt; @inject_docstring_content(&#39;This is a test.&#39;)</span>
 <span class="sd">    ... def test_func():</span>
 <span class="sd">    ...     &#39;&#39;&#39;This is the docstring.&#39;&#39;&#39;</span>
@@ -192,7 +195,7 @@
     <span class="k">if</span> <span class="n">indent</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">indent</span> <span class="o">=</span> <span class="n">most_common_indent</span><span class="p">(</span><span class="n">to_inject</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">indent</span> <span class="o">=</span> <span class="n">indent</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="n">indent</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="n">input_was_docstr_itself</span> <span class="o">=</span> <span class="kc">False</span>
@@ -255,6 +258,7 @@
 <span class="sd">    :return: A formatted docstring (str).</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">    &gt;&gt;&gt; params = [</span>
 <span class="sd">    ...     {&quot;name&quot;: &quot;x&quot;, &quot;default&quot;: 1, &quot;annotation&quot;: &quot;int&quot;, &quot;description&quot;: &quot;An integer value.&quot;},</span>
 <span class="sd">    ...     {&quot;name&quot;: &quot;y&quot;, &quot;default&quot;: None, &quot;annotation&quot;: &quot;str&quot;, &quot;description&quot;: &quot;An optional string.&quot;},</span>
@@ -379,6 +383,7 @@
 <span class="sd">        - description: A description of the parameter (str).</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">    &gt;&gt;&gt; docstring = &#39;&#39;&#39;</span>
 <span class="sd">    ... Parameters</span>
 <span class="sd">    ... ----------</span>

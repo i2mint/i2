@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.doc_mint &mdash; i2 0.1.41 documentation</title>
+  <title>i2.doc_mint &mdash; i2 0.1.42 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3203cd3c"></script>
+      <script src="../../_static/documentation_options.js?v=05fb4756"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -155,21 +155,23 @@
 - description: A description of the parameter (str).</p>
 </dd>
 </dl>
-<p>Examples:
-&gt;&gt;&gt; docstring = ‘’’
-… Parameters
-… ———-
-… x : int, default=1
-…     An integer value.
-… y : str, default=None
-…     An optional string.
-… ‘’’
-&gt;&gt;&gt; params = docstring_to_params(docstring)
-&gt;&gt;&gt; params == [
-…     {“name”: “x”, “default”: “1”, “annotation”: “int”, “description”: “An integer value.”},
-…     {“name”: “y”, “default”: “None”, “annotation”: “str”, “description”: “An optional string.”},
-… ]
-True</p>
+<p>Examples:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">docstring</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">... </span><span class="s1">Parameters</span>
+<span class="gp">... </span><span class="s1">----------</span>
+<span class="gp">... </span><span class="s1">x : int, default=1</span>
+<span class="gp">... </span><span class="s1">    An integer value.</span>
+<span class="gp">... </span><span class="s1">y : str, default=None</span>
+<span class="gp">... </span><span class="s1">    An optional string.</span>
+<span class="gp">... </span><span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">docstring_to_params</span><span class="p">(</span><span class="n">docstring</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">==</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An integer value.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An optional string.&quot;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">docstring</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="gp">... </span><span class="s1">Args:</span>
 <span class="gp">... </span><span class="s1">    x (int, optional): An integer value. Defaults to 1.</span>
@@ -242,12 +244,12 @@ True</p>
 <dd class="field-even"><p>The indented string.</p>
 </dd>
 </dl>
-<p>Examples:
-&gt;&gt;&gt; print(indent_lines(‘This is a test.nAnother line.’, ‘ ‘ * 8))</p>
-<blockquote>
-<div><p>This is a test.
-Another line.</p>
-</div></blockquote>
+<p>Examples:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">indent_lines</span><span class="p">(</span><span class="s1">&#39;This is a test.</span><span class="se">\n</span><span class="s1">Another line.&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="mi">8</span><span class="p">))</span>
+<span class="go">        This is a test.</span>
+<span class="go">        Another line.</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -273,22 +275,24 @@ If a string, it will use that specific string.</p></li>
 <dd class="field-even"><p>A decorator that injects the content into the docstring of the decorated function.</p>
 </dd>
 </dl>
-<p>Examples:
-&gt;&gt;&gt; &#64;inject_docstring_content(‘This is a test.’)
-… def test_func():
-…     ‘’’This is the docstring.’’’
-…     pass
-&gt;&gt;&gt; test_func.__doc__
-‘This is the docstring.nThis is a test.’
-&gt;&gt;&gt; &#64;inject_docstring_content(‘This is a test.’, position=’###INSERT HERE###’)
-… def test_func():
-…     ‘’’This is the docstring.
-…     ###INSERT HERE###
-…     More blah.
-…     ‘’’
-…     pass
-&gt;&gt;&gt; test_func.__doc__
-‘This is the docstring.n    ###INSERT HERE###n    More blah.n    ‘</p>
+<p>Examples:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@inject_docstring_content</span><span class="p">(</span><span class="s1">&#39;This is a test.&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">test_func</span><span class="p">():</span>
+<span class="gp">... </span><span class="w">    </span><span class="sd">&#39;&#39;&#39;This is the docstring.&#39;&#39;&#39;</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_func</span><span class="o">.</span><span class="vm">__doc__</span>
+<span class="go">&#39;This is the docstring.\nThis is a test.&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@inject_docstring_content</span><span class="p">(</span><span class="s1">&#39;This is a test.&#39;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="s1">&#39;###INSERT HERE###&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">test_func</span><span class="p">():</span>
+<span class="gp">... </span><span class="w">    </span><span class="sd">&#39;&#39;&#39;This is the docstring.</span>
+<span class="gp">... </span><span class="sd">    ###INSERT HERE###</span>
+<span class="gp">... </span><span class="sd">    More blah.</span>
+<span class="gp">... </span><span class="sd">    &#39;&#39;&#39;</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_func</span><span class="o">.</span><span class="vm">__doc__</span>
+<span class="go">&#39;This is the docstring.\n    ###INSERT HERE###\n    More blah.\n    &#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -303,9 +307,11 @@ If a string, it will use that specific string.</p></li>
 <dd class="field-even"><p>The most common indentation string.</p>
 </dd>
 </dl>
-<p>Examples:
-&gt;&gt;&gt; most_common_indent(’    This is a test.n    Another line.’)
-‘    ‘</p>
+<p>Examples:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">most_common_indent</span><span class="p">(</span><span class="s1">&#39;    This is a test.</span><span class="se">\n</span><span class="s1">    Another line.&#39;</span><span class="p">)</span>
+<span class="go">&#39;    &#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -377,43 +383,39 @@ Each dictionary should contain:</p>
 <dd class="field-even"><p>A formatted docstring (str).</p>
 </dd>
 </dl>
-<p>Examples:
-&gt;&gt;&gt; params = [
-…     {“name”: “x”, “default”: 1, “annotation”: “int”, “description”: “An integer value.”},
-…     {“name”: “y”, “default”: None, “annotation”: “str”, “description”: “An optional string.”},
-… ]
-&gt;&gt;&gt; print(params_to_docstring(params))  # doctest: +NORMALIZE_WHITESPACE
-:param x: An integer value.
-:type x: int, default=1
-:param y: An optional string.
-:type y: str, default=None
-:param &lt;BLANKLINE&gt;:
-:param &gt;&gt;&gt; print(params_to_docstring(params:
-:type &gt;&gt;&gt; print(params_to_docstring(params: +NORMALIZE_WHITESPACE
-:param doc_style=’google’))  # doctest:
-:type doc_style=’google’))  # doctest: +NORMALIZE_WHITESPACE
-:param Args: x (int, optional): An integer value. Defaults to 1.</p>
-<blockquote>
-<div><p>y (str, optional): An optional string. Defaults to None.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;BLANKLINE&gt;</strong></p></li>
-<li><p><strong>print</strong><strong>(</strong><strong>params_to_docstring</strong><strong>(</strong><strong>params</strong> (<em>&gt;&gt;&gt;</em>)</p></li>
-<li><p><strong>doctest</strong> (<em>doc_style='rest'</em><em>)</em><em>)  </em><em>#</em>)</p></li>
-</ul>
-</dd>
-</dl>
-<p>:param :
-:type : param x: An integer value. (Default: 1)
-:param :
-:type : type x: int
-:param :
-:type : param y: An optional string. (Default: None)
-:param :
-:type : type y: str
-:param &lt;BLANKLINE&gt;:</p>
+<p>Examples:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An integer value.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;An optional string.&quot;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">params_to_docstring</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>  
+<span class="go">:param x: An integer value.</span>
+<span class="go">:type x: int, default=1</span>
+<span class="go">:param y: An optional string.</span>
+<span class="go">:type y: str, default=None</span>
+<span class="go">:param &lt;BLANKLINE&gt;:</span>
+<span class="go">:param &gt;&gt;&gt; print(params_to_docstring(params:</span>
+<span class="go">:type &gt;&gt;&gt; print(params_to_docstring(params: +NORMALIZE_WHITESPACE</span>
+<span class="go">:param doc_style=&#39;google&#39;))  # doctest:</span>
+<span class="go">:type doc_style=&#39;google&#39;))  </span>
+<span class="go">:param Args: x (int, optional): An integer value. Defaults to 1.</span>
+<span class="go">             y (str, optional): An optional string. Defaults to None.</span>
+<span class="go">:param &lt;BLANKLINE&gt;:</span>
+<span class="go">:param &gt;&gt;&gt; print(params_to_docstring(params:</span>
+<span class="go">:type &gt;&gt;&gt; print(params_to_docstring(params: +NORMALIZE_WHITESPACE</span>
+<span class="go">:param doc_style=&#39;rest&#39;))  # doctest:</span>
+<span class="go">:type doc_style=&#39;rest&#39;))  </span>
+<span class="go">:param :</span>
+<span class="go">:type : param x: An integer value. (Default: 1)</span>
+<span class="go">:param :</span>
+<span class="go">:type : type x: int</span>
+<span class="go">:param :</span>
+<span class="go">:type : param y: An optional string. (Default: None)</span>
+<span class="go">:param :</span>
+<span class="go">:type : type y: str</span>
+<span class="go">:param &lt;BLANKLINE&gt;:</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
