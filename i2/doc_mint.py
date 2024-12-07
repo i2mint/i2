@@ -8,6 +8,111 @@ nan = float("nan")
 # --------------------------------------------------------------------------------------
 
 
+def indent_lines(string: str, indent: str) -> str:
+    r"""
+    Indent each line of a string.
+
+    :param string: The string to indent.
+    :param indent: The string to use for indentation.
+    :return: The indented string.
+
+    Examples:
+    >>> print(indent_lines('This is a test.\nAnother line.', ' ' * 8))
+            This is a test.
+            Another line.
+    """
+    return "\n".join(indent + line for line in string.split("\n"))
+
+
+def most_common_indent(string: str) -> str:
+    r"""
+    Find the most common indentation in a string.
+
+    :param string: The string to analyze.
+    :return: The most common indentation string.
+
+    Examples:
+    >>> most_common_indent('    This is a test.\n    Another line.')
+    '    '
+    """
+    indents = re.findall(r"^( *)\S", string, re.MULTILINE)
+    return max(indents, key=indents.count)
+
+
+def inject_docstring_content(to_inject, *, position=-1, indent=True):
+    r"""
+    Inject content into the docstring of a function.
+
+    Note: If you use the decorator on a string, it will assume that string is the doc
+    string you want to transform and return the modified string directly.
+
+    :param to_inject: The content to inject.
+    :param position: The position in the docstring to inject the content.
+        If an integer, the content is injected at that line number (pushing the rest down).
+        If a string, will consider it as a regex pattern to match the line to inject after.
+        Default is -1, to inject at the end.
+    :param indent: Control on indent.
+        If True, will use the most common indent of the input docstrings.
+        If a string, it will use that specific string.
+    :return: A decorator that injects the content into the docstring of the decorated function.
+
+    Examples:
+    >>> @inject_docstring_content('This is a test.')
+    ... def test_func():
+    ...     '''This is the docstring.'''
+    ...     pass
+    >>> test_func.__doc__
+    'This is the docstring.\nThis is a test.'
+    >>> @inject_docstring_content('This is a test.', position='###INSERT HERE###')
+    ... def test_func():
+    ...     '''This is the docstring.
+    ...     ###INSERT HERE###
+    ...     More blah.
+    ...     '''
+    ...     pass
+    >>> test_func.__doc__
+    'This is the docstring.\n    ###INSERT HERE###\n    More blah.\n    '
+    """
+
+    if indent is True:
+        indent = most_common_indent(to_inject)
+    else:
+        indent = indent or ''
+
+    def decorator(func):
+        input_was_docstr_itself = False
+
+        if isinstance(func, str):
+            doc = func
+            input_was_docstr_itself = True
+        else:
+            doc = func.__doc__ or ""
+
+        lines = doc.split("\n")
+        # TODO: Could figure out indent (ignoring first line), to inform the injected content indent
+
+        if isinstance(position, int):
+            if position == -1:
+                lines.append(to_inject)
+            else:
+                lines.insert(position, to_inject)
+        elif isinstance(position, str):
+            for i, line in enumerate(lines):
+                if re.match(position, line):
+                    lines.insert(i + 1, to_inject)
+                    break
+
+        new_doc = "\n".join(lines)
+
+        if input_was_docstr_itself:
+            return new_doc
+        else:
+            func.__doc__ = new_doc
+            return func
+
+    return decorator
+
+
 # TODO: params_to_docstring and docstring_to_params are a parse/generate pair, with echoes of embody and routing techniques.
 def params_to_docstring(
     params: list[dict],
