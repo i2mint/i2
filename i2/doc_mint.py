@@ -7,6 +7,7 @@ nan = float("nan")
 
 # --------------------------------------------------------------------------------------
 
+
 # TODO: params_to_docstring and docstring_to_params are a parse/generate pair, with echoes of embody and routing techniques.
 def params_to_docstring(
     params: list[dict],
