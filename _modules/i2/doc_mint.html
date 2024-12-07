@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.doc_mint &mdash; i2 0.1.40 documentation</title>
+  <title>i2.doc_mint &mdash; i2 0.1.41 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=967b4925"></script>
+      <script src="../../_static/documentation_options.js?v=3203cd3c"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -113,6 +113,120 @@
 <span class="n">nan</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
 
 <span class="c1"># --------------------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="indent_lines">
+<a class="viewcode-back" href="../../module_docs/i2/doc_mint.html#i2.doc_mint.indent_lines">[docs]</a>
+<span class="k">def</span> <span class="nf">indent_lines</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Indent each line of a string.</span>
+
+<span class="sd">    :param string: The string to indent.</span>
+<span class="sd">    :param indent: The string to use for indentation.</span>
+<span class="sd">    :return: The indented string.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    &gt;&gt;&gt; print(indent_lines(&#39;This is a test.\nAnother line.&#39;, &#39; &#39; * 8))</span>
+<span class="sd">            This is a test.</span>
+<span class="sd">            Another line.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="most_common_indent">
+<a class="viewcode-back" href="../../module_docs/i2/doc_mint.html#i2.doc_mint.most_common_indent">[docs]</a>
+<span class="k">def</span> <span class="nf">most_common_indent</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the most common indentation in a string.</span>
+
+<span class="sd">    :param string: The string to analyze.</span>
+<span class="sd">    :return: The most common indentation string.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    &gt;&gt;&gt; most_common_indent(&#39;    This is a test.\n    Another line.&#39;)</span>
+<span class="sd">    &#39;    &#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">indents</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^( *)\S&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">indents</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">indents</span><span class="o">.</span><span class="n">count</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="inject_docstring_content">
+<a class="viewcode-back" href="../../module_docs/i2/doc_mint.html#i2.doc_mint.inject_docstring_content">[docs]</a>
+<span class="k">def</span> <span class="nf">inject_docstring_content</span><span class="p">(</span><span class="n">to_inject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">position</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inject content into the docstring of a function.</span>
+
+<span class="sd">    Note: If you use the decorator on a string, it will assume that string is the doc</span>
+<span class="sd">    string you want to transform and return the modified string directly.</span>
+
+<span class="sd">    :param to_inject: The content to inject.</span>
+<span class="sd">    :param position: The position in the docstring to inject the content.</span>
+<span class="sd">        If an integer, the content is injected at that line number (pushing the rest down).</span>
+<span class="sd">        If a string, will consider it as a regex pattern to match the line to inject after.</span>
+<span class="sd">        Default is -1, to inject at the end.</span>
+<span class="sd">    :param indent: Control on indent.</span>
+<span class="sd">        If True, will use the most common indent of the input docstrings.</span>
+<span class="sd">        If a string, it will use that specific string.</span>
+<span class="sd">    :return: A decorator that injects the content into the docstring of the decorated function.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    &gt;&gt;&gt; @inject_docstring_content(&#39;This is a test.&#39;)</span>
+<span class="sd">    ... def test_func():</span>
+<span class="sd">    ...     &#39;&#39;&#39;This is the docstring.&#39;&#39;&#39;</span>
+<span class="sd">    ...     pass</span>
+<span class="sd">    &gt;&gt;&gt; test_func.__doc__</span>
+<span class="sd">    &#39;This is the docstring.\nThis is a test.&#39;</span>
+<span class="sd">    &gt;&gt;&gt; @inject_docstring_content(&#39;This is a test.&#39;, position=&#39;###INSERT HERE###&#39;)</span>
+<span class="sd">    ... def test_func():</span>
+<span class="sd">    ...     &#39;&#39;&#39;This is the docstring.</span>
+<span class="sd">    ...     ###INSERT HERE###</span>
+<span class="sd">    ...     More blah.</span>
+<span class="sd">    ...     &#39;&#39;&#39;</span>
+<span class="sd">    ...     pass</span>
+<span class="sd">    &gt;&gt;&gt; test_func.__doc__</span>
+<span class="sd">    &#39;This is the docstring.\n    ###INSERT HERE###\n    More blah.\n    &#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">indent</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="n">most_common_indent</span><span class="p">(</span><span class="n">to_inject</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="n">indent</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="n">input_was_docstr_itself</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">func</span>
+            <span class="n">input_was_docstr_itself</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># TODO: Could figure out indent (ignoring first line), to inform the injected content indent</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">position</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_inject</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">to_inject</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">to_inject</span><span class="p">)</span>
+                    <span class="k">break</span>
+
+        <span class="n">new_doc</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">input_was_docstr_itself</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">new_doc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">new_doc</span>
+            <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">return</span> <span class="n">decorator</span></div>
+
 
 
 <span class="c1"># TODO: params_to_docstring and docstring_to_params are a parse/generate pair, with echoes of embody and routing techniques.</span>
