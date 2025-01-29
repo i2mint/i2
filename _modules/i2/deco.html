@@ -5,8 +5,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.1.44 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+  <title>i2.deco &mdash; i2 0.1.45 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6a0a5382"></script>
+      <script src="../../_static/documentation_options.js?v=ce72d79b"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -107,17 +107,17 @@
   <h1>Source code for i2.deco</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Decorator tools&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>  <span class="c1"># TODO: Overwritten. Remove?</span>
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Signature</span><span class="p">,</span> <span class="n">signature</span><span class="p">,</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>  <span class="c1"># TODO: Overwritten. Remove?</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">Signature</span><span class="p">,</span> <span class="n">signature</span><span class="p">,</span> <span class="n">Parameter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span>
 
-<span class="kn">from</span> <span class="nn">i2.util</span> <span class="kn">import</span> <span class="n">mk_sentinel</span>
-<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">kind_forgiving_func</span><span class="p">,</span> <span class="n">name_of_obj</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_sentinel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">kind_forgiving_func</span><span class="p">,</span> <span class="n">name_of_obj</span>
 
 <span class="c1"># keep the imports below here because might be referenced (or take care of refs)</span>
 <span class="c1"># from i2.signatures import ch_signature_to_all_pk, params_of, copy_func</span>
@@ -125,7 +125,7 @@
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>  <span class="c1"># Can be anything</span>
 
 
-<span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">identity</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">obj</span>
 
 
@@ -135,15 +135,15 @@
 <span class="c1"># See description of problem here:</span>
 <span class="c1"># https://stackoverflow.com/questions/73243479/mysterious-effect-a-decorator-that-breaks-juypyters-ability-to-tab-complete-a</span>
 
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span> <span class="n">WRAPPER_UPDATES</span><span class="p">,</span> <span class="n">update_wrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span> <span class="n">WRAPPER_UPDATES</span><span class="p">,</span> <span class="n">update_wrapper</span>
 
 
 <span class="c1"># Overwrites the imported functools.wraps</span>
-<span class="k">def</span> <span class="nf">wraps</span><span class="p">(</span><span class="n">wrapped</span><span class="p">,</span> <span class="n">assigned</span><span class="o">=</span><span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span> <span class="n">updated</span><span class="o">=</span><span class="n">WRAPPER_UPDATES</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">wraps</span><span class="p">(</span><span class="n">wrapped</span><span class="p">,</span> <span class="n">assigned</span><span class="o">=</span><span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span> <span class="n">updated</span><span class="o">=</span><span class="n">WRAPPER_UPDATES</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">update_wrapper</span><span class="p">,</span> <span class="n">wrapped</span><span class="o">=</span><span class="n">wrapped</span><span class="p">,</span> <span class="n">assigned</span><span class="o">=</span><span class="n">assigned</span><span class="p">,</span> <span class="n">updated</span><span class="o">=</span><span class="n">updated</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_resolve_inclusion</span><span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">super_set</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_inclusion</span><span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">super_set</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">include</span> <span class="o">=</span> <span class="n">include</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -154,7 +154,7 @@
     <span class="k">return</span> <span class="n">include</span>
 
 
-<span class="k">def</span> <span class="nf">_not_set_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_not_set_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s2">&quot;NotSet&quot;</span>
 
 
@@ -165,7 +165,7 @@
 <span class="c1"># TODO: https://github.com/i2mint/i2/issues/48</span>
 <div class="viewcode-block" id="FuncFactory">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.FuncFactory">[docs]</a>
-<span class="k">class</span> <span class="nc">FuncFactory</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FuncFactory</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a function factory.</span>
 
 <span class="sd">    but more convenient and helpful (e.g. is picklable, produces functions with</span>
@@ -248,7 +248,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="p">(),</span> <span class="n">exclude</span><span class="o">=</span><span class="p">()):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="p">(),</span> <span class="n">exclude</span><span class="o">=</span><span class="p">()):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
         <span class="n">func_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="n">include</span><span class="p">,</span> <span class="n">exclude</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">func_sig</span><span class="o">.</span><span class="n">get_names</span><span class="p">,</span> <span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="p">))</span>
@@ -285,10 +285,10 @@
         <span class="c1"># self.__signature__ = shown_factory_sig</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="p">(),</span> <span class="n">exclude</span><span class="o">=</span><span class="p">()):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="p">(),</span> <span class="n">exclude</span><span class="o">=</span><span class="p">()):</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_process_args_and_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_args_and_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="n">_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">factory_sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span>
             <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">allow_partial</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore_kind</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
@@ -299,27 +299,27 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">__args</span><span class="p">,</span> <span class="n">__kwargs</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_args_and_kwargs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;FuncFactory(</span><span class="si">{</span><span class="n">name_of_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span><span class="si">}</span><span class="s2">)&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">func_returning_obj</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func_returning_obj</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">identity</span><span class="p">)(</span><span class="n">obj</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_jdict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jdict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">}</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_jdict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">jdict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_jdict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">jdict</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">FuncFactory</span><span class="p">(</span><span class="o">**</span><span class="n">jdict</span><span class="p">)</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_double_up_as_factory</span><span class="p">(</span><span class="n">wrapped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">__decorator_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_double_up_as_factory</span><span class="p">(</span><span class="n">wrapped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">__decorator_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Util for double_up_as_factory, ``__decorator_func`` to be partialized&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
@@ -334,7 +334,7 @@
 
 <div class="viewcode-block" id="double_up_as_factory">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.double_up_as_factory">[docs]</a>
-<span class="k">def</span> <span class="nf">double_up_as_factory</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">double_up_as_factory</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Repurpose a decorator both as it&#39;s original form, and as a decorator factory.</span>
 <span class="sd">    That is, from a decorator that is defined do ``wrapped_func = decorator(func, **params)``,</span>
 <span class="sd">    make it also be able to do ``wrapped_func = decorator(**params)(func)``.</span>
@@ -388,7 +388,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">validate_decorator_func</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_decorator_func</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">):</span>
         <span class="n">first_param</span><span class="p">,</span> <span class="o">*</span><span class="n">other_params</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">first_param</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;First argument of the decorator function needs to default to None. &quot;</span>
@@ -411,14 +411,14 @@
 <span class="c1">#   Namely, it may be cleaner to have the `argname=argtrans, ...` interface</span>
 <span class="c1">#   and offer utils to make an argtrans be the combination of a condition and a trans!</span>
 <span class="nd">@double_up_as_factory</span>
-<span class="k">def</span> <span class="nf">_conditional_arg_trans</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">condition_and_trans_of_argname</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_conditional_arg_trans</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">condition_and_trans_of_argname</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    See also: ensure_iterable_args, for a more complex example of how to use it.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">argname</span><span class="p">,</span> <span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">trans</span><span class="p">)</span> <span class="ow">in</span> <span class="n">condition_and_trans_of_argname</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -431,11 +431,11 @@
     <span class="k">return</span> <span class="n">_func</span>
 
 
-<span class="k">def</span> <span class="nf">_tuplize</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_tuplize</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span>
 
 
-<span class="k">def</span> <span class="nf">_mk_type_condition</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_mk_type_condition</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;If condition is a type, make an isinstance function to check for that type&quot;&quot;&quot;</span>
     <span class="n">curryable_isinstance</span> <span class="o">=</span> <span class="n">kind_forgiving_func</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
@@ -446,7 +446,7 @@
 
 <div class="viewcode-block" id="ensure_iterable_args">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.ensure_iterable_args">[docs]</a>
-<span class="k">def</span> <span class="nf">ensure_iterable_args</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">condition_of_argname</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_iterable_args</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">condition_of_argname</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap a function so that specific arguments are assured to be iterable if</span>
 <span class="sd">    they meet specific conditions.</span>
 
@@ -475,9 +475,9 @@
 
 
 
-<span class="k">def</span> <span class="nf">transparently_wrapped</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">transparently_wrapped</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">transparently_wrapped_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transparently_wrapped_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">transparently_wrapped_func</span>
@@ -485,7 +485,7 @@
 
 <div class="viewcode-block" id="mk_args_kwargs_merger">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.mk_args_kwargs_merger">[docs]</a>
-<span class="k">def</span> <span class="nf">mk_args_kwargs_merger</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_args_kwargs_merger</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a function that will return a dict containing all {argname: argval} pairs from a function&#39;s call.</span>
 <span class="sd">    That is, it merges all non-keyword arguments with the keyword-arguments, with the right name, so that</span>
@@ -511,7 +511,7 @@
 <span class="sd">    &gt;&gt;&gt; assert func(**{&#39;a&#39;: 1, &#39;b&#39;: 10}) == func(**merger([], {&#39;a&#39;: 1, &#39;b&#39;: 10}))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">merge_args_and_kwargs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_args_and_kwargs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">bind_partial</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">arguments</span>
         <span class="k">else</span><span class="p">:</span>
@@ -523,7 +523,7 @@
 
 <div class="viewcode-block" id="kwargs_for_func">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.kwargs_for_func">[docs]</a>
-<span class="k">def</span> <span class="nf">kwargs_for_func</span><span class="p">(</span><span class="o">*</span><span class="n">funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kwargs_for_func</span><span class="p">(</span><span class="o">*</span><span class="n">funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :param funcs:</span>
 <span class="sd">    :param kwargs:</span>
@@ -545,7 +545,7 @@
 
 <div class="viewcode-block" id="assert_attrs">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.assert_attrs">[docs]</a>
-<span class="k">def</span> <span class="nf">assert_attrs</span><span class="p">(</span><span class="n">attrs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">assert_attrs</span><span class="p">(</span><span class="n">attrs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Asserts, at construction time, that the class contains a specific set of attributes</span>
 <span class="sd">    :param attrs: An attribute name (string) or a list of attribute names whose existence needs to be enforced.</span>
@@ -578,9 +578,9 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">attrs</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_assert_attrs</span><span class="p">(</span><span class="n">klass</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_assert_attrs</span><span class="p">(</span><span class="n">klass</span><span class="p">):</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">klass</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_instance</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
@@ -598,11 +598,11 @@
 
 <div class="viewcode-block" id="preprocess_arguments">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.preprocess_arguments">[docs]</a>
-<span class="k">def</span> <span class="nf">preprocess_arguments</span><span class="p">(</span><span class="n">pre</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess_arguments</span><span class="p">(</span><span class="n">pre</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply a function to args, kwargs and use the transformed in the decorated function&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">pre</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -612,16 +612,16 @@
 
 
 
-<span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">pre</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess</span><span class="p">(</span><span class="n">pre</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 
-            <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pre</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
         <span class="k">else</span><span class="p">:</span>
 
-            <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">pre</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)(</span><span class="n">wrapper</span><span class="p">)</span>
@@ -629,7 +629,7 @@
     <span class="k">return</span> <span class="n">decorator</span>
 
 
-<span class="k">def</span> <span class="nf">_return_annotation_of</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_return_annotation_of</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return annotation of callable (if type, will return type systematically)</span>
 
 <span class="sd">    &gt;&gt;&gt; def foo() -&gt; bool: ...</span>
@@ -650,13 +650,13 @@
 
 <div class="viewcode-block" id="OutputPostProcessingError">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.OutputPostProcessingError">[docs]</a>
-<span class="k">class</span> <span class="nc">OutputPostProcessingError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span> <span class="o">...</span></div>
+<span class="k">class</span><span class="w"> </span><span class="nc">OutputPostProcessingError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span> <span class="o">...</span></div>
 
 
 
 <div class="viewcode-block" id="postprocess">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.postprocess">[docs]</a>
-<span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="n">post</span><span class="p">,</span> <span class="n">caught_post_errors</span><span class="o">=</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span> <span class="n">verbose_error_message</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">postprocess</span><span class="p">(</span><span class="n">post</span><span class="p">,</span> <span class="n">caught_post_errors</span><span class="o">=</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span> <span class="n">verbose_error_message</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add some post-processing after a function</span>
 
 <span class="sd">    :param post: The function to apply to the output</span>
@@ -712,9 +712,9 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">output</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">post</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
@@ -755,7 +755,7 @@
 
 <div class="viewcode-block" id="input_output_decorator">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.input_output_decorator">[docs]</a>
-<span class="k">def</span> <span class="nf">input_output_decorator</span><span class="p">(</span><span class="n">preprocess</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">postprocess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">input_output_decorator</span><span class="p">(</span><span class="n">preprocess</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">postprocess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Makes a decorator that preprocesses inputs and postprocesses outputs.</span>
 <span class="sd">    Use it if you want to transform the input of a function or method before calling it, or if you want</span>
@@ -823,20 +823,20 @@
 <span class="sd">    # What big &quot;eyes&quot; you have!!!</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">preprocess</span> <span class="ow">and</span> <span class="n">postprocess</span><span class="p">:</span>
 
-            <span class="k">def</span> <span class="nf">func_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">func_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">postprocess</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">preprocess</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)))</span>
 
         <span class="k">elif</span> <span class="n">preprocess</span><span class="p">:</span>  <span class="c1"># a preprocess but no postprocess</span>
 
-            <span class="k">def</span> <span class="nf">func_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">func_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">preprocess</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
         <span class="k">elif</span> <span class="n">postprocess</span><span class="p">:</span>  <span class="c1"># a postprocess but no preprocess</span>
 
-            <span class="k">def</span> <span class="nf">func_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">func_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">postprocess</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># neither pre nor post processing, so leave func as is</span>
@@ -853,7 +853,7 @@
 
 <div class="viewcode-block" id="transform_args">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.transform_args">[docs]</a>
-<span class="k">def</span> <span class="nf">transform_args</span><span class="p">(</span><span class="n">dflt_trans_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">trans_func_for_arg</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">transform_args</span><span class="p">(</span><span class="n">dflt_trans_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">trans_func_for_arg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a decorator that transforms function arguments before calling the function.</span>
 <span class="sd">    Works with plain functions and bounded methods.</span>
@@ -901,7 +901,7 @@
 <span class="sd">    &gt;&gt;&gt; assert a.f(&#39;foo&#39;, &#39;bar&#39;) == &#39;a=ROOT/foo, b=ROOT/bar, c=default_c&#39;  # defaults still work</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">transform_args_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_args_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="n">get_kwargs</span> <span class="o">=</span> <span class="n">mk_args_kwargs_merger</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span>
@@ -914,7 +914,7 @@
             <span class="p">),</span> <span class="s2">&quot;The dflt_trans_func needs to be a callable&quot;</span>
 
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-            <span class="k">def</span> <span class="nf">transform_args_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">transform_args_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="n">val_of_argname</span> <span class="o">=</span> <span class="n">get_kwargs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">val_of_argname</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="n">argname</span><span class="p">:</span> <span class="n">dflt_trans_func</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
@@ -928,7 +928,7 @@
         <span class="k">else</span><span class="p">:</span>
 
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-            <span class="k">def</span> <span class="nf">transform_args_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">transform_args_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="c1"># get a {argname: argval, ...} dict from *args and **kwargs</span>
                 <span class="c1"># Note: Didn&#39;t really need an if/else here but I am assuming that...</span>
                 <span class="c1"># Note: ... getcallargs gives us an overhead that can be avoided if there&#39;s only keyword args.</span>
@@ -950,10 +950,10 @@
 
 
 
-<span class="k">def</span> <span class="nf">wrap_method_output</span><span class="p">(</span><span class="n">wrapper_func</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">_wrap_output</span><span class="p">(</span><span class="n">wrapped</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">wrap_method_output</span><span class="p">(</span><span class="n">wrapper_func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_wrap_output</span><span class="p">(</span><span class="n">wrapped</span><span class="p">):</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">wrapped</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">_wrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_wrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">wrapper_func</span><span class="p">(</span><span class="n">wrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">_wrapped</span>
@@ -963,7 +963,7 @@
 
 <div class="viewcode-block" id="wrap_class_methods">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.wrap_class_methods">[docs]</a>
-<span class="k">def</span> <span class="nf">wrap_class_methods</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">wrap_class_methods</span><span class="p">(</span>
     <span class="n">_return_a_copy_of_the_class</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">_raise_error_if_non_existent_method</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="o">**</span><span class="n">wrapper_for_method</span><span class="p">,</span>
@@ -1028,7 +1028,7 @@
 <span class="sd">    30</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">class_wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">class_wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">_return_a_copy_of_the_class</span><span class="p">:</span>
             <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">))</span>
             <span class="c1"># class _cls(cls):</span>
@@ -1048,8 +1048,8 @@
 
 
 
-<span class="k">def</span> <span class="nf">mk_input_and_output_method_wrapper</span><span class="p">(</span><span class="n">method_output_trans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">arg_trans</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">wrap_method</span><span class="p">(</span><span class="n">method_func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_input_and_output_method_wrapper</span><span class="p">(</span><span class="n">method_output_trans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">arg_trans</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrap_method</span><span class="p">(</span><span class="n">method_func</span><span class="p">):</span>
         <span class="n">wrapped_method</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="o">**</span><span class="n">arg_trans</span><span class="p">)(</span><span class="n">method_func</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">method_output_trans</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">wrap_method_output</span><span class="p">(</span><span class="n">method_output_trans</span><span class="p">)(</span><span class="n">wrapped_method</span><span class="p">)</span>
@@ -1059,7 +1059,7 @@
     <span class="k">return</span> <span class="n">wrap_method</span>
 
 
-<span class="k">def</span> <span class="nf">transform_class_method_input_and_output</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">transform_class_method_input_and_output</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">method_output_trans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">arg_trans</span>
 <span class="p">):</span>
     <span class="n">wrapped_method</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="o">**</span><span class="n">arg_trans</span><span class="p">)(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">))</span>
@@ -1075,7 +1075,7 @@
 
 <div class="viewcode-block" id="wrap_class_methods_input_and_output">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.wrap_class_methods_input_and_output">[docs]</a>
-<span class="k">def</span> <span class="nf">wrap_class_methods_input_and_output</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">wrap_class_methods_input_and_output</span><span class="p">(</span>
     <span class="n">_return_a_copy_of_the_class</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">_raise_error_if_non_existent_method</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="o">**</span><span class="n">method_trans_spec</span><span class="p">,</span>
@@ -1292,7 +1292,7 @@
 
 <div class="viewcode-block" id="add_method">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.add_method">[docs]</a>
-<span class="k">def</span> <span class="nf">add_method</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">method_func</span><span class="p">,</span> <span class="n">method_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_method</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">method_func</span><span class="p">,</span> <span class="n">method_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dynamically add a method to an object.</span>
 
@@ -1354,10 +1354,10 @@
 
 
 
-<span class="k">def</span> <span class="nf">transform_instance_method_input_and_output</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">transform_instance_method_input_and_output</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">method_output_trans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">arg_trans</span>
 <span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 
     <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Not sure transform_instance_method_input_and_output works yet&quot;</span><span class="p">)</span>
     <span class="n">wrapped_method</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="o">**</span><span class="n">arg_trans</span><span class="p">)(</span><span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">method</span><span class="p">))</span>
@@ -1372,12 +1372,12 @@
     <span class="k">return</span> <span class="n">obj</span>
 
 
-<span class="k">def</span> <span class="nf">wrap_instance_methods</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">wrap_instance_methods</span><span class="p">(</span>
     <span class="n">_return_a_copy_of_the_class</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">_raise_error_if_non_existent_method</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="o">**</span><span class="n">method_trans_spec</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="k">def</span> <span class="nf">obj_wrapper</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">obj_wrapper</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">method</span><span class="p">,</span> <span class="n">method_trans</span> <span class="ow">in</span> <span class="n">method_trans_spec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
                 <span class="n">obj</span> <span class="o">=</span> <span class="n">transform_instance_method_input_and_output</span><span class="p">(</span>
@@ -1396,7 +1396,7 @@
 
 <div class="viewcode-block" id="mk_method_trans_spec_from_methods_specs_dict">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.mk_method_trans_spec_from_methods_specs_dict">[docs]</a>
-<span class="k">def</span> <span class="nf">mk_method_trans_spec_from_methods_specs_dict</span><span class="p">(</span><span class="n">methods_specs_dict</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_method_trans_spec_from_methods_specs_dict</span><span class="p">(</span><span class="n">methods_specs_dict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Utility to make inputs for wrap_class_methods_input_and_output more easily.</span>
 <span class="sd">    :param methods_specs_dict: a dict where</span>
@@ -1431,7 +1431,7 @@
 <span class="n">WhatToLog</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Args</span><span class="p">,</span> <span class="n">Kwargs</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_special_str</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_special_str</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A util function for _call_signature&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
@@ -1447,7 +1447,7 @@
         <span class="k">return</span> <span class="n">x_str</span>
 
 
-<span class="k">def</span> <span class="nf">_call_signature</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_call_signature</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A util to make a string representation of a call of a function func with given args and kwargs.</span>
 <span class="sd">    Meant to be the default mk_log_str of mk_call_logger.</span>
@@ -1473,7 +1473,7 @@
 
 <div class="viewcode-block" id="mk_call_logger">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.mk_call_logger">[docs]</a>
-<span class="k">def</span> <span class="nf">mk_call_logger</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_call_logger</span><span class="p">(</span>
     <span class="n">logger</span><span class="o">=</span><span class="nb">print</span><span class="p">,</span>
     <span class="n">what_to_log</span><span class="p">:</span> <span class="n">WhatToLog</span> <span class="o">=</span> <span class="n">_call_signature</span><span class="p">,</span>
     <span class="n">log_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -1545,9 +1545,9 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">func_is_bounded</span><span class="p">:</span>
 
-        <span class="k">def</span> <span class="nf">log_calls</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">log_calls</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-            <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="n">logger</span><span class="p">(</span><span class="n">what_to_log</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">))</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">log_output</span> <span class="ow">and</span> <span class="n">logger</span><span class="p">(</span><span class="n">log_output</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
@@ -1559,9 +1559,9 @@
 
     <span class="k">else</span><span class="p">:</span>
 
-        <span class="k">def</span> <span class="nf">log_calls</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">log_calls</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-            <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="n">logger</span><span class="p">(</span><span class="n">what_to_log</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">))</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">log_output</span> <span class="ow">and</span> <span class="n">logger</span><span class="p">(</span><span class="n">log_output</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
@@ -1577,7 +1577,7 @@
 
 <div class="viewcode-block" id="get_callable_from_factory_if_no_arguments">
 <a class="viewcode-back" href="../../module_docs/i2/deco.html#i2.deco.get_callable_from_factory_if_no_arguments">[docs]</a>
-<span class="k">def</span> <span class="nf">get_callable_from_factory_if_no_arguments</span><span class="p">(</span><span class="n">func_or_factory_thereof</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_callable_from_factory_if_no_arguments</span><span class="p">(</span><span class="n">func_or_factory_thereof</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Will return the input itself if it&#39;s a callable with at least one argument.</span>
 <span class="sd">    If not, it will consider it to be a factory, call it to get the actual</span>
 <span class="sd">    callable object that the user presumably is seeking to get&quot;&quot;&quot;</span>

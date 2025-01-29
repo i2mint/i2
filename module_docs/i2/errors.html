@@ -6,8 +6,8 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.errors &mdash; i2 0.1.44 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+  <title>i2.errors &mdash; i2 0.1.45 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6a0a5382"></script>
+      <script src="../../_static/documentation_options.js?v=ce72d79b"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -156,8 +156,8 @@ caught by <cite>HandleExceptions</cite>.</p>
 envoke the command pattern, using <cite>functools.partial</cite> to make a argument-less
 function. See in the example below how we ask <cite>HandleExceptions</cite> to print a
 specific string if a <cite>ZeroDivisionError</cite> happens:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">print_and_return</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">print_and_return</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">msg</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">HandleExceptions</span><span class="p">({</span>
@@ -188,7 +188,7 @@ instance itself:</p>
 <p>If all you want to do though is print a string (and have the same string
 available in the <cite>exit_value</cite> attribute, we got you covered!
 Just specify a string and we’ll make that printer callaback for you!</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">HandleExceptions</span><span class="p">({</span><span class="ne">ZeroDivisionError</span><span class="p">:</span> <span class="s2">&quot;You interrupted me again!&quot;</span><span class="p">}):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This also works&#39;</span><span class="p">)</span>
@@ -219,7 +219,7 @@ a with block early given some condition(s).</p>
 </div>
 <p>Tip: If you need to do stuff with an exception, but reraise it, you can
 still do that in your callback. Just say <cite>raise</cite> at the end of the callback!</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">print_and_raise</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">print_and_raise</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">raise</span>
 <span class="gp">&gt;&gt;&gt;</span>

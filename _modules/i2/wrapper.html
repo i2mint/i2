@@ -5,8 +5,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.1.44 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+  <title>i2.wrapper &mdash; i2 0.1.45 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6a0a5382"></script>
+      <script src="../../_static/documentation_options.js?v=ce72d79b"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -170,9 +170,9 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span><span class="p">,</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">signature</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span><span class="p">,</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">signature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Mapping</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">Any</span><span class="p">,</span>
@@ -185,11 +185,11 @@
     <span class="n">Tuple</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span>
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">make_dataclass</span><span class="p">,</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MethodType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parameter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_dataclass</span><span class="p">,</span> <span class="n">dataclass</span>
 
-<span class="kn">from</span> <span class="nn">i2.signatures</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Sig</span><span class="p">,</span>
     <span class="n">name_of_obj</span><span class="p">,</span>
     <span class="n">KO</span><span class="p">,</span>
@@ -200,10 +200,10 @@
     <span class="n">_call_forgivingly</span><span class="p">,</span>
     <span class="n">kind_forgiving_func</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">i2.errors</span> <span class="kn">import</span> <span class="n">OverwritesNotAllowed</span>
-<span class="kn">from</span> <span class="nn">i2.multi_object</span> <span class="kn">import</span> <span class="n">Pipe</span>
-<span class="kn">from</span> <span class="nn">i2.deco</span> <span class="kn">import</span> <span class="n">double_up_as_factory</span>
-<span class="kn">from</span> <span class="nn">i2.util</span> <span class="kn">import</span> <span class="n">deprecation_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">OverwritesNotAllowed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2.multi_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2.deco</span><span class="w"> </span><span class="kn">import</span> <span class="n">double_up_as_factory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecation_of</span>
 
 <span class="c1"># ---------------------------------------------------------------------------------------</span>
 <span class="c1"># Wrap</span>
@@ -216,7 +216,7 @@
 
 <div class="viewcode-block" id="identity">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.identity">[docs]</a>
-<span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">identity</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Transparent function, returning what&#39;s been input&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">x</span></div>
 
@@ -224,7 +224,7 @@
 
 <div class="viewcode-block" id="transparent_ingress">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.transparent_ingress">[docs]</a>
-<span class="k">def</span> <span class="nf">transparent_ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">transparent_ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &gt;&gt;&gt; transparent_ingress(1, 2, test=1)</span>
 <span class="sd">    ((1, 2), {&#39;test&#39;: 1})</span>
@@ -236,7 +236,7 @@
 
 <div class="viewcode-block" id="transparent_egress">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.transparent_egress">[docs]</a>
-<span class="k">def</span> <span class="nf">transparent_egress</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">transparent_egress</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &gt;&gt;&gt; transparent_egress(&#39;unnecessary_doctest&#39;)</span>
 <span class="sd">    &#39;unnecessary_doctest&#39;</span>
@@ -248,25 +248,25 @@
 
 <div class="viewcode-block" id="MakeFromFunc">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.MakeFromFunc">[docs]</a>
-<span class="k">class</span> <span class="nc">MakeFromFunc</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MakeFromFunc</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to indicate that an object should be made as a function of an input func&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_to_obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_to_obj</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func_to_obj</span> <span class="o">=</span> <span class="n">func_to_obj</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_to_obj</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></div>
 
 
 
 <span class="c1"># TODO: Continue factoring out Wrap and Wrapx code</span>
-<span class="k">class</span> <span class="nc">_Wrap</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_Wrap</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;To be used as the base of actual Wrap objects.&quot;&quot;&quot;</span>
 
     <span class="n">_init_args</span> <span class="o">=</span> <span class="p">()</span>
     <span class="n">_init_kwargs</span> <span class="o">=</span> <span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
         <span class="c1"># wraps(func)(self) is there to copy over to self anything that func may</span>
@@ -280,44 +280,44 @@
         <span class="c1"># TODO: Pros and cons analysis of pointing __wrapped__ to func. partial uses</span>
         <span class="c1">#  .func, but wraps looks for __wrapped__</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Just forward the call to the wrapped function.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;reduce is meant to control how things are pickled/unpickled&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This method allows things to work well when we use Wrap object as method&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="k">return</span> <span class="n">MethodType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># TODO: Replace i2.Wrap with dynamic (Wrap or Wrapx)</span>
         <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;Wrap&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;i2.Wrap </span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
     <span class="c1"># TODO: Don&#39;t know exactly what I&#39;m doing below. Review with someone!</span>
-    <span class="k">def</span> <span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;So that name of function is passed on to method when assigning to attribute</span>
 <span class="sd">        That is, doing ``method = Wrap(func)`` in a class definition&quot;&quot;&quot;</span>
         <span class="c1"># TODO: Look into sanity of mutating the name and other ways to achieve same</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
 
-    <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="c1"># To get help(instance.method) to work!</span>
     <span class="c1"># TODO: Does this have undesirable side effects?</span>
     <span class="c1"># TODO: Perhaps self.__call__.__code__ is better (since it&#39;s actually what runs)?</span>
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">__code__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__code__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__code__</span>
 
 
-<span class="k">def</span> <span class="nf">_defaults_and_kwdefaults_of_func</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_defaults_and_kwdefaults_of_func</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">func</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="vm">__kwdefaults__</span>
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
@@ -329,7 +329,7 @@
 
 <div class="viewcode-block" id="Wrap">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Wrap">[docs]</a>
-<span class="k">class</span> <span class="nc">Wrap</span><span class="p">(</span><span class="n">_Wrap</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Wrap</span><span class="p">(</span><span class="n">_Wrap</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A function wrapper with interface modifiers.</span>
 
 <span class="sd">    :param func: The wrapped function</span>
@@ -428,7 +428,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="n">ingress_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
@@ -464,14 +464,14 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">ingress_sig</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotation</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
         <span class="n">func_args</span><span class="p">,</span> <span class="n">func_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span><span class="p">(</span><span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">egress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">func_args</span><span class="p">,</span> <span class="o">**</span><span class="n">func_kwargs</span><span class="p">))</span></div>
 
 
 
 <span class="nd">@double_up_as_factory</span>
-<span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span>
     <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">caller</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dflt_wrap</span><span class="o">=</span><span class="n">Wrap</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap a function, optionally transforming interface, input and output.</span>
@@ -585,7 +585,7 @@
 
 
 <span class="c1"># TODO: Add conditions on egress to route to Wrapx when complex egress</span>
-<span class="k">def</span> <span class="nf">_should_use_wrapx</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="p">,</span> <span class="n">caller</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_should_use_wrapx</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="p">,</span> <span class="n">caller</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">caller</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
@@ -594,12 +594,12 @@
 
 <div class="viewcode-block" id="append_empty_args">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.append_empty_args">[docs]</a>
-<span class="k">def</span> <span class="nf">append_empty_args</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">append_empty_args</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;To use to transform an ingress function that only returns kwargs to one that</span>
 <span class="sd">    returns the normal form of ingress functions: ((), kwargs)&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(),</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_func</span></div>
@@ -608,7 +608,7 @@
 
 <div class="viewcode-block" id="Ingress">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Ingress">[docs]</a>
-<span class="k">class</span> <span class="nc">Ingress</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ingress</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The Ingress class offers a template for creating ingress classes.</span>
 
 <span class="sd">    Note that when writing a decorator with ``i2.wrapper``, you&#39;re usually better off</span>
@@ -736,7 +736,7 @@
 <span class="sd">    &gt;&gt;&gt; assert wrapped_f(2, x=3, you=4) == &#39;(w:=4) + (x:=6) * (y:=7) ** (z:=3) == 2062&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">inner_sig</span><span class="p">,</span>
         <span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KwargsTrans</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -792,7 +792,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">allow_excess</span> <span class="o">=</span> <span class="n">allow_excess</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">allow_partial</span> <span class="o">=</span> <span class="n">allow_partial</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
         <span class="c1"># Get the all-keywords version of the arguments (args,kwargs-&gt;kwargs)</span>
         <span class="n">func_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span>
             <span class="n">ingress_args</span><span class="p">,</span> <span class="n">ingress_kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">apply_defaults</span>
@@ -813,12 +813,12 @@
             <span class="n">allow_partial</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">allow_partial</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Ingress signature: </span><span class="si">{</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
 <div class="viewcode-block" id="Ingress.wrap">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Ingress.wrap">[docs]</a>
-    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Wrap</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Wrap</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convenience method to wrap a function with the instance ingress.</span>
 <span class="sd">        ``ingress.wrap(func,...)`` equivalent to ``Wrap(func, ingress, ...)``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -828,7 +828,7 @@
 <div class="viewcode-block" id="Ingress.name_map">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Ingress.name_map">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">name_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wrapped</span><span class="p">,</span> <span class="o">**</span><span class="n">old_to_new_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wrapped</span><span class="p">,</span> <span class="o">**</span><span class="n">old_to_new_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Change argument names.</span>
 
 <span class="sd">        &gt;&gt;&gt; def f(w, /, x: float, y=2, *, z: int = 3):</span>
@@ -868,7 +868,7 @@
 
 <div class="viewcode-block" id="items_with_mapped_keys">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.items_with_mapped_keys">[docs]</a>
-<span class="k">def</span> <span class="nf">items_with_mapped_keys</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key_mapper</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">items_with_mapped_keys</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key_mapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform dict keys. More precisely yield (new_k,v) pairs from a key mapper dict.</span>
 
 <span class="sd">    :param d: src dict</span>
@@ -891,7 +891,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">invert_map</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_map</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="n">new_d</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_d</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">new_d</span>
@@ -899,11 +899,11 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There are duplicate keys so I can invert map: </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">parameters_to_dict</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parameters_to_dict</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">parameter_to_dict</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_ingress_class_inputs</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_ingress_class_inputs</span><span class="p">(</span>
     <span class="n">inner_sig</span><span class="p">,</span>
     <span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KwargsTrans</span><span class="p">],</span>
     <span class="n">outer_sig</span><span class="p">,</span>
@@ -934,7 +934,7 @@
 <span class="c1"># TODO: See what this adds over ``Ingress`` class. Consider merging or reusing.</span>
 <div class="viewcode-block" id="InnerMapIngress">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.InnerMapIngress">[docs]</a>
-<span class="k">class</span> <span class="nc">InnerMapIngress</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InnerMapIngress</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A class to help build ingresses systematically by mapping the inner signature.</span>
 
 <span class="sd">    *Systematically*, i.e. &quot;according to a fixed plan/system&quot; is what it&#39;s about here.</span>
@@ -1039,7 +1039,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">inner_sig</span><span class="p">,</span>
         <span class="n">kwargs_trans</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KwargsTrans</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1067,7 +1067,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">inner_name_for_outer_name</span> <span class="o">=</span> <span class="n">invert_map</span><span class="p">(</span><span class="n">outer_name_for_inner_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
         <span class="c1"># Get the all-keywords version of the arguments (args,kwargs-&gt;kwargs)</span>
         <span class="n">func_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span>
             <span class="n">ingress_args</span><span class="p">,</span> <span class="n">ingress_kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span>
@@ -1092,7 +1092,7 @@
 <div class="viewcode-block" id="InnerMapIngress.from_signature">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.InnerMapIngress.from_signature">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="n">outer_sig</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="n">outer_sig</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A convienience ingress constructor to specify wrappings that affect arguments</span>
 <span class="sd">        independently.</span>
@@ -1145,8 +1145,8 @@
 
 
 <span class="c1"># TODO: Fits global pattern -- merge</span>
-<span class="k">class</span> <span class="nc">ArgNameMappingIngress</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">outer_name_for_inner_name</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArgNameMappingIngress</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">outer_name_for_inner_name</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">inner_sig</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">ch_names</span><span class="p">(</span><span class="o">**</span><span class="n">outer_name_for_inner_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">conserve_kind</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
@@ -1154,7 +1154,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">inner_name_for_outer_name</span> <span class="o">=</span> <span class="n">invert_map</span><span class="p">(</span><span class="n">outer_name_for_inner_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ingress_args</span><span class="p">,</span> <span class="o">**</span><span class="n">ingress_kwargs</span><span class="p">):</span>
         <span class="c1"># Get the all-keywords version of the arguments (args,kwargs-&gt;kwargs)</span>
         <span class="n">func_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span><span class="n">ingress_args</span><span class="p">,</span> <span class="n">ingress_kwargs</span><span class="p">)</span>
         <span class="c1"># Modify the keys of func_kwargs so they reflect the inner signature&#39;s names</span>
@@ -1168,7 +1168,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">mk_args_and_kwargs</span><span class="p">(</span><span class="n">func_kwargs</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">mk_ingress_from_name_mapper</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">name_mapper</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_ingress_from_name_mapper</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">name_mapper</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">ArgNameMappingIngress</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="n">conserve_kind</span><span class="p">,</span> <span class="o">**</span><span class="n">name_mapper</span><span class="p">)</span>
 
 
@@ -1176,18 +1176,18 @@
 <span class="c1"># TODO: Make sure VARIADICs are handled properly, or error raised if present</span>
 
 
-<span class="k">def</span> <span class="nf">apply_func_on_cond</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_func_on_cond</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">cond</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">v</span>
 
 
-<span class="k">def</span> <span class="nf">modify_dict_on_cond</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">modify_dict_on_cond</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">apply_func_on_cond</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
 
-<span class="k">def</span> <span class="nf">convert_VK_to_KO</span><span class="p">(</span><span class="n">kinds</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_VK_to_KO</span><span class="p">(</span><span class="n">kinds</span><span class="p">):</span>
     <span class="n">cond</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">v</span> <span class="o">==</span> <span class="n">VK</span>
     <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">KO</span>
 
@@ -1197,11 +1197,11 @@
 <span class="n">nice_kinds</span> <span class="o">=</span> <span class="n">deprecation_of</span><span class="p">(</span><span class="n">kind_forgiving_func</span><span class="p">,</span> <span class="s2">&quot;nice_kinds&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">wrap_from_sig</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">new_sig</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">call_somewhat_forgivingly</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">wrap_from_sig</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">new_sig</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">i2</span><span class="w"> </span><span class="kn">import</span> <span class="n">call_somewhat_forgivingly</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">call_somewhat_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">enforce_sig</span><span class="o">=</span><span class="n">new_sig</span><span class="p">)</span>
 
     <span class="n">_func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">new_sig</span>
@@ -1213,12 +1213,12 @@
 <span class="c1"># wrap tools</span>
 
 
-<span class="k">def</span> <span class="nf">_only_keep_non_none_values</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_only_keep_non_none_values</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
 
 
 <span class="nd">@double_up_as_factory</span>
-<span class="k">def</span> <span class="nf">ch_names</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">old_to_new_name</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ch_names</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">old_to_new_name</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Change the argument names of a function.</span>
 
 <span class="sd">    &gt;&gt;&gt; def f(w, /, x: float, y=2, *, z: int = 3):</span>
@@ -1245,7 +1245,7 @@
 
 <span class="n">map_names</span> <span class="o">=</span> <span class="n">ch_names</span>  <span class="c1"># back-compatibility alias</span>
 
-<span class="kn">from</span> <span class="nn">i2.deco</span> <span class="kn">import</span> <span class="n">_resolve_inclusion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2.deco</span><span class="w"> </span><span class="kn">import</span> <span class="n">_resolve_inclusion</span>
 
 
 <span class="c1"># TODO: A more general version would allow include and exclude to be expressed as</span>
@@ -1253,7 +1253,7 @@
 <span class="c1">#     (name, kind, default, annotation).</span>
 <div class="viewcode-block" id="include_exclude_ingress_factory">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.include_exclude_ingress_factory">[docs]</a>
-<span class="k">def</span> <span class="nf">include_exclude_ingress_factory</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">include_exclude_ingress_factory</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allow_partial</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1270,7 +1270,7 @@
 
 
 <span class="nd">@double_up_as_factory</span>
-<span class="k">def</span> <span class="nf">include_exclude</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">include_exclude</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reorder and/or remove parameters.</span>
 
 <span class="sd">    &gt;&gt;&gt; def foo(a, b, c=&#39;C&#39;, d=&#39;D&#39;):</span>
@@ -1295,7 +1295,7 @@
 <span class="c1"># TODO: Not working completely with allow_removal_of_non_defaulted_params=True</span>
 <span class="c1">#  See https://github.com/i2mint/i2/issues/44</span>
 <span class="nd">@double_up_as_factory</span>
-<span class="k">def</span> <span class="nf">rm_params</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rm_params</span><span class="p">(</span>
     <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">params_to_remove</span><span class="o">=</span><span class="p">(),</span>
@@ -1351,11 +1351,11 @@
 <span class="c1">#     return new_sig(func)</span>
 
 
-<span class="k">def</span> <span class="nf">arg_val_converter</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_for_arg</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">arg_val_converter</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_for_arg</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ArgValConverterIngress</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_for_arg</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">arg_val_converter_ingress</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">__strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_for_arg</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">arg_val_converter_ingress</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">__strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_for_arg</span><span class="p">):</span>
     <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">__strict</span><span class="p">:</span>
         <span class="n">conversion_names_that_are_not_func_args</span> <span class="o">=</span> <span class="n">conversion_for_arg</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span>
@@ -1365,7 +1365,7 @@
         <span class="p">)</span>
 
     <span class="nd">@sig</span>
-    <span class="k">def</span> <span class="nf">ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># TODO: Make a helper function for this ak -&gt; k -&gt; proc -&gt; ak pattern</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">convert_dict_values</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">conversion_for_arg</span><span class="p">))</span>
@@ -1376,8 +1376,8 @@
 
 
 <span class="c1"># TODO: Fits global pattern -- merge</span>
-<span class="k">class</span> <span class="nc">ArgValConverterIngress</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">__strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_for_arg</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArgValConverterIngress</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">__strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_for_arg</span><span class="p">):</span>
         <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">__strict</span><span class="p">:</span>
             <span class="n">conversion_names_that_are_not_func_args</span> <span class="o">=</span> <span class="p">(</span>
@@ -1391,7 +1391,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">conversion_for_arg</span> <span class="o">=</span> <span class="n">conversion_for_arg</span>
         <span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># TODO: Make a helper function for this ak -&gt; k -&gt; proc -&gt; ak pattern</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">convert_dict_values</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conversion_for_arg</span><span class="p">))</span>
@@ -1403,7 +1403,7 @@
 <span class="c1"># Utils to help define value conversions in ingress functions</span>
 
 
-<span class="k">def</span> <span class="nf">convert_dict_values</span><span class="p">(</span><span class="n">to_convert</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key_to_conversion_function</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_dict_values</span><span class="p">(</span><span class="n">to_convert</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key_to_conversion_function</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">to_convert</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key_to_conversion_function</span><span class="p">:</span>
             <span class="n">conversion_func</span> <span class="o">=</span> <span class="n">key_to_conversion_function</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
@@ -1413,24 +1413,24 @@
 
 
 <span class="c1"># TODO: Test for performance and ask about readability</span>
-<span class="k">def</span> <span class="nf">_alt_convert_dict_values</span><span class="p">(</span><span class="n">to_convert</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key_to_conversion_function</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_alt_convert_dict_values</span><span class="p">(</span><span class="n">to_convert</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key_to_conversion_function</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">to_convert</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">conversion_func</span> <span class="o">=</span> <span class="n">key_to_conversion_function</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
         <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">conversion_func</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">params_used_in_funcs</span><span class="p">(</span><span class="n">funcs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">params_used_in_funcs</span><span class="p">(</span><span class="n">funcs</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">name</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">names</span><span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">required_params_used_in_funcs</span><span class="p">(</span><span class="n">funcs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">required_params_used_in_funcs</span><span class="p">(</span><span class="n">funcs</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">name</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">required_names</span><span class="p">}</span>
 
 
 <span class="c1"># TODO: Should we add some explicit/validation/strict options?</span>
 <div class="viewcode-block" id="kwargs_trans">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.kwargs_trans">[docs]</a>
-<span class="k">def</span> <span class="nf">kwargs_trans</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kwargs_trans</span><span class="p">(</span>
     <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">_recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">_inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">key_and_val_func</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform a kwargs dict or build a transformer.</span>
@@ -1523,7 +1523,7 @@
 
 <div class="viewcode-block" id="camelize">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.camelize">[docs]</a>
-<span class="k">def</span> <span class="nf">camelize</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">camelize</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &gt;&gt;&gt; camelize(&#39;camel_case&#39;)</span>
 <span class="sd">    &#39;CamelCase&#39;</span>
@@ -1532,7 +1532,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">kwargs_trans_to_extract_args_from_attrs</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kwargs_trans_to_extract_args_from_attrs</span><span class="p">(</span>
     <span class="n">outer_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">attr_names</span><span class="o">=</span><span class="p">(),</span> <span class="n">obj_param</span><span class="o">=</span><span class="s2">&quot;self&quot;</span>
 <span class="p">):</span>
     <span class="bp">self</span> <span class="o">=</span> <span class="n">outer_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">obj_param</span><span class="p">)</span>
@@ -1543,7 +1543,7 @@
 
 <span class="c1"># TODO: kind lost here, only 3.10 offers dataclasses with some control over kind:</span>
 <span class="c1">#   See: https://stackoverflow.com/questions/49908182/how-to-make-keyword-only-fields-with-dataclasses</span>
-<span class="k">def</span> <span class="nf">param_to_dataclass_field_tuple</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">param_to_dataclass_field_tuple</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span>
 
 
@@ -1552,7 +1552,7 @@
 
 <div class="viewcode-block" id="func_to_method_func">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.func_to_method_func">[docs]</a>
-<span class="k">def</span> <span class="nf">func_to_method_func</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">func_to_method_func</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span>
     <span class="n">instance_params</span><span class="o">=</span><span class="p">(),</span>
     <span class="o">*</span><span class="p">,</span>
@@ -1677,7 +1677,7 @@
 <span class="c1"># TODO: Make instances picklable (class is already, but not instances!)!!</span>
 <div class="viewcode-block" id="bind_funcs_object_attrs">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.bind_funcs_object_attrs">[docs]</a>
-<span class="k">def</span> <span class="nf">bind_funcs_object_attrs</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bind_funcs_object_attrs</span><span class="p">(</span>
     <span class="n">funcs</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="p">(),</span> <span class="o">*</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_attrs</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform one or several functions into a class that contains them as methods</span>
@@ -1765,12 +1765,12 @@
 
 
 
-<span class="k">class</span> <span class="nc">PickleHelperMixin</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PickleHelperMixin</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span>
 
 
-<span class="k">def</span> <span class="nf">_mk_base_class_for_funcs</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">init_params</span><span class="p">,</span> <span class="n">funcs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_mk_base_class_for_funcs</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">init_params</span><span class="p">,</span> <span class="n">funcs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a class with given init_params.</span>
 
@@ -1799,7 +1799,7 @@
 
 <div class="viewcode-block" id="bind_funcs_object_attrs_old">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.bind_funcs_object_attrs_old">[docs]</a>
-<span class="k">def</span> <span class="nf">bind_funcs_object_attrs_old</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bind_funcs_object_attrs_old</span><span class="p">(</span>
     <span class="n">funcs</span><span class="p">,</span>
     <span class="n">init_params</span><span class="o">=</span><span class="p">(),</span>
     <span class="o">*</span><span class="p">,</span>
@@ -1889,14 +1889,14 @@
 
 
 
-<span class="k">def</span> <span class="nf">_items_filt</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_items_filt</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
 
 
-<span class="k">def</span> <span class="nf">_mk_sig_from_params_and_funcs</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">funcs</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">gen</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_mk_sig_from_params_and_funcs</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">funcs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gen</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="k">pass</span>
 
@@ -1957,56 +1957,56 @@
 
 <div class="viewcode-block" id="WrapperValidationError">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.WrapperValidationError">[docs]</a>
-<span class="k">class</span> <span class="nc">WrapperValidationError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WrapperValidationError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when wrapper some construction params are not valid&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="EgressValidationError">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.EgressValidationError">[docs]</a>
-<span class="k">class</span> <span class="nc">EgressValidationError</span><span class="p">(</span><span class="n">WrapperValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EgressValidationError</span><span class="p">(</span><span class="n">WrapperValidationError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a egress is not valid&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="IngressValidationError">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.IngressValidationError">[docs]</a>
-<span class="k">class</span> <span class="nc">IngressValidationError</span><span class="p">(</span><span class="n">WrapperValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IngressValidationError</span><span class="p">(</span><span class="n">WrapperValidationError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a ingress is not valid&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="CallerValidationError">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.CallerValidationError">[docs]</a>
-<span class="k">class</span> <span class="nc">CallerValidationError</span><span class="p">(</span><span class="n">WrapperValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CallerValidationError</span><span class="p">(</span><span class="n">WrapperValidationError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a caller is not valid&quot;&quot;&quot;</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_default_ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_default_ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
 
 
-<span class="k">def</span> <span class="nf">_default_egress</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="o">**</span><span class="n">egress_params</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_default_egress</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="o">**</span><span class="n">egress_params</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">output</span>
 
 
-<span class="k">def</span> <span class="nf">_default_caller</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_default_caller</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
 <span class="n">_keyword_kinds</span> <span class="o">=</span> <span class="p">{</span><span class="n">Sig</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span><span class="p">,</span> <span class="n">Sig</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">_all_kinds_are_keyword_only_or_variadic_keyword</span><span class="p">(</span><span class="n">sig</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_all_kinds_are_keyword_only_or_variadic_keyword</span><span class="p">(</span><span class="n">sig</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">kind</span> <span class="ow">in</span> <span class="n">_keyword_kinds</span> <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">kinds</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">3</span><span class="p">:])</span>
 
 
 <span class="c1"># TODO: Factor out more common parts with Wrap and reuse (possibly through _Wrap)</span>
 <div class="viewcode-block" id="Wrapx">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.Wrapx">[docs]</a>
-<span class="k">class</span> <span class="nc">Wrapx</span><span class="p">(</span><span class="n">_Wrap</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">caller</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Wrapx</span><span class="p">(</span><span class="n">_Wrap</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">caller</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;An extended wrapping object that allows more complex wrapping mechanisms.</span>
 
 <span class="sd">        :param func: The wrapped function</span>
@@ -2104,7 +2104,7 @@
         <span class="c1"># TODO: Pros and cons analysis of pointing __wrapped__ to func. partial uses</span>
         <span class="c1">#  .func, but wraps looks for __wrapped__</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
             <span class="c1"># TODO: Consider call_forgivingly(self.ingress, *args, **kwargs)</span>
@@ -2129,7 +2129,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_validate_ingress_output</span><span class="p">(</span><span class="n">ingress_output</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_ingress_output</span><span class="p">(</span><span class="n">ingress_output</span><span class="p">):</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ingress_output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
         <span class="ow">or</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">ingress_output</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
@@ -2143,7 +2143,7 @@
     <span class="k">return</span> <span class="n">ingress_output</span>
 
 
-<span class="k">def</span> <span class="nf">_process_wrapx_params</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="p">,</span> <span class="n">caller</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_process_wrapx_params</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="p">,</span> <span class="n">caller</span><span class="p">):</span>
     <span class="n">func_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
     <span class="n">ingress</span><span class="p">,</span> <span class="n">ingress_sig</span> <span class="o">=</span> <span class="n">_init_ingress</span><span class="p">(</span><span class="n">func_sig</span><span class="p">,</span> <span class="n">ingress</span><span class="p">)</span>
@@ -2154,7 +2154,7 @@
     <span class="k">return</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="p">,</span> <span class="n">caller</span><span class="p">,</span> <span class="n">sig</span>
 
 
-<span class="k">def</span> <span class="nf">_mk_composite_sig</span><span class="p">(</span><span class="n">ingress_sig</span><span class="p">,</span> <span class="n">egress_sig</span><span class="p">,</span> <span class="n">caller_sig</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_mk_composite_sig</span><span class="p">(</span><span class="n">ingress_sig</span><span class="p">,</span> <span class="n">egress_sig</span><span class="p">,</span> <span class="n">caller_sig</span><span class="p">):</span>
     <span class="n">egress_sig_minus_first_arg</span> <span class="o">=</span> <span class="n">egress_sig</span> <span class="o">-</span> <span class="n">egress_sig</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">caller_sig_minus_three_first_args</span> <span class="o">=</span> <span class="n">caller_sig</span> <span class="o">-</span> <span class="n">caller_sig</span><span class="o">.</span><span class="n">names</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
     <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span>
@@ -2164,7 +2164,7 @@
     <span class="k">return</span> <span class="n">sig</span>
 
 
-<span class="k">def</span> <span class="nf">_init_caller</span><span class="p">(</span><span class="n">caller</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_init_caller</span><span class="p">(</span><span class="n">caller</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">caller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">caller</span> <span class="o">=</span> <span class="n">_default_caller</span>
         <span class="n">caller_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="s2">&quot;func args kwargs&quot;</span><span class="p">)</span>  <span class="c1"># sig with three inputs</span>
@@ -2183,7 +2183,7 @@
     <span class="k">return</span> <span class="n">caller</span><span class="p">,</span> <span class="n">caller_sig</span>
 
 
-<span class="k">def</span> <span class="nf">_init_egress</span><span class="p">(</span><span class="n">func_sig</span><span class="p">,</span> <span class="n">egress</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_init_egress</span><span class="p">(</span><span class="n">func_sig</span><span class="p">,</span> <span class="n">egress</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">egress</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">egress</span> <span class="o">=</span> <span class="n">_default_egress</span>
         <span class="c1"># signature with a single &#39;output&#39; arg and func_sig&#39;s return_annotation</span>
@@ -2201,7 +2201,7 @@
     <span class="k">return</span> <span class="n">egress</span><span class="p">,</span> <span class="n">egress_sig</span>
 
 
-<span class="k">def</span> <span class="nf">_init_ingress</span><span class="p">(</span><span class="n">func_sig</span><span class="p">,</span> <span class="n">ingress</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_init_ingress</span><span class="p">(</span><span class="n">func_sig</span><span class="p">,</span> <span class="n">ingress</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">ingress</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ingress</span> <span class="o">=</span> <span class="n">_default_ingress</span>
         <span class="n">ingress_sig</span> <span class="o">=</span> <span class="n">func_sig</span>
@@ -2216,7 +2216,7 @@
 
 <div class="viewcode-block" id="partialx">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.partialx">[docs]</a>
-<span class="k">def</span> <span class="nf">partialx</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">partialx</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="vm">__name__</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_rm_partialize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2273,7 +2273,7 @@
 
 <div class="viewcode-block" id="move_params_to_the_end">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.move_params_to_the_end">[docs]</a>
-<span class="k">def</span> <span class="nf">move_params_to_the_end</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">move_params_to_the_end</span><span class="p">(</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">names_to_move</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2306,7 +2306,7 @@
 
 <div class="viewcode-block" id="move_names_to_the_end">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.move_names_to_the_end">[docs]</a>
-<span class="k">def</span> <span class="nf">move_names_to_the_end</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">names_to_move_to_the_end</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">move_names_to_the_end</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">names_to_move_to_the_end</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove the items of ``names_to_move_to_the_end`` from ``names``</span>
 <span class="sd">    and append to the right of names</span>
@@ -2337,11 +2337,11 @@
 <div class="viewcode-block" id="SmartDefault">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.SmartDefault">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">SmartDefault</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SmartDefault</span><span class="p">:</span>
     <span class="n">func_computing_default</span><span class="p">:</span> <span class="n">Callable</span>
     <span class="n">original_default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">empty</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_computing_default</span>
         <span class="n">func_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_default</span> <span class="ow">is</span> <span class="n">empty</span><span class="p">:</span>
@@ -2359,7 +2359,7 @@
 <span class="c1"># IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode</span>
 <div class="viewcode-block" id="complete_dict_applying_functions">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.complete_dict_applying_functions">[docs]</a>
-<span class="k">def</span> <span class="nf">complete_dict_applying_functions</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">complete_dict_applying_functions</span><span class="p">(</span>
     <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">func_for_name</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Complete dict ``d`` by applying function to variables in ``d``, sequentially.</span>
@@ -2423,7 +2423,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_compute_new_sigs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">smart_defaults</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_new_sigs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">smart_defaults</span><span class="p">):</span>
     <span class="n">original_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">original_sig</span><span class="o">.</span><span class="n">ch_defaults</span><span class="p">(</span>
         <span class="o">**</span><span class="p">{</span>
@@ -2437,7 +2437,7 @@
 
 
 <span class="nd">@double_up_as_factory</span>
-<span class="k">def</span> <span class="nf">add_smart_defaults</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_smart_defaults</span><span class="p">(</span>
     <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>

@@ -6,8 +6,8 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.routing_forest &mdash; i2 0.1.44 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+  <title>i2.routing_forest &mdash; i2 0.1.45 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6a0a5382"></script>
+      <script src="../../_static/documentation_options.js?v=ce72d79b"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -156,9 +156,9 @@ conditions that were specified for it.
 For example, if you need all matches, you can wrap it with <code class="docutils literal notranslate"><span class="pre">list</span></code>, if you need the
 first match only, you can wrap it with <code class="docutils literal notranslate"><span class="pre">next</span></code>, if you have a default value,
 you can wrap it in <code class="docutils literal notranslate"><span class="pre">next</span></code> with a default value.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">inspect</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">could_be_int</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">could_be_int</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="n">b</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
@@ -171,7 +171,7 @@ you can wrap it in <code class="docutils literal notranslate"><span class="pre">
 <span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">b</span>
 <span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">could_be_float</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">could_be_float</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="n">b</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
@@ -344,7 +344,7 @@ It yields (both with call and iter) it’s single <cite>.val</cite> attribute.</
 <dd><p>Implements a switch-case-like mapping with a callable key function.</p>
 <p>The purpose of <code class="docutils literal notranslate"><span class="pre">KeyFuncMapping</span></code> is to  allow switch-case logic to be
 given as a plugin specification.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">i2.routing_forest</span> <span class="kn">import</span> <span class="n">KeyFuncMapping</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">i2.routing_forest</span><span class="w"> </span><span class="kn">import</span> <span class="n">KeyFuncMapping</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">get_extension</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt;</span>

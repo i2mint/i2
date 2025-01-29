@@ -5,8 +5,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.1.44 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+  <title>i2.util &mdash; i2 0.1.45 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6a0a5382"></script>
+      <script src="../../_static/documentation_options.js?v=ce72d79b"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -107,16 +107,16 @@
   <h1>Source code for i2.util</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Misc util objects&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span><span class="p">,</span> <span class="n">itemgetter</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">wraps</span>
-<span class="kn">import</span> <span class="nn">types</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">SimpleNamespace</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">attrgetter</span><span class="p">,</span> <span class="n">itemgetter</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">wraps</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Mapping</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">Tuple</span><span class="p">,</span>
@@ -128,15 +128,15 @@
     <span class="n">TypeVar</span><span class="p">,</span>
     <span class="n">KT</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">import</span> <span class="nn">contextlib</span>
-<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="asis">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.asis">[docs]</a>
-<span class="k">def</span> <span class="nf">asis</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">asis</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;the identity function: f(x) := x (takes only one argument, and returns it)&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">x</span></div>
 
@@ -144,7 +144,7 @@
 
 <div class="viewcode-block" id="return_false">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.return_false">[docs]</a>
-<span class="k">def</span> <span class="nf">return_false</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">return_false</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;a function that returns True (takes any number of arguments)&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">False</span></div>
 
@@ -152,7 +152,7 @@
 
 <div class="viewcode-block" id="return_true">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.return_true">[docs]</a>
-<span class="k">def</span> <span class="nf">return_true</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">return_true</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;a function that returns False (takes any number of arguments)&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">False</span></div>
 
@@ -169,7 +169,7 @@
 <span class="c1">#       (https://github.com/i2mint/meshed/blob/61a5633cc8e1d4b4b26f31d3bf70d744aab327c4/meshed/slabs.py#L145)</span>
 <div class="viewcode-block" id="ConditionalExceptionCatcher">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.ConditionalExceptionCatcher">[docs]</a>
-<span class="k">class</span> <span class="nc">ConditionalExceptionCatcher</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConditionalExceptionCatcher</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Context manager to catch exceptions of a certain type and instance condition.</span>
 
@@ -210,7 +210,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">exception_types</span><span class="p">:</span> <span class="n">ExceptionTypes</span><span class="p">,</span>
         <span class="n">exception_condition</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="ne">BaseException</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">return_true</span><span class="p">,</span>
@@ -230,10 +230,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">handlers</span><span class="p">,</span> <span class="n">Mapping</span>
         <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected a callable or a mapping for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">handlers</span><span class="si">=}</span><span class="s2">&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
         <span class="c1"># TODO: Could extend exception_condition and/or handler to use traceback</span>
         <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">exception_types</span> <span class="ow">and</span> <span class="p">(</span>
             <span class="n">key</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exception_condition</span><span class="p">(</span><span class="n">exc_value</span><span class="p">)</span>
@@ -250,7 +250,7 @@
 
 <div class="viewcode-block" id="Namespace">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.Namespace">[docs]</a>
-<span class="k">class</span> <span class="nc">Namespace</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Namespace</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A namespace that is also a mutable mapping.</span>
 
@@ -285,19 +285,19 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
         <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span></div>
 
 
@@ -305,7 +305,7 @@
 <div class="viewcode-block" id="FileLikeObject">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FileLikeObject">[docs]</a>
 <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-<span class="k">def</span> <span class="nf">FileLikeObject</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">io_cls</span><span class="o">=</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">,</span> <span class="n">open_mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">FileLikeObject</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">io_cls</span><span class="o">=</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">,</span> <span class="n">open_mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager for file-like objects.</span>
 
 <span class="sd">    The purpose of this context manager is to be able to ensure we have a file-like</span>
@@ -334,7 +334,7 @@
 
 <div class="viewcode-block" id="copy_func">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.copy_func">[docs]</a>
-<span class="k">def</span> <span class="nf">copy_func</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">copy_func</span><span class="p">(</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">copy_dict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">globals_</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a (shallow) copy of a function.</span>
@@ -377,7 +377,7 @@
 <span class="sd">    :param copy_dict: Also copy any attributes set on the function instance. Defaults to ``True``.</span>
 <span class="sd">    :return: A shallow copy of the function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">FunctionType</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionType</span>
 
     <span class="n">code</span> <span class="o">=</span> <span class="n">code</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__code__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">CodeType</span><span class="p">):</span>
@@ -400,19 +400,19 @@
 
 <div class="viewcode-block" id="OverwritesForbidden">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.OverwritesForbidden">[docs]</a>
-<span class="k">class</span> <span class="nc">OverwritesForbidden</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OverwritesForbidden</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise when a user is not allowed to overwrite a mapping&#39;s key&quot;&quot;&quot;</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">is_lambda</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_lambda</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&lt;lambda&gt;&quot;</span>
 
 
 <span class="c1"># TODO: Fragile. Make more robust.</span>
 <div class="viewcode-block" id="lambda_code">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.lambda_code">[docs]</a>
-<span class="k">def</span> <span class="nf">lambda_code</span><span class="p">(</span><span class="n">lambda_func</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lambda_code</span><span class="p">(</span><span class="n">lambda_func</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract code of expression from lambda function.</span>
 <span class="sd">    For lambda code-extraction see:</span>
 <span class="sd">    https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function</span>
@@ -427,7 +427,7 @@
 <span class="c1">#  or make it work with functions more generally.</span>
 <div class="viewcode-block" id="PicklableLambda">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.PicklableLambda">[docs]</a>
-<span class="k">class</span> <span class="nc">PicklableLambda</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PicklableLambda</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wraps a lambda function to make it picklable (through extracting its code)</span>
 <span class="sd">    Also, provide it with a name, optionally.</span>
@@ -443,30 +443,30 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">lambda_code</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span>
 
-    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="n">func_code</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">state</span>
         <span class="n">func</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">func_code</span><span class="p">)</span>  <span class="c1"># scary?</span>
         <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)&gt;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="ensure_identifiers">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.ensure_identifiers">[docs]</a>
-<span class="k">def</span> <span class="nf">ensure_identifiers</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_identifiers</span><span class="p">(</span>
     <span class="o">*</span><span class="n">objs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
     <span class="n">get_identfiers</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">,</span>
     <span class="n">is_identifier</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">,</span>
@@ -516,7 +516,7 @@
 
 <div class="viewcode-block" id="insert_name_based_objects_in_scope">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.insert_name_based_objects_in_scope">[docs]</a>
-<span class="k">def</span> <span class="nf">insert_name_based_objects_in_scope</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">insert_name_based_objects_in_scope</span><span class="p">(</span>
     <span class="o">*</span><span class="n">names</span><span class="p">,</span>
     <span class="n">factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">scope</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">,</span>
@@ -583,7 +583,7 @@
 
 <div class="viewcode-block" id="LiteralVal">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.LiteralVal">[docs]</a>
-<span class="k">class</span> <span class="nc">LiteralVal</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LiteralVal</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An object to indicate that the value should be considered literally.</span>
 
 <span class="sd">    &gt;&gt;&gt; t = LiteralVal(42)</span>
@@ -594,12 +594,12 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
 
 <div class="viewcode-block" id="LiteralVal.get_val">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.LiteralVal.get_val">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_val</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_val</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the value wrapped by Literal instance.</span>
 
 <span class="sd">        One might want to use ``literal.get_val()`` instead ``literal()`` to get the</span>
@@ -616,7 +616,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">dflt_idx_preprocessor</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dflt_idx_preprocessor</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">str</span><span class="o">.</span><span class="n">isdigit</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
@@ -629,7 +629,7 @@
 
 <div class="viewcode-block" id="path_extractor">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.path_extractor">[docs]</a>
-<span class="k">def</span> <span class="nf">path_extractor</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">getter</span><span class="o">=</span><span class="n">dflt_idx_preprocessor</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">path_sep</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">path_extractor</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">getter</span><span class="o">=</span><span class="n">dflt_idx_preprocessor</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">path_sep</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get items from a tree-structured object from a sequence of tree-traversal indices.</span>
 
 <span class="sd">    :param tree: The object you want to extract values from:</span>
@@ -710,7 +710,7 @@
 <span class="c1"># Note: Specialization of path_extractor for Mappings</span>
 <div class="viewcode-block" id="dp_get">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.dp_get">[docs]</a>
-<span class="k">def</span> <span class="nf">dp_get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">dot_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dp_get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">dot_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get stuff from a dict (or any Mapping), using dot_paths (i.e. &#39;foo.bar&#39; instead of</span>
 <span class="sd">     [&#39;foo&#39;][&#39;bar&#39;])</span>
 
@@ -725,7 +725,7 @@
 
 <div class="viewcode-block" id="get_app_data_folder">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.get_app_data_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">get_app_data_folder</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_app_data_folder</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the full path of a directory suitable for storing application-specific data.</span>
 
@@ -754,7 +754,7 @@
 
 <div class="viewcode-block" id="lazyprop">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.lazyprop">[docs]</a>
-<span class="k">class</span> <span class="nc">lazyprop</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">lazyprop</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A descriptor implementation of lazyprop (cached property) from David Beazley&#39;s &quot;Python Cookbook&quot; book.</span>
 <span class="sd">    It&#39;s</span>
@@ -786,10 +786,10 @@
 <span class="sd">    3</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
-    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="k">else</span><span class="p">:</span>
@@ -801,14 +801,14 @@
 
 <div class="viewcode-block" id="FrozenHashError">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FrozenHashError">[docs]</a>
-<span class="k">class</span> <span class="nc">FrozenHashError</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FrozenHashError</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="FrozenDict">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FrozenDict">[docs]</a>
-<span class="k">class</span> <span class="nc">FrozenDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FrozenDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An immutable dict subtype that is hashable and can itself be used</span>
 <span class="sd">    as a :class:`dict` key or :class:`set` entry. What</span>
 <span class="sd">    :class:`frozenset` is to :class:`set`, FrozenDict is to</span>
@@ -826,7 +826,7 @@
 
 <div class="viewcode-block" id="FrozenDict.updated">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FrozenDict.updated">[docs]</a>
-    <span class="k">def</span> <span class="nf">updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a copy and add items from a dictionary or iterable (and/or</span>
 <span class="sd">        keyword arguments), overwriting values under an existing</span>
 <span class="sd">        key. See :meth:`dict.update` for more details.</span>
@@ -839,19 +839,19 @@
 <div class="viewcode-block" id="FrozenDict.fromkeys">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FrozenDict.fromkeys">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">fromkeys</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fromkeys</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># one of the lesser known and used/useful dict methods</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">cn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cn</span><span class="p">,</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">__reduce_ex__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">protocol</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__reduce_ex__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">protocol</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">),)</span>
 
-    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
@@ -865,11 +865,11 @@
 
         <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>  <span class="c1"># immutable types don&#39;t copy, see tuple&#39;s behavior</span>
 
     <span class="c1"># block everything else</span>
-    <span class="k">def</span> <span class="nf">_raise_frozen_typeerror</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_raise_frozen_typeerror</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="s2">&quot;raises a TypeError, because FrozenDicts are immutable&quot;</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> object is immutable&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -890,8 +890,8 @@
 <span class="p">)</span>  <span class="c1"># using this instead of callable() because classes are callable, for instance</span>
 
 
-<span class="k">class</span> <span class="nc">NoDefault</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NoDefault</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;no_default&quot;</span>
 
 
@@ -900,11 +900,11 @@
 
 <div class="viewcode-block" id="imdict">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.imdict">[docs]</a>
-<span class="k">class</span> <span class="nc">imdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">imdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;object is immutable&quot;</span><span class="p">)</span>
 
     <span class="fm">__setitem__</span> <span class="o">=</span> <span class="n">_immutable</span>
@@ -919,7 +919,7 @@
 
 <div class="viewcode-block" id="inject_method">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.inject_method">[docs]</a>
-<span class="k">def</span> <span class="nf">inject_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_function</span><span class="p">,</span> <span class="n">method_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">inject_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_function</span><span class="p">,</span> <span class="n">method_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Inject a method into an object instance.</span>
 
@@ -952,7 +952,7 @@
 
 <div class="viewcode-block" id="get_function_body">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.get_function_body">[docs]</a>
-<span class="k">def</span> <span class="nf">get_function_body</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_function_body</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the body of a function as a string.</span>
 
@@ -983,25 +983,25 @@
 
 <div class="viewcode-block" id="ExistingArgument">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.ExistingArgument">[docs]</a>
-<span class="k">class</span> <span class="nc">ExistingArgument</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExistingArgument</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="MissingArgument">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.MissingArgument">[docs]</a>
-<span class="k">class</span> <span class="nc">MissingArgument</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingArgument</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_default_sentinel_repr_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_default_sentinel_repr_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="mk_sentinel">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.mk_sentinel">[docs]</a>
-<span class="k">def</span> <span class="nf">mk_sentinel</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_sentinel</span><span class="p">(</span>
     <span class="n">name</span><span class="p">,</span>
     <span class="n">boolean_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">repr_</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_default_sentinel_repr_method</span><span class="p">,</span>
@@ -1121,21 +1121,21 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">class</span> <span class="nc">Sentinel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Sentinel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
 
         <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">repr_</span><span class="p">):</span>
             <span class="fm">__repr__</span> <span class="o">=</span> <span class="n">repr_</span>
         <span class="k">else</span><span class="p">:</span>
 
-            <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">repr_</span>
 
-        <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span>
 
-        <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">boolean_value</span>
 
     <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1154,7 +1154,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_indent</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">bool</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_indent</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">bool</span><span class="p">):</span>
     <span class="s2">&quot;based on boltons.strutils.indent&quot;</span>
     <span class="n">indented_lines</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="n">margin</span> <span class="o">+</span> <span class="n">line</span> <span class="k">if</span> <span class="n">key</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">else</span> <span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
@@ -1167,12 +1167,12 @@
 <span class="c1"># --------------------------------------------------------------------------------------</span>
 <span class="c1"># FunctionBuilder, vendored and adapted from boltons.funcutils</span>
 
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">formatannotation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">formatannotation</span>
 
 
 <div class="viewcode-block" id="inspect_formatargspec">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.inspect_formatargspec">[docs]</a>
-<span class="k">def</span> <span class="nf">inspect_formatargspec</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">inspect_formatargspec</span><span class="p">(</span>
     <span class="n">args</span><span class="p">,</span>
     <span class="n">varargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">varkw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1195,7 +1195,7 @@
 <span class="sd">    to reinvent from scratch, just copy their compatibility routine.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">formatargandannotation</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">formatargandannotation</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">formatarg</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">formatannotation</span><span class="p">(</span><span class="n">annotations</span><span class="p">[</span><span class="n">arg</span><span class="p">])</span>
@@ -1231,7 +1231,7 @@
 
 <div class="viewcode-block" id="FunctionBuilder">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FunctionBuilder">[docs]</a>
-<span class="k">class</span> <span class="nc">FunctionBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FunctionBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The FunctionBuilder type provides an interface for programmatically</span>
 <span class="sd">    creating new functions, either based on existing functions or from</span>
 <span class="sd">    scratch.</span>
@@ -1308,7 +1308,7 @@
     <span class="p">}</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_argspec_to_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_argspec_to_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
         <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">((</span><span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">argspec</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_argspec_defaults</span><span class="p">)</span>
 
@@ -1327,7 +1327,7 @@
 
     <span class="n">_compile_count</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">default_factory</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">val</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -1343,7 +1343,7 @@
 
 <div class="viewcode-block" id="FunctionBuilder.get_sig_str">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FunctionBuilder.get_sig_str">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_sig_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_annotations</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sig_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_annotations</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return function signature as a string.</span>
 
 <span class="sd">        with_annotations is ignored on Python 2.  On Python 3 signature</span>
@@ -1369,7 +1369,7 @@
         <span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_invocation_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_invocation_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">kwonly_pairs</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">formatters</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="p">:</span>
@@ -1392,7 +1392,7 @@
 <div class="viewcode-block" id="FunctionBuilder.from_func">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FunctionBuilder.from_func">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_func</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_func</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new FunctionBuilder instance based on an existing</span>
 <span class="sd">        function. The original function will not be stored or</span>
 <span class="sd">        modified.</span>
@@ -1421,7 +1421,7 @@
 
 <div class="viewcode-block" id="FunctionBuilder.get_func">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FunctionBuilder.get_func">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">execdict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_source</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">execdict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_source</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compile and return a new function based on the current values of</span>
 <span class="sd">        the FunctionBuilder.</span>
 
@@ -1478,7 +1478,7 @@
 
 <div class="viewcode-block" id="FunctionBuilder.get_defaults_dict">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FunctionBuilder.get_defaults_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_defaults_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_defaults_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a dictionary of function arguments with defaults and the</span>
 <span class="sd">        respective values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1491,7 +1491,7 @@
         <span class="k">return</span> <span class="n">ret</span></div>
 
 
-    <span class="k">def</span> <span class="nf">get_arg_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_required</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_arg_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_required</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">arg_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;kwonlyargs&quot;</span><span class="p">,</span> <span class="p">()))</span>
         <span class="k">if</span> <span class="n">only_required</span><span class="p">:</span>
             <span class="n">defaults_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_defaults_dict</span><span class="p">()</span>
@@ -1500,7 +1500,7 @@
 
 <div class="viewcode-block" id="FunctionBuilder.add_arg">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FunctionBuilder.add_arg">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">NO_DEFAULT</span><span class="p">,</span> <span class="n">kwonly</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">NO_DEFAULT</span><span class="p">,</span> <span class="n">kwonly</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an argument with optional *default* (defaults to</span>
 <span class="sd">        ``funcutils.NO_DEFAULT``). Pass *kwonly=True* to add a</span>
 <span class="sd">        keyword-only argument</span>
@@ -1526,7 +1526,7 @@
 
 <div class="viewcode-block" id="FunctionBuilder.remove_arg">
 <a class="viewcode-back" href="../../module_docs/i2/util.html#i2.util.FunctionBuilder.remove_arg">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove an argument from this FunctionBuilder&#39;s argument list. The</span>
 <span class="sd">        resulting function will have one less argument per call to</span>
 <span class="sd">        this function.</span>
@@ -1560,7 +1560,7 @@
         <span class="k">return</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">execdict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">execdict</span><span class="p">):</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;&lt;</span><span class="si">%s</span><span class="s2">-</span><span class="si">%d</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
             <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_compile_count</span><span class="p">),</span>
@@ -1574,10 +1574,10 @@
 
 
 
-<span class="k">def</span> <span class="nf">deprecation_of</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">old_name</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deprecation_of</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">old_name</span><span class="p">):</span>
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 
         <span class="n">warn</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">old_name</span><span class="si">}</span><span class="s2">` is deprecated. Use `</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">` instead.&quot;</span><span class="p">,</span>
