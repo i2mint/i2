@@ -1,4 +1,4 @@
-"""Meta-interfaces """
+"""Meta-interfaces"""
 
 from typing import Literal, List, Dict, Tuple, Callable, Union
 import re
