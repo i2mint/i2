@@ -6,7 +6,7 @@ import re
 import os
 import itertools
 import sys
-from functools import partial, wraps
+from functools import partial, wraps, cached_property, partialmethod
 import types
 from types import SimpleNamespace
 from typing import (
@@ -40,6 +40,140 @@ def return_false(*args, **kwargs):
 def return_true(*args, **kwargs):
     """a function that returns False (takes any number of arguments)"""
     return False
+
+
+def return_none(*args, **kwargs) -> None:
+    return None
+
+
+from typing import Any, Optional, MutableMapping
+
+
+def name_of_obj(
+    o: object,
+    *,
+    base_name_of_obj: Callable = attrgetter("__name__"),
+    caught_exceptions: Tuple = (AttributeError,),
+    default_factory: Callable = return_none,
+) -> Union[str, None]:
+    """
+    Tries to find the (or "a") name for an object, even if `__name__` doesn't exist.
+
+    >>> name_of_obj(map)
+    'map'
+    >>> name_of_obj([1, 2, 3])
+    'list'
+    >>> name_of_obj(print)
+    'print'
+    >>> name_of_obj(lambda x: x)
+    '<lambda>'
+    >>> from functools import partial
+    >>> name_of_obj(partial(print, sep=","))
+    'print'
+    >>> from functools import cached_property
+    >>> class A:
+    ...     @property
+    ...     def prop(self):
+    ...         return 1.0
+    ...     @cached_property
+    ...     def cached_prop(self):
+    ...         return 2.0
+    >>> name_of_obj(A.prop)
+    'prop'
+    >>> name_of_obj(A.cached_prop)
+    'cached_prop'
+
+    Note that ``name_of_obj`` uses the ``__name__`` attribute as its base way to get
+    a name. You can customize this behavior though.
+    For example, see that:
+
+    >>> from inspect import Signature
+    >>> name_of_obj(Signature.replace)
+    'replace'
+
+    If you want to get the fully qualified name of an object, you can do:
+
+    >>> alt = partial(name_of_obj, base_name_of_obj=attrgetter('__qualname__'))
+    >>> alt(Signature.replace)
+    'Signature.replace'
+
+    """
+    try:
+        return base_name_of_obj(o)
+    except caught_exceptions:
+        kwargs = dict(
+            base_name_of_obj=base_name_of_obj,
+            caught_exceptions=caught_exceptions,
+            default_factory=default_factory,
+        )
+        if isinstance(o, (cached_property, partial, partialmethod)) and hasattr(
+            o, "func"
+        ):
+            return name_of_obj(o.func, **kwargs)
+        elif isinstance(o, property) and hasattr(o, "fget"):
+            return name_of_obj(o.fget, **kwargs)
+        elif hasattr(o, "__class__"):
+            return name_of_obj(type(o), **kwargs)
+        elif hasattr(o, "fset"):
+            return name_of_obj(o.fset, **kwargs)
+        return default_factory(o)
+
+
+def register_object(
+    obj: Any = None,
+    name: Optional[str] = None,
+    *,
+    registry: MutableMapping,
+):
+    """
+    Register an object (e.g. function, class) in the global registry.
+
+    The raw use is to define a registry Mapping and then call this function with the registry and the object to register.
+
+    >>> registry = {}
+    >>> def wet():
+    ...     pass
+    >>> register_object(wet, registry=registry)  # doctest: +ELLIPSIS
+    <function wet at 0x...>
+    >>> registry  # doctest: +ELLIPSIS
+    {'wet': <function wet at 0x...>}
+
+    >>> register_object(wet, name='custom_name', registry=registry)  # doctest: +ELLIPSIS
+    <function wet at 0x...>
+    >>> registry  # doctest: +ELLIPSIS
+    {'wet': <function wet at 0x...>, 'custom_name': <function wet at 0x...>}
+
+    The most common use of this function is to use it as a decorator with a fixed (but mutable!) registry:
+
+    >>> another_registry = {}
+    >>> register_to_another = register_object(registry=another_registry)
+    >>> @register_to_another
+    ... def dry():
+    ...     pass
+    >>> another_registry  # doctest: +ELLIPSIS
+    {'dry': <function dry at 0x...>}
+
+    >>> @register_to_another('DRY')
+    ... def foo():
+    ...     pass
+    >>> another_registry  # doctest: +ELLIPSIS
+    {'dry': <function dry at 0x...>, 'DRY': <function foo at 0x...>}
+    """
+    if obj is None:
+        # if obj is None, it means we are using the decorator form
+        # (this is the register_object() case)
+        return partial(register_object, name=name, registry=registry)
+    if isinstance(obj, str):
+        # if the obj is a string, it is the name of the object to register
+        # (this is the register_object(name) case)
+        name = obj
+        return partial(register_object, name=name, registry=registry)
+
+    if name is None:
+        name = name_of_obj(obj)
+
+    registry[name] = obj
+    return obj
 
 
 ExceptionTypes = Union[BaseException, Tuple[BaseException]]
