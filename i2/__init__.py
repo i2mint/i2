@@ -50,6 +50,7 @@ from i2.wrapper import (
 )
 
 from i2.util import (
+    register_object,  # Register an object in a registry
     asis,  # the identity function: f(x) := x (takes only one argument, and returns it)
     return_true,  # a function that returns True (takes any number of arguments)
     return_false,  # a function that returns False (takes any number of arguments)
