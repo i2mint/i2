@@ -18,6 +18,7 @@ from typing import (
     Union,
     Optional,
     Iterable,
+    Iterator,
     TypeVar,
     KT,
 )
@@ -263,55 +264,87 @@ class ConditionalExceptionCatcher:
         return False  # Allows other exceptions to propagate
 
 
-class Namespace(SimpleNamespace, MutableMapping):
+class AttributeMapping(SimpleNamespace, Mapping[str, Any]):
     """
-    A namespace that is also a mutable mapping.
+    A read-only mapping with attribute access.
 
-    Example:
+    Useful when you want mapping interface but don't need mutation.
 
-    >>> s = Namespace(apple=1, apps=2)
+    Examples:
 
-    Get your values via attributes:
-
-    >>> s.apple
-    1
-
-    Get your values via keys:
-
-    >>> s['apple']
-    1
-
-    Do the stuff Mappings do:
-
-    >>> list(s)
-    ['apple', 'apps']
-    >>> 'apps' in s
-    True
-
-    Or even MutableMappings do:
-
-    >>> s['appartment'] = 3
-    >>> s
-    Namespace(apple=1, apps=2, appartment=3)
-    >>> s.appartment
-    3
-
+    >>> ns = AttributeMapping(x=10, y=20)
+    >>> ns.x
+    10
+    >>> ns['y']
+    20
+    >>> list(ns)
+    ['x', 'y']
     """
 
-    def __getitem__(self, k):
-        return getattr(self, k)
+    def __getitem__(self, key: str) -> Any:
+        """Get item with proper KeyError on missing keys."""
+        return _get_attr_or_key_error(self, key)
 
-    def __setitem__(self, k, v):
-        setattr(self, k, v)
-
-    def __delitem__(self, k):
-        delattr(self, k)
-
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
+        """Iterate over attribute names."""
         return iter(self.__dict__)
 
-    def __len__(self):
+    def __len__(self) -> int:
+        """Return number of attributes."""
         return len(self.__dict__)
+
+
+class AttributeMutableMapping(AttributeMapping, MutableMapping[str, Any]):
+    """
+    A mutable mapping that provides both attribute and dictionary-style access.
+
+    Extends AttributeMapping with mutation capabilities,
+    ensuring proper error handling and protocol compliance.
+
+    Examples:
+
+    >>> ns = AttributeMutableMapping(apple=1, banana=2)
+    >>> ns.apple
+    1
+    >>> ns['banana']
+    2
+    >>> ns['cherry'] = 3
+    >>> ns.cherry
+    3
+    >>> list(ns)
+    ['apple', 'banana', 'cherry']
+    >>> len(ns)
+    3
+    >>> 'apple' in ns
+    True
+    >>> del ns['banana']
+    >>> 'banana' in ns
+    False
+    """
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        """Set item via attribute assignment."""
+        setattr(self, key, value)
+
+    def __delitem__(self, key: str) -> None:
+        """Delete item with proper KeyError on missing keys."""
+        try:
+            delattr(self, key)
+        except AttributeError:
+            raise KeyError(key)
+
+
+def _get_attr_or_key_error(obj: object, key: str) -> Any:
+    """
+    Get attribute or raise KeyError if not found.
+
+    Helper function to maintain consistent error handling across
+    mapping implementations.
+    """
+    try:
+        return getattr(obj, key)
+    except AttributeError:
+        raise KeyError(key)
 
 
 @contextlib.contextmanager
