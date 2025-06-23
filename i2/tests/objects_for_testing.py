@@ -76,7 +76,7 @@ def sum_of_args(*args, **kwargs):
     return {k: t + v for k, v in kwargs.items()}
 
 
-def test_func_1(
+def demo_func_1(
     any_var,
     a_list: list,
     a_dict: dict,
@@ -119,7 +119,7 @@ class SomeOtherClass(object):
     pass
 
 
-def test_func_2(
+def demo_func_2(
     any_var,
     an_int: int,
     a_float=0.1,
