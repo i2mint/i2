@@ -281,6 +281,16 @@ class AttributeMapping(SimpleNamespace, Mapping[str, Any]):
     ['x', 'y']
     """
 
+    @classmethod
+    def from_mapping(self, mapping: Mapping[str, Any]) -> "AttributeMapping":
+        """
+        Create an AttributeMapping from a regular mapping.
+
+        This is useful when you want to convert a dictionary or other mapping
+        into an AttributeMapping for attribute-style access.
+        """
+        return self(**mapping)
+
     def __getitem__(self, key: str) -> Any:
         """Get item with proper KeyError on missing keys."""
         return _get_attr_or_key_error(self, key)
