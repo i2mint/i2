@@ -100,15 +100,15 @@ def demo_func_1(
     :param a_bool: type declared in signature but NOT in doc, and has a default of the desired type
     :param str a_str: type declared in signature AND doc, but has a default that is not of that type
     line description
-    :return str: Will just return the 'test_func_1 returned' string
+    :return str: Will just return the 'demo_func_1 returned' string
     :tags foo, bar
 
     >>> # here are sometests
-    >>> test_func_1('anything', [1, 2], {'this': 0, 'that': 'foo'}, 1, 1.1, a_bool=True, a_str='hello')
-    'test_func_1 returned'
+    >>> demo_func_1('anything', [1, 2], {'this': 0, 'that': 'foo'}, 1, 1.1, a_bool=True, a_str='hello')
+    'demo_func_1 returned'
     """
     # This is the first comment
-    return "test_func_1 returned"  # this is a comment on the same line as some code
+    return "demo_func_1 returned"  # this is a comment on the same line as some code
 
 
 class SomeClass(object):
@@ -169,7 +169,7 @@ def demo_func_2(
     :return:
 
     >>> # here are sometests
-    >>> test_func_1('anything', 1, 1.1, True, 'hello', [1, 2], {'this': 0, 'that': 'foo'})
+    >>> demo_func_1('anything', 1, 1.1, True, 'hello', [1, 2], {'this': 0, 'that': 'foo'})
     'returned'
     """
     return 3.14
