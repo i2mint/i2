@@ -263,6 +263,9 @@ class ConditionalExceptionCatcher:
             return self.prevent_propagation
         return False  # Allows other exceptions to propagate
 
+# -------------------------------------------------------------------------------------
+# Attribute Mapping Classes
+# (Vendored in dol)
 
 class AttributeMapping(SimpleNamespace, Mapping[str, Any]):
     """
@@ -355,6 +358,7 @@ def _get_attr_or_key_error(obj: object, key: str) -> Any:
         return getattr(obj, key)
     except AttributeError:
         raise KeyError(key)
+# -------------------------------------------------------------------------------------
 
 
 @contextlib.contextmanager

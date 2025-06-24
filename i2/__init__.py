@@ -55,8 +55,8 @@ from i2.util import (
     return_true,  # a function that returns True (takes any number of arguments)
     return_false,  # a function that returns False (takes any number of arguments)
     ConditionalExceptionCatcher,  # A context manager that catches exceptions based on a condition.
-    AttributeMapping,  # A namespace that is also a (read-only) mapping,
-    AttributeMutableMapping,  # A namespace that is also a mutable mapping,
+    AttributeMapping,  # a mapping that provides attribute-access to the keys that are valid attribute names
+    AttributeMutableMapping,  # a mutable mapping version of AttributeMapping
     copy_func,  # Copy a function.
     get_app_data_folder,  # Get the application data folder of the current system.
     LiteralVal,  # An object to indicate that the value should be considered literally.
