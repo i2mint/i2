@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>i2.examples.castgraph_examples &mdash; i2 0.1.48 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=b5e87a2a"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="i2.examples.signature_calculus" href="signature_calculus.html" />
+    <link rel="prev" title="i2.examples" href="../examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            i2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_deprecated.html">i2._deprecated</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../castgraph.html">i2.castgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">i2.examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">i2.examples.castgraph_examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#i2.examples.castgraph_examples.CanonicalRecord"><code class="docutils literal notranslate"><span class="pre">CanonicalRecord</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.examples.castgraph_examples.FilePath"><code class="docutils literal notranslate"><span class="pre">FilePath</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.examples.castgraph_examples.JSONDict"><code class="docutils literal notranslate"><span class="pre">JSONDict</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.examples.castgraph_examples.Text"><code class="docutils literal notranslate"><span class="pre">Text</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.examples.castgraph_examples.example_registry"><code class="docutils literal notranslate"><span class="pre">example_registry()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="signature_calculus.html">i2.examples.signature_calculus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../footprints.html">i2.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../itypes.html">i2.itypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../key_path.html">i2.key_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multi_object.html">i2.multi_object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/scrap_ch_variadics.html">i2.scrap.scrap_ch_variadics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/signature_bops.html">i2.scrap.signature_bops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scrap/switch_case_tree.html">i2.scrap.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests/footprints_test.html">i2.tests.footprints_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests/signatures_test.html">i2.tests.signatures_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests/test_castgraph.html">i2.tests.test_castgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests/util.html">i2.tests.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wrapper.html">i2.wrapper</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">i2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">i2.examples.castgraph_examples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/module_docs/i2/examples/castgraph_examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-i2.examples.castgraph_examples">
+<span id="i2-examples-castgraph-examples"></span><h1>i2.examples.castgraph_examples<a class="headerlink" href="#module-i2.examples.castgraph_examples" title="Link to this heading"></a></h1>
+<p>Examples using castgraph.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.examples.castgraph_examples.CanonicalRecord">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.examples.castgraph_examples.</span></span><span class="sig-name descname"><span class="pre">CanonicalRecord</span></span><a class="reference internal" href="../../../_modules/i2/examples/castgraph_examples.html#CanonicalRecord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.examples.castgraph_examples.CanonicalRecord" title="Link to this definition"></a></dt>
+<dd><p>Canonical in-memory record format.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.examples.castgraph_examples.FilePath">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.examples.castgraph_examples.</span></span><span class="sig-name descname"><span class="pre">FilePath</span></span><a class="reference internal" href="../../../_modules/i2/examples/castgraph_examples.html#FilePath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.examples.castgraph_examples.FilePath" title="Link to this definition"></a></dt>
+<dd><p>Marker type for file paths (to distinguish from arbitrary strings).</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.examples.castgraph_examples.JSONDict">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.examples.castgraph_examples.</span></span><span class="sig-name descname"><span class="pre">JSONDict</span></span><a class="reference internal" href="../../../_modules/i2/examples/castgraph_examples.html#JSONDict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.examples.castgraph_examples.JSONDict" title="Link to this definition"></a></dt>
+<dd><p>Marker type for dicts with JSON semantics.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.examples.castgraph_examples.Text">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.examples.castgraph_examples.</span></span><span class="sig-name descname"><span class="pre">Text</span></span><a class="reference internal" href="../../../_modules/i2/examples/castgraph_examples.html#Text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.examples.castgraph_examples.Text" title="Link to this definition"></a></dt>
+<dd><p>Marker type for text payloads.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.examples.castgraph_examples.example_registry">
+<span class="sig-prename descclassname"><span class="pre">i2.examples.castgraph_examples.</span></span><span class="sig-name descname"><span class="pre">example_registry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../castgraph.html#i2.castgraph.ConversionRegistry" title="i2.castgraph.ConversionRegistry"><span class="pre">ConversionRegistry</span></a></span></span><a class="reference internal" href="../../../_modules/i2/examples/castgraph_examples.html#example_registry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.examples.castgraph_examples.example_registry" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Build a registry that can:</dt><dd><ul class="simple">
+<li><p>FilePath -&gt; Text</p></li>
+<li><p>Text -&gt; JSONDict</p></li>
+<li><p>JSONDict -&gt; CanonicalRecord</p></li>
+<li><p>Direct Text -&gt; CanonicalRecord (cheaper path)</p></li>
+</ul>
+</dd>
+</dl>
+<p>The route chosen will be the minimum total cost.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">reg</span> <span class="o">=</span> <span class="n">example_registry</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Multi-hop via cheaper direct Text-&gt;CanonicalRecord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="s1">&#39;{&quot;a&quot;: 1, &quot;b&quot;: 2}&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">CanonicalRecord</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">CanonicalRecord</span><span class="p">)</span> <span class="ow">and</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># FilePath -&gt; Text -&gt; CanonicalRecord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fp</span> <span class="o">=</span> <span class="n">FilePath</span><span class="p">(</span><span class="s2">&quot;/tmp/dummy.json&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">CanonicalRecord</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot; /tmp/dummy.json&quot;</span><span class="p">:</span> <span class="s1">&#39;{&quot;x&quot;:42}&#39;</span><span class="p">}})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">CanonicalRecord</span><span class="p">)</span> <span class="ow">and</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">42</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../examples.html" class="btn btn-neutral float-left" title="i2.examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="signature_calculus.html" class="btn btn-neutral float-right" title="i2.examples.signature_calculus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

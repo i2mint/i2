@@ -1,0 +1,528 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>i2.castgraph &mdash; i2 0.1.48 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b5e87a2a"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            i2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2.html">i2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/_deprecated.html">i2._deprecated</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/base.html">i2.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/castgraph.html">i2.castgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/deco.html">i2.deco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/errors.html">i2.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/examples.html">i2.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/examples/castgraph_examples.html">i2.examples.castgraph_examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/footprints.html">i2.footprints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/itypes.html">i2.itypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/key_path.html">i2.key_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/multi_object.html">i2.multi_object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap.html">i2.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/scrap.html">i2.scrap.scrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/scrap_ch_variadics.html">i2.scrap.scrap_ch_variadics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/signature_bops.html">i2.scrap.signature_bops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/scrap/switch_case_tree.html">i2.scrap.switch_case_tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/signatures.html">i2.signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests.html">i2.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/footprints_test.html">i2.tests.footprints_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_castgraph.html">i2.tests.test_castgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/util.html">i2.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/wrapper.html">i2.wrapper</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">i2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">i2.castgraph</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for i2.castgraph</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">castgraph</span>
+<span class="sd">=========</span>
+
+<span class="sd">A lightweight conversion service for Python that solves the &quot;stable role,</span>
+<span class="sd">unstable representation&quot; problem: a resource has a consistent semantic role</span>
+<span class="sd">(e.g., configuration, text, structured record) but appears in many forms</span>
+<span class="sd">(filepath, string, dict, custom class), while consumers expect specific</span>
+<span class="sd">representations. castgraph organizes conversions as a graph of typed edges and</span>
+<span class="sd">routes requests through the best available path.</span>
+
+<span class="sd">Solution patterns</span>
+<span class="sd">-----------------</span>
+<span class="sd">- **Type Converter / Conversion Service**: central registry mapping (FromType, ToType) to converter functions.</span>
+<span class="sd">- **Adapter**: each edge adapts one representation to another.</span>
+<span class="sd">- **Strategy**: routing/selection among multiple possible conversions via cost/priority.</span>
+<span class="sd">- **(Optional) Canonical Data Model**: a hub type to reduce pairwise conversions.</span>
+<span class="sd">- **DDD Anti-Corruption Layer (ACL)**: keep external formats outside the core domain.</span>
+<span class="sd">- **Typeclass / Multimethod idiom**: dispatch based on (source type, target type).</span>
+
+<span class="sd">Minimal example (doctest)</span>
+<span class="sd">-------------------------</span>
+<span class="sd">Register tiny adapters and convert across types with optional multi-hop routing.</span>
+
+<span class="sd">    &gt;&gt;&gt; from i2.castgraph import ConversionRegistry</span>
+<span class="sd">    &gt;&gt;&gt; class Path(str): ...</span>
+<span class="sd">    &gt;&gt;&gt; class Text(str): ...</span>
+<span class="sd">    &gt;&gt;&gt; class Record(dict): ...</span>
+<span class="sd">    &gt;&gt;&gt; reg = ConversionRegistry()</span>
+<span class="sd">    &gt;&gt;&gt; @reg.register(Path, Text)</span>
+<span class="sd">    ... def path_to_text(p, ctx):  # ctx is an optional dict</span>
+<span class="sd">    ...     fs = (ctx or {}).get(&quot;fs&quot;, {})</span>
+<span class="sd">    ...     return Text(fs.get(str(p), &quot;&quot;))</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; @reg.register(Text, Record, cost=0.5)  # cheaper direct edge</span>
+<span class="sd">    ... def text_to_record(t, ctx):</span>
+<span class="sd">    ...     import json</span>
+<span class="sd">    ...     return Record(json.loads(t or &quot;{}&quot;))</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; ctx = {&quot;fs&quot;: {&quot;/app/data.json&quot;: &#39;{&quot;x&quot;: 1}&#39;}}</span>
+<span class="sd">    &gt;&gt;&gt; out = reg.convert(Path(&quot;/app/data.json&quot;), Record, context=ctx)</span>
+<span class="sd">    &gt;&gt;&gt; isinstance(out, Record) and out[&quot;x&quot;] == 1</span>
+<span class="sd">    True</span>
+
+<span class="sd">Main tools</span>
+<span class="sd">----------</span>
+<span class="sd">- **ConversionRegistry**: the central graph-based registry.</span>
+<span class="sd">  - `.register(From, To, cost=1.0)`: decorator to add an adapter (`func(obj, context) -&gt; new_obj`).</span>
+<span class="sd">  - `.convert(obj, ToType, context=None, use_result_cache=False)`: convert with multi-hop routing,</span>
+<span class="sd">    MRO-aware fallbacks, and optional result caching.</span>
+<span class="sd">- **ConversionError**: raised when no route exists between types.</span>
+
+<span class="sd">Design guidelines</span>
+<span class="sd">-----------------</span>
+<span class="sd">- Define a single ConversionRegistry per bounded context; keep edges local.</span>
+<span class="sd">- Prefer small, testable converter functions with explicit types.</span>
+<span class="sd">- Use a canonical domain type as a **hub** when many formats interoperate.</span>
+<span class="sd">- Assign **costs** to prefer fast/accurate routes; tune with metrics.</span>
+<span class="sd">- Pass a **context** dict for side-channel knobs (I/O, flags, cache handles).</span>
+<span class="sd">- Cache paths (via lru_cache) and consider result caching for hot conversions.</span>
+<span class="sd">- Keep adapters at the boundaries; the core domain should consume domain types.</span>
+<span class="sd">- Add identity edges implicitly; avoid no-op boilerplate.</span>
+<span class="sd">- Write doctests on each converter to lock behavior and invariants.</span>
+
+<span class="sd">Design heritage</span>
+<span class="sd">---------------</span>
+<span class="sd">castgraph is a composition of well-known patterns centered on a **Type Converter /</span>
+<span class="sd">Conversion Service**, with **Adapter** edges and **Strategy**-based route selection.</span>
+<span class="sd">At system boundaries, it complements DDD’s **Anti-Corruption Layer** and can employ</span>
+<span class="sd">an integration **Canonical Data Model** to curb O(n²) pairwise mappings.</span>
+<span class="sd">Its (FromType, ToType) dispatch style mirrors **typeclass/multimethod** idioms.</span>
+<span class="sd">For background reading, see:</span>
+<span class="sd">- .NET TypeConverter: https://learn.microsoft.com/dotnet/api/system.componentmodel.typeconverter</span>
+<span class="sd">- Spring ConversionService: https://docs.spring.io/spring-framework/reference/core/validation/convert.html</span>
+<span class="sd">- Apache Camel Type Converter: https://camel.apache.org/manual/type-converter.html</span>
+<span class="sd">- Adapter: https://refactoring.guru/design-patterns/adapter</span>
+<span class="sd">- Strategy: https://refactoring.guru/design-patterns/strategy</span>
+<span class="sd">- Anti-Corruption Layer: https://martinfowler.com/bliki/AntiCorruptionLayer.html</span>
+<span class="sd">- Canonical Data Model: https://www.enterpriseintegrationpatterns.com/patterns/messaging/CanonicalDataModel.html</span>
+<span class="sd">- PEP 443 singledispatch: https://peps.python.org/pep-0443/</span>
+
+<span class="sd">Related</span>
+<span class="sd">-------</span>
+
+<span class="sd">- Issue that sparked this implementation: https://github.com/i2mint/i2/issues/79</span>
+<span class="sd">- Computational path resolution: https://github.com/i2mint/meshed/discussions/71</span>
+<span class="sd">- Subsuming concept - &quot;routing&quot;: https://github.com/i2mint/i2/discussions/68</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">deque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Deque</span><span class="p">,</span>
+    <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">Hashable</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">List</span><span class="p">,</span>
+    <span class="n">MutableMapping</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Tuple</span><span class="p">,</span>
+    <span class="n">Type</span><span class="p">,</span>
+    <span class="n">TypeVar</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">U</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">)</span>
+<span class="n">Converter</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]],</span> <span class="n">Any</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Edge">
+<a class="viewcode-back" href="../../module_docs/i2/castgraph.html#i2.castgraph.Edge">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Edge</span><span class="p">:</span>
+    <span class="n">src</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
+    <span class="n">dst</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">Converter</span>
+    <span class="n">cost</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># lower = preferred</span></div>
+
+
+
+<div class="viewcode-block" id="ConversionError">
+<a class="viewcode-back" href="../../module_docs/i2/castgraph.html#i2.castgraph.ConversionError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConversionError</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="ConversionRegistry">
+<a class="viewcode-back" href="../../module_docs/i2/castgraph.html#i2.castgraph.ConversionRegistry">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConversionRegistry</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A graph-based registry of converters between Python types with:</span>
+<span class="sd">      - registration decorator</span>
+<span class="sd">      - shortest-path (by total cost) routing</span>
+<span class="sd">      - MRO-aware fallback for source types</span>
+<span class="sd">      - caching of paths and (optionally) results</span>
+
+<span class="sd">    Design notes:</span>
+<span class="sd">    - Each converter has signature: func(obj, context) -&gt; converted_obj</span>
+<span class="sd">    - Identity edges are implicit (T -&gt; T) with cost 0.</span>
+<span class="sd">    - If multiple routes exist, the minimum total cost path is chosen.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Edge</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="c1"># Optional result cache (obj identity-sensitive). Keep simple by default.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_result_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Registration API</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="ConversionRegistry.register">
+<a class="viewcode-back" href="../../module_docs/i2/castgraph.html#i2.castgraph.ConversionRegistry.register">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">dst</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Converter</span><span class="p">],</span> <span class="n">Converter</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decorator to register a converter function.</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        &gt;&gt;&gt; reg = ConversionRegistry()</span>
+<span class="sd">        &gt;&gt;&gt; class A: ...</span>
+<span class="sd">        &gt;&gt;&gt; class B: ...</span>
+<span class="sd">        &gt;&gt;&gt; @reg.register(A, B)</span>
+<span class="sd">        ... def a_to_b(a, ctx): return B()</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; isinstance(reg.convert(A(), B), B)</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">deco</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Converter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Converter</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="p">[</span><span class="n">src</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Edge</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">cost</span><span class="p">))</span>
+            <span class="c1"># Invalidate path cache because the graph changed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_find_path_cached</span><span class="o">.</span><span class="n">cache_clear</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">func</span>
+
+        <span class="k">return</span> <span class="n">deco</span></div>
+
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Public convert()</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="ConversionRegistry.convert">
+<a class="viewcode-back" href="../../module_docs/i2/castgraph.html#i2.castgraph.ConversionRegistry.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">to_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">U</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_result_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">U</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert `obj` to `to_type`, possibly via multi-hop.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        obj : Any</span>
+<span class="sd">            Source object to convert.</span>
+<span class="sd">        to_type : Type[U]</span>
+<span class="sd">            Desired target type.</span>
+<span class="sd">        context : Optional[dict]</span>
+<span class="sd">            Arbitrary context propagated through the chain (e.g., config, flags).</span>
+<span class="sd">        use_result_cache : bool</span>
+<span class="sd">            If True, cache results keyed by (id(obj), to_type).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        U</span>
+<span class="sd">            Converted object.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ConversionError</span>
+<span class="sd">            If no conversion path is found.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; reg = ConversionRegistry()</span>
+<span class="sd">        &gt;&gt;&gt; class X: ...</span>
+<span class="sd">        &gt;&gt;&gt; class Y: ...</span>
+<span class="sd">        &gt;&gt;&gt; class Z: ...</span>
+<span class="sd">        &gt;&gt;&gt; @reg.register(X, Y)</span>
+<span class="sd">        ... def x_to_y(x, ctx): return Y()</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; @reg.register(Y, Z)</span>
+<span class="sd">        ... def y_to_z(y, ctx): return Z()</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; isinstance(reg.convert(X(), Z), Z)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        MRO fallback: if a converter is registered for a base class, it applies to a subclass.</span>
+<span class="sd">        &gt;&gt;&gt; class Base: ...</span>
+<span class="sd">        &gt;&gt;&gt; class Sub(Base): ...</span>
+<span class="sd">        &gt;&gt;&gt; class Out: ...</span>
+<span class="sd">        &gt;&gt;&gt; reg2 = ConversionRegistry()</span>
+<span class="sd">        &gt;&gt;&gt; @reg2.register(Base, Out)</span>
+<span class="sd">        ... def base_to_out(b, ctx): return Out()</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; isinstance(reg2.convert(Sub(), Out), Out)</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">to_type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span>  <span class="c1"># Identity</span>
+
+        <span class="k">if</span> <span class="n">use_result_cache</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">to_type</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result_cache</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="n">from_types</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">mro</span><span class="p">())</span>  <span class="c1"># MRO-aware source candidates</span>
+
+        <span class="c1"># Try direct or multi-hop path for the first MRO type that can route.</span>
+        <span class="k">for</span> <span class="n">from_type</span> <span class="ow">in</span> <span class="n">from_types</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_path_cached</span><span class="p">(</span><span class="n">from_type</span><span class="p">,</span> <span class="n">to_type</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">ConversionError</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_path</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">use_result_cache</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_result_cache</span><span class="p">[(</span><span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">to_type</span><span class="p">)]</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="k">raise</span> <span class="n">ConversionError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No conversion path from </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">to_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Internals: path finding &amp; application</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Edge</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4096</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_path_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">dst</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Edge</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_min_cost_path</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Edge</span><span class="p">]:</span>
+        <span class="c1"># Outgoing edges from exact src</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="c1"># Identity edge (src-&gt;src) for free; useful for uniform path logic.</span>
+        <span class="k">yield</span> <span class="n">Edge</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_min_cost_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">dst</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Edge</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">src</span> <span class="ow">is</span> <span class="n">dst</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># already at target</span>
+
+        <span class="c1"># Dijkstra over type-nodes</span>
+        <span class="n">frontier</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">src</span><span class="p">)]</span>
+        <span class="n">dist</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">src</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">}</span>
+        <span class="n">prev</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Edge</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">src</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="n">visited</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">while</span> <span class="n">frontier</span><span class="p">:</span>
+            <span class="n">frontier</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">cost_so_far</span><span class="p">,</span> <span class="n">node</span> <span class="o">=</span> <span class="n">frontier</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="n">dst</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="n">new_cost</span> <span class="o">=</span> <span class="n">cost_so_far</span> <span class="o">+</span> <span class="n">edge</span><span class="o">.</span><span class="n">cost</span>
+                <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">dst</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dist</span> <span class="ow">or</span> <span class="n">new_cost</span> <span class="o">&lt;</span> <span class="n">dist</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">dst</span><span class="p">]:</span>
+                    <span class="n">dist</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">dst</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_cost</span>
+                    <span class="n">prev</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">dst</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">edge</span><span class="p">)</span>
+                    <span class="n">frontier</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">new_cost</span><span class="p">,</span> <span class="n">edge</span><span class="o">.</span><span class="n">dst</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">dst</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prev</span><span class="p">:</span>
+            <span class="c1"># Try MRO-based widening for dst (accept subclass→superclass matches)</span>
+            <span class="n">original_dst</span> <span class="o">=</span> <span class="n">dst</span>
+            <span class="k">for</span> <span class="n">super_dst</span> <span class="ow">in</span> <span class="n">dst</span><span class="o">.</span><span class="n">mro</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">super_dst</span> <span class="ow">in</span> <span class="n">prev</span> <span class="ow">and</span> <span class="n">super_dst</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">src</span><span class="p">:</span>
+                    <span class="n">dst</span> <span class="o">=</span> <span class="n">super_dst</span>  <span class="c1"># type: ignore[assignment]</span>
+                    <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">dst</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prev</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConversionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No route from </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">dst</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Reconstruct path</span>
+        <span class="n">path_edges</span><span class="p">:</span> <span class="n">Deque</span><span class="p">[</span><span class="n">Edge</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+        <span class="n">cur</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dst</span>
+        <span class="k">while</span> <span class="n">cur</span> <span class="ow">and</span> <span class="n">prev</span><span class="p">[</span><span class="n">cur</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">edge</span> <span class="o">=</span> <span class="n">prev</span><span class="p">[</span><span class="n">cur</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">edge</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">path_edges</span><span class="o">.</span><span class="n">appendleft</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+            <span class="n">cur</span> <span class="o">=</span> <span class="n">prev</span><span class="p">[</span><span class="n">cur</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Strip leading/trailing identity edges</span>
+        <span class="n">final_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">path_edges</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">src</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">dst</span><span class="p">]</span>
+        
+        <span class="c1"># If MRO widening happened but no conversion steps, this is invalid</span>
+        <span class="k">if</span> <span class="s1">&#39;original_dst&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span> <span class="ow">and</span> <span class="n">dst</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">original_dst</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">final_path</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConversionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No route from </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">original_dst</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">final_path</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------</span>
+<span class="c1"># Best-practice guidance</span>
+<span class="c1"># ----------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="design_guidelines">
+<a class="viewcode-back" href="../../module_docs/i2/castgraph.html#i2.castgraph.design_guidelines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">design_guidelines</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns concise guidance for organizing casting in Python.</span>
+
+<span class="sd">    &gt;&gt;&gt; &quot;registry&quot; in design_guidelines().lower()</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="s2">&quot;- Define a single ConversionRegistry per bounded context; keep edges local.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;- Prefer small, testable converter functions with explicit types.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;- Use a canonical domain type as a **hub** when many formats interoperate.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;- Assign **costs** to prefer fast/accurate routes; tune with metrics.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;- Pass a **context** dict for side-channel knobs (I/O, flags, cache handles).</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;- Cache paths (via lru_cache) and consider result caching for hot conversions.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;- Keep adapters at the boundaries; the core domain should consume domain types.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;- Add identity edges implicitly; avoid no-op boilerplate.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;- Write doctests on each converter to lock behavior and invariants.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">doctest</span>
+
+    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
