@@ -333,7 +333,7 @@ class ConversionRegistry:
         final_path = [e for e in path_edges if e.src is not e.dst]
 
         # If MRO widening happened but no conversion steps, this is invalid
-        if 'original_dst' in locals() and dst is not original_dst and not final_path:
+        if "original_dst" in locals() and dst is not original_dst and not final_path:
             raise ConversionError(
                 f"No route from {src.__name__} to {original_dst.__name__}"
             )

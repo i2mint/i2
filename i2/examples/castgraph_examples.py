@@ -8,6 +8,7 @@ from i2.castgraph import ConversionRegistry
 # Example usage and optional "canonical" hub
 # ----------------------------------------------------------------------
 
+
 class FilePath(str):
     """Marker type for file paths (to distinguish from arbitrary strings)."""
 
