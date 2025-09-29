@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.examples.castgraph_examples &mdash; i2 0.1.48 documentation</title>
+  <title>i2.examples.castgraph_examples &mdash; i2 0.1.49 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=b5e87a2a"></script>
+      <script src="../../../_static/documentation_options.js?v=1190fe33"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -118,6 +118,7 @@
 <span class="c1"># Example usage and optional &quot;canonical&quot; hub</span>
 <span class="c1"># ----------------------------------------------------------------------</span>
 
+
 <div class="viewcode-block" id="FilePath">
 <a class="viewcode-back" href="../../../module_docs/i2/examples/castgraph_examples.html#i2.examples.castgraph_examples.FilePath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FilePath</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
@@ -179,13 +180,25 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">filepath_to_text</span><span class="p">(</span><span class="n">fp</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
         <span class="c1"># Example: pretend-read from an injected &quot;fs&quot; dict for testability</span>
         <span class="n">fs</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ctx</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fs&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="c1"># Try direct lookup first</span>
         <span class="n">content</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fp</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Fallback to real file read (commented to keep doctests pure)</span>
-            <span class="c1"># with open(fp, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</span>
-            <span class="c1">#     content = f.read()</span>
-            <span class="c1"># For doctest, simulate missing file:</span>
-            <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="c1"># Some doctests or callers may have accidental whitespace in keys</span>
+            <span class="c1"># (e.g. &quot; /tmp/dummy.json&quot;). Try matching by stripping keys.</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">k</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">fp</span><span class="p">):</span>
+                        <span class="n">content</span> <span class="o">=</span> <span class="n">v</span>
+                        <span class="k">break</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="c1"># Ignore problematic keys and continue</span>
+                    <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Fallback to real file read (commented to keep doctests pure)</span>
+                <span class="c1"># with open(fp, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:</span>
+                <span class="c1">#     content = f.read()</span>
+                <span class="c1"># For doctest, simulate missing file:</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Text</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
 
     <span class="nd">@reg</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">JSONDict</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
