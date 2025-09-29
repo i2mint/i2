@@ -56,13 +56,25 @@ def example_registry() -> ConversionRegistry:
     def filepath_to_text(fp: FilePath, ctx: Optional[dict]) -> Text:
         # Example: pretend-read from an injected "fs" dict for testability
         fs: MutableMapping[str, str] = (ctx or {}).get("fs", {})
+        # Try direct lookup first
         content = fs.get(str(fp))
         if content is None:
-            # Fallback to real file read (commented to keep doctests pure)
-            # with open(fp, "r", encoding="utf-8") as f:
-            #     content = f.read()
-            # For doctest, simulate missing file:
-            content = ""
+            # Some doctests or callers may have accidental whitespace in keys
+            # (e.g. " /tmp/dummy.json"). Try matching by stripping keys.
+            for k, v in fs.items():
+                try:
+                    if isinstance(k, str) and k.strip() == str(fp):
+                        content = v
+                        break
+                except Exception:
+                    # Ignore problematic keys and continue
+                    continue
+            if content is None:
+                # Fallback to real file read (commented to keep doctests pure)
+                # with open(fp, "r", encoding="utf-8") as f:
+                #     content = f.read()
+                # For doctest, simulate missing file:
+                content = ""
         return Text(content)
 
     @reg.register(Text, JSONDict, cost=1.0)
