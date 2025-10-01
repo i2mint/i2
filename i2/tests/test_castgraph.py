@@ -254,3 +254,81 @@ def test_canonical_hub_style_is_ergonomic():
 
     out = reg.convert(CSVText("a,1\nb,2"), Canon)
     assert isinstance(out, Canon) and out == {"a": "1", "b": "2"}
+
+
+def test_single_arg_converter_is_wrapped():
+    reg = ConversionRegistry()
+    calls = {"n": 0}
+
+    class Src: ...
+
+    class Dst: ...
+
+    @reg.register(Src, Dst)
+    def s_to_d(s):
+        calls["n"] += 1
+        return Dst()
+
+    out = reg.convert(Src(), Dst)
+    assert isinstance(out, Dst)
+    assert calls["n"] == 1
+
+
+def test_infer_types_from_annotations_with_and_without_context():
+    reg = ConversionRegistry()
+
+    class ASrc: ...
+
+    class ADst: ...
+
+    # With context parameter present
+    @reg.register()
+    def a_to_b(x: ASrc, ctx) -> ADst:
+        return ADst()
+
+    assert isinstance(reg.convert(ASrc(), ADst), ADst)
+
+    # Without context parameter (single-arg converter should be wrapped)
+    class BSrc: ...
+
+    class BDst: ...
+
+    @reg.register()
+    def b_to_d(x: BSrc) -> BDst:
+        return BDst()
+
+    assert isinstance(reg.convert(BSrc(), BDst), BDst)
+
+
+def test_annotation_conflict_warns_and_uses_explicit():
+    reg = ConversionRegistry()
+
+    class A1: ...
+
+    class B1: ...
+
+    class C1: ...
+
+    # function annotated as A1 -> B1, but register explicitly as C1 -> B1
+    with pytest.warns(UserWarning):
+
+        @reg.register(C1, B1)
+        def annotated(a: A1, ctx) -> B1:
+            return B1()
+
+    # Ensure the explicit registration is used
+    assert isinstance(reg.convert(C1(), B1), B1)
+
+
+def test_missing_annotations_raises_at_registration_time():
+    reg = ConversionRegistry()
+
+    class M1: ...
+
+    class M2: ...
+
+    with pytest.raises(ValueError):
+
+        @reg.register()
+        def bad(x):
+            return None
