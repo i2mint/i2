@@ -107,6 +107,7 @@ from typing import (
     Optional,
     Tuple,
     get_type_hints,
+    get_origin,
     Type,
     TypeVar,
 )
@@ -209,13 +210,39 @@ def _extract_types_from_annotations(
         # Check for conflicts
         if params:
             annotated_src = hints.get(params[0].name, None)
-            if annotated_src is not None and annotated_src != src:
-                warnings.warn(
-                    f"Type mismatch in {func.__name__}: "
-                    f"register() specifies src={src.__name__}, "
-                    f"but first parameter is annotated as {annotated_src.__name__}. "
-                    f"Using src={src.__name__} from register()."
-                )
+            if annotated_src is not None:
+                # Normalize typing aliases (e.g., typing.Mapping) to their runtime
+                # origins (e.g., collections.abc.Mapping) for an apples-to-apples
+                # comparison. This avoids spurious warnings when the same
+                # semantic type is referenced via different typing modules.
+                def _canonical_type(t: Type[Any]) -> Type[Any]:
+                    try:
+                        origin = get_origin(t)
+                        if origin:
+                            return origin
+                    except Exception:
+                        pass
+                    # Fallback: map typing.Mapping -> collections.abc.Mapping when
+                    # typing.get_origin doesn't return an origin (older Python)
+                    try:
+                        import collections.abc as cabc
+
+                        if (
+                            getattr(t, "__name__", None) == "Mapping"
+                            and getattr(t, "__module__", "") == "typing"
+                        ):
+                            return cabc.Mapping
+                    except Exception:
+                        pass
+                    return t
+
+                if _canonical_type(annotated_src) != _canonical_type(src):
+                    warnings.warn(
+                        f"Type mismatch in {func.__name__}: "
+                        f"register() specifies src={getattr(src, '__name__', str(src))}, "
+                        f"but first parameter is annotated as {getattr(annotated_src, '__name__', str(annotated_src))}. "
+                        f"Using src={getattr(src, '__name__', str(src))} from register()."
+                    )
 
     # Determine dst type
     if provided_dst is None:
@@ -230,13 +257,34 @@ def _extract_types_from_annotations(
     else:
         dst = provided_dst
         annotated_dst = hints.get("return", None)
-        if annotated_dst is not None and annotated_dst != dst:
-            warnings.warn(
-                f"Type mismatch in {func.__name__}: "
-                f"register() specifies dst={dst.__name__}, "
-                f"but return annotation is {annotated_dst.__name__}. "
-                f"Using dst={dst.__name__} from register()."
-            )
+        if annotated_dst is not None:
+            # Reuse the same canonicalization logic for dst comparison
+            def _canonical_type(t: Type[Any]) -> Type[Any]:
+                try:
+                    origin = get_origin(t)
+                    if origin:
+                        return origin
+                except Exception:
+                    pass
+                try:
+                    import collections.abc as cabc
+
+                    if (
+                        getattr(t, "__name__", None) == "Mapping"
+                        and getattr(t, "__module__", "") == "typing"
+                    ):
+                        return cabc.Mapping
+                except Exception:
+                    pass
+                return t
+
+            if _canonical_type(annotated_dst) != _canonical_type(dst):
+                warnings.warn(
+                    f"Type mismatch in {func.__name__}: "
+                    f"register() specifies dst={getattr(dst, '__name__', str(dst))}, "
+                    f"but return annotation is {getattr(annotated_dst, '__name__', str(annotated_dst))}. "
+                    f"Using dst={getattr(dst, '__name__', str(dst))} from register()."
+                )
 
     return src, dst
 
