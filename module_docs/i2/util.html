@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.util &mdash; i2 0.1.51 documentation</title>
+  <title>i2.util &mdash; i2 0.1.52 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=56cc1d78"></script>
+      <script src="../../_static/documentation_options.js?v=61349712"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -91,6 +91,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.ConditionalExceptionCatcher"><code class="docutils literal notranslate"><span class="pre">ConditionalExceptionCatcher</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.ExistingArgument"><code class="docutils literal notranslate"><span class="pre">ExistingArgument</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.FileLikeObject"><code class="docutils literal notranslate"><span class="pre">FileLikeObject()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.util.FolderSpec"><code class="docutils literal notranslate"><span class="pre">FolderSpec</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#i2.util.FolderSpec.default_path"><code class="docutils literal notranslate"><span class="pre">FolderSpec.default_path</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.util.FolderSpec.env_var"><code class="docutils literal notranslate"><span class="pre">FolderSpec.env_var</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.FrozenDict"><code class="docutils literal notranslate"><span class="pre">FrozenDict</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#i2.util.FrozenDict.clear"><code class="docutils literal notranslate"><span class="pre">FrozenDict.clear()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#i2.util.FrozenDict.fromkeys"><code class="docutils literal notranslate"><span class="pre">FrozenDict.fromkeys()</span></code></a></li>
@@ -123,7 +128,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.dp_get"><code class="docutils literal notranslate"><span class="pre">dp_get()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.ensure_identifiers"><code class="docutils literal notranslate"><span class="pre">ensure_identifiers()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.frozendict"><code class="docutils literal notranslate"><span class="pre">frozendict</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.util.get_app_config_folder"><code class="docutils literal notranslate"><span class="pre">get_app_config_folder()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.get_app_data_folder"><code class="docutils literal notranslate"><span class="pre">get_app_data_folder()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.util.get_app_folder"><code class="docutils literal notranslate"><span class="pre">get_app_folder()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.get_function_body"><code class="docutils literal notranslate"><span class="pre">get_function_body()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.ignore_exception"><code class="docutils literal notranslate"><span class="pre">ignore_exception()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.util.imdict"><code class="docutils literal notranslate"><span class="pre">imdict</span></code></a><ul>
@@ -296,6 +303,23 @@ bytes of a file, or an open file pointer.</p>
 <dd class="field-even"><p><em>io.IOBase</em> – A file-like object.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.util.FolderSpec">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">FolderSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#i2.util.FolderSpec" title="Link to this definition"></a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="i2.util.FolderSpec.default_path">
+<span class="sig-name descname"><span class="pre">default_path</span></span><a class="headerlink" href="#i2.util.FolderSpec.default_path" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="i2.util.FolderSpec.env_var">
+<span class="sig-name descname"><span class="pre">env_var</span></span><a class="headerlink" href="#i2.util.FolderSpec.env_var" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -665,18 +689,90 @@ from other objects than strings.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="i2.util.get_app_data_folder">
-<span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">get_app_data_folder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#get_app_data_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.util.get_app_data_folder" title="Link to this definition"></a></dt>
-<dd><p>Returns the full path of a directory suitable for storing application-specific data.</p>
+<dt class="sig sig-object py" id="i2.util.get_app_config_folder">
+<span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">get_app_config_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'config'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'data'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cache'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'state'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'runtime'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'config'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#i2.util.get_app_config_folder" title="Link to this definition"></a></dt>
+<dd><p>Get the full path of a directory suitable for storing application-specific configs,
+(or data, or cache, or state or runtime)</p>
 <p>On Windows, this is typically %APPDATA%.
 On macOS, this is typically ~/.config.
 On Linux, this is typically ~/.config.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The full path of the app data folder.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>folder_kind</strong> (<em>str</em>) – The kind of folder to get. One of ‘config’, ‘data’, ‘cache’, ‘state’, ‘runtime’.
+Defaults to ‘config’.
+Here are concise explanations for each folder kind:
+<strong>config</strong>: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
+<strong>data</strong>: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.
+<strong>cache</strong>: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.
+<strong>state</strong>: Application state and logs that persist between sessions but aren’t critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn’t be auto-deleted.
+<strong>runtime</strong>: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
+<strong>TL;DR</strong>: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The full path of the app data folder.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p>See <a class="reference external" href="https://github.com/i2mint/i2mint/issues/1">https://github.com/i2mint/i2mint/issues/1</a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.util.get_app_data_folder">
+<span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">get_app_data_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'config'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'data'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cache'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'state'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'runtime'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'data'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#i2.util.get_app_data_folder" title="Link to this definition"></a></dt>
+<dd><p>Get the full path of a directory suitable for storing application-specific configs,
+(or data, or cache, or state or runtime)</p>
+<p>On Windows, this is typically %APPDATA%.
+On macOS, this is typically ~/.config.
+On Linux, this is typically ~/.config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>folder_kind</strong> (<em>str</em>) – The kind of folder to get. One of ‘config’, ‘data’, ‘cache’, ‘state’, ‘runtime’.
+Defaults to ‘config’.
+Here are concise explanations for each folder kind:
+<strong>config</strong>: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
+<strong>data</strong>: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.
+<strong>cache</strong>: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.
+<strong>state</strong>: Application state and logs that persist between sessions but aren’t critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn’t be auto-deleted.
+<strong>runtime</strong>: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
+<strong>TL;DR</strong>: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The full path of the app data folder.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p>See <a class="reference external" href="https://github.com/i2mint/i2mint/issues/1">https://github.com/i2mint/i2mint/issues/1</a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.util.get_app_folder">
+<span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">get_app_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'config'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'data'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cache'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'state'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'runtime'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'config'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/util.html#get_app_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.util.get_app_folder" title="Link to this definition"></a></dt>
+<dd><p>Get the full path of a directory suitable for storing application-specific configs,
+(or data, or cache, or state or runtime)</p>
+<p>On Windows, this is typically %APPDATA%.
+On macOS, this is typically ~/.config.
+On Linux, this is typically ~/.config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>folder_kind</strong> (<em>str</em>) – The kind of folder to get. One of ‘config’, ‘data’, ‘cache’, ‘state’, ‘runtime’.
+Defaults to ‘config’.
+Here are concise explanations for each folder kind:
+<strong>config</strong>: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
+<strong>data</strong>: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.
+<strong>cache</strong>: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.
+<strong>state</strong>: Application state and logs that persist between sessions but aren’t critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn’t be auto-deleted.
+<strong>runtime</strong>: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
+<strong>TL;DR</strong>: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The full path of the app data folder.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 <p>See <a class="reference external" href="https://github.com/i2mint/i2mint/issues/1">https://github.com/i2mint/i2mint/issues/1</a>.</p>
