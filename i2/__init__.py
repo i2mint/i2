@@ -58,7 +58,8 @@ from i2.util import (
     AttributeMapping,  # a mapping that provides attribute-access to the keys that are valid attribute names
     AttributeMutableMapping,  # a mutable mapping version of AttributeMapping
     copy_func,  # Copy a function.
-    get_app_data_folder,  # Get the application data folder of the current system.
+    get_app_folder,  # Get the application folder of a specified kind for the current system.
+    get_app_config_folder,  # Get the application config folder of the current system.
     LiteralVal,  # An object to indicate that the value should be considered literally.
     path_extractor,  # Get items from a tree-structured object from a sequence of tree-traversal indices.
     get_function_body,
@@ -80,3 +81,17 @@ from i2.doc_mint import (
     docstring_to_params,  # extract the params from a docstring
     find_in_params,  # find a substring in the params-info part of the docstring
 )
+
+
+def __getattr__(name):
+    """Handle deprecated imports at module level."""
+    if name == "get_app_data_folder":
+        import warnings
+
+        warnings.warn(
+            "`get_app_data_folder` is deprecated. Use `get_app_config_folder` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return get_app_config_folder
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
