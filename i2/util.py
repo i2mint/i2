@@ -1559,7 +1559,7 @@ else:
     )
 
 AppFolderKind = Literal["config", "data", "cache", "state", "runtime"]
-DFLT_APP_FOLDER_KIND = 'config'
+DFLT_APP_FOLDER_KIND = "config"
 
 
 def get_app_folder(folder_kind: AppFolderKind = DFLT_APP_FOLDER_KIND):
