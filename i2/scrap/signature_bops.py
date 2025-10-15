@@ -16,7 +16,7 @@ B.__doc__ = (
 A = TypeVar("A")
 A.__doc__ = "'Abstract' type we want to operate on through a key-function"
 KeyFunction = Callable[[A], B]
-KeyFunction.__doc__ = "Function that transforms an A to a B"
+# KeyFunction.__doc__ = "Function that transforms an A to a B"
 
 R = TypeVar("R")
 R.__doc__ = "The return type of a binary operator"

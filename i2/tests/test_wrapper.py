@@ -256,7 +256,7 @@ def test_rm_params():
     wf = range(7)
     mk_chunker = FuncFactory(simple_chunker, exclude="a")
     chunker = mk_chunker(chk_size=3)
-    assert str(Sig(chunker)) == "(a: Iterable, *, chk_size: int = 3)"
+    assert str(Sig(chunker)) == "(a: collections.abc.Iterable, *, chk_size: int = 3)"
     assert list(chunker(wf)) == [(0, 1, 2), (3, 4, 5)]
 
     mk_chunker = rm_params(
@@ -270,6 +270,6 @@ def test_rm_params():
 
     wf = range(7)
     chunker = mk_chunker(chk_size=3)
-    assert str(Sig(chunker)) == "(a: Iterable, *, chk_size: int = 3)"
+    assert str(Sig(chunker)) == "(a: collections.abc.Iterable, *, chk_size: int = 3)"
     assert list(chunker(wf)) == [(0, 1, 2), (3, 4, 5)]
     # ----------------------------------------------------------------------------

@@ -88,7 +88,7 @@ class FuncFactory:
 
     >>> factory = FuncFactory(foo)
     >>> factory
-    <FuncFactory(foo)>(a, b, *, c=2) -> Callable[..., float]
+    <FuncFactory(foo)>(a, b, *, c=2) -> ...Callable[..., float]
 
     (Note that the repr even reuses ``foo``'s return annotation to tell us that our
     factory will return a callable that returns that type (if the annotation is a type).
@@ -111,7 +111,7 @@ class FuncFactory:
 
     >>> factory_no_a = FuncFactory(foo, exclude=['a'])
     >>> factory_no_a
-    <FuncFactory(foo)>(b, *, c=2) -> Callable[..., float]
+    <FuncFactory(foo)>(b, *, c=2) -> ...Callable[..., float]
     >>> g = factory_no_a(2, 3)  # equivalent to ``factory(b=2, c=3)`` as no ``a`` here
     >>> g(10)
     23
