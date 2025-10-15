@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.util &mdash; i2 0.1.56 documentation</title>
+  <title>i2.tests.util &mdash; i2 0.1.57 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9d458db5"></script>
+      <script src="../../../_static/documentation_options.js?v=393d09ac"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -116,13 +116,10 @@
     <span class="n">List</span><span class="p">,</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
-    <span class="n">Callable</span><span class="p">,</span>
-    <span class="n">Iterator</span><span class="p">,</span>
     <span class="n">Tuple</span><span class="p">,</span>
     <span class="n">Optional</span><span class="p">,</span>
-    <span class="n">Iterable</span><span class="p">,</span>
-    <span class="n">Mapping</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">KO</span><span class="p">,</span> <span class="n">PK</span><span class="p">,</span> <span class="n">PO</span><span class="p">,</span> <span class="n">VP</span><span class="p">,</span> <span class="n">VK</span><span class="p">,</span> <span class="n">var_param_kinds</span>
@@ -130,7 +127,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParamsAble</span><span class="p">,</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">ensure_param</span><span class="p">,</span> <span class="n">SignatureAble</span>
 
 <span class="n">ParameterAble</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
-<span class="n">ParamsAble_</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">ParamsAble</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+<span class="n">ParamsAble_</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">ParamsAble</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_is_valid_arg_for_sig</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -373,13 +370,13 @@
 <a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.sig_to_func">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sig_to_func</span><span class="p">(</span>
     <span class="n">sig</span><span class="p">:</span> <span class="n">ParamsAble</span> <span class="o">=</span> <span class="s2">&quot;00111234&quot;</span><span class="p">,</span>
-    <span class="n">code_lines</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
-        <span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Sig</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span>
-    <span class="p">]</span> <span class="o">=</span> <span class="n">_sig_to_str_of_call_args_code_str</span><span class="p">,</span>
+    <span class="n">code_lines</span><span class="p">:</span> <span class="p">(</span>
+        <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Sig</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">_sig_to_str_of_call_args_code_str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="nb">globals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="nb">locals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="nb">globals</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="nb">locals</span><span class="p">:</span> <span class="n">Mapping</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a function from a signature</span>
@@ -532,13 +529,13 @@
 <a class="viewcode-back" href="../../../module_docs/i2/tests/util.html#i2.tests.util.sig_to_inputs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sig_to_inputs</span><span class="p">(</span>
     <span class="n">sig</span><span class="p">:</span> <span class="n">SignatureAble</span><span class="p">,</span>
-    <span class="n">argument_vals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">argument_vals</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">variadics_source</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">variadics_source</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
         <span class="p">(</span><span class="s2">&quot;args1&quot;</span><span class="p">,</span> <span class="s2">&quot;args2&quot;</span><span class="p">),</span>
         <span class="p">{</span><span class="s2">&quot;kwargs1&quot;</span><span class="p">:</span> <span class="s2">&quot;kwargs1_val&quot;</span><span class="p">},</span>
     <span class="p">),</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate all kind-valid (arg, kwargs) input combinations for a function with a</span>
 <span class="sd">    given signature ``sig``, with argument values taken from the ``argument_vals``</span>
 
@@ -604,7 +601,7 @@
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_sig_to_inputs</span><span class="p">(</span><span class="n">po</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ko</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">argument_vals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_sig_to_inputs</span><span class="p">(</span><span class="n">po</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ko</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">argument_vals</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    &gt;&gt;&gt; list(_sig_to_inputs(2,2,2))</span>
@@ -701,7 +698,7 @@
     <span class="s2">&quot;invalid keyword argument&quot;</span><span class="p">,</span>
     <span class="s2">&quot;expected at most&quot;</span><span class="p">,</span>
     <span class="s2">&quot;keyword argument&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;got some positional\-only arguments passed as keyword arguments&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;got some positional\-only arguments passed as keyword arguments&quot;</span><span class="p">,</span>
     <span class="s2">&quot;no signature found&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 

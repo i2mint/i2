@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.1.56 documentation</title>
+  <title>i2.deco &mdash; i2 0.1.57 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=9d458db5"></script>
+      <script src="../../_static/documentation_options.js?v=393d09ac"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -160,7 +160,7 @@ arguments of a function <code class="docutils literal notranslate"><span class="
 It also has a more helpful signature:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">factory</span> <span class="o">=</span> <span class="n">FuncFactory</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">factory</span>
-<span class="go">&lt;FuncFactory(foo)&gt;(a, b, *, c=2) -&gt; Callable[..., float]</span>
+<span class="go">&lt;FuncFactory(foo)&gt;(a, b, *, c=2) -&gt; ...Callable[..., float]</span>
 </pre></div>
 </div>
 <p>(Note that the repr even reuses <code class="docutils literal notranslate"><span class="pre">foo</span></code>’s return annotation to tell us that our
@@ -182,7 +182,7 @@ functions for you based on the instance’s underlying <code class="docutils lit
 arguments, using their names or indices to specify them.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">factory_no_a</span> <span class="o">=</span> <span class="n">FuncFactory</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">factory_no_a</span>
-<span class="go">&lt;FuncFactory(foo)&gt;(b, *, c=2) -&gt; Callable[..., float]</span>
+<span class="go">&lt;FuncFactory(foo)&gt;(b, *, c=2) -&gt; ...Callable[..., float]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">factory_no_a</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># equivalent to ``factory(b=2, c=3)`` as no ``a`` here</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="go">23</span>
@@ -509,7 +509,7 @@ the arguments can be handled more uniformly.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.deco.mk_call_logger">
-<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">mk_call_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">logger=&lt;built-in</span> <span class="pre">function</span> <span class="pre">print&gt;,</span> <span class="pre">what_to_log:</span> <span class="pre">~typing.Callable[[~typing.Callable,</span> <span class="pre">~typing.Tuple,</span> <span class="pre">~typing.Dict],</span> <span class="pre">~typing.Any]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_call_signature&gt;,</span> <span class="pre">log_output=False,</span> <span class="pre">func_is_bounded=False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#mk_call_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.deco.mk_call_logger" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">mk_call_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">logger=&lt;built-in</span> <span class="pre">function</span> <span class="pre">print&gt;,</span> <span class="pre">what_to_log:</span> <span class="pre">~collections.abc.Callable[[~collections.abc.Callable,</span> <span class="pre">tuple,</span> <span class="pre">dict],</span> <span class="pre">~typing.Any]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_call_signature&gt;,</span> <span class="pre">log_output=False,</span> <span class="pre">func_is_bounded=False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/deco.html#mk_call_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.deco.mk_call_logger" title="Link to this definition"></a></dt>
 <dd><p>Makes a decorator that logs each call to the wrapped function.
 :param logger: The actual function that logs stuff. Default is print. The “stuff” it logs is given by</p>
 <blockquote>
