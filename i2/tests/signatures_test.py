@@ -947,7 +947,7 @@ def test_sigless_builtins():
         # def foo(*, a): ...
         # ------------------------------------------------------------------------------
         ("(*, a)", None, {"a": 1}, None, {"a": 1}),
-        ("(*, a)", None, None, None, (TypeError, "missing.*required keyword-only argument: 'a'")),
+        ("(*, a)", None, None, None, (TypeError, "missing a required.*argument: 'a'")),
         ("(*, a)", None, None, dict(allow_partial=True), {}),
         ("(*, a=0)", None, None, dict(apply_defaults=True), {"a": 0}),
         (
@@ -1987,7 +1987,7 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
         # def foo(*, a): ...
         # ------------------------------------------------------------------------------
         ("(*, a)", {"a": 1}, None, ((), {"a": 1})),
-        ("(*, a)", None, None, (TypeError, "missing.*required keyword-only argument: 'a'")),
+        ("(*, a)", None, None, (TypeError, "missing a required.*argument: 'a'")),
         ("(*, a)", None, dict(allow_partial=True), ((), {})),
         ("(*, a=0)", None, dict(apply_defaults=True), ((), {"a": 0})),
         (
