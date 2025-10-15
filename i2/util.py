@@ -1459,7 +1459,9 @@ class FunctionBuilder:
             )
         if arg_name in self.kwonlyargs:
             raise ExistingArgument(
-                "arg {!r} already in func {} kwonly arg list".format(arg_name, self.name)
+                "arg {!r} already in func {} kwonly arg list".format(
+                    arg_name, self.name
+                )
             )
         if not kwonly:
             self.args.append(arg_name)

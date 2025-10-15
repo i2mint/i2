@@ -1311,9 +1311,7 @@ def _call_signature(func: Callable, args: Args, kwargs: Kwargs) -> str:
     _call_signature(2, 'sdf', list([0, 1, 2, 3, 4, 5, 6...), z='boo', zzz=10)
     """
     args_signature = ", ".join(map(_special_str, args))
-    kwargs_signature = ", ".join(
-        (f"{k}={_special_str(v)}" for k, v in kwargs.items())
-    )
+    kwargs_signature = ", ".join((f"{k}={_special_str(v)}" for k, v in kwargs.items()))
     return "{func_name}({signature})".format(
         func_name=func.__name__,
         signature=", ".join([args_signature, kwargs_signature]),

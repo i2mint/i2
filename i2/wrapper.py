@@ -2089,9 +2089,7 @@ def partialx(
     return f
 
 
-def move_params_to_the_end(
-    func: Callable, names_to_move: Callable | Iterable[str]
-):
+def move_params_to_the_end(func: Callable, names_to_move: Callable | Iterable[str]):
     """
     Choose args from func, according to choice_args_func and move them
     to the right
