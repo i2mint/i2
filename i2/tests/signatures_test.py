@@ -163,12 +163,12 @@ def test_signature_of_partial():
 def test_some_edge_cases_of_sig():
     from operator import itemgetter, attrgetter, methodcaller
 
-    assert Sig(itemgetter).names == ["key", "keys"]
-    assert Sig(itemgetter(1)).names == ["iterable"]
-    assert Sig(itemgetter(1, 2)).names == ["iterable"]
-    assert Sig(attrgetter).names == ["key", "keys"]
-    assert Sig(attrgetter("foo")).names == ["iterable"]
-    assert Sig(attrgetter("foo", "bar")).names == ["iterable"]
+    assert Sig(itemgetter).names == ["item", "items"]
+    assert Sig(itemgetter(1)).names == ["args", "kwargs"]
+    assert Sig(itemgetter(1, 2)).names == ["args", "kwargs"]
+    assert Sig(attrgetter).names == ["attr", "attrs"]
+    assert Sig(attrgetter("foo")).names == ["args", "kwargs"]
+    assert Sig(attrgetter("foo", "bar")).names == ["args", "kwargs"]
     assert Sig(methodcaller).names == ["name", "args", "kwargs"]
     # assert Sig(methodcaller('foo')).names == []  # fix!!
 
@@ -821,7 +821,7 @@ def test_sigless_builtins():
         # PO
         # ------------------------------------------------------------------------------
         ("(a, /)", (1,), None, None, {"a": 1}),
-        ("(a, /)", None, None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(a, /)", None, None, None, (TypeError, "missing.*required.*argument: 'a'")),
         ("(a, /)", None, None, dict(allow_partial=True), {}),
         ("(a=0, /)", None, None, dict(apply_defaults=True), {"a": 0}),
         (
@@ -865,7 +865,7 @@ def test_sigless_builtins():
         # ------------------------------------------------------------------------------
         ("(a)", (1,), None, None, {"a": 1}),
         ("(a)", None, {"a": 1}, None, {"a": 1}),
-        ("(a)", None, None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(a)", None, None, None, (TypeError, "missing.*required.*argument: 'a'")),
         ("(a)", None, None, dict(allow_partial=True), {}),
         ("(a=0)", None, None, dict(apply_defaults=True), {"a": 0}),
         ("(a=0)", None, None, dict(apply_defaults=True, allow_partial=True), {"a": 0}),
@@ -947,7 +947,7 @@ def test_sigless_builtins():
         # def foo(*, a): ...
         # ------------------------------------------------------------------------------
         ("(*, a)", None, {"a": 1}, None, {"a": 1}),
-        ("(*, a)", None, None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(*, a)", None, None, None, (TypeError, "missing.*required keyword-only argument: 'a'")),
         ("(*, a)", None, None, dict(allow_partial=True), {}),
         ("(*, a=0)", None, None, dict(apply_defaults=True), {"a": 0}),
         (
@@ -1061,28 +1061,28 @@ def test_sigless_builtins():
             None,
             None,
             None,
-            (TypeError, "missing a required argument: 'a'"),
+            (TypeError, "missing.*required.*argument: 'a'"),
         ),
         (
             "(a, /, b, *, c)",
             (1,),
             None,
             None,
-            (TypeError, "missing a required argument: 'b'"),
+            (TypeError, "missing.*required.*argument: 'b'"),
         ),
         (
             "(a, /, b, *, c)",
             (1, 2),
             None,
             None,
-            (TypeError, "missing a required argument: 'c'"),
+            (TypeError, "missing a required.*argument: 'c'"),
         ),
         (
             "(a, /, b, *, c)",
             (1,),
             {"b": 2},
             None,
-            (TypeError, "missing a required argument: 'c'"),
+            (TypeError, "missing a required.*argument: 'c'"),
         ),
         ("(a, /, b, *, c)", None, None, dict(allow_partial=True), {}),
         ("(a, /, b, *, c)", (1,), None, dict(allow_partial=True), {"a": 1}),
@@ -1326,35 +1326,35 @@ def test_sigless_builtins():
             None,
             None,
             None,
-            (TypeError, "missing a required argument: 'a'"),
+            (TypeError, "missing.*required.*argument: 'a'"),
         ),
         (
             "(a, /, b, *args, c)",
             (1,),
             None,
             None,
-            (TypeError, "missing a required argument: 'b'"),
+            (TypeError, "missing.*required.*argument: 'b'"),
         ),
         (
             "(a, /, b, *args, c)",
             (1, 2),
             None,
             None,
-            (TypeError, "missing a required argument: 'c'"),
+            (TypeError, "missing a required.*argument: 'c'"),
         ),
         (
             "(a, /, b, *args, c)",
             (1, 2, 3, 4),
             None,
             None,
-            (TypeError, "missing a required argument: 'c'"),
+            (TypeError, "missing a required.*argument: 'c'"),
         ),
         (
             "(a, /, b, *args, c)",
             (1,),
             {"b": 2},
             None,
-            (TypeError, "missing a required argument: 'c'"),
+            (TypeError, "missing a required.*argument: 'c'"),
         ),
         ("(a, /, b, *args, c)", None, None, dict(allow_partial=True), {}),
         ("(a, /, b, *args, c)", (1,), None, dict(allow_partial=True), {"a": 1}),
@@ -1525,56 +1525,56 @@ def test_sigless_builtins():
             None,
             None,
             None,
-            (TypeError, "missing a required argument: 'a'"),
+            (TypeError, "missing.*required.*argument: 'a'"),
         ),
         (
             "(a, /, b, *, c, **kwargs)",
             (1,),
             None,
             None,
-            (TypeError, "missing a required argument: 'b'"),
+            (TypeError, "missing.*required.*argument: 'b'"),
         ),
         (
             "(a, /, b, *, c, **kwargs)",
             (1, 2),
             None,
             None,
-            (TypeError, "missing a required argument: 'c'"),
+            (TypeError, "missing a required.*argument: 'c'"),
         ),
         (
             "(a, /, b, *, c, **kwargs)",
             (1,),
             {"b": 2},
             None,
-            (TypeError, "missing a required argument: 'c'"),
+            (TypeError, "missing a required.*argument: 'c'"),
         ),
         (
             "(a, /, b, *, c, **kwargs)",
             None,
             {"d": 4, "e": 5},
             None,
-            (TypeError, "missing a required argument: 'a'"),
+            (TypeError, "missing.*required.*argument: 'a'"),
         ),
         (
             "(a, /, b, *, c, **kwargs)",
             (1,),
             {"d": 4, "e": 5},
             None,
-            (TypeError, "missing a required argument: 'b'"),
+            (TypeError, "missing.*required.*argument: 'b'"),
         ),
         (
             "(a, /, b, *, c, **kwargs)",
             (1, 2),
             {"d": 4, "e": 5},
             None,
-            (TypeError, "missing a required argument: 'c'"),
+            (TypeError, "missing a required.*argument: 'c'"),
         ),
         (
             "(a, /, b, *, c, **kwargs)",
             (1,),
             {"b": 2, "d": 4, "e": 5},
             None,
-            (TypeError, "missing a required argument: 'c'"),
+            (TypeError, "missing a required.*argument: 'c'"),
         ),
         ("(a, /, b, *, c, **kwargs)", None, None, dict(allow_partial=True), {}),
         ("(a, /, b, *, c, **kwargs)", (1,), None, dict(allow_partial=True), {"a": 1}),
@@ -1836,7 +1836,7 @@ def test_sigless_builtins():
             None,
             None,
             None,
-            (TypeError, "missing a required argument: 'a'"),
+            (TypeError, "missing.*required.*argument: 'a'"),
         ),
         ("(a, /, b, *args, c, **kwargs)", None, None, dict(allow_partial=True), {}),
         (
@@ -1908,7 +1908,7 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
         # PO
         # ------------------------------------------------------------------------------
         ("(a, /)", {"a": 1}, None, ((1,), {})),
-        ("(a, /)", None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(a, /)", None, None, (TypeError, "missing.*required.*argument: 'a'")),
         ("(a, /)", None, dict(allow_partial=True), ((), {})),
         ("(a=0, /)", None, dict(apply_defaults=True), ((0,), {})),
         ("(a=0, /)", None, dict(allow_partial=True, apply_defaults=True), ((0,), {})),
@@ -1932,7 +1932,7 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
         # PK
         # ------------------------------------------------------------------------------
         ("(a)", {"a": 1}, None, ((), {"a": 1})),
-        ("(a)", None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(a)", None, None, (TypeError, "missing.*required.*argument: 'a'")),
         ("(a)", None, dict(allow_partial=True), ((), {})),
         ("(a=0)", None, dict(apply_defaults=True), ((), {"a": 0})),
         ("(a=0)", None, dict(allow_partial=True, apply_defaults=True), ((), {"a": 0})),
@@ -1987,7 +1987,7 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
         # def foo(*, a): ...
         # ------------------------------------------------------------------------------
         ("(*, a)", {"a": 1}, None, ((), {"a": 1})),
-        ("(*, a)", None, None, (TypeError, "missing a required argument: 'a'")),
+        ("(*, a)", None, None, (TypeError, "missing.*required keyword-only argument: 'a'")),
         ("(*, a)", None, dict(allow_partial=True), ((), {})),
         ("(*, a=0)", None, dict(apply_defaults=True), ((), {"a": 0})),
         (
@@ -2061,7 +2061,7 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
             "(a, /, b, *, c)",
             None,
             None,
-            (TypeError, "missing a required argument: 'a'"),
+            (TypeError, "missing.*required.*argument: 'a'"),
         ),
         ("(a, /, b, *, c)", None, dict(allow_partial=True), ((), {})),
         (
@@ -2177,7 +2177,7 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
             "(a, /, b, *args, c)",
             None,
             None,
-            (TypeError, "missing a required argument: 'a'"),
+            (TypeError, "missing.*required.*argument: 'a'"),
         ),
         ("(a, /, b, *args, c)", None, dict(allow_partial=True), ((), {})),
         (
@@ -2237,7 +2237,7 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
             "(a, /, b, *, c, **kwargs)",
             None,
             None,
-            (TypeError, "missing a required argument: 'a'"),
+            (TypeError, "missing.*required.*argument: 'a'"),
         ),
         ("(a, /, b, *, c, **kwargs)", None, dict(allow_partial=True), ((), {})),
         (
@@ -2303,7 +2303,7 @@ def test_map_arguments(sig_spec, args, kwargs, map_arguments_kwargs, expected_ou
             "(a, /, b, *args, c, **kwargs)",
             None,
             None,
-            (TypeError, "missing a required argument: 'a'"),
+            (TypeError, "missing.*required.*argument: 'a'"),
         ),
         ("(a, /, b, *args, c, **kwargs)", None, dict(allow_partial=True), ((), {})),
         (

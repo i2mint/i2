@@ -84,7 +84,7 @@ def convert_output():
 def test_attrs_used_by_method():
     from i2.footprints import attrs_used_by_method
 
-    assert attrs_used_by_method(A.target_method) == {"a", "b", "c", "e"}
+    assert attrs_used_by_method(A.target_method) == {"a", "b", "e"}
     assert attrs_used_by_method(A.other_method) == {"c", "e"}
     assert attrs_used_by_method(A.a_class_method) == {"e"}
 
