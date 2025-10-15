@@ -6,7 +6,8 @@ See design issue: https://github.com/i2mint/i2/issues/50
 from functools import partial
 from collections import defaultdict
 from itertools import tee
-from typing import Callable, TypeVar, Optional, Union, Iterable
+from typing import TypeVar, Optional, Union
+from collections.abc import Callable, Iterable
 
 B = TypeVar("B")
 B.__doc__ = (
@@ -48,7 +49,7 @@ _key_function_enabled_operator = _keyed_comparator
 _key_function_factory = keyed_comparator
 
 
-def _key_mappings(x: Iterable, key: Optional[KeyFunction] = None):
+def _key_mappings(x: Iterable, key: KeyFunction | None = None):
     """Create a mapping from key to value, and a mapping from value to key"""
     if key is None:
         key = lambda x: x

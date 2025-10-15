@@ -1,6 +1,7 @@
 """Meta-interfaces"""
 
-from typing import Literal, List, Dict, Tuple, Callable, Union
+from typing import Literal, List, Dict, Tuple, Union
+from collections.abc import Callable
 import re
 import ast
 
@@ -10,8 +11,8 @@ nan = float("nan")
 
 
 def find_in_params(
-    query: str, params: Union[Callable, str], *, search_in=("name", "description")
-) -> List[Dict]:
+    query: str, params: Callable | str, *, search_in=("name", "description")
+) -> list[dict]:
     """
     Find parameters in a list of parameter specifications.
 
@@ -380,7 +381,7 @@ register_converter(dflt_str_to_obj_mapping)
 register_converter(literal_eval_converter)
 
 
-def convert_string(s: str, converters: List[Union[dict, Callable]]) -> object:
+def convert_string(s: str, converters: list[dict | Callable]) -> object:
     for converter in converters:
         # If converter is a dict
         if isinstance(converter, dict):
@@ -405,8 +406,8 @@ def docstring_to_params(
     docstring: str,
     *,
     doc_style: Literal["numpy", "google", "rest"] = "numpy",
-    converters: List = dflt_str_to_obj_converters,
-) -> List[Dict]:
+    converters: list = dflt_str_to_obj_converters,
+) -> list[dict]:
     """
     Parse a docstring and extract parameter specifications.
 
@@ -488,7 +489,7 @@ def docstring_to_params(
     return params
 
 
-def _extract_params_section(docstring: str, doc_style: str) -> List[str]:
+def _extract_params_section(docstring: str, doc_style: str) -> list[str]:
     lines = docstring.strip().split("\n")
     if doc_style == "numpy":
         # Find "Parameters" section
@@ -520,8 +521,8 @@ def _extract_params_section(docstring: str, doc_style: str) -> List[str]:
 
 
 def _collect_indented_lines(
-    param_lines: List[str], start_index: int, indent_level: int
-) -> Tuple[str, int]:
+    param_lines: list[str], start_index: int, indent_level: int
+) -> tuple[str, int]:
     description_lines = []
     i = start_index
     while i < len(param_lines) and (
@@ -533,7 +534,7 @@ def _collect_indented_lines(
     return description, i
 
 
-def _parse_numpy_param_lines(param_lines: List[str]) -> List[Dict]:
+def _parse_numpy_param_lines(param_lines: list[str]) -> list[dict]:
     params = []
     i = 0
     while i < len(param_lines):
@@ -564,7 +565,7 @@ def _parse_numpy_param_lines(param_lines: List[str]) -> List[Dict]:
     return params
 
 
-def _parse_google_param_lines(param_lines: List[str]) -> List[Dict]:
+def _parse_google_param_lines(param_lines: list[str]) -> list[dict]:
     params = []
     i = 0
     while i < len(param_lines):
@@ -611,7 +612,7 @@ def _parse_google_param_lines(param_lines: List[str]) -> List[Dict]:
     return params
 
 
-def _parse_rest_param_lines(param_lines: List[str]) -> List[Dict]:
+def _parse_rest_param_lines(param_lines: list[str]) -> list[dict]:
     params_dict = {}
     i = 0
     while i < len(param_lines):
@@ -663,7 +664,7 @@ def _parse_rest_param_lines(param_lines: List[str]) -> List[Dict]:
 # Older stuff. TODO: Clean up and remove what's not needed
 
 import doctest
-from typing import Callable
+from collections.abc import Callable
 import re
 from itertools import groupby
 from inspect import getdoc
@@ -750,7 +751,7 @@ class ExampleX(doctest.Example):
         return str(self)
 
 
-from typing import Sequence
+from collections.abc import Sequence
 
 
 class DoctestBlock(list):
@@ -851,8 +852,8 @@ def split_text_and_doctests(doc_string: str):
 
 
 comment_strip_p = re.compile(r"(?m)^ *#.*\n?")
-doctest_line_p = re.compile("\s*>>>")
-empty_line = re.compile("\s*$")
+doctest_line_p = re.compile(r"\s*>>>")
+empty_line = re.compile(r"\s*$")
 
 
 def non_doctest_lines(doc):
@@ -933,7 +934,7 @@ def _assert_wants(source, want, wrap_func_name=None):
             strchr = "'"
             return "assert {t}, {strchr}{t}{strchr}".format(t=t, strchr=strchr)
         else:
-            return "assert {t}".format(t=t)
+            return f"assert {t}"
     else:  # if you didn't return before
         if wrap_func_name is None:
             return f"actual = {source}\nexpected = {want}\nassert actual == expected"

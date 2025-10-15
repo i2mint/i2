@@ -3,7 +3,8 @@ Deprecated code I'm keeping around so I can at least reuse it's docs at some poi
 """
 
 from functools import partial
-from typing import Iterable, Callable, Any
+from typing import Any
+from collections.abc import Iterable, Callable
 
 from i2 import Sig, name_of_obj
 from i2.signatures import extract_arguments

@@ -10,19 +10,15 @@ from functools import partial, wraps, cached_property, partialmethod
 import types
 from types import SimpleNamespace
 from typing import (
-    Mapping,
-    Callable,
     Tuple,
     Any,
-    MutableMapping,
     Union,
     Optional,
-    Iterable,
-    Iterator,
     TypeVar,
     KT,
     Literal,
 )
+from collections.abc import Mapping, Callable, MutableMapping, Iterable, Iterator
 from collections import namedtuple
 import contextlib
 import io
@@ -49,16 +45,17 @@ def return_none(*args, **kwargs) -> None:
     return None
 
 
-from typing import Any, Optional, MutableMapping
+from typing import Any, Optional
+from collections.abc import MutableMapping
 
 
 def name_of_obj(
     o: object,
     *,
     base_name_of_obj: Callable = attrgetter("__name__"),
-    caught_exceptions: Tuple = (AttributeError,),
+    caught_exceptions: tuple = (AttributeError,),
     default_factory: Callable = return_none,
-) -> Union[str, None]:
+) -> str | None:
     """
     Tries to find the (or "a") name for an object, even if `__name__` doesn't exist.
 
@@ -124,7 +121,7 @@ def name_of_obj(
 
 def register_object(
     obj: Any = None,
-    name: Optional[str] = None,
+    name: str | None = None,
     *,
     registry: MutableMapping,
 ):
@@ -179,7 +176,7 @@ def register_object(
     return obj
 
 
-ExceptionTypes = Union[BaseException, Tuple[BaseException]]
+ExceptionTypes = Union[BaseException, tuple[BaseException]]
 Handler = Callable[[BaseException], None]
 Handlers = Union[Handler, Mapping[KT, Handler]]
 
@@ -835,7 +832,7 @@ class FrozenDict(dict):
 
     def __repr__(self):
         cn = self.__class__.__name__
-        return "%s(%s)" % (cn, dict.__repr__(self))
+        return "{}({})".format(cn, dict.__repr__(self))
 
     def __reduce_ex__(self, protocol):
         return type(self), (dict(self),)
@@ -878,7 +875,7 @@ function_type = type(
 )  # using this instead of callable() because classes are callable, for instance
 
 
-class NoDefault(object):
+class NoDefault:
     def __repr__(self):
         return "no_default"
 
@@ -969,15 +966,15 @@ class MissingArgument(ValueError):
 
 
 def _default_sentinel_repr_method(self):
-    return "%s(%r)" % (self.__class__.__name__, self.__name__)
+    return "{}({!r})".format(self.__class__.__name__, self.__name__)
 
 
 def mk_sentinel(
     name,
     boolean_value: bool = False,
-    repr_: Union[str, Callable] = _default_sentinel_repr_method,
+    repr_: str | Callable = _default_sentinel_repr_method,
     *,
-    module: Optional[str] = None,
+    module: str | None = None,
 ):
     """Creates and returns a new **instance** of a new class, suitable for usage as a
     "sentinel" since it is a kind of singleton (there can be only one instance of it.)
@@ -1092,7 +1089,7 @@ def mk_sentinel(
 
     """
 
-    class Sentinel(object):
+    class Sentinel:
         def __init__(self):
             self.__name__ = name
 
@@ -1196,7 +1193,7 @@ def inspect_formatargspec(
     return result
 
 
-class FunctionBuilder(object):
+class FunctionBuilder:
     """The FunctionBuilder type provides an interface for programmatically
     creating new functions, either based on existing functions or from
     scratch.
@@ -1275,7 +1272,7 @@ class FunctionBuilder(object):
     @classmethod
     def _argspec_to_dict(cls, f):
         argspec = inspect.getfullargspec(f)
-        return dict((attr, getattr(argspec, attr)) for attr in cls._argspec_defaults)
+        return {attr: getattr(argspec, attr) for attr in cls._argspec_defaults}
 
     _defaults = {
         "doc": str,
@@ -1335,7 +1332,7 @@ class FunctionBuilder(object):
         kwonly_pairs = None
         formatters = {}
         if self.kwonlyargs:
-            kwonly_pairs = dict((arg, arg) for arg in self.kwonlyargs)
+            kwonly_pairs = {arg: arg for arg in self.kwonlyargs}
             formatters["formatvalue"] = lambda value: "=" + value
 
         sig = inspect_formatargspec(
@@ -1360,7 +1357,7 @@ class FunctionBuilder(object):
         # TODO: copy_body? gonna need a good signature regex.
         # TODO: might worry about __closure__?
         if not callable(func):
-            raise TypeError("expected callable object, not %r" % (func,))
+            raise TypeError("expected callable object, not {!r}".format(func))
 
         if isinstance(func, partial):
             kwargs = {
@@ -1458,11 +1455,11 @@ class FunctionBuilder(object):
         """
         if arg_name in self.args:
             raise ExistingArgument(
-                "arg %r already in func %s arg list" % (arg_name, self.name)
+                "arg {!r} already in func {} arg list".format(arg_name, self.name)
             )
         if arg_name in self.kwonlyargs:
             raise ExistingArgument(
-                "arg %r already in func %s kwonly arg list" % (arg_name, self.name)
+                "arg {!r} already in func {} kwonly arg list".format(arg_name, self.name)
             )
         if not kwonly:
             self.args.append(arg_name)

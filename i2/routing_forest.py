@@ -154,7 +154,8 @@ from itertools import chain
 from dataclasses import dataclass
 from i2.util import LiteralVal, mk_sentinel
 
-from typing import TypeVar, Tuple, Iterable, Callable, Mapping, MutableMapping, Any
+from typing import TypeVar, Tuple, Any
+from collections.abc import Iterable, Callable, Mapping, MutableMapping
 
 
 def return_sentinel(obj: Any, sentinel: Any = None):
@@ -308,7 +309,7 @@ Obj = TypeVar("Obj")
 Output = TypeVar("Output")
 Cond = Callable[[Obj], bool]
 Then = Callable[[Obj], Output]
-Rule = Tuple[Cond, Then]
+Rule = tuple[Cond, Then]
 Rules = Iterable[Rule]
 
 
@@ -482,7 +483,7 @@ class FeatCondNode(RoutingNode):
     """
 
     feat: Featurizer
-    feat_cond_thens: Iterable[Tuple[Callable[[Feature], bool], Any]]
+    feat_cond_thens: Iterable[tuple[Callable[[Feature], bool], Any]]
 
     @classmethod
     def from_feature_val_map(cls, feat, feat_cond_thens: FeatCondThenMap):

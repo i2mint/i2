@@ -1,7 +1,8 @@
 """Scrap"""
 
 from functools import wraps
-from typing import Iterable, Callable, Tuple
+from typing import Tuple
+from collections.abc import Iterable, Callable
 from i2.wrapper import Wrap
 from i2 import call_forgivingly, Sig
 
@@ -15,7 +16,7 @@ def default_caller(
     return func(*func_args, **func_kwargs)
 
 
-def _extract_params(ingress_output) -> Tuple[tuple, dict, dict, dict]:
+def _extract_params(ingress_output) -> tuple[tuple, dict, dict, dict]:
     """Pads tuple with empty dicts"""
     if isinstance(ingress_output, tuple) and len(ingress_output) == 2:
         # This is the "normal" ingress protocol, so transform to the extended

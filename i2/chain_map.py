@@ -145,7 +145,7 @@ class ChainMapTree(Mapping):
         _maps = list(maps)
 
         # All keys of kids that are mappings
-        kid_keys = set([key for m in maps for key in m.keys() if is_mapping(m[key])])
+        kid_keys = {key for m in maps for key in m.keys() if is_mapping(m[key])}
 
         # This will be a dictionary of lists of mappings
         kid_maps = {}
@@ -221,7 +221,7 @@ class ChainMapTree(Mapping):
         return d
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({', '.join((_map.__repr__() for _map in self._maps))})"
+        return f"{self.__class__.__name__}({', '.join(_map.__repr__() for _map in self._maps)})"
         #         map_keys_strs = self._mk_keys_str(self.keys())
         #         map_keys_strs = []
         #         for _map in self._maps:

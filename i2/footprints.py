@@ -8,7 +8,8 @@ import operator
 from functools import partial, cached_property
 import ast
 from textwrap import dedent
-from typing import List, Callable, Literal, Union, Container
+from typing import List, Literal, Union
+from collections.abc import Callable, Container
 
 from i2.util import ConditionalExceptionCatcher
 from i2.multi_object import Pipe
@@ -444,7 +445,7 @@ def _get_source(o, src_code=None) -> str:
             o = _unwrap_object(o)
             # get's it's source code
             try:
-                with open(getsourcefile(o), "r") as f:
+                with open(getsourcefile(o)) as f:
                     source_str = f.read()
                 return source_str
                 # TODO: (somehow, simply return getsource(o) doesn't lead to passing tests)
@@ -578,7 +579,7 @@ def _is_method_like(
     return isinstance(obj, include_types) and not isinstance(obj, exclude_types)
 
 
-def init_argument_names(cls, *, no_error_action=None) -> List[str]:
+def init_argument_names(cls, *, no_error_action=None) -> list[str]:
     """
     Get the list of argument names
 
@@ -834,7 +835,7 @@ def dict_to_graph(
     indent: str = "    ",
     prefix: str = "",
     suffix: str = "",
-    display: Union[bool, Callable] = False,
+    display: bool | Callable = False,
 ) -> str:
     """A function to convert a dictionary to a graphviz string.
 
@@ -923,7 +924,7 @@ def dict_to_graph(
     if not from_key_to_values:
         graph = {
             to_node: [from_node for from_node in graph if to_node in graph[from_node]]
-            for to_node in set(val for vals in graph.values() for val in vals)
+            for to_node in {val for vals in graph.values() for val in vals}
         }
 
     return _dict_to_graph(

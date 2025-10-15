@@ -1,6 +1,6 @@
 """Testing wrapper"""
 
-from typing import Iterable
+from collections.abc import Iterable
 from i2.wrapper import wrap, mk_ingress_from_name_mapper, rm_params
 from i2.deco import FuncFactory
 from i2.signatures import Sig

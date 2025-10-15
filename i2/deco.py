@@ -7,7 +7,8 @@ from functools import partial
 from functools import wraps  # TODO: Overwritten. Remove?
 from inspect import Signature, signature, Parameter
 from itertools import chain
-from typing import Callable, Tuple, Dict, Any, TypeVar
+from typing import Tuple, Dict, Any, TypeVar
+from collections.abc import Callable
 
 from i2.util import mk_sentinel
 from i2.signatures import Sig, kind_forgiving_func, name_of_obj
@@ -418,7 +419,7 @@ def kwargs_for_func(*funcs, **kwargs):
      'formula1': {'w': 1, 'x': 2, 'z': 3},
      'mult': {'x': 2}}
     """
-    return dict((func, Sig(func).source_arguments(**kwargs)) for func in funcs)
+    return {func: Sig(func).source_arguments(**kwargs) for func in funcs}
 
 
 def assert_attrs(attrs):
@@ -1239,7 +1240,7 @@ def wrap_instance_methods(
                     class_name = obj.__name__
                 else:
                     class_name = str(obj)
-                raise ValueError("{} has no '{}' method!".format(class_name, method))
+                raise ValueError(f"{class_name} has no '{method}' method!")
         return obj
 
     return obj_wrapper
@@ -1274,8 +1275,8 @@ def mk_method_trans_spec_from_methods_specs_dict(methods_specs_dict):
     return dict(method_trans_spec)
 
 
-Args = Tuple
-Kwargs = Dict
+Args = tuple
+Kwargs = dict
 WhatToLog = Callable[[Callable, Args, Kwargs], Any]
 
 
@@ -1291,7 +1292,7 @@ def _special_str(x: Any, max_len=100) -> str:
                 value_str = x.__repr__()
             else:
                 value_str = x_str
-            x_str = "{}({}...)".format(type_str, value_str[:20])
+            x_str = f"{type_str}({value_str[:20]}...)"
         return x_str
 
 
@@ -1311,7 +1312,7 @@ def _call_signature(func: Callable, args: Args, kwargs: Kwargs) -> str:
     """
     args_signature = ", ".join(map(_special_str, args))
     kwargs_signature = ", ".join(
-        ("{}={}".format(k, _special_str(v)) for k, v in kwargs.items())
+        (f"{k}={_special_str(v)}" for k, v in kwargs.items())
     )
     return "{func_name}({signature})".format(
         func_name=func.__name__,

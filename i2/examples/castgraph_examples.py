@@ -1,6 +1,7 @@
 """Examples using castgraph."""
 
-from typing import Optional, MutableMapping
+from typing import Optional
+from collections.abc import MutableMapping
 from i2.castgraph import ConversionRegistry
 
 
@@ -53,7 +54,7 @@ def example_registry() -> ConversionRegistry:
     reg = ConversionRegistry()
 
     @reg.register(FilePath, Text, cost=1.0)
-    def filepath_to_text(fp: FilePath, ctx: Optional[dict]) -> Text:
+    def filepath_to_text(fp: FilePath, ctx: dict | None) -> Text:
         # Example: pretend-read from an injected "fs" dict for testability
         fs: MutableMapping[str, str] = (ctx or {}).get("fs", {})
         # Try direct lookup first
@@ -78,16 +79,16 @@ def example_registry() -> ConversionRegistry:
         return Text(content)
 
     @reg.register(Text, JSONDict, cost=1.0)
-    def text_to_json(t: Text, ctx: Optional[dict]) -> JSONDict:
+    def text_to_json(t: Text, ctx: dict | None) -> JSONDict:
         return JSONDict(json.loads(str(t) or "{}"))
 
     @reg.register(JSONDict, CanonicalRecord, cost=1.0)
-    def json_to_canonical(d: JSONDict, ctx: Optional[dict]) -> CanonicalRecord:
+    def json_to_canonical(d: JSONDict, ctx: dict | None) -> CanonicalRecord:
         # Simple normalization step
         return CanonicalRecord(d)
 
     @reg.register(Text, CanonicalRecord, cost=0.5)  # cheaper direct route
-    def text_to_canonical(t: Text, ctx: Optional[dict]) -> CanonicalRecord:
+    def text_to_canonical(t: Text, ctx: dict | None) -> CanonicalRecord:
         return CanonicalRecord(json.loads(str(t) or "{}"))
 
     return reg

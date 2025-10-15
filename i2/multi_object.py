@@ -22,7 +22,8 @@ together)
 
 """
 
-from typing import Mapping, Iterable, Union, Callable, Any, TypeVar
+from typing import Union, Any, TypeVar
+from collections.abc import Mapping, Iterable, Callable
 from inspect import Signature, signature
 
 
@@ -31,7 +32,7 @@ from inspect import Signature, signature
 # TODO: Analyse usages and reroute to i2.signatures.name_of_obj instead.
 #   Reason this duplicate exists might be because we wanted to keep multi_object
 #   completely independent from other modules (self-contained).
-def name_of_obj(o: object, default=None) -> Union[str, None]:
+def name_of_obj(o: object, default=None) -> str | None:
     """
     Tries to find the (or "a") name for an object, even if `__name__` doesn't exist.
 
@@ -782,18 +783,18 @@ class FlexFuncFanout(MultiFunc):
         # multi_func_sig.wrap(self.kwargs_for_func)
 
     def kwargs_for_func(self, *args, **kwargs):
-        return dict(
-            (name, self.sigs[name].source_arguments(**kwargs))
+        return {
+            name: self.sigs[name].source_arguments(**kwargs)
             for name, func in self.funcs.items()
-        )
+        }
 
     # TODO: Give it a signature (needs to be done in __init__)
     # TODO: Validation of inputs
     def __call__(self, *args, **kwargs):
-        return dict(
-            (name, self.sigs[name].source_arguments(**kwargs))
+        return {
+            name: self.sigs[name].source_arguments(**kwargs)
             for name, func in self.funcs.items()
-        )
+        }
 
 
 class ParallelFuncs(MultiFunc):

@@ -66,17 +66,14 @@ How the ``Ingress`` class (ingress templated function maker) works:
 from functools import wraps, partial
 from inspect import Parameter, signature
 from typing import (
-    Mapping,
-    Callable,
     Any,
     Optional,
     Union,
-    Iterable,
-    Sequence,
     NewType,
     Dict,
     Tuple,
 )
+from collections.abc import Mapping, Callable, Iterable, Sequence
 
 from types import MethodType
 from inspect import Parameter
@@ -482,7 +479,7 @@ def append_empty_args(func):
 
 
 class Ingress:
-    """The Ingress class offers a template for creating ingress classes.
+    r"""The Ingress class offers a template for creating ingress classes.
 
     Note that when writing a decorator with ``i2.wrapper``, you're usually better off
     writing an ingress function for the purpose. As a result, your code will usually
@@ -612,7 +609,7 @@ class Ingress:
     def __init__(
         self,
         inner_sig,
-        kwargs_trans: Optional[KwargsTrans] = None,
+        kwargs_trans: KwargsTrans | None = None,
         outer_sig=None,
         *,
         allow_excess=True,
@@ -768,7 +765,7 @@ def parameters_to_dict(parameters):
 
 def _handle_ingress_class_inputs(
     inner_sig,
-    kwargs_trans: Optional[KwargsTrans],
+    kwargs_trans: KwargsTrans | None,
     outer_sig,
     *,
     _allow_reordering=False,
@@ -903,7 +900,7 @@ class InnerMapIngress:
     def __init__(
         self,
         inner_sig,
-        kwargs_trans: Optional[KwargsTrans] = None,
+        kwargs_trans: KwargsTrans | None = None,
         *,
         _allow_reordering=False,
         **changes_for_name,
@@ -2093,7 +2090,7 @@ def partialx(
 
 
 def move_params_to_the_end(
-    func: Callable, names_to_move: Union[Callable, Iterable[str]]
+    func: Callable, names_to_move: Callable | Iterable[str]
 ):
     """
     Choose args from func, according to choice_args_func and move them

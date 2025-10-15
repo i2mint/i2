@@ -97,13 +97,9 @@ import inspect
 import warnings
 from typing import (
     Any,
-    Callable,
     Deque,
     Dict,
-    Hashable,
-    Iterable,
     List,
-    MutableMapping,
     Optional,
     Tuple,
     get_type_hints,
@@ -111,6 +107,7 @@ from typing import (
     Type,
     TypeVar,
 )
+from collections.abc import Callable, Hashable, Iterable, MutableMapping
 
 
 T = TypeVar("T")
@@ -120,8 +117,8 @@ Converter = Callable[[Any, Optional[dict]], Any]
 
 @dataclass(frozen=True)
 class Edge:
-    src: Type[Any]
-    dst: Type[Any]
+    src: type[Any]
+    dst: type[Any]
     func: Converter
     cost: float = 1.0  # lower = preferred
 
@@ -167,8 +164,8 @@ def _normalize_converter(func: Converter) -> Converter:
 
 
 def _extract_types_from_annotations(
-    func: Callable, provided_src: Optional[Type], provided_dst: Optional[Type]
-) -> Tuple[Type[Any], Type[Any]]:
+    func: Callable, provided_src: type | None, provided_dst: type | None
+) -> tuple[type[Any], type[Any]]:
     """
     Extract src and dst types from function annotations if not provided.
 
@@ -215,7 +212,7 @@ def _extract_types_from_annotations(
                 # origins (e.g., collections.abc.Mapping) for an apples-to-apples
                 # comparison. This avoids spurious warnings when the same
                 # semantic type is referenced via different typing modules.
-                def _canonical_type(t: Type[Any]) -> Type[Any]:
+                def _canonical_type(t: type[Any]) -> type[Any]:
                     try:
                         origin = get_origin(t)
                         if origin:
@@ -259,7 +256,7 @@ def _extract_types_from_annotations(
         annotated_dst = hints.get("return", None)
         if annotated_dst is not None:
             # Reuse the same canonicalization logic for dst comparison
-            def _canonical_type(t: Type[Any]) -> Type[Any]:
+            def _canonical_type(t: type[Any]) -> type[Any]:
                 try:
                     origin = get_origin(t)
                     if origin:
@@ -304,17 +301,17 @@ class ConversionRegistry:
     """
 
     def __init__(self) -> None:
-        self._edges: Dict[Type[Any], List[Edge]] = defaultdict(list)
+        self._edges: dict[type[Any], list[Edge]] = defaultdict(list)
         # Optional result cache (obj identity-sensitive). Keep simple by default.
-        self._result_cache: Dict[Tuple[int, Type[Any]], Any] = {}
+        self._result_cache: dict[tuple[int, type[Any]], Any] = {}
 
     # -----------------------------
     # Registration API
     # -----------------------------
     def register(
         self,
-        src: Optional[Type[Any]] = None,
-        dst: Optional[Type[Any]] = None,
+        src: type[Any] | None = None,
+        dst: type[Any] | None = None,
         *,
         cost: float = 1.0,
     ) -> Callable[[Converter], Converter]:
@@ -366,9 +363,9 @@ class ConversionRegistry:
     def convert(
         self,
         obj: Any,
-        to_type: Type[U],
+        to_type: type[U],
         *,
-        context: Optional[dict] = None,
+        context: dict | None = None,
         use_result_cache: bool = False,
     ) -> U:
         """
@@ -449,34 +446,34 @@ class ConversionRegistry:
     # -----------------------------
     # Internals: path finding & application
     # -----------------------------
-    def _apply_path(self, obj: Any, path: List[Edge], context: Optional[dict]) -> Any:
+    def _apply_path(self, obj: Any, path: list[Edge], context: dict | None) -> Any:
         out = obj
         for edge in path:
             out = edge.func(out, context)
         return out
 
     @lru_cache(maxsize=4096)
-    def _find_path_cached(self, src: Type[Any], dst: Type[Any]) -> List[Edge]:
+    def _find_path_cached(self, src: type[Any], dst: type[Any]) -> list[Edge]:
         return self._find_min_cost_path(src, dst)
 
-    def _neighbors(self, src: Type[Any]) -> Iterable[Edge]:
+    def _neighbors(self, src: type[Any]) -> Iterable[Edge]:
         # Outgoing edges from exact src
         yield from self._edges.get(src, [])
         # Identity edge (src->src) for free; useful for uniform path logic.
         yield Edge(src, src, lambda x, ctx: x, cost=0.0)
 
-    def _find_min_cost_path(self, src: Type[Any], dst: Type[Any]) -> List[Edge]:
+    def _find_min_cost_path(self, src: type[Any], dst: type[Any]) -> list[Edge]:
         if src is dst:
             return []  # already at target
 
         # Dijkstra over type-nodes
-        frontier: List[Tuple[float, Type[Any]]] = [(0.0, src)]
-        dist: Dict[Type[Any], float] = {src: 0.0}
-        prev: Dict[Type[Any], Tuple[Optional[Type[Any]], Optional[Edge]]] = {
+        frontier: list[tuple[float, type[Any]]] = [(0.0, src)]
+        dist: dict[type[Any], float] = {src: 0.0}
+        prev: dict[type[Any], tuple[type[Any] | None, Edge | None]] = {
             src: (None, None)
         }
 
-        visited: set[Type[Any]] = set()
+        visited: set[type[Any]] = set()
 
         while frontier:
             frontier.sort(key=lambda t: t[0])
@@ -508,7 +505,7 @@ class ConversionRegistry:
 
         # Reconstruct path
         path_edges: Deque[Edge] = deque()
-        cur: Optional[Type[Any]] = dst
+        cur: type[Any] | None = dst
         while cur and prev[cur][0] is not None:
             _, edge = prev[cur]
             assert edge is not None
@@ -531,8 +528,8 @@ class ConversionRegistry:
     # -----------------------------
     def register(
         self,
-        src: Optional[Type[Any]] = None,
-        dst: Optional[Type[Any]] = None,
+        src: type[Any] | None = None,
+        dst: type[Any] | None = None,
         *,
         cost: float = 1.0,
     ) -> Callable[[Converter], Converter]:
@@ -581,9 +578,9 @@ class ConversionRegistry:
     def convert(
         self,
         obj: Any,
-        to_type: Type[U],
+        to_type: type[U],
         *,
-        context: Optional[dict] = None,
+        context: dict | None = None,
         use_result_cache: bool = False,
     ) -> U:
         """
@@ -664,34 +661,34 @@ class ConversionRegistry:
     # -----------------------------
     # Internals: path finding & application
     # -----------------------------
-    def _apply_path(self, obj: Any, path: List[Edge], context: Optional[dict]) -> Any:
+    def _apply_path(self, obj: Any, path: list[Edge], context: dict | None) -> Any:
         out = obj
         for edge in path:
             out = edge.func(out, context)
         return out
 
     @lru_cache(maxsize=4096)
-    def _find_path_cached(self, src: Type[Any], dst: Type[Any]) -> List[Edge]:
+    def _find_path_cached(self, src: type[Any], dst: type[Any]) -> list[Edge]:
         return self._find_min_cost_path(src, dst)
 
-    def _neighbors(self, src: Type[Any]) -> Iterable[Edge]:
+    def _neighbors(self, src: type[Any]) -> Iterable[Edge]:
         # Outgoing edges from exact src
         yield from self._edges.get(src, [])
         # Identity edge (src->src) for free; useful for uniform path logic.
         yield Edge(src, src, lambda x, ctx: x, cost=0.0)
 
-    def _find_min_cost_path(self, src: Type[Any], dst: Type[Any]) -> List[Edge]:
+    def _find_min_cost_path(self, src: type[Any], dst: type[Any]) -> list[Edge]:
         if src is dst:
             return []  # already at target
 
         # Dijkstra over type-nodes
-        frontier: List[Tuple[float, Type[Any]]] = [(0.0, src)]
-        dist: Dict[Type[Any], float] = {src: 0.0}
-        prev: Dict[Type[Any], Tuple[Optional[Type[Any]], Optional[Edge]]] = {
+        frontier: list[tuple[float, type[Any]]] = [(0.0, src)]
+        dist: dict[type[Any], float] = {src: 0.0}
+        prev: dict[type[Any], tuple[type[Any] | None, Edge | None]] = {
             src: (None, None)
         }
 
-        visited: set[Type[Any]] = set()
+        visited: set[type[Any]] = set()
 
         while frontier:
             frontier.sort(key=lambda t: t[0])
@@ -723,7 +720,7 @@ class ConversionRegistry:
 
         # Reconstruct path
         path_edges: Deque[Edge] = deque()
-        cur: Optional[Type[Any]] = dst
+        cur: type[Any] | None = dst
         while cur and prev[cur][0] is not None:
             _, edge = prev[cur]
             assert edge is not None

@@ -3,7 +3,6 @@
 from typing import (
     NewType,
     Optional,
-    Iterable,
     Protocol,
     Any,
     runtime_checkable,
@@ -11,6 +10,7 @@ from typing import (
     Literal,
     get_origin,
 )
+from collections.abc import Iterable
 
 
 from inspect import signature
@@ -118,8 +118,8 @@ def iterable_to_literal(iterable: Iterable):
 def new_type(
     name,
     tp,
-    doc: Optional[str] = None,
-    aka: Optional[Iterable] = None,
+    doc: str | None = None,
+    aka: Iterable | None = None,
     assign_to_globals=False,
 ):
     """
@@ -306,7 +306,8 @@ def dot_strings_of_callable_types(*typs, func_shape="box"):
 # --------------------------------------------------------------------------------------
 # Misc
 
-from typing import Callable, Any, Dict, Optional, Iterator, Iterable, KT
+from typing import Any, Dict, Optional, KT
+from collections.abc import Callable, Iterator, Iterable
 
 # Define a type alias for clarity in the code
 ObjectType = Any
@@ -367,7 +368,7 @@ class ObjectClassifier:
 
     """
 
-    def __init__(self, verifiers: Dict[KT, Callable[[ObjectType], bool]]):
+    def __init__(self, verifiers: dict[KT, Callable[[ObjectType], bool]]):
         """
         Initialize with a dictionary of verifiers. Each verifier is a function
         that returns True or False based on the object's classification.
@@ -376,7 +377,7 @@ class ObjectClassifier:
         """
         self.verifiers = verifiers
 
-    def matches(self, obj: ObjectType, kind: Optional[KT] = None) -> bool:
+    def matches(self, obj: ObjectType, kind: KT | None = None) -> bool:
         """
         Returns True if the object matches the given kind, or matches any kind
         if kind is None.
@@ -391,7 +392,7 @@ class ObjectClassifier:
         # Check for the specific kind
         return self.verifiers.get(kind, lambda x: False)(obj)
 
-    def all_matches(self, obj: ObjectType) -> Dict[KT, bool]:
+    def all_matches(self, obj: ObjectType) -> dict[KT, bool]:
         """
         Returns a dictionary indicating if the object matches each kind.
 
@@ -402,7 +403,7 @@ class ObjectClassifier:
 
     def matching_kind(
         self, obj: ObjectType, *, assert_unique: bool = True
-    ) -> Optional[KT]:
+    ) -> KT | None:
         """
         Returns the first kind that matches the object. If assert_unique is True,
         it asserts that only one match exists. Optionally, it can return the value instead of the key.

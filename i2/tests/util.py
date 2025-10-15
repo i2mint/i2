@@ -6,13 +6,10 @@ from typing import (
     List,
     Any,
     Union,
-    Callable,
-    Iterator,
     Tuple,
     Optional,
-    Iterable,
-    Mapping,
 )
+from collections.abc import Callable, Iterator, Iterable, Mapping
 from inspect import signature
 
 from i2.signatures import KO, PK, PO, VP, VK, var_param_kinds
@@ -20,7 +17,7 @@ from i2.signatures import _empty
 from i2.signatures import ParamsAble, Sig, ensure_param, SignatureAble
 
 ParameterAble = Union[int, Parameter, str]
-ParamsAble_ = Union[ParamsAble, str, List[int]]
+ParamsAble_ = Union[ParamsAble, str, list[int]]
 
 
 def _is_valid_arg_for_sig(x):
@@ -249,13 +246,13 @@ def _is_simple_expression(code_lines):
 
 def sig_to_func(
     sig: ParamsAble = "00111234",
-    code_lines: Union[
-        str, Iterable, Callable[[Sig], str]
-    ] = _sig_to_str_of_call_args_code_str,
+    code_lines: (
+        str | Iterable | Callable[[Sig], str]
+    ) = _sig_to_str_of_call_args_code_str,
     *,
-    name: Optional[str] = None,
-    globals: Optional[dict] = None,
-    locals: Optional[Mapping] = None,
+    name: str | None = None,
+    globals: dict | None = None,
+    locals: Mapping | None = None,
 ):
     """
     Make a function from a signature
@@ -405,13 +402,13 @@ def create_variadic_source(sig, variadics, dflt_source):
 # TODO: Get rid of ignore_variadics once using code is refactored
 def sig_to_inputs(
     sig: SignatureAble,
-    argument_vals: Optional[Iterable] = None,
+    argument_vals: Iterable | None = None,
     *,
-    variadics_source: Tuple[tuple, dict] = (
+    variadics_source: tuple[tuple, dict] = (
         ("args1", "args2"),
         {"kwargs1": "kwargs1_val"},
     ),
-) -> Iterator[Tuple[tuple, dict]]:
+) -> Iterator[tuple[tuple, dict]]:
     """Generate all kind-valid (arg, kwargs) input combinations for a function with a
     given signature ``sig``, with argument values taken from the ``argument_vals``
 
@@ -476,7 +473,7 @@ def sig_to_inputs(
                     already_yielded.append(input_)
 
 
-def _sig_to_inputs(po=0, pk=0, ko=0, argument_vals: Optional[Iterable] = None):
+def _sig_to_inputs(po=0, pk=0, ko=0, argument_vals: Iterable | None = None):
     """
 
     >>> list(_sig_to_inputs(2,2,2))
@@ -573,7 +570,7 @@ _signature_msg_patterns = [
     "invalid keyword argument",
     "expected at most",
     "keyword argument",
-    "got some positional\-only arguments passed as keyword arguments",
+    r"got some positional\-only arguments passed as keyword arguments",
     "no signature found",
 ]
 

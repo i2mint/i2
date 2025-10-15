@@ -1,7 +1,8 @@
 """Error objects"""
 
 import dataclasses
-from typing import Callable, Mapping, Union, Any, Type
+from typing import Union, Any, Type
+from collections.abc import Callable, Mapping
 from functools import partial
 from contextlib import AbstractContextManager
 
@@ -67,7 +68,7 @@ class ModuleNotFoundIgnore:
 
 
 OnErrorCallback = Union[None, str, Callable[[], Any]]
-ExceptionType = Type[BaseException]
+ExceptionType = type[BaseException]
 
 
 def log_and_return(msg, logger=print):

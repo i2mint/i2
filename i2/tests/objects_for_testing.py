@@ -111,11 +111,11 @@ def demo_func_1(
     return "demo_func_1 returned"  # this is a comment on the same line as some code
 
 
-class SomeClass(object):
+class SomeClass:
     pass
 
 
-class SomeOtherClass(object):
+class SomeOtherClass:
     pass
 
 
@@ -175,7 +175,7 @@ def demo_func_2(
     return 3.14
 
 
-class AClass(object):
+class AClass:
     def __init__(self, a=1, b=0):
         """The doc of the __init__"""
         self.a = a

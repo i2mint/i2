@@ -6,7 +6,7 @@ See also:
 
 import inspect
 from inspect import signature, Parameter
-from typing import Mapping
+from collections.abc import Mapping
 
 from i2.util import lazyprop, FrozenDict, get_function_body
 

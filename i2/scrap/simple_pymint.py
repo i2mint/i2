@@ -4,7 +4,7 @@ import inspect
 from collections import defaultdict
 
 
-class NoDefault(object):
+class NoDefault:
     def __repr__(self):
         return "no_default"
 

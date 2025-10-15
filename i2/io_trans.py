@@ -10,11 +10,10 @@ Output value tranformers can be conditioned on argument value and the wrapped fu
 
 from dataclasses import dataclass
 from typing import (
-    Mapping,
-    Callable,
     Optional,
     TypedDict,
 )
+from collections.abc import Mapping, Callable
 from inspect import signature, Parameter
 from pickle import dumps
 
@@ -211,7 +210,7 @@ class TypedBasedOutIoTrans(IoTrans):
     trans_func_for_type: (
         Mapping
     ) = ()  # Todo: Want empty mapping as default (use frozendict or __post_init__?)
-    dflt_trans_func: Optional[Callable] = None
+    dflt_trans_func: Callable | None = None
 
     def out_trans(self, argval, func):
         for typ in self.trans_func_for_type:
