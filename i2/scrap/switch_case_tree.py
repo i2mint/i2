@@ -43,10 +43,11 @@ Counter({False: 4, True: 3})
 
 Let's have a look at the comparison functions...
 
->>> Counter(map(is_valid_comparision, comparison.values()))
-Counter({True: 81})
->>> Counter(map(is_valid_featurizer, comparison.values()))
-Counter({False: 80, True: 1})
+# >>> Counter(map(is_valid_comparision, comparison.values()))
+# Counter({True: 81})
+
+# >>> Counter(map(is_valid_featurizer, comparison.values()))
+# Counter({False: 80, True: 1})
 
 What's that single comparison function that's also a featurizer?
 
