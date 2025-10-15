@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.footprints &mdash; i2 0.1.53 documentation</title>
+  <title>i2.footprints &mdash; i2 0.1.56 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=c54c130b"></script>
+      <script src="../../_static/documentation_options.js?v=9d458db5"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -74,8 +74,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests.html">i2.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/footprints_test.html">i2.tests.footprints_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/signatures_test.html">i2.tests.signatures_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_castgraph.html">i2.tests.test_castgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_signatures.html">i2.tests.test_signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/util.html">i2.tests.util</a></li>
@@ -869,8 +869,10 @@
 <span class="sd">            return cls.e + y</span>
 <span class="sd">    ```</span>
 
-<span class="sd">    &gt;&gt;&gt; from i2.tests.footprints_test import A</span>
-<span class="sd">    &gt;&gt;&gt; assert attrs_used_by_method(A.target_method) == {&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;e&#39;}</span>
+<span class="sd">    # TODO: Stopped working in 3.12 (worked in 3.10). See why</span>
+<span class="sd">    # &gt;&gt;&gt; from i2.tests.footprints_test import A</span>
+<span class="sd">    # &gt;&gt;&gt; assert attrs_used_by_method(A.target_method) == {&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;e&#39;}</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_attrs_used_by_method</span><span class="p">(</span>
         <span class="o">*</span><span class="n">cls_and_method_name_of_method</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">src_code</span><span class="o">=</span><span class="n">src_code</span>
