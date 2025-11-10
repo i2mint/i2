@@ -4,40 +4,15 @@ Core tools for minting code.
 
 [Documentation here.](https://i2mint.github.io/i2/)
 
-## What's mint?
-
-Mint stands for "Meta-INTerface".
-
-Minting is core technique of i2i: It can be seen as the encapsulation of a construct’s interface into a (data) 
-structure that contains everything one needs to know about the construct to perform a specific action 
-with or on the construct.
-
-A little note on the use of “encapsulation”. The term is widely used in computer science, 
-and is typically tied to object oriented programming. Wikipedia provides two definitions:
-* A language mechanism for restricting direct access to some of the object's components.
-* A language construct that facilitates the bundling of data with the methods (or other functions) 
-operating on that data.
-
-Though both these definitions apply to minting, 
-the original sense of the word “encapsulate” is even more relevant (from google definitions): 
-* express the essential features of (something) succinctly
-* enclose (something) in or as if in a capsule
-
-Indeed, minting is the process of enclosing a construct into a “mint” (for “Meta INTerface”) 
-that will express the features of the construct that are essential to the task at hand. 
-The mint provides a declarative layer of the construct that allows one to write code that operates with this layer, 
-which is designed to be (as) consistent (as possible) from one system/language to another.
-
-For example, whether a (non-anonymous) function was written in C, Python, or JavaScript, 
-it will at least have a name, and it's arguments will (most often) have names, and may have types. 
-Similarly with "data objects": The data of both JavaScript and Python objects can be represented by a tree whose 
-leaves are base types, which can in turn be represented by a C struct. 
-
 ## Key Modules Overview
 
 ### i2.castgraph - Type/Kind-Based Transformation Graphs
 
 `castgraph` provides a graph-based system for organizing transformations between different data representations ("kinds"). It routes objects through multi-hop conversion paths, selecting the optimal route based on cost.
+
+The `castgraph` tool addresses the common friction point in software design where a function requires a specific data type or format, but the user possesses related data in a different, interchangeable representation (e.g., a file path instead of a loaded object). Inspired by Postel's Law ("be liberal in what you accept"), the core problem is how to make interfaces highly flexible and accommodating of diverse inputs—eliminating tedious data preparation boilerplate for the user—while simultaneously adhering to the principle that "explicit is better than implicit" by keeping complex conversion logic out of the main application code; i2.castgraph solves this by providing a dedicated, cost-aware graph system to organize and execute necessary multi-hop transformations dynamically, effectively acting as an intelligent input adapter.
+Read me in the [castgraph dev notes](https://github.com/i2mint/i2/discussions/77#discussioncomment-14928396).
+
 
 **Basic Usage (Type-Based):**
 
@@ -451,3 +426,32 @@ assert validate_input(-1) is False
 ```
 
 
+
+## What's mint?
+
+Mint stands for "Meta-INTerface".
+
+Minting is core technique of i2i: It can be seen as the encapsulation of a construct’s interface into a (data) 
+structure that contains everything one needs to know about the construct to perform a specific action 
+with or on the construct.
+
+A little note on the use of “encapsulation”. The term is widely used in computer science, 
+and is typically tied to object oriented programming. Wikipedia provides two definitions:
+* A language mechanism for restricting direct access to some of the object's components.
+* A language construct that facilitates the bundling of data with the methods (or other functions) 
+operating on that data.
+
+Though both these definitions apply to minting, 
+the original sense of the word “encapsulate” is even more relevant (from google definitions): 
+* express the essential features of (something) succinctly
+* enclose (something) in or as if in a capsule
+
+Indeed, minting is the process of enclosing a construct into a “mint” (for “Meta INTerface”) 
+that will express the features of the construct that are essential to the task at hand. 
+The mint provides a declarative layer of the construct that allows one to write code that operates with this layer, 
+which is designed to be (as) consistent (as possible) from one system/language to another.
+
+For example, whether a (non-anonymous) function was written in C, Python, or JavaScript, 
+it will at least have a name, and it's arguments will (most often) have names, and may have types. 
+Similarly with "data objects": The data of both JavaScript and Python objects can be represented by a tree whose 
+leaves are base types, which can in turn be represented by a C struct. 
