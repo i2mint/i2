@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.castgraph &mdash; i2 0.1.57 documentation</title>
+  <title>i2.castgraph &mdash; i2 0.1.58 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=393d09ac"></script>
+      <script src="../../_static/documentation_options.js?v=d127aa6e"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -54,10 +54,13 @@
 <li class="toctree-l1"><a class="reference internal" href="base.html">i2.base</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">i2.castgraph</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#castgraph">castgraph</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#key-concepts">Key concepts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#solution-patterns">Solution patterns</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#minimal-example-doctest">Minimal example (doctest)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#minimal-example-new-kind-based-interface">Minimal example (new kind-based interface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#legacy-example-type-based-interface">Legacy example (type-based interface)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#main-tools">Main tools</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#design-guidelines">Design guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#migration-guide">Migration guide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#design-heritage">Design heritage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#related">Related</a></li>
 </ul>
@@ -69,6 +72,28 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.castgraph.Edge"><code class="docutils literal notranslate"><span class="pre">Edge</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.castgraph.Kind"><code class="docutils literal notranslate"><span class="pre">Kind</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.Kind.isa"><code class="docutils literal notranslate"><span class="pre">Kind.isa()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.castgraph.KindMatch"><code class="docutils literal notranslate"><span class="pre">KindMatch</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.castgraph.Transformation"><code class="docutils literal notranslate"><span class="pre">Transformation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i2.castgraph.TransformationGraph"><code class="docutils literal notranslate"><span class="pre">TransformationGraph</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.add_edge"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.add_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.add_node"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.add_node()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.convert"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.convert()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.detect_kind"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.detect_kind()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.get_transformer"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.get_transformer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.kinds"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.kinds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.reachable_from"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.reachable_from()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.register"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.register()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.register_edge"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.register_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.set_kind_detector"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.set_kind_detector()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.sources_for"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.sources_for()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.transform"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.transform_any"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.transform_any()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#i2.castgraph.design_guidelines"><code class="docutils literal notranslate"><span class="pre">design_guidelines()</span></code></a></li>
 </ul>
 </li>
@@ -97,6 +122,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tests/footprints_test.html">i2.tests.footprints_test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_castgraph.html">i2.tests.test_castgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_castgraph_kinds.html">i2.tests.test_castgraph_kinds</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_signatures.html">i2.tests.test_signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_util.html">i2.tests.test_util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
@@ -133,43 +159,75 @@
 <span id="i2-castgraph"></span><h1>i2.castgraph<a class="headerlink" href="#module-i2.castgraph" title="Link to this heading"></a></h1>
 <section id="castgraph">
 <h2>castgraph<a class="headerlink" href="#castgraph" title="Link to this heading"></a></h2>
-<p>A lightweight conversion service for Python that solves the “stable role,
+<p>A lightweight transformation service for Python that solves the “stable role,
 unstable representation” problem: a resource has a consistent semantic role
 (e.g., configuration, text, structured record) but appears in many forms
 (filepath, string, dict, custom class), while consumers expect specific
-representations. castgraph organizes conversions as a graph of typed edges and
-routes requests through the best available path.</p>
+representations. castgraph organizes transformations as a graph of “kinds”
+(data representations) and routes requests through the best available path.</p>
+<section id="key-concepts">
+<h3>Key concepts<a class="headerlink" href="#key-concepts" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Kind</strong>: Any hashable identifier for a data representation (type, string, custom marker)</p></li>
+<li><p><strong>Transformation</strong>: An edge in the graph that converts one kind to another</p></li>
+<li><p><strong>Kind Predicate (isa)</strong>: A function that determines if an object is of a kind</p></li>
+<li><p><strong>TransformationGraph</strong>: The main registry with graph-oriented interface</p></li>
+</ul>
+</section>
 <section id="solution-patterns">
 <h3>Solution patterns<a class="headerlink" href="#solution-patterns" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p><strong>Type Converter / Conversion Service</strong>: central registry mapping (FromType, ToType) to converter functions.</p></li>
+<li><p><strong>Type Converter / Conversion Service</strong>: central registry mapping (FromKind, ToKind) to transformer functions.</p></li>
 <li><p><strong>Adapter</strong>: each edge adapts one representation to another.</p></li>
-<li><p><strong>Strategy</strong>: routing/selection among multiple possible conversions via cost/priority.</p></li>
-<li><p><strong>(Optional) Canonical Data Model</strong>: a hub type to reduce pairwise conversions.</p></li>
+<li><p><strong>Strategy</strong>: routing/selection among multiple possible transformations via cost/priority.</p></li>
+<li><p><strong>(Optional) Canonical Data Model</strong>: a hub kind to reduce pairwise conversions.</p></li>
 <li><p><strong>DDD Anti-Corruption Layer (ACL)</strong>: keep external formats outside the core domain.</p></li>
-<li><p><strong>Typeclass / Multimethod idiom</strong>: dispatch based on (source type, target type).</p></li>
+<li><p><strong>Typeclass / Multimethod idiom</strong>: dispatch based on (source kind, target kind).</p></li>
 </ul>
 </section>
-<section id="minimal-example-doctest">
-<h3>Minimal example (doctest)<a class="headerlink" href="#minimal-example-doctest" title="Link to this heading"></a></h3>
-<p>Register tiny adapters and convert across types with optional multi-hop routing.</p>
+<section id="minimal-example-new-kind-based-interface">
+<h3>Minimal example (new kind-based interface)<a class="headerlink" href="#minimal-example-new-kind-based-interface" title="Link to this heading"></a></h3>
+<p>Use the new TransformationGraph with flexible kinds (not limited to types).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">i2.castgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformationGraph</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add nodes with predicates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;json_dict&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add transformation edges</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;json_dict&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">text_to_json</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">t</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Transform using kinds (need explicit from_kind since &#39;text&#39; != str)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;{&quot;x&quot;: 1}&#39;</span><span class="p">,</span> <span class="s1">&#39;json_dict&#39;</span><span class="p">,</span> <span class="n">from_kind</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+</section>
+<section id="legacy-example-type-based-interface">
+<h3>Legacy example (type-based interface)<a class="headerlink" href="#legacy-example-type-based-interface" title="Link to this heading"></a></h3>
+<p>The old ConversionRegistry interface still works but is deprecated.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">i2.castgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConversionRegistry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span> <span class="o">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">Text</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span> <span class="o">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">Record</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span> <span class="o">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">reg</span> <span class="o">=</span> <span class="n">ConversionRegistry</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@reg</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="n">Text</span><span class="p">)</span>
-<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">path_to_text</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>  <span class="c1"># ctx is an optional dict</span>
-<span class="gp">... </span>    <span class="n">fs</span> <span class="o">=</span> <span class="p">(</span><span class="n">ctx</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fs&quot;</span><span class="p">,</span> <span class="p">{})</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">Text</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@reg</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Record</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># cheaper direct edge</span>
-<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">text_to_record</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">Record</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">t</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">))</span>
-<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nd">@reg</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="n">Text</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">path_to_text</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">fs</span> <span class="o">=</span> <span class="p">(</span><span class="n">ctx</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fs&quot;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">Text</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="nd">@reg</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Record</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">text_to_record</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">Record</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">t</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;/app/data.json&quot;</span><span class="p">:</span> <span class="s1">&#39;{&quot;x&quot;: 1}&#39;</span><span class="p">}}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/app/data.json&quot;</span><span class="p">),</span> <span class="n">Record</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">out</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/app/data.json&quot;</span><span class="p">),</span> <span class="n">Record</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">Record</span><span class="p">)</span> <span class="ow">and</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
 <span class="go">True</span>
 </pre></div>
@@ -177,30 +235,65 @@ routes requests through the best available path.</p>
 </section>
 <section id="main-tools">
 <h3>Main tools<a class="headerlink" href="#main-tools" title="Link to this heading"></a></h3>
-<ul>
-<li><p><strong>ConversionRegistry</strong>: the central graph-based registry.
-- <cite>.register(From, To, cost=1.0)</cite>: decorator to add an adapter (<cite>func(obj, context) -&gt; new_obj</cite>).
-- <cite>.convert(obj, ToType, context=None, use_result_cache=False)</cite>: convert with multi-hop routing,</p>
-<blockquote>
-<div><p>MRO-aware fallbacks, and optional result caching.</p>
-</div></blockquote>
-</li>
-<li><p><strong>ConversionError</strong>: raised when no route exists between types.</p></li>
+<ul class="simple">
+<li><p><strong>TransformationGraph</strong>: the main graph-based registry (recommended).
+- <cite>.add_node(kind, isa=None)</cite>: add a kind with optional predicate.
+- <cite>.add_edge(src, dst, func, cost=1.0)</cite>: add a transformation edge.
+- <cite>.register_edge(src, dst, cost=1.0)</cite>: decorator to add an edge.
+- <cite>.transform(obj, to_kind, from_kind=None, context=None)</cite>: transform with multi-hop routing.
+- <cite>.transform_any(obj, to_kind, context=None)</cite>: transform with automatic kind detection.
+- <cite>.get_transformer(from_kind, to_kind)</cite>: get a composed transformer function.
+- <cite>.detect_kind(obj)</cite>: detect the kind of an object.
+- <cite>.reachable_from(kind)</cite>: get all reachable kinds.
+- <cite>.sources_for(kind)</cite>: get all source kinds.
+- <cite>.kinds()</cite>: get all registered kinds.</p></li>
+<li><p><strong>ConversionRegistry</strong>: DEPRECATED - use TransformationGraph instead.
+- <cite>.register(From, To, cost=1.0)</cite>: DEPRECATED - use <cite>.register_edge()</cite> instead.
+- <cite>.convert(obj, ToType, context=None)</cite>: DEPRECATED - use <cite>.transform()</cite> instead.</p></li>
+<li><p><strong>Kind</strong>: Optional wrapper for explicit kind specification with predicates.</p></li>
+<li><p><strong>KindMatch</strong>: Truthy result from kind predicates that can carry metadata.</p></li>
+<li><p><strong>ConversionError</strong>: raised when no route exists between kinds.</p></li>
 </ul>
 </section>
 <section id="design-guidelines">
 <h3>Design guidelines<a class="headerlink" href="#design-guidelines" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p>Define a single ConversionRegistry per bounded context; keep edges local.</p></li>
-<li><p>Prefer small, testable converter functions with explicit types.</p></li>
-<li><p>Use a canonical domain type as a <strong>hub</strong> when many formats interoperate.</p></li>
+<li><p>Define a single TransformationGraph per bounded context; keep edges local.</p></li>
+<li><p>Prefer small, testable transformer functions with explicit kinds.</p></li>
+<li><p>Use a canonical domain kind as a <strong>hub</strong> when many formats interoperate.</p></li>
 <li><p>Assign <strong>costs</strong> to prefer fast/accurate routes; tune with metrics.</p></li>
 <li><p>Pass a <strong>context</strong> dict for side-channel knobs (I/O, flags, cache handles).</p></li>
-<li><p>Cache paths (via lru_cache) and consider result caching for hot conversions.</p></li>
-<li><p>Keep adapters at the boundaries; the core domain should consume domain types.</p></li>
+<li><p>Cache paths (via lru_cache) and consider result caching for hot transformations.</p></li>
+<li><p>Keep adapters at the boundaries; the core domain should consume domain kinds.</p></li>
 <li><p>Add identity edges implicitly; avoid no-op boilerplate.</p></li>
-<li><p>Write doctests on each converter to lock behavior and invariants.</p></li>
+<li><p>Write doctests on each transformer to lock behavior and invariants.</p></li>
+<li><p>Use bare hashables (types, strings) as kinds; Kind class is optional.</p></li>
 </ul>
+</section>
+<section id="migration-guide">
+<h3>Migration guide<a class="headerlink" href="#migration-guide" title="Link to this heading"></a></h3>
+<p>Old code using ConversionRegistry:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">reg</span> <span class="o">=</span> <span class="n">ConversionRegistry</span><span class="p">()</span>
+<span class="nd">@reg</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">SrcType</span><span class="p">,</span> <span class="n">DstType</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_func</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span> <span class="o">...</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">DstType</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>New code using TransformationGraph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="n">SrcType</span><span class="p">,</span> <span class="n">DstType</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">transform_func</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span> <span class="o">...</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">DstType</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or with string kinds:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;src_format&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">...</span><span class="p">)</span>
+<span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s1">&#39;src_format&#39;</span><span class="p">,</span> <span class="s1">&#39;dst_format&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">transform_func</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span> <span class="o">...</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;dst_format&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="design-heritage">
 <h3>Design heritage<a class="headerlink" href="#design-heritage" title="Link to this heading"></a></h3>
@@ -236,7 +329,8 @@ For background reading, see:
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.castgraph.ConversionRegistry">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.castgraph.</span></span><span class="sig-name descname"><span class="pre">ConversionRegistry</span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#ConversionRegistry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.ConversionRegistry" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
+<dd><p>DEPRECATED: Use TransformationGraph instead.</p>
+<dl class="simple">
 <dt>A graph-based registry of converters between Python types with:</dt><dd><ul class="simple">
 <li><p>registration decorator</p></li>
 <li><p>shortest-path (by total cost) routing</p></li>
@@ -329,8 +423,393 @@ True</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.castgraph.Edge">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.castgraph.</span></span><span class="sig-name descname"><span class="pre">Edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'type[Any]'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'type[Any]'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'Converter'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'float'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/castgraph.html#Edge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.Edge" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.castgraph.</span></span><span class="sig-name descname"><span class="pre">Edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/castgraph.html#Edge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.Edge" title="Link to this definition"></a></dt>
+<dd><p>DEPRECATED: Use Transformation instead. Kept for backward compatibility.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.castgraph.Kind">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.castgraph.</span></span><span class="sig-name descname"><span class="pre">Kind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isa</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.KindMatch" title="i2.castgraph.KindMatch"><span class="pre">KindMatch</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/castgraph.html#Kind"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.Kind" title="Link to this definition"></a></dt>
+<dd><p>Optional marker for explicit kind specification.</p>
+<p>A Kind wraps a hashable identifier and optionally an ‘isa’ predicate.
+Users are NOT required to use this class - bare hashables work fine.
+This class is for when you want to be explicit or bundle identifier + predicate.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">text_kind</span> <span class="o">=</span> <span class="n">Kind</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">text_kind</span><span class="o">.</span><span class="n">identifier</span>
+<span class="go">&#39;text&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">text_kind</span><span class="o">.</span><span class="n">isa</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.Kind.isa">
+<span class="sig-name descname"><span class="pre">isa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.KindMatch" title="i2.castgraph.KindMatch"><span class="pre">KindMatch</span></a></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#Kind.isa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.Kind.isa" title="Link to this definition"></a></dt>
+<dd><p>Check if obj is of this kind (predicate/recognizer function).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.castgraph.KindMatch">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.castgraph.</span></span><span class="sig-name descname"><span class="pre">KindMatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/castgraph.html#KindMatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.KindMatch" title="Link to this definition"></a></dt>
+<dd><p>Result of a successful kind predicate match.</p>
+<p>Evaluates to True but can carry additional metadata about the match
+that downstream transformations might use.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">match</span> <span class="o">=</span> <span class="n">KindMatch</span><span class="p">({</span><span class="s1">&#39;encoding&#39;</span><span class="p">:</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;analyzed&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">match</span><span class="o">.</span><span class="n">metadata</span>
+<span class="go">{&#39;encoding&#39;: &#39;utf-8&#39;, &#39;analyzed&#39;: True}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.castgraph.Transformation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.castgraph.</span></span><span class="sig-name descname"><span class="pre">Transformation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/castgraph.html#Transformation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.Transformation" title="Link to this definition"></a></dt>
+<dd><p>An edge in the transformation graph.</p>
+<p>Represents a transformation function from one kind to another.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.castgraph.</span></span><span class="sig-name descname"><span class="pre">TransformationGraph</span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph" title="Link to this definition"></a></dt>
+<dd><p>A graph-based registry of transformations between kinds (data representations).</p>
+<p>A “kind” is any hashable identifier for a data representation - it can be a type,
+a string, or any custom marker. The graph supports:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Flexible kind system (not limited to Python types)</p></li>
+<li><p>Graph-oriented interface (add_node, add_edge)</p></li>
+<li><p>Pluggable kind detection via predicates</p></li>
+<li><p>Shortest-path (by total cost) routing</p></li>
+<li><p>MRO-aware fallback for type-based kinds</p></li>
+<li><p>Caching of paths and (optionally) results</p></li>
+</ul>
+</div></blockquote>
+<p>Design notes:
+- Each transformer has signature: func(obj, context) -&gt; transformed_obj
+- Identity edges are implicit (K -&gt; K) with cost 0
+- If multiple routes exist, the minimum total cost path is chosen
+- Kinds can be types, strings, or any hashable objects</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.add_edge">
+<span class="sig-name descname"><span class="pre">add_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.add_edge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.add_edge" title="Link to this definition"></a></dt>
+<dd><p>Add a transformation (edge) between two kinds.</p>
+<p>Automatically adds nodes if they don’t exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a>) – Source kind</p></li>
+<li><p><strong>dst</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a>) – Destination kind</p></li>
+<li><p><strong>func</strong> (<em>Callable</em>) – Transformation function with signature func(obj, context) -&gt; transformed_obj
+or func(obj) -&gt; transformed_obj (will be wrapped)</p></li>
+<li><p><strong>cost</strong> (<em>float</em>) – Cost of this transformation (lower is preferred)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">text_to_int</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span> <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">text_to_int</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.add_node">
+<span class="sig-name descname"><span class="pre">add_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">isa</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.KindMatch" title="i2.castgraph.KindMatch"><span class="pre">KindMatch</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.add_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.add_node" title="Link to this definition"></a></dt>
+<dd><p>Add a kind (node) to the graph with optional predicate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a>) – The kind identifier (can be a type, string, or Kind object)</p></li>
+<li><p><strong>isa</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>bool</em><em> | </em><a class="reference internal" href="#i2.castgraph.KindMatch" title="i2.castgraph.KindMatch"><em>KindMatch</em></a><em>] </em><em>| </em><em>None</em>) – Optional predicate function to detect if an object is of this kind</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># Type implies isinstance check</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.convert">
+<span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">U</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_result_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">U</span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.convert" title="Link to this definition"></a></dt>
+<dd><p>DEPRECATED: Use transform() instead.</p>
+<p>This method is kept for backward compatibility.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">str_to_int</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span> <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;42&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span>
+<span class="go">42</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.detect_kind">
+<span class="sig-name descname"><span class="pre">detect_kind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.detect_kind"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.detect_kind" title="Link to this definition"></a></dt>
+<dd><p>Detect the kind of an object.</p>
+<p>Uses custom detector if set, otherwise tries registered predicates in order.
+Returns None if no kind matches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<em>Any</em>) – Object to classify</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The detected kind identifier, or None if no match</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Hashable | None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">detect_kind</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+<span class="go">&#39;text&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.get_transformer">
+<span class="sig-name descname"><span class="pre">get_transformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.get_transformer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.get_transformer" title="Link to this definition"></a></dt>
+<dd><p>Get a function that transforms from_kind → to_kind.</p>
+<p>Returns a composed transformer function (Pipe-like).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>from_kind</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a>) – Source kind</p></li>
+<li><p><strong>to_kind</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a>) – Destination kind</p></li>
+<li><p><strong>context</strong> (<em>dict</em><em> | </em><em>None</em>) – Optional context to bake into the transformer</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A function that transforms objects from from_kind to to_kind</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable[[Any], Any]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">str_to_int</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span> <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transformer</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">get_transformer</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transformer</span><span class="p">(</span><span class="s2">&quot;42&quot;</span><span class="p">)</span>
+<span class="go">42</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.kinds">
+<span class="sig-name descname"><span class="pre">kinds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.kinds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.kinds" title="Link to this definition"></a></dt>
+<dd><p>Get all registered kinds (nodes in the graph).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Set of all registered kind identifiers</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[Hashable]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;text&#39;</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">kinds</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.reachable_from">
+<span class="sig-name descname"><span class="pre">reachable_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.reachable_from"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.reachable_from" title="Link to this definition"></a></dt>
+<dd><p>Get all kinds reachable from this kind via transformations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kind</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a>) – The starting kind</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set of all reachable kind identifiers</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set[Hashable]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ... register transformations ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reachable</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">reachable_from</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.register" title="Link to this definition"></a></dt>
+<dd><p>DEPRECATED: Use register_edge() instead.</p>
+<p>This method is kept for backward compatibility.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nd">@graph</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">str_to_int</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span> <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.register_edge">
+<span class="sig-name descname"><span class="pre">register_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.register_edge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.register_edge" title="Link to this definition"></a></dt>
+<dd><p>Decorator to register a transformation edge.</p>
+<p>Can infer src/dst from function annotations if not provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a><em> | </em><em>None</em>) – Source kind (inferred from annotations if None)</p></li>
+<li><p><strong>dst</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a><em> | </em><em>None</em>) – Destination kind (inferred from annotations if None)</p></li>
+<li><p><strong>cost</strong> (<em>float</em>) – Cost of this transformation</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">text_to_int</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span> <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.set_kind_detector">
+<span class="sig-name descname"><span class="pre">set_kind_detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.set_kind_detector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.set_kind_detector" title="Link to this definition"></a></dt>
+<dd><p>Set a custom kind detector function.</p>
+<p>The detector receives an object and returns a kind identifier or None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>detector</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Hashable</em><em> | </em><em>None</em><em>]</em>) – Function that takes an object and returns its kind or None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">my_detector</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;{&quot;&#39;</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;json_string&#39;</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="kc">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">set_kind_detector</span><span class="p">(</span><span class="n">my_detector</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.sources_for">
+<span class="sig-name descname"><span class="pre">sources_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.sources_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.sources_for" title="Link to this definition"></a></dt>
+<dd><p>Get all kinds that can be transformed to this kind.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kind</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a>) – The destination kind</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set of all source kind identifiers</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set[Hashable]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ... register transformations ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sources</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">sources_for</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_result_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.transform" title="Link to this definition"></a></dt>
+<dd><p>Transform obj to to_kind.</p>
+<p>If from_kind not specified, uses type(obj) with MRO fallback.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>Any</em>) – Object to transform</p></li>
+<li><p><strong>to_kind</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a>) – Destination kind</p></li>
+<li><p><strong>from_kind</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a><em> | </em><em>None</em>) – Source kind (inferred if None)</p></li>
+<li><p><strong>context</strong> (<em>dict</em><em> | </em><em>None</em>) – Optional context passed to transformation functions</p></li>
+<li><p><strong>use_result_cache</strong> (<em>bool</em>) – If True, cache results keyed by (id(obj), to_kind)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transformed object</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#i2.castgraph.ConversionError" title="i2.castgraph.ConversionError"><strong>ConversionError</strong></a> – If no transformation path is found</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">str_to_int</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span> <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;42&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="go">42</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.transform_any">
+<span class="sig-name descname"><span class="pre">transform_any</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><span class="pre">Kind</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_result_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/i2/castgraph.html#TransformationGraph.transform_any"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.castgraph.TransformationGraph.transform_any" title="Link to this definition"></a></dt>
+<dd><p>Transform obj to to_kind with automatic kind detection.</p>
+<p>Uses configured kind detector or fallback detection strategy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>Any</em>) – Object to transform</p></li>
+<li><p><strong>to_kind</strong> (<em>Hashable</em><em> | </em><a class="reference internal" href="#i2.castgraph.Kind" title="i2.castgraph.Kind"><em>Kind</em></a>) – Destination kind</p></li>
+<li><p><strong>context</strong> (<em>dict</em><em> | </em><em>None</em>) – Optional context passed to transformation functions</p></li>
+<li><p><strong>use_result_cache</strong> (<em>bool</em>) – If True, cache results</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transformed object</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#i2.castgraph.ConversionError" title="i2.castgraph.ConversionError"><strong>ConversionError</strong></a> – If no transformation path is found or kind cannot be detected</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">text_to_int</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span> <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">transform_any</span><span class="p">(</span><span class="s2">&quot;42&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>  
+<span class="go">42</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.castgraph.design_guidelines">
