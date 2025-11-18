@@ -14,16 +14,16 @@ def demo_basic_usage():
     print("\n=== Basic Usage Demo ===\n")
 
     graph = TransformationGraph()
-    graph.add_node('text', isa=lambda x: isinstance(x, str))
+    graph.add_node("text", isa=lambda x: isinstance(x, str))
     graph.add_node(int)
 
     # Register transformation: int -> text
-    @graph.register_edge(int, 'text')
+    @graph.register_edge(int, "text")
     def int_to_text(i, ctx):
         return str(i)
 
     # Decorate function to auto-transform first arg to 'text'
-    @graph.ingress('text')
+    @graph.ingress("text")
     def process(x):
         return x + " processed"
 
@@ -44,7 +44,7 @@ def demo_explicit_arg_name():
         return int(s)
 
     # Transform specific argument 'x' to int
-    @graph.ingress(int, 'x')
+    @graph.ingress(int, "x")
     def add(x, y):
         return x + y
 
@@ -81,16 +81,16 @@ def demo_attribute_with_arg_name():
     print("\n=== Attribute Syntax + Arg Name Demo ===\n")
 
     graph = TransformationGraph()
-    graph.add_node('data', isa=lambda x: isinstance(x, dict))
+    graph.add_node("data", isa=lambda x: isinstance(x, dict))
 
-    @graph.register_edge(str, 'data')
+    @graph.register_edge(str, "data")
     def parse_json(s, ctx):
         return json.loads(s)
 
     # Use attribute syntax with argument name
-    @graph.ingress.data('obj')
+    @graph.ingress.data("obj")
     def get_name(obj):
-        return obj.get('name', 'unknown')
+        return obj.get("name", "unknown")
 
     result = get_name('{"name": "Alice"}')
     print(f"get_name(json_str) = {result!r}")
@@ -154,26 +154,26 @@ def demo_real_world_pipeline():
     graph = TransformationGraph()
 
     # Define kinds for config data pipeline
-    graph.add_node('json_str', isa=lambda x: isinstance(x, str) and x.startswith('{'))
-    graph.add_node('config_dict', isa=lambda x: isinstance(x, dict))
+    graph.add_node("json_str", isa=lambda x: isinstance(x, str) and x.startswith("{"))
+    graph.add_node("config_dict", isa=lambda x: isinstance(x, dict))
     graph.add_node(
-        'validated_config', isa=lambda x: isinstance(x, dict) and 'version' in x
+        "validated_config", isa=lambda x: isinstance(x, dict) and "version" in x
     )
 
-    @graph.register_edge('json_str', 'config_dict')
+    @graph.register_edge("json_str", "config_dict")
     def parse_config(s, ctx):
         print(f"  Parsing JSON config")
         return json.loads(s)
 
-    @graph.register_edge('config_dict', 'validated_config')
+    @graph.register_edge("config_dict", "validated_config")
     def validate_config(d, ctx):
         print(f"  Validating config")
-        if 'version' not in d:
-            d['version'] = '1.0'
+        if "version" not in d:
+            d["version"] = "1.0"
         return d
 
     # Function that requires validated config
-    @graph.ingress.validated_config('config')
+    @graph.ingress.validated_config("config")
     def deploy_service(config):
         print(f"  Deploying service with config version {config['version']}")
         return f"Service deployed (v{config['version']})"
@@ -186,7 +186,7 @@ def demo_real_world_pipeline():
     assert result == "Service deployed (v1.0)"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     demo_basic_usage()
     demo_explicit_arg_name()
     demo_attribute_syntax()

@@ -583,14 +583,14 @@ def test_mro_fallback_for_types():
 def test_ingress_basic_with_kind_and_arg_name():
     """Test ingress decorator with explicit kind and argument name."""
     graph = TransformationGraph()
-    graph.add_node('text', isa=lambda x: isinstance(x, str))
+    graph.add_node("text", isa=lambda x: isinstance(x, str))
     graph.add_node(int)
 
-    @graph.register_edge(int, 'text')
+    @graph.register_edge(int, "text")
     def int_to_text(i, ctx):
         return str(i)
 
-    @graph.ingress('text', 'x')
+    @graph.ingress("text", "x")
     def process(x):
         return x + " processed"
 
@@ -620,14 +620,14 @@ def test_ingress_with_kind_only_transforms_first_arg():
 def test_ingress_attribute_syntax_with_arg_name():
     """Test ingress decorator with attribute syntax and arg name."""
     graph = TransformationGraph()
-    graph.add_node('text', isa=lambda x: isinstance(x, str))
+    graph.add_node("text", isa=lambda x: isinstance(x, str))
     graph.add_node(int)
 
-    @graph.register_edge(int, 'text')
+    @graph.register_edge(int, "text")
     def int_to_text(i, ctx):
         return str(i)
 
-    @graph.ingress.text('value')
+    @graph.ingress.text("value")
     def format_value(value):
         return f"Value: {value}"
 
@@ -663,7 +663,7 @@ def test_ingress_with_type_kind():
     def str_to_int(s, ctx):
         return int(s)
 
-    @graph.ingress(int, 'num')
+    @graph.ingress(int, "num")
     def add_ten(num):
         return num + 10
 
@@ -674,11 +674,11 @@ def test_ingress_with_type_kind():
 def test_ingress_with_multi_hop_transformation():
     """Test ingress decorator with multi-hop transformation."""
     graph = TransformationGraph()
-    graph.add_node('text', isa=lambda x: isinstance(x, str))
+    graph.add_node("text", isa=lambda x: isinstance(x, str))
     graph.add_node(float)
     graph.add_node(int)
 
-    @graph.register_edge('text', float)
+    @graph.register_edge("text", float)
     def text_to_float(s, ctx):
         return float(s)
 
@@ -723,7 +723,7 @@ def test_ingress_preserves_multiple_args():
     def str_to_int(s, ctx):
         return int(s)
 
-    @graph.ingress(int, 'x')
+    @graph.ingress(int, "x")
     def add(x, y):
         return x + y
 
@@ -741,7 +741,7 @@ def test_ingress_with_kwargs():
     def str_to_int(s, ctx):
         return int(s)
 
-    @graph.ingress(int, 'value')
+    @graph.ingress(int, "value")
     def process(value, multiplier=1):
         return value * multiplier
 
@@ -756,7 +756,7 @@ def test_ingress_raises_on_invalid_arg_name():
 
     with pytest.raises(ValueError, match="Argument 'nonexistent' not found"):
 
-        @graph.ingress(int, 'nonexistent')
+        @graph.ingress(int, "nonexistent")
         def func(x):
             return x
 
@@ -776,7 +776,7 @@ def test_ingress_raises_on_no_parameters():
 def test_ingress_attribute_raises_on_unknown_kind():
     """Test ingress attribute access raises error for unknown kind."""
     graph = TransformationGraph()
-    graph.add_node('text')
+    graph.add_node("text")
 
     with pytest.raises(AttributeError, match="Kind 'unknown' not found"):
         _ = graph.ingress.unknown
@@ -806,23 +806,23 @@ def test_ingress_complex_pipeline():
     graph = TransformationGraph()
 
     # Define kinds
-    graph.add_node('json_str', isa=lambda x: isinstance(x, str) and x.startswith('{'))
-    graph.add_node('data', isa=lambda x: isinstance(x, dict))
-    graph.add_node('record', isa=lambda x: isinstance(x, dict) and 'id' in x)
+    graph.add_node("json_str", isa=lambda x: isinstance(x, str) and x.startswith("{"))
+    graph.add_node("data", isa=lambda x: isinstance(x, dict))
+    graph.add_node("record", isa=lambda x: isinstance(x, dict) and "id" in x)
 
     # Define transformations
-    @graph.register_edge('json_str', 'data')
+    @graph.register_edge("json_str", "data")
     def parse_json(s, ctx):
         return json.loads(s)
 
-    @graph.register_edge('data', 'record')
+    @graph.register_edge("data", "record")
     def validate_record(d, ctx):
-        if 'id' not in d:
-            d['id'] = 'generated'
+        if "id" not in d:
+            d["id"] = "generated"
         return d
 
     # Use ingress to automatically convert json string to record
-    @graph.ingress('record', 'obj')
+    @graph.ingress("record", "obj")
     def process_record(obj):
         return f"Processing record {obj['id']}"
 
@@ -835,11 +835,11 @@ def test_ingress_does_not_transform_if_already_correct_kind():
     graph = TransformationGraph()
     graph.add_node(int)
 
-    calls = {'count': 0}
+    calls = {"count": 0}
 
     @graph.register_edge(str, int)
     def str_to_int(s, ctx):
-        calls['count'] += 1
+        calls["count"] += 1
         return int(s)
 
     @graph.ingress(int)

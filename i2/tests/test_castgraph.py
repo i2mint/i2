@@ -342,14 +342,14 @@ def test_ingress_with_string_kinds():
     from i2.castgraph import TransformationGraph
 
     graph = TransformationGraph()
-    graph.add_node('text', isa=lambda x: isinstance(x, str))
-    graph.add_node('number', isa=lambda x: isinstance(x, (int, float)))
+    graph.add_node("text", isa=lambda x: isinstance(x, str))
+    graph.add_node("number", isa=lambda x: isinstance(x, (int, float)))
 
-    @graph.register_edge('text', 'number')
+    @graph.register_edge("text", "number")
     def text_to_number(t, ctx):
         return float(t)
 
-    @graph.ingress('number', 'x')
+    @graph.ingress("number", "x")
     def double(x):
         return x * 2
 
@@ -380,15 +380,15 @@ def test_ingress_attribute_syntax():
     from i2.castgraph import TransformationGraph
 
     graph = TransformationGraph()
-    graph.add_node('data', isa=lambda x: isinstance(x, dict))
+    graph.add_node("data", isa=lambda x: isinstance(x, dict))
 
-    @graph.register_edge(str, 'data')
+    @graph.register_edge(str, "data")
     def str_to_data(s, ctx):
         return json.loads(s)
 
-    @graph.ingress.data('obj')
+    @graph.ingress.data("obj")
     def get_value(obj):
-        return obj.get('value', 0)
+        return obj.get("value", 0)
 
     result = get_value('{"value": 42}')
     assert result == 42
@@ -404,7 +404,7 @@ def test_ingress_preserves_function_signature():
     def str_to_int(s, ctx):
         return int(s)
 
-    @graph.ingress(int, 'a')
+    @graph.ingress(int, "a")
     def add(a, b):
         return a + b
 
