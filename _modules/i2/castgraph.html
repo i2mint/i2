@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.castgraph &mdash; i2 0.1.59 documentation</title>
+  <title>i2.castgraph &mdash; i2 0.1.60 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=755f2e77"></script>
+      <script src="../../_static/documentation_options.js?v=5fe4e9ad"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -76,6 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_castgraph.html">i2.tests.test_castgraph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_castgraph_kinds.html">i2.tests.test_castgraph_kinds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_ingress_demo.html">i2.tests.test_ingress_demo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_signatures.html">i2.tests.test_signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
@@ -287,6 +288,9 @@
     <span class="n">TypeVar</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">MutableMapping</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2.wrapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">Wrap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span>
 
 
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
@@ -1107,6 +1111,127 @@
 
 
     <span class="c1"># -----------------------------</span>
+    <span class="c1"># Ingress decorator for automatic argument transformation</span>
+    <span class="c1"># -----------------------------</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ingress</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return decorator factory with attribute access for kinds.</span>
+
+<span class="sd">        This property provides a flexible interface for decorating functions to</span>
+<span class="sd">        automatically transform their arguments to specified kinds.</span>
+
+<span class="sd">        Usage patterns:</span>
+
+<span class="sd">        1. Specify kind and argument name:</span>
+<span class="sd">           @graph.ingress(&#39;text&#39;, &#39;content&#39;)</span>
+<span class="sd">           def func(content): ...</span>
+
+<span class="sd">        2. Specify kind only (transforms first argument):</span>
+<span class="sd">           @graph.ingress(&#39;text&#39;)</span>
+<span class="sd">           def func(arg): ...</span>
+
+<span class="sd">        3. Use keyword argument:</span>
+<span class="sd">           @graph.ingress(arg_name=&#39;text&#39;)</span>
+<span class="sd">           def func(arg_name): ...</span>
+
+<span class="sd">        4. Attribute-based syntax for registered kinds:</span>
+<span class="sd">           @graph.ingress.text(&#39;content&#39;)</span>
+<span class="sd">           def func(content): ...</span>
+
+<span class="sd">        5. Attribute-based for first argument:</span>
+<span class="sd">           @graph.ingress.text</span>
+<span class="sd">           def func(arg): ...</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; graph = TransformationGraph()</span>
+<span class="sd">        &gt;&gt;&gt; graph.add_node(&#39;text&#39;, isa=lambda x: isinstance(x, str))</span>
+<span class="sd">        &gt;&gt;&gt; graph.add_node(int)</span>
+<span class="sd">        &gt;&gt;&gt; @graph.register_edge(&#39;text&#39;, int)</span>
+<span class="sd">        ... def text_to_int(s, ctx): return int(s)</span>
+<span class="sd">        &gt;&gt;&gt; @graph.ingress(&#39;text&#39;)</span>
+<span class="sd">        ... def process(x):</span>
+<span class="sd">        ...     return x + &#39; processed&#39;</span>
+<span class="sd">        &gt;&gt;&gt; # Can now pass int, will be transformed to text first</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_IngressProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ingress_decorator</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">kind_or_arg</span><span class="p">:</span> <span class="n">Hashable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">arg_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Internal method to create ingress decorator.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kind_or_arg : Hashable | None</span>
+<span class="sd">            The target kind for transformation, or argument name if arg_name is provided</span>
+<span class="sd">        arg_name : str | None</span>
+<span class="sd">            The name of the argument to transform. If None, transforms first argument.</span>
+<span class="sd">        context : dict | None</span>
+<span class="sd">            Optional context to pass to transformations</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Callable</span>
+<span class="sd">            Decorator function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Determine target kind and argument name</span>
+        <span class="k">if</span> <span class="n">arg_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># @graph.ingress(str, &#39;x&#39;) or @graph.ingress(&#39;text&#39;, &#39;x&#39;)</span>
+            <span class="n">target_kind</span> <span class="o">=</span> <span class="n">kind_or_arg</span>
+            <span class="n">target_arg</span> <span class="o">=</span> <span class="n">arg_name</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind_or_arg</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind_or_arg</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="c1"># @graph.ingress(&#39;text&#39;) or @graph.ingress(int)</span>
+            <span class="n">target_kind</span> <span class="o">=</span> <span class="n">kind_or_arg</span>
+            <span class="n">target_arg</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Will use first arg</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># kind_or_arg could be None or some other hashable</span>
+            <span class="n">target_kind</span> <span class="o">=</span> <span class="n">kind_or_arg</span>
+            <span class="n">target_arg</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">target_arg</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+            <span class="c1"># Default to first arg if not specified</span>
+            <span class="k">if</span> <span class="n">target_arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Function </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> has no parameters to transform&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">target_arg</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Validate target_arg exists</span>
+            <span class="k">if</span> <span class="n">target_arg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Argument &#39;</span><span class="si">{</span><span class="n">target_arg</span><span class="si">}</span><span class="s2">&#39; not found in function </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Available arguments: </span><span class="si">{</span><span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Create ingress function</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">ingress_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="c1"># Map to all kwargs</span>
+                <span class="n">all_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+                <span class="c1"># Transform the target argument if present</span>
+                <span class="k">if</span> <span class="n">target_arg</span> <span class="ow">in</span> <span class="n">all_kwargs</span><span class="p">:</span>
+                    <span class="n">all_kwargs</span><span class="p">[</span><span class="n">target_arg</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_any</span><span class="p">(</span>
+                        <span class="n">all_kwargs</span><span class="p">[</span><span class="n">target_arg</span><span class="p">],</span> <span class="n">target_kind</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># Convert back to args/kwargs respecting signature</span>
+                <span class="k">return</span> <span class="n">sig</span><span class="o">.</span><span class="n">mk_args_and_kwargs</span><span class="p">(</span><span class="n">all_kwargs</span><span class="p">,</span> <span class="n">allow_partial</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress_func</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">decorator</span>
+
+    <span class="c1"># -----------------------------</span>
     <span class="c1"># Backward compatibility methods (deprecated)</span>
     <span class="c1"># -----------------------------</span>
 <div class="viewcode-block" id="TransformationGraph.register">
@@ -1736,6 +1861,69 @@
 <span class="c1"># ----------------------------------------------------------------------</span>
 <span class="c1"># Best-practice guidance</span>
 <span class="c1"># ----------------------------------------------------------------------</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_IngressProxy</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper class to provide attribute-based access to kinds for ingress decorator.</span>
+
+<span class="sd">    This class enables syntax like @graph.ingress.text or @graph.ingress.int</span>
+<span class="sd">    by dynamically looking up kinds and creating decorators.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">TransformationGraph</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span> <span class="o">=</span> <span class="n">graph</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">kind_or_arg</span><span class="p">:</span> <span class="n">Hashable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">arg_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow calling as @graph.ingress(kind, arg_name).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="o">.</span><span class="n">_ingress_decorator</span><span class="p">(</span><span class="n">kind_or_arg</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enable attribute access like @graph.ingress.text or @graph.ingress.int.</span>
+
+<span class="sd">        Looks up the kind by string name or by type.__name__.</span>
+<span class="sd">        Returns a decorator or a decorator factory depending on usage.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Look up kind by string name or type.__name__</span>
+        <span class="n">matching_kind</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">kind</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="o">.</span><span class="n">kinds</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kind</span> <span class="o">==</span> <span class="n">kind_name</span><span class="p">:</span>
+                <span class="n">matching_kind</span> <span class="o">=</span> <span class="n">kind</span>
+                <span class="k">break</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kind</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">kind_name</span><span class="p">:</span>
+                <span class="n">matching_kind</span> <span class="o">=</span> <span class="n">kind</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">matching_kind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Kind &#39;</span><span class="si">{</span><span class="n">kind_name</span><span class="si">}</span><span class="s2">&#39; not found in graph. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Available kinds: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="o">.</span><span class="n">kinds</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Return a factory that can be used as @graph.ingress.kind or @graph.ingress.kind(arg_name)</span>
+        <span class="k">return</span> <span class="n">_KindIngressFactory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">,</span> <span class="n">matching_kind</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_KindIngressFactory</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory to handle @graph.ingress.kind and @graph.ingress.kind(arg_name) syntax.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">TransformationGraph</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">Hashable</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span> <span class="o">=</span> <span class="n">graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kind</span> <span class="o">=</span> <span class="n">kind</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_or_arg_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle both @graph.ingress.kind and @graph.ingress.kind(arg_name) patterns.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func_or_arg_name</span><span class="p">):</span>
+            <span class="c1"># Used as @graph.ingress.kind (no parentheses, applied to first arg)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="o">.</span><span class="n">_ingress_decorator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kind</span><span class="p">,</span> <span class="kc">None</span><span class="p">)(</span><span class="n">func_or_arg_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Used as @graph.ingress.kind(arg_name) or @graph.ingress.kind(&#39;arg&#39;)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="o">.</span><span class="n">_ingress_decorator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kind</span><span class="p">,</span> <span class="n">func_or_arg_name</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="design_guidelines">

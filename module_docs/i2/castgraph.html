@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.castgraph &mdash; i2 0.1.59 documentation</title>
+  <title>i2.castgraph &mdash; i2 0.1.60 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=755f2e77"></script>
+      <script src="../../_static/documentation_options.js?v=5fe4e9ad"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -84,6 +84,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.convert"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.convert()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.detect_kind"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.detect_kind()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.get_transformer"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.get_transformer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.ingress"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.ingress</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.kinds"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.kinds()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.reachable_from"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.reachable_from()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#i2.castgraph.TransformationGraph.register"><code class="docutils literal notranslate"><span class="pre">TransformationGraph.register()</span></code></a></li>
@@ -123,6 +124,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_castgraph.html">i2.tests.test_castgraph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_castgraph_kinds.html">i2.tests.test_castgraph_kinds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_ingress_demo.html">i2.tests.test_ingress_demo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_signatures.html">i2.tests.test_signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_util.html">i2.tests.test_util</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
@@ -608,6 +610,44 @@ Returns None if no kind matches.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">transformer</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">get_transformer</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">transformer</span><span class="p">(</span><span class="s2">&quot;42&quot;</span><span class="p">)</span>
 <span class="go">42</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="i2.castgraph.TransformationGraph.ingress">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ingress</span></span><a class="headerlink" href="#i2.castgraph.TransformationGraph.ingress" title="Link to this definition"></a></dt>
+<dd><p>Return decorator factory with attribute access for kinds.</p>
+<p>This property provides a flexible interface for decorating functions to
+automatically transform their arguments to specified kinds.</p>
+<p>Usage patterns:</p>
+<ol class="arabic simple">
+<li><p>Specify kind and argument name:
+&#64;graph.ingress(‘text’, ‘content’)
+def func(content): …</p></li>
+<li><p>Specify kind only (transforms first argument):
+&#64;graph.ingress(‘text’)
+def func(arg): …</p></li>
+<li><p>Use keyword argument:
+&#64;graph.ingress(arg_name=’text’)
+def func(arg_name): …</p></li>
+<li><p>Attribute-based syntax for registered kinds:
+&#64;graph.ingress.text(‘content’)
+def func(content): …</p></li>
+<li><p>Attribute-based for first argument:
+&#64;graph.ingress.text
+def func(arg): …</p></li>
+</ol>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">text_to_int</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span> <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@graph</span><span class="o">.</span><span class="n">ingress</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="s1">&#39; processed&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Can now pass int, will be transformed to text first</span>
 </pre></div>
 </div>
 </dd></dl>
