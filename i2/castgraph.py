@@ -177,6 +177,9 @@ from typing import (
 )
 from collections.abc import Callable, Hashable, Iterable, MutableMapping
 
+from i2.wrapper import Wrap
+from i2.signatures import Sig
+
 
 T = TypeVar("T")
 U = TypeVar("U")
@@ -943,6 +946,127 @@ class TransformationGraph:
         return self._kinds.copy()
 
     # -----------------------------
+    # Ingress decorator for automatic argument transformation
+    # -----------------------------
+
+    @property
+    def ingress(self):
+        """Return decorator factory with attribute access for kinds.
+
+        This property provides a flexible interface for decorating functions to
+        automatically transform their arguments to specified kinds.
+
+        Usage patterns:
+
+        1. Specify kind and argument name:
+           @graph.ingress('text', 'content')
+           def func(content): ...
+
+        2. Specify kind only (transforms first argument):
+           @graph.ingress('text')
+           def func(arg): ...
+
+        3. Use keyword argument:
+           @graph.ingress(arg_name='text')
+           def func(arg_name): ...
+
+        4. Attribute-based syntax for registered kinds:
+           @graph.ingress.text('content')
+           def func(content): ...
+
+        5. Attribute-based for first argument:
+           @graph.ingress.text
+           def func(arg): ...
+
+        Examples
+        --------
+        >>> graph = TransformationGraph()
+        >>> graph.add_node('text', isa=lambda x: isinstance(x, str))
+        >>> graph.add_node(int)
+        >>> @graph.register_edge('text', int)
+        ... def text_to_int(s, ctx): return int(s)
+        >>> @graph.ingress('text')
+        ... def process(x):
+        ...     return x + ' processed'
+        >>> # Can now pass int, will be transformed to text first
+        """
+        return _IngressProxy(self)
+
+    def _ingress_decorator(
+        self,
+        kind_or_arg: Hashable | None = None,
+        arg_name: str | None = None,
+        *,
+        context: dict | None = None,
+    ):
+        """Internal method to create ingress decorator.
+
+        Parameters
+        ----------
+        kind_or_arg : Hashable | None
+            The target kind for transformation, or argument name if arg_name is provided
+        arg_name : str | None
+            The name of the argument to transform. If None, transforms first argument.
+        context : dict | None
+            Optional context to pass to transformations
+
+        Returns
+        -------
+        Callable
+            Decorator function
+        """
+        # Determine target kind and argument name
+        if arg_name is not None:
+            # @graph.ingress(str, 'x') or @graph.ingress('text', 'x')
+            target_kind = kind_or_arg
+            target_arg = arg_name
+        elif isinstance(kind_or_arg, str) or isinstance(kind_or_arg, type):
+            # @graph.ingress('text') or @graph.ingress(int)
+            target_kind = kind_or_arg
+            target_arg = None  # Will use first arg
+        else:
+            # kind_or_arg could be None or some other hashable
+            target_kind = kind_or_arg
+            target_arg = None
+
+        def decorator(func):
+            nonlocal target_arg
+            sig = Sig(func)
+
+            # Default to first arg if not specified
+            if target_arg is None:
+                if not sig.names:
+                    raise ValueError(
+                        f"Function {func.__name__} has no parameters to transform"
+                    )
+                target_arg = sig.names[0]
+
+            # Validate target_arg exists
+            if target_arg not in sig.names:
+                raise ValueError(
+                    f"Argument '{target_arg}' not found in function {func.__name__}. "
+                    f"Available arguments: {sig.names}"
+                )
+
+            # Create ingress function
+            def ingress_func(*args, **kwargs):
+                # Map to all kwargs
+                all_kwargs = sig.map_arguments(args, kwargs, apply_defaults=False)
+
+                # Transform the target argument if present
+                if target_arg in all_kwargs:
+                    all_kwargs[target_arg] = self.transform_any(
+                        all_kwargs[target_arg], target_kind, context=context
+                    )
+
+                # Convert back to args/kwargs respecting signature
+                return sig.mk_args_and_kwargs(all_kwargs, allow_partial=True)
+
+            return Wrap(func, ingress=ingress_func)
+
+        return decorator
+
+    # -----------------------------
     # Backward compatibility methods (deprecated)
     # -----------------------------
     def register(
@@ -1556,6 +1680,69 @@ class ConversionRegistry:
 # ----------------------------------------------------------------------
 # Best-practice guidance
 # ----------------------------------------------------------------------
+
+
+class _IngressProxy:
+    """Helper class to provide attribute-based access to kinds for ingress decorator.
+
+    This class enables syntax like @graph.ingress.text or @graph.ingress.int
+    by dynamically looking up kinds and creating decorators.
+    """
+
+    def __init__(self, graph: TransformationGraph):
+        self._graph = graph
+
+    def __call__(
+        self,
+        kind_or_arg: Hashable | None = None,
+        arg_name: str | None = None,
+        *,
+        context: dict | None = None,
+    ):
+        """Allow calling as @graph.ingress(kind, arg_name)."""
+        return self._graph._ingress_decorator(kind_or_arg, arg_name, context=context)
+
+    def __getattr__(self, kind_name: str):
+        """Enable attribute access like @graph.ingress.text or @graph.ingress.int.
+
+        Looks up the kind by string name or by type.__name__.
+        Returns a decorator or a decorator factory depending on usage.
+        """
+        # Look up kind by string name or type.__name__
+        matching_kind = None
+        for kind in self._graph.kinds():
+            if isinstance(kind, str) and kind == kind_name:
+                matching_kind = kind
+                break
+            elif isinstance(kind, type) and kind.__name__ == kind_name:
+                matching_kind = kind
+                break
+
+        if matching_kind is None:
+            raise AttributeError(
+                f"Kind '{kind_name}' not found in graph. "
+                f"Available kinds: {self._graph.kinds()}"
+            )
+
+        # Return a factory that can be used as @graph.ingress.kind or @graph.ingress.kind(arg_name)
+        return _KindIngressFactory(self._graph, matching_kind)
+
+
+class _KindIngressFactory:
+    """Factory to handle @graph.ingress.kind and @graph.ingress.kind(arg_name) syntax."""
+
+    def __init__(self, graph: TransformationGraph, kind: Hashable):
+        self._graph = graph
+        self._kind = kind
+
+    def __call__(self, func_or_arg_name):
+        """Handle both @graph.ingress.kind and @graph.ingress.kind(arg_name) patterns."""
+        if callable(func_or_arg_name):
+            # Used as @graph.ingress.kind (no parentheses, applied to first arg)
+            return self._graph._ingress_decorator(self._kind, None)(func_or_arg_name)
+        else:
+            # Used as @graph.ingress.kind(arg_name) or @graph.ingress.kind('arg')
+            return self._graph._ingress_decorator(self._kind, func_or_arg_name)
 
 
 def design_guidelines() -> str:

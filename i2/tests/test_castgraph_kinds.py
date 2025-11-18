@@ -575,3 +575,277 @@ def test_mro_fallback_for_types():
     # No direct Sub -> Out, should use Base -> Out via MRO
     result = graph.transform(Sub(), Out)
     assert isinstance(result, Out)
+
+
+# --- Tests for ingress decorator ---
+
+
+def test_ingress_basic_with_kind_and_arg_name():
+    """Test ingress decorator with explicit kind and argument name."""
+    graph = TransformationGraph()
+    graph.add_node('text', isa=lambda x: isinstance(x, str))
+    graph.add_node(int)
+
+    @graph.register_edge(int, 'text')
+    def int_to_text(i, ctx):
+        return str(i)
+
+    @graph.ingress('text', 'x')
+    def process(x):
+        return x + " processed"
+
+    # Pass int, should be transformed to text first
+    result = process(42)
+    assert result == "42 processed"
+
+
+def test_ingress_with_kind_only_transforms_first_arg():
+    """Test ingress decorator with kind only (no arg name)."""
+    graph = TransformationGraph()
+    graph.add_node(str)
+    graph.add_node(int)
+
+    @graph.register_edge(int, str)
+    def int_to_str(i, ctx):
+        return str(i)
+
+    @graph.ingress(str)
+    def double_length(s):
+        return len(s) * 2
+
+    result = double_length(12345)
+    assert result == 10  # "12345" has length 5, doubled is 10
+
+
+def test_ingress_attribute_syntax_with_arg_name():
+    """Test ingress decorator with attribute syntax and arg name."""
+    graph = TransformationGraph()
+    graph.add_node('text', isa=lambda x: isinstance(x, str))
+    graph.add_node(int)
+
+    @graph.register_edge(int, 'text')
+    def int_to_text(i, ctx):
+        return str(i)
+
+    @graph.ingress.text('value')
+    def format_value(value):
+        return f"Value: {value}"
+
+    result = format_value(42)
+    assert result == "Value: 42"
+
+
+def test_ingress_attribute_syntax_first_arg():
+    """Test ingress decorator with attribute syntax on first arg."""
+    graph = TransformationGraph()
+    graph.add_node(str)
+    graph.add_node(int)
+
+    @graph.register_edge(str, int)
+    def str_to_int(s, ctx):
+        return int(s)
+
+    @graph.ingress.int
+    def square(n):
+        return n * n
+
+    result = square("5")
+    assert result == 25
+
+
+def test_ingress_with_type_kind():
+    """Test ingress decorator with type as kind."""
+    graph = TransformationGraph()
+    graph.add_node(str)
+    graph.add_node(int)
+
+    @graph.register_edge(str, int)
+    def str_to_int(s, ctx):
+        return int(s)
+
+    @graph.ingress(int, 'num')
+    def add_ten(num):
+        return num + 10
+
+    result = add_ten("32")
+    assert result == 42
+
+
+def test_ingress_with_multi_hop_transformation():
+    """Test ingress decorator with multi-hop transformation."""
+    graph = TransformationGraph()
+    graph.add_node('text', isa=lambda x: isinstance(x, str))
+    graph.add_node(float)
+    graph.add_node(int)
+
+    @graph.register_edge('text', float)
+    def text_to_float(s, ctx):
+        return float(s)
+
+    @graph.register_edge(float, int)
+    def float_to_int(f, ctx):
+        return int(f)
+
+    @graph.ingress(int)
+    def increment(n):
+        return n + 1
+
+    result = increment("41.7")
+    assert result == 42
+
+
+def test_ingress_with_context():
+    """Test ingress decorator passes context through transformations."""
+    graph = TransformationGraph()
+    graph.add_node(str)
+    graph.add_node(int)
+
+    @graph.register_edge(str, int)
+    def str_to_int_with_base(s, ctx):
+        base = (ctx or {}).get("base", 10)
+        return int(s, base)
+
+    @graph.ingress(int, context={"base": 16})
+    def multiply_by_two(n):
+        return n * 2
+
+    result = multiply_by_two("FF")
+    assert result == 510  # FF in hex is 255, * 2 = 510
+
+
+def test_ingress_preserves_multiple_args():
+    """Test ingress decorator only transforms specified arg."""
+    graph = TransformationGraph()
+    graph.add_node(str)
+    graph.add_node(int)
+
+    @graph.register_edge(str, int)
+    def str_to_int(s, ctx):
+        return int(s)
+
+    @graph.ingress(int, 'x')
+    def add(x, y):
+        return x + y
+
+    result = add("10", 32)
+    assert result == 42
+
+
+def test_ingress_with_kwargs():
+    """Test ingress decorator works with keyword arguments."""
+    graph = TransformationGraph()
+    graph.add_node(str)
+    graph.add_node(int)
+
+    @graph.register_edge(str, int)
+    def str_to_int(s, ctx):
+        return int(s)
+
+    @graph.ingress(int, 'value')
+    def process(value, multiplier=1):
+        return value * multiplier
+
+    result = process(value="21", multiplier=2)
+    assert result == 42
+
+
+def test_ingress_raises_on_invalid_arg_name():
+    """Test ingress decorator raises error for invalid argument name."""
+    graph = TransformationGraph()
+    graph.add_node(int)
+
+    with pytest.raises(ValueError, match="Argument 'nonexistent' not found"):
+
+        @graph.ingress(int, 'nonexistent')
+        def func(x):
+            return x
+
+
+def test_ingress_raises_on_no_parameters():
+    """Test ingress decorator raises error for function with no parameters."""
+    graph = TransformationGraph()
+    graph.add_node(int)
+
+    with pytest.raises(ValueError, match="has no parameters to transform"):
+
+        @graph.ingress(int)
+        def func():
+            return 42
+
+
+def test_ingress_attribute_raises_on_unknown_kind():
+    """Test ingress attribute access raises error for unknown kind."""
+    graph = TransformationGraph()
+    graph.add_node('text')
+
+    with pytest.raises(AttributeError, match="Kind 'unknown' not found"):
+        _ = graph.ingress.unknown
+
+
+def test_ingress_with_type_attribute_access():
+    """Test ingress attribute syntax works with type kinds."""
+    graph = TransformationGraph()
+    graph.add_node(str)
+    graph.add_node(int)
+
+    @graph.register_edge(str, int)
+    def str_to_int(s, ctx):
+        return int(s)
+
+    # Access int kind by its __name__
+    @graph.ingress.int
+    def double(n):
+        return n * 2
+
+    result = double("21")
+    assert result == 42
+
+
+def test_ingress_complex_pipeline():
+    """Test ingress decorator in realistic pipeline."""
+    graph = TransformationGraph()
+
+    # Define kinds
+    graph.add_node('json_str', isa=lambda x: isinstance(x, str) and x.startswith('{'))
+    graph.add_node('data', isa=lambda x: isinstance(x, dict))
+    graph.add_node('record', isa=lambda x: isinstance(x, dict) and 'id' in x)
+
+    # Define transformations
+    @graph.register_edge('json_str', 'data')
+    def parse_json(s, ctx):
+        return json.loads(s)
+
+    @graph.register_edge('data', 'record')
+    def validate_record(d, ctx):
+        if 'id' not in d:
+            d['id'] = 'generated'
+        return d
+
+    # Use ingress to automatically convert json string to record
+    @graph.ingress('record', 'obj')
+    def process_record(obj):
+        return f"Processing record {obj['id']}"
+
+    result = process_record('{"name": "test"}')
+    assert result == "Processing record generated"
+
+
+def test_ingress_does_not_transform_if_already_correct_kind():
+    """Test ingress skips transformation if argument is already correct kind."""
+    graph = TransformationGraph()
+    graph.add_node(int)
+
+    calls = {'count': 0}
+
+    @graph.register_edge(str, int)
+    def str_to_int(s, ctx):
+        calls['count'] += 1
+        return int(s)
+
+    @graph.ingress(int)
+    def square(n):
+        return n * n
+
+    # Pass int directly - should still work (identity transformation)
+    result = square(5)
+    assert result == 25

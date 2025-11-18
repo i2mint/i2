@@ -332,3 +332,83 @@ def test_missing_annotations_raises_at_registration_time():
         @reg.register()
         def bad(x):
             return None
+
+
+# --- Tests for ingress decorator ---
+
+
+def test_ingress_with_string_kinds():
+    """Test ingress decorator with string-based kinds."""
+    from i2.castgraph import TransformationGraph
+
+    graph = TransformationGraph()
+    graph.add_node('text', isa=lambda x: isinstance(x, str))
+    graph.add_node('number', isa=lambda x: isinstance(x, (int, float)))
+
+    @graph.register_edge('text', 'number')
+    def text_to_number(t, ctx):
+        return float(t)
+
+    @graph.ingress('number', 'x')
+    def double(x):
+        return x * 2
+
+    result = double("21")
+    assert result == 42.0
+
+
+def test_ingress_with_type_kinds():
+    """Test ingress decorator with type-based kinds."""
+    from i2.castgraph import TransformationGraph
+
+    graph = TransformationGraph()
+
+    @graph.register_edge(str, int)
+    def str_to_int(s, ctx):
+        return int(s)
+
+    @graph.ingress(int)
+    def square(n):
+        return n**2
+
+    result = square("5")
+    assert result == 25
+
+
+def test_ingress_attribute_syntax():
+    """Test ingress decorator with attribute-based syntax."""
+    from i2.castgraph import TransformationGraph
+
+    graph = TransformationGraph()
+    graph.add_node('data', isa=lambda x: isinstance(x, dict))
+
+    @graph.register_edge(str, 'data')
+    def str_to_data(s, ctx):
+        return json.loads(s)
+
+    @graph.ingress.data('obj')
+    def get_value(obj):
+        return obj.get('value', 0)
+
+    result = get_value('{"value": 42}')
+    assert result == 42
+
+
+def test_ingress_preserves_function_signature():
+    """Test that ingress decorator preserves function behavior."""
+    from i2.castgraph import TransformationGraph
+
+    graph = TransformationGraph()
+
+    @graph.register_edge(str, int)
+    def str_to_int(s, ctx):
+        return int(s)
+
+    @graph.ingress(int, 'a')
+    def add(a, b):
+        return a + b
+
+    # Test with various call patterns
+    assert add("10", 5) == 15
+    assert add(a="20", b=22) == 42
+    assert add("7", b=8) == 15
