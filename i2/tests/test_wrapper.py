@@ -273,3 +273,155 @@ def test_rm_params():
     assert str(Sig(chunker)) == "(a: collections.abc.Iterable, *, chk_size: int = 3)"
     assert list(chunker(wf)) == [(0, 1, 2), (3, 4, 5)]
     # ----------------------------------------------------------------------------
+
+
+def test_preserve_signature_auto_generic():
+    """Test auto preservation with generic (*args, **kwargs) ingress."""
+    from inspect import signature
+    from i2.wrapper import Wrap
+
+    def my_func(x: int, y: int = 5) -> int:
+        return x + y
+
+    def ingress(*args, **kwargs):
+        return args, kwargs
+
+    wrapped = Wrap(my_func, ingress=ingress)  # Default: preserve_signature='auto'
+
+    # Signature should be preserved
+    assert str(signature(wrapped)) == '(x: int, y: int = 5) -> int'
+    assert wrapped.__annotations__ == my_func.__annotations__
+    # Test functionality
+    assert wrapped(2, 3) == 5  # 2 + 3 = 5
+
+
+def test_preserve_signature_auto_non_generic():
+    """Test auto mode doesn't preserve non-generic ingress."""
+    from inspect import signature
+    from i2.wrapper import Wrap
+
+    def my_func(x: int, y: int = 5) -> int:
+        return x + y
+
+    def ingress(x, y):  # Not generic
+        return (x,), {'y': y}
+
+    wrapped = Wrap(my_func, ingress=ingress)  # Auto mode
+
+    # Should use ingress's signature (but with func's return annotation via fallback)
+    assert str(signature(wrapped)) == '(x, y) -> int'
+    # Test functionality
+    assert wrapped(2, 3) == 5  # 2 + 3 = 5
+
+
+def test_preserve_signature_explicit_true():
+    """Test explicit True mode always preserves."""
+    from inspect import signature
+    from i2.wrapper import Wrap
+
+    def my_func(x: int, y: int = 5) -> int:
+        return x + y
+
+    def ingress(x, y):  # Not generic
+        return (x,), {'y': y}
+
+    wrapped = Wrap(my_func, ingress=ingress, preserve_signature=True)
+
+    # Should preserve despite non-generic ingress
+    assert str(signature(wrapped)) == '(x: int, y: int = 5) -> int'
+    # Test functionality
+    assert wrapped(2, 3) == 5  # 2 + 3 = 5
+
+
+def test_preserve_signature_explicit_false():
+    """Test explicit False mode never preserves."""
+    from inspect import signature
+    from i2.wrapper import Wrap
+
+    def my_func(x: int, y: int = 5) -> int:
+        return x + y
+
+    def ingress(*args, **kwargs):  # Generic
+        return args, kwargs
+
+    wrapped = Wrap(my_func, ingress=ingress, preserve_signature=False)
+
+    # Should not preserve despite generic ingress (but still gets return annotation via fallback)
+    assert str(signature(wrapped)) == '(*args, **kwargs) -> int'
+    # Test functionality
+    assert wrapped(2, 3) == 5  # 2 + 3 = 5
+
+
+def test_return_annotation_no_egress():
+    """Test return annotation preserved when no egress."""
+    from inspect import signature
+    from i2.wrapper import Wrap
+
+    def my_func(x: int) -> int:
+        return x * 2
+
+    wrapped = Wrap(my_func)  # No egress
+
+    sig = signature(wrapped)
+    assert sig.return_annotation == int
+    # Test functionality
+    assert wrapped(5) == 10
+
+
+def test_return_annotation_egress_with_annotation():
+    """Test egress annotation takes precedence."""
+    from inspect import signature
+    from i2.wrapper import Wrap
+
+    def my_func(x: int) -> int:
+        return x * 2
+
+    def egress(output) -> str:  # Different return type
+        return str(output)
+
+    wrapped = Wrap(my_func, egress=egress)
+
+    sig = signature(wrapped)
+    assert sig.return_annotation == str
+    # Test functionality
+    result = wrapped(5)
+    assert result == "10"
+    assert isinstance(result, str)
+
+
+def test_return_annotation_egress_without_annotation():
+    """Test fallback to func annotation when egress lacks one."""
+    from inspect import signature
+    from i2.wrapper import Wrap
+
+    def my_func(x: int) -> int:
+        return x * 2
+
+    def egress(output):  # No annotation
+        return output  # Doesn't transform
+
+    wrapped = Wrap(my_func, egress=egress)
+
+    sig = signature(wrapped)
+    assert sig.return_annotation == int  # Falls back to func's
+    # Test functionality
+    assert wrapped(5) == 10
+
+
+def test_return_annotation_none_anywhere():
+    """Test empty when no annotations exist."""
+    from inspect import signature, Parameter
+    from i2.wrapper import Wrap
+
+    def my_func(x):  # No annotation
+        return x * 2
+
+    def egress(output):  # No annotation
+        return output
+
+    wrapped = Wrap(my_func, egress=egress)
+
+    sig = signature(wrapped)
+    assert sig.return_annotation is Parameter.empty
+    # Test functionality
+    assert wrapped(5) == 10

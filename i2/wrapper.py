@@ -205,6 +205,94 @@ def _defaults_and_kwdefaults_of_func(func: Callable):
         return sig._defaults_, sig._kwdefaults_
 
 
+def _should_preserve_signature(ingress, func, preserve_mode):
+    """Determine if signature should be auto-preserved from func to ingress.
+
+    Parameters
+    ----------
+    ingress : callable or None
+        The ingress function
+    func : callable
+        The wrapped function
+    preserve_mode : 'auto' | True | False
+        The preservation mode
+
+    Returns
+    -------
+    bool
+        True if signature should be preserved
+    """
+    if preserve_mode is False:
+        return False
+    if preserve_mode is True:
+        return True
+
+    # 'auto' mode: preserve if ingress has generic (*args, **kwargs)
+    if ingress is None:
+        return False
+
+    try:
+        ingress_sig = signature(ingress)
+    except (ValueError, TypeError):
+        # Can't get signature, don't preserve
+        return False
+
+    params = list(ingress_sig.parameters.values())
+
+    # Check if ingress has exactly (*args, **kwargs) signature
+    if len(params) != 2:
+        return False
+
+    is_generic = (
+        params[0].kind == Parameter.VAR_POSITIONAL and
+        params[1].kind == Parameter.VAR_KEYWORD
+    )
+
+    # Only preserve if generic and doesn't already have __signature__
+    return is_generic and not hasattr(ingress, '__signature__')
+
+
+def _get_return_annotation(func, egress):
+    """Get return annotation with smart fallback logic.
+
+    Fallback chain: egress annotation → func annotation → empty
+
+    Parameters
+    ----------
+    func : callable
+        The wrapped function
+    egress : callable or None
+        The egress function
+
+    Returns
+    -------
+    annotation
+        The return annotation to use, or Parameter.empty
+    """
+    func_sig = Sig(func)
+    func_return = func_sig.return_annotation
+
+    if egress is None:
+        # No egress: use func's return annotation
+        return func_return if func_return is not Parameter.empty else empty
+
+    # Egress provided: check its annotation first
+    try:
+        egress_sig = Sig(egress)
+        egress_return = egress_sig.return_annotation
+    except (ValueError, TypeError):
+        # Can't get egress signature, fall back to func
+        return func_return if func_return is not Parameter.empty else empty
+
+    if egress_return is not Parameter.empty:
+        # Egress has annotation, use it
+        return egress_return
+
+    # Egress has no annotation: fall back to func's annotation
+    # Assumption: egress doesn't transform the type
+    return func_return if func_return is not Parameter.empty else empty
+
+
 class Wrap(_Wrap):
     """A function wrapper with interface modifiers.
 
@@ -215,6 +303,14 @@ class Wrap(_Wrap):
     :param egress: The outgoing data transformer. It also takes precedence over the
         wrapped function to determine the return annotation of the ``Wrap`` instance
     :param name: Name to give the wrapper (will use wrapped func name by default)
+    :param preserve_signature: Controls signature preservation from the wrapped function.
+        - 'auto' (default): Automatically preserve if ingress has (*args, **kwargs) signature
+        - True: Always preserve signature from func (copies __signature__)
+        - False: Don't preserve (use ingress's natural signature)
+
+        When signature is preserved, both __signature__ and __annotations__ are
+        copied from func to the wrapper, ensuring type checkers and IDEs see
+        the original signature.
     :return: A callable instance wrapping ``func``
 
     Some examples:
@@ -298,13 +394,177 @@ class Wrap(_Wrap):
     explicitly (as in the examples above), but through a factory -- a function that
     will be called on ``func`` to produce the ingress that should be used to wrap it.
 
+    Common Patterns and Best Practices
+    -----------------------------------
+
+    Pattern 1: Transform inputs while preserving signature
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    By default (with preserve_signature='auto'), Wrap automatically preserves
+    signatures when your ingress uses (*args, **kwargs):
+
+    >>> def uppercase_args(func):
+    ...     def ingress(*args, **kwargs):
+    ...         args = tuple(str(a).upper() if isinstance(a, str) else a for a in args)
+    ...         return args, kwargs
+    ...     return Wrap(func, ingress=ingress)
+    >>>
+    >>> @uppercase_args
+    ... def greet(name: str, greeting: str = "Hello") -> str:
+    ...     return f"{greeting}, {name}!"
+    >>>
+    >>> greet("alice")  # Signature preserved, input transformed
+    'Hello, ALICE!'
+
+    Pattern 2: Keep return annotation with transparent egress
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    When using an egress that doesn't transform the type, return annotations
+    are automatically preserved:
+
+    >>> def add_logging(func):
+    ...     def egress(output):
+    ...         # print(f"Result: {output}")  # Commented out for doctest
+    ...         return output  # Type unchanged
+    ...     return Wrap(func, egress=egress)
+    >>>
+    >>> @add_logging
+    ... def calculate(x: int) -> int:
+    ...     return x * 2
+    >>>
+    >>> result = calculate(5)  # Return type preserved as int
+    >>> result
+    10
+
+    Pattern 3: Validation without transformation
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Use ingress for validation without modifying arguments:
+
+    >>> def validate_positive(func):
+    ...     def ingress(*args, **kwargs):
+    ...         if any(a <= 0 for a in args if isinstance(a, (int, float))):
+    ...             raise ValueError("All numeric arguments must be positive")
+    ...         return args, kwargs
+    ...     return Wrap(func, ingress=ingress)
+    >>>
+    >>> @validate_positive
+    ... def multiply(x: int, y: int) -> int:
+    ...     return x * y
+    >>>
+    >>> multiply(2, 3)
+    6
+
+    Pattern 4: Error handling and logging
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Wrap both ends for comprehensive error handling:
+
+    >>> def safe_call(func):
+    ...     def ingress(*args, **kwargs):
+    ...         # print(f"Calling {func.__name__}")  # Commented out for doctest
+    ...         return args, kwargs
+    ...
+    ...     def egress(output):
+    ...         # print(f"Success: {output}")  # Commented out for doctest
+    ...         return output
+    ...
+    ...     return Wrap(func, ingress=ingress, egress=egress)
+
+    Common Pitfalls and Solutions
+    ------------------------------
+
+    Pitfall 1: Losing signatures with explicit non-generic ingress
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    If your ingress doesn't use (*args, **kwargs), the auto mode won't preserve
+    the signature. Use preserve_signature=True explicitly:
+
+    >>> # WRONG: Signature lost with non-generic ingress
+    >>> def my_func(x: int, y: int = 5) -> int:
+    ...     return x + y
+    >>>
+    >>> def ingress(x, y):  # Specific signature
+    ...     return (x,), {'y': y}
+    >>>
+    >>> # Without explicit preservation, signature won't match original
+    >>> wrapped = Wrap(my_func, ingress=ingress, preserve_signature=False)
+    >>> # Signature is now (x, y) instead of (x: int, y: int = 5) -> int
+    >>>
+    >>> # RIGHT: Explicit preservation
+    >>> wrapped = Wrap(my_func, ingress=ingress, preserve_signature=True)
+    >>> # Now signature is correctly (x: int, y: int = 5) -> int
+
+    Pitfall 2: Type-changing egress without annotation
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    If your egress changes the output type, annotate it. Otherwise, the function's
+    original return type will be preserved, creating incorrect type hints:
+
+    >>> # RIGHT: Egress annotated with correct return type
+    >>> def stringify(func):
+    ...     def egress(output) -> str:  # Annotated!
+    ...         return str(output)
+    ...     return Wrap(func, egress=egress)
+    >>>
+    >>> @stringify
+    ... def calc(x: int) -> str:  # Note: return annotation updated
+    ...     return x * 2
+    >>>
+    >>> isinstance(calc(5), str)
+    True
+
+    Pitfall 3: Forgetting to return (args, kwargs) from ingress
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Ingress MUST return a tuple of (args, kwargs) for the wrapped function:
+
+    >>> # WRONG: ingress doesn't return (args, kwargs)
+    >>> # def broken_ingress(*args, **kwargs):
+    >>> #     print("called")
+    >>> #     return None  # WRONG! Must return (args, kwargs)
+    >>>
+    >>> # RIGHT: Always return (args, kwargs)
+    >>> def correct_ingress(*args, **kwargs):
+    ...     # Do any processing here
+    ...     return args, kwargs  # CORRECT
+
+    Pitfall 4: Modifying mutable arguments in place
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Be careful when modifying arguments - changes affect the original objects:
+
+    >>> # RIGHT: Create new objects
+    >>> def fixed(func):
+    ...     def ingress(*args, **kwargs):
+    ...         if args and isinstance(args[0], list):
+    ...             args = ([*args[0], 999],) + args[1:]  # New list
+    ...         return args, kwargs
+    ...     return Wrap(func, ingress=ingress)
+
+    Backward Compatibility Notes
+    -----------------------------
+
+    **Signature Preservation (v3.0):**
+
+    Currently, preserve_signature defaults to 'auto' which only preserves
+    signatures for generic (*args, **kwargs) ingress functions. In v3.0,
+    we may change the default to True to always preserve signatures unless
+    explicitly disabled. This matches user expectations that decorators
+    should preserve signatures by default.
+
+    To prepare for this change:
+    - If you want current behavior: explicitly set preserve_signature='auto'
+    - If you want v3.0 behavior: explicitly set preserve_signature=True
+    - If you never want preservation: explicitly set preserve_signature=False
+
     .. seealso::
 
         ``wrap`` function.
 
     """
 
-    def __init__(self, func, ingress=None, egress=None, *, name=None):
+    def __init__(self, func, ingress=None, egress=None, *, name=None, preserve_signature='auto'):
         super().__init__(func, ingress, egress, name=name)
         ingress_sig = Sig(func)
 
@@ -323,20 +583,25 @@ class Wrap(_Wrap):
                 assert callable(ingress), f"Should be callable: {ingress}"
                 self.ingress = ingress
 
+            # Apply signature preservation if needed
+            if _should_preserve_signature(self.ingress, func, preserve_signature):
+                # Preserve signature and annotations from func to ingress
+                self.ingress.__signature__ = signature(func)
+                self.ingress.__annotations__ = getattr(func, '__annotations__', {})
+
             ingress_sig = Sig(self.ingress)
             self.__defaults__, self.__kwdefaults__ = _defaults_and_kwdefaults_of_func(
                 self.ingress
             )
 
-        return_annotation = empty
-
+        # Set egress
         if egress is None:
             self.egress = transparent_egress
         else:
             self.egress = egress
-            egress_return_annotation = Sig(egress).return_annotation
-            if egress_return_annotation is not Parameter.empty:
-                return_annotation = egress_return_annotation
+
+        # Smart return annotation fallback
+        return_annotation = _get_return_annotation(func, egress)
 
         self.__signature__ = Sig(ingress_sig, return_annotation=return_annotation)
 
