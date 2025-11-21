@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.1.61 documentation</title>
+  <title>i2.wrapper &mdash; i2 0.1.62 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fb9c6db4"></script>
+      <script src="../../_static/documentation_options.js?v=cc64e7de"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -549,7 +549,7 @@ can doesn’t have the position only restriction on <code class="docutils litera
 
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.wrapper.Wrap">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">Wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ingress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#Wrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.wrapper.Wrap" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">Wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ingress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preserve_signature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#Wrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.wrapper.Wrap" title="Link to this definition"></a></dt>
 <dd><p>A function wrapper with interface modifiers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -561,6 +561,14 @@ wrapped function.</p></li>
 <li><p><strong>egress</strong> – The outgoing data transformer. It also takes precedence over the
 wrapped function to determine the return annotation of the <code class="docutils literal notranslate"><span class="pre">Wrap</span></code> instance</p></li>
 <li><p><strong>name</strong> – Name to give the wrapper (will use wrapped func name by default)</p></li>
+<li><p><strong>preserve_signature</strong> – <p>Controls signature preservation from the wrapped function.
+- ‘auto’ (default): Automatically preserve if ingress has (<a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs) signature
+- True: Always preserve signature from func (copies __signature__)
+- False: Don’t preserve (use ingress’s natural signature)</p>
+<p>When signature is preserved, both __signature__ and __annotations__ are
+copied from func to the wrapper, ensuring type checkers and IDEs see
+the original signature.</p>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -649,10 +657,171 @@ wrapped func; therefore it’s definition often depends on information of both,
 and for that reason, we provide the ability to specify the ingress not only
 explicitly (as in the examples above), but through a factory – a function that
 will be called on <code class="docutils literal notranslate"><span class="pre">func</span></code> to produce the ingress that should be used to wrap it.</p>
+<section id="common-patterns-and-best-practices">
+<h2>Common Patterns and Best Practices<a class="headerlink" href="#common-patterns-and-best-practices" title="Link to this heading"></a></h2>
+<section id="pattern-1-transform-inputs-while-preserving-signature">
+<h3>Pattern 1: Transform inputs while preserving signature<a class="headerlink" href="#pattern-1-transform-inputs-while-preserving-signature" title="Link to this heading"></a></h3>
+<p>By default (with preserve_signature=’auto’), Wrap automatically preserves
+signatures when your ingress uses (<a href="#id5"><span class="problematic" id="id6">*</span></a>args, <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">uppercase_args</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@uppercase_args</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">greeting</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Hello&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">greeting</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!&quot;</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">greet</span><span class="p">(</span><span class="s2">&quot;alice&quot;</span><span class="p">)</span>  <span class="c1"># Signature preserved, input transformed</span>
+<span class="go">&#39;Hello, ALICE!&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="pattern-2-keep-return-annotation-with-transparent-egress">
+<h3>Pattern 2: Keep return annotation with transparent egress<a class="headerlink" href="#pattern-2-keep-return-annotation-with-transparent-egress" title="Link to this heading"></a></h3>
+<p>When using an egress that doesn’t transform the type, return annotations
+are automatically preserved:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">add_logging</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">egress</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="c1"># print(f&quot;Result: {output}&quot;)  # Commented out for doctest</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">output</span>  <span class="c1"># Type unchanged</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@add_logging</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">calculate</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">calculate</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># Return type preserved as int</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span>
+<span class="go">10</span>
+</pre></div>
+</div>
+</section>
+<section id="pattern-3-validation-without-transformation">
+<h3>Pattern 3: Validation without transformation<a class="headerlink" href="#pattern-3-validation-without-transformation" title="Link to this heading"></a></h3>
+<p>Use ingress for validation without modifying arguments:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">validate_positive</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">a</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))):</span>
+<span class="gp">... </span>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All numeric arguments must be positive&quot;</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@validate_positive</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">multiply</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">6</span>
+</pre></div>
+</div>
+</section>
+<section id="pattern-4-error-handling-and-logging">
+<h3>Pattern 4: Error handling and logging<a class="headerlink" href="#pattern-4-error-handling-and-logging" title="Link to this heading"></a></h3>
+<p>Wrap both ends for comprehensive error handling:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">safe_call</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="c1"># print(f&quot;Calling {func.__name__}&quot;)  # Commented out for doctest</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">egress</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="c1"># print(f&quot;Success: {output}&quot;)  # Commented out for doctest</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">output</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="common-pitfalls-and-solutions">
+<h2>Common Pitfalls and Solutions<a class="headerlink" href="#common-pitfalls-and-solutions" title="Link to this heading"></a></h2>
+<section id="pitfall-1-losing-signatures-with-explicit-non-generic-ingress">
+<h3>Pitfall 1: Losing signatures with explicit non-generic ingress<a class="headerlink" href="#pitfall-1-losing-signatures-with-explicit-non-generic-ingress" title="Link to this heading"></a></h3>
+<p>If your ingress doesn’t use (<a href="#id9"><span class="problematic" id="id10">*</span></a>args, <a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs), the auto mode won’t preserve
+the signature. Use preserve_signature=True explicitly:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># WRONG: Signature lost with non-generic ingress</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">my_func</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">ingress</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>  <span class="c1"># Specific signature</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Without explicit preservation, signature won&#39;t match original</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped</span> <span class="o">=</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">my_func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress</span><span class="p">,</span> <span class="n">preserve_signature</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Signature is now (x, y) instead of (x: int, y: int = 5) -&gt; int</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># RIGHT: Explicit preservation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped</span> <span class="o">=</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">my_func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress</span><span class="p">,</span> <span class="n">preserve_signature</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Now signature is correctly (x: int, y: int = 5) -&gt; int</span>
+</pre></div>
+</div>
+</section>
+<section id="pitfall-2-type-changing-egress-without-annotation">
+<h3>Pitfall 2: Type-changing egress without annotation<a class="headerlink" href="#pitfall-2-type-changing-egress-without-annotation" title="Link to this heading"></a></h3>
+<p>If your egress changes the output type, annotate it. Otherwise, the function’s
+original return type will be preserved, creating incorrect type hints:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># RIGHT: Egress annotated with correct return type</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">stringify</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">egress</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># Annotated!</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@stringify</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">calc</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># Note: return annotation updated</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">calc</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="nb">str</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="pitfall-3-forgetting-to-return-args-kwargs-from-ingress">
+<h3>Pitfall 3: Forgetting to return (args, kwargs) from ingress<a class="headerlink" href="#pitfall-3-forgetting-to-return-args-kwargs-from-ingress" title="Link to this heading"></a></h3>
+<p>Ingress MUST return a tuple of (args, kwargs) for the wrapped function:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># WRONG: ingress doesn&#39;t return (args, kwargs)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># def broken_ingress(*args, **kwargs):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#     print(&quot;called&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#     return None  # WRONG! Must return (args, kwargs)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># RIGHT: Always return (args, kwargs)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">correct_ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="c1"># Do any processing here</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>  <span class="c1"># CORRECT</span>
+</pre></div>
+</div>
+</section>
+<section id="pitfall-4-modifying-mutable-arguments-in-place">
+<h3>Pitfall 4: Modifying mutable arguments in place<a class="headerlink" href="#pitfall-4-modifying-mutable-arguments-in-place" title="Link to this heading"></a></h3>
+<p>Be careful when modifying arguments - changes affect the original objects:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># RIGHT: Create new objects</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">fixed</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="n">args</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+<span class="gp">... </span>            <span class="n">args</span> <span class="o">=</span> <span class="p">([</span><span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">999</span><span class="p">],)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># New list</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="backward-compatibility-notes">
+<h2>Backward Compatibility Notes<a class="headerlink" href="#backward-compatibility-notes" title="Link to this heading"></a></h2>
+<p><strong>Signature Preservation (v3.0):</strong></p>
+<p>Currently, preserve_signature defaults to ‘auto’ which only preserves
+signatures for generic (<a href="#id13"><span class="problematic" id="id14">*</span></a>args, <a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs) ingress functions. In v3.0,
+we may change the default to True to always preserve signatures unless
+explicitly disabled. This matches user expectations that decorators
+should preserve signatures by default.</p>
+<p>To prepare for this change:
+- If you want current behavior: explicitly set preserve_signature=’auto’
+- If you want v3.0 behavior: explicitly set preserve_signature=True
+- If you never want preservation: explicitly set preserve_signature=False</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><code class="docutils literal notranslate"><span class="pre">wrap</span></code> function.</p>
 </div>
+</section>
 </dd></dl>
 
 <dl class="py exception">
@@ -738,7 +907,7 @@ sourcing specific arguments from the instance’s attributes.
 &gt;&gt;&gt; from inspect import signature
 &gt;&gt;&gt; from dataclasses import dataclass
 &gt;&gt;&gt;
-&gt;&gt;&gt; def foo(a, b, c=2, <a href="#id1"><span class="problematic" id="id2">*</span></a>, d=’bar’):
+&gt;&gt;&gt; def foo(a, b, c=2, <a href="#id17"><span class="problematic" id="id18">*</span></a>, d=’bar’):
 …     return f”{d}: {(a + b) * c}”
 &gt;&gt;&gt; foo(1, 2)
 ‘bar: 6’
@@ -755,7 +924,7 @@ sourcing specific arguments from the instance’s attributes.
 &gt;&gt;&gt; str(instance)
 ‘Foo(a=1, c=3)’
 &gt;&gt;&gt; str(signature(instance.foo))
-“(b, <a href="#id3"><span class="problematic" id="id4">*</span></a>, d=’bar’)”
+“(b, <a href="#id19"><span class="problematic" id="id20">*</span></a>, d=’bar’)”
 &gt;&gt;&gt; instance.foo(2, d=’hello’)
 ‘hello: 9’
 &gt;&gt;&gt; instance.foo(10, d=’goodbye’)
@@ -1068,7 +1237,7 @@ to the right</p>
 <span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">partialx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">__name__</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_rm_partialize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_allow_reordering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/i2/wrapper.html#partialx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#i2.wrapper.partialx" title="Link to this definition"></a></dt>
 <dd><p>Extends the functionality of builtin <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code> with the ability to</p>
 <ul class="simple">
-<li><p>set <a href="#id5"><span class="problematic" id="id6">``</span></a>__name__ ``</p></li>
+<li><p>set <a href="#id21"><span class="problematic" id="id22">``</span></a>__name__ ``</p></li>
 <li><p>remove partialized arguments from signature</p></li>
 <li><p>reorder params (so that defaults are at the end)</p></li>
 </ul>
