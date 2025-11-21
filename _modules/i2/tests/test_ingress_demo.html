@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.tests.test_ingress_demo &mdash; i2 0.1.60 documentation</title>
+  <title>i2.tests.test_ingress_demo &mdash; i2 0.1.61 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=5fe4e9ad"></script>
+      <script src="../../../_static/documentation_options.js?v=fb9c6db4"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -128,16 +128,16 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Basic Usage Demo ===</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
     <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="c1"># Register transformation: int -&gt; text</span>
-    <span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">)</span>
+    <span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">int_to_text</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
     <span class="c1"># Decorate function to auto-transform first arg to &#39;text&#39;</span>
-    <span class="nd">@graph</span><span class="o">.</span><span class="n">ingress</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+    <span class="nd">@graph</span><span class="o">.</span><span class="n">ingress</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">&quot; processed&quot;</span>
 
@@ -161,7 +161,7 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
     <span class="c1"># Transform specific argument &#39;x&#39; to int</span>
-    <span class="nd">@graph</span><span class="o">.</span><span class="n">ingress</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="nd">@graph</span><span class="o">.</span><span class="n">ingress</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
 
@@ -204,16 +204,16 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Attribute Syntax + Arg Name Demo ===</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span>
 
-    <span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">)</span>
+    <span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parse_json</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
     <span class="c1"># Use attribute syntax with argument name</span>
-    <span class="nd">@graph</span><span class="o">.</span><span class="n">ingress</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="s1">&#39;obj&#39;</span><span class="p">)</span>
+    <span class="nd">@graph</span><span class="o">.</span><span class="n">ingress</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="s2">&quot;obj&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_name</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="n">get_name</span><span class="p">(</span><span class="s1">&#39;{&quot;name&quot;: &quot;Alice&quot;}&#39;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;get_name(json_str) = </span><span class="si">{</span><span class="n">result</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -286,26 +286,26 @@
     <span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
 
     <span class="c1"># Define kinds for config data pipeline</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;json_str&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">))</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">&#39;config_dict&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;json_str&quot;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">))</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;config_dict&quot;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span>
     <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span>
-        <span class="s1">&#39;validated_config&#39;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;version&#39;</span> <span class="ow">in</span> <span class="n">x</span>
+        <span class="s2">&quot;validated_config&quot;</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;version&quot;</span> <span class="ow">in</span> <span class="n">x</span>
     <span class="p">)</span>
 
-    <span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s1">&#39;json_str&#39;</span><span class="p">,</span> <span class="s1">&#39;config_dict&#39;</span><span class="p">)</span>
+    <span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s2">&quot;json_str&quot;</span><span class="p">,</span> <span class="s2">&quot;config_dict&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parse_config</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Parsing JSON config&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
-    <span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s1">&#39;config_dict&#39;</span><span class="p">,</span> <span class="s1">&#39;validated_config&#39;</span><span class="p">)</span>
+    <span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s2">&quot;config_dict&quot;</span><span class="p">,</span> <span class="s2">&quot;validated_config&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_config</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Validating config&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;version&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+        <span class="k">if</span> <span class="s2">&quot;version&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1.0&quot;</span>
         <span class="k">return</span> <span class="n">d</span>
 
     <span class="c1"># Function that requires validated config</span>
-    <span class="nd">@graph</span><span class="o">.</span><span class="n">ingress</span><span class="o">.</span><span class="n">validated_config</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span>
+    <span class="nd">@graph</span><span class="o">.</span><span class="n">ingress</span><span class="o">.</span><span class="n">validated_config</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">deploy_service</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Deploying service with config version </span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Service deployed (v</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
@@ -319,7 +319,7 @@
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">demo_basic_usage</span><span class="p">()</span>
     <span class="n">demo_explicit_arg_name</span><span class="p">()</span>
     <span class="n">demo_attribute_syntax</span><span class="p">()</span>

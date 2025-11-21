@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.castgraph &mdash; i2 0.1.60 documentation</title>
+  <title>i2.castgraph &mdash; i2 0.1.61 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=5fe4e9ad"></script>
+      <script src="../../_static/documentation_options.js?v=fb9c6db4"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -274,6 +274,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span><span class="p">,</span> <span class="n">wraps</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parameter</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
@@ -1214,6 +1215,7 @@
                 <span class="p">)</span>
 
             <span class="c1"># Create ingress function</span>
+            <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">ingress_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="c1"># Map to all kwargs</span>
                 <span class="n">all_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">map_arguments</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1227,7 +1229,20 @@
                 <span class="c1"># Convert back to args/kwargs respecting signature</span>
                 <span class="k">return</span> <span class="n">sig</span><span class="o">.</span><span class="n">mk_args_and_kwargs</span><span class="p">(</span><span class="n">all_kwargs</span><span class="p">,</span> <span class="n">allow_partial</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-            <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress_func</span><span class="p">)</span>
+            <span class="c1"># TODO: Remove all this extra boilerplate once i2.wrapper supports full signature preservation</span>
+            <span class="c1">#  and return_annotation preservation...</span>
+            <span class="c1"># Explicitly preserve signature (__wraps handles __annotations__ but not __signature__)</span>
+            <span class="n">ingress_func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+            <span class="c1"># Create a transparent egress that preserves the return annotation</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">egress_func</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">output</span>
+
+            <span class="c1"># Copy return annotation to egress if it exists</span>
+            <span class="k">if</span> <span class="n">sig</span><span class="o">.</span><span class="n">return_annotation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">egress_func</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;return&#39;</span><span class="p">:</span> <span class="n">sig</span><span class="o">.</span><span class="n">return_annotation</span><span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress_func</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="n">egress_func</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">decorator</span>
 
