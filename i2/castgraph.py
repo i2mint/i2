@@ -1075,7 +1075,7 @@ class TransformationGraph:
 
             # Copy return annotation to egress if it exists
             if sig.return_annotation is not Parameter.empty:
-                egress_func.__annotations__ = {'return': sig.return_annotation}
+                egress_func.__annotations__ = {"return": sig.return_annotation}
 
             return Wrap(func, ingress=ingress_func, egress=egress_func)
 
