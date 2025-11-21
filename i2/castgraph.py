@@ -162,6 +162,7 @@ from collections import defaultdict, deque
 from dataclasses import dataclass
 from functools import lru_cache, wraps
 import inspect
+from inspect import Parameter
 import warnings
 from typing import (
     Any,
@@ -1049,6 +1050,7 @@ class TransformationGraph:
                 )
 
             # Create ingress function
+            @wraps(func)
             def ingress_func(*args, **kwargs):
                 # Map to all kwargs
                 all_kwargs = sig.map_arguments(args, kwargs, apply_defaults=False)
@@ -1062,7 +1064,20 @@ class TransformationGraph:
                 # Convert back to args/kwargs respecting signature
                 return sig.mk_args_and_kwargs(all_kwargs, allow_partial=True)
 
-            return Wrap(func, ingress=ingress_func)
+            # TODO: Remove all this extra boilerplate once i2.wrapper supports full signature preservation
+            #  and return_annotation preservation...
+            # Explicitly preserve signature (__wraps handles __annotations__ but not __signature__)
+            ingress_func.__signature__ = inspect.signature(func)
+
+            # Create a transparent egress that preserves the return annotation
+            def egress_func(output):
+                return output
+
+            # Copy return annotation to egress if it exists
+            if sig.return_annotation is not Parameter.empty:
+                egress_func.__annotations__ = {'return': sig.return_annotation}
+
+            return Wrap(func, ingress=ingress_func, egress=egress_func)
 
         return decorator
 
