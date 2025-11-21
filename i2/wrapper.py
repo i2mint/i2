@@ -244,12 +244,12 @@ def _should_preserve_signature(ingress, func, preserve_mode):
         return False
 
     is_generic = (
-        params[0].kind == Parameter.VAR_POSITIONAL and
-        params[1].kind == Parameter.VAR_KEYWORD
+        params[0].kind == Parameter.VAR_POSITIONAL
+        and params[1].kind == Parameter.VAR_KEYWORD
     )
 
     # Only preserve if generic and doesn't already have __signature__
-    return is_generic and not hasattr(ingress, '__signature__')
+    return is_generic and not hasattr(ingress, "__signature__")
 
 
 def _get_return_annotation(func, egress):
@@ -564,7 +564,9 @@ class Wrap(_Wrap):
 
     """
 
-    def __init__(self, func, ingress=None, egress=None, *, name=None, preserve_signature='auto'):
+    def __init__(
+        self, func, ingress=None, egress=None, *, name=None, preserve_signature="auto"
+    ):
         super().__init__(func, ingress, egress, name=name)
         ingress_sig = Sig(func)
 
@@ -587,7 +589,7 @@ class Wrap(_Wrap):
             if _should_preserve_signature(self.ingress, func, preserve_signature):
                 # Preserve signature and annotations from func to ingress
                 self.ingress.__signature__ = signature(func)
-                self.ingress.__annotations__ = getattr(func, '__annotations__', {})
+                self.ingress.__annotations__ = getattr(func, "__annotations__", {})
 
             ingress_sig = Sig(self.ingress)
             self.__defaults__, self.__kwdefaults__ = _defaults_and_kwdefaults_of_func(

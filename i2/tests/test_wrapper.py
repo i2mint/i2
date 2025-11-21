@@ -289,7 +289,7 @@ def test_preserve_signature_auto_generic():
     wrapped = Wrap(my_func, ingress=ingress)  # Default: preserve_signature='auto'
 
     # Signature should be preserved
-    assert str(signature(wrapped)) == '(x: int, y: int = 5) -> int'
+    assert str(signature(wrapped)) == "(x: int, y: int = 5) -> int"
     assert wrapped.__annotations__ == my_func.__annotations__
     # Test functionality
     assert wrapped(2, 3) == 5  # 2 + 3 = 5
@@ -304,12 +304,12 @@ def test_preserve_signature_auto_non_generic():
         return x + y
 
     def ingress(x, y):  # Not generic
-        return (x,), {'y': y}
+        return (x,), {"y": y}
 
     wrapped = Wrap(my_func, ingress=ingress)  # Auto mode
 
     # Should use ingress's signature (but with func's return annotation via fallback)
-    assert str(signature(wrapped)) == '(x, y) -> int'
+    assert str(signature(wrapped)) == "(x, y) -> int"
     # Test functionality
     assert wrapped(2, 3) == 5  # 2 + 3 = 5
 
@@ -323,12 +323,12 @@ def test_preserve_signature_explicit_true():
         return x + y
 
     def ingress(x, y):  # Not generic
-        return (x,), {'y': y}
+        return (x,), {"y": y}
 
     wrapped = Wrap(my_func, ingress=ingress, preserve_signature=True)
 
     # Should preserve despite non-generic ingress
-    assert str(signature(wrapped)) == '(x: int, y: int = 5) -> int'
+    assert str(signature(wrapped)) == "(x: int, y: int = 5) -> int"
     # Test functionality
     assert wrapped(2, 3) == 5  # 2 + 3 = 5
 
@@ -347,7 +347,7 @@ def test_preserve_signature_explicit_false():
     wrapped = Wrap(my_func, ingress=ingress, preserve_signature=False)
 
     # Should not preserve despite generic ingress (but still gets return annotation via fallback)
-    assert str(signature(wrapped)) == '(*args, **kwargs) -> int'
+    assert str(signature(wrapped)) == "(*args, **kwargs) -> int"
     # Test functionality
     assert wrapped(2, 3) == 5  # 2 + 3 = 5
 
