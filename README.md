@@ -2,7 +2,23 @@
 
 Core tools for minting code.
 
-[Documentation here.](https://i2mint.github.io/i2/)
+For human readers: [Documentation here.](https://i2mint.github.io/i2/)
+
+For AI agents, and humans that use them: this repo ships
+[agent skills](https://github.com/i2mint/i2/tree/master/.claude/skills) —
+focused, task-oriented guides that tell a coding agent when and how to reach
+for `i2`'s tools:
+
+- [i2-signatures](https://github.com/i2mint/i2/tree/master/.claude/skills/i2-signatures)
+  — introspect signatures and bind a call's `*args, **kwargs` to named arguments.
+- [i2-sig-arithmetic](https://github.com/i2mint/i2/tree/master/.claude/skills/i2-sig-arithmetic)
+  — build, merge (`+`/`-`) and edit function signatures.
+- [i2-wrapper](https://github.com/i2mint/i2/tree/master/.claude/skills/i2-wrapper)
+  — wrap functions to transform their interface, inputs and output.
+- [i2-castgraph](https://github.com/i2mint/i2/tree/master/.claude/skills/i2-castgraph)
+  — route data through a graph of type/representation conversions.
+- [i2-multi-object](https://github.com/i2mint/i2/tree/master/.claude/skills/i2-multi-object)
+  — compose a fixed set of functions or context managers (`Pipe`, `FuncFanout`, …).
 
 ## Key Modules Overview
 
