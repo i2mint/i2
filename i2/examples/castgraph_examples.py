@@ -4,7 +4,6 @@ from typing import Optional
 from collections.abc import MutableMapping
 from i2.castgraph import ConversionRegistry
 
-
 # ----------------------------------------------------------------------
 # Example usage and optional "canonical" hub
 # ----------------------------------------------------------------------

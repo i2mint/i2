@@ -12,7 +12,6 @@ from i2.castgraph import (
     KindMatch,
 )
 
-
 # --- Tests for KindMatch ---
 
 

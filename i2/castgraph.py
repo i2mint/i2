@@ -181,7 +181,6 @@ from collections.abc import Callable, Hashable, Iterable, MutableMapping
 from i2.wrapper import Wrap
 from i2.signatures import Sig
 
-
 T = TypeVar("T")
 U = TypeVar("U")
 Converter = Callable[[Any, Optional[dict]], Any]

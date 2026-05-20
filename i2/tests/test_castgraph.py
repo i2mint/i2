@@ -12,7 +12,6 @@ from i2.castgraph import (
     design_guidelines,
 )
 
-
 # --- Helper marker types for tests -------------------------------------------------
 
 

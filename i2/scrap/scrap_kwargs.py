@@ -4,7 +4,6 @@ from i2.wrapper import InnerMapIngress
 from i2.wrapper import wrap
 from inspect import Parameter, Signature
 
-
 # def bar(w, /, x: float, y=1, *args, z: int = 1, **rest):
 #     return ((w + x) * y) ** z
 
