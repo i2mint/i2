@@ -313,6 +313,34 @@ def double_up_as_factory(decorator_func):
       ...
     AssertionError: All arguments (besides the first) need to be keyword-only
 
+    Note also that the name of that first argument is effectively **reserved**: it always
+    means "the object to wrap". For a decorator that also takes ``**kwargs``, this means
+    a decorator argument can never share that name. Say a decorator's first parameter is
+    ``func`` and it renames parameters via ``**kwargs``:
+
+    >>> @double_up_as_factory
+    ... def rename(func=None, **new_name_for_old_name):
+    ...     return new_name_for_old_name  # (stand-in for the real work)
+
+    You can rename an ordinary parameter through the factory form:
+
+    >>> rename(b='bee')(lambda a, b: None)
+    {'b': 'bee'}
+
+    But you cannot use it to rename a parameter that happens to be called ``func``:
+    ``rename(func='callback')`` is read as "wrap the object ``'callback'``", not as
+    "rename ``func`` to ``callback``", so it returns nonsense rather than a factory:
+
+    >>> rename(func='callback')
+    {}
+
+    This is a pre-existing limitation of the double-up idiom -- there is no way to tell
+    the two intents apart -- and it is not specific to passing the object by keyword.
+    Before keyword-passing was supported the same call failed later and differently,
+    with ``TypeError: rename() got multiple values for argument 'func'``.  If a decorator
+    needs an argument with the same name as its first parameter, don't use
+    ``double_up_as_factory``.
+
     """
 
     def validated_wrapped_param_name(decorator_func):
