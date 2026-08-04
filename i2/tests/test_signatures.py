@@ -2400,3 +2400,49 @@ def _test_call(call, expected_output):
             call()
     else:
         assert call() == expected_output
+
+
+# ---------------------------------------------------------------------------------
+# Regression: a name collision with a builtin must not override a real signature.
+# `sigs_for_sigless_builtin_name` is keyed by __name__ alone, so consulting it before
+# `inspect.signature` gave any callable named e.g. `map` the *builtin* map's signature,
+# growing phantom parameters (it made meshed DAG nodes sprout an `iterables` input).
+
+
+def test_builtin_name_collision_does_not_override_own_signature():
+    """A callable named after a builtin keeps its own signature."""
+
+    # A plain Python function whose name shadows a builtin
+    def map(chunker, wfs):  # noqa: A001 - shadowing is the point of the test
+        return chunker, wfs
+
+    assert str(Sig(map)) == "(chunker, wfs)"
+    assert str(_robust_signature_of_callable(map)) == "(chunker, wfs)"
+
+    # An object carrying an explicit __signature__ (how i2 stamps partials/wrappers)
+    placeholder = partial(lambda *a, **kw: None)
+    placeholder.__signature__ = signature(lambda chunker, wfs: None)
+    placeholder.__name__ = "map"
+
+    assert str(Sig(placeholder)) == "(chunker, wfs)"
+    assert str(_robust_signature_of_callable(placeholder)) == "(chunker, wfs)"
+
+
+def test_sigless_builtins_still_get_their_curated_signatures():
+    """The curated table must still serve the genuine builtins it was written for."""
+    # `map` itself has no introspectable signature, so the curated one must be used
+    with pytest.raises(ValueError):
+        signature(map)
+    assert str(Sig(map)) == str(sigs_for_sigless_builtin_name["map"])
+
+    # `print` has a curated signature that intentionally differs from the introspected
+    # one, and must keep winning
+    assert str(_robust_signature_of_callable(print)) == str(
+        sigs_for_sigless_builtin_name["print"]
+    )
+
+    # operator instances have a useless generic signature in 3.12+, so the curated
+    # per-type signature must keep taking precedence over `inspect.signature`
+    from operator import itemgetter
+
+    assert str(_robust_signature_of_callable(itemgetter(1))) != "(*args, **kwargs)"

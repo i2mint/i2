@@ -97,7 +97,7 @@ from typing import (
 )
 from collections.abc import Callable, Iterable, Iterator, Mapping as MappingType
 from typing import KT, VT, T
-from types import FunctionType
+from types import FunctionType, MethodType
 from collections import defaultdict
 from operator import eq, attrgetter
 
@@ -4311,6 +4311,47 @@ Sig.replace_kwargs_using = replace_kwargs_using
 # ############################################################################
 
 
+#: Callable kinds that are defined in Python (as opposed to C-level builtins) and
+#: therefore always carry authoritative signature information of their own.
+PYTHON_DEFINED_CALLABLE_TYPES = (FunctionType, MethodType)
+
+
+def _declares_own_signature(callable_obj: Callable) -> bool:
+    """Whether ``callable_obj`` carries authoritative signature information of its own.
+
+    The ``sigs_for_sigless_builtin_name`` and ``sigs_for_type_name`` tables are keyed by
+    name, which is only a sound key for the C-level builtins they were written for. An
+    object that declares its own signature must never be overridden by a name collision.
+
+    A Python-defined function knows its own signature:
+
+    >>> def map(chunker, wfs):  # shadows the ``map`` builtin
+    ...     ...
+    >>> _declares_own_signature(map)
+    True
+
+    So does any object carrying an explicit ``__signature__`` (which is how i2 itself
+    stamps signatures onto ``functools.partial`` objects and other wrappers):
+
+    >>> from functools import partial
+    >>> from inspect import signature
+    >>> p = partial(lambda a, b: None, 1)
+    >>> _declares_own_signature(p)
+    False
+    >>> p.__signature__ = signature(lambda chunker, wfs: None)
+    >>> _declares_own_signature(p)
+    True
+
+    Genuine builtins declare nothing, so the curated tables still apply to them:
+
+    >>> _declares_own_signature(print)
+    False
+    """
+    return getattr(callable_obj, "__signature__", None) is not None or isinstance(
+        callable_obj, PYTHON_DEFINED_CALLABLE_TYPES
+    )
+
+
 # TODO: Might want to monkey-patch inspect._signature_from_callable to use
 #  sigs_for_sigless_builtin_name
 def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
@@ -4330,16 +4371,30 @@ def _robust_signature_of_callable(callable_obj: Callable) -> Signature:
     ... )  # doesn't have one, so will return a blanket one
     <Signature (*no_sig_args, **no_sig_kwargs)>
 
-    """
-    # First check if we have a custom signature for this type/object
-    # This is important for operator instances that might have generic signatures in Python 3.12+
-    obj_name = getattr(callable_obj, "__name__", None)
-    if obj_name in sigs_for_sigless_builtin_name:
-        return sigs_for_sigless_builtin_name[obj_name] or DFLT_SIGNATURE
+    A callable that carries its own signature information is never overridden by the
+    curated tables, even if its ``__name__`` happens to collide with a builtin's:
 
-    type_name = getattr(type(callable_obj), "__name__", None)
-    if type_name in sigs_for_type_name:
-        return sigs_for_type_name[type_name] or DFLT_SIGNATURE
+    >>> def map(chunker, wfs):  # a Python function that shadows the ``map`` builtin
+    ...     ...
+    >>> _robust_signature_of_callable(map)
+    <Signature (chunker, wfs)>
+
+    """
+    # The curated tables are keyed by *name*, which is only a sound key for the
+    # C-level builtins they were written for. Consulting them for a callable that
+    # knows its own signature would let a mere name collision (e.g. a Python function
+    # named ``map``) replace a correct signature with the builtin's one.
+    if not _declares_own_signature(callable_obj):
+        # Check for a curated signature for this object/type. This must precede
+        # ``signature`` because operator instances (itemgetter, attrgetter,
+        # methodcaller) do have a signature in Python 3.12+, but a useless generic one.
+        obj_name = getattr(callable_obj, "__name__", None)
+        if obj_name in sigs_for_sigless_builtin_name:
+            return sigs_for_sigless_builtin_name[obj_name] or DFLT_SIGNATURE
+
+        type_name = getattr(type(callable_obj), "__name__", None)
+        if type_name in sigs_for_type_name:
+            return sigs_for_type_name[type_name] or DFLT_SIGNATURE
 
     # Try to get the signature normally
     try:
