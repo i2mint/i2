@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.signatures &mdash; i2 0.1.64 documentation</title>
+  <title>i2.signatures &mdash; i2 0.1.65 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=a395f30a"></script>
+      <script src="../../_static/documentation_options.js?v=07ed7713"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -209,7 +209,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Mapping</span> <span class="k">as</span> <span class="n">MappingType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">,</span> <span class="n">T</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionType</span><span class="p">,</span> <span class="n">MethodType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">eq</span><span class="p">,</span> <span class="n">attrgetter</span>
 
@@ -4567,6 +4567,47 @@
 <span class="c1"># ############################################################################</span>
 
 
+<span class="c1">#: Callable kinds that are defined in Python (as opposed to C-level builtins) and</span>
+<span class="c1">#: therefore always carry authoritative signature information of their own.</span>
+<span class="n">PYTHON_DEFINED_CALLABLE_TYPES</span> <span class="o">=</span> <span class="p">(</span><span class="n">FunctionType</span><span class="p">,</span> <span class="n">MethodType</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_declares_own_signature</span><span class="p">(</span><span class="n">callable_obj</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether ``callable_obj`` carries authoritative signature information of its own.</span>
+
+<span class="sd">    The ``sigs_for_sigless_builtin_name`` and ``sigs_for_type_name`` tables are keyed by</span>
+<span class="sd">    name, which is only a sound key for the C-level builtins they were written for. An</span>
+<span class="sd">    object that declares its own signature must never be overridden by a name collision.</span>
+
+<span class="sd">    A Python-defined function knows its own signature:</span>
+
+<span class="sd">    &gt;&gt;&gt; def map(chunker, wfs):  # shadows the ``map`` builtin</span>
+<span class="sd">    ...     ...</span>
+<span class="sd">    &gt;&gt;&gt; _declares_own_signature(map)</span>
+<span class="sd">    True</span>
+
+<span class="sd">    So does any object carrying an explicit ``__signature__`` (which is how i2 itself</span>
+<span class="sd">    stamps signatures onto ``functools.partial`` objects and other wrappers):</span>
+
+<span class="sd">    &gt;&gt;&gt; from functools import partial</span>
+<span class="sd">    &gt;&gt;&gt; from inspect import signature</span>
+<span class="sd">    &gt;&gt;&gt; p = partial(lambda a, b: None, 1)</span>
+<span class="sd">    &gt;&gt;&gt; _declares_own_signature(p)</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; p.__signature__ = signature(lambda chunker, wfs: None)</span>
+<span class="sd">    &gt;&gt;&gt; _declares_own_signature(p)</span>
+<span class="sd">    True</span>
+
+<span class="sd">    Genuine builtins declare nothing, so the curated tables still apply to them:</span>
+
+<span class="sd">    &gt;&gt;&gt; _declares_own_signature(print)</span>
+<span class="sd">    False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">callable_obj</span><span class="p">,</span> <span class="s2">&quot;__signature__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">callable_obj</span><span class="p">,</span> <span class="n">PYTHON_DEFINED_CALLABLE_TYPES</span>
+    <span class="p">)</span>
+
+
 <span class="c1"># TODO: Might want to monkey-patch inspect._signature_from_callable to use</span>
 <span class="c1">#  sigs_for_sigless_builtin_name</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_robust_signature_of_callable</span><span class="p">(</span><span class="n">callable_obj</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Signature</span><span class="p">:</span>
@@ -4586,16 +4627,30 @@
 <span class="sd">    ... )  # doesn&#39;t have one, so will return a blanket one</span>
 <span class="sd">    &lt;Signature (*no_sig_args, **no_sig_kwargs)&gt;</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># First check if we have a custom signature for this type/object</span>
-    <span class="c1"># This is important for operator instances that might have generic signatures in Python 3.12+</span>
-    <span class="n">obj_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">callable_obj</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">obj_name</span> <span class="ow">in</span> <span class="n">sigs_for_sigless_builtin_name</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">sigs_for_sigless_builtin_name</span><span class="p">[</span><span class="n">obj_name</span><span class="p">]</span> <span class="ow">or</span> <span class="n">DFLT_SIGNATURE</span>
+<span class="sd">    A callable that carries its own signature information is never overridden by the</span>
+<span class="sd">    curated tables, even if its ``__name__`` happens to collide with a builtin&#39;s:</span>
 
-    <span class="n">type_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">callable_obj</span><span class="p">),</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">type_name</span> <span class="ow">in</span> <span class="n">sigs_for_type_name</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">sigs_for_type_name</span><span class="p">[</span><span class="n">type_name</span><span class="p">]</span> <span class="ow">or</span> <span class="n">DFLT_SIGNATURE</span>
+<span class="sd">    &gt;&gt;&gt; def map(chunker, wfs):  # a Python function that shadows the ``map`` builtin</span>
+<span class="sd">    ...     ...</span>
+<span class="sd">    &gt;&gt;&gt; _robust_signature_of_callable(map)</span>
+<span class="sd">    &lt;Signature (chunker, wfs)&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The curated tables are keyed by *name*, which is only a sound key for the</span>
+    <span class="c1"># C-level builtins they were written for. Consulting them for a callable that</span>
+    <span class="c1"># knows its own signature would let a mere name collision (e.g. a Python function</span>
+    <span class="c1"># named ``map``) replace a correct signature with the builtin&#39;s one.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_declares_own_signature</span><span class="p">(</span><span class="n">callable_obj</span><span class="p">):</span>
+        <span class="c1"># Check for a curated signature for this object/type. This must precede</span>
+        <span class="c1"># ``signature`` because operator instances (itemgetter, attrgetter,</span>
+        <span class="c1"># methodcaller) do have a signature in Python 3.12+, but a useless generic one.</span>
+        <span class="n">obj_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">callable_obj</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj_name</span> <span class="ow">in</span> <span class="n">sigs_for_sigless_builtin_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sigs_for_sigless_builtin_name</span><span class="p">[</span><span class="n">obj_name</span><span class="p">]</span> <span class="ow">or</span> <span class="n">DFLT_SIGNATURE</span>
+
+        <span class="n">type_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">callable_obj</span><span class="p">),</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">type_name</span> <span class="ow">in</span> <span class="n">sigs_for_type_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sigs_for_type_name</span><span class="p">[</span><span class="n">type_name</span><span class="p">]</span> <span class="ow">or</span> <span class="n">DFLT_SIGNATURE</span>
 
     <span class="c1"># Try to get the signature normally</span>
     <span class="k">try</span><span class="p">:</span>
