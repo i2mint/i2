@@ -210,17 +210,35 @@ class FuncFactory:
         return FuncFactory(**jdict)
 
 
-def _double_up_as_factory(wrapped=None, *args, __decorator_func=None, **kwargs):
-    """Util for double_up_as_factory, ``__decorator_func`` to be partialized"""
+def _double_up_as_factory(
+    wrapped=None,
+    *args,
+    __decorator_func=None,
+    __wrapped_param_name=None,
+    **kwargs,
+):
+    """Util for double_up_as_factory; the ``__``-prefixed params are partialized in.
+
+    ``__decorator_func`` is the decorator being doubled up, and
+    ``__wrapped_param_name`` is the name that decorator gave its first parameter --
+    needed so that the object to wrap can be given by keyword as well as positionally.
+    """
     if args:
         raise RuntimeError(
             f"You need to specify decorator arguments as keyword-only."
             f"You specified positional arguments: {args=}"
         )
+    if wrapped is None:
+        # The object to wrap may have been given by keyword (``decorator(func=foo)``),
+        # in which case it landed in kwargs, under the decorator's first param name.
+        # Note we only look for it when nothing was given positionally: if it was given
+        # both ways, leaving kwargs alone lets python raise its own (clearer)
+        # "got multiple values for argument" TypeError.
+        wrapped = kwargs.pop(__wrapped_param_name, None)
     if wrapped is None:  # then we want a factory
         return partial(__decorator_func, **kwargs)
     else:
-        return __decorator_func(wrapped, *args, **kwargs)
+        return __decorator_func(wrapped, **kwargs)
 
 
 def double_up_as_factory(decorator_func):
@@ -246,7 +264,27 @@ def double_up_as_factory(decorator_func):
     >>> wrapped_foo = decorator(foo, multiplier=10)
     >>> wrapped_foo(2)
     30
-    >>>
+
+    The object to wrap doesn't have to be given positionally: it can also be given by
+    keyword, under the name the decorator gave its first parameter (here, ``func``).
+    This matters because forwarding arguments through ``**kwargs`` is a very common way
+    to call a decorator, so ``decorator(func=foo)`` must mean what ``decorator(foo)``
+    means:
+
+    >>> decorator(func=foo, multiplier=10)(2)
+    30
+    >>> decorator(func=foo)(2)
+    6
+
+    It is the *absence* of an object to wrap -- not the way it's passed -- that asks for
+    a factory:
+
+    >>> from functools import partial
+    >>> isinstance(decorator(multiplier=3), partial)
+    True
+    >>> isinstance(decorator(func=foo), partial)
+    False
+
     >>> multiply_by_3 = decorator(multiplier=3)
     >>> wrapped_foo = multiply_by_3(foo)
     >>> wrapped_foo(2)
@@ -275,9 +313,38 @@ def double_up_as_factory(decorator_func):
       ...
     AssertionError: All arguments (besides the first) need to be keyword-only
 
+    Note also that the name of that first argument is effectively **reserved**: it always
+    means "the object to wrap". For a decorator that also takes ``**kwargs``, this means
+    a decorator argument can never share that name. Say a decorator's first parameter is
+    ``func`` and it renames parameters via ``**kwargs``:
+
+    >>> @double_up_as_factory
+    ... def rename(func=None, **new_name_for_old_name):
+    ...     return new_name_for_old_name  # (stand-in for the real work)
+
+    You can rename an ordinary parameter through the factory form:
+
+    >>> rename(b='bee')(lambda a, b: None)
+    {'b': 'bee'}
+
+    But you cannot use it to rename a parameter that happens to be called ``func``:
+    ``rename(func='callback')`` is read as "wrap the object ``'callback'``", not as
+    "rename ``func`` to ``callback``", so it returns nonsense rather than a factory:
+
+    >>> rename(func='callback')
+    {}
+
+    This is a pre-existing limitation of the double-up idiom -- there is no way to tell
+    the two intents apart -- and it is not specific to passing the object by keyword.
+    Before keyword-passing was supported the same call failed later and differently,
+    with ``TypeError: rename() got multiple values for argument 'func'``.  If a decorator
+    needs an argument with the same name as its first parameter, don't use
+    ``double_up_as_factory``.
+
     """
 
-    def validate_decorator_func(decorator_func):
+    def validated_wrapped_param_name(decorator_func):
+        """Validate decorator_func, returning the name of its first parameter."""
         first_param, *other_params = signature(decorator_func).parameters.values()
         assert first_param.default is None, (
             f"First argument of the decorator function needs to default to None. "
@@ -286,12 +353,14 @@ def double_up_as_factory(decorator_func):
         assert all(
             p.kind in {p.KEYWORD_ONLY, p.VAR_KEYWORD} for p in other_params
         ), f"All arguments (besides the first) need to be keyword-only"
-        return True
-
-    validate_decorator_func(decorator_func)
+        return first_param.name
 
     return wraps(decorator_func)(
-        partial(_double_up_as_factory, __decorator_func=decorator_func)
+        partial(
+            _double_up_as_factory,
+            __decorator_func=decorator_func,
+            __wrapped_param_name=validated_wrapped_param_name(decorator_func),
+        )
     )
 
 

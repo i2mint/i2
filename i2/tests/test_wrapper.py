@@ -1,9 +1,20 @@
 """Testing wrapper"""
 
 from collections.abc import Iterable
-from i2.wrapper import wrap, mk_ingress_from_name_mapper, rm_params
+from functools import partial
+
+import pytest
+
+from i2.wrapper import (
+    wrap,
+    mk_ingress_from_name_mapper,
+    rm_params,
+    ch_names,
+    include_exclude,
+    add_smart_defaults,
+)
 from i2.deco import FuncFactory
-from i2.signatures import Sig
+from i2.signatures import Sig, name_of_obj
 
 
 def _test_ingress(a, b: str, c="hi"):
@@ -425,3 +436,101 @@ def test_return_annotation_none_anywhere():
     assert sig.return_annotation is Parameter.empty
     # Test functionality
     assert wrapped(5) == 10
+
+
+# ---------------------------------------------------------------------------------------
+# double_up_as_factory: the object to wrap can be given positionally OR by keyword
+# See https://github.com/i2mint/i2/issues/64
+
+#: The ``double_up_as_factory``-built decorators of ``i2.wrapper``. Each takes the object
+#: to wrap as its first parameter (named ``func``) and every other parameter is
+#: keyword-only with a default, so each must be usable in all three of these ways:
+#: ``deco(func)``, ``deco(func=func)`` (keyword-forwarding) and ``deco(**params)(func)``
+#: (factory).
+DOUBLED_UP_DECORATORS = (wrap, ch_names, include_exclude, rm_params, add_smart_defaults)
+
+
+def _incr(x, y=1):
+    """Fixture function to be wrapped by the decorators under test."""
+    return x + y
+
+
+@pytest.mark.parametrize("decorator", DOUBLED_UP_DECORATORS, ids=name_of_obj)
+def test_double_up_as_factory_accepts_wrapped_by_keyword(decorator):
+    """``deco(func=func)`` must wrap, not silently make a factory (i2mint/i2#64).
+
+    The failure this guards against is silent: before the fix, passing the object to
+    wrap by keyword returned a ``functools.partial`` and the caller only found out much
+    later, at call time, when the "wrapped" object behaved like the decorator instead.
+    """
+    wrapped = decorator(func=_incr)
+    assert not isinstance(wrapped, partial), (
+        f"{name_of_obj(decorator)}(func=...) returned a factory instead of wrapping: "
+        f"{wrapped!r}"
+    )
+    assert wrapped(2) == _incr(2) == 3
+
+
+@pytest.mark.parametrize("decorator", DOUBLED_UP_DECORATORS, ids=name_of_obj)
+def test_double_up_as_factory_keyword_and_positional_agree(decorator):
+    """``deco(func)`` and ``deco(func=func)`` must produce equivalent wrappers."""
+    from_positional, from_keyword = decorator(_incr), decorator(func=_incr)
+    assert type(from_positional) is type(from_keyword)
+    assert from_positional(2) == from_keyword(2)
+    assert Sig(from_positional) == Sig(from_keyword)
+
+
+@pytest.mark.parametrize("decorator", DOUBLED_UP_DECORATORS, ids=name_of_obj)
+def test_double_up_as_factory_still_makes_factories(decorator):
+    """Guard: the factory direction (no object to wrap) must keep returning a partial."""
+    factory = decorator()
+    assert isinstance(factory, partial)
+    assert factory(_incr)(2) == 3
+
+
+def test_double_up_as_factory_with_decorator_params():
+    """Guard: giving decorator params (and no wrapped object) still gives a factory."""
+    from i2.deco import double_up_as_factory
+
+    @double_up_as_factory
+    def multiply_result(func=None, *, multiplier=2):
+        return lambda x: func(x) * multiplier
+
+    assert isinstance(multiply_result(multiplier=3), partial)
+    assert multiply_result(multiplier=3)(_incr)(2) == 9
+    # ... and the two non-factory directions agree
+    assert multiply_result(_incr, multiplier=3)(2) == 9
+    assert multiply_result(func=_incr, multiplier=3)(2) == 9
+
+
+def test_double_up_as_factory_honors_the_wrapped_params_name():
+    """The keyword to use is whatever the decorator named its first param."""
+    from i2.deco import double_up_as_factory
+
+    @double_up_as_factory
+    def decorate(obj=None, *, suffix="!"):
+        return lambda: obj() + suffix
+
+    hello = lambda: "hello"
+    assert decorate(obj=hello)() == "hello!"
+    assert decorate(hello)() == "hello!"
+    assert isinstance(decorate(suffix="?"), partial)
+    # ``func`` is NOT special: only the decorator's own first param name is understood
+    # as "the object to wrap", so ``func=`` stays an (here, unexpected) decorator arg,
+    # making a factory that complains only when it's used -- as it did before too.
+    unexpected_kwarg_factory = decorate(func=hello)
+    assert isinstance(unexpected_kwarg_factory, partial)
+    with pytest.raises(TypeError):
+        unexpected_kwarg_factory(hello)
+
+
+def test_double_up_as_factory_rejects_duplicate_wrapped():
+    """Giving the wrapped object both positionally and by keyword is an error."""
+    from i2.deco import double_up_as_factory
+
+    @double_up_as_factory
+    def decorate(func=None, *, multiplier=2):
+        return lambda x: func(x) * multiplier
+
+    with pytest.raises(TypeError):
+        decorate(_incr, func=_incr)
