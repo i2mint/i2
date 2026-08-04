@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.1.63 documentation</title>
+  <title>i2.deco &mdash; i2 0.1.64 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=681c63c7"></script>
+      <script src="../../_static/documentation_options.js?v=a395f30a"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -325,17 +325,35 @@
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_double_up_as_factory</span><span class="p">(</span><span class="n">wrapped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">__decorator_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Util for double_up_as_factory, ``__decorator_func`` to be partialized&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_double_up_as_factory</span><span class="p">(</span>
+    <span class="n">wrapped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+    <span class="n">__decorator_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">__wrapped_param_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Util for double_up_as_factory; the ``__``-prefixed params are partialized in.</span>
+
+<span class="sd">    ``__decorator_func`` is the decorator being doubled up, and</span>
+<span class="sd">    ``__wrapped_param_name`` is the name that decorator gave its first parameter --</span>
+<span class="sd">    needed so that the object to wrap can be given by keyword as well as positionally.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;You need to specify decorator arguments as keyword-only.&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;You specified positional arguments: </span><span class="si">{</span><span class="n">args</span><span class="si">=}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
+    <span class="k">if</span> <span class="n">wrapped</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># The object to wrap may have been given by keyword (``decorator(func=foo)``),</span>
+        <span class="c1"># in which case it landed in kwargs, under the decorator&#39;s first param name.</span>
+        <span class="c1"># Note we only look for it when nothing was given positionally: if it was given</span>
+        <span class="c1"># both ways, leaving kwargs alone lets python raise its own (clearer)</span>
+        <span class="c1"># &quot;got multiple values for argument&quot; TypeError.</span>
+        <span class="n">wrapped</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">__wrapped_param_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wrapped</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># then we want a factory</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">__decorator_func</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">__decorator_func</span><span class="p">(</span><span class="n">wrapped</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">__decorator_func</span><span class="p">(</span><span class="n">wrapped</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="double_up_as_factory">
@@ -363,7 +381,27 @@
 <span class="sd">    &gt;&gt;&gt; wrapped_foo = decorator(foo, multiplier=10)</span>
 <span class="sd">    &gt;&gt;&gt; wrapped_foo(2)</span>
 <span class="sd">    30</span>
-<span class="sd">    &gt;&gt;&gt;</span>
+
+<span class="sd">    The object to wrap doesn&#39;t have to be given positionally: it can also be given by</span>
+<span class="sd">    keyword, under the name the decorator gave its first parameter (here, ``func``).</span>
+<span class="sd">    This matters because forwarding arguments through ``**kwargs`` is a very common way</span>
+<span class="sd">    to call a decorator, so ``decorator(func=foo)`` must mean what ``decorator(foo)``</span>
+<span class="sd">    means:</span>
+
+<span class="sd">    &gt;&gt;&gt; decorator(func=foo, multiplier=10)(2)</span>
+<span class="sd">    30</span>
+<span class="sd">    &gt;&gt;&gt; decorator(func=foo)(2)</span>
+<span class="sd">    6</span>
+
+<span class="sd">    It is the *absence* of an object to wrap -- not the way it&#39;s passed -- that asks for</span>
+<span class="sd">    a factory:</span>
+
+<span class="sd">    &gt;&gt;&gt; from functools import partial</span>
+<span class="sd">    &gt;&gt;&gt; isinstance(decorator(multiplier=3), partial)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; isinstance(decorator(func=foo), partial)</span>
+<span class="sd">    False</span>
+
 <span class="sd">    &gt;&gt;&gt; multiply_by_3 = decorator(multiplier=3)</span>
 <span class="sd">    &gt;&gt;&gt; wrapped_foo = multiply_by_3(foo)</span>
 <span class="sd">    &gt;&gt;&gt; wrapped_foo(2)</span>
@@ -392,9 +430,38 @@
 <span class="sd">      ...</span>
 <span class="sd">    AssertionError: All arguments (besides the first) need to be keyword-only</span>
 
+<span class="sd">    Note also that the name of that first argument is effectively **reserved**: it always</span>
+<span class="sd">    means &quot;the object to wrap&quot;. For a decorator that also takes ``**kwargs``, this means</span>
+<span class="sd">    a decorator argument can never share that name. Say a decorator&#39;s first parameter is</span>
+<span class="sd">    ``func`` and it renames parameters via ``**kwargs``:</span>
+
+<span class="sd">    &gt;&gt;&gt; @double_up_as_factory</span>
+<span class="sd">    ... def rename(func=None, **new_name_for_old_name):</span>
+<span class="sd">    ...     return new_name_for_old_name  # (stand-in for the real work)</span>
+
+<span class="sd">    You can rename an ordinary parameter through the factory form:</span>
+
+<span class="sd">    &gt;&gt;&gt; rename(b=&#39;bee&#39;)(lambda a, b: None)</span>
+<span class="sd">    {&#39;b&#39;: &#39;bee&#39;}</span>
+
+<span class="sd">    But you cannot use it to rename a parameter that happens to be called ``func``:</span>
+<span class="sd">    ``rename(func=&#39;callback&#39;)`` is read as &quot;wrap the object ``&#39;callback&#39;``&quot;, not as</span>
+<span class="sd">    &quot;rename ``func`` to ``callback``&quot;, so it returns nonsense rather than a factory:</span>
+
+<span class="sd">    &gt;&gt;&gt; rename(func=&#39;callback&#39;)</span>
+<span class="sd">    {}</span>
+
+<span class="sd">    This is a pre-existing limitation of the double-up idiom -- there is no way to tell</span>
+<span class="sd">    the two intents apart -- and it is not specific to passing the object by keyword.</span>
+<span class="sd">    Before keyword-passing was supported the same call failed later and differently,</span>
+<span class="sd">    with ``TypeError: rename() got multiple values for argument &#39;func&#39;``.  If a decorator</span>
+<span class="sd">    needs an argument with the same name as its first parameter, don&#39;t use</span>
+<span class="sd">    ``double_up_as_factory``.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">validate_decorator_func</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validated_wrapped_param_name</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate decorator_func, returning the name of its first parameter.&quot;&quot;&quot;</span>
         <span class="n">first_param</span><span class="p">,</span> <span class="o">*</span><span class="n">other_params</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">first_param</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;First argument of the decorator function needs to default to None. &quot;</span>
@@ -403,12 +470,14 @@
         <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
             <span class="n">p</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">}</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">other_params</span>
         <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;All arguments (besides the first) need to be keyword-only&quot;</span>
-        <span class="k">return</span> <span class="kc">True</span>
-
-    <span class="n">validate_decorator_func</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">first_param</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">return</span> <span class="n">wraps</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)(</span>
-        <span class="n">partial</span><span class="p">(</span><span class="n">_double_up_as_factory</span><span class="p">,</span> <span class="n">__decorator_func</span><span class="o">=</span><span class="n">decorator_func</span><span class="p">)</span>
+        <span class="n">partial</span><span class="p">(</span>
+            <span class="n">_double_up_as_factory</span><span class="p">,</span>
+            <span class="n">__decorator_func</span><span class="o">=</span><span class="n">decorator_func</span><span class="p">,</span>
+            <span class="n">__wrapped_param_name</span><span class="o">=</span><span class="n">validated_wrapped_param_name</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">),</span>
+        <span class="p">)</span>
     <span class="p">)</span></div>
 
 
@@ -1642,7 +1711,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright NO COPYRIGHT.</p>
+    <p></p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

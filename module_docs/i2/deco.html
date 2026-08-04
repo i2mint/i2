@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.deco &mdash; i2 0.1.63 documentation</title>
+  <title>i2.deco &mdash; i2 0.1.64 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=681c63c7"></script>
+      <script src="../../_static/documentation_options.js?v=a395f30a"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -315,8 +315,29 @@ This is validated before making the “double up as factory” decorator.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span> <span class="o">=</span> <span class="n">decorator</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">30</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">multiply_by_3</span> <span class="o">=</span> <span class="n">decorator</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The object to wrap doesn’t have to be given positionally: it can also be given by
+keyword, under the name the decorator gave its first parameter (here, <code class="docutils literal notranslate"><span class="pre">func</span></code>).
+This matters because forwarding arguments through <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> is a very common way
+to call a decorator, so <code class="docutils literal notranslate"><span class="pre">decorator(func=foo)</span></code> must mean what <code class="docutils literal notranslate"><span class="pre">decorator(foo)</span></code>
+means:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">decorator</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">foo</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">10</span><span class="p">)(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decorator</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">foo</span><span class="p">)(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">6</span>
+</pre></div>
+</div>
+<p>It is the <em>absence</em> of an object to wrap – not the way it’s passed – that asks for
+a factory:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">decorator</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span> <span class="n">partial</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">decorator</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">foo</span><span class="p">),</span> <span class="n">partial</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">multiply_by_3</span> <span class="o">=</span> <span class="n">decorator</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span> <span class="o">=</span> <span class="n">multiply_by_3</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">9</span>
@@ -345,6 +366,33 @@ to None and be the only argument that is not keyword-only (i.e. all other argume
 <span class="gr">AssertionError</span>: <span class="n">All arguments (besides the first) need to be keyword-only</span>
 </pre></div>
 </div>
+<p>Note also that the name of that first argument is effectively <strong>reserved</strong>: it always
+means “the object to wrap”. For a decorator that also takes <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>, this means
+a decorator argument can never share that name. Say a decorator’s first parameter is
+<code class="docutils literal notranslate"><span class="pre">func</span></code> and it renames parameters via <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@double_up_as_factory</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">rename</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">new_name_for_old_name</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">new_name_for_old_name</span>  <span class="c1"># (stand-in for the real work)</span>
+</pre></div>
+</div>
+<p>You can rename an ordinary parameter through the factory form:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rename</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="s1">&#39;bee&#39;</span><span class="p">)(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+<span class="go">{&#39;b&#39;: &#39;bee&#39;}</span>
+</pre></div>
+</div>
+<p>But you cannot use it to rename a parameter that happens to be called <code class="docutils literal notranslate"><span class="pre">func</span></code>:
+<code class="docutils literal notranslate"><span class="pre">rename(func='callback')</span></code> is read as “wrap the object <code class="docutils literal notranslate"><span class="pre">'callback'</span></code>”, not as
+“rename <code class="docutils literal notranslate"><span class="pre">func</span></code> to <code class="docutils literal notranslate"><span class="pre">callback</span></code>”, so it returns nonsense rather than a factory:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rename</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="s1">&#39;callback&#39;</span><span class="p">)</span>
+<span class="go">{}</span>
+</pre></div>
+</div>
+<p>This is a pre-existing limitation of the double-up idiom – there is no way to tell
+the two intents apart – and it is not specific to passing the object by keyword.
+Before keyword-passing was supported the same call failed later and differently,
+with <code class="docutils literal notranslate"><span class="pre">TypeError:</span> <span class="pre">rename()</span> <span class="pre">got</span> <span class="pre">multiple</span> <span class="pre">values</span> <span class="pre">for</span> <span class="pre">argument</span> <span class="pre">'func'</span></code>.  If a decorator
+needs an argument with the same name as its first parameter, don’t use
+<code class="docutils literal notranslate"><span class="pre">double_up_as_factory</span></code>.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1024,7 +1072,7 @@ Of course, this is just pretend. Don’t use this with real waveforms. It won’
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright NO COPYRIGHT.</p>
+    <p></p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
