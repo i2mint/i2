@@ -6,6 +6,7 @@ from functools import partial
 import pytest
 
 from i2.wrapper import (
+    Wrap,
     wrap,
     mk_ingress_from_name_mapper,
     rm_params,
@@ -534,3 +535,66 @@ def test_double_up_as_factory_rejects_duplicate_wrapped():
 
     with pytest.raises(TypeError):
         decorate(_incr, func=_incr)
+
+
+# ---------------------------------------------------------------------------------------
+# Regression: Wrap must not mutate the ingress it is given.
+# `preserve_signature` used to stamp `__signature__`/`__annotations__` onto the ingress
+# object. A decorator normally defines one ingress and reuses it for every function it
+# wraps, so that write corrupted the caller's function AND made every later Wrap built
+# from the same ingress advertise the first-wrapped function's signature -- while still
+# executing correctly, so nothing surfaced the lie.
+
+
+def _shared_ingress(*args, **kwargs):
+    """A module-level ingress, of the shape `preserve_signature='auto'` acts on."""
+    return args, kwargs
+
+
+def test_wrap_does_not_mutate_the_ingress():
+    """Wrapping must leave the caller's ingress object exactly as it was."""
+    from inspect import signature
+
+    def func(a: int) -> int:
+        return a
+
+    before = signature(_shared_ingress)
+    Wrap(func, ingress=_shared_ingress)
+
+    assert signature(_shared_ingress) == before
+    assert not hasattr(_shared_ingress, "__signature__")
+
+
+def test_reused_ingress_gives_each_wrap_its_own_signature():
+    """Two Wraps sharing one ingress must each report their own func's signature."""
+
+    def f(a: int) -> int:
+        return a
+
+    def g(x: str, y: str) -> str:
+        return x + y
+
+    wrapped_f = Wrap(f, ingress=_shared_ingress)
+    wrapped_g = Wrap(g, ingress=_shared_ingress)
+
+    assert str(Sig(wrapped_f)) == "(a: int) -> int"
+    assert str(Sig(wrapped_g)) == "(x: str, y: str) -> str"
+    # ... and both still actually work
+    assert wrapped_f(3) == 3
+    assert wrapped_g("a", "b") == "ab"
+
+
+def test_wrap_signature_is_order_independent():
+    """Building the two Wraps in the other order must give the same signatures."""
+
+    def f(a: int) -> int:
+        return a
+
+    def g(x: str, y: str) -> str:
+        return x + y
+
+    wrapped_g = Wrap(g, ingress=_shared_ingress)
+    wrapped_f = Wrap(f, ingress=_shared_ingress)
+
+    assert str(Sig(wrapped_g)) == "(x: str, y: str) -> str"
+    assert str(Sig(wrapped_f)) == "(a: int) -> int"
