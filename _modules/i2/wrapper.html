@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>i2.wrapper &mdash; i2 0.1.65 documentation</title>
+  <title>i2.wrapper &mdash; i2 0.1.66 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=07ed7713"></script>
+      <script src="../../_static/documentation_options.js?v=3015fd79"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -215,6 +215,11 @@
 <span class="n">InnerKwargs</span> <span class="o">=</span> <span class="nb">dict</span>
 <span class="n">KwargsTrans</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">OuterKwargs</span><span class="p">],</span> <span class="n">InnerKwargs</span><span class="p">]</span>
 
+<span class="c1">#: ``preserve_signature`` value meaning &quot;decide per ingress&quot; (see</span>
+<span class="c1">#: :func:`_should_preserve_signature`). Named rather than spelled ``&#39;auto&#39;`` at each</span>
+<span class="c1">#: use so the sentinel has exactly one definition.</span>
+<span class="n">AUTO_PRESERVE_SIGNATURE</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
+
 
 <div class="viewcode-block" id="identity">
 <a class="viewcode-back" href="../../module_docs/i2/wrapper.html#i2.wrapper.identity">[docs]</a>
@@ -329,92 +334,102 @@
         <span class="k">return</span> <span class="n">sig</span><span class="o">.</span><span class="n">_defaults_</span><span class="p">,</span> <span class="n">sig</span><span class="o">.</span><span class="n">_kwdefaults_</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_should_preserve_signature</span><span class="p">(</span><span class="n">ingress</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">preserve_mode</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine if signature should be auto-preserved from func to ingress.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_generic_signature</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether ``func``&#39;s signature is exactly ``(*args, **kwargs)``.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    ingress : callable or None</span>
-<span class="sd">        The ingress function</span>
-<span class="sd">    func : callable</span>
-<span class="sd">        The wrapped function</span>
-<span class="sd">    preserve_mode : &#39;auto&#39; | True | False</span>
-<span class="sd">        The preservation mode</span>
+<span class="sd">    Such a signature carries no interface information, which is what makes it safe</span>
+<span class="sd">    to show the wrapped function&#39;s signature in its place.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    bool</span>
-<span class="sd">        True if signature should be preserved</span>
+<span class="sd">    &gt;&gt;&gt; _is_generic_signature(lambda *a, **kw: None)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _is_generic_signature(lambda x, *a, **kw: None)</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; _is_generic_signature(lambda *a: None)</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; _is_generic_signature(lambda x: None)</span>
+<span class="sd">    False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">preserve_mode</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>  <span class="c1"># no inspectable signature (some builtins)</span>
         <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="n">preserve_mode</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">kind</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_POSITIONAL</span><span class="p">,</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">]</span>
 
-    <span class="c1"># &#39;auto&#39; mode: preserve if ingress has generic (*args, **kwargs)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_should_preserve_signature</span><span class="p">(</span><span class="n">ingress</span><span class="p">,</span> <span class="n">preserve_mode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the wrapper should advertise the wrapped function&#39;s signature instead</span>
+<span class="sd">    of ``ingress``&#39;s.</span>
+
+<span class="sd">    :param ingress: The incoming data transformer, or ``None``</span>
+<span class="sd">    :param preserve_mode: ``True`` (always), ``False`` (never), or ``&#39;auto&#39;``</span>
+<span class="sd">    :return: ``True`` if the wrapped function&#39;s signature should be used</span>
+
+<span class="sd">    ``&#39;auto&#39;`` preserves only when the ingress signature is ``(*args, **kwargs)`` and</span>
+<span class="sd">    the ingress does not declare a ``__signature__`` of its own -- i.e. only when the</span>
+<span class="sd">    ingress says nothing about its interface, so there is nothing to overwrite:</span>
+
+<span class="sd">    &gt;&gt;&gt; _should_preserve_signature(lambda *a, **kw: None, &#39;auto&#39;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _should_preserve_signature(lambda a: None, &#39;auto&#39;)</span>
+<span class="sd">    False</span>
+
+<span class="sd">    ``True``/``False`` are unconditional, and are the way to override ``&#39;auto&#39;``&#39;s guess:</span>
+
+<span class="sd">    &gt;&gt;&gt; _should_preserve_signature(lambda a: None, True)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _should_preserve_signature(lambda *a, **kw: None, False)</span>
+<span class="sd">    False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">preserve_mode</span> <span class="o">!=</span> <span class="n">AUTO_PRESERVE_SIGNATURE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">preserve_mode</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ingress</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">_is_generic_signature</span><span class="p">(</span><span class="n">ingress</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ingress</span><span class="p">,</span> <span class="s2">&quot;__signature__&quot;</span><span class="p">)</span>
 
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_return_annotation_of</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The return annotation of ``func``, or ``empty`` if it has none or has no</span>
+<span class="sd">    inspectable signature at all.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">ingress_sig</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">ingress</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">return_annotation</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
-        <span class="c1"># Can&#39;t get signature, don&#39;t preserve</span>
-        <span class="k">return</span> <span class="kc">False</span>
-
-    <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ingress_sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-
-    <span class="c1"># Check if ingress has exactly (*args, **kwargs) signature</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>
-
-    <span class="n">is_generic</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_POSITIONAL</span>
-        <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span>
-    <span class="p">)</span>
-
-    <span class="c1"># Only preserve if generic and doesn&#39;t already have __signature__</span>
-    <span class="k">return</span> <span class="n">is_generic</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ingress</span><span class="p">,</span> <span class="s2">&quot;__signature__&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">empty</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_return_annotation</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">egress</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get return annotation with smart fallback logic.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve the return annotation a :class:`Wrap` should advertise.</span>
 
-<span class="sd">    Fallback chain: egress annotation → func annotation → empty</span>
+<span class="sd">    :param func: The wrapped function</span>
+<span class="sd">    :param egress: The outgoing data transformer, or ``None``</span>
+<span class="sd">    :return: The return annotation to use, or ``empty``</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    func : callable</span>
-<span class="sd">        The wrapped function</span>
-<span class="sd">    egress : callable or None</span>
-<span class="sd">        The egress function</span>
+<span class="sd">    The egress wins when it declares a return annotation, since it is what actually</span>
+<span class="sd">    produces the wrapper&#39;s output. Otherwise the annotation falls back to ``func``&#39;s,</span>
+<span class="sd">    on the assumption that an unannotated egress does not change the type:</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    annotation</span>
-<span class="sd">        The return annotation to use, or Parameter.empty</span>
+<span class="sd">    &gt;&gt;&gt; def f(x: int) -&gt; str: return str(x)</span>
+<span class="sd">    &gt;&gt;&gt; def annotated_egress(out) -&gt; bytes: return out.encode()</span>
+<span class="sd">    &gt;&gt;&gt; def bare_egress(out): return out</span>
+
+<span class="sd">    &gt;&gt;&gt; _get_return_annotation(f, None)</span>
+<span class="sd">    &lt;class &#39;str&#39;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; _get_return_annotation(f, annotated_egress)</span>
+<span class="sd">    &lt;class &#39;bytes&#39;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; _get_return_annotation(f, bare_egress)</span>
+<span class="sd">    &lt;class &#39;str&#39;&gt;</span>
+
+<span class="sd">    An unannotated ``func`` yields ``empty``, not ``None`` -- ``None`` is a legitimate</span>
+<span class="sd">    annotation meaning &quot;returns None&quot;, so the two must stay distinguishable:</span>
+
+<span class="sd">    &gt;&gt;&gt; def g(x): pass</span>
+<span class="sd">    &gt;&gt;&gt; _get_return_annotation(g, None) is empty</span>
+<span class="sd">    True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">func_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="n">func_return</span> <span class="o">=</span> <span class="n">func_sig</span><span class="o">.</span><span class="n">return_annotation</span>
-
-    <span class="k">if</span> <span class="n">egress</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># No egress: use func&#39;s return annotation</span>
-        <span class="k">return</span> <span class="n">func_return</span> <span class="k">if</span> <span class="n">func_return</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span> <span class="k">else</span> <span class="n">empty</span>
-
-    <span class="c1"># Egress provided: check its annotation first</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">egress_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">egress</span><span class="p">)</span>
-        <span class="n">egress_return</span> <span class="o">=</span> <span class="n">egress_sig</span><span class="o">.</span><span class="n">return_annotation</span>
-    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
-        <span class="c1"># Can&#39;t get egress signature, fall back to func</span>
-        <span class="k">return</span> <span class="n">func_return</span> <span class="k">if</span> <span class="n">func_return</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span> <span class="k">else</span> <span class="n">empty</span>
-
-    <span class="k">if</span> <span class="n">egress_return</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-        <span class="c1"># Egress has annotation, use it</span>
-        <span class="k">return</span> <span class="n">egress_return</span>
-
-    <span class="c1"># Egress has no annotation: fall back to func&#39;s annotation</span>
-    <span class="c1"># Assumption: egress doesn&#39;t transform the type</span>
-    <span class="k">return</span> <span class="n">func_return</span> <span class="k">if</span> <span class="n">func_return</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span> <span class="k">else</span> <span class="n">empty</span>
+    <span class="k">if</span> <span class="n">egress</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">egress_return</span> <span class="o">=</span> <span class="n">_return_annotation_of</span><span class="p">(</span><span class="n">egress</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">egress_return</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">egress_return</span>
+    <span class="k">return</span> <span class="n">_return_annotation_of</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Wrap">
@@ -691,7 +706,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preserve_signature</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">,</span>
+        <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">preserve_signature</span><span class="o">=</span><span class="n">AUTO_PRESERVE_SIGNATURE</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="n">ingress_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
@@ -702,7 +723,6 @@
                 <span class="n">func</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ingress</span><span class="p">,</span> <span class="n">MakeFromFunc</span><span class="p">):</span>
                 <span class="n">func_to_ingress</span> <span class="o">=</span> <span class="n">ingress</span>  <span class="c1"># it&#39;s not the ingress function itself</span>
                 <span class="c1"># ... but an ingress factory: Should make the ingress in function of func</span>
@@ -711,15 +731,19 @@
                 <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">ingress</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Should be callable: </span><span class="si">{</span><span class="n">ingress</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span> <span class="o">=</span> <span class="n">ingress</span>
 
-            <span class="c1"># Apply signature preservation if needed</span>
-            <span class="k">if</span> <span class="n">_should_preserve_signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingress</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">preserve_signature</span><span class="p">):</span>
-                <span class="c1"># Preserve signature and annotations from func to ingress</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__annotations__&quot;</span><span class="p">,</span> <span class="p">{})</span>
-
-            <span class="n">ingress_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingress</span><span class="p">)</span>
+            <span class="c1"># Preserving means *this wrapper* presents func&#39;s interface. Read it from</span>
+            <span class="c1"># func directly; never write it onto self.ingress. The ingress belongs to</span>
+            <span class="c1"># the caller -- a decorator typically defines one and reuses it for every</span>
+            <span class="c1"># function it wraps -- so stamping __signature__ on it corrupted both the</span>
+            <span class="c1"># caller&#39;s object and every later Wrap built from the same ingress.</span>
+            <span class="n">signature_source</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">func</span>
+                <span class="k">if</span> <span class="n">_should_preserve_signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingress</span><span class="p">,</span> <span class="n">preserve_signature</span><span class="p">)</span>
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span>
+            <span class="p">)</span>
+            <span class="n">ingress_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">signature_source</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__kwdefaults__</span> <span class="o">=</span> <span class="n">_defaults_and_kwdefaults_of_func</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span>
+                <span class="n">signature_source</span>
             <span class="p">)</span>
 
         <span class="c1"># Set egress</span>
@@ -1111,9 +1135,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">new_to_old_name</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">old_to_new_name</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_to_old_name</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-            <span class="n">old_to_new_name</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Inversion is not possible since </span><span class="si">{</span><span class="n">old_to_new_name</span><span class="si">=}</span><span class="s2"> has duplicate values.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_to_old_name</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">old_to_new_name</span><span class="p">),</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Inversion is not possible since </span><span class="si">{</span><span class="n">old_to_new_name</span><span class="si">=}</span><span class="s2"> has duplicate values.&quot;</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">wrapped</span><span class="p">,</span>
             <span class="n">partial</span><span class="p">(</span><span class="n">Pipe</span><span class="p">(</span><span class="n">items_with_mapped_keys</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="n">key_mapper</span><span class="o">=</span><span class="n">new_to_old_name</span><span class="p">),</span>
@@ -2737,9 +2761,9 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">names_not_in_func_arguments</span> <span class="o">=</span> <span class="n">smart_defaults</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">names</span>
-    <span class="k">assert</span> <span class="p">(</span>
-        <span class="ow">not</span> <span class="n">names_not_in_func_arguments</span>
-    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;These weren&#39;t argument names of the </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2"> function: </span><span class="si">{</span><span class="n">names_not_in_func_arguments</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">names_not_in_func_arguments</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;These weren&#39;t argument names of the </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2"> function: </span><span class="si">{</span><span class="n">names_not_in_func_arguments</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
     <span class="n">kwargs_trans</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
         <span class="n">complete_dict_applying_functions</span><span class="p">,</span>
         <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="n">_only_if_name_missing</span><span class="p">,</span>
