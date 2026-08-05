@@ -998,9 +998,9 @@ class Ingress:
 
         """
         new_to_old_name = {v: k for k, v in old_to_new_name.items()}
-        assert len(new_to_old_name) == len(old_to_new_name), (
-            f"Inversion is not possible since {old_to_new_name=} has duplicate values."
-        )
+        assert len(new_to_old_name) == len(
+            old_to_new_name
+        ), f"Inversion is not possible since {old_to_new_name=} has duplicate values."
         return cls(
             wrapped,
             partial(Pipe(items_with_mapped_keys, dict), key_mapper=new_to_old_name),
@@ -2565,9 +2565,9 @@ def add_smart_defaults(
 
     """
     names_not_in_func_arguments = smart_defaults.keys() - Sig(func).names
-    assert not names_not_in_func_arguments, (
-        f"These weren't argument names of the {func} function: {names_not_in_func_arguments}"
-    )
+    assert (
+        not names_not_in_func_arguments
+    ), f"These weren't argument names of the {func} function: {names_not_in_func_arguments}"
     kwargs_trans = partial(
         complete_dict_applying_functions,
         _only_if_name_missing=_only_if_name_missing,
