@@ -1,1436 +1,1620 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; i2 0.1.66 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+<html lang="en" data-content_root="./"
+  x-data="{ darkMode: $persist(window.matchMedia('(prefers-color-scheme: dark)').matches), activeSection: ''}"
+  :class="{ 'dark' : darkMode === true }">
 
+<head>
+  <script>
+    (function () {
+      // Set initial color scheme
+      if ((localStorage.getItem("_x_darkMode") === "true") || (window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+
+      // Watch for media preference changes
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+        localStorage.setItem("_x_darkMode", event.matches);
+        document.documentElement.classList.toggle("dark", event.matches);
+      });
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#030711" />
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=3015fd79"></script>
-      <script src="_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
-      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="#" />
-    <link rel="search" title="Search" href="search.html" /> 
+<link rel="alternate" type="text/markdown" href="genindex.html.md">
+<link rel="describedby" href="llms.txt" type="text/markdown">
+  <title>Index | i2</title>
+  <meta property="og:title" content="Index | i2" />
+  <meta name="twitter:title" content="Index | i2" />
+  <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d75fae25" />
+  <link rel="stylesheet" type="text/css" href="_static/theme.css?v=d6d7c91b" />
+  <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+  <link rel="stylesheet" type="text/css" href="_static/epythet.css?v=01b0658f" />
+  <link rel="search" title="Search" href="search.html" />
+  <link rel="index" title="Index" href="#" />
 </head>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+<body x-data="{ showSidebar: false, showScrollTop: false }"
+  class="min-h-screen font-sans antialiased bg-background text-foreground" :class="{ 'overflow-hidden': showSidebar }">
+  <div x-cloak x-show="showSidebar"
+    class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden"
+    @click.self="showSidebar = false"></div><div id="page" class="relative flex flex-col min-h-screen"><a href="#content"
+      class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100">
+      Skip to content
+    </a><header class="sticky top-0 z-40 w-full border-b shadow-xs border-border bg-background/90 backdrop-blur"><div class="container flex items-center h-14">
+    <div class="hidden mr-4 md:flex">
+      <a href="index.html" class="flex items-center mr-6"><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">i2</span>
+      </a><nav class="flex items-center gap-6 text-sm font-medium">
+        <a href="https://github.com/i2mint/i2" class="transition-colors hover:text-foreground/80 text-foreground/60" rel="noopener nofollow">GitHub</a>
+      </nav></div><button
+      class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden"
+      type="button" @click="showSidebar = true">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 96 960 960" aria-hidden="true"
+        fill="currentColor">
+        <path
+          d="M152.587 825.087q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440Zm0-203.587q-19.152 0-32.326-13.174T107.087 576q0-19.152 13.174-32.326t32.326-13.174h320q19.152 0 32.326 13.174T518.087 576q0 19.152-13.174 32.326T472.587 621.5h-320Zm0-203.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440ZM708.913 576l112.174 112.174q12.674 12.674 12.674 31.826t-12.674 31.826Q808.413 764.5 789.261 764.5t-31.826-12.674l-144-144Q600 594.391 600 576t13.435-31.826l144-144q12.674-12.674 31.826-12.674t31.826 12.674q12.674 12.674 12.674 31.826t-12.674 31.826L708.913 576Z" />
+      </svg>
+      <span class="sr-only">Toggle navigation menu</span>
+    </button>
+    <div class="flex items-center justify-between flex-1 gap-2 sm:gap-4 md:justify-end">
+      <div class="flex-1 w-full md:w-auto md:flex-none"><form id="searchbox"
+      action="search.html"
+      method="get"
+      class="relative flex items-center group"
+      @keydown.k.window.meta="$refs.search.focus()">
+  <input x-ref="search"
+          name="q"
+          id="search-input"
+          type="search"
+          aria-label="Search the docs"
+          placeholder="Search ..."
+          class="inline-flex items-center font-medium transition-colors bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent focus:bg-accent hover:text-accent-foreground focus:text-accent-foreground hover:placeholder-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" />
+  <kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none text-muted-foreground items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex group-hover:bg-accent group-hover:text-accent-foreground">
+    <span class="text-xs">⌘</span>
+    K
+  </kbd>
+</form>
+      </div>
+      <nav class="flex items-center gap-1">
+        <button @click="darkMode = !darkMode"
+          class="relative inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9"
+          type="button"
+          title="Toggle color scheme">
+          <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 96 960 960" fill="currentColor"
+            class="absolute transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0">
+            <path
+              d="M480 685q45.456 0 77.228-31.772Q589 621.456 589 576q0-45.456-31.772-77.228Q525.456 467 480 467q-45.456 0-77.228 31.772Q371 530.544 371 576q0 45.456 31.772 77.228Q434.544 685 480 685Zm0 91q-83 0-141.5-58.5T280 576q0-83 58.5-141.5T480 376q83 0 141.5 58.5T680 576q0 83-58.5 141.5T480 776ZM80 621.5q-19.152 0-32.326-13.174T34.5 576q0-19.152 13.174-32.326T80 530.5h80q19.152 0 32.326 13.174T205.5 576q0 19.152-13.174 32.326T160 621.5H80Zm720 0q-19.152 0-32.326-13.174T754.5 576q0-19.152 13.174-32.326T800 530.5h80q19.152 0 32.326 13.174T925.5 576q0 19.152-13.174 32.326T880 621.5h-80Zm-320-320q-19.152 0-32.326-13.174T434.5 256v-80q0-19.152 13.174-32.326T480 130.5q19.152 0 32.326 13.174T525.5 176v80q0 19.152-13.174 32.326T480 301.5Zm0 720q-19.152 0-32.326-13.17Q434.5 995.152 434.5 976v-80q0-19.152 13.174-32.326T480 850.5q19.152 0 32.326 13.174T525.5 896v80q0 19.152-13.174 32.33-13.174 13.17-32.326 13.17ZM222.174 382.065l-43-42Q165.5 327.391 166 308.239t13.174-33.065q13.435-13.674 32.587-13.674t32.065 13.674l42.239 43q12.674 13.435 12.555 31.706-.12 18.272-12.555 31.946-12.674 13.674-31.445 13.413-18.772-.261-32.446-13.174Zm494 494.761-42.239-43q-12.674-13.435-12.674-32.087t12.674-31.565Q686.609 756.5 705.38 757q18.772.5 32.446 13.174l43 41.761Q794.5 824.609 794 843.761t-13.174 33.065Q767.391 890.5 748.239 890.5t-32.065-13.674Zm-42-494.761Q660.5 369.391 661 350.62q.5-18.772 13.174-32.446l41.761-43Q728.609 261.5 747.761 262t33.065 13.174q13.674 13.435 13.674 32.587t-13.674 32.065l-43 42.239q-13.435 12.674-31.706 12.555-18.272-.12-31.946-12.555Zm-495 494.761Q165.5 863.391 165.5 844.239t13.674-32.065l43-42.239q13.435-12.674 32.087-12.674t31.565 12.674Q299.5 782.609 299 801.38q-.5 18.772-13.174 32.446l-41.761 43Q231.391 890.5 212.239 890t-33.065-13.174ZM480 576Z" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 96 960 960" fill="currentColor"
+            class="absolute transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100">
+            <path
+              d="M480 936q-151 0-255.5-104.5T120 576q0-138 90-239.5T440 218q25-3 39 18t-1 44q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q21-14 43-1.5t19 39.5q-14 138-117.5 229T480 936Zm0-80q88 0 158-48.5T740 681q-20 5-40 8t-40 3q-123 0-209.5-86.5T364 396q0-20 3-40t8-40q-78 32-126.5 102T200 576q0 116 82 198t198 82Zm-10-270Z" />
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </div>
+</header>
 
-          
-          
-          <a href="index.html" class="icon icon-home">
-            i2
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2.html">i2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/_deprecated.html">i2._deprecated</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/base.html">i2.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/castgraph.html">i2.castgraph</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/chain_map.html">i2.chain_map</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/deco.html">i2.deco</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/doc_mint.html">i2.doc_mint</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/errors.html">i2.errors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/examples.html">i2.examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/examples/castgraph_examples.html">i2.examples.castgraph_examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/footprints.html">i2.footprints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/io_trans.html">i2.io_trans</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/itypes.html">i2.itypes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/key_path.html">i2.key_path</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/multi_object.html">i2.multi_object</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/routing_forest.html">i2.routing_forest</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap.html">i2.scrap</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/scrap.html">i2.scrap.scrap</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/scrap_ch_variadics.html">i2.scrap.scrap_ch_variadics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/signature_bops.html">i2.scrap.signature_bops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/switch_case_tree.html">i2.scrap.switch_case_tree</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/signatures.html">i2.signatures</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests.html">i2.tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/footprints_test.html">i2.tests.footprints_test</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_castgraph.html">i2.tests.test_castgraph</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_castgraph_kinds.html">i2.tests.test_castgraph_kinds</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_ingress_demo.html">i2.tests.test_ingress_demo</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_signatures.html">i2.tests.test_signatures</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/util.html">i2.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/wrapper.html">i2.wrapper</a></li>
+    <div class="flex-1"><div
+        class="container md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10"><aside id="left-sidebar"
+  class="fixed inset-y-0 left-0 md:top-14 z-50 md:z-30 bg-background md:bg-transparent transition-all duration-100 -translate-x-full md:translate-x-0 ml-0 p-6 md:p-0 md:-ml-2 md:h-[calc(100vh-3.5rem)] w-5/6 md:w-full overflow-y-auto border-r border-border md:sticky"
+  :aria-hidden="!showSidebar" :class="{ 'translate-x-0': showSidebar }">
+
+    <a href="index.html" class="justify-start text-sm md:!hidden bg-background"><span class="font-bold text-clip whitespace-nowrap">i2</span>
+    </a>
+
+    <div class="relative overflow-hidden md:overflow-auto my-4 md:my-0">
+      <div class="overflow-y-auto h-full w-full relative pr-6"><nav class="flex md:hidden flex-col font-medium mt-4">
+  <a href="https://github.com/i2mint/i2" rel="nofollow noopener">GitHub</a>
+</nav><nav class="table w-full min-w-full my-6 lg:my-8">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/i2.html">i2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.base.html">i2.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.castgraph.html">i2.castgraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.deco.html">i2.deco</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.errors.html">i2.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.footprints.html">i2.footprints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.itypes.html">i2.itypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.key_path.html">i2.key_path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.multi_object.html">i2.multi_object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.signatures.html">i2.signatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.util.html">i2.util</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.wrapper.html">i2.wrapper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ai-agents.html">For AI agents</a></li>
 </ul>
 
-        </div>
+</nav>
       </div>
-    </nav>
+    </div>
+    <button type="button" @click="showSidebar = false"
+      class="absolute md:hidden right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 96 960 960" fill="currentColor"
+        stroke="none" class="h-4 w-4">
+        <path
+          d="M480 632 284 828q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536 576l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480 632Z" />
+      </svg>
+    </button>
+  </aside>
+          <main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+<div class="w-full min-w-0 mx-auto">
+<nav aria-label="breadcrumbs"
+     class="flex items-center mb-4 space-x-1 text-sm text-muted-foreground">
+  <a class="overflow-hidden text-ellipsis whitespace-nowrap hover:text-foreground"
+     href="index.html">
+    <span class="hidden md:inline">i2</span>
+    <svg xmlns="http://www.w3.org/2000/svg"
+         height="18"
+         width="18"
+         viewBox="0 96 960 960"
+         aria-label="Home"
+         fill="currentColor"
+         stroke="none"
+         class="md:hidden">
+      <path d="M240 856h120V616h240v240h120V496L480 316 240 496v360Zm-80 80V456l320-240 320 240v480H520V696h-80v240H160Zm320-350Z" />
+    </svg>
+  </a>
+  
+<div class="mr-1">/</div><span aria-current="page"
+        class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">Index</span>
+</nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">i2</a>
-      </nav>
+<div id="content" role="main">
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Index</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-
-<h1 id="index">Index</h1>
-
-<div class="genindex-jumpbox">
- <a href="#A"><strong>A</strong></a>
- | <a href="#B"><strong>B</strong></a>
- | <a href="#C"><strong>C</strong></a>
- | <a href="#D"><strong>D</strong></a>
- | <a href="#E"><strong>E</strong></a>
- | <a href="#F"><strong>F</strong></a>
- | <a href="#G"><strong>G</strong></a>
- | <a href="#H"><strong>H</strong></a>
- | <a href="#I"><strong>I</strong></a>
- | <a href="#J"><strong>J</strong></a>
- | <a href="#K"><strong>K</strong></a>
- | <a href="#L"><strong>L</strong></a>
- | <a href="#M"><strong>M</strong></a>
- | <a href="#N"><strong>N</strong></a>
- | <a href="#O"><strong>O</strong></a>
- | <a href="#P"><strong>P</strong></a>
- | <a href="#R"><strong>R</strong></a>
- | <a href="#S"><strong>S</strong></a>
- | <a href="#T"><strong>T</strong></a>
- | <a href="#U"><strong>U</strong></a>
- | <a href="#V"><strong>V</strong></a>
- | <a href="#W"><strong>W</strong></a>
- 
-</div>
-<h2 id="A">A</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.accessed_attributes">accessed_attributes() (in module i2.footprints)</a>
+  <h1 id="index">Index</h1>
+  <h2 id="A">A</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.accessed_attributes">accessed_attributes() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.add">add() (in module i2.tests.objects_for_testing)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FunctionBuilder.add_arg">add_arg() (i2.util.FunctionBuilder method)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.FunctionBuilder.add_arg">add_arg() (i2.util.FunctionBuilder method)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.add_edge">add_edge() (i2.castgraph.TransformationGraph method)</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.add_edge">add_edge() (i2.castgraph.TransformationGraph method)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.add_method">add_method() (in module i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.add_method">add_method() (in module i2.deco)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.add_node">add_node() (i2.castgraph.TransformationGraph method)</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.add_node">add_node() (i2.castgraph.TransformationGraph method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.add_optional_keywords">add_optional_keywords() (i2.signatures.Sig method)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.add_optional_keywords">add_optional_keywords() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.add_params">add_params() (i2.signatures.Sig method)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.add_params">add_params() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.Import.alias">alias (i2.footprints.Import attribute)</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.Import.alias">alias (i2.footprints.Import attribute)</a>
+      <li><a href="_autosummary/i2.itypes.html#i2.itypes.ObjectClassifier.all_matches">all_matches() (i2.itypes.ObjectClassifier method)</a>
 </li>
-      <li><a href="module_docs/i2/itypes.html#i2.itypes.ObjectClassifier.all_matches">all_matches() (i2.itypes.ObjectClassifier method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.all_pk_signature">all_pk_signature() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.all_pk_signature">all_pk_signature() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.io_trans.html#i2.io_trans.AnnotAndDfltIoTrans">AnnotAndDfltIoTrans (class in i2.io_trans)</a>
 </li>
-      <li><a href="module_docs/i2/io_trans.html#i2.io_trans.AnnotAndDfltIoTrans">AnnotAndDfltIoTrans (class in i2.io_trans)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.annotations">annotations (i2.signatures.Sig property)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.annotations">annotations (i2.signatures.Sig property)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.append_empty_args">append_empty_args() (in module i2.wrapper)</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.append_empty_args">append_empty_args() (in module i2.wrapper)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.SigPair.are_call_compatible">are_call_compatible() (i2.signatures.SigPair method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.SigPair.are_call_compatible">are_call_compatible() (i2.signatures.SigPair method)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/io_trans.html#i2.io_trans.ArgnameIoTrans">ArgnameIoTrans (class in i2.io_trans)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.io_trans.html#i2.io_trans.ArgnameIoTrans">ArgnameIoTrans (class in i2.io_trans)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.args_and_kwargs_from_kwargs">args_and_kwargs_from_kwargs() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.args_and_kwargs_from_kwargs">args_and_kwargs_from_kwargs() (i2.signatures.Sig method)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.asis">asis() (in module i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.asis">asis() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.assert_attrs">assert_attrs() (in module i2.deco)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.assert_attrs">assert_attrs() (in module i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.assure_params">assure_params() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.assure_params">assure_params() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.attr_list">attr_list() (in module i2.footprints)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.attr_list">attr_list() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.attribute_dependencies">attribute_dependencies() (in module i2.footprints)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.attribute_dependencies">attribute_dependencies() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.AttributeMapping">AttributeMapping (class in i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.AttributeMapping">AttributeMapping (class in i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.AttributeMutableMapping">AttributeMutableMapping (class in i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.AttributeMutableMapping">AttributeMutableMapping (class in i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.AttributeVisitor">AttributeVisitor (class in i2.footprints)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.AttributeVisitor">AttributeVisitor (class in i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/scrap/switch_case_tree.html#i2.scrap.switch_case_tree.AttrMap">AttrMap (class in i2.scrap.switch_case_tree)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.attrs_used_by_method">attrs_used_by_method() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.attrs_used_by_method">attrs_used_by_method() (in module i2.footprints)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.attrs_used_by_method_computation">attrs_used_by_method_computation() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.attrs_used_by_method_computation">attrs_used_by_method_computation() (in module i2.footprints)</a>
+      <li><a href="_autosummary/i2.errors.html#i2.errors.AuthorizationError">AuthorizationError</a>
 </li>
-      <li><a href="module_docs/i2/errors.html#i2.errors.AuthorizationError">AuthorizationError</a>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.MultiObj.auto_namer">auto_namer() (i2.multi_object.MultiObj static method)</a>
 </li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.MultiObj.auto_namer">auto_namer() (i2.multi_object.MultiObj static method)</a>
-</li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.AUTO_PRESERVE_SIGNATURE">AUTO_PRESERVE_SIGNATURE (in module i2.wrapper)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.AUTO_PRESERVE_SIGNATURE">AUTO_PRESERVE_SIGNATURE (in module i2.wrapper)</a>
 </li>
   </ul></td>
-</tr></table>
-
-<h2 id="B">B</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.bind_funcs_object_attrs">bind_funcs_object_attrs() (in module i2.wrapper)</a>
+  </tr>
+      </table>
+  
+  <h2 id="B">B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.bind_funcs_object_attrs">bind_funcs_object_attrs() (in module i2.wrapper)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.bind_funcs_object_attrs_old">bind_funcs_object_attrs_old() (in module i2.wrapper)</a>
-</li>
-      <li><a href="module_docs/i2/tests/util.html#i2.tests.util.builtin_signatureless_callables">builtin_signatureless_callables() (in module i2.tests.util)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.bind_funcs_object_attrs_old">bind_funcs_object_attrs_old() (in module i2.wrapper)</a>
 </li>
   </ul></td>
-</tr></table>
+  </tr>
+      </table>
+  
+  <h2 id="C">C</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.call_forgivingly">call_forgivingly() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.call_somewhat_forgivingly">call_somewhat_forgivingly() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.CallerValidationError">CallerValidationError</a>
+</li>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.camelize">camelize() (in module i2.wrapper)</a>
+</li>
+      <li><a href="_autosummary/i2.io_trans.html#i2.io_trans.cast_to_jdict">cast_to_jdict() (in module i2.io_trans)</a>
+</li>
+      <li><a href="_autosummary/i2.io_trans.html#i2.io_trans.cast_to_list">cast_to_list() (in module i2.io_trans)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.ch_func_to_all_pk">ch_func_to_all_pk() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.ch_param_attrs">ch_param_attrs() (i2.signatures.Sig method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.ch_signature_to_all_pk">ch_signature_to_all_pk() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.ch_variadics_to_non_variadic_kind">ch_variadics_to_non_variadic_kind() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.chain_map.html#i2.chain_map.ChainMapTree">ChainMapTree (class in i2.chain_map)</a>
+</li>
+      <li><a href="_autosummary/i2.util.html#i2.util.FrozenDict.clear">clear() (i2.util.FrozenDict method)</a>
 
-<h2 id="C">C</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.call_forgivingly">call_forgivingly() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.call_somewhat_forgivingly">call_somewhat_forgivingly() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.CallerValidationError">CallerValidationError</a>
-</li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.camelize">camelize() (in module i2.wrapper)</a>
-</li>
-      <li><a href="module_docs/i2/examples/castgraph_examples.html#i2.examples.castgraph_examples.CanonicalRecord">CanonicalRecord (class in i2.examples.castgraph_examples)</a>
-</li>
-      <li><a href="module_docs/i2/io_trans.html#i2.io_trans.cast_to_jdict">cast_to_jdict() (in module i2.io_trans)</a>
-</li>
-      <li><a href="module_docs/i2/io_trans.html#i2.io_trans.cast_to_list">cast_to_list() (in module i2.io_trans)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.ch_func_to_all_pk">ch_func_to_all_pk() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.ch_param_attrs">ch_param_attrs() (i2.signatures.Sig method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.ch_signature_to_all_pk">ch_signature_to_all_pk() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.ch_variadics_to_non_variadic_kind">ch_variadics_to_non_variadic_kind() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/chain_map.html#i2.chain_map.ChainMapTree">ChainMapTree (class in i2.chain_map)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.FrozenDict.clear">clear() (i2.util.FrozenDict method)</a>
-
-      <ul>
-        <li><a href="module_docs/i2/util.html#i2.util.imdict.clear">(i2.util.imdict method)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.util.html#i2.util.imdict.clear">(i2.util.imdict method)</a>
 </li>
       </ul></li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/_deprecated.html#i2._deprecated.Command">Command (class in i2._deprecated)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.common_and_diff_argnames">common_and_diff_argnames() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/_deprecated.html#i2._deprecated.commands_dict">commands_dict() (in module i2._deprecated)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.complete_dict_applying_functions">complete_dict_applying_functions() (in module i2.wrapper)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.common_and_diff_argnames">common_and_diff_argnames() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.ConditionalExceptionCatcher">ConditionalExceptionCatcher (class in i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.complete_dict_applying_functions">complete_dict_applying_functions() (in module i2.wrapper)</a>
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.CondNode">CondNode (class in i2.routing_forest)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.ConditionalExceptionCatcher">ConditionalExceptionCatcher (class in i2.util)</a>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.ContextFanout">ContextFanout (class in i2.multi_object)</a>
 </li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.CondNode">CondNode (class in i2.routing_forest)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.ConversionError">ConversionError</a>
 </li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.ContextFanout">ContextFanout (class in i2.multi_object)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.ConversionRegistry">ConversionRegistry (class in i2.castgraph)</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.ConversionError">ConversionError</a>
-</li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.ConversionRegistry">ConversionRegistry (class in i2.castgraph)</a>
-</li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.ConversionRegistry.convert">convert() (i2.castgraph.ConversionRegistry method)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.ConversionRegistry.convert">convert() (i2.castgraph.ConversionRegistry method)</a>
 
-      <ul>
-        <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.convert">(i2.castgraph.TransformationGraph method)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.convert">(i2.castgraph.TransformationGraph method)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.copy_func">copy_func() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.copy_func">copy_func() (in module i2.signatures)</a>
 
-      <ul>
-        <li><a href="module_docs/i2/util.html#i2.util.copy_func">(in module i2.util)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.util.html#i2.util.copy_func">(in module i2.util)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/i2/_deprecated.html#i2._deprecated.Command.curried">curried() (i2._deprecated.Command class method)</a>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="D">D</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.errors.html#i2.errors.DataError">DataError</a>
+</li>
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.KeyFuncMapping.default_factory">default_factory() (i2.routing_forest.KeyFuncMapping method)</a>
+</li>
+      <li><a href="_autosummary/i2.util.html#i2.util.FolderSpec.default_path">default_path (i2.util.FolderSpec attribute)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.defaults">defaults (i2.signatures.Sig property)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.defaults_are_the_same_when_not_empty">defaults_are_the_same_when_not_empty() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.DelegateToMappingAttrMixin">DelegateToMappingAttrMixin (class in i2.routing_forest)</a>
+</li>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.design_guidelines">design_guidelines() (in module i2.castgraph)</a>
+</li>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.detect_kind">detect_kind() (i2.castgraph.TransformationGraph method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.dflt1_is_empty_or_dflt2_is_not">dflt1_is_empty_or_dflt2_is_not() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.dflt1_is_empty_or_dflt2_is_not_param_comparator">dflt1_is_empty_or_dflt2_is_not_param_comparator() (in module i2.signatures)</a>
 </li>
   </ul></td>
-</tr></table>
-
-<h2 id="D">D</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/errors.html#i2.errors.DataError">DataError</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.dict_of_attribute_signatures">dict_of_attribute_signatures() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/scrap/scrap.html#i2.scrap.scrap.default_caller">default_caller() (in module i2.scrap.scrap)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.dict_to_graph">dict_to_graph() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.KeyFuncMapping.default_factory">default_factory() (i2.routing_forest.KeyFuncMapping method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.SigPair.diff">diff() (i2.signatures.SigPair method)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.FolderSpec.default_path">default_path (i2.util.FolderSpec attribute)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.SigPair.diff_str">diff_str() (i2.signatures.SigPair method)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.defaults">defaults (i2.signatures.Sig property)</a>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.docstring_to_params">docstring_to_params() (in module i2.doc_mint)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.defaults_are_the_same_when_not_empty">defaults_are_the_same_when_not_empty() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.doctest_string">doctest_string() (in module i2.doc_mint)</a>
 </li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.DelegateToMappingAttrMixin">DelegateToMappingAttrMixin (class in i2.routing_forest)</a>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.doctest_string_print">doctest_string_print() (in module i2.doc_mint)</a>
 </li>
-      <li><a href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_attribute_syntax">demo_attribute_syntax() (in module i2.tests.test_ingress_demo)</a>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.DoctestBlock">DoctestBlock (class in i2.doc_mint)</a>
 </li>
-      <li><a href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_attribute_with_arg_name">demo_attribute_with_arg_name() (in module i2.tests.test_ingress_demo)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.double_up_as_factory">double_up_as_factory() (in module i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_basic_usage">demo_basic_usage() (in module i2.tests.test_ingress_demo)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.dp_get">dp_get() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_explicit_arg_name">demo_explicit_arg_name() (in module i2.tests.test_ingress_demo)</a>
-</li>
-      <li><a href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.demo_func_1">demo_func_1() (in module i2.tests.objects_for_testing)</a>
-</li>
-      <li><a href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.demo_func_2">demo_func_2() (in module i2.tests.objects_for_testing)</a>
-</li>
-      <li><a href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_multi_hop">demo_multi_hop() (in module i2.tests.test_ingress_demo)</a>
-</li>
-      <li><a href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_real_world_pipeline">demo_real_world_pipeline() (in module i2.tests.test_ingress_demo)</a>
+      <li><a href="_autosummary/i2.errors.html#i2.errors.DuplicateRecordError">DuplicateRecordError</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_with_context">demo_with_context() (in module i2.tests.test_ingress_demo)</a>
+  </tr>
+      </table>
+  
+  <h2 id="E">E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.Edge">Edge (class in i2.castgraph)</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.design_guidelines">design_guidelines() (in module i2.castgraph)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.EgressValidationError">EgressValidationError</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.detect_kind">detect_kind() (i2.castgraph.TransformationGraph method)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.ensure_ast">ensure_ast() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.dflt1_is_empty_or_dflt2_is_not">dflt1_is_empty_or_dflt2_is_not() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.ensure_identifiers">ensure_identifiers() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.dflt1_is_empty_or_dflt2_is_not_param_comparator">dflt1_is_empty_or_dflt2_is_not_param_comparator() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.ensure_iterable_args">ensure_iterable_args() (in module i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.dict_of_attribute_signatures">dict_of_attribute_signatures() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.ensure_iterable_of_callables">ensure_iterable_of_callables() (in module i2.multi_object)</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.dict_to_graph">dict_to_graph() (in module i2.footprints)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.ensure_params">ensure_params() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.SigPair.diff">diff() (i2.signatures.SigPair method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.SigPair.diff_str">diff_str() (i2.signatures.SigPair method)</a>
-</li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.docstring_to_params">docstring_to_params() (in module i2.doc_mint)</a>
-</li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.doctest_string">doctest_string() (in module i2.doc_mint)</a>
-</li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.doctest_string_print">doctest_string_print() (in module i2.doc_mint)</a>
-</li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.DoctestBlock">DoctestBlock (class in i2.doc_mint)</a>
-</li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.double_up_as_factory">double_up_as_factory() (in module i2.deco)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.dp_get">dp_get() (in module i2.util)</a>
-</li>
-      <li><a href="module_docs/i2/errors.html#i2.errors.DuplicateRecordError">DuplicateRecordError</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FolderSpec.env_var">env_var (i2.util.FolderSpec attribute)</a>
 </li>
   </ul></td>
-</tr></table>
-
-<h2 id="E">E</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.Edge">Edge (class in i2.castgraph)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.ExampleX">ExampleX (class in i2.doc_mint)</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.EgressValidationError">EgressValidationError</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.ExistingArgument">ExistingArgument</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.ensure_ast">ensure_ast() (in module i2.footprints)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.extract_args_and_kwargs">extract_args_and_kwargs() (i2.signatures.Sig method)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.ensure_identifiers">ensure_identifiers() (in module i2.util)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.extract_arguments">extract_arguments() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.ensure_iterable_args">ensure_iterable_args() (in module i2.deco)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.extract_arguments_asserting_no_remainder">extract_arguments_asserting_no_remainder() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.ensure_iterable_of_callables">ensure_iterable_of_callables() (in module i2.multi_object)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.extract_arguments_ignoring_remainder">extract_arguments_ignoring_remainder() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.ensure_params">ensure_params() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.extract_key_paths">extract_key_paths() (i2.key_path.KeyPathTrans method)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.FolderSpec.env_var">env_var (i2.util.FolderSpec attribute)</a>
-</li>
-      <li><a href="module_docs/i2/examples/castgraph_examples.html#i2.examples.castgraph_examples.example_registry">example_registry() (in module i2.examples.castgraph_examples)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.extract_kwargs">extract_kwargs() (i2.signatures.Sig method)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.ExampleX">ExampleX (class in i2.doc_mint)</a>
+  </tr>
+      </table>
+  
+  <h2 id="F">F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.FeatCondNode">FeatCondNode (class in i2.routing_forest)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.ExistingArgument">ExistingArgument</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FileLikeObject">FileLikeObject() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.extract_args_and_kwargs">extract_args_and_kwargs() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.FinalNode">FinalNode (class in i2.routing_forest)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.extract_arguments">extract_arguments() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.find_in_params">find_in_params() (in module i2.doc_mint)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.extract_arguments_asserting_no_remainder">extract_arguments_asserting_no_remainder() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.key_path.html#i2.key_path.flatten_dict">flatten_dict() (in module i2.key_path)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.extract_arguments_ignoring_remainder">extract_arguments_ignoring_remainder() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.flatten_pipe">flatten_pipe() (in module i2.multi_object)</a>
 </li>
-      <li><a href="module_docs/i2/_deprecated.html#i2._deprecated.extract_commands">extract_commands() (in module i2._deprecated)</a>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.FlexFuncFanout">FlexFuncFanout (class in i2.multi_object)</a>
 </li>
-      <li><a href="module_docs/i2/key_path.html#i2.key_path.KeyPathTrans.extract_key_paths">extract_key_paths() (i2.key_path.KeyPathTrans method)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FolderSpec">FolderSpec (class in i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.extract_kwargs">extract_kwargs() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.errors.html#i2.errors.ForbiddenError">ForbiddenError</a>
 </li>
-  </ul></td>
-</tr></table>
-
-<h2 id="F">F</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.f">f() (in module i2.tests.objects_for_testing)</a>
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.FeatCondNode.from_feature_val_map">from_feature_val_map() (i2.routing_forest.FeatCondNode class method)</a>
 </li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.FeatCondNode">FeatCondNode (class in i2.routing_forest)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FunctionBuilder.from_func">from_func() (i2.util.FunctionBuilder class method)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.FileLikeObject">FileLikeObject() (in module i2.util)</a>
-</li>
-      <li><a href="module_docs/i2/examples/castgraph_examples.html#i2.examples.castgraph_examples.FilePath">FilePath (class in i2.examples.castgraph_examples)</a>
-</li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.FinalNode">FinalNode (class in i2.routing_forest)</a>
-</li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.find_in_params">find_in_params() (in module i2.doc_mint)</a>
-</li>
-      <li><a href="module_docs/i2/key_path.html#i2.key_path.flatten_dict">flatten_dict() (in module i2.key_path)</a>
-</li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.flatten_pipe">flatten_pipe() (in module i2.multi_object)</a>
-</li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.FlexFuncFanout">FlexFuncFanout (class in i2.multi_object)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.FolderSpec">FolderSpec (class in i2.util)</a>
-</li>
-      <li><a href="module_docs/i2/errors.html#i2.errors.ForbiddenError">ForbiddenError</a>
-</li>
-      <li><a href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.formula1">formula1() (in module i2.tests.objects_for_testing)</a>
-</li>
-      <li><a href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.formula2">formula2() (in module i2.tests.objects_for_testing)</a>
-</li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.FeatCondNode.from_feature_val_map">from_feature_val_map() (i2.routing_forest.FeatCondNode class method)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.AttributeMapping.from_mapping">from_mapping() (i2.util.AttributeMapping class method)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/util.html#i2.util.FunctionBuilder.from_func">from_func() (i2.util.FunctionBuilder class method)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.RoutingNode.from_object">from_object() (i2.routing_forest.RoutingNode static method)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.AttributeMapping.from_mapping">from_mapping() (i2.util.AttributeMapping class method)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.InnerMapIngress.from_signature">from_signature() (i2.wrapper.InnerMapIngress class method)</a>
 </li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.RoutingNode.from_object">from_object() (i2.routing_forest.RoutingNode static method)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FrozenDict.fromkeys">fromkeys() (i2.util.FrozenDict class method)</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.InnerMapIngress.from_signature">from_signature() (i2.wrapper.InnerMapIngress class method)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FrozenDict">FrozenDict (class in i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.FrozenDict.fromkeys">fromkeys() (i2.util.FrozenDict class method)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.frozendict">frozendict (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.FrozenDict">FrozenDict (class in i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FrozenHashError">FrozenHashError</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.frozendict">frozendict (in module i2.util)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.func_to_method_func">func_to_method_func() (in module i2.wrapper)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.FrozenHashError">FrozenHashError</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.FuncCallNotMatchingSignature">FuncCallNotMatchingSignature</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.func_to_method_func">func_to_method_func() (in module i2.wrapper)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.FuncFactory">FuncFactory (class in i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.FuncCallNotMatchingSignature">FuncCallNotMatchingSignature</a>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.FuncFanout">FuncFanout (class in i2.multi_object)</a>
 </li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.FuncFactory">FuncFactory (class in i2.deco)</a>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.MultiFunc.funcs">funcs (i2.multi_object.MultiFunc property)</a>
 </li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.FuncFanout">FuncFanout (class in i2.multi_object)</a>
-</li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.MultiFunc.funcs">funcs (i2.multi_object.MultiFunc property)</a>
-</li>
-      <li><a href="module_docs/i2/tests/util.html#i2.tests.util.function_is_compatible_with_signature">function_is_compatible_with_signature() (in module i2.tests.util)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.FunctionBuilder">FunctionBuilder (class in i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FunctionBuilder">FunctionBuilder (class in i2.util)</a>
 </li>
   </ul></td>
-</tr></table>
-
-<h2 id="G">G</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/tests/util.html#i2.tests.util.generate_params">generate_params() (in module i2.tests.util)</a>
+  </tr>
+      </table>
+  
+  <h2 id="G">G</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.util.html#i2.util.get_app_config_folder">get_app_config_folder() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.get_app_config_folder">get_app_config_folder() (in module i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.get_app_data_folder">get_app_data_folder() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.get_app_data_folder">get_app_data_folder() (in module i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.get_app_folder">get_app_folder() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.get_app_folder">get_app_folder() (in module i2.util)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.get_callable_from_factory_if_no_arguments">get_callable_from_factory_if_no_arguments() (in module i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.get_callable_from_factory_if_no_arguments">get_callable_from_factory_if_no_arguments() (in module i2.deco)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.get_class_that_defined_method">get_class_that_defined_method() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.get_class_that_defined_method">get_class_that_defined_method() (in module i2.footprints)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FunctionBuilder.get_defaults_dict">get_defaults_dict() (i2.util.FunctionBuilder method)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.FunctionBuilder.get_defaults_dict">get_defaults_dict() (i2.util.FunctionBuilder method)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.FunctionBuilder.get_func">get_func() (i2.util.FunctionBuilder method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/util.html#i2.util.get_function_body">get_function_body() (in module i2.util)</a>
-</li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.get_imports_from_obj">get_imports_from_obj() (in module i2.footprints)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.get_names">get_names() (i2.signatures.Sig method)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.FunctionBuilder.get_sig_str">get_sig_str() (i2.util.FunctionBuilder method)</a>
-</li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.get_source">get_source() (in module i2.footprints)</a>
-</li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.get_transformer">get_transformer() (i2.castgraph.TransformationGraph method)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.LiteralVal.get_val">get_val() (i2.util.LiteralVal method)</a>
-</li>
-      <li><a href="module_docs/i2/key_path.html#i2.key_path.KeyPathTrans.getitem">getitem() (i2.key_path.KeyPathTrans method)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FunctionBuilder.get_func">get_func() (i2.util.FunctionBuilder method)</a>
 </li>
   </ul></td>
-</tr></table>
-
-<h2 id="H">H</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/errors.html#i2.errors.HandleExceptions">HandleExceptions (class in i2.errors)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.util.html#i2.util.get_function_body">get_function_body() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.has_signature">has_signature() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.get_imports_from_obj">get_imports_from_obj() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.has_var_keyword">has_var_keyword (i2.signatures.Sig property)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.get_names">get_names() (i2.signatures.Sig method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.has_var_kinds">has_var_kinds (i2.signatures.Sig property)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FunctionBuilder.get_sig_str">get_sig_str() (i2.util.FunctionBuilder method)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.has_var_positional">has_var_positional (i2.signatures.Sig property)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.get_source">get_source() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/itypes.html#i2.itypes.HasAttrs">HasAttrs (class in i2.itypes)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.get_transformer">get_transformer() (i2.castgraph.TransformationGraph method)</a>
+</li>
+      <li><a href="_autosummary/i2.util.html#i2.util.LiteralVal.get_val">get_val() (i2.util.LiteralVal method)</a>
+</li>
+      <li><a href="_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.getitem">getitem() (i2.key_path.KeyPathTrans method)</a>
 </li>
   </ul></td>
-</tr></table>
-
-<h2 id="I">I</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
+  </tr>
+      </table>
+  
+  <h2 id="H">H</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.errors.html#i2.errors.HandleExceptions">HandleExceptions (class in i2.errors)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.has_signature">has_signature() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.has_var_keyword">has_var_keyword (i2.signatures.Sig property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.has_var_kinds">has_var_kinds (i2.signatures.Sig property)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.has_var_positional">has_var_positional (i2.signatures.Sig property)</a>
+</li>
+      <li><a href="_autosummary/i2.itypes.html#i2.itypes.HasAttrs">HasAttrs (class in i2.itypes)</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="I">I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
       <li>
     i2
 
-      <ul>
-        <li><a href="module_docs/i2.html#module-i2">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2._deprecated
-
-      <ul>
-        <li><a href="module_docs/i2/_deprecated.html#module-i2._deprecated">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.html#module-i2">module</a>
 </li>
       </ul></li>
       <li>
     i2.base
 
-      <ul>
-        <li><a href="module_docs/i2/base.html#module-i2.base">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.base.html#module-i2.base">module</a>
 </li>
       </ul></li>
       <li>
     i2.castgraph
 
-      <ul>
-        <li><a href="module_docs/i2/castgraph.html#module-i2.castgraph">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.castgraph.html#module-i2.castgraph">module</a>
 </li>
       </ul></li>
       <li>
     i2.chain_map
 
-      <ul>
-        <li><a href="module_docs/i2/chain_map.html#module-i2.chain_map">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.chain_map.html#module-i2.chain_map">module</a>
 </li>
       </ul></li>
       <li>
     i2.deco
 
-      <ul>
-        <li><a href="module_docs/i2/deco.html#module-i2.deco">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.deco.html#module-i2.deco">module</a>
 </li>
       </ul></li>
       <li>
     i2.doc_mint
 
-      <ul>
-        <li><a href="module_docs/i2/doc_mint.html#module-i2.doc_mint">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.doc_mint.html#module-i2.doc_mint">module</a>
 </li>
       </ul></li>
       <li>
     i2.errors
 
-      <ul>
-        <li><a href="module_docs/i2/errors.html#module-i2.errors">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.examples
-
-      <ul>
-        <li><a href="module_docs/i2/examples.html#module-i2.examples">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.examples.castgraph_examples
-
-      <ul>
-        <li><a href="module_docs/i2/examples/castgraph_examples.html#module-i2.examples.castgraph_examples">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.examples.signature_calculus
-
-      <ul>
-        <li><a href="module_docs/i2/examples/signature_calculus.html#module-i2.examples.signature_calculus">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.errors.html#module-i2.errors">module</a>
 </li>
       </ul></li>
       <li>
     i2.footprints
 
-      <ul>
-        <li><a href="module_docs/i2/footprints.html#module-i2.footprints">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.footprints.html#module-i2.footprints">module</a>
 </li>
       </ul></li>
       <li>
     i2.io_trans
 
-      <ul>
-        <li><a href="module_docs/i2/io_trans.html#module-i2.io_trans">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.io_trans.html#module-i2.io_trans">module</a>
 </li>
       </ul></li>
       <li>
     i2.itypes
 
-      <ul>
-        <li><a href="module_docs/i2/itypes.html#module-i2.itypes">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.itypes.html#module-i2.itypes">module</a>
 </li>
       </ul></li>
       <li>
     i2.key_path
 
-      <ul>
-        <li><a href="module_docs/i2/key_path.html#module-i2.key_path">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.key_path.html#module-i2.key_path">module</a>
 </li>
       </ul></li>
       <li>
     i2.multi_object
 
-      <ul>
-        <li><a href="module_docs/i2/multi_object.html#module-i2.multi_object">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.multi_object.html#module-i2.multi_object">module</a>
 </li>
       </ul></li>
       <li>
     i2.routing_forest
 
-      <ul>
-        <li><a href="module_docs/i2/routing_forest.html#module-i2.routing_forest">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.scrap
-
-      <ul>
-        <li><a href="module_docs/i2/scrap.html#module-i2.scrap">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.scrap.scrap
-
-      <ul>
-        <li><a href="module_docs/i2/scrap/scrap.html#module-i2.scrap.scrap">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.scrap.scrap_ch_variadics
-
-      <ul>
-        <li><a href="module_docs/i2/scrap/scrap_ch_variadics.html#module-i2.scrap.scrap_ch_variadics">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.scrap.scrap_kwargs
-
-      <ul>
-        <li><a href="module_docs/i2/scrap/scrap_kwargs.html#module-i2.scrap.scrap_kwargs">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.scrap.signature_bops
-
-      <ul>
-        <li><a href="module_docs/i2/scrap/signature_bops.html#module-i2.scrap.signature_bops">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.scrap.simple_pymint
-
-      <ul>
-        <li><a href="module_docs/i2/scrap/simple_pymint.html#module-i2.scrap.simple_pymint">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.scrap.switch_case_tree
-
-      <ul>
-        <li><a href="module_docs/i2/scrap/switch_case_tree.html#module-i2.scrap.switch_case_tree">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.routing_forest.html#module-i2.routing_forest">module</a>
 </li>
       </ul></li>
       <li>
     i2.signatures
 
-      <ul>
-        <li><a href="module_docs/i2/signatures.html#module-i2.signatures">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.tests
-
-      <ul>
-        <li><a href="module_docs/i2/tests.html#module-i2.tests">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.tests.footprints_test
-
-      <ul>
-        <li><a href="module_docs/i2/tests/footprints_test.html#module-i2.tests.footprints_test">module</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    i2.tests.objects_for_testing
-
-      <ul>
-        <li><a href="module_docs/i2/tests/objects_for_testing.html#module-i2.tests.objects_for_testing">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.tests.test_ingress_demo
-
-      <ul>
-        <li><a href="module_docs/i2/tests/test_ingress_demo.html#module-i2.tests.test_ingress_demo">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.tests.test_util
-
-      <ul>
-        <li><a href="module_docs/i2/tests/test_util.html#module-i2.tests.test_util">module</a>
-</li>
-      </ul></li>
-      <li>
-    i2.tests.util
-
-      <ul>
-        <li><a href="module_docs/i2/tests/util.html#module-i2.tests.util">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.signatures.html#module-i2.signatures">module</a>
 </li>
       </ul></li>
       <li>
     i2.util
 
-      <ul>
-        <li><a href="module_docs/i2/util.html#module-i2.util">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.util.html#module-i2.util">module</a>
 </li>
       </ul></li>
       <li>
     i2.wrapper
 
-      <ul>
-        <li><a href="module_docs/i2/wrapper.html#module-i2.wrapper">module</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.wrapper.html#module-i2.wrapper">module</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.identity">identity() (in module i2.wrapper)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.identity">identity() (in module i2.wrapper)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.ignore_exception">ignore_exception() (in module i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.ignore_exception">ignore_exception() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.imdict">imdict (class in i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.imdict">imdict (class in i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.Import">Import (class in i2.footprints)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.Import">Import (class in i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.include_exclude_ingress_factory">include_exclude_ingress_factory() (in module i2.wrapper)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.include_exclude_ingress_factory">include_exclude_ingress_factory() (in module i2.wrapper)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.IncompatibleSignatures">IncompatibleSignatures</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.IncompatibleSignatures">IncompatibleSignatures</a>
 </li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.indent_lines">indent_lines() (in module i2.doc_mint)</a>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.indent_lines">indent_lines() (in module i2.doc_mint)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.index_of_var_keyword">index_of_var_keyword (i2.signatures.Sig property)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.index_of_var_keyword">index_of_var_keyword (i2.signatures.Sig property)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.index_of_var_positional">index_of_var_positional (i2.signatures.Sig property)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.index_of_var_positional">index_of_var_positional (i2.signatures.Sig property)</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.Ingress">Ingress (class in i2.wrapper)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.Ingress">Ingress (class in i2.wrapper)</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.ingress">ingress (i2.castgraph.TransformationGraph property)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.ingress">ingress (i2.castgraph.TransformationGraph property)</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.IngressValidationError">IngressValidationError</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.IngressValidationError">IngressValidationError</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.init_argument_names">init_argument_names() (in module i2.footprints)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.init_argument_names">init_argument_names() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/tests/util.html#i2.tests.util.inject_defaults">inject_defaults() (in module i2.tests.util)</a>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.inject_docstring_content">inject_docstring_content() (in module i2.doc_mint)</a>
 </li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.inject_docstring_content">inject_docstring_content() (in module i2.doc_mint)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.inject_into_keyword_variadic">inject_into_keyword_variadic (i2.signatures.Sig property)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.inject_into_keyword_variadic">inject_into_keyword_variadic (i2.signatures.Sig property)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.inject_method">inject_method() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.inject_method">inject_method() (in module i2.util)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.InnerMapIngress">InnerMapIngress (class in i2.wrapper)</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.InnerMapIngress">InnerMapIngress (class in i2.wrapper)</a>
+      <li><a href="_autosummary/i2.itypes.html#i2.itypes.input_and_output_types">input_and_output_types() (in module i2.itypes)</a>
 </li>
-      <li><a href="module_docs/i2/itypes.html#i2.itypes.input_and_output_types">input_and_output_types() (in module i2.itypes)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.input_output_decorator">input_output_decorator() (in module i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.input_output_decorator">input_output_decorator() (in module i2.deco)</a>
+      <li><a href="_autosummary/i2.errors.html#i2.errors.InputError">InputError</a>
 </li>
-      <li><a href="module_docs/i2/errors.html#i2.errors.InputError">InputError</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.insert_annotations">insert_annotations() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.insert_annotations">insert_annotations() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.insert_name_based_objects_in_scope">insert_name_based_objects_in_scope() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.insert_name_based_objects_in_scope">insert_name_based_objects_in_scope() (in module i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.inspect_formatargspec">inspect_formatargspec() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.inspect_formatargspec">inspect_formatargspec() (in module i2.util)</a>
+      <li><a href="_autosummary/i2.errors.html#i2.errors.InterruptWithBlock">InterruptWithBlock</a>
 </li>
-      <li><a href="module_docs/i2/errors.html#i2.errors.InterruptWithBlock">InterruptWithBlock</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.InvalidSignature">InvalidSignature</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.InvalidSignature">InvalidSignature</a>
+      <li><a href="_autosummary/i2.io_trans.html#i2.io_trans.IoTrans">IoTrans (class in i2.io_trans)</a>
 </li>
-      <li><a href="module_docs/i2/io_trans.html#i2.io_trans.IoTrans">IoTrans (class in i2.io_trans)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.is_call_compatible_with">is_call_compatible_with() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.is_call_compatible_with">is_call_compatible_with() (i2.signatures.Sig method)</a>
 
-      <ul>
-        <li><a href="module_docs/i2/signatures.html#i2.signatures.is_call_compatible_with">(in module i2.signatures)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.signatures.html#i2.signatures.is_call_compatible_with">(in module i2.signatures)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/i2/itypes.html#i2.itypes.is_callable_kind">is_callable_kind() (in module i2.itypes)</a>
+      <li><a href="_autosummary/i2.itypes.html#i2.itypes.is_callable_kind">is_callable_kind() (in module i2.itypes)</a>
 </li>
-      <li><a href="module_docs/i2/chain_map.html#i2.chain_map.is_iterable">is_iterable() (in module i2.chain_map)</a>
+      <li><a href="_autosummary/i2.chain_map.html#i2.chain_map.is_iterable">is_iterable() (in module i2.chain_map)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.is_signature_error">is_signature_error() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.is_signature_error">is_signature_error() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.Kind.isa">isa() (i2.castgraph.Kind method)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.Kind.isa">isa() (i2.castgraph.Kind method)</a>
 </li>
-      <li><a href="module_docs/i2/base.html#i2.base.Mint.items">items() (i2.base.Mint method)</a>
+      <li><a href="_autosummary/i2.base.html#i2.base.Mint.items">items() (i2.base.Mint method)</a>
 
-      <ul>
-        <li><a href="module_docs/i2/base.html#i2.base.ParametersMint.items">(i2.base.ParametersMint method)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.base.html#i2.base.ParametersMint.items">(i2.base.ParametersMint method)</a>
 </li>
-        <li><a href="module_docs/i2/key_path.html#i2.key_path.KeyPathMap.items">(i2.key_path.KeyPathMap method)</a>
+        <li><a href="_autosummary/i2.key_path.html#i2.key_path.KeyPathMap.items">(i2.key_path.KeyPathMap method)</a>
 </li>
-        <li><a href="module_docs/i2/key_path.html#i2.key_path.KeyPathTrans.items">(i2.key_path.KeyPathTrans method)</a>
+        <li><a href="_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.items">(i2.key_path.KeyPathTrans method)</a>
 </li>
-        <li><a href="module_docs/i2/key_path.html#i2.key_path.StrKeyPath.items">(i2.key_path.StrKeyPath method)</a>
+        <li><a href="_autosummary/i2.key_path.html#i2.key_path.StrKeyPath.items">(i2.key_path.StrKeyPath method)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.items_with_mapped_keys">items_with_mapped_keys() (in module i2.wrapper)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.items_with_mapped_keys">items_with_mapped_keys() (in module i2.wrapper)</a>
 </li>
-      <li><a href="module_docs/i2/itypes.html#i2.itypes.iterable_to_literal">iterable_to_literal() (in module i2.itypes)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="J">J</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/io_trans.html#i2.io_trans.JSONAnnotAndDfltIoTrans">JSONAnnotAndDfltIoTrans (class in i2.io_trans)</a>
+      <li><a href="_autosummary/i2.itypes.html#i2.itypes.iterable_to_literal">iterable_to_literal() (in module i2.itypes)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/examples/castgraph_examples.html#i2.examples.castgraph_examples.JSONDict">JSONDict (class in i2.examples.castgraph_examples)</a>
+  </tr>
+      </table>
+  
+  <h2 id="J">J</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.io_trans.html#i2.io_trans.JSONAnnotAndDfltIoTrans">JSONAnnotAndDfltIoTrans (class in i2.io_trans)</a>
 </li>
   </ul></td>
-</tr></table>
-
-<h2 id="K">K</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/scrap/signature_bops.html#i2.scrap.signature_bops.keyed_comparator">keyed_comparator() (in module i2.scrap.signature_bops)</a>
-
-      <ul>
-        <li><a href="module_docs/i2/signatures.html#i2.signatures.keyed_comparator">(in module i2.signatures)</a>
+  </tr>
+      </table>
+  
+  <h2 id="K">K</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.keyed_comparator">keyed_comparator() (in module i2.signatures)</a>
 </li>
-      </ul></li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.KeyFuncMapping">KeyFuncMapping (class in i2.routing_forest)</a>
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.KeyFuncMapping">KeyFuncMapping (class in i2.routing_forest)</a>
 </li>
-      <li><a href="module_docs/i2/key_path.html#i2.key_path.KeyPathMap">KeyPathMap (class in i2.key_path)</a>
+      <li><a href="_autosummary/i2.key_path.html#i2.key_path.KeyPathMap">KeyPathMap (class in i2.key_path)</a>
 </li>
-      <li><a href="module_docs/i2/key_path.html#i2.key_path.KeyPathTrans">KeyPathTrans (class in i2.key_path)</a>
+      <li><a href="_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans">KeyPathTrans (class in i2.key_path)</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.Kind">Kind (class in i2.castgraph)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.Kind">Kind (class in i2.castgraph)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.kind_forgiving_func">kind_forgiving_func() (in module i2.signatures)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.kind_forgiving_func">kind_forgiving_func() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.KindMatch">KindMatch (class in i2.castgraph)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.KindMatch">KindMatch (class in i2.castgraph)</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.kinds">kinds() (i2.castgraph.TransformationGraph method)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.kinds">kinds() (i2.castgraph.TransformationGraph method)</a>
 </li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.kwargs_for_func">kwargs_for_func() (in module i2.deco)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.kwargs_for_func">kwargs_for_func() (in module i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.kwargs_from_args_and_kwargs">kwargs_from_args_and_kwargs() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.kwargs_from_args_and_kwargs">kwargs_from_args_and_kwargs() (i2.signatures.Sig method)</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.kwargs_trans">kwargs_trans() (in module i2.wrapper)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="L">L</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/util.html#i2.util.lambda_code">lambda_code() (in module i2.util)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.lazyprop">lazyprop (class in i2.util)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.kwargs_trans">kwargs_trans() (in module i2.wrapper)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.list_func_calls">list_func_calls() (in module i2.footprints)</a>
+  </tr>
+      </table>
+  
+  <h2 id="L">L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.util.html#i2.util.lambda_code">lambda_code() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.LiteralVal">LiteralVal (class in i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.lazyprop">lazyprop (class in i2.util)</a>
 </li>
   </ul></td>
-</tr></table>
-
-<h2 id="M">M</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.MakeFromFunc">MakeFromFunc (class in i2.wrapper)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.list_func_calls">list_func_calls() (in module i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.map_arguments">map_arguments() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.LiteralVal">LiteralVal (class in i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.map_arguments_from_variadics">map_arguments_from_variadics() (i2.signatures.Sig method)</a>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="M">M</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.MakeFromFunc">MakeFromFunc (class in i2.wrapper)</a>
 </li>
-      <li><a href="module_docs/i2/itypes.html#i2.itypes.ObjectClassifier.matches">matches() (i2.itypes.ObjectClassifier method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.map_arguments">map_arguments() (i2.signatures.Sig method)</a>
 </li>
-      <li><a href="module_docs/i2/itypes.html#i2.itypes.ObjectClassifier.matching_kind">matching_kind() (i2.itypes.ObjectClassifier method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.map_arguments_from_variadics">map_arguments_from_variadics() (i2.signatures.Sig method)</a>
 </li>
-      <li><a href="module_docs/i2/itypes.html#i2.itypes.ObjectClassifier.matching_kinds">matching_kinds() (i2.itypes.ObjectClassifier method)</a>
+      <li><a href="_autosummary/i2.itypes.html#i2.itypes.ObjectClassifier.matches">matches() (i2.itypes.ObjectClassifier method)</a>
 </li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.merge_unnamed_and_named">merge_unnamed_and_named() (in module i2.multi_object)</a>
+      <li><a href="_autosummary/i2.itypes.html#i2.itypes.ObjectClassifier.matching_kind">matching_kind() (i2.itypes.ObjectClassifier method)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.merge_with_sig">merge_with_sig() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.itypes.html#i2.itypes.ObjectClassifier.matching_kinds">matching_kinds() (i2.itypes.ObjectClassifier method)</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.MethodTrace">MethodTrace (class in i2.footprints)</a>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.merge_unnamed_and_named">merge_unnamed_and_named() (in module i2.multi_object)</a>
 </li>
-      <li><a href="module_docs/i2/base.html#i2.base.Mint">Mint (class in i2.base)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.merge_with_sig">merge_with_sig() (i2.signatures.Sig method)</a>
 </li>
-      <li><a href="module_docs/i2/scrap/simple_pymint.html#i2.scrap.simple_pymint.mint_of_callable">mint_of_callable() (in module i2.scrap.simple_pymint)</a>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.MethodTrace">MethodTrace (class in i2.footprints)</a>
 </li>
-      <li><a href="module_docs/i2/base.html#i2.base.MintOfCallable">MintOfCallable (class in i2.base)</a>
+      <li><a href="_autosummary/i2.base.html#i2.base.Mint">Mint (class in i2.base)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.MissingArgument">MissingArgument</a>
+      <li><a href="_autosummary/i2.base.html#i2.base.MintOfCallable">MintOfCallable (class in i2.base)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.MissingArgValFor">MissingArgValFor (class in i2.signatures)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.MissingArgument">MissingArgument</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.mk_args_and_kwargs">mk_args_and_kwargs() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.MissingArgValFor">MissingArgValFor (class in i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.mk_args_kwargs_merger">mk_args_kwargs_merger() (in module i2.deco)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.mk_args_and_kwargs">mk_args_and_kwargs() (i2.signatures.Sig method)</a>
 </li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.mk_call_logger">mk_call_logger() (in module i2.deco)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.mk_args_kwargs_merger">mk_args_kwargs_merger() (in module i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/tests/util.html#i2.tests.util.mk_func_from_params">mk_func_from_params() (in module i2.tests.util)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.mk_call_logger">mk_call_logger() (in module i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.mk_method_trans_spec_from_methods_specs_dict">mk_method_trans_spec_from_methods_specs_dict() (in module i2.deco)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.mk_method_trans_spec_from_methods_specs_dict">mk_method_trans_spec_from_methods_specs_dict() (in module i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.mk_sentinel">mk_sentinel() (in module i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.mk_sentinel">mk_sentinel() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.mk_sig_from_args">mk_sig_from_args() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.mk_sig_from_args">mk_sig_from_args() (in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.modified">modified() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.modified">modified() (i2.signatures.Sig method)</a>
 </li>
       <li>
     module
 
-      <ul>
-        <li><a href="module_docs/i2.html#module-i2">i2</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.html#module-i2">i2</a>
 </li>
-        <li><a href="module_docs/i2/_deprecated.html#module-i2._deprecated">i2._deprecated</a>
+        <li><a href="_autosummary/i2.base.html#module-i2.base">i2.base</a>
 </li>
-        <li><a href="module_docs/i2/base.html#module-i2.base">i2.base</a>
+        <li><a href="_autosummary/i2.castgraph.html#module-i2.castgraph">i2.castgraph</a>
 </li>
-        <li><a href="module_docs/i2/castgraph.html#module-i2.castgraph">i2.castgraph</a>
+        <li><a href="_autosummary/i2.chain_map.html#module-i2.chain_map">i2.chain_map</a>
 </li>
-        <li><a href="module_docs/i2/chain_map.html#module-i2.chain_map">i2.chain_map</a>
+        <li><a href="_autosummary/i2.deco.html#module-i2.deco">i2.deco</a>
 </li>
-        <li><a href="module_docs/i2/deco.html#module-i2.deco">i2.deco</a>
+        <li><a href="_autosummary/i2.doc_mint.html#module-i2.doc_mint">i2.doc_mint</a>
 </li>
-        <li><a href="module_docs/i2/doc_mint.html#module-i2.doc_mint">i2.doc_mint</a>
+        <li><a href="_autosummary/i2.errors.html#module-i2.errors">i2.errors</a>
 </li>
-        <li><a href="module_docs/i2/errors.html#module-i2.errors">i2.errors</a>
+        <li><a href="_autosummary/i2.footprints.html#module-i2.footprints">i2.footprints</a>
 </li>
-        <li><a href="module_docs/i2/examples.html#module-i2.examples">i2.examples</a>
+        <li><a href="_autosummary/i2.io_trans.html#module-i2.io_trans">i2.io_trans</a>
 </li>
-        <li><a href="module_docs/i2/examples/castgraph_examples.html#module-i2.examples.castgraph_examples">i2.examples.castgraph_examples</a>
+        <li><a href="_autosummary/i2.itypes.html#module-i2.itypes">i2.itypes</a>
 </li>
-        <li><a href="module_docs/i2/examples/signature_calculus.html#module-i2.examples.signature_calculus">i2.examples.signature_calculus</a>
+        <li><a href="_autosummary/i2.key_path.html#module-i2.key_path">i2.key_path</a>
 </li>
-        <li><a href="module_docs/i2/footprints.html#module-i2.footprints">i2.footprints</a>
+        <li><a href="_autosummary/i2.multi_object.html#module-i2.multi_object">i2.multi_object</a>
 </li>
-        <li><a href="module_docs/i2/io_trans.html#module-i2.io_trans">i2.io_trans</a>
+        <li><a href="_autosummary/i2.routing_forest.html#module-i2.routing_forest">i2.routing_forest</a>
 </li>
-        <li><a href="module_docs/i2/itypes.html#module-i2.itypes">i2.itypes</a>
+        <li><a href="_autosummary/i2.signatures.html#module-i2.signatures">i2.signatures</a>
 </li>
-        <li><a href="module_docs/i2/key_path.html#module-i2.key_path">i2.key_path</a>
+        <li><a href="_autosummary/i2.util.html#module-i2.util">i2.util</a>
 </li>
-        <li><a href="module_docs/i2/multi_object.html#module-i2.multi_object">i2.multi_object</a>
-</li>
-        <li><a href="module_docs/i2/routing_forest.html#module-i2.routing_forest">i2.routing_forest</a>
-</li>
-        <li><a href="module_docs/i2/scrap.html#module-i2.scrap">i2.scrap</a>
-</li>
-        <li><a href="module_docs/i2/scrap/scrap.html#module-i2.scrap.scrap">i2.scrap.scrap</a>
-</li>
-        <li><a href="module_docs/i2/scrap/scrap_ch_variadics.html#module-i2.scrap.scrap_ch_variadics">i2.scrap.scrap_ch_variadics</a>
-</li>
-        <li><a href="module_docs/i2/scrap/scrap_kwargs.html#module-i2.scrap.scrap_kwargs">i2.scrap.scrap_kwargs</a>
-</li>
-        <li><a href="module_docs/i2/scrap/signature_bops.html#module-i2.scrap.signature_bops">i2.scrap.signature_bops</a>
-</li>
-        <li><a href="module_docs/i2/scrap/simple_pymint.html#module-i2.scrap.simple_pymint">i2.scrap.simple_pymint</a>
-</li>
-        <li><a href="module_docs/i2/scrap/switch_case_tree.html#module-i2.scrap.switch_case_tree">i2.scrap.switch_case_tree</a>
-</li>
-        <li><a href="module_docs/i2/signatures.html#module-i2.signatures">i2.signatures</a>
-</li>
-        <li><a href="module_docs/i2/tests.html#module-i2.tests">i2.tests</a>
-</li>
-        <li><a href="module_docs/i2/tests/footprints_test.html#module-i2.tests.footprints_test">i2.tests.footprints_test</a>
-</li>
-        <li><a href="module_docs/i2/tests/objects_for_testing.html#module-i2.tests.objects_for_testing">i2.tests.objects_for_testing</a>
-</li>
-        <li><a href="module_docs/i2/tests/test_ingress_demo.html#module-i2.tests.test_ingress_demo">i2.tests.test_ingress_demo</a>
-</li>
-        <li><a href="module_docs/i2/tests/test_util.html#module-i2.tests.test_util">i2.tests.test_util</a>
-</li>
-        <li><a href="module_docs/i2/tests/util.html#module-i2.tests.util">i2.tests.util</a>
-</li>
-        <li><a href="module_docs/i2/util.html#module-i2.util">i2.util</a>
-</li>
-        <li><a href="module_docs/i2/wrapper.html#module-i2.wrapper">i2.wrapper</a>
+        <li><a href="_autosummary/i2.wrapper.html#module-i2.wrapper">i2.wrapper</a>
 </li>
       </ul></li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.Import.module">module (i2.footprints.Import attribute)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.Import.module">module (i2.footprints.Import attribute)</a>
 </li>
-      <li><a href="module_docs/i2/errors.html#i2.errors.ModuleNotFoundIgnore">ModuleNotFoundIgnore (class in i2.errors)</a>
+      <li><a href="_autosummary/i2.errors.html#i2.errors.ModuleNotFoundIgnore">ModuleNotFoundIgnore (class in i2.errors)</a>
 </li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.most_common_indent">most_common_indent() (in module i2.doc_mint)</a>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.most_common_indent">most_common_indent() (in module i2.doc_mint)</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.move_names_to_the_end">move_names_to_the_end() (in module i2.wrapper)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.move_names_to_the_end">move_names_to_the_end() (in module i2.wrapper)</a>
 </li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.move_params_to_the_end">move_params_to_the_end() (in module i2.wrapper)</a>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.move_params_to_the_end">move_params_to_the_end() (in module i2.wrapper)</a>
 </li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.MultiFunc">MultiFunc (class in i2.multi_object)</a>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.MultiFunc">MultiFunc (class in i2.multi_object)</a>
 </li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.MultiObj">MultiObj (class in i2.multi_object)</a>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.MultiObj">MultiObj (class in i2.multi_object)</a>
 </li>
   </ul></td>
-</tr></table>
+  </tr>
+      </table>
+  
+  <h2 id="N">N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.n_required">n_required (i2.signatures.Sig property)</a>
+</li>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.Import.name">name (i2.footprints.Import attribute)</a>
+</li>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.Ingress.name_map">name_map() (i2.wrapper.Ingress class method)</a>
+</li>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.name_of_obj">name_of_obj() (in module i2.multi_object)</a>
 
-<h2 id="N">N</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.n_required">n_required (i2.signatures.Sig property)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.signatures.html#i2.signatures.name_of_obj">(in module i2.signatures)</a>
 </li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.Import.name">name (i2.footprints.Import attribute)</a>
-</li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.Ingress.name_map">name_map() (i2.wrapper.Ingress class method)</a>
-</li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.name_of_obj">name_of_obj() (in module i2.multi_object)</a>
-
-      <ul>
-        <li><a href="module_docs/i2/signatures.html#i2.signatures.name_of_obj">(in module i2.signatures)</a>
-</li>
-        <li><a href="module_docs/i2/util.html#i2.util.name_of_obj">(in module i2.util)</a>
+        <li><a href="_autosummary/i2.util.html#i2.util.name_of_obj">(in module i2.util)</a>
 </li>
       </ul></li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.names_for_kind">names_for_kind() (i2.signatures.Sig method)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.names_for_kind">names_for_kind() (i2.signatures.Sig method)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.SigPair.names_missing_in_sig1">names_missing_in_sig1 (i2.signatures.SigPair property)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.SigPair.names_missing_in_sig1">names_missing_in_sig1 (i2.signatures.SigPair property)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.SigPair.names_missing_in_sig2">names_missing_in_sig2 (i2.signatures.SigPair property)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.SigPair.names_missing_in_sig2">names_missing_in_sig2 (i2.signatures.SigPair property)</a>
 </li>
-      <li><a href="module_docs/i2/itypes.html#i2.itypes.new_type">new_type() (in module i2.itypes)</a>
+      <li><a href="_autosummary/i2.itypes.html#i2.itypes.new_type">new_type() (in module i2.itypes)</a>
 </li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.non_doctest_lines">non_doctest_lines() (in module i2.doc_mint)</a>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.non_doctest_lines">non_doctest_lines() (in module i2.doc_mint)</a>
 </li>
-      <li><a href="module_docs/i2/errors.html#i2.errors.NotFoundError">NotFoundError</a>
+      <li><a href="_autosummary/i2.errors.html#i2.errors.NotFoundError">NotFoundError</a>
 </li>
   </ul></td>
-</tr></table>
+  </tr>
+      </table>
+  
+  <h2 id="O">O</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.key_path.html#i2.key_path.obj_to_str_path">obj_to_str_path() (in module i2.key_path)</a>
+</li>
+      <li><a href="_autosummary/i2.itypes.html#i2.itypes.ObjectClassifier">ObjectClassifier (class in i2.itypes)</a>
+</li>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.old_doctest_string">old_doctest_string() (in module i2.doc_mint)</a>
+</li>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.Tracker.on_access">on_access() (i2.footprints.Tracker method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.SmartDefault.original_default">original_default (i2.wrapper.SmartDefault attribute)</a>
+</li>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.OutputPostProcessingError">OutputPostProcessingError</a>
+</li>
+      <li><a href="_autosummary/i2.util.html#i2.util.OverwritesForbidden">OverwritesForbidden</a>
+</li>
+      <li><a href="_autosummary/i2.errors.html#i2.errors.OverwritesNotAllowed">OverwritesNotAllowed</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="P">P</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.P">P (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.pair_with">pair_with() (i2.signatures.Sig method)</a>
+</li>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.ParallelFuncs">ParallelFuncs (class in i2.multi_object)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Param">Param (class in i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.param_binary_func">param_binary_func() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.param_comparator">param_comparator() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.SigPair.param_comparison">param_comparison() (i2.signatures.SigPair method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.param_comparison_dict">param_comparison_dict() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.SigPair.param_differences">param_differences() (i2.signatures.SigPair method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.param_differences_dict">param_differences_dict() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.param_for_kind">param_for_kind() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.base.html#i2.base.ParametersMint">ParametersMint (class in i2.base)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.params">params (i2.signatures.Sig property)</a>
+</li>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.params_to_docstring">params_to_docstring() (in module i2.doc_mint)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.partialx">partialx() (in module i2.wrapper)</a>
+</li>
+      <li><a href="_autosummary/i2.util.html#i2.util.path_extractor">path_extractor() (in module i2.util)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.permissive_param_comparator">permissive_param_comparator() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.IncompatibleSignatures.pformat">pformat() (i2.signatures.IncompatibleSignatures method)</a>
+</li>
+      <li><a href="_autosummary/i2.util.html#i2.util.PicklableLambda">PicklableLambda (class in i2.util)</a>
+</li>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.Pipe">Pipe (class in i2.multi_object)</a>
+</li>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.pipes_are_equal">pipes_are_equal() (in module i2.multi_object)</a>
+</li>
+      <li><a href="_autosummary/i2.util.html#i2.util.FrozenDict.pop">pop() (i2.util.FrozenDict method)</a>
 
-<h2 id="O">O</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/key_path.html#i2.key_path.obj_to_str_path">obj_to_str_path() (in module i2.key_path)</a>
-</li>
-      <li><a href="module_docs/i2/itypes.html#i2.itypes.ObjectClassifier">ObjectClassifier (class in i2.itypes)</a>
-</li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.old_doctest_string">old_doctest_string() (in module i2.doc_mint)</a>
-</li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.Tracker.on_access">on_access() (i2.footprints.Tracker method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.SmartDefault.original_default">original_default (i2.wrapper.SmartDefault attribute)</a>
-</li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.OutputPostProcessingError">OutputPostProcessingError</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.OverwritesForbidden">OverwritesForbidden</a>
-</li>
-      <li><a href="module_docs/i2/errors.html#i2.errors.OverwritesNotAllowed">OverwritesNotAllowed</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="P">P</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.P">P (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.pair_with">pair_with() (i2.signatures.Sig method)</a>
-</li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.ParallelFuncs">ParallelFuncs (class in i2.multi_object)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Param">Param (class in i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.param_binary_func">param_binary_func() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.param_comparator">param_comparator() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.SigPair.param_comparison">param_comparison() (i2.signatures.SigPair method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.param_comparison_dict">param_comparison_dict() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.SigPair.param_differences">param_differences() (i2.signatures.SigPair method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.param_differences_dict">param_differences_dict() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.param_for_kind">param_for_kind() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/base.html#i2.base.ParametersMint">ParametersMint (class in i2.base)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.params">params (i2.signatures.Sig property)</a>
-</li>
-      <li><a href="module_docs/i2/tests/util.html#i2.tests.util.params_to_arg_name_and_val">params_to_arg_name_and_val() (in module i2.tests.util)</a>
-</li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.params_to_docstring">params_to_docstring() (in module i2.doc_mint)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.partialx">partialx() (in module i2.wrapper)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.path_extractor">path_extractor() (in module i2.util)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.permissive_param_comparator">permissive_param_comparator() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.IncompatibleSignatures.pformat">pformat() (i2.signatures.IncompatibleSignatures method)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.PicklableLambda">PicklableLambda (class in i2.util)</a>
-</li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.Pipe">Pipe (class in i2.multi_object)</a>
-</li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.pipes_are_equal">pipes_are_equal() (in module i2.multi_object)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.FrozenDict.pop">pop() (i2.util.FrozenDict method)</a>
-
-      <ul>
-        <li><a href="module_docs/i2/util.html#i2.util.imdict.pop">(i2.util.imdict method)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.util.html#i2.util.imdict.pop">(i2.util.imdict method)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/i2/util.html#i2.util.FrozenDict.popitem">popitem() (i2.util.FrozenDict method)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FrozenDict.popitem">popitem() (i2.util.FrozenDict method)</a>
 
-      <ul>
-        <li><a href="module_docs/i2/util.html#i2.util.imdict.popitem">(i2.util.imdict method)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.util.html#i2.util.imdict.popitem">(i2.util.imdict method)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.postprocess">postprocess() (in module i2.deco)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.postprocess">postprocess() (in module i2.deco)</a>
 
-      <ul>
-        <li><a href="module_docs/i2/signatures.html#i2.signatures.postprocess">(in module i2.signatures)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.signatures.html#i2.signatures.postprocess">(in module i2.signatures)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.preprocess_arguments">preprocess_arguments() (in module i2.deco)</a>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.preprocess_arguments">preprocess_arguments() (in module i2.deco)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.PYTHON_DEFINED_CALLABLE_TYPES">PYTHON_DEFINED_CALLABLE_TYPES (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.PYTHON_DEFINED_CALLABLE_TYPES">PYTHON_DEFINED_CALLABLE_TYPES (in module i2.signatures)</a>
 </li>
   </ul></td>
-</tr></table>
-
-<h2 id="R">R</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.reachable_from">reachable_from() (i2.castgraph.TransformationGraph method)</a>
+  </tr>
+      </table>
+  
+  <h2 id="R">R</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.reachable_from">reachable_from() (i2.castgraph.TransformationGraph method)</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.ConversionRegistry.register">register() (i2.castgraph.ConversionRegistry method)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.ConversionRegistry.register">register() (i2.castgraph.ConversionRegistry method)</a>
 
-      <ul>
-        <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.register">(i2.castgraph.TransformationGraph method)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.register">(i2.castgraph.TransformationGraph method)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.register_converter">register_converter() (in module i2.doc_mint)</a>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.register_converter">register_converter() (in module i2.doc_mint)</a>
 </li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.register_edge">register_edge() (i2.castgraph.TransformationGraph method)</a>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.register_edge">register_edge() (i2.castgraph.TransformationGraph method)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.register_object">register_object() (in module i2.util)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.register_object">register_object() (in module i2.util)</a>
 </li>
-      <li><a href="module_docs/i2/util.html#i2.util.FunctionBuilder.remove_arg">remove_arg() (i2.util.FunctionBuilder method)</a>
+      <li><a href="_autosummary/i2.util.html#i2.util.FunctionBuilder.remove_arg">remove_arg() (i2.util.FunctionBuilder method)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.replace_kwargs_using">replace_kwargs_using() (i2.signatures.Sig method)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.replace_kwargs_using">replace_kwargs_using() (i2.signatures.Sig method)</a>
 
-      <ul>
-        <li><a href="module_docs/i2/signatures.html#i2.signatures.replace_kwargs_using">(in module i2.signatures)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.required_names">required_names (i2.signatures.Sig property)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.resolve_function">resolve_function() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.return_false">return_false() (in module i2.util)</a>
-</li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.return_sentinel">return_sentinel() (in module i2.routing_forest)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.return_true">return_true() (in module i2.util)</a>
-</li>
-      <li><a href="module_docs/i2/key_path.html#i2.key_path.rollout_dict">rollout_dict() (in module i2.key_path)</a>
-</li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.RoutingForest">RoutingForest (class in i2.routing_forest)</a>
-</li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.RoutingNode">RoutingNode (class in i2.routing_forest)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="S">S</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.set_kind_detector">set_kind_detector() (i2.castgraph.TransformationGraph method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.set_signature_of_func">set_signature_of_func() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.FrozenDict.setdefault">setdefault() (i2.util.FrozenDict method)</a>
-
-      <ul>
-        <li><a href="module_docs/i2/util.html#i2.util.imdict.setdefault">(i2.util.imdict method)</a>
-</li>
-      </ul></li>
-      <li><a href="module_docs/i2/key_path.html#i2.key_path.KeyPathTrans.setitem">setitem() (i2.key_path.KeyPathTrans method)</a>
-</li>
-      <li><a href="module_docs/i2/key_path.html#i2.key_path.KeyPathTrans.setitem_recursive">setitem_recursive() (i2.key_path.KeyPathTrans method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.SigPair.shared_names">shared_names (i2.signatures.SigPair property)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig">Sig (class in i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.sig_or_default">sig_or_default() (i2.signatures.Sig class method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.sig_or_none">sig_or_none() (i2.signatures.Sig class method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.sig_to_dataclass">sig_to_dataclass() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/tests/util.html#i2.tests.util.sig_to_func">sig_to_func() (in module i2.tests.util)</a>
-</li>
-      <li><a href="module_docs/i2/tests/util.html#i2.tests.util.sig_to_inputs">sig_to_inputs() (in module i2.tests.util)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.SigPair">SigPair (class in i2.signatures)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.SmartDefault">SmartDefault (class in i2.wrapper)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.sort_params">sort_params() (i2.signatures.Sig method)</a>
-
-      <ul>
-        <li><a href="module_docs/i2/signatures.html#i2.signatures.sort_params">(in module i2.signatures)</a>
-</li>
-      </ul></li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.source_args_and_kwargs">source_args_and_kwargs() (i2.signatures.Sig method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.source_arguments">source_arguments() (i2.signatures.Sig method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.source_kwargs">source_kwargs() (i2.signatures.Sig method)</a>
-</li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.sources_for">sources_for() (i2.castgraph.TransformationGraph method)</a>
-</li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.split_text_and_doctests">split_text_and_doctests() (in module i2.doc_mint)</a>
-</li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.start_tracking">start_tracking() (in module i2.footprints)</a>
-</li>
-      <li><a href="module_docs/i2/key_path.html#i2.key_path.str_path_to_obj">str_path_to_obj() (in module i2.key_path)</a>
-</li>
-      <li><a href="module_docs/i2/doc_mint.html#i2.doc_mint.string_param_to_obj">string_param_to_obj() (in module i2.doc_mint)</a>
-</li>
-      <li><a href="module_docs/i2/key_path.html#i2.key_path.StrKeyPath">StrKeyPath (class in i2.key_path)</a>
-</li>
-      <li><a href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.sum_of_args">sum_of_args() (in module i2.tests.objects_for_testing)</a>
-</li>
-      <li><a href="module_docs/i2/routing_forest.html#i2.routing_forest.SwitchCaseNode">SwitchCaseNode (class in i2.routing_forest)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="T">T</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/examples/castgraph_examples.html#i2.examples.castgraph_examples.Text">Text (class in i2.examples.castgraph_examples)</a>
-</li>
-      <li><a href="module_docs/i2/chain_map.html#i2.chain_map.ChainMapTree.to_dict">to_dict() (i2.chain_map.ChainMapTree method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.to_signature_kwargs">to_signature_kwargs() (i2.signatures.Sig method)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.to_simple_signature">to_simple_signature() (i2.signatures.Sig method)</a>
-</li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.trace_class_decorator">trace_class_decorator() (in module i2.footprints)</a>
-</li>
-      <li><a href="module_docs/i2/footprints.html#i2.footprints.Tracker">Tracker (class in i2.footprints)</a>
-</li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.transform">transform() (i2.castgraph.TransformationGraph method)</a>
-</li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph.transform_any">transform_any() (i2.castgraph.TransformationGraph method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/deco.html#i2.deco.transform_args">transform_args() (in module i2.deco)</a>
-</li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.Transformation">Transformation (class in i2.castgraph)</a>
-</li>
-      <li><a href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph">TransformationGraph (class in i2.castgraph)</a>
-</li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.transparent_egress">transparent_egress() (in module i2.wrapper)</a>
-</li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.transparent_ingress">transparent_ingress() (in module i2.wrapper)</a>
-</li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.truncate_string_with_marker">truncate_string_with_marker() (in module i2.multi_object)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.tuple_the_args">tuple_the_args() (in module i2.signatures)</a>
-</li>
-      <li><a href="module_docs/i2/io_trans.html#i2.io_trans.TypedBasedOutIoTrans">TypedBasedOutIoTrans (class in i2.io_trans)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="U">U</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/chain_map.html#i2.chain_map.unique_iter">unique_iter() (in module i2.chain_map)</a>
-</li>
-      <li><a href="module_docs/i2/multi_object.html#i2.multi_object.uniquely_named_objects">uniquely_named_objects() (in module i2.multi_object)</a>
-</li>
-      <li><a href="module_docs/i2/util.html#i2.util.FrozenDict.update">update() (i2.util.FrozenDict method)</a>
-
-      <ul>
-        <li><a href="module_docs/i2/util.html#i2.util.imdict.update">(i2.util.imdict method)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.signatures.html#i2.signatures.replace_kwargs_using">(in module i2.signatures)</a>
 </li>
       </ul></li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/util.html#i2.util.FrozenDict.updated">updated() (i2.util.FrozenDict method)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.required_names">required_names (i2.signatures.Sig property)</a>
 </li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.use_interface">use_interface() (in module i2.signatures)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.resolve_function">resolve_function() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.util.html#i2.util.return_false">return_false() (in module i2.util)</a>
+</li>
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.return_sentinel">return_sentinel() (in module i2.routing_forest)</a>
+</li>
+      <li><a href="_autosummary/i2.util.html#i2.util.return_true">return_true() (in module i2.util)</a>
+</li>
+      <li><a href="_autosummary/i2.key_path.html#i2.key_path.rollout_dict">rollout_dict() (in module i2.key_path)</a>
+</li>
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.RoutingForest">RoutingForest (class in i2.routing_forest)</a>
+</li>
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.RoutingNode">RoutingNode (class in i2.routing_forest)</a>
 </li>
   </ul></td>
-</tr></table>
+  </tr>
+      </table>
+  
+  <h2 id="S">S</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.set_kind_detector">set_kind_detector() (i2.castgraph.TransformationGraph method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.set_signature_of_func">set_signature_of_func() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.util.html#i2.util.FrozenDict.setdefault">setdefault() (i2.util.FrozenDict method)</a>
 
-<h2 id="V">V</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/itypes.html#i2.itypes.validate_literal">validate_literal() (in module i2.itypes)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.util.html#i2.util.imdict.setdefault">(i2.util.imdict method)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.setitem">setitem() (i2.key_path.KeyPathTrans method)</a>
+</li>
+      <li><a href="_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.setitem_recursive">setitem_recursive() (i2.key_path.KeyPathTrans method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.SigPair.shared_names">shared_names (i2.signatures.SigPair property)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig">Sig (class in i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.sig_or_default">sig_or_default() (i2.signatures.Sig class method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.sig_or_none">sig_or_none() (i2.signatures.Sig class method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.sig_to_dataclass">sig_to_dataclass() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.SigPair">SigPair (class in i2.signatures)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.validate_signature">validate_signature() (in module i2.signatures)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.SmartDefault">SmartDefault (class in i2.wrapper)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.sort_params">sort_params() (i2.signatures.Sig method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.signatures.html#i2.signatures.sort_params">(in module i2.signatures)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.source_args_and_kwargs">source_args_and_kwargs() (i2.signatures.Sig method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.source_arguments">source_arguments() (i2.signatures.Sig method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.source_kwargs">source_kwargs() (i2.signatures.Sig method)</a>
+</li>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.sources_for">sources_for() (i2.castgraph.TransformationGraph method)</a>
+</li>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.split_text_and_doctests">split_text_and_doctests() (in module i2.doc_mint)</a>
+</li>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.start_tracking">start_tracking() (in module i2.footprints)</a>
+</li>
+      <li><a href="_autosummary/i2.key_path.html#i2.key_path.str_path_to_obj">str_path_to_obj() (in module i2.key_path)</a>
+</li>
+      <li><a href="_autosummary/i2.doc_mint.html#i2.doc_mint.string_param_to_obj">string_param_to_obj() (in module i2.doc_mint)</a>
+</li>
+      <li><a href="_autosummary/i2.key_path.html#i2.key_path.StrKeyPath">StrKeyPath (class in i2.key_path)</a>
+</li>
+      <li><a href="_autosummary/i2.routing_forest.html#i2.routing_forest.SwitchCaseNode">SwitchCaseNode (class in i2.routing_forest)</a>
 </li>
   </ul></td>
-</tr></table>
+  </tr>
+      </table>
+  
+  <h2 id="T">T</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.chain_map.html#i2.chain_map.ChainMapTree.to_dict">to_dict() (i2.chain_map.ChainMapTree method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.to_signature_kwargs">to_signature_kwargs() (i2.signatures.Sig method)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.to_simple_signature">to_simple_signature() (i2.signatures.Sig method)</a>
+</li>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.trace_class_decorator">trace_class_decorator() (in module i2.footprints)</a>
+</li>
+      <li><a href="_autosummary/i2.footprints.html#i2.footprints.Tracker">Tracker (class in i2.footprints)</a>
+</li>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.transform">transform() (i2.castgraph.TransformationGraph method)</a>
+</li>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph.transform_any">transform_any() (i2.castgraph.TransformationGraph method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.deco.html#i2.deco.transform_args">transform_args() (in module i2.deco)</a>
+</li>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.Transformation">Transformation (class in i2.castgraph)</a>
+</li>
+      <li><a href="_autosummary/i2.castgraph.html#i2.castgraph.TransformationGraph">TransformationGraph (class in i2.castgraph)</a>
+</li>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.transparent_egress">transparent_egress() (in module i2.wrapper)</a>
+</li>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.transparent_ingress">transparent_ingress() (in module i2.wrapper)</a>
+</li>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.truncate_string_with_marker">truncate_string_with_marker() (in module i2.multi_object)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.tuple_the_args">tuple_the_args() (in module i2.signatures)</a>
+</li>
+      <li><a href="_autosummary/i2.io_trans.html#i2.io_trans.TypedBasedOutIoTrans">TypedBasedOutIoTrans (class in i2.io_trans)</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="U">U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.chain_map.html#i2.chain_map.unique_iter">unique_iter() (in module i2.chain_map)</a>
+</li>
+      <li><a href="_autosummary/i2.multi_object.html#i2.multi_object.uniquely_named_objects">uniquely_named_objects() (in module i2.multi_object)</a>
+</li>
+      <li><a href="_autosummary/i2.util.html#i2.util.FrozenDict.update">update() (i2.util.FrozenDict method)</a>
 
-<h2 id="W">W</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.with_defaults">with_defaults (i2.signatures.Sig property)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.without_defaults">without_defaults (i2.signatures.Sig property)</a>
-</li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.Wrap">Wrap (class in i2.wrapper)</a>
-</li>
-      <li><a href="module_docs/i2/signatures.html#i2.signatures.Sig.wrap">wrap() (i2.signatures.Sig method)</a>
-
-      <ul>
-        <li><a href="module_docs/i2/wrapper.html#i2.wrapper.Ingress.wrap">(i2.wrapper.Ingress method)</a>
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.util.html#i2.util.imdict.update">(i2.util.imdict method)</a>
 </li>
       </ul></li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/i2/deco.html#i2.deco.wrap_class_methods">wrap_class_methods() (in module i2.deco)</a>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.util.html#i2.util.FrozenDict.updated">updated() (i2.util.FrozenDict method)</a>
 </li>
-      <li><a href="module_docs/i2/deco.html#i2.deco.wrap_class_methods_input_and_output">wrap_class_methods_input_and_output() (in module i2.deco)</a>
-</li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.WrapperValidationError">WrapperValidationError</a>
-</li>
-      <li><a href="module_docs/i2/wrapper.html#i2.wrapper.Wrapx">Wrapx (class in i2.wrapper)</a>
-</li>
-      <li><a href="module_docs/i2/scrap/scrap.html#i2.scrap.scrap.Wrapx1">Wrapx1 (class in i2.scrap.scrap)</a>
-</li>
-      <li><a href="module_docs/i2/scrap/scrap.html#i2.scrap.scrap.Wrapx2">Wrapx2 (class in i2.scrap.scrap)</a>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.use_interface">use_interface() (in module i2.signatures)</a>
 </li>
   </ul></td>
-</tr></table>
+  </tr>
+      </table>
+  
+  <h2 id="V">V</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.itypes.html#i2.itypes.validate_literal">validate_literal() (in module i2.itypes)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.validate_signature">validate_signature() (in module i2.signatures)</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="W">W</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.with_defaults">with_defaults (i2.signatures.Sig property)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.without_defaults">without_defaults (i2.signatures.Sig property)</a>
+</li>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.Wrap">Wrap (class in i2.wrapper)</a>
+</li>
+      <li><a href="_autosummary/i2.signatures.html#i2.signatures.Sig.wrap">wrap() (i2.signatures.Sig method)</a>
 
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.Ingress.wrap">(i2.wrapper.Ingress method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/i2.deco.html#i2.deco.wrap_class_methods">wrap_class_methods() (in module i2.deco)</a>
+</li>
+      <li><a href="_autosummary/i2.deco.html#i2.deco.wrap_class_methods_input_and_output">wrap_class_methods_input_and_output() (in module i2.deco)</a>
+</li>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.WrapperValidationError">WrapperValidationError</a>
+</li>
+      <li><a href="_autosummary/i2.wrapper.html#i2.wrapper.Wrapx">Wrapx (class in i2.wrapper)</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
 
-
-           </div>
-          </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+</div></div>
+<aside id="right-sidebar" class="hidden text-sm xl:block">
+<div class="sticky top-16 -mt-10 max-h-[calc(var(--vh)-4rem)] overflow-y-auto pt-6 space-y-2">
+<a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#A">A</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#B">B</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#C">C</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#D">D</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#E">E</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#F">F</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#G">G</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#H">H</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#I">I</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#J">J</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#K">K</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#L">L</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#M">M</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#N">N</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#O">O</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#P">P</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#R">R</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#S">S</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#T">T</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#U">U</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#V">V</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#W">W</a>
+</div>
+</aside>
+          </main>
         </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      </div><footer class="py-6 border-t border-border md:py-0">
+    <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+      <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+        <p class="text-sm leading-loose text-center text-muted-foreground md:text-left"></p>
+</div>
+</div>
+</footer>
+    </div>
+    
+    <script src="_static/documentation_options.js?v=946d7960"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    <script defer="defer" src="_static/theme.js?v=5db23cf8"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
 
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    
 </body>
+
 </html>

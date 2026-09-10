@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+
+<html :class="{ 'dark' : darkMode === true }" data-content_root="../" lang="en" x-data="{ darkMode: $persist(window.matchMedia('(prefers-color-scheme: dark)').matches), activeSection: ''}">
+<head>
+<script>
+    (function () {
+      // Set initial color scheme
+      if ((localStorage.getItem("_x_darkMode") === "true") || (window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+
+      // Watch for media preference changes
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+        localStorage.setItem("_x_darkMode", event.matches);
+        document.documentElement.classList.toggle("dark", event.matches);
+      });
+    })();
+  </script>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8"/>
+<meta content="#ffffff" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#030711" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="i2.deco.html.md" rel="alternate" type="text/markdown"/>
+<link href="../llms.txt" rel="describedby" type="text/markdown"/>
+<title>i2.deco | i2</title>
+<meta content="i2.deco | i2" property="og:title"/>
+<meta content="i2.deco | i2" name="twitter:title"/>
+<link href="../_static/pygments.css?v=d75fae25" rel="stylesheet" type="text/css"/>
+<link href="../_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
+<link href="../_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
+<link href="../_static/epythet.css?v=01b0658f" rel="stylesheet" type="text/css"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="i2.doc_mint.html" rel="next" title="i2.doc_mint"/>
+<link href="i2.chain_map.html" rel="prev" title="i2.chain_map"/>
+</head>
+<body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
+<div @click.self="showSidebar = false" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" x-cloak="" x-show="showSidebar"></div><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
+      Skip to content
+    </a><header class="sticky top-0 z-40 w-full border-b shadow-xs border-border bg-background/90 backdrop-blur"><div class="container flex items-center h-14">
+<div class="hidden mr-4 md:flex">
+<a class="flex items-center mr-6" href="../index.html"><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">i2</span>
+</a><nav class="flex items-center gap-6 text-sm font-medium">
+<a class="transition-colors hover:text-foreground/80 text-foreground/60" href="https://github.com/i2mint/i2" rel="noopener nofollow">GitHub</a>
+</nav></div><button @click="showSidebar = true" class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden" type="button">
+<svg aria-hidden="true" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M152.587 825.087q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440Zm0-203.587q-19.152 0-32.326-13.174T107.087 576q0-19.152 13.174-32.326t32.326-13.174h320q19.152 0 32.326 13.174T518.087 576q0 19.152-13.174 32.326T472.587 621.5h-320Zm0-203.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440ZM708.913 576l112.174 112.174q12.674 12.674 12.674 31.826t-12.674 31.826Q808.413 764.5 789.261 764.5t-31.826-12.674l-144-144Q600 594.391 600 576t13.435-31.826l144-144q12.674-12.674 31.826-12.674t31.826 12.674q12.674 12.674 12.674 31.826t-12.674 31.826L708.913 576Z"></path>
+</svg>
+<span class="sr-only">Toggle navigation menu</span>
+</button>
+<div class="flex items-center justify-between flex-1 gap-2 sm:gap-4 md:justify-end">
+<div class="flex-1 w-full md:w-auto md:flex-none"><form @keydown.k.window.meta="$refs.search.focus()" action="../search.html" class="relative flex items-center group" id="searchbox" method="get">
+<input aria-label="Search the docs" class="inline-flex items-center font-medium transition-colors bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent focus:bg-accent hover:text-accent-foreground focus:text-accent-foreground hover:placeholder-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" id="search-input" name="q" placeholder="Search ..." type="search" x-ref="search"/>
+<kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none text-muted-foreground items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex group-hover:bg-accent group-hover:text-accent-foreground">
+<span class="text-xs">⌘</span>
+    K
+  </kbd>
+</form>
+</div>
+<nav class="flex items-center gap-1">
+<button @click="darkMode = !darkMode" class="relative inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9" title="Toggle color scheme" type="button">
+<svg class="absolute transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 685q45.456 0 77.228-31.772Q589 621.456 589 576q0-45.456-31.772-77.228Q525.456 467 480 467q-45.456 0-77.228 31.772Q371 530.544 371 576q0 45.456 31.772 77.228Q434.544 685 480 685Zm0 91q-83 0-141.5-58.5T280 576q0-83 58.5-141.5T480 376q83 0 141.5 58.5T680 576q0 83-58.5 141.5T480 776ZM80 621.5q-19.152 0-32.326-13.174T34.5 576q0-19.152 13.174-32.326T80 530.5h80q19.152 0 32.326 13.174T205.5 576q0 19.152-13.174 32.326T160 621.5H80Zm720 0q-19.152 0-32.326-13.174T754.5 576q0-19.152 13.174-32.326T800 530.5h80q19.152 0 32.326 13.174T925.5 576q0 19.152-13.174 32.326T880 621.5h-80Zm-320-320q-19.152 0-32.326-13.174T434.5 256v-80q0-19.152 13.174-32.326T480 130.5q19.152 0 32.326 13.174T525.5 176v80q0 19.152-13.174 32.326T480 301.5Zm0 720q-19.152 0-32.326-13.17Q434.5 995.152 434.5 976v-80q0-19.152 13.174-32.326T480 850.5q19.152 0 32.326 13.174T525.5 896v80q0 19.152-13.174 32.33-13.174 13.17-32.326 13.17ZM222.174 382.065l-43-42Q165.5 327.391 166 308.239t13.174-33.065q13.435-13.674 32.587-13.674t32.065 13.674l42.239 43q12.674 13.435 12.555 31.706-.12 18.272-12.555 31.946-12.674 13.674-31.445 13.413-18.772-.261-32.446-13.174Zm494 494.761-42.239-43q-12.674-13.435-12.674-32.087t12.674-31.565Q686.609 756.5 705.38 757q18.772.5 32.446 13.174l43 41.761Q794.5 824.609 794 843.761t-13.174 33.065Q767.391 890.5 748.239 890.5t-32.065-13.674Zm-42-494.761Q660.5 369.391 661 350.62q.5-18.772 13.174-32.446l41.761-43Q728.609 261.5 747.761 262t33.065 13.174q13.674 13.435 13.674 32.587t-13.674 32.065l-43 42.239q-13.435 12.674-31.706 12.555-18.272-.12-31.946-12.555Zm-495 494.761Q165.5 863.391 165.5 844.239t13.674-32.065l43-42.239q13.435-12.674 32.087-12.674t31.565 12.674Q299.5 782.609 299 801.38q-.5 18.772-13.174 32.446l-41.761 43Q231.391 890.5 212.239 890t-33.065-13.174ZM480 576Z"></path>
+</svg>
+<svg class="absolute transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 936q-151 0-255.5-104.5T120 576q0-138 90-239.5T440 218q25-3 39 18t-1 44q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q21-14 43-1.5t19 39.5q-14 138-117.5 229T480 936Zm0-80q88 0 158-48.5T740 681q-20 5-40 8t-40 3q-123 0-209.5-86.5T364 396q0-20 3-40t8-40q-78 32-126.5 102T200 576q0 116 82 198t198 82Zm-10-270Z"></path>
+</svg>
+</button>
+</nav>
+</div>
+</div>
+</header>
+<div class="flex-1"><div class="container md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10"><aside :aria-hidden="!showSidebar" :class="{ 'translate-x-0': showSidebar }" class="fixed inset-y-0 left-0 md:top-14 z-50 md:z-30 bg-background md:bg-transparent transition-all duration-100 -translate-x-full md:translate-x-0 ml-0 p-6 md:p-0 md:-ml-2 md:h-[calc(100vh-3.5rem)] w-5/6 md:w-full overflow-y-auto border-r border-border md:sticky" id="left-sidebar">
+<a class="justify-start text-sm md:!hidden bg-background" href="../index.html"><span class="font-bold text-clip whitespace-nowrap">i2</span>
+</a>
+<div class="relative overflow-hidden md:overflow-auto my-4 md:my-0">
+<div class="overflow-y-auto h-full w-full relative pr-6"><nav class="flex md:hidden flex-col font-medium mt-4">
+<a href="https://github.com/i2mint/i2" rel="nofollow noopener">GitHub</a>
+</nav><nav class="table w-full min-w-full my-6 lg:my-8">
+<ul class="current">
+<li class="toctree-l1 current" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="reference internal expandable" href="../api.html">API reference<button @click.prevent.stop="expanded = !expanded" type="button" x-cloak=""><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul class="current" x-show="expanded">
+<li class="toctree-l2 current" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="reference internal expandable" href="i2.html">i2<button @click.prevent.stop="expanded = !expanded" type="button" x-cloak=""><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul class="current" x-show="expanded">
+<li class="toctree-l3"><a class="reference internal" href="i2.base.html">i2.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.castgraph.html">i2.castgraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">i2.deco</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.errors.html">i2.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.footprints.html">i2.footprints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.itypes.html">i2.itypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.key_path.html">i2.key_path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.multi_object.html">i2.multi_object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.signatures.html">i2.signatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.util.html">i2.util</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2.wrapper.html">i2.wrapper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ai-agents.html">For AI agents</a></li>
+</ul>
+</nav>
+</div>
+</div>
+<button @click="showSidebar = false" class="absolute md:hidden right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100" type="button">
+<svg class="h-4 w-4" fill="currentColor" height="24" stroke="none" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 632 284 828q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536 576l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480 632Z"></path>
+</svg>
+</button>
+</aside>
+<main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+<div class="w-full min-w-0 mx-auto">
+<nav aria-label="breadcrumbs" class="flex items-center mb-4 space-x-1 text-sm text-muted-foreground">
+<a class="overflow-hidden text-ellipsis whitespace-nowrap hover:text-foreground" href="../index.html">
+<span class="hidden md:inline">i2</span>
+<svg aria-label="Home" class="md:hidden" fill="currentColor" height="18" stroke="none" viewbox="0 96 960 960" width="18" xmlns="http://www.w3.org/2000/svg">
+<path d="M240 856h120V616h240v240h120V496L480 316 240 496v360Zm-80 80V456l320-240 320 240v480H520V696h-80v240H160Zm320-350Z"></path>
+</svg>
+</a>
+<div class="mr-1">/</div><a class="hover:text-foreground overflow-hidden text-ellipsis whitespace-nowrap" href="../api.html">API reference</a>
+<div class="mr-1">/</div><a class="hover:text-foreground overflow-hidden text-ellipsis whitespace-nowrap" href="i2.html">i2</a>
+<div class="mr-1">/</div><span aria-current="page" class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">i2.deco</span>
+</nav>
+<div id="content" role="main">
+<section id="module-i2.deco">
+<span id="i2-deco"></span><h1>i2.deco<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#module-i2.deco">¶</a></h1>
+<p>Decorator tools</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.add_method" title="i2.deco.add_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_method</span></code></a>(obj, method_func[, method_name, ...])</p></td>
+<td><p>Dynamically add a method to an object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.assert_attrs" title="i2.deco.assert_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assert_attrs</span></code></a>(attrs)</p></td>
+<td><p>Asserts, at construction time, that the class contains a specific set of attributes</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.double_up_as_factory" title="i2.deco.double_up_as_factory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">double_up_as_factory</span></code></a>(decorator_func)</p></td>
+<td><p>Repurpose a decorator both as it's original form, and as a decorator factory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.ensure_iterable_args" title="i2.deco.ensure_iterable_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_iterable_args</span></code></a>([func])</p></td>
+<td><p>Wrap a function so that specific arguments are assured to be iterable if they meet specific conditions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.get_callable_from_factory_if_no_arguments" title="i2.deco.get_callable_from_factory_if_no_arguments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_callable_from_factory_if_no_arguments</span></code></a>(...)</p></td>
+<td><p>Will return the input itself if it's a callable with at least one argument.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code>(obj)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.input_output_decorator" title="i2.deco.input_output_decorator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_output_decorator</span></code></a>([preprocess, postprocess])</p></td>
+<td><p>Makes a decorator that preprocesses inputs and postprocesses outputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.kwargs_for_func" title="i2.deco.kwargs_for_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs_for_func</span></code></a>(*funcs, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.mk_args_kwargs_merger" title="i2.deco.mk_args_kwargs_merger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_args_kwargs_merger</span></code></a>(func)</p></td>
+<td><p>Make a function that will return a dict containing all {argname: argval} pairs from a function's call.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.mk_call_logger" title="i2.deco.mk_call_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_call_logger</span></code></a>([logger, what_to_log, ...])</p></td>
+<td><p>Makes a decorator that logs each call to the wrapped function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_input_and_output_method_wrapper</span></code>([...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.mk_method_trans_spec_from_methods_specs_dict" title="i2.deco.mk_method_trans_spec_from_methods_specs_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_method_trans_spec_from_methods_specs_dict</span></code></a>(...)</p></td>
+<td><p>Utility to make inputs for wrap_class_methods_input_and_output more easily.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.postprocess" title="i2.deco.postprocess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess</span></code></a>(post[, caught_post_errors, ...])</p></td>
+<td><p>Add some post-processing after a function</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess</span></code>(pre)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.preprocess_arguments" title="i2.deco.preprocess_arguments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess_arguments</span></code></a>(pre)</p></td>
+<td><p>Apply a function to args, kwargs and use the transformed in the decorated function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.transform_args" title="i2.deco.transform_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_args</span></code></a>([dflt_trans_func])</p></td>
+<td><p>Make a decorator that transforms function arguments before calling the function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_class_method_input_and_output</span></code>(cls, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_instance_method_input_and_output</span></code>(...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transparently_wrapped</span></code>(func)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.wrap_class_methods" title="i2.deco.wrap_class_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_class_methods</span></code></a>([...])</p></td>
+<td><p>Make a decorator that wraps specific methods.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.wrap_class_methods_input_and_output" title="i2.deco.wrap_class_methods_input_and_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_class_methods_input_and_output</span></code></a>([...])</p></td>
+<td><p>Make a decorator that wraps specific methods, transforming specific argument values a nd output values.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_instance_methods</span></code>([...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_method_output</span></code>(wrapper_func)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wraps</span></code>(wrapped[, assigned, updated])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.FuncFactory" title="i2.deco.FuncFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FuncFactory</span></code></a>(func, *[, include, exclude])</p></td>
+<td><p>Make a function factory.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Exceptions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.OutputPostProcessingError" title="i2.deco.OutputPostProcessingError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OutputPostProcessingError</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.deco.FuncFactory">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">FuncFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#FuncFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.FuncFactory" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.FuncFactory'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Make a function factory.</p>
+<p>but more convenient and helpful (e.g. is picklable, produces functions with
+signatures, etc.)</p>
+<p>One can use <code class="docutils literal notranslate"><span class="pre">functools.partials</span></code> to fix, or change, the defaults of
+arguments of a function <code class="docutils literal notranslate"><span class="pre">func</span></code> thereby creating a different function.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span id="line-4"><span class="go">22</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-6"><span class="go">23</span>
+</span><span id="line-7"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="n">new_foo</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># change default c=3 and add one: b=2</span>
+</span><span id="line-9"><span class="gp">&gt;&gt;&gt; </span><span class="n">new_foo</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># now the function can be called with one argument (couldn't before)</span>
+</span><span id="line-10"><span class="go">23</span>
+</span></code></pre></div>
+</div>
+<p>In essence, <code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code> is equivalent to:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">FuncFactory = lambda func: lambda *args, **kwargs: partial(func, *args, **kwargs)
+</span></code></pre></div>
+</div>
+<p>but more convenient and helpful. For one, it doesn’t use <code class="docutils literal notranslate"><span class="pre">lambda</span></code>, so is picklable.
+It also has a more helpful signature:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">factory</span> <span class="o">=</span> <span class="n">FuncFactory</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">factory</span>
+</span><span id="line-3"><span class="go">&lt;FuncFactory(foo)&gt;(a, b, *, c=2) -&gt; ...Callable[..., float]</span>
+</span></code></pre></div>
+</div>
+<p>(Note that the repr even reuses <code class="docutils literal notranslate"><span class="pre">foo</span></code>’s return annotation to tell us that our
+factory will return a callable that returns that type (if the annotation is a type).</p>
+<p>An instance of <code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code> is a factory of functions, that is, it can make
+functions for you based on the instance’s underlying <code class="docutils literal notranslate"><span class="pre">func</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">factory</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span><span id="line-3"><span class="go">23</span>
+</span></code></pre></div>
+</div>
+<p>Note that:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">factory</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># equivalent to ``factory(a=2, b=3)``</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span><span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</span><span id="line-3"><span class="go">16</span>
+</span></code></pre></div>
+</div>
+<p>Further, you can tell <code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code> to <code class="docutils literal notranslate"><span class="pre">include</span></code> or <code class="docutils literal notranslate"><span class="pre">exclude</span></code> specific
+arguments, using their names or indices to specify them.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">factory_no_a</span> <span class="o">=</span> <span class="n">FuncFactory</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s1">'a'</span><span class="p">])</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">factory_no_a</span>
+</span><span id="line-3"><span class="go">&lt;FuncFactory(foo)&gt;(b, *, c=2) -&gt; ...Callable[..., float]</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">factory_no_a</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># equivalent to ``factory(b=2, c=3)`` as no ``a`` here</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span><span id="line-6"><span class="go">23</span>
+</span></code></pre></div>
+</div>
+<p>Recipe: Say you’re normalizing some data accessor into callback functions and you
+want to create functions that provide a specific object when called (with no args).
+Sure, you can do this by specifying <code class="docutils literal notranslate"><span class="pre">lambda:</span> <span class="pre">obj</span></code> every time, but lambdas can be
+problematic (e.g. their not picklable).</p>
+<p>Here’s another solution:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">identity</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">obj</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">func_returning_obj</span> <span class="o">=</span> <span class="n">FuncFactory</span><span class="p">(</span><span class="n">identity</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">get_42</span> <span class="o">=</span> <span class="n">func_returning_obj</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">get_42</span><span class="p">()</span>
+</span><span id="line-6"><span class="go">42</span>
+</span></code></pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A convenience property has been added to implement this recipe:</p>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">get_42</span><span class="p">,</span> <span class="n">get_hello</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">FuncFactory</span><span class="o">.</span><span class="n">func_returning_obj</span><span class="p">,</span> <span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="s1">'hello'</span><span class="p">))</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">get_42</span><span class="p">()</span>
+</span><span id="line-3"><span class="go">42</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">get_hello</span><span class="p">()</span>
+</span><span id="line-5"><span class="go">'hello'</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="i2.deco.OutputPostProcessingError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">OutputPostProcessingError</span></span><a class="reference internal" href="../_modules/i2/deco.html#OutputPostProcessingError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.OutputPostProcessingError" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.OutputPostProcessingError'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.add_method">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">add_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#add_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.add_method" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.add_method'">¶</a></dt>
+<dd><p>Dynamically add a method to an object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – The object to add a method to</p></li>
+<li><p><strong>method_func</strong> – The function to use as a method. The first argument must be the object itself
+(usually called self)</p></li>
+<li><p><strong>method_name</strong> – The desired function name. If None, will take method_func.__name__</p></li>
+<li><p><strong>class_name</strong> – The desired class name. If None, will take type(obj).__name__</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the object, but with the additional method (or a different function for it)</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+</span><span id="line-3"><span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">times</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span id="line-5"><span class="gp">... </span>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">plus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span id="line-7"><span class="gp">... </span>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</span><span id="line-9"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">add_method</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">plus</span><span class="p">,</span> <span class="s1">'__call__'</span><span class="p">)</span>  <span class="c1"># add a __call__ method, assigning it to plus</span>
+</span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-11"><span class="go">12</span>
+</span><span id="line-12"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">add_method</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="s1">'__call__'</span><span class="p">)</span>  <span class="c1"># reassign the __call__ method to times instead</span>
+</span><span id="line-13"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-14"><span class="go">20</span>
+</span><span id="line-15"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">add_method</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">plus</span><span class="p">,</span> <span class="s1">'__getitem__'</span><span class="p">)</span>  <span class="c1"># assign the method __getitem__ to plus</span>
+</span><span id="line-16"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># see that it works</span>
+</span><span id="line-17"><span class="go">12</span>
+</span><span id="line-18"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># and that we still have our __call__ method</span>
+</span><span id="line-19"><span class="go">20</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.assert_attrs">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">assert_attrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attrs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#assert_attrs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.assert_attrs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.assert_attrs'">¶</a></dt>
+<dd><p>Asserts, at construction time, that the class contains a specific set of attributes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>attrs</strong> – An attribute name (string) or a list of attribute names whose existence needs to be enforced.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A class decorator that will enforce the existence of the attrs when an instance is made</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@assert_attrs</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">)</span>
+</span><span id="line-2"><span class="gp">... </span><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="n">bar</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span id="line-4"><span class="gp">...</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+</span><span id="line-6"><span class="gp">... </span>    <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+</span><span id="line-7"><span class="gp">... </span><span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+</span><span id="line-8"><span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">"AttributeError, as expected, because missing the foo attribute"</span><span class="p">)</span>
+</span><span id="line-9"><span class="go">AttributeError, as expected, because missing the foo attribute</span>
+</span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@assert_attrs</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">)</span>
+</span><span id="line-11"><span class="gp">... </span><span class="k">class</span><span class="w"> </span><span class="nc">B</span><span class="p">:</span>
+</span><span id="line-12"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+</span><span id="line-13"><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
+</span><span id="line-14"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-15"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+</span><span id="line-16"><span class="gp">... </span>    <span class="n">bar</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span id="line-17"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">B</span><span class="p">:</span>
+</span><span id="line-18"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+</span><span id="line-19"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-20"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@assert_attrs</span><span class="p">([</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">])</span>
+</span><span id="line-21"><span class="gp">... </span><span class="k">class</span><span class="w"> </span><span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+</span><span id="line-22"><span class="gp">... </span>    <span class="k">pass</span>
+</span><span id="line-23"><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.double_up_as_factory">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">double_up_as_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decorator_func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#double_up_as_factory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.double_up_as_factory" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.double_up_as_factory'">¶</a></dt>
+<dd><p>Repurpose a decorator both as it’s original form, and as a decorator factory.
+That is, from a decorator that is defined do <code class="docutils literal notranslate"><span class="pre">wrapped_func</span> <span class="pre">=</span> <span class="pre">decorator(func,</span> <span class="pre">**params)</span></code>,
+make it also be able to do <code class="docutils literal notranslate"><span class="pre">wrapped_func</span> <span class="pre">=</span> <span class="pre">decorator(**params)(func)</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You’ll only be able to do this if all but the first argument are keyword-only,
+and the first argument (the function to decorate) has a default of <code class="docutils literal notranslate"><span class="pre">None</span></code> (this is for your own good).
+This is validated before making the “double up as factory” decorator.</p>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@double_up_as_factory</span>
+</span><span id="line-2"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">_func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="line-4"><span class="gp">... </span>        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">multiplier</span>
+</span><span id="line-5"><span class="gp">... </span>    <span class="k">return</span> <span class="n">_func</span>
+</span><span id="line-6"><span class="gp">...</span>
+</span><span id="line-7"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="line-8"><span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span id="line-9"><span class="gp">...</span>
+</span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-11"><span class="go">3</span>
+</span><span id="line-12"><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span> <span class="o">=</span> <span class="n">decorator</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</span><span id="line-13"><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-14"><span class="go">30</span>
+</span></code></pre></div>
+</div>
+<p>The object to wrap doesn’t have to be given positionally: it can also be given by
+keyword, under the name the decorator gave its first parameter (here, <code class="docutils literal notranslate"><span class="pre">func</span></code>).
+This matters because forwarding arguments through <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> is a very common way
+to call a decorator, so <code class="docutils literal notranslate"><span class="pre">decorator(func=foo)</span></code> must mean what <code class="docutils literal notranslate"><span class="pre">decorator(foo)</span></code>
+means:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">decorator</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">foo</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">10</span><span class="p">)(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-2"><span class="go">30</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">decorator</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">foo</span><span class="p">)(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-4"><span class="go">6</span>
+</span></code></pre></div>
+</div>
+<p>It is the <em>absence</em> of an object to wrap – not the way it’s passed – that asks for
+a factory:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">decorator</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span> <span class="n">partial</span><span class="p">)</span>
+</span><span id="line-3"><span class="go">True</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">decorator</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">foo</span><span class="p">),</span> <span class="n">partial</span><span class="p">)</span>
+</span><span id="line-5"><span class="go">False</span>
+</span></code></pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">multiply_by_3</span> <span class="o">=</span> <span class="n">decorator</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span> <span class="o">=</span> <span class="n">multiply_by_3</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-4"><span class="go">9</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@decorator</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-7"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="line-8"><span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span id="line-9"><span class="gp">...</span>
+</span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-11"><span class="go">9</span>
+</span></code></pre></div>
+</div>
+<p>Note that to be able to use double_up_as_factory, your first argument (the object to be wrapped) needs to default
+to None and be the only argument that is not keyword-only (i.e. all other arguments need to be keyword only).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@double_up_as_factory</span>
+</span><span id="line-2"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">decorator_2</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+</span><span id="line-3"><span class="gp">... </span><span class="w">    </span><span class="sd">'''Should not be able to be transformed with double_up_as_factory'''</span>
+</span><span id="line-4"><span class="gt">Traceback (most recent call last):</span>
+</span><span id="line-5"><span class="w">  </span><span class="c">...</span>
+</span><span id="line-6"><span class="gr">AssertionError</span>: <span class="n">First argument of the decorator function needs to default to None. Was &lt;class 'inspect._empty'&gt;</span>
+</span><span id="line-7"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@double_up_as_factory</span>
+</span><span id="line-8"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">decorator_3</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+</span><span id="line-9"><span class="gp">... </span><span class="w">    </span><span class="sd">'''Should not be able to be transformed with double_up_as_factory'''</span>
+</span><span id="line-10"><span class="gt">Traceback (most recent call last):</span>
+</span><span id="line-11"><span class="w">  </span><span class="c">...</span>
+</span><span id="line-12"><span class="gr">AssertionError</span>: <span class="n">All arguments (besides the first) need to be keyword-only</span>
+</span></code></pre></div>
+</div>
+<p>Note also that the name of that first argument is effectively <strong>reserved</strong>: it always
+means “the object to wrap”. For a decorator that also takes <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>, this means
+a decorator argument can never share that name. Say a decorator’s first parameter is
+<code class="docutils literal notranslate"><span class="pre">func</span></code> and it renames parameters via <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@double_up_as_factory</span>
+</span><span id="line-2"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">rename</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">new_name_for_old_name</span><span class="p">):</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="k">return</span> <span class="n">new_name_for_old_name</span>  <span class="c1"># (stand-in for the real work)</span>
+</span></code></pre></div>
+</div>
+<p>You can rename an ordinary parameter through the factory form:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">rename</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="s1">'bee'</span><span class="p">)(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="line-2"><span class="go">{'b': 'bee'}</span>
+</span></code></pre></div>
+</div>
+<p>But you cannot use it to rename a parameter that happens to be called <code class="docutils literal notranslate"><span class="pre">func</span></code>:
+<code class="docutils literal notranslate"><span class="pre">rename(func='callback')</span></code> is read as “wrap the object <code class="docutils literal notranslate"><span class="pre">'callback'</span></code>”, not as
+“rename <code class="docutils literal notranslate"><span class="pre">func</span></code> to <code class="docutils literal notranslate"><span class="pre">callback</span></code>”, so it returns nonsense rather than a factory:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">rename</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="s1">'callback'</span><span class="p">)</span>
+</span><span id="line-2"><span class="go">{}</span>
+</span></code></pre></div>
+</div>
+<p>This is a pre-existing limitation of the double-up idiom – there is no way to tell
+the two intents apart – and it is not specific to passing the object by keyword.
+Before keyword-passing was supported the same call failed later and differently,
+with <code class="docutils literal notranslate"><span class="pre">TypeError:</span> <span class="pre">rename()</span> <span class="pre">got</span> <span class="pre">multiple</span> <span class="pre">values</span> <span class="pre">for</span> <span class="pre">argument</span> <span class="pre">'func'</span></code>.  If a decorator
+needs an argument with the same name as its first parameter, don’t use
+<code class="docutils literal notranslate"><span class="pre">double_up_as_factory</span></code>.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.ensure_iterable_args">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">ensure_iterable_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">condition_of_argname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#ensure_iterable_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.ensure_iterable_args" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.ensure_iterable_args'">¶</a></dt>
+<dd><p>Wrap a function so that specific arguments are assured to be iterable if
+they meet specific conditions.</p>
+<p>The condition, in the example below, is being a string.
+Note that in general, the condition needs to be a boolean function.
+The explicit form of our example would say <code class="code docutils literal notranslate"><span class="pre">names=lambda</span> <span class="pre">x:</span> <span class="pre">isinstance(x,</span> <span class="pre">str)</span></code>,
+but <code class="code docutils literal notranslate"><span class="pre">ensure_iterable_args</span></code> allows the convenience of just specifying the type,
+or a tuple of types, and the actually boolean function will be made for you.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@ensure_iterable_args</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+</span><span id="line-2"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">greet_people</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">greeting</span><span class="o">=</span><span class="s1">'Hello'</span><span class="p">):</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+</span><span id="line-4"><span class="gp">... </span>        <span class="k">yield</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">greeting</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!"</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">greet_people</span><span class="p">([</span><span class="s1">'Alice'</span><span class="p">,</span> <span class="s1">'Bob'</span><span class="p">]))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">'Hello Alice!'</span><span class="p">,</span> <span class="s1">'Hello Bob!'</span><span class="p">]</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">greet_people</span><span class="p">(</span><span class="s1">'Alice'</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">'Hello Alice!'</span><span class="p">]</span>
+</span></code></pre></div>
+</div>
+<p>Note that to decorate a function, you can also use the form:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">greet_people</span> <span class="o">=</span> <span class="n">ensure_iterable_args</span><span class="p">(</span><span class="n">greet_people</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.get_callable_from_factory_if_no_arguments">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">get_callable_from_factory_if_no_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_or_factory_thereof</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#get_callable_from_factory_if_no_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.get_callable_from_factory_if_no_arguments" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.get_callable_from_factory_if_no_arguments'">¶</a></dt>
+<dd><p>Will return the input itself if it’s a callable with at least one argument.
+If not, it will consider it to be a factory, call it to get the actual
+callable object that the user presumably is seeking to get</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.input_output_decorator">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">input_output_decorator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preprocess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postprocess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#input_output_decorator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.input_output_decorator" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.input_output_decorator'">¶</a></dt>
+<dd><p>Makes a decorator that preprocesses inputs and postprocesses outputs.
+Use it if you want to transform the input of a function or method before calling it, or if you want
+to transform the returned value before returning it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>preprocess</strong> – Function to be applied to input</p></li>
+<li><p><strong>postprocess</strong> – Function to be applied to output</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a decorator that preprocesses inputs and postprocesses outputs</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>preprocess and postprocess decorators if you need only to pre or post process!</p>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Examples with "normal functions"</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+</span><span id="line-3"><span class="gp">... </span><span class="w">    </span><span class="sd">'''Some doc...'''</span>
+</span><span id="line-4"><span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">10</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">input_output_decorator</span><span class="p">()(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)))</span>
+</span><span id="line-7"><span class="go">15.0</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">input_output_decorator</span><span class="p">(</span><span class="n">preprocess</span><span class="o">=</span><span class="nb">int</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-9"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)))</span>
+</span><span id="line-10"><span class="go">15</span>
+</span><span id="line-11"><span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">input_output_decorator</span><span class="p">(</span><span class="n">preprocess</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">postprocess</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-12"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="p">(</span><span class="s1">'5'</span><span class="p">)))</span>
+</span><span id="line-13"><span class="go">Hello 15!</span>
+</span><span id="line-14"><span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">input_output_decorator</span><span class="p">(</span><span class="n">postprocess</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-15"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)))</span>
+</span><span id="line-16"><span class="go">Hello 15.0!</span>
+</span><span id="line-17"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">))</span>
+</span><span id="line-18"><span class="go">Some doc...</span>
+</span><span id="line-19"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-20"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># examples with methods (bounded, class methods, static methods</span>
+</span><span id="line-21"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">F</span><span class="p">:</span>
+</span><span id="line-22"><span class="gp">... </span><span class="w">    </span><span class="sd">'''This is not what you'd expect: The doc of the class, not the function'''</span>
+</span><span id="line-23"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+</span><span id="line-24"><span class="gp">... </span><span class="w">        </span><span class="sd">'''Initialize'''</span>
+</span><span id="line-25"><span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+</span><span id="line-26"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+</span><span id="line-27"><span class="gp">... </span><span class="w">        </span><span class="sd">'''Some doc...'''</span>
+</span><span id="line-28"><span class="gp">... </span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">x</span>
+</span><span id="line-29"><span class="gp">... </span>    <span class="nd">@staticmethod</span>
+</span><span id="line-30"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">static_method</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span id="line-31"><span class="gp">... </span>        <span class="k">return</span> <span class="s2">"What </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> you have"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</span><span id="line-32"><span class="gp">... </span>    <span class="nd">@classmethod</span>
+</span><span id="line-33"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">class_method</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span><span id="line-34"><span class="gp">... </span>        <span class="k">return</span> <span class="s2">"</span><span class="si">{}</span><span class="s2"> likes </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span id="line-35"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-36"><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">F</span><span class="p">()</span>
+</span><span id="line-37"><span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">input_output_decorator</span><span class="p">()(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-38"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)))</span>
+</span><span id="line-39"><span class="go">15.0</span>
+</span><span id="line-40"><span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">input_output_decorator</span><span class="p">(</span><span class="n">preprocess</span><span class="o">=</span><span class="nb">int</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-41"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)))</span>
+</span><span id="line-42"><span class="go">15</span>
+</span><span id="line-43"><span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">input_output_decorator</span><span class="p">(</span><span class="n">preprocess</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">postprocess</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-44"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="p">(</span><span class="s1">'5'</span><span class="p">)))</span>
+</span><span id="line-45"><span class="go">Hello 15!</span>
+</span><span id="line-46"><span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">input_output_decorator</span><span class="p">(</span><span class="n">postprocess</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">"Hello </span><span class="si">{}</span><span class="s2">!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-47"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)))</span>
+</span><span id="line-48"><span class="go">Hello 15.0!</span>
+</span><span id="line-49"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">ff</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">))</span>
+</span><span id="line-50"><span class="go">This is not what you'd expect: The doc of the class, not the function</span>
+</span></code></pre></div>
+</div>
+<p># &gt;&gt;&gt;
+# &gt;&gt;&gt; f.static_method = input_output_decorator(preprocess=lambda x: ‘”’ + x + ‘”’,
+# …                                          postprocess=lambda x: x + ‘!!!’)(f.static_method)
+# &gt;&gt;&gt; print(ff.static_method(‘big’, ‘eyes’))</p>
+<p class="rubric">What big “eyes” you have!!!</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.kwargs_for_func">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">kwargs_for_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">funcs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#kwargs_for_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.kwargs_for_func" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.kwargs_for_func'">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>funcs</strong></p></li>
+<li><p><strong>kwargs</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">i2.tests.objects_for_testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">formula1</span><span class="p">,</span> <span class="n">sum_of_args</span><span class="p">,</span> <span class="n">mult</span><span class="p">,</span> <span class="n">add</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">print_dict</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>  <span class="c1"># just a util for this doctest</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="kn">from</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="kn">import</span> <span class="n">pprint</span>
+</span><span id="line-4"><span class="gp">... </span>    <span class="n">pprint</span><span class="p">({</span><span class="n">k</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)})</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">print_dict</span><span class="p">(</span><span class="n">kwargs_for_func</span><span class="p">(</span><span class="n">formula1</span><span class="p">,</span> <span class="n">mult</span><span class="p">,</span> <span class="n">add</span><span class="p">,</span>
+</span><span id="line-6"><span class="gp">... </span>                          <span class="n">w</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+</span><span id="line-7"><span class="go">{'add': {'a': 4, 'b': 5},</span>
+</span><span id="line-8"><span class="go"> 'formula1': {'w': 1, 'x': 2, 'z': 3},</span>
+</span><span id="line-9"><span class="go"> 'mult': {'x': 2}}</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.mk_args_kwargs_merger">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">mk_args_kwargs_merger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#mk_args_kwargs_merger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.mk_args_kwargs_merger" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.mk_args_kwargs_merger'">¶</a></dt>
+<dd><p>Make a function that will return a dict containing all {argname: argval} pairs from a function’s call.
+That is, it merges all non-keyword arguments with the keyword-arguments, with the right name, so that
+the arguments can be handled more uniformly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>func</strong> – The function that will be called, whose signature should be looked at to make the
+merging function</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A function merge_args_and_kwargs(args, kwargs) that can be used to merge arguments</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">merger</span> <span class="o">=</span> <span class="n">mk_args_kwargs_merger</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">merger</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="p">{</span><span class="s1">'b'</span><span class="p">:</span> <span class="mi">10</span><span class="p">}))</span>
+</span><span id="line-5"><span class="go">{'a': 1, 'b': 10}</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">merger</span><span class="p">([],</span> <span class="p">{</span><span class="s1">'a'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">:</span> <span class="mi">10</span><span class="p">}))</span>
+</span><span id="line-7"><span class="go">{'a': 1, 'b': 10}</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">merger</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="p">{}))</span>
+</span><span id="line-9"><span class="go">{'a': 1, 'b': 10}</span>
+</span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">merger</span><span class="p">([],</span> <span class="p">{}))</span>
+</span><span id="line-11"><span class="go">{}</span>
+</span><span id="line-12"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Usage demo:</span>
+</span><span id="line-13"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">**</span><span class="p">{</span><span class="s1">'b'</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span> <span class="o">==</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">merger</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="p">{</span><span class="s1">'b'</span><span class="p">:</span> <span class="mi">10</span><span class="p">}))</span>
+</span><span id="line-14"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="p">[],</span> <span class="o">**</span><span class="p">{</span><span class="s1">'a'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span> <span class="o">==</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">merger</span><span class="p">([],</span> <span class="p">{</span><span class="s1">'a'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">:</span> <span class="mi">10</span><span class="p">}))</span>
+</span><span id="line-15"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">'a'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span> <span class="o">==</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">merger</span><span class="p">([],</span> <span class="p">{</span><span class="s1">'a'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">:</span> <span class="mi">10</span><span class="p">}))</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.mk_call_logger">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">mk_call_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;built-in</span> <span class="pre">function</span> <span class="pre">print&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">what_to_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_call_signature&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_is_bounded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#mk_call_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.mk_call_logger" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.mk_call_logger'">¶</a></dt>
+<dd><p>Makes a decorator that logs each call to the wrapped function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger</strong> – The actual function that logs stuff. Default is print. The “stuff” it logs is given by
+the what_to_log argument (a function).</p></li>
+<li><p><strong>what_to_log</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[[<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>]</span>) – A function taking inputs (func, args, kwargs) of the call, and returning something to log
+(usually, and by default, a string)</p></li>
+<li><p><strong>func_is_bounded</strong> – Whether the function is bounded (like a method) or not</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorator</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example of use on (unbounded) function, with default args</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@mk_call_logger</span><span class="p">()</span>
+</span><span id="line-3"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">useless_computation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="s1">'foo'</span><span class="p">):</span>
+</span><span id="line-4"><span class="gp">... </span>    <span class="k">return</span> <span class="n">z</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+</span><span id="line-5"><span class="gp">...</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">useless_computation</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="s1">'ha'</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">useless_computation(3, y=1, z='ha')</span>
+</span></code></pre></div>
+</div>
+<p>The same example, but with output logging too</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@mk_call_logger</span><span class="p">(</span><span class="n">log_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-2"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">useless_computation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="s1">'foo'</span><span class="p">):</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="k">return</span> <span class="n">z</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">useless_computation</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="s1">'ha'</span><span class="p">)</span>
+</span><span id="line-5"><span class="go">useless_computation(3, y=1, z='ha')</span>
+</span><span id="line-6"><span class="go">-&gt; hahahaha</span>
+</span></code></pre></div>
+</div>
+<p>And now a bit more involved…</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example of use on class method, with a different what_to_log function.</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+</span><span id="line-4"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+</span><span id="line-5"><span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
+</span><span id="line-6"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span><span id="line-7"><span class="gp">... </span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">x</span>
+</span><span id="line-8"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span><span id="line-9"><span class="gp">... </span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span>
+</span><span id="line-10"><span class="gp">...</span>
+</span><span id="line-11"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">_name_args_kwargs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-12"><span class="gp">... </span>    <span class="k">return</span> <span class="s2">"Calling </span><span class="si">{}</span><span class="s2"> with</span><span class="se">\n</span><span class="s2">  args=</span><span class="si">{}</span><span class="se">\n</span><span class="s2">  kwargs=</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+</span><span id="line-13"><span class="gp">...</span>
+</span><span id="line-14"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-15"><span class="gp">&gt;&gt;&gt; </span><span class="n">log_calls</span> <span class="o">=</span> <span class="n">mk_call_logger</span><span class="p">(</span><span class="n">what_to_log</span><span class="o">=</span><span class="n">_name_args_kwargs</span><span class="p">,</span> <span class="n">func_is_bounded</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-16"><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'add'</span><span class="p">,</span> <span class="s1">'multiply'</span><span class="p">]:</span>
+</span><span id="line-17"><span class="gp">... </span>    <span class="n">A_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+</span><span id="line-18"><span class="gp">... </span>    <span class="nb">setattr</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">mk_call_logger</span><span class="p">(</span><span class="n">what_to_log</span><span class="o">=</span><span class="n">_name_args_kwargs</span><span class="p">,</span> <span class="n">func_is_bounded</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">A_method</span><span class="p">))</span>
+</span><span id="line-19"><span class="gp">...</span>
+</span><span id="line-20"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-21"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+</span><span id="line-22"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-23"><span class="go">Calling add with</span>
+</span><span id="line-24"><span class="go">  args=()</span>
+</span><span id="line-25"><span class="go">  kwargs={'x': 2}</span>
+</span><span id="line-26"><span class="go">12</span>
+</span><span id="line-27"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-28"><span class="go">Calling multiply with</span>
+</span><span id="line-29"><span class="go">  args=(2,)</span>
+</span><span id="line-30"><span class="go">  kwargs={}</span>
+</span><span id="line-31"><span class="go">20</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.mk_method_trans_spec_from_methods_specs_dict">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">mk_method_trans_spec_from_methods_specs_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methods_specs_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#mk_method_trans_spec_from_methods_specs_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.mk_method_trans_spec_from_methods_specs_dict" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.mk_method_trans_spec_from_methods_specs_dict'">¶</a></dt>
+<dd><p>Utility to make inputs for wrap_class_methods_input_and_output more easily.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>methods_specs_dict</strong> – a dict where
+keys are method names (either a single string, or a tuple of strings)
+values are the trans_spec dicts that should be associated to those methods</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dict in the method_trans_spec (input of wrap_class_method) format.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span><span class="p">[</span><span class="s1">'foo'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'x'</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s1">'y'</span><span class="p">:</span> <span class="nb">int</span><span class="p">}</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span><span class="p">[(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'z'</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="s1">'method_output_trans'</span><span class="p">:</span> <span class="nb">float</span><span class="p">}</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span><span class="p">[(</span><span class="s1">'bar'</span><span class="p">,</span> <span class="p">)]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'zz'</span><span class="p">:</span> <span class="nb">int</span><span class="p">}</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">method_trans_spec</span> <span class="o">=</span> <span class="n">mk_method_trans_spec_from_methods_specs_dict</span><span class="p">(</span><span class="n">methods_specs_dict</span><span class="p">)</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">method_trans_spec</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="line-7"><span class="go">['foo', 'bar']</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="n">method_trans_spec</span><span class="p">[</span><span class="s1">'foo'</span><span class="p">]</span>
+</span><span id="line-9"><span class="go">{'x': &lt;class 'str'&gt;, 'y': &lt;class 'int'&gt;, 'z': &lt;class 'list'&gt;, 'method_output_trans': &lt;class 'float'&gt;}</span>
+</span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="n">method_trans_spec</span><span class="p">[</span><span class="s1">'bar'</span><span class="p">]</span>
+</span><span id="line-11"><span class="go">{'z': &lt;class 'list'&gt;, 'method_output_trans': &lt;class 'float'&gt;, 'zz': &lt;class 'int'&gt;}</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.postprocess">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">postprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">post</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caught_post_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(&lt;class</span> <span class="pre">'Exception'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_error_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#postprocess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.postprocess" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.postprocess'">¶</a></dt>
+<dd><p>Add some post-processing after a function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>post</strong> – The function to apply to the output</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">list_range</span> <span class="o">=</span> <span class="n">postprocess</span><span class="p">(</span><span class="nb">list</span><span class="p">)(</span><span class="nb">range</span><span class="p">)</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">list_range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span><span id="line-3"><span class="go">[0, 1, 2, 3]</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">sum_range</span> <span class="o">=</span> <span class="n">postprocess</span><span class="p">(</span><span class="nb">sum</span><span class="p">)(</span><span class="nb">range</span><span class="p">)</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">sum_range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span><span id="line-6"><span class="go">6</span>
+</span></code></pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The decorator also sticks the return annotation of the post function on the wrapped one.</p>
+</div>
+<p>Use cases:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Changing a generator into a container returning function</dt><dd><p>In many situations, writing a generator is simpler than writing a function
+that accumulates a list or a dict etc.
+So here, you just write the generator and tag this decorator on top, to get the same effect.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@postprocess</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-3"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">bar</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="line-4"><span class="gp">... </span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="line-5"><span class="gp">... </span>        <span class="k">yield</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">i</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">{'0': 0, '1': 1, '2': 2}</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="n">signature</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+</span><span id="line-9"><span class="go">&lt;Signature (x) -&gt; dict&gt;</span>
+</span><span id="line-10"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-11"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@postprocess</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="line-12"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="line-13"><span class="gp">... </span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="line-14"><span class="gp">... </span>        <span class="k">yield</span> <span class="n">i</span>
+</span><span id="line-15"><span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-16"><span class="go">[0, 1, 2]</span>
+</span><span id="line-17"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span>
+</span><span id="line-18"><span class="gp">&gt;&gt;&gt; </span><span class="n">signature</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+</span><span id="line-19"><span class="go">&lt;Signature (x) -&gt; list&gt;</span>
+</span></code></pre></div>
+</div>
+<ul class="simple">
+<li><p>Triggering something (like logging, or forwarding) when a function returns</p></li>
+</ul>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">log_this</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Logging </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">logged_foo</span> <span class="o">=</span> <span class="n">postprocess</span><span class="p">(</span><span class="n">log_this</span><span class="p">)(</span><span class="n">foo</span><span class="p">)</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">logged_foo</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-6"><span class="go">Logging [0, 1]</span>
+</span><span id="line-7"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">t</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</span></code></pre></div>
+</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Using a function that does a lot to make several functions that do less.</dt><dd><p>(e.g. Extracting/making a python object from a function returning a raw http <a href="#id1"><span class="problematic" id="id2">response_</span></a></p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.preprocess_arguments">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">preprocess_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pre</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#preprocess_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.preprocess_arguments" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.preprocess_arguments'">¶</a></dt>
+<dd><p>Apply a function to args, kwargs and use the transformed in the decorated function</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.transform_args">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">transform_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dflt_trans_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">trans_func_for_arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#transform_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.transform_args" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.transform_args'">¶</a></dt>
+<dd><p>Make a decorator that transforms function arguments before calling the function.
+Works with plain functions and bounded methods.
+For example:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>original argument: a relative path –&gt; used argument: a full path</p></li>
+<li><p>original argument: a pickle filepath –&gt; used argument: the loaded object</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rootdir</strong> – rootdir to be used for all name arguments of target function</p></li>
+<li><p><strong>name_arg</strong> – the position (int) or argument name of the argument containing the name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a decorator</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example with a plain function</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">'default_c'</span><span class="p">):</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="k">return</span> <span class="s2">"a=</span><span class="si">{a}</span><span class="s2">, b=</span><span class="si">{b}</span><span class="s2">, c=</span><span class="si">{c}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">prepend_root</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="line-5"><span class="gp">... </span>    <span class="k">return</span> <span class="s1">'ROOT/'</span> <span class="o">+</span> <span class="n">x</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-7"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+</span><span id="line-8"><span class="gp">... </span>    <span class="k">assert</span> <span class="n">f</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'a=foo, b=bar, c=3'</span>
+</span><span id="line-9"><span class="gp">... </span>    <span class="n">ff</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">()(</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># no transformation specification, so function is unchanged</span>
+</span><span id="line-10"><span class="gp">... </span>    <span class="k">assert</span> <span class="n">ff</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'a=foo, b=bar, c=3'</span>
+</span><span id="line-11"><span class="gp">... </span>    <span class="n">ff</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">prepend_root</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># prepend root to a</span>
+</span><span id="line-12"><span class="gp">... </span>    <span class="k">assert</span> <span class="n">ff</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s1">'bar'</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'a=ROOT/foo, b=bar, c=3'</span>  <span class="c1"># note: testing different order of args</span>
+</span><span id="line-13"><span class="gp">... </span>    <span class="n">ff</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="n">prepend_root</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># prepend root to b</span>
+</span><span id="line-14"><span class="gp">... </span>    <span class="k">assert</span> <span class="n">ff</span><span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s1">'bar'</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="s1">'foo'</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'a=foo, b=ROOT/bar, c=3'</span>  <span class="c1"># note: testing different order of args</span>
+</span><span id="line-15"><span class="gp">... </span>    <span class="n">ff</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">prepend_root</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">prepend_root</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># prepend root to a and b</span>
+</span><span id="line-16"><span class="gp">... </span>    <span class="k">assert</span> <span class="n">ff</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'a=ROOT/foo, b=ROOT/bar, c=3'</span>
+</span><span id="line-17"><span class="gp">... </span>    <span class="k">assert</span> <span class="n">ff</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'a=ROOT/foo, b=ROOT/bar, c=default_c'</span>  <span class="c1"># defaults still work</span>
+</span><span id="line-18"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-19"><span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-20"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-21"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example with bounded method, wrapping from instance</span>
+</span><span id="line-22"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+</span><span id="line-23"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
+</span><span id="line-24"><span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span>
+</span><span id="line-25"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">'default_c'</span><span class="p">):</span>
+</span><span id="line-26"><span class="gp">... </span>        <span class="k">return</span> <span class="sa">f</span><span class="s2">"a=</span><span class="si">{</span><span class="n">a</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="si">}</span><span class="s2"> b=</span><span class="si">{</span><span class="n">b</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="si">}</span><span class="s2"> c=</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-27"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-28"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">','</span><span class="p">)</span>
+</span><span id="line-29"><span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-30"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-31"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example with bounded method, wrapping from class</span>
+</span><span id="line-32"><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">prepend_root</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">prepend_root</span><span class="p">)(</span><span class="n">A</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-33"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">','</span><span class="p">)</span>
+</span><span id="line-34"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'a=ROOT/foo, b=ROOT/bar, c=3'</span>
+</span><span id="line-35"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'a=ROOT/foo, b=ROOT/bar, c=default_c'</span>  <span class="c1"># defaults still work</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.wrap_class_methods">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">wrap_class_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_return_a_copy_of_the_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_raise_error_if_non_existent_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">wrapper_for_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#wrap_class_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.wrap_class_methods" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.wrap_class_methods'">¶</a></dt>
+<dd><p>Make a decorator that wraps specific methods.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The decorator will by default return a copy of the class. This might incur some run time overhead.
+If this is desirable, for example, when you want to create several decorations of a same class.
+If you want to change the class itself (e.g. you’re only loading it once in a module, and decorating it), then
+specify _return_a_copy_of_the_class=False</p>
+</div>
+<p>Note that _return_a_copy_of_the_class=True has a side effect of building russian dolls of essentially subclasses
+of the class, which may have some undesirable results if repeated too many times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_return_a_copy_of_the_class</strong> – Specifies whether to
+return a copy of the class (_return_a_copy_of_the_class=True, the default),
+or change the actual loaded class itself (_return_a_copy_of_the_class=False)</p></li>
+<li><p><strong>wrapper_for_method</strong> – method_name=wrapper_function pairs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A class wrapper. That is, a decorator that takes a class and returns a decorated version of it
+(or decaorates “in-place” if _return_a_copy_of_the_class=False</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p>wrap_method_output: The function that is called for every method we wrap.</p></li>
+<li><dl class="simple">
+<dt>transform_class_method_input_and_output: A wrap_class_methods that is specialized for input arg and output</dt><dd><p>transformation.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+</span><span id="line-4"><span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
+</span><span id="line-5"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span><span id="line-6"><span class="gp">... </span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">x</span>
+</span><span id="line-7"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span><span id="line-8"><span class="gp">... </span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span>
+</span><span id="line-9"><span class="gp">...</span>
+</span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+</span><span id="line-11"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-12"><span class="go">12</span>
+</span><span id="line-13"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-14"><span class="go">20</span>
+</span><span id="line-15"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-16"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">log_calls</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span id="line-17"><span class="gp">... </span>    <span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+</span><span id="line-18"><span class="gp">... </span>    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="line-19"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-20"><span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="s2">"Calling </span><span class="si">{}</span><span class="s2"> with</span><span class="se">\n</span><span class="s2">  args=</span><span class="si">{}</span><span class="se">\n</span><span class="s2">  kwargs=</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">))</span>
+</span><span id="line-21"><span class="gp">... </span>        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="line-22"><span class="gp">... </span>    <span class="k">return</span> <span class="n">_func</span>
+</span><span id="line-23"><span class="gp">...</span>
+</span><span id="line-24"><span class="gp">&gt;&gt;&gt; </span><span class="n">AA</span> <span class="o">=</span> <span class="n">wrap_class_methods</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">log_calls</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'add'</span><span class="p">,</span> <span class="s1">'multiply'</span><span class="p">]})(</span><span class="n">A</span><span class="p">)</span>
+</span><span id="line-25"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">AA</span><span class="p">()</span>
+</span><span id="line-26"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-27"><span class="go">Calling add with</span>
+</span><span id="line-28"><span class="go">  args=()</span>
+</span><span id="line-29"><span class="go">  kwargs={'x': 3}</span>
+</span><span id="line-30"><span class="go">13</span>
+</span><span id="line-31"><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-32"><span class="go">Calling multiply with</span>
+</span><span id="line-33"><span class="go">  args=(3,)</span>
+</span><span id="line-34"><span class="go">  kwargs={}</span>
+</span><span id="line-35"><span class="go">30</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.wrap_class_methods_input_and_output">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">wrap_class_methods_input_and_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_return_a_copy_of_the_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_raise_error_if_non_existent_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">method_trans_spec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#wrap_class_methods_input_and_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.wrap_class_methods_input_and_output" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.wrap_class_methods_input_and_output'">¶</a></dt>
+<dd><p>Make a decorator that wraps specific methods, transforming specific argument values a nd output values.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The decorator will by default return a copy of the class. This might incur some run time overhead.
+If this is desirable, for example, when you want to create several decorations of a same class.
+If you want to change the class itself (e.g. you’re only loading it once in a module, and decorating it), then
+specify _return_a_copy_of_the_class=False</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_return_a_copy_of_the_class</strong> – Specifies whether to
+return a copy of the class (_return_a_copy_of_the_class=True, the default),
+or change the actual loaded class itself (_return_a_copy_of_the_class=False)</p></li>
+<li><p><strong>method_trans_spec</strong> – method_name=trans_specs_for_method pairs.
+The trans_specs_for_method is a dict that is understood by transform_class_method_input_and_output.
+Except for one special case, it’s keys are argument names and values are callables to call on those
+arguments’ values.
+The special case is method_output_trans. This specifies that the callable it points to should be called
+on output of method. Here’s one recipe for outputs: If the output of a function is an iterable and you want
+to apply a function trans to each element of the output, specify method_output_trans=lambda x: map(trans, x).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A wrapped class</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p>mk_method_trans_spec_from_methods_specs_dict: a utility to make method_trans_spec more easily</p></li>
+<li><p>transform_class_method_input_and_output: The function that is called for every method we wrap.</p></li>
+</ul>
+</div>
+<p>In the following, we will show two examples.</p>
+<ul class="simple">
+<li><p>The first is a toy example to demonstrate the basic functionality.</p></li>
+<li><p>The second demonstrates a more involved case, but is still a silly example.</p></li>
+<li><p>The third demonstrates more the type of application we’d use wrap_class_methods_input_and_output for in real life.</p></li>
+</ul>
+<p class="rubric">FIRST EXAMPLE</p>
+<p>We make an Ops class that wraps Counter, allowing one to add items and show the counts of items added.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserDict</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">Ops</span><span class="p">:</span>
+</span><span id="line-6"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-7"><span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+</span><span id="line-8"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+</span><span id="line-9"><span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">item</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+</span><span id="line-10"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-11"><span class="gp">... </span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span>
+</span><span id="line-12"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Here's an example of what Ops does</span>
+</span><span id="line-13"><span class="gp">&gt;&gt;&gt; </span><span class="n">ops</span> <span class="o">=</span> <span class="n">Ops</span><span class="p">()</span>
+</span><span id="line-14"><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'this'</span><span class="p">,</span> <span class="s1">'is'</span><span class="p">,</span> <span class="s1">'that'</span><span class="p">,</span> <span class="s1">'and'</span><span class="p">,</span> <span class="s1">'that'</span><span class="p">,</span> <span class="s1">'is'</span><span class="p">,</span> <span class="s1">'this'</span><span class="p">]:</span>
+</span><span id="line-15"><span class="gp">... </span>    <span class="n">ops</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span><span id="line-16"><span class="gp">...</span>
+</span><span id="line-17"><span class="gp">&gt;&gt;&gt; </span><span class="n">ops</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span><span id="line-18"><span class="go">Counter({'this': 2, 'is': 2, 'that': 2, 'and': 1})</span>
+</span><span id="line-19"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-20"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># But say we don't want to count actual words added, but just the first two letters of these words,</span>
+</span><span id="line-21"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># and say we want to show() to return the dict, not the Counter.</span>
+</span><span id="line-22"><span class="gp">&gt;&gt;&gt; </span><span class="n">NewOps</span> <span class="o">=</span> <span class="n">wrap_class_methods_input_and_output</span><span class="p">(</span>
+</span><span id="line-23"><span class="gp">... </span>    <span class="n">_return_a_copy_of_the_class</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="line-24"><span class="gp">... </span>    <span class="n">add_item</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:</span><span class="mi">2</span><span class="p">]),</span>  <span class="c1"># intercept items fed to add_item and keep only 2 first letters</span>
+</span><span id="line-25"><span class="gp">... </span>    <span class="n">show</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">method_output_trans</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>  <span class="c1"># intercept output of show method, converting to dict</span>
+</span><span id="line-26"><span class="gp">... </span><span class="p">)(</span><span class="n">Ops</span><span class="p">)</span>
+</span><span id="line-27"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># let's try it out!</span>
+</span><span id="line-28"><span class="gp">&gt;&gt;&gt; </span><span class="n">ops</span> <span class="o">=</span> <span class="n">NewOps</span><span class="p">()</span>
+</span><span id="line-29"><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'this'</span><span class="p">,</span> <span class="s1">'is'</span><span class="p">,</span> <span class="s1">'that'</span><span class="p">,</span> <span class="s1">'and'</span><span class="p">,</span> <span class="s1">'that'</span><span class="p">,</span> <span class="s1">'is'</span><span class="p">,</span> <span class="s1">'this'</span><span class="p">]:</span>
+</span><span id="line-30"><span class="gp">... </span>    <span class="n">ops</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span><span id="line-31"><span class="gp">...</span>
+</span><span id="line-32"><span class="gp">&gt;&gt;&gt; </span><span class="n">ops</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span><span id="line-33"><span class="go">{'th': 4, 'is': 2, 'an': 1}</span>
+</span><span id="line-34"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># See that we specified _return_a_copy_of_the_class=False?</span>
+</span><span id="line-35"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Now look at what happens if we try to use Ops, the original class, again. It behaves like NewOps.</span>
+</span><span id="line-36"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># That's usually not the behavior we want, so be careful!</span>
+</span><span id="line-37"><span class="gp">&gt;&gt;&gt; </span><span class="n">ops</span> <span class="o">=</span> <span class="n">Ops</span><span class="p">()</span>
+</span><span id="line-38"><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'this'</span><span class="p">,</span> <span class="s1">'is'</span><span class="p">,</span> <span class="s1">'that'</span><span class="p">,</span> <span class="s1">'and'</span><span class="p">,</span> <span class="s1">'that'</span><span class="p">,</span> <span class="s1">'is'</span><span class="p">,</span> <span class="s1">'this'</span><span class="p">]:</span>
+</span><span id="line-39"><span class="gp">... </span>    <span class="n">ops</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span><span id="line-40"><span class="gp">...</span>
+</span><span id="line-41"><span class="gp">&gt;&gt;&gt; </span><span class="n">ops</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span><span id="line-42"><span class="go">{'th': 4, 'is': 2, 'an': 1}</span>
+</span><span id="line-43"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-44"><span class="gp">&gt;&gt;&gt;</span>
+</span></code></pre></div>
+</div>
+<p class="rubric">SECOND EXAMPLE</p>
+<p>Wrap a dict (or rather, the safer collections.UserDict), doing weird things to the input and output
+keys and values</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">val_in_trans</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">'hello </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># prepend "hello " to incoming values</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">val_out_trans</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">'hello'</span><span class="p">,</span> <span class="s1">'hi'</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>  <span class="c1"># replace "hello" by "hi" in output values</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">key_in_trans</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">'__'</span> <span class="o">+</span> <span class="n">x</span>  <span class="c1"># prepend incoming keys with double underscore</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">key_out_trans</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>  <span class="c1"># remove the first two characters (underscores) from keys when output</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-7"><span class="gp">... </span>    <span class="p">(</span><span class="s1">'__contains__'</span><span class="p">,</span> <span class="s1">'__getitem__'</span><span class="p">,</span> <span class="s1">'__setitem__'</span><span class="p">,</span> <span class="s1">'__delitem__'</span><span class="p">):</span> <span class="nb">dict</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key_in_trans</span><span class="p">),</span>
+</span><span id="line-8"><span class="gp">... </span>    <span class="s1">'__setitem__'</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">val_in_trans</span><span class="p">),</span>
+</span><span id="line-9"><span class="gp">... </span>    <span class="s1">'__iter__'</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">method_output_trans</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="n">key_out_trans</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span>
+</span><span id="line-10"><span class="gp">... </span>    <span class="s1">'__getitem__'</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">method_output_trans</span><span class="o">=</span><span class="n">val_out_trans</span><span class="p">)</span>
+</span><span id="line-11"><span class="gp">... </span><span class="p">}</span>
+</span><span id="line-12"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-13"><span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span> <span class="o">=</span> <span class="n">mk_method_trans_spec_from_methods_specs_dict</span><span class="p">(</span><span class="n">methods_specs_dict</span><span class="p">)</span>
+</span><span id="line-14"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-15"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@wrap_class_methods_input_and_output</span><span class="p">(</span><span class="o">**</span><span class="n">methods_specs_dict</span><span class="p">)</span>
+</span><span id="line-16"><span class="gp">... </span><span class="k">class</span><span class="w"> </span><span class="nc">AA</span><span class="p">(</span><span class="n">UserDict</span><span class="p">):</span>
+</span><span id="line-17"><span class="gp">... </span>    <span class="k">pass</span>
+</span><span id="line-18"><span class="gp">...</span>
+</span><span id="line-19"><span class="gp">&gt;&gt;&gt; </span><span class="n">aa</span> <span class="o">=</span> <span class="n">AA</span><span class="p">()</span>
+</span><span id="line-20"><span class="gp">&gt;&gt;&gt; </span><span class="n">aa</span><span class="p">[</span><span class="s1">'foo'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'shoo'</span>  <span class="c1"># store 'shoo' under 'foo'</span>
+</span><span id="line-21"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># the __str__ method isn't wrapped, so we see the actual STORED keys and values</span>
+</span><span id="line-22"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># we see that __foo, not foo is the actual key, and "hello shoo" the value:</span>
+</span><span id="line-23"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"{'__foo': 'hello shoo'}"</span>
+</span><span id="line-24"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="s1">'foo'</span> <span class="ow">in</span> <span class="n">aa</span>  <span class="c1"># yet from the interface, it looks like 'foo' is a key of aa...</span>
+</span><span id="line-25"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="s1">'__foo'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aa</span>  <span class="c1"># ... and '__foo' is not a key.</span>
+</span><span id="line-26"><span class="gp">&gt;&gt;&gt; </span><span class="n">aa</span><span class="p">[</span><span class="s1">'foo'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'bar'</span>  <span class="c1"># let's replace the value of 'foo'</span>
+</span><span id="line-27"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"{'__foo': 'hello bar'}"</span>  <span class="c1"># see what's stored</span>
+</span><span id="line-28"><span class="gp">&gt;&gt;&gt; </span><span class="n">aa</span><span class="p">[</span><span class="s1">'star'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'wars'</span>  <span class="c1"># let's add another</span>
+</span><span id="line-29"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'star'</span><span class="p">]</span>  <span class="c1"># what are the keys? (this uses __iter__ under the hood)</span>
+</span><span id="line-30"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># In the following, we'll use methods keys(), values(), and items(), none of which we wrapped.</span>
+</span><span id="line-31"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># And yet, they work as expected, since they pass on their work to methods we wrapped.</span>
+</span><span id="line-32"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">aa</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="p">[</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'star'</span><span class="p">]</span>  <span class="c1"># another way to get keys</span>
+</span><span id="line-33"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># see here that when we ask for values, we don't get what we asked to store, ...</span>
+</span><span id="line-34"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># ... nor what is actually stored, but something else</span>
+</span><span id="line-35"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">aa</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">==</span> <span class="p">[</span><span class="s1">'hi bar'</span><span class="p">,</span> <span class="s1">'hi wars'</span><span class="p">]</span>
+</span><span id="line-36"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">aa</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span> <span class="o">==</span> <span class="s2">"[('foo', 'hi bar'), ('star', 'hi wars')]"</span>  <span class="c1"># the keys and values we get from items()</span>
+</span><span id="line-37"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"{'__foo': 'hello bar', '__star': 'hello wars'}"</span>  <span class="c1"># what is actually stored</span>
+</span><span id="line-38"><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">aa</span><span class="p">[</span><span class="s1">'foo'</span><span class="p">]</span>  <span class="c1"># testing deletion of a key</span>
+</span><span id="line-39"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"{'__star': 'hello wars'}"</span>  <span class="c1"># it worked!</span>
+</span><span id="line-40"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-41"><span class="gp">&gt;&gt;&gt;</span>
+</span></code></pre></div>
+</div>
+<p class="rubric">THIRD EXAMPLE</p>
+<p>Here again, we’ll wrap UserDict. But instead of being silly, we’ll pretend we need to store waveforms
+in binary format (so input values will have to be wrapped), but still retrieving these waveforms as lists
+(so output values will have to be wrapped).
+Additionally, we’ll pretend we’re working with wav files within some root directory, but don’t
+want the root dir or the ‘.wav’ extension to appear in our keys. So we’ll have to wrap input and output keys.
+Of course, this is just pretend. Don’t use this with real waveforms. It won’t work.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="s1">'/ROOT/DIR/'</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">abs_path_of_rel_path</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">rel_path</span><span class="p">:</span> <span class="n">root</span> <span class="o">+</span> <span class="n">rel_path</span> <span class="o">+</span> <span class="s1">'.wav'</span>  <span class="c1"># transform a relative path to an absolute one</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">rel_path_of_abs_path</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'.wav'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>  <span class="c1"># transform an absolute path to a relative one</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">list_to_bytes</span> <span class="o">=</span> <span class="nb">bytes</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">bytes_to_list</span> <span class="o">=</span> <span class="nb">list</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-7"><span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-8"><span class="gp">... </span>    <span class="p">(</span><span class="s1">'__contains__'</span><span class="p">,</span> <span class="s1">'__getitem__'</span><span class="p">,</span> <span class="s1">'__setitem__'</span><span class="p">,</span> <span class="s1">'__delitem__'</span><span class="p">):</span> <span class="nb">dict</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">abs_path_of_rel_path</span><span class="p">),</span>
+</span><span id="line-9"><span class="gp">... </span>    <span class="s1">'__setitem__'</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">list_to_bytes</span><span class="p">),</span>
+</span><span id="line-10"><span class="gp">... </span>    <span class="s1">'__iter__'</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">method_output_trans</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="n">rel_path_of_abs_path</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span>
+</span><span id="line-11"><span class="gp">... </span>    <span class="s1">'__getitem__'</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">method_output_trans</span><span class="o">=</span><span class="n">bytes_to_list</span><span class="p">)</span>
+</span><span id="line-12"><span class="gp">... </span><span class="p">}</span>
+</span><span id="line-13"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-14"><span class="gp">&gt;&gt;&gt; </span><span class="n">methods_specs_dict</span> <span class="o">=</span> <span class="n">mk_method_trans_spec_from_methods_specs_dict</span><span class="p">(</span><span class="n">methods_specs_dict</span><span class="p">)</span>
+</span><span id="line-15"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-16"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@wrap_class_methods_input_and_output</span><span class="p">(</span><span class="o">**</span><span class="n">methods_specs_dict</span><span class="p">)</span>
+</span><span id="line-17"><span class="gp">... </span><span class="k">class</span><span class="w"> </span><span class="nc">Wf</span><span class="p">(</span><span class="n">UserDict</span><span class="p">):</span>
+</span><span id="line-18"><span class="gp">... </span>    <span class="k">pass</span>
+</span><span id="line-19"><span class="gp">...</span>
+</span><span id="line-20"><span class="gp">&gt;&gt;&gt; </span><span class="n">year</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+</span><span id="line-21"><span class="gp">&gt;&gt;&gt; </span><span class="n">down</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</span><span id="line-22"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-23"><span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span> <span class="o">=</span> <span class="n">Wf</span><span class="p">()</span>
+</span><span id="line-24"><span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span><span class="p">[</span><span class="s1">'year'</span><span class="p">]</span> <span class="o">=</span> <span class="n">year</span>
+</span><span id="line-25"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">wf</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"b'"</span><span class="p">,</span> <span class="s2">"'"</span><span class="p">))</span>
+</span><span id="line-26"><span class="go">{'/ROOT/DIR/year.wav': '\x02\x00\x01\t'}</span>
+</span><span id="line-27"><span class="gp">&gt;&gt;&gt; </span><span class="s1">'year'</span> <span class="ow">in</span> <span class="n">wf</span>
+</span><span id="line-28"><span class="go">True</span>
+</span><span id="line-29"><span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span><span class="p">[</span><span class="s1">'down'</span><span class="p">]</span> <span class="o">=</span> <span class="n">down</span>
+</span><span id="line-30"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">wf</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"b'"</span><span class="p">,</span> <span class="s2">"'"</span><span class="p">))</span>
+</span><span id="line-31"><span class="go">{'/ROOT/DIR/year.wav': '\x02\x00\x01\t', '/ROOT/DIR/down.wav': '\x05\x04\x03\x02\x01'}</span>
+</span><span id="line-32"><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="line-33"><span class="go">['year', 'down']</span>
+</span><span id="line-34"><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</span><span id="line-35"><span class="go">[[2, 0, 1, 9], [5, 4, 3, 2, 1]]</span>
+</span><span id="line-36"><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+</span><span id="line-37"><span class="go">[('year', [2, 0, 1, 9]), ('down', [5, 4, 3, 2, 1])]</span>
+</span><span id="line-38"><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="p">)</span>
+</span><span id="line-39"><span class="go">2</span>
+</span><span id="line-40"><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">wf</span><span class="p">[</span><span class="s1">'year'</span><span class="p">]</span>
+</span><span id="line-41"><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="p">)</span>
+</span><span id="line-42"><span class="go">1</span>
+</span><span id="line-43"><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+</span><span id="line-44"><span class="go">[('down', [5, 4, 3, 2, 1])]</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+</section>
+</div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
+<div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
+<ul>
+<li><a :data-current="activeSection === '#i2.deco.FuncFactory'" class="reference internal" href="#i2.deco.FuncFactory"><code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.OutputPostProcessingError'" class="reference internal" href="#i2.deco.OutputPostProcessingError"><code class="docutils literal notranslate"><span class="pre">OutputPostProcessingError</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.add_method'" class="reference internal" href="#i2.deco.add_method"><code class="docutils literal notranslate"><span class="pre">add_method()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.assert_attrs'" class="reference internal" href="#i2.deco.assert_attrs"><code class="docutils literal notranslate"><span class="pre">assert_attrs()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.double_up_as_factory'" class="reference internal" href="#i2.deco.double_up_as_factory"><code class="docutils literal notranslate"><span class="pre">double_up_as_factory()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.ensure_iterable_args'" class="reference internal" href="#i2.deco.ensure_iterable_args"><code class="docutils literal notranslate"><span class="pre">ensure_iterable_args()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.get_callable_from_factory_if_no_arguments'" class="reference internal" href="#i2.deco.get_callable_from_factory_if_no_arguments"><code class="docutils literal notranslate"><span class="pre">get_callable_from_factory_if_no_arguments()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.input_output_decorator'" class="reference internal" href="#i2.deco.input_output_decorator"><code class="docutils literal notranslate"><span class="pre">input_output_decorator()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.kwargs_for_func'" class="reference internal" href="#i2.deco.kwargs_for_func"><code class="docutils literal notranslate"><span class="pre">kwargs_for_func()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.mk_args_kwargs_merger'" class="reference internal" href="#i2.deco.mk_args_kwargs_merger"><code class="docutils literal notranslate"><span class="pre">mk_args_kwargs_merger()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.mk_call_logger'" class="reference internal" href="#i2.deco.mk_call_logger"><code class="docutils literal notranslate"><span class="pre">mk_call_logger()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.mk_method_trans_spec_from_methods_specs_dict'" class="reference internal" href="#i2.deco.mk_method_trans_spec_from_methods_specs_dict"><code class="docutils literal notranslate"><span class="pre">mk_method_trans_spec_from_methods_specs_dict()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.postprocess'" class="reference internal" href="#i2.deco.postprocess"><code class="docutils literal notranslate"><span class="pre">postprocess()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.preprocess_arguments'" class="reference internal" href="#i2.deco.preprocess_arguments"><code class="docutils literal notranslate"><span class="pre">preprocess_arguments()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.transform_args'" class="reference internal" href="#i2.deco.transform_args"><code class="docutils literal notranslate"><span class="pre">transform_args()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.wrap_class_methods'" class="reference internal" href="#i2.deco.wrap_class_methods"><code class="docutils literal notranslate"><span class="pre">wrap_class_methods()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.wrap_class_methods_input_and_output'" class="reference internal" href="#i2.deco.wrap_class_methods_input_and_output"><code class="docutils literal notranslate"><span class="pre">wrap_class_methods_input_and_output()</span></code></a></li>
+</ul>
+</div>
+</aside>
+</main>
+</div>
+</div><footer class="py-6 border-t border-border md:py-0">
+<div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+<div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left"></p>
+</div>
+</div>
+</footer>
+</div>
+<script src="../_static/documentation_options.js?v=946d7960"></script>
+<script src="../_static/doctools.js?v=fd6eb6e6"></script>
+<script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+<script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+<script src="../_static/copybutton.js?v=fd10adb8"></script>
+<script defer="defer" src="../_static/theme.js?v=5db23cf8"></script>
+</body>
+</html>

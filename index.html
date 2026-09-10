@@ -1,513 +1,600 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+
+<html :class="{ 'dark' : darkMode === true }" data-content_root="./" lang="en" x-data="{ darkMode: $persist(window.matchMedia('(prefers-color-scheme: dark)').matches), activeSection: ''}">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+    (function () {
+      // Set initial color scheme
+      if ((localStorage.getItem("_x_darkMode") === "true") || (window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to i2’s documentation! &mdash; i2 0.1.66 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
-
-  
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=3015fd79"></script>
-      <script src="_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
-      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="i2" href="module_docs/i2.html" /> 
-</head>
-
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="#" class="icon icon-home">
-            i2
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2.html">i2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/_deprecated.html">i2._deprecated</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/base.html">i2.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/castgraph.html">i2.castgraph</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/chain_map.html">i2.chain_map</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/deco.html">i2.deco</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/doc_mint.html">i2.doc_mint</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/errors.html">i2.errors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/examples.html">i2.examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/examples/castgraph_examples.html">i2.examples.castgraph_examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/footprints.html">i2.footprints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/io_trans.html">i2.io_trans</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/itypes.html">i2.itypes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/key_path.html">i2.key_path</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/multi_object.html">i2.multi_object</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/routing_forest.html">i2.routing_forest</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap.html">i2.scrap</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/scrap.html">i2.scrap.scrap</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/scrap_ch_variadics.html">i2.scrap.scrap_ch_variadics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/signature_bops.html">i2.scrap.signature_bops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/simple_pymint.html">i2.scrap.simple_pymint</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/switch_case_tree.html">i2.scrap.switch_case_tree</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/signatures.html">i2.signatures</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests.html">i2.tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/footprints_test.html">i2.tests.footprints_test</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_castgraph.html">i2.tests.test_castgraph</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_castgraph_kinds.html">i2.tests.test_castgraph_kinds</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_ingress_demo.html">i2.tests.test_ingress_demo</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_signatures.html">i2.tests.test_signatures</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/util.html">i2.tests.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/util.html">i2.util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/wrapper.html">i2.wrapper</a></li>
-</ul>
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">i2</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Welcome to i2’s documentation!</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="welcome-to-i2-s-documentation">
-<h1>Welcome to i2’s documentation!<a class="headerlink" href="#welcome-to-i2-s-documentation" title="Link to this heading"></a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2.html">i2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/_deprecated.html">i2._deprecated</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/_deprecated.html#i2._deprecated.Command"><code class="docutils literal notranslate"><span class="pre">Command</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/_deprecated.html#i2._deprecated.commands_dict"><code class="docutils literal notranslate"><span class="pre">commands_dict()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/_deprecated.html#i2._deprecated.extract_commands"><code class="docutils literal notranslate"><span class="pre">extract_commands()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/base.html">i2.base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/base.html#i2.base.Mint"><code class="docutils literal notranslate"><span class="pre">Mint</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/base.html#i2.base.MintOfCallable"><code class="docutils literal notranslate"><span class="pre">MintOfCallable</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/base.html#i2.base.ParametersMint"><code class="docutils literal notranslate"><span class="pre">ParametersMint</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/castgraph.html">i2.castgraph</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/castgraph.html#castgraph">castgraph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/castgraph.html#i2.castgraph.ConversionError"><code class="docutils literal notranslate"><span class="pre">ConversionError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/castgraph.html#i2.castgraph.ConversionRegistry"><code class="docutils literal notranslate"><span class="pre">ConversionRegistry</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/castgraph.html#i2.castgraph.Edge"><code class="docutils literal notranslate"><span class="pre">Edge</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/castgraph.html#i2.castgraph.Kind"><code class="docutils literal notranslate"><span class="pre">Kind</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/castgraph.html#i2.castgraph.KindMatch"><code class="docutils literal notranslate"><span class="pre">KindMatch</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/castgraph.html#i2.castgraph.Transformation"><code class="docutils literal notranslate"><span class="pre">Transformation</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/castgraph.html#i2.castgraph.TransformationGraph"><code class="docutils literal notranslate"><span class="pre">TransformationGraph</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/castgraph.html#i2.castgraph.design_guidelines"><code class="docutils literal notranslate"><span class="pre">design_guidelines()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/chain_map.html">i2.chain_map</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/chain_map.html#i2.chain_map.ChainMapTree"><code class="docutils literal notranslate"><span class="pre">ChainMapTree</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/chain_map.html#i2.chain_map.is_iterable"><code class="docutils literal notranslate"><span class="pre">is_iterable()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/chain_map.html#i2.chain_map.unique_iter"><code class="docutils literal notranslate"><span class="pre">unique_iter()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/deco.html">i2.deco</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.FuncFactory"><code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.OutputPostProcessingError"><code class="docutils literal notranslate"><span class="pre">OutputPostProcessingError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.add_method"><code class="docutils literal notranslate"><span class="pre">add_method()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.assert_attrs"><code class="docutils literal notranslate"><span class="pre">assert_attrs()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.double_up_as_factory"><code class="docutils literal notranslate"><span class="pre">double_up_as_factory()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.ensure_iterable_args"><code class="docutils literal notranslate"><span class="pre">ensure_iterable_args()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.get_callable_from_factory_if_no_arguments"><code class="docutils literal notranslate"><span class="pre">get_callable_from_factory_if_no_arguments()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.input_output_decorator"><code class="docutils literal notranslate"><span class="pre">input_output_decorator()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.kwargs_for_func"><code class="docutils literal notranslate"><span class="pre">kwargs_for_func()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.mk_args_kwargs_merger"><code class="docutils literal notranslate"><span class="pre">mk_args_kwargs_merger()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.mk_call_logger"><code class="docutils literal notranslate"><span class="pre">mk_call_logger()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.mk_method_trans_spec_from_methods_specs_dict"><code class="docutils literal notranslate"><span class="pre">mk_method_trans_spec_from_methods_specs_dict()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.postprocess"><code class="docutils literal notranslate"><span class="pre">postprocess()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.preprocess_arguments"><code class="docutils literal notranslate"><span class="pre">preprocess_arguments()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.transform_args"><code class="docutils literal notranslate"><span class="pre">transform_args()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.wrap_class_methods"><code class="docutils literal notranslate"><span class="pre">wrap_class_methods()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/deco.html#i2.deco.wrap_class_methods_input_and_output"><code class="docutils literal notranslate"><span class="pre">wrap_class_methods_input_and_output()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/doc_mint.html">i2.doc_mint</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.DoctestBlock"><code class="docutils literal notranslate"><span class="pre">DoctestBlock</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.ExampleX"><code class="docutils literal notranslate"><span class="pre">ExampleX</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.docstring_to_params"><code class="docutils literal notranslate"><span class="pre">docstring_to_params()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.doctest_string"><code class="docutils literal notranslate"><span class="pre">doctest_string()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.doctest_string_print"><code class="docutils literal notranslate"><span class="pre">doctest_string_print()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.find_in_params"><code class="docutils literal notranslate"><span class="pre">find_in_params()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.indent_lines"><code class="docutils literal notranslate"><span class="pre">indent_lines()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.inject_docstring_content"><code class="docutils literal notranslate"><span class="pre">inject_docstring_content()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.most_common_indent"><code class="docutils literal notranslate"><span class="pre">most_common_indent()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.non_doctest_lines"><code class="docutils literal notranslate"><span class="pre">non_doctest_lines()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.old_doctest_string"><code class="docutils literal notranslate"><span class="pre">old_doctest_string()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.params_to_docstring"><code class="docutils literal notranslate"><span class="pre">params_to_docstring()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.register_converter"><code class="docutils literal notranslate"><span class="pre">register_converter()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.split_text_and_doctests"><code class="docutils literal notranslate"><span class="pre">split_text_and_doctests()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/doc_mint.html#i2.doc_mint.string_param_to_obj"><code class="docutils literal notranslate"><span class="pre">string_param_to_obj()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/errors.html">i2.errors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/errors.html#i2.errors.AuthorizationError"><code class="docutils literal notranslate"><span class="pre">AuthorizationError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/errors.html#i2.errors.DataError"><code class="docutils literal notranslate"><span class="pre">DataError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/errors.html#i2.errors.DuplicateRecordError"><code class="docutils literal notranslate"><span class="pre">DuplicateRecordError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/errors.html#i2.errors.ForbiddenError"><code class="docutils literal notranslate"><span class="pre">ForbiddenError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/errors.html#i2.errors.HandleExceptions"><code class="docutils literal notranslate"><span class="pre">HandleExceptions</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/errors.html#i2.errors.InputError"><code class="docutils literal notranslate"><span class="pre">InputError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/errors.html#i2.errors.InterruptWithBlock"><code class="docutils literal notranslate"><span class="pre">InterruptWithBlock</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/errors.html#i2.errors.ModuleNotFoundIgnore"><code class="docutils literal notranslate"><span class="pre">ModuleNotFoundIgnore</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/errors.html#i2.errors.NotFoundError"><code class="docutils literal notranslate"><span class="pre">NotFoundError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/errors.html#i2.errors.OverwritesNotAllowed"><code class="docutils literal notranslate"><span class="pre">OverwritesNotAllowed</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/examples.html">i2.examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/examples/castgraph_examples.html">i2.examples.castgraph_examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/examples/castgraph_examples.html#i2.examples.castgraph_examples.CanonicalRecord"><code class="docutils literal notranslate"><span class="pre">CanonicalRecord</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/examples/castgraph_examples.html#i2.examples.castgraph_examples.FilePath"><code class="docutils literal notranslate"><span class="pre">FilePath</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/examples/castgraph_examples.html#i2.examples.castgraph_examples.JSONDict"><code class="docutils literal notranslate"><span class="pre">JSONDict</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/examples/castgraph_examples.html#i2.examples.castgraph_examples.Text"><code class="docutils literal notranslate"><span class="pre">Text</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/examples/castgraph_examples.html#i2.examples.castgraph_examples.example_registry"><code class="docutils literal notranslate"><span class="pre">example_registry()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/examples/signature_calculus.html">i2.examples.signature_calculus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/footprints.html">i2.footprints</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.AttributeVisitor"><code class="docutils literal notranslate"><span class="pre">AttributeVisitor</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.Import"><code class="docutils literal notranslate"><span class="pre">Import</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.MethodTrace"><code class="docutils literal notranslate"><span class="pre">MethodTrace</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.Tracker"><code class="docutils literal notranslate"><span class="pre">Tracker</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.accessed_attributes"><code class="docutils literal notranslate"><span class="pre">accessed_attributes()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.attr_list"><code class="docutils literal notranslate"><span class="pre">attr_list()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.attribute_dependencies"><code class="docutils literal notranslate"><span class="pre">attribute_dependencies()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.attrs_used_by_method"><code class="docutils literal notranslate"><span class="pre">attrs_used_by_method()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.attrs_used_by_method_computation"><code class="docutils literal notranslate"><span class="pre">attrs_used_by_method_computation()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.dict_to_graph"><code class="docutils literal notranslate"><span class="pre">dict_to_graph()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.ensure_ast"><code class="docutils literal notranslate"><span class="pre">ensure_ast()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.get_class_that_defined_method"><code class="docutils literal notranslate"><span class="pre">get_class_that_defined_method()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.get_imports_from_obj"><code class="docutils literal notranslate"><span class="pre">get_imports_from_obj()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.get_source"><code class="docutils literal notranslate"><span class="pre">get_source()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.init_argument_names"><code class="docutils literal notranslate"><span class="pre">init_argument_names()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.list_func_calls"><code class="docutils literal notranslate"><span class="pre">list_func_calls()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.start_tracking"><code class="docutils literal notranslate"><span class="pre">start_tracking()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/footprints.html#i2.footprints.trace_class_decorator"><code class="docutils literal notranslate"><span class="pre">trace_class_decorator()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/io_trans.html">i2.io_trans</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/io_trans.html#i2.io_trans.AnnotAndDfltIoTrans"><code class="docutils literal notranslate"><span class="pre">AnnotAndDfltIoTrans</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/io_trans.html#i2.io_trans.ArgnameIoTrans"><code class="docutils literal notranslate"><span class="pre">ArgnameIoTrans</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/io_trans.html#i2.io_trans.IoTrans"><code class="docutils literal notranslate"><span class="pre">IoTrans</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/io_trans.html#i2.io_trans.JSONAnnotAndDfltIoTrans"><code class="docutils literal notranslate"><span class="pre">JSONAnnotAndDfltIoTrans</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/io_trans.html#i2.io_trans.TypedBasedOutIoTrans"><code class="docutils literal notranslate"><span class="pre">TypedBasedOutIoTrans</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/io_trans.html#i2.io_trans.cast_to_jdict"><code class="docutils literal notranslate"><span class="pre">cast_to_jdict()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/io_trans.html#i2.io_trans.cast_to_list"><code class="docutils literal notranslate"><span class="pre">cast_to_list()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/itypes.html">i2.itypes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/itypes.html#i2.itypes.HasAttrs"><code class="docutils literal notranslate"><span class="pre">HasAttrs</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/itypes.html#i2.itypes.ObjectClassifier"><code class="docutils literal notranslate"><span class="pre">ObjectClassifier</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/itypes.html#i2.itypes.input_and_output_types"><code class="docutils literal notranslate"><span class="pre">input_and_output_types()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/itypes.html#i2.itypes.is_callable_kind"><code class="docutils literal notranslate"><span class="pre">is_callable_kind()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/itypes.html#i2.itypes.iterable_to_literal"><code class="docutils literal notranslate"><span class="pre">iterable_to_literal()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/itypes.html#i2.itypes.new_type"><code class="docutils literal notranslate"><span class="pre">new_type()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/itypes.html#i2.itypes.validate_literal"><code class="docutils literal notranslate"><span class="pre">validate_literal()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/key_path.html">i2.key_path</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/key_path.html#i2.key_path.KeyPathMap"><code class="docutils literal notranslate"><span class="pre">KeyPathMap</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/key_path.html#i2.key_path.KeyPathTrans"><code class="docutils literal notranslate"><span class="pre">KeyPathTrans</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/key_path.html#i2.key_path.StrKeyPath"><code class="docutils literal notranslate"><span class="pre">StrKeyPath</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/key_path.html#i2.key_path.flatten_dict"><code class="docutils literal notranslate"><span class="pre">flatten_dict()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/key_path.html#i2.key_path.obj_to_str_path"><code class="docutils literal notranslate"><span class="pre">obj_to_str_path()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/key_path.html#i2.key_path.rollout_dict"><code class="docutils literal notranslate"><span class="pre">rollout_dict()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/key_path.html#i2.key_path.str_path_to_obj"><code class="docutils literal notranslate"><span class="pre">str_path_to_obj()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/multi_object.html">i2.multi_object</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.ContextFanout"><code class="docutils literal notranslate"><span class="pre">ContextFanout</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.FlexFuncFanout"><code class="docutils literal notranslate"><span class="pre">FlexFuncFanout</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.FuncFanout"><code class="docutils literal notranslate"><span class="pre">FuncFanout</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.MultiFunc"><code class="docutils literal notranslate"><span class="pre">MultiFunc</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.MultiObj"><code class="docutils literal notranslate"><span class="pre">MultiObj</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.ParallelFuncs"><code class="docutils literal notranslate"><span class="pre">ParallelFuncs</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.Pipe"><code class="docutils literal notranslate"><span class="pre">Pipe</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.ensure_iterable_of_callables"><code class="docutils literal notranslate"><span class="pre">ensure_iterable_of_callables()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.flatten_pipe"><code class="docutils literal notranslate"><span class="pre">flatten_pipe()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.merge_unnamed_and_named"><code class="docutils literal notranslate"><span class="pre">merge_unnamed_and_named()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.name_of_obj"><code class="docutils literal notranslate"><span class="pre">name_of_obj()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.pipes_are_equal"><code class="docutils literal notranslate"><span class="pre">pipes_are_equal()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.truncate_string_with_marker"><code class="docutils literal notranslate"><span class="pre">truncate_string_with_marker()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/multi_object.html#i2.multi_object.uniquely_named_objects"><code class="docutils literal notranslate"><span class="pre">uniquely_named_objects()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/routing_forest.html">i2.routing_forest</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/routing_forest.html#i2.routing_forest.CondNode"><code class="docutils literal notranslate"><span class="pre">CondNode</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/routing_forest.html#i2.routing_forest.DelegateToMappingAttrMixin"><code class="docutils literal notranslate"><span class="pre">DelegateToMappingAttrMixin</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/routing_forest.html#i2.routing_forest.FeatCondNode"><code class="docutils literal notranslate"><span class="pre">FeatCondNode</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/routing_forest.html#i2.routing_forest.FinalNode"><code class="docutils literal notranslate"><span class="pre">FinalNode</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/routing_forest.html#i2.routing_forest.KeyFuncMapping"><code class="docutils literal notranslate"><span class="pre">KeyFuncMapping</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/routing_forest.html#i2.routing_forest.RoutingForest"><code class="docutils literal notranslate"><span class="pre">RoutingForest</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/routing_forest.html#i2.routing_forest.RoutingNode"><code class="docutils literal notranslate"><span class="pre">RoutingNode</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/routing_forest.html#i2.routing_forest.SwitchCaseNode"><code class="docutils literal notranslate"><span class="pre">SwitchCaseNode</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/routing_forest.html#i2.routing_forest.return_sentinel"><code class="docutils literal notranslate"><span class="pre">return_sentinel()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap.html">i2.scrap</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/scrap.html">i2.scrap.scrap</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/scrap/scrap.html#i2.scrap.scrap.Wrapx1"><code class="docutils literal notranslate"><span class="pre">Wrapx1</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/scrap/scrap.html#i2.scrap.scrap.Wrapx2"><code class="docutils literal notranslate"><span class="pre">Wrapx2</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/scrap/scrap.html#i2.scrap.scrap.default_caller"><code class="docutils literal notranslate"><span class="pre">default_caller()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/scrap_ch_variadics.html">i2.scrap.scrap_ch_variadics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/scrap_kwargs.html">i2.scrap.scrap_kwargs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/signature_bops.html">i2.scrap.signature_bops</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/scrap/signature_bops.html#i2.scrap.signature_bops.keyed_comparator"><code class="docutils literal notranslate"><span class="pre">keyed_comparator()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/simple_pymint.html">i2.scrap.simple_pymint</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/scrap/simple_pymint.html#i2.scrap.simple_pymint.mint_of_callable"><code class="docutils literal notranslate"><span class="pre">mint_of_callable()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/scrap/switch_case_tree.html">i2.scrap.switch_case_tree</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/scrap/switch_case_tree.html#i2.scrap.switch_case_tree.AttrMap"><code class="docutils literal notranslate"><span class="pre">AttrMap</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/signatures.html">i2.signatures</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.FuncCallNotMatchingSignature"><code class="docutils literal notranslate"><span class="pre">FuncCallNotMatchingSignature</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.IncompatibleSignatures"><code class="docutils literal notranslate"><span class="pre">IncompatibleSignatures</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.InvalidSignature"><code class="docutils literal notranslate"><span class="pre">InvalidSignature</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.MissingArgValFor"><code class="docutils literal notranslate"><span class="pre">MissingArgValFor</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.P"><code class="docutils literal notranslate"><span class="pre">P</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.PYTHON_DEFINED_CALLABLE_TYPES"><code class="docutils literal notranslate"><span class="pre">PYTHON_DEFINED_CALLABLE_TYPES</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.Param"><code class="docutils literal notranslate"><span class="pre">Param</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.Sig"><code class="docutils literal notranslate"><span class="pre">Sig</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.SigPair"><code class="docutils literal notranslate"><span class="pre">SigPair</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.all_pk_signature"><code class="docutils literal notranslate"><span class="pre">all_pk_signature()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.assure_params"><code class="docutils literal notranslate"><span class="pre">assure_params()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.call_forgivingly"><code class="docutils literal notranslate"><span class="pre">call_forgivingly()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.call_somewhat_forgivingly"><code class="docutils literal notranslate"><span class="pre">call_somewhat_forgivingly()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.ch_func_to_all_pk"><code class="docutils literal notranslate"><span class="pre">ch_func_to_all_pk()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.ch_signature_to_all_pk"><code class="docutils literal notranslate"><span class="pre">ch_signature_to_all_pk()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.ch_variadics_to_non_variadic_kind"><code class="docutils literal notranslate"><span class="pre">ch_variadics_to_non_variadic_kind()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.common_and_diff_argnames"><code class="docutils literal notranslate"><span class="pre">common_and_diff_argnames()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.copy_func"><code class="docutils literal notranslate"><span class="pre">copy_func()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.defaults_are_the_same_when_not_empty"><code class="docutils literal notranslate"><span class="pre">defaults_are_the_same_when_not_empty()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.dflt1_is_empty_or_dflt2_is_not"><code class="docutils literal notranslate"><span class="pre">dflt1_is_empty_or_dflt2_is_not()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.dflt1_is_empty_or_dflt2_is_not_param_comparator"><code class="docutils literal notranslate"><span class="pre">dflt1_is_empty_or_dflt2_is_not_param_comparator()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.dict_of_attribute_signatures"><code class="docutils literal notranslate"><span class="pre">dict_of_attribute_signatures()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.ensure_params"><code class="docutils literal notranslate"><span class="pre">ensure_params()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.extract_arguments"><code class="docutils literal notranslate"><span class="pre">extract_arguments()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.extract_arguments_asserting_no_remainder"><code class="docutils literal notranslate"><span class="pre">extract_arguments_asserting_no_remainder()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.extract_arguments_ignoring_remainder"><code class="docutils literal notranslate"><span class="pre">extract_arguments_ignoring_remainder()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.has_signature"><code class="docutils literal notranslate"><span class="pre">has_signature()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.insert_annotations"><code class="docutils literal notranslate"><span class="pre">insert_annotations()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.is_call_compatible_with"><code class="docutils literal notranslate"><span class="pre">is_call_compatible_with()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.is_signature_error"><code class="docutils literal notranslate"><span class="pre">is_signature_error()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.keyed_comparator"><code class="docutils literal notranslate"><span class="pre">keyed_comparator()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.kind_forgiving_func"><code class="docutils literal notranslate"><span class="pre">kind_forgiving_func()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.mk_sig_from_args"><code class="docutils literal notranslate"><span class="pre">mk_sig_from_args()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.name_of_obj"><code class="docutils literal notranslate"><span class="pre">name_of_obj()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.param_binary_func"><code class="docutils literal notranslate"><span class="pre">param_binary_func()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.param_comparator"><code class="docutils literal notranslate"><span class="pre">param_comparator()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.param_comparison_dict"><code class="docutils literal notranslate"><span class="pre">param_comparison_dict()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.param_differences_dict"><code class="docutils literal notranslate"><span class="pre">param_differences_dict()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.param_for_kind"><code class="docutils literal notranslate"><span class="pre">param_for_kind()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.permissive_param_comparator"><code class="docutils literal notranslate"><span class="pre">permissive_param_comparator()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.postprocess"><code class="docutils literal notranslate"><span class="pre">postprocess()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.replace_kwargs_using"><code class="docutils literal notranslate"><span class="pre">replace_kwargs_using()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.resolve_function"><code class="docutils literal notranslate"><span class="pre">resolve_function()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.set_signature_of_func"><code class="docutils literal notranslate"><span class="pre">set_signature_of_func()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.sig_to_dataclass"><code class="docutils literal notranslate"><span class="pre">sig_to_dataclass()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.sort_params"><code class="docutils literal notranslate"><span class="pre">sort_params()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.tuple_the_args"><code class="docutils literal notranslate"><span class="pre">tuple_the_args()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.use_interface"><code class="docutils literal notranslate"><span class="pre">use_interface()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/signatures.html#i2.signatures.validate_signature"><code class="docutils literal notranslate"><span class="pre">validate_signature()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests.html">i2.tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/footprints_test.html">i2.tests.footprints_test</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/objects_for_testing.html">i2.tests.objects_for_testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.add"><code class="docutils literal notranslate"><span class="pre">add()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.demo_func_1"><code class="docutils literal notranslate"><span class="pre">demo_func_1()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.demo_func_2"><code class="docutils literal notranslate"><span class="pre">demo_func_2()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.f"><code class="docutils literal notranslate"><span class="pre">f()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.formula1"><code class="docutils literal notranslate"><span class="pre">formula1()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.formula2"><code class="docutils literal notranslate"><span class="pre">formula2()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/objects_for_testing.html#i2.tests.objects_for_testing.sum_of_args"><code class="docutils literal notranslate"><span class="pre">sum_of_args()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_castgraph.html">i2.tests.test_castgraph</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_castgraph_kinds.html">i2.tests.test_castgraph_kinds</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_ingress_demo.html">i2.tests.test_ingress_demo</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_attribute_syntax"><code class="docutils literal notranslate"><span class="pre">demo_attribute_syntax()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_attribute_with_arg_name"><code class="docutils literal notranslate"><span class="pre">demo_attribute_with_arg_name()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_basic_usage"><code class="docutils literal notranslate"><span class="pre">demo_basic_usage()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_explicit_arg_name"><code class="docutils literal notranslate"><span class="pre">demo_explicit_arg_name()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_multi_hop"><code class="docutils literal notranslate"><span class="pre">demo_multi_hop()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_real_world_pipeline"><code class="docutils literal notranslate"><span class="pre">demo_real_world_pipeline()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/test_ingress_demo.html#i2.tests.test_ingress_demo.demo_with_context"><code class="docutils literal notranslate"><span class="pre">demo_with_context()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_signatures.html">i2.tests.test_signatures</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_util.html">i2.tests.test_util</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/test_wrapper.html">i2.tests.test_wrapper</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/tests/util.html">i2.tests.util</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/util.html#i2.tests.util.builtin_signatureless_callables"><code class="docutils literal notranslate"><span class="pre">builtin_signatureless_callables()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/util.html#i2.tests.util.function_is_compatible_with_signature"><code class="docutils literal notranslate"><span class="pre">function_is_compatible_with_signature()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/util.html#i2.tests.util.generate_params"><code class="docutils literal notranslate"><span class="pre">generate_params()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/util.html#i2.tests.util.inject_defaults"><code class="docutils literal notranslate"><span class="pre">inject_defaults()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/util.html#i2.tests.util.mk_func_from_params"><code class="docutils literal notranslate"><span class="pre">mk_func_from_params()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/util.html#i2.tests.util.params_to_arg_name_and_val"><code class="docutils literal notranslate"><span class="pre">params_to_arg_name_and_val()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/util.html#i2.tests.util.sig_to_func"><code class="docutils literal notranslate"><span class="pre">sig_to_func()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/tests/util.html#i2.tests.util.sig_to_inputs"><code class="docutils literal notranslate"><span class="pre">sig_to_inputs()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/util.html">i2.util</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.AttributeMapping"><code class="docutils literal notranslate"><span class="pre">AttributeMapping</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.AttributeMutableMapping"><code class="docutils literal notranslate"><span class="pre">AttributeMutableMapping</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.ConditionalExceptionCatcher"><code class="docutils literal notranslate"><span class="pre">ConditionalExceptionCatcher</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.ExistingArgument"><code class="docutils literal notranslate"><span class="pre">ExistingArgument</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.FileLikeObject"><code class="docutils literal notranslate"><span class="pre">FileLikeObject()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.FolderSpec"><code class="docutils literal notranslate"><span class="pre">FolderSpec</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.FrozenDict"><code class="docutils literal notranslate"><span class="pre">FrozenDict</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.FrozenHashError"><code class="docutils literal notranslate"><span class="pre">FrozenHashError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.FunctionBuilder"><code class="docutils literal notranslate"><span class="pre">FunctionBuilder</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.LiteralVal"><code class="docutils literal notranslate"><span class="pre">LiteralVal</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.MissingArgument"><code class="docutils literal notranslate"><span class="pre">MissingArgument</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.OverwritesForbidden"><code class="docutils literal notranslate"><span class="pre">OverwritesForbidden</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.PicklableLambda"><code class="docutils literal notranslate"><span class="pre">PicklableLambda</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.asis"><code class="docutils literal notranslate"><span class="pre">asis()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.copy_func"><code class="docutils literal notranslate"><span class="pre">copy_func()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.dp_get"><code class="docutils literal notranslate"><span class="pre">dp_get()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.ensure_identifiers"><code class="docutils literal notranslate"><span class="pre">ensure_identifiers()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.frozendict"><code class="docutils literal notranslate"><span class="pre">frozendict</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.get_app_config_folder"><code class="docutils literal notranslate"><span class="pre">get_app_config_folder()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.get_app_data_folder"><code class="docutils literal notranslate"><span class="pre">get_app_data_folder()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.get_app_folder"><code class="docutils literal notranslate"><span class="pre">get_app_folder()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.get_function_body"><code class="docutils literal notranslate"><span class="pre">get_function_body()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.ignore_exception"><code class="docutils literal notranslate"><span class="pre">ignore_exception()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.imdict"><code class="docutils literal notranslate"><span class="pre">imdict</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.inject_method"><code class="docutils literal notranslate"><span class="pre">inject_method()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.insert_name_based_objects_in_scope"><code class="docutils literal notranslate"><span class="pre">insert_name_based_objects_in_scope()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.inspect_formatargspec"><code class="docutils literal notranslate"><span class="pre">inspect_formatargspec()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.lambda_code"><code class="docutils literal notranslate"><span class="pre">lambda_code()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.lazyprop"><code class="docutils literal notranslate"><span class="pre">lazyprop</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.mk_sentinel"><code class="docutils literal notranslate"><span class="pre">mk_sentinel()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.name_of_obj"><code class="docutils literal notranslate"><span class="pre">name_of_obj()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.path_extractor"><code class="docutils literal notranslate"><span class="pre">path_extractor()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.register_object"><code class="docutils literal notranslate"><span class="pre">register_object()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.return_false"><code class="docutils literal notranslate"><span class="pre">return_false()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/util.html#i2.util.return_true"><code class="docutils literal notranslate"><span class="pre">return_true()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/i2/wrapper.html">i2.wrapper</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.AUTO_PRESERVE_SIGNATURE"><code class="docutils literal notranslate"><span class="pre">AUTO_PRESERVE_SIGNATURE</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.CallerValidationError"><code class="docutils literal notranslate"><span class="pre">CallerValidationError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.EgressValidationError"><code class="docutils literal notranslate"><span class="pre">EgressValidationError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.Ingress"><code class="docutils literal notranslate"><span class="pre">Ingress</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.IngressValidationError"><code class="docutils literal notranslate"><span class="pre">IngressValidationError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.InnerMapIngress"><code class="docutils literal notranslate"><span class="pre">InnerMapIngress</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.MakeFromFunc"><code class="docutils literal notranslate"><span class="pre">MakeFromFunc</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.SmartDefault"><code class="docutils literal notranslate"><span class="pre">SmartDefault</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.Wrap"><code class="docutils literal notranslate"><span class="pre">Wrap</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.WrapperValidationError"><code class="docutils literal notranslate"><span class="pre">WrapperValidationError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.Wrapx"><code class="docutils literal notranslate"><span class="pre">Wrapx</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.append_empty_args"><code class="docutils literal notranslate"><span class="pre">append_empty_args()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.bind_funcs_object_attrs"><code class="docutils literal notranslate"><span class="pre">bind_funcs_object_attrs()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.bind_funcs_object_attrs_old"><code class="docutils literal notranslate"><span class="pre">bind_funcs_object_attrs_old()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.camelize"><code class="docutils literal notranslate"><span class="pre">camelize()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.complete_dict_applying_functions"><code class="docutils literal notranslate"><span class="pre">complete_dict_applying_functions()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.func_to_method_func"><code class="docutils literal notranslate"><span class="pre">func_to_method_func()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.include_exclude_ingress_factory"><code class="docutils literal notranslate"><span class="pre">include_exclude_ingress_factory()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.items_with_mapped_keys"><code class="docutils literal notranslate"><span class="pre">items_with_mapped_keys()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.kwargs_trans"><code class="docutils literal notranslate"><span class="pre">kwargs_trans()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.move_names_to_the_end"><code class="docutils literal notranslate"><span class="pre">move_names_to_the_end()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.move_params_to_the_end"><code class="docutils literal notranslate"><span class="pre">move_params_to_the_end()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.partialx"><code class="docutils literal notranslate"><span class="pre">partialx()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.transparent_egress"><code class="docutils literal notranslate"><span class="pre">transparent_egress()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/i2/wrapper.html#i2.wrapper.transparent_ingress"><code class="docutils literal notranslate"><span class="pre">transparent_ingress()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
-<p>Release: 0.1.66</p>
-<p>Last change: Aug 05, 2026</p>
-</section>
-
-
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="module_docs/i2.html" class="btn btn-neutral float-right" title="i2" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+      // Watch for media preference changes
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+        localStorage.setItem("_x_darkMode", event.matches);
+        document.documentElement.classList.toggle("dark", event.matches);
       });
-  </script> 
+    })();
+  </script>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8"/>
+<meta content="#ffffff" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#030711" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="index.html.md" rel="alternate" type="text/markdown"/>
+<link href="llms.txt" rel="describedby" type="text/markdown"/>
+<title>i2</title>
+<meta content="i2" property="og:title"/>
+<meta content="i2" name="twitter:title"/>
+<link href="_static/pygments.css?v=d75fae25" rel="stylesheet" type="text/css"/>
+<link href="_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
+<link href="_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
+<link href="_static/epythet.css?v=01b0658f" rel="stylesheet" type="text/css"/>
+<link href="search.html" rel="search" title="Search"/>
+<link href="genindex.html" rel="index" title="Index"/>
+<link href="api.html" rel="next" title="API reference"/>
+</head>
+<body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
+<div @click.self="showSidebar = false" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" x-cloak="" x-show="showSidebar"></div><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
+      Skip to content
+    </a><header class="sticky top-0 z-40 w-full border-b shadow-xs border-border bg-background/90 backdrop-blur"><div class="container flex items-center h-14">
+<div class="hidden mr-4 md:flex">
+<a class="flex items-center mr-6" href="#"><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">i2</span>
+</a><nav class="flex items-center gap-6 text-sm font-medium">
+<a class="transition-colors hover:text-foreground/80 text-foreground/60" href="https://github.com/i2mint/i2" rel="noopener nofollow">GitHub</a>
+</nav></div><button @click="showSidebar = true" class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden" type="button">
+<svg aria-hidden="true" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M152.587 825.087q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440Zm0-203.587q-19.152 0-32.326-13.174T107.087 576q0-19.152 13.174-32.326t32.326-13.174h320q19.152 0 32.326 13.174T518.087 576q0 19.152-13.174 32.326T472.587 621.5h-320Zm0-203.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440ZM708.913 576l112.174 112.174q12.674 12.674 12.674 31.826t-12.674 31.826Q808.413 764.5 789.261 764.5t-31.826-12.674l-144-144Q600 594.391 600 576t13.435-31.826l144-144q12.674-12.674 31.826-12.674t31.826 12.674q12.674 12.674 12.674 31.826t-12.674 31.826L708.913 576Z"></path>
+</svg>
+<span class="sr-only">Toggle navigation menu</span>
+</button>
+<div class="flex items-center justify-between flex-1 gap-2 sm:gap-4 md:justify-end">
+<div class="flex-1 w-full md:w-auto md:flex-none"><form @keydown.k.window.meta="$refs.search.focus()" action="search.html" class="relative flex items-center group" id="searchbox" method="get">
+<input aria-label="Search the docs" class="inline-flex items-center font-medium transition-colors bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent focus:bg-accent hover:text-accent-foreground focus:text-accent-foreground hover:placeholder-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" id="search-input" name="q" placeholder="Search ..." type="search" x-ref="search"/>
+<kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none text-muted-foreground items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex group-hover:bg-accent group-hover:text-accent-foreground">
+<span class="text-xs">⌘</span>
+    K
+  </kbd>
+</form>
+</div>
+<nav class="flex items-center gap-1">
+<button @click="darkMode = !darkMode" class="relative inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9" title="Toggle color scheme" type="button">
+<svg class="absolute transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 685q45.456 0 77.228-31.772Q589 621.456 589 576q0-45.456-31.772-77.228Q525.456 467 480 467q-45.456 0-77.228 31.772Q371 530.544 371 576q0 45.456 31.772 77.228Q434.544 685 480 685Zm0 91q-83 0-141.5-58.5T280 576q0-83 58.5-141.5T480 376q83 0 141.5 58.5T680 576q0 83-58.5 141.5T480 776ZM80 621.5q-19.152 0-32.326-13.174T34.5 576q0-19.152 13.174-32.326T80 530.5h80q19.152 0 32.326 13.174T205.5 576q0 19.152-13.174 32.326T160 621.5H80Zm720 0q-19.152 0-32.326-13.174T754.5 576q0-19.152 13.174-32.326T800 530.5h80q19.152 0 32.326 13.174T925.5 576q0 19.152-13.174 32.326T880 621.5h-80Zm-320-320q-19.152 0-32.326-13.174T434.5 256v-80q0-19.152 13.174-32.326T480 130.5q19.152 0 32.326 13.174T525.5 176v80q0 19.152-13.174 32.326T480 301.5Zm0 720q-19.152 0-32.326-13.17Q434.5 995.152 434.5 976v-80q0-19.152 13.174-32.326T480 850.5q19.152 0 32.326 13.174T525.5 896v80q0 19.152-13.174 32.33-13.174 13.17-32.326 13.17ZM222.174 382.065l-43-42Q165.5 327.391 166 308.239t13.174-33.065q13.435-13.674 32.587-13.674t32.065 13.674l42.239 43q12.674 13.435 12.555 31.706-.12 18.272-12.555 31.946-12.674 13.674-31.445 13.413-18.772-.261-32.446-13.174Zm494 494.761-42.239-43q-12.674-13.435-12.674-32.087t12.674-31.565Q686.609 756.5 705.38 757q18.772.5 32.446 13.174l43 41.761Q794.5 824.609 794 843.761t-13.174 33.065Q767.391 890.5 748.239 890.5t-32.065-13.674Zm-42-494.761Q660.5 369.391 661 350.62q.5-18.772 13.174-32.446l41.761-43Q728.609 261.5 747.761 262t33.065 13.174q13.674 13.435 13.674 32.587t-13.674 32.065l-43 42.239q-13.435 12.674-31.706 12.555-18.272-.12-31.946-12.555Zm-495 494.761Q165.5 863.391 165.5 844.239t13.674-32.065l43-42.239q13.435-12.674 32.087-12.674t31.565 12.674Q299.5 782.609 299 801.38q-.5 18.772-13.174 32.446l-41.761 43Q231.391 890.5 212.239 890t-33.065-13.174ZM480 576Z"></path>
+</svg>
+<svg class="absolute transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100" fill="currentColor" height="16" viewbox="0 96 960 960" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 936q-151 0-255.5-104.5T120 576q0-138 90-239.5T440 218q25-3 39 18t-1 44q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q21-14 43-1.5t19 39.5q-14 138-117.5 229T480 936Zm0-80q88 0 158-48.5T740 681q-20 5-40 8t-40 3q-123 0-209.5-86.5T364 396q0-20 3-40t8-40q-78 32-126.5 102T200 576q0 116 82 198t198 82Zm-10-270Z"></path>
+</svg>
+</button>
+</nav>
+</div>
+</div>
+</header>
+<div class="flex-1"><div class="container md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10"><aside :aria-hidden="!showSidebar" :class="{ 'translate-x-0': showSidebar }" class="fixed inset-y-0 left-0 md:top-14 z-50 md:z-30 bg-background md:bg-transparent transition-all duration-100 -translate-x-full md:translate-x-0 ml-0 p-6 md:p-0 md:-ml-2 md:h-[calc(100vh-3.5rem)] w-5/6 md:w-full overflow-y-auto border-r border-border md:sticky" id="left-sidebar">
+<a class="justify-start text-sm md:!hidden bg-background" href="#"><span class="font-bold text-clip whitespace-nowrap">i2</span>
+</a>
+<div class="relative overflow-hidden md:overflow-auto my-4 md:my-0">
+<div class="overflow-y-auto h-full w-full relative pr-6"><nav class="flex md:hidden flex-col font-medium mt-4">
+<a href="https://github.com/i2mint/i2" rel="nofollow noopener">GitHub</a>
+</nav><nav class="table w-full min-w-full my-6 lg:my-8">
+<ul>
+<li class="toctree-l1" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="reference internal expandable" href="api.html">API reference<button @click.prevent.stop="expanded = !expanded" type="button" x-cloak=""><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul x-cloak="" x-show="expanded">
+<li class="toctree-l2" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="reference internal expandable" href="_autosummary/i2.html">i2<button @click.prevent.stop="expanded = !expanded" type="button" x-cloak=""><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul x-cloak="" x-show="expanded">
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.base.html">i2.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.castgraph.html">i2.castgraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.chain_map.html">i2.chain_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.deco.html">i2.deco</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.doc_mint.html">i2.doc_mint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.errors.html">i2.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.footprints.html">i2.footprints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.io_trans.html">i2.io_trans</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.itypes.html">i2.itypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.key_path.html">i2.key_path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.multi_object.html">i2.multi_object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.routing_forest.html">i2.routing_forest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.signatures.html">i2.signatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.util.html">i2.util</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/i2.wrapper.html">i2.wrapper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ai-agents.html">For AI agents</a></li>
+</ul>
+</nav>
+</div>
+</div>
+<button @click="showSidebar = false" class="absolute md:hidden right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100" type="button">
+<svg class="h-4 w-4" fill="currentColor" height="24" stroke="none" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 632 284 828q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536 576l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480 632Z"></path>
+</svg>
+</button>
+</aside>
+<main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+<div class="w-full min-w-0 mx-auto">
+<div id="content" role="main">
 
+<section id="i2">
+<h1>i2<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2">¶</a></h1>
+<p>Core tools for minting code.</p>
+<p>For human readers: <a class="reference external" href="https://i2mint.github.io/i2/" rel="nofollow noopener">Documentation here.<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>For AI agents, and humans that use them: this repo ships
+<a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills" rel="nofollow noopener">agent skills<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> —
+focused, task-oriented guides that tell a coding agent when and how to reach
+for <code class="docutils literal notranslate"><span class="pre">i2</span></code>’s tools:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills/i2-signatures" rel="nofollow noopener">i2-signatures<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>
+— introspect signatures and bind a call’s <code class="docutils literal notranslate"><span class="pre">*args,</span> <span class="pre">**kwargs</span></code> to named arguments.</p></li>
+<li><p><a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills/i2-sig-arithmetic" rel="nofollow noopener">i2-sig-arithmetic<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>
+— build, merge (<code class="docutils literal notranslate"><span class="pre">+</span></code>/<code class="docutils literal notranslate"><span class="pre">-</span></code>) and edit function signatures.</p></li>
+<li><p><a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills/i2-wrapper" rel="nofollow noopener">i2-wrapper<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>
+— wrap functions to transform their interface, inputs and output.</p></li>
+<li><p><a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills/i2-castgraph" rel="nofollow noopener">i2-castgraph<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>
+— route data through a graph of type/representation conversions.</p></li>
+<li><p><a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills/i2-multi-object" rel="nofollow noopener">i2-multi-object<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>
+— compose a fixed set of functions or context managers (<code class="docutils literal notranslate"><span class="pre">Pipe</span></code>, <code class="docutils literal notranslate"><span class="pre">FuncFanout</span></code>, …).</p></li>
+</ul>
+<section id="key-modules-overview">
+<h2>Key Modules Overview<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#key-modules-overview" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#key-modules-overview'">¶</a></h2>
+<section id="i2-castgraph-type-kind-based-transformation-graphs">
+<h3>i2.castgraph - Type/Kind-Based Transformation Graphs<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2-castgraph-type-kind-based-transformation-graphs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2-castgraph-type-kind-based-transformation-graphs'">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">castgraph</span></code> provides a graph-based system for organizing transformations between different data representations (“kinds”). It routes objects through multi-hop conversion paths, selecting the optimal route based on cost.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">castgraph</span></code> tool addresses the common friction point in software design where a function requires a specific data type or format, but the user possesses related data in a different, interchangeable representation (e.g., a file path instead of a loaded object). Inspired by Postel’s Law (“be liberal in what you accept”), the core problem is how to make interfaces highly flexible and accommodating of diverse inputs—eliminating tedious data preparation boilerplate for the user—while simultaneously adhering to the principle that “explicit is better than implicit” by keeping complex conversion logic out of the main application code; i2.castgraph solves this by providing a dedicated, cost-aware graph system to organize and execute necessary multi-hop transformations dynamically, effectively acting as an intelligent input adapter.
+Read me in the <a class="reference external" href="https://github.com/i2mint/i2/discussions/77#discussioncomment-14928396" rel="nofollow noopener">castgraph dev notes<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>.</p>
+<p><strong>Basic Usage (Type-Based):</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.castgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformationGraph</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+</span><span id="line-4">
+</span><span id="line-5"><span class="c1"># Register transformations between types</span>
+</span><span id="line-6"><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+</span><span id="line-7"><span class="k">def</span><span class="w"> </span><span class="nf">str_to_float</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+</span><span id="line-8">    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span id="line-9">
+</span><span id="line-10"><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+</span><span id="line-11"><span class="k">def</span><span class="w"> </span><span class="nf">float_to_int</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+</span><span id="line-12">    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-13">
+</span><span id="line-14"><span class="c1"># Automatically routes str -&gt; float -&gt; int</span>
+</span><span id="line-15"><span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">"42.7"</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+</span><span id="line-16"><span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">42</span>
+</span></code></pre></div>
+</div>
+<p><strong>Advanced Usage (Kind-Based):</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Define custom "kinds" (not just types)</span>
+</span><span id="line-2"><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">'json_string'</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'{'</span><span class="p">))</span>
+</span><span id="line-3"><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s1">'config_dict'</span><span class="p">,</span> <span class="n">isa</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span>
+</span><span id="line-4">
+</span><span id="line-5"><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s1">'json_string'</span><span class="p">,</span> <span class="s1">'config_dict'</span><span class="p">)</span>
+</span><span id="line-6"><span class="k">def</span><span class="w"> </span><span class="nf">parse_json</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+</span><span id="line-7">    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="line-8">    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</span><span id="line-9">
+</span><span id="line-10"><span class="c1"># Transform with automatic kind detection</span>
+</span><span id="line-11"><span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">'{"key": "value"}'</span><span class="p">,</span> <span class="s1">'config_dict'</span><span class="p">,</span> <span class="n">from_kind</span><span class="o">=</span><span class="s1">'json_string'</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<p><strong>Key Features:</strong></p>
+<ul class="simple">
+<li><p>Multi-hop routing with cost-based path selection</p></li>
+<li><p>Support for arbitrary hashable kinds (types, strings, custom markers)</p></li>
+<li><p>Pluggable kind detection with predicates</p></li>
+<li><p>Context propagation for dependency injection</p></li>
+<li><p>MRO-aware fallback for type hierarchies</p></li>
+</ul>
+</section>
+<section id="i2-signatures-function-signature-manipulation">
+<h3>i2.signatures - Function Signature Manipulation<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2-signatures-function-signature-manipulation" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2-signatures-function-signature-manipulation'">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">signatures</span></code> provides a calculus for working with function signatures - introspecting, merging, and modifying them programmatically.</p>
+<p><strong>Signature Introspection:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+</span><span id="line-4">    <span class="k">pass</span>
+</span><span id="line-5">
+</span><span id="line-6"><span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="line-7"><span class="nb">print</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>        <span class="c1"># ['z', 'a', 'b', 'c']</span>
+</span><span id="line-8"><span class="nb">print</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">defaults</span><span class="p">)</span>     <span class="c1"># {'a': 1.0, 'b': 2, 'c': 3}</span>
+</span><span id="line-9"><span class="nb">print</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>  <span class="c1"># {'a': &lt;class 'float'&gt;, 'c': &lt;class 'int'&gt;}</span>
+</span></code></pre></div>
+</div>
+<p><strong>Signature Construction:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># From function</span>
+</span><span id="line-2"><span class="n">sig1</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="c1"># From list of names</span>
+</span><span id="line-5"><span class="n">sig2</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">([</span><span class="s1">'a'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'c'</span><span class="p">])</span>
+</span><span id="line-6">
+</span><span id="line-7"><span class="c1"># From string</span>
+</span><span id="line-8"><span class="n">sig3</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="s1">'x y z'</span><span class="p">)</span>
+</span><span id="line-9">
+</span><span id="line-10"><span class="c1"># All create callable Signature objects</span>
+</span><span id="line-11"><span class="nb">print</span><span class="p">(</span><span class="n">sig2</span><span class="p">)</span>  <span class="c1"># &lt;Sig (a, b, c)&gt;</span>
+</span></code></pre></div>
+</div>
+<p><strong>Signature Merging:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span> <span class="k">pass</span>
+</span><span id="line-2"><span class="k">def</span><span class="w"> </span><span class="nf">bar</span><span class="p">(</span><span class="n">z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="k">pass</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="c1"># Combine signatures</span>
+</span><span id="line-5"><span class="n">combined</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span> <span class="o">+</span> <span class="n">Sig</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+</span><span id="line-6"><span class="nb">print</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>  <span class="c1"># &lt;Sig (x, y=1, z: int, w=2)&gt;</span>
+</span></code></pre></div>
+</div>
+<p><strong>Decorating with Signatures:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Give a function a specific signature</span>
+</span><span id="line-2"><span class="nd">@Sig</span><span class="p">(</span><span class="s1">'a b c'</span><span class="p">)</span>
+</span><span id="line-3"><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-4">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Called with: </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="line-5">
+</span><span id="line-6"><span class="c1"># Now func has signature (a, b, c)</span>
+</span><span id="line-7"><span class="n">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># Works as expected</span>
+</span></code></pre></div>
+</div>
+<p><strong>Key Features:</strong></p>
+<ul class="simple">
+<li><p>Extract parameter names, kinds, defaults, and annotations</p></li>
+<li><p>Merge multiple signatures flexibly</p></li>
+<li><p>Apply signatures as decorators</p></li>
+<li><p>Support for all parameter kinds (positional-only, keyword-only, VAR_POSITIONAL, VAR_KEYWORD)</p></li>
+<li><p>Signature algebra for composing function interfaces</p></li>
+</ul>
+</section>
+<section id="i2-wrapper-ingress-egress-function-wrapping">
+<h3>i2.wrapper - Ingress/Egress Function Wrapping<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2-wrapper-ingress-egress-function-wrapping" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2-wrapper-ingress-egress-function-wrapping'">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">wrapper</span></code> provides the <code class="docutils literal notranslate"><span class="pre">Wrap</span></code> class for transforming function inputs and outputs through composable ingress/egress layers.</p>
+<p><strong>Basic Wrapping:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.wrapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">Wrap</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span id="line-4">    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</span><span id="line-5">
+</span><span id="line-6"><span class="c1"># Transform inputs before function, outputs after</span>
+</span><span id="line-7"><span class="n">wrapped</span> <span class="o">=</span> <span class="n">Wrap</span><span class="p">(</span>
+</span><span id="line-8">    <span class="n">add</span><span class="p">,</span>
+</span><span id="line-9">    <span class="n">ingress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>  <span class="c1"># Double inputs</span>
+</span><span id="line-10">    <span class="n">egress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">result</span><span class="p">:</span> <span class="n">result</span> <span class="o">/</span> <span class="mi">2</span>       <span class="c1"># Halve output</span>
+</span><span id="line-11"><span class="p">)</span>
+</span><span id="line-12">
+</span><span id="line-13"><span class="n">result</span> <span class="o">=</span> <span class="n">wrapped</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1"># (3*2 + 4*2) / 2 = 7</span>
+</span><span id="line-14"><span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">7</span>
+</span></code></pre></div>
+</div>
+<p><strong>Signature Transformation:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.wrapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ingress</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="line-4">    <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s1">'value'</span><span class="p">]</span>
+</span><span id="line-5">
+</span><span id="line-6"><span class="c1"># Change signature: accept 'x' instead of 'data'</span>
+</span><span id="line-7"><span class="n">ingress</span> <span class="o">=</span> <span class="n">Ingress</span><span class="p">(</span>
+</span><span id="line-8">    <span class="n">outer_sig</span><span class="o">=</span><span class="s1">'x'</span><span class="p">,</span>
+</span><span id="line-9">    <span class="n">inner_sig</span><span class="o">=</span><span class="s1">'data'</span><span class="p">,</span>
+</span><span id="line-10">    <span class="n">kwargs_trans</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span><span class="s1">'data'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'value'</span><span class="p">:</span> <span class="n">x</span><span class="p">}}</span>
+</span><span id="line-11"><span class="p">)</span>
+</span><span id="line-12">
+</span><span id="line-13"><span class="n">new_func</span> <span class="o">=</span> <span class="n">ingress</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+</span><span id="line-14"><span class="n">result</span> <span class="o">=</span> <span class="n">new_func</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># Calls process({'value': 42})</span>
+</span><span id="line-15"><span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">42</span>
+</span></code></pre></div>
+</div>
+<p><strong>The Wrap Flow:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">*outer_args, **outer_kwargs
+</span><span id="line-2">        ↓
+</span><span id="line-3">    [ingress] - transform inputs
+</span><span id="line-4">        ↓
+</span><span id="line-5">*inner_args, **inner_kwargs
+</span><span id="line-6">        ↓
+</span><span id="line-7">     [func] - original function
+</span><span id="line-8">        ↓
+</span><span id="line-9">   func_output
+</span><span id="line-10">        ↓
+</span><span id="line-11">    [egress] - transform outputs
+</span><span id="line-12">        ↓
+</span><span id="line-13">  final_output
+</span></code></pre></div>
+</div>
+<p><strong>Key Features:</strong></p>
+<ul class="simple">
+<li><p>Separate ingress (input transformation) and egress (output transformation)</p></li>
+<li><p>Signature-aware argument mapping</p></li>
+<li><p>Composable wrapper layers</p></li>
+<li><p>Supports partial application and argument reordering</p></li>
+<li><p>Clean separation of concerns for cross-cutting functionality</p></li>
+</ul>
+</section>
+<section id="i2-routing-forest-conditional-logic-as-data-structures">
+<h3>i2.routing_forest - Conditional Logic as Data Structures<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2-routing-forest-conditional-logic-as-data-structures" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2-routing-forest-conditional-logic-as-data-structures'">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">routing_forest</span></code> lets you express nested if/then conditions as composable, reusable tree structures instead of tangled code.</p>
+<p><strong>Basic Routing:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.routing_forest</span><span class="w"> </span><span class="kn">import</span> <span class="n">RoutingForest</span><span class="p">,</span> <span class="n">CondNode</span><span class="p">,</span> <span class="n">FinalNode</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="c1"># Define routing logic as a forest</span>
+</span><span id="line-4"><span class="n">router</span> <span class="o">=</span> <span class="n">RoutingForest</span><span class="p">([</span>
+</span><span id="line-5">    <span class="n">CondNode</span><span class="p">(</span>
+</span><span id="line-6">        <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+</span><span id="line-7">        <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s2">"It's an integer!"</span><span class="p">)</span>
+</span><span id="line-8">    <span class="p">),</span>
+</span><span id="line-9">    <span class="n">CondNode</span><span class="p">(</span>
+</span><span id="line-10">        <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+</span><span id="line-11">        <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s2">"It's a string!"</span><span class="p">)</span>
+</span><span id="line-12">    <span class="p">)</span>
+</span><span id="line-13"><span class="p">])</span>
+</span><span id="line-14">
+</span><span id="line-15"><span class="c1"># Get first match</span>
+</span><span id="line-16"><span class="n">result</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">router</span><span class="p">(</span><span class="mi">42</span><span class="p">))</span>
+</span><span id="line-17"><span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="s2">"It's an integer!"</span>
+</span></code></pre></div>
+</div>
+<p><strong>Nested Conditions:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Nested routing with multiple conditions</span>
+</span><span id="line-2"><span class="n">router</span> <span class="o">=</span> <span class="n">RoutingForest</span><span class="p">([</span>
+</span><span id="line-3">    <span class="n">CondNode</span><span class="p">(</span>
+</span><span id="line-4">        <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">)),</span>
+</span><span id="line-5">        <span class="n">then</span><span class="o">=</span><span class="n">RoutingForest</span><span class="p">([</span>
+</span><span id="line-6">            <span class="n">CondNode</span><span class="p">(</span>
+</span><span id="line-7">                <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">,</span>
+</span><span id="line-8">                <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s2">"≥ 10"</span><span class="p">)</span>
+</span><span id="line-9">            <span class="p">),</span>
+</span><span id="line-10">            <span class="n">CondNode</span><span class="p">(</span>
+</span><span id="line-11">                <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>
+</span><span id="line-12">                <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s2">"Odd number"</span><span class="p">)</span>
+</span><span id="line-13">            <span class="p">)</span>
+</span><span id="line-14">        <span class="p">])</span>
+</span><span id="line-15">    <span class="p">)</span>
+</span><span id="line-16"><span class="p">])</span>
+</span><span id="line-17">
+</span><span id="line-18"><span class="c1"># Can get all matches or just first</span>
+</span><span id="line-19"><span class="nb">list</span><span class="p">(</span><span class="n">router</span><span class="p">(</span><span class="mi">15</span><span class="p">))</span>   <span class="c1"># ['≥ 10', 'Odd number']</span>
+</span><span id="line-20"><span class="nb">next</span><span class="p">(</span><span class="n">router</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>    <span class="c1"># None (no matches)</span>
+</span></code></pre></div>
+</div>
+<p><strong>Pattern Matching Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># Router as pattern matcher</span>
+</span><span id="line-2"><span class="k">def</span><span class="w"> </span><span class="nf">route_value</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span id="line-3">    <span class="n">router</span> <span class="o">=</span> <span class="n">RoutingForest</span><span class="p">([</span>
+</span><span id="line-4">        <span class="n">CondNode</span><span class="p">(</span>
+</span><span id="line-5">            <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span>
+</span><span id="line-6">            <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s2">"negative"</span><span class="p">)</span>
+</span><span id="line-7">        <span class="p">),</span>
+</span><span id="line-8">        <span class="n">CondNode</span><span class="p">(</span>
+</span><span id="line-9">            <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+</span><span id="line-10">            <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s2">"zero"</span><span class="p">)</span>
+</span><span id="line-11">        <span class="p">),</span>
+</span><span id="line-12">        <span class="n">CondNode</span><span class="p">(</span>
+</span><span id="line-13">            <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+</span><span id="line-14">            <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="s2">"positive"</span><span class="p">)</span>
+</span><span id="line-15">        <span class="p">)</span>
+</span><span id="line-16">    <span class="p">])</span>
+</span><span id="line-17">    <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">router</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="s2">"unknown"</span><span class="p">)</span>
+</span><span id="line-18">
+</span><span id="line-19"><span class="k">assert</span> <span class="n">route_value</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"negative"</span>
+</span><span id="line-20"><span class="k">assert</span> <span class="n">route_value</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"zero"</span>
+</span><span id="line-21"><span class="k">assert</span> <span class="n">route_value</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"positive"</span>
+</span></code></pre></div>
+</div>
+<p><strong>Key Features:</strong></p>
+<ul class="simple">
+<li><p>Objectify nested if/then logic into composable components</p></li>
+<li><p>Both callable and iterable nodes</p></li>
+<li><p>Get first match, all matches, or default values</p></li>
+<li><p>Cleaner than nested if/elif/else chains for complex routing</p></li>
+<li><p>Reusable condition components</p></li>
+</ul>
+</section>
+<section id="i2-util-utility-functions-and-helpers">
+<h3>i2.util - Utility Functions and Helpers<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2-util-utility-functions-and-helpers" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2-util-utility-functions-and-helpers'">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">util</span></code> provides miscellaneous utility functions for common patterns.</p>
+<p><strong>Identity and Constant Functions:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">asis</span><span class="p">,</span> <span class="n">return_true</span><span class="p">,</span> <span class="n">return_false</span><span class="p">,</span> <span class="n">return_none</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="c1"># Identity function</span>
+</span><span id="line-4"><span class="k">assert</span> <span class="n">asis</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span> <span class="o">==</span> <span class="mi">42</span>
+</span><span id="line-5"><span class="k">assert</span> <span class="n">asis</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</span><span id="line-6">
+</span><span id="line-7"><span class="c1"># Constant functions (useful as defaults)</span>
+</span><span id="line-8"><span class="k">assert</span> <span class="n">return_true</span><span class="p">(</span><span class="n">anything</span><span class="p">,</span> <span class="n">goes</span><span class="o">=</span><span class="s2">"here"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+</span><span id="line-9"><span class="k">assert</span> <span class="n">return_false</span><span class="p">(</span><span class="s2">"doesn't"</span><span class="p">,</span> <span class="s2">"matter"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
+</span><span id="line-10"><span class="k">assert</span> <span class="n">return_none</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+</span></code></pre></div>
+</div>
+<p><strong>Object Naming:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">name_of_obj</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="c1"># Get name of various objects</span>
+</span><span id="line-4"><span class="k">assert</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="nb">map</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'map'</span>
+</span><span id="line-5"><span class="k">assert</span> <span class="n">name_of_obj</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">==</span> <span class="s1">'list'</span>
+</span><span id="line-6"><span class="k">assert</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'&lt;lambda&gt;'</span>
+</span><span id="line-7">
+</span><span id="line-8"><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+</span><span id="line-9"><span class="k">assert</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="nb">print</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">","</span><span class="p">))</span> <span class="o">==</span> <span class="s1">'print'</span>
+</span></code></pre></div>
+</div>
+<p><strong>Attribute/Item Access:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">imdict</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="c1"># Flexible dict-like access</span>
+</span><span id="line-4"><span class="n">data</span> <span class="o">=</span> <span class="n">imdict</span><span class="p">({</span><span class="s1">'a'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">:</span> <span class="mi">2</span><span class="p">})</span>
+</span><span id="line-5"><span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">a</span> <span class="o">==</span> <span class="mi">1</span>  <span class="c1"># Attribute access</span>
+</span><span id="line-6"><span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">'b'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>  <span class="c1"># Item access</span>
+</span></code></pre></div>
+</div>
+<p><strong>Laziness Utilities:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazyprop</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="k">class</span><span class="w"> </span><span class="nc">DataLoader</span><span class="p">:</span>
+</span><span id="line-4">    <span class="nd">@lazyprop</span>
+</span><span id="line-5">    <span class="k">def</span><span class="w"> </span><span class="nf">expensive_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-6">        <span class="nb">print</span><span class="p">(</span><span class="s2">"Loading..."</span><span class="p">)</span>
+</span><span id="line-7">        <span class="k">return</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+</span><span id="line-8">
+</span><span id="line-9"><span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">()</span>
+</span><span id="line-10"><span class="c1"># First access computes and caches</span>
+</span><span id="line-11"><span class="n">data1</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">expensive_data</span>  <span class="c1"># Prints "Loading..."</span>
+</span><span id="line-12"><span class="c1"># Subsequent accesses use cached value</span>
+</span><span id="line-13"><span class="n">data2</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">expensive_data</span>  <span class="c1"># No print</span>
+</span><span id="line-14"><span class="k">assert</span> <span class="n">data1</span> <span class="ow">is</span> <span class="n">data2</span>
+</span></code></pre></div>
+</div>
+<p><strong>Key Features:</strong></p>
+<ul class="simple">
+<li><p>Common function patterns (identity, constants)</p></li>
+<li><p>Object introspection helpers</p></li>
+<li><p>Flexible attribute/item access wrappers</p></li>
+<li><p>Lazy evaluation utilities</p></li>
+<li><p>Deprecation helpers</p></li>
+<li><p>String manipulation tools</p></li>
+</ul>
+</section>
+</section>
+<section id="common-patterns">
+<h2>Common Patterns<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#common-patterns" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#common-patterns'">¶</a></h2>
+<section id="composing-transformations">
+<h3>Composing Transformations<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#composing-transformations" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#composing-transformations'">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.castgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformationGraph</span>
+</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.wrapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">Wrap</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="c1"># Define transformation graph</span>
+</span><span id="line-5"><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformationGraph</span><span class="p">()</span>
+</span><span id="line-6">
+</span><span id="line-7"><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s1">'csv'</span><span class="p">,</span> <span class="s1">'rows'</span><span class="p">)</span>
+</span><span id="line-8"><span class="k">def</span><span class="w"> </span><span class="nf">parse_csv</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+</span><span id="line-9">    <span class="k">return</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">','</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)]</span>
+</span><span id="line-10">
+</span><span id="line-11"><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s1">'rows'</span><span class="p">,</span> <span class="s1">'records'</span><span class="p">)</span>
+</span><span id="line-12"><span class="k">def</span><span class="w"> </span><span class="nf">rows_to_records</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+</span><span id="line-13">    <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+</span><span id="line-14">
+</span><span id="line-15"><span class="c1"># Use with wrapper for clean API</span>
+</span><span id="line-16"><span class="k">def</span><span class="w"> </span><span class="nf">process_csv</span><span class="p">(</span><span class="n">csv_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="line-17">    <span class="k">return</span> <span class="n">graph</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">csv_text</span><span class="p">,</span> <span class="s1">'records'</span><span class="p">,</span> <span class="n">from_kind</span><span class="o">=</span><span class="s1">'csv'</span><span class="p">)</span>
+</span><span id="line-18">
+</span><span id="line-19"><span class="c1"># Wrap to add validation</span>
+</span><span id="line-20"><span class="n">validated</span> <span class="o">=</span> <span class="n">Wrap</span><span class="p">(</span>
+</span><span id="line-21">    <span class="n">process_csv</span><span class="p">,</span>
+</span><span id="line-22">    <span class="n">ingress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),),</span>
+</span><span id="line-23">    <span class="n">egress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">records</span><span class="p">:</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">records</span> <span class="k">if</span> <span class="n">r</span><span class="p">]</span>  <span class="c1"># Filter empties</span>
+</span><span id="line-24"><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</section>
+<section id="dynamic-signature-manipulation">
+<h3>Dynamic Signature Manipulation<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#dynamic-signature-manipulation" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#dynamic-signature-manipulation'">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span>
+</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.wrapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ingress</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="c1"># Start with a general function</span>
+</span><span id="line-5"><span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-6">    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</span><span id="line-7">
+</span><span id="line-8"><span class="c1"># Give it a specific signature</span>
+</span><span id="line-9"><span class="nd">@Sig</span><span class="p">(</span><span class="s1">'a b c'</span><span class="p">)</span>
+</span><span id="line-10"><span class="k">def</span><span class="w"> </span><span class="nf">typed_process</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-11">    <span class="k">return</span> <span class="n">process</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="line-12">
+</span><span id="line-13"><span class="c1"># Now can call with clear parameters</span>
+</span><span id="line-14"><span class="n">result</span> <span class="o">=</span> <span class="n">typed_process</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span><span id="line-15"><span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">6</span>
+</span></code></pre></div>
+</div>
+</section>
+<section id="routing-with-validation">
+<h3>Routing with Validation<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#routing-with-validation" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#routing-with-validation'">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.routing_forest</span><span class="w"> </span><span class="kn">import</span> <span class="n">RoutingForest</span><span class="p">,</span> <span class="n">CondNode</span><span class="p">,</span> <span class="n">FinalNode</span>
+</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">return_none</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="k">def</span><span class="w"> </span><span class="nf">validate_input</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span id="line-5"><span class="w">    </span><span class="sd">"""Route to appropriate validator."""</span>
+</span><span id="line-6">    <span class="n">router</span> <span class="o">=</span> <span class="n">RoutingForest</span><span class="p">([</span>
+</span><span id="line-7">        <span class="n">CondNode</span><span class="p">(</span>
+</span><span id="line-8">            <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+</span><span id="line-9">            <span class="n">then</span><span class="o">=</span><span class="n">RoutingForest</span><span class="p">([</span>
+</span><span id="line-10">                <span class="n">CondNode</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">FinalNode</span><span class="p">(</span><span class="kc">True</span><span class="p">)),</span>
+</span><span id="line-11">                <span class="n">CondNode</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">FinalNode</span><span class="p">(</span><span class="kc">False</span><span class="p">))</span>
+</span><span id="line-12">            <span class="p">])</span>
+</span><span id="line-13">        <span class="p">),</span>
+</span><span id="line-14">        <span class="n">CondNode</span><span class="p">(</span>
+</span><span id="line-15">            <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+</span><span id="line-16">            <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+</span><span id="line-17">        <span class="p">)</span>
+</span><span id="line-18">    <span class="p">])</span>
+</span><span id="line-19">    <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">router</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span>
+</span><span id="line-20">
+</span><span id="line-21"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="s2">"hello"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+</span><span id="line-22"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
+</span><span id="line-23"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+</span><span id="line-24"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
+</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="what-s-mint">
+<h2>What’s mint?<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#what-s-mint" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#what-s-mint'">¶</a></h2>
+<p>Mint stands for “Meta-INTerface”.</p>
+<p>Minting is core technique of i2i: It can be seen as the encapsulation of a construct’s interface into a (data)
+structure that contains everything one needs to know about the construct to perform a specific action
+with or on the construct.</p>
+<p>A little note on the use of “encapsulation”. The term is widely used in computer science,
+and is typically tied to object oriented programming. Wikipedia provides two definitions:</p>
+<ul class="simple">
+<li><p>A language mechanism for restricting direct access to some of the object’s components.</p></li>
+<li><p>A language construct that facilitates the bundling of data with the methods (or other functions)
+operating on that data.</p></li>
+</ul>
+<p>Though both these definitions apply to minting,
+the original sense of the word “encapsulate” is even more relevant (from google definitions):</p>
+<ul class="simple">
+<li><p>express the essential features of (something) succinctly</p></li>
+<li><p>enclose (something) in or as if in a capsule</p></li>
+</ul>
+<p>Indeed, minting is the process of enclosing a construct into a “mint” (for “Meta INTerface”)
+that will express the features of the construct that are essential to the task at hand.
+The mint provides a declarative layer of the construct that allows one to write code that operates with this layer,
+which is designed to be (as) consistent (as possible) from one system/language to another.</p>
+<p>For example, whether a (non-anonymous) function was written in C, Python, or JavaScript,
+it will at least have a name, and it’s arguments will (most often) have names, and may have types.
+Similarly with “data objects”: The data of both JavaScript and Python objects can be represented by a tree whose
+leaves are base types, which can in turn be represented by a C struct.</p>
+<p class="epythet-aggregates">This documentation as a single file: <a href="i2.md">i2.md</a> (Markdown, for agents).</p>
+
+</section>
+</section>
+</div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
+<div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
+<ul>
+<li><a :data-current="activeSection === '#key-modules-overview'" class="reference internal" href="#key-modules-overview">Key Modules Overview</a><ul>
+<li><a :data-current="activeSection === '#i2-castgraph-type-kind-based-transformation-graphs'" class="reference internal" href="#i2-castgraph-type-kind-based-transformation-graphs">i2.castgraph - Type/Kind-Based Transformation Graphs</a></li>
+<li><a :data-current="activeSection === '#i2-signatures-function-signature-manipulation'" class="reference internal" href="#i2-signatures-function-signature-manipulation">i2.signatures - Function Signature Manipulation</a></li>
+<li><a :data-current="activeSection === '#i2-wrapper-ingress-egress-function-wrapping'" class="reference internal" href="#i2-wrapper-ingress-egress-function-wrapping">i2.wrapper - Ingress/Egress Function Wrapping</a></li>
+<li><a :data-current="activeSection === '#i2-routing-forest-conditional-logic-as-data-structures'" class="reference internal" href="#i2-routing-forest-conditional-logic-as-data-structures">i2.routing_forest - Conditional Logic as Data Structures</a></li>
+<li><a :data-current="activeSection === '#i2-util-utility-functions-and-helpers'" class="reference internal" href="#i2-util-utility-functions-and-helpers">i2.util - Utility Functions and Helpers</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#common-patterns'" class="reference internal" href="#common-patterns">Common Patterns</a><ul>
+<li><a :data-current="activeSection === '#composing-transformations'" class="reference internal" href="#composing-transformations">Composing Transformations</a></li>
+<li><a :data-current="activeSection === '#dynamic-signature-manipulation'" class="reference internal" href="#dynamic-signature-manipulation">Dynamic Signature Manipulation</a></li>
+<li><a :data-current="activeSection === '#routing-with-validation'" class="reference internal" href="#routing-with-validation">Routing with Validation</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#what-s-mint'" class="reference internal" href="#what-s-mint">What’s mint?</a></li>
+</ul>
+</div>
+</aside>
+</main>
+</div>
+</div><footer class="py-6 border-t border-border md:py-0">
+<div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+<div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left"></p>
+</div>
+</div>
+</footer>
+</div>
+<script src="_static/documentation_options.js?v=946d7960"></script>
+<script src="_static/doctools.js?v=fd6eb6e6"></script>
+<script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+<script src="_static/clipboard.min.js?v=a7894cd8"></script>
+<script src="_static/copybutton.js?v=fd10adb8"></script>
+<script defer="defer" src="_static/theme.js?v=5db23cf8"></script>
 </body>
 </html>
