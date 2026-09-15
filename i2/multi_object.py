@@ -735,7 +735,7 @@ class FlexFuncFanout(MultiFunc):
     Therefore ``FlexFuncFanout`` holds a "normalized" form of the functions; namely one that handles such things as
     postion only and varargs.
 
-    TODO: Make this work (right now it raises ``TypeError: formula1() got some
+    Not yet working (to do; right now it raises ``TypeError: formula1() got some
     positional-only arguments passed as keyword arguments: 'w'``)::
 
         # >>> assert formula1(1, x=2, z=3) == mf1.normalized_funcs[formula1](**kwargs_for_func[formula1])

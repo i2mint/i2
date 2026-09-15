@@ -924,8 +924,11 @@ def strip_comments(code):
 
 
 def mk_example_wants_callback(source_want_func: Callable[[str, str], Callable]):
-    """Turn a ``(source, want) -> str`` function into a ``doctest.Example`` callback that
-    returns the example's source untouched when the example expects no output."""
+    """Make a ``doctest.Example`` callback from a ``(source, want) -> str`` function.
+
+    The callback returns the example's source untouched when the example expects no
+    output.
+    """
     def example_wants_callback(example, *args, **kwargs):
         want = example.want.strip()
         if want:
