@@ -987,7 +987,7 @@ def _output_prefix(source, want, prefix="# OUTPUT: "):
 
 output_prefix = mk_example_wants_callback(_output_prefix)
 output_prefix.__doc__ = (
-    "Render a ``doctest.Example`` as its source followed by a ``# OUTPUT: `` line.\n\n"
+    "Render a ``doctest.Example`` as its source followed by a ``# OUTPUT:`` line.\n\n"
     "    >>> import doctest\n"
     "    >>> output_prefix(doctest.Example(source='1 + 1\\n', want='2\\n'))\n"
     "    '1 + 1\\n# OUTPUT: 2\\n'\n"
