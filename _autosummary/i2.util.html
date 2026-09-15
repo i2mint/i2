@@ -263,7 +263,7 @@
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/types.html#types.SimpleNamespace" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleNamespace</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>, <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Any</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>]</p>
 <p>A read-only mapping with attribute access.</p>
 <p>Useful when you want mapping interface but don’t need mutation.</p>
-<p class="rubric">Examples</p>
+<p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">ns</span> <span class="o">=</span> <span class="n">AttributeMapping</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 </span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">ns</span><span class="o">.</span><span class="n">x</span>
 </span><span id="line-3"><span class="go">10</span>
@@ -293,7 +293,7 @@ into an AttributeMapping for attribute-style access.</p>
 <p>A mutable mapping that provides both attribute and dictionary-style access.</p>
 <p>Extends AttributeMapping with mutation capabilities,
 ensuring proper error handling and protocol compliance.</p>
-<p class="rubric">Examples</p>
+<p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">ns</span> <span class="o">=</span> <span class="n">AttributeMutableMapping</span><span class="p">(</span><span class="n">apple</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">banana</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">ns</span><span class="o">.</span><span class="n">apple</span>
 </span><span id="line-3"><span class="go">1</span>
@@ -340,7 +340,7 @@ to <code class="docutils literal notranslate"><span class="pre">True</span></cod
 </ul>
 </dd>
 </dl>
-<p class="rubric">Example</p>
+<p><strong>Example</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">exception_catcher</span> <span class="o">=</span> <span class="n">ConditionalExceptionCatcher</span><span class="p">(</span>
 </span><span id="line-2"><span class="gp">... </span>    <span class="ne">ValueError</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'foo'</span><span class="p">,</span> <span class="n">handlers</span><span class="o">=</span><span class="nb">print</span>
 </span><span id="line-3"><span class="gp">... </span><span class="p">)</span>
@@ -1465,7 +1465,7 @@ a filter function.</p>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=d80f5ebb"></script>
+<script src="../_static/documentation_options.js?v=3b2b39e9"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
