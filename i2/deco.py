@@ -20,6 +20,7 @@ T = TypeVar("T")  # Can be anything
 
 
 def identity(obj: T) -> T:
+    """Return the input unchanged."""
     return obj
 
 
@@ -34,6 +35,7 @@ from functools import WRAPPER_ASSIGNMENTS, WRAPPER_UPDATES, update_wrapper
 
 # Overwrites the imported functools.wraps
 def wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
+    """Copy of ``functools.wraps`` (kept local: it avoids a Jupyter tab-completion issue)."""
     return partial(update_wrapper, wrapped=wrapped, assigned=assigned, updated=updated)
 
 
@@ -79,9 +81,10 @@ class FuncFactory:
 
     In essence, ``FuncFactory`` is equivalent to:
 
-    ```
-    FuncFactory = lambda func: lambda *args, **kwargs: partial(func, *args, **kwargs)
-    ```
+    .. code-block:: text
+
+        FuncFactory = lambda func: lambda *args, **kwargs: partial(func, *args, **kwargs)
+
 
     but more convenient and helpful. For one, it doesn't use ``lambda``, so is picklable.
     It also has a more helpful signature:
@@ -130,14 +133,14 @@ class FuncFactory:
     >>> get_42()
     42
 
-    Note: A convenience property has been added to implement this recipe:
+    Note:
+        A convenience property has been added to implement this recipe:
 
     >>> get_42, get_hello = map(FuncFactory.func_returning_obj, (42, 'hello'))
     >>> get_42()
     42
     >>> get_hello()
     'hello'
-
     """
 
     def __init__(self, func, *, include=(), exclude=()):
@@ -178,6 +181,7 @@ class FuncFactory:
 
     @classmethod
     def wrap(cls, include=(), exclude=()):
+        """Return a ``FuncFactory`` constructor with ``include`` and ``exclude`` fixed."""
         return partial(cls, include=include, exclude=exclude)
 
     def _process_args_and_kwargs(self, args, kwargs):
@@ -203,6 +207,7 @@ class FuncFactory:
         return cls(identity)(obj)
 
     def to_jdict(self):
+        """Return a ``{"func": ...}`` dict from which ``from_jdict`` rebuilds the factory."""
         return {"func": self.func}
 
     @classmethod
@@ -246,9 +251,10 @@ def double_up_as_factory(decorator_func):
     That is, from a decorator that is defined do ``wrapped_func = decorator(func, **params)``,
     make it also be able to do ``wrapped_func = decorator(**params)(func)``.
 
-    Note: You'll only be able to do this if all but the first argument are keyword-only,
-    and the first argument (the function to decorate) has a default of ``None`` (this is for your own good).
-    This is validated before making the "double up as factory" decorator.
+    Note:
+        You'll only be able to do this if all but the first argument are keyword-only,
+        and the first argument (the function to decorate) has a default of ``None`` (this is for your own good).
+        This is validated before making the "double up as factory" decorator.
 
     >>> @double_up_as_factory
     ... def decorator(func=None, *, multiplier=2):
@@ -340,7 +346,6 @@ def double_up_as_factory(decorator_func):
     with ``TypeError: rename() got multiple values for argument 'func'``.  If a decorator
     needs an argument with the same name as its first parameter, don't use
     ``double_up_as_factory``.
-
     """
 
     def validated_wrapped_param_name(decorator_func):
@@ -371,7 +376,8 @@ def double_up_as_factory(decorator_func):
 def _conditional_arg_trans(func=None, **condition_and_trans_of_argname):
     """
 
-    See also: ensure_iterable_args, for a more complex example of how to use it.
+    See also:
+        ensure_iterable_args, for a more complex example of how to use it.
     """
 
     @wraps(func)
@@ -430,6 +436,7 @@ def ensure_iterable_args(func=None, **condition_of_argname):
 
 
 def transparently_wrapped(func):
+    """Wrap ``func`` so it is called with its positional arguments packed in one tuple."""
     @wraps(func)
     def transparently_wrapped_func(*args, **kwargs):
         return func(args, **kwargs)
@@ -442,6 +449,7 @@ def mk_args_kwargs_merger(func):
     Make a function that will return a dict containing all {argname: argval} pairs from a function's call.
     That is, it merges all non-keyword arguments with the keyword-arguments, with the right name, so that
     the arguments can be handled more uniformly.
+
     :param func: The function that will be called, whose signature should be looked at to make the
         merging function
     :return: A function merge_args_and_kwargs(args, kwargs) that can be used to merge arguments
@@ -494,6 +502,7 @@ def kwargs_for_func(*funcs, **kwargs):
 def assert_attrs(attrs):
     """
     Asserts, at construction time, that the class contains a specific set of attributes
+
     :param attrs: An attribute name (string) or a list of attribute names whose existence needs to be enforced.
     :return: A class decorator that will enforce the existence of the attrs when an instance is made
 
@@ -542,7 +551,23 @@ def assert_attrs(attrs):
 
 
 def preprocess_arguments(pre):
-    """Apply a function to args, kwargs and use the transformed in the decorated function"""
+    """Make a decorator that lets ``pre`` rewrite the ``(args, kwargs)`` of every call.
+
+    ``pre(*args, **kwargs)`` must return an ``(args, kwargs)`` pair; the wrapped
+    function is then called with that pair.
+
+    >>> @preprocess_arguments(lambda *args, **kwargs: (
+    ...     tuple(int(a) for a in args), {k: int(v) for k, v in kwargs.items()}
+    ... ))
+    ... def add(a, b):
+    ...     return a + b
+    >>> add("1", b="2")
+    3
+
+    See Also:
+        ``preprocess``: ``pre`` returns a single value that becomes the only argument.
+        ``transform_args``: transform named arguments one by one.
+    """
 
     def decorator(func):
         def wrapper(*args, **kwargs):
@@ -555,6 +580,22 @@ def preprocess_arguments(pre):
 
 
 def preprocess(pre):
+    """Make a decorator that feeds the wrapped function the output of ``pre``.
+
+    The wrapped function receives a single argument: ``pre(*args, **kwargs)``, computed
+    from whatever the caller passed.
+
+    >>> @preprocess(int)
+    ... def double(x):
+    ...     return 2 * x
+    >>> double("21")
+    42
+
+    See Also:
+        ``postprocess``: apply a function to the output instead.
+        ``preprocess_arguments``: ``pre`` returns the ``(args, kwargs)`` pair to call the
+        wrapped function with, instead of a single value.
+    """
     def decorator(func):
         if inspect.ismethod(func):
 
@@ -590,7 +631,8 @@ def _return_annotation_of(func):
             return Parameter.empty
 
 
-class OutputPostProcessingError(RuntimeError): ...
+class OutputPostProcessingError(RuntimeError):
+    """Raised by ``postprocess`` when the post-processing function fails."""
 
 
 def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=False):
@@ -605,14 +647,15 @@ def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=Fal
     >>> sum_range(4)
     6
 
-    Note: The decorator also sticks the return annotation of the post function on the wrapped one.
+    Note:
+        The decorator also sticks the return annotation of the post function on the wrapped one.
 
     Use cases:
 
     - Changing a generator into a container returning function
-        In many situations, writing a generator is simpler than writing a function
-        that accumulates a list or a dict etc.
-        So here, you just write the generator and tag this decorator on top, to get the same effect.
+      In many situations, writing a generator is simpler than writing a function
+      that accumulates a list or a dict etc.
+      So here, you just write the generator and tag this decorator on top, to get the same effect.
 
     >>> from inspect import signature
     >>> @postprocess(dict)
@@ -645,8 +688,7 @@ def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=Fal
     >>> assert t == [0, 1]
 
     - Using a function that does a lot to make several functions that do less.
-        (e.g. Extracting/making a python object from a function returning a raw http response_
-
+      (e.g. Extracting/making a python object from a function returning a raw http response)
     """
 
     def decorator(func):
@@ -694,10 +736,13 @@ def input_output_decorator(preprocess=None, postprocess=None):
     Makes a decorator that preprocesses inputs and postprocesses outputs.
     Use it if you want to transform the input of a function or method before calling it, or if you want
     to transform the returned value before returning it.
+
     :param preprocess: Function to be applied to input
     :param postprocess: Function to be applied to output
     :return: a decorator that preprocesses inputs and postprocesses outputs
-    See also: preprocess and postprocess decorators if you need only to pre or post process!
+
+    See also:
+        preprocess and postprocess decorators if you need only to pre or post process!
 
     >>> # Examples with "normal functions"
     >>> def f(x=3):
@@ -751,11 +796,13 @@ def input_output_decorator(preprocess=None, postprocess=None):
     This is not what you'd expect: The doc of the class, not the function
 
     # >>>
+    """
+    # Not a doctest (kept as a note):
     # >>> f.static_method = input_output_decorator(preprocess=lambda x: '"' + x + '"',
     # ...                                          postprocess=lambda x: x + '!!!')(f.static_method)
     # >>> print(ff.static_method('big', 'eyes'))
+    #
     # What big "eyes" you have!!!
-    """
 
     def decorator(func):
         if preprocess and postprocess:
@@ -789,8 +836,10 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
     Make a decorator that transforms function arguments before calling the function.
     Works with plain functions and bounded methods.
     For example:
+
         * original argument: a relative path --> used argument: a full path
         * original argument: a pickle filepath --> used argument: the loaded object
+
     :param rootdir: rootdir to be used for all name arguments of target function
     :param name_arg: the position (int) or argument name of the argument containing the name
     :return: a decorator
@@ -881,6 +930,7 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
 
 
 def wrap_method_output(wrapper_func):
+    """Make a method decorator that applies ``wrapper_func`` to the method's output."""
     def _wrap_output(wrapped):
         @wraps(wrapped)
         def _wrapped(self, *args, **kwargs):
@@ -976,6 +1026,8 @@ def wrap_class_methods(
 
 
 def mk_input_and_output_method_wrapper(method_output_trans=None, **arg_trans):
+    """Make a method decorator transforming named arguments (``arg_trans``) and, if
+    given, the output (``method_output_trans``)."""
     def wrap_method(method_func):
         wrapped_method = transform_args(**arg_trans)(method_func)
         if method_output_trans is not None:
@@ -989,6 +1041,8 @@ def mk_input_and_output_method_wrapper(method_output_trans=None, **arg_trans):
 def transform_class_method_input_and_output(
     cls, method, method_output_trans=None, **arg_trans
 ):
+    """Replace ``cls.method`` in place with a version whose named arguments are
+    transformed by ``arg_trans`` and whose output by ``method_output_trans``."""
     wrapped_method = transform_args(**arg_trans)(getattr(cls, method))
     if method_output_trans is not None:
         setattr(
@@ -1030,6 +1084,7 @@ def wrap_class_methods_input_and_output(
         * transform_class_method_input_and_output: The function that is called for every method we wrap.
 
     In the following, we will show two examples.
+
     - The first is a toy example to demonstrate the basic functionality.
     - The second demonstrates a more involved case, but is still a silly example.
     - The third demonstrates more the type of application we'd use wrap_class_methods_input_and_output for in real life.
@@ -1278,6 +1333,8 @@ def add_method(obj, method_func, method_name=None, class_name=None):
 def transform_instance_method_input_and_output(
     obj, method, method_output_trans=None, **arg_trans
 ):
+    """Instance-level counterpart of ``transform_class_method_input_and_output``;
+    experimental (it emits a warning saying so)."""
     from warnings import warn
 
     warn("Not sure transform_instance_method_input_and_output works yet")
@@ -1298,6 +1355,11 @@ def wrap_instance_methods(
     _raise_error_if_non_existent_method=True,
     **method_trans_spec,
 ):
+    """Make a function that wraps the named methods of an instance, as
+    ``wrap_class_methods_input_and_output`` does for a class (experimental).
+
+    ``_return_a_copy_of_the_class`` is accepted for symmetry but not used.
+    """
     def obj_wrapper(obj):
         for method, method_trans in method_trans_spec.items():
             if hasattr(obj, method):
@@ -1318,6 +1380,7 @@ def wrap_instance_methods(
 def mk_method_trans_spec_from_methods_specs_dict(methods_specs_dict):
     """
     Utility to make inputs for wrap_class_methods_input_and_output more easily.
+
     :param methods_specs_dict: a dict where
         keys are method names (either a single string, or a tuple of strings)
         values are the trans_spec dicts that should be associated to those methods
@@ -1369,6 +1432,7 @@ def _call_signature(func: Callable, args: Args, kwargs: Kwargs) -> str:
     """
     A util to make a string representation of a call of a function func with given args and kwargs.
     Meant to be the default mk_log_str of mk_call_logger.
+
     :param func: A callable
     :param args: A tuple of positional arguments
     :param kwargs: A dict of key=val arguments
@@ -1395,6 +1459,7 @@ def mk_call_logger(
 ):
     """
     Makes a decorator that logs each call to the wrapped function.
+
     :param logger: The actual function that logs stuff. Default is print. The "stuff" it logs is given by
         the what_to_log argument (a function).
     :param what_to_log: A function taking inputs (func, args, kwargs) of the call, and returning something to log

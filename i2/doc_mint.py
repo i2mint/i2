@@ -19,24 +19,27 @@ def find_in_params(
     :param query: The query to search for.
     :param params: The list of parameter specifications.
         Params can be provided in two formats:
+
         - A function, from which the params will be extracted from the docstring.
         - A list of dictionaries where each dictionary specifies a parameter, containing:
+
             - name: The name of the parameter (str).
             - default: The default value of the parameter (any, optional).
             - annotation: The type annotation for the parameter (str, optional).
             - description: A description of the parameter (str).
+
         If a callable is provided, it will be used to generate the list of parameter specifications.
     :param search_in: The fields to search in each parameter specification.
     :return: A list of parameter specifications that match the query.
 
     Examples:
 
-    >>> params = [
-    ...     {"name": "x", "default": 1, "annotation": "int", "description": "An integer value."},
-    ...     {"name": "y", "default": None, "annotation": "str", "description": "An optional string."},
-    ... ]
-    >>> find_in_params('int', params)
-    [{'name': 'x', 'default': 1, 'annotation': 'int', 'description': 'An integer value.'}]
+        >>> params = [
+        ...     {"name": "x", "default": 1, "annotation": "int", "description": "An integer value."},
+        ...     {"name": "y", "default": None, "annotation": "str", "description": "An optional string."},
+        ... ]
+        >>> find_in_params('int', params)
+        [{'name': 'x', 'default': 1, 'annotation': 'int', 'description': 'An integer value.'}]
 
     """
     if isinstance(search_in, str):
@@ -58,7 +61,7 @@ def indent_lines(string: str, indent: str) -> str:
     :param indent: The string to use for indentation.
     :return: The indented string.
 
-    Examples:
+    **Examples**
 
     >>> print(indent_lines('This is a test.\nAnother line.', ' ' * 8))
             This is a test.
@@ -77,7 +80,7 @@ def most_common_indent(string: str, ignore_first_line=True) -> str:
         because of the way python strings appear in code.
     :return: The most common indentation string.
 
-    Examples:
+    **Examples**
 
     >>> most_common_indent('    This is a test.\n    Another line.')
     '    '
@@ -95,8 +98,9 @@ def inject_docstring_content(to_inject, *, position=-1, indent=True):
     r"""
     Inject content into the docstring of a function.
 
-    Note: If you use the decorator on a string, it will assume that string is the doc
-    string you want to transform and return the modified string directly.
+    Note:
+        If you use the decorator on a string, it will assume that string is the doc
+        string you want to transform and return the modified string directly.
 
     :param to_inject: The content to inject.
     :param position: The position in the docstring to inject the content.
@@ -108,7 +112,7 @@ def inject_docstring_content(to_inject, *, position=-1, indent=True):
         If a string, it will use that specific string.
     :return: A decorator that injects the content into the docstring of the decorated function.
 
-    Examples:
+    **Examples**
 
     >>> @inject_docstring_content('This is a test.')
     ... def test_func():
@@ -179,17 +183,19 @@ def params_to_docstring(
 
     :param params: A list of dictionaries where each dictionary specifies a parameter.
         Each dictionary should contain:
+
           - name: The name of the parameter (str).
           - default: The default value of the parameter (any, optional).
           - annotation: The type annotation for the parameter (str, optional).
           - description: A description of the parameter (str).
+
     :param doc_style: The style of the docstring to generate. One of 'numpy', 'google', or 'rest'.
     :param take_name_of_types: Whether to use the name of the type as the annotation (bool).
     :param quote_string_defaults: Whether to quote string defaults (bool).
 
     :return: A formatted docstring (str).
 
-    Examples:
+    **Examples**
 
     >>> params = [
     ...     {"name": "x", "default": 1, "annotation": "int", "description": "An integer value."},
@@ -307,7 +313,7 @@ def string_param_to_obj(string_to_object_mapping: dict, string=None):
     :param string_to_object_mapping: A mapping from string representations to objects.
     :return: The object corresponding to the string representation.
 
-    Examples:
+    **Examples**
 
     >>> string_to_object_mapping = {
     ...     'None': None,
@@ -357,6 +363,12 @@ _MAX_LENGTH_FOR_LITERAL_EVAL = 1000
 
 
 def literal_eval_converter(s: str, max_length=_MAX_LENGTH_FOR_LITERAL_EVAL):
+    """Evaluate ``s`` as a Python literal, or return None when it is not one (or is
+    longer than ``max_length``, or contains a newline or ``;``).
+
+    >>> literal_eval_converter("[1, 2]"), literal_eval_converter("foo")
+    ([1, 2], None)
+    """
     if len(s) > max_length:  # Restrict long strings for extra safety
         return None
     elif "\n" in s or "\r" in s or ";" in s:  # extra safety
@@ -370,6 +382,7 @@ def literal_eval_converter(s: str, max_length=_MAX_LENGTH_FOR_LITERAL_EVAL):
 def register_converter(converter):
     """
     Register a new converter. A converter can be:
+
       - A dict: { "None": None, "int": int, ... }
       - A callable: lambda s: attempt to parse s and return object or None
     """
@@ -382,6 +395,14 @@ register_converter(literal_eval_converter)
 
 
 def convert_string(s: str, converters: list[dict | Callable]) -> object:
+    """Convert ``s`` with the first converter that matches (a dict containing ``s`` as a
+    key, or a callable returning something other than None); return ``s`` if none does.
+
+    >>> convert_string("None", dflt_str_to_obj_converters), convert_string("3.5", dflt_str_to_obj_converters)
+    (None, 3.5)
+    >>> convert_string("hello", dflt_str_to_obj_converters)
+    'hello'
+    """
     for converter in converters:
         # If converter is a dict
         if isinstance(converter, dict):
@@ -415,12 +436,13 @@ def docstring_to_params(
     :param doc_style: The style of the docstring to parse. One of 'numpy', 'google', or 'rest'.
 
     :return: A list of parameter specifications, where each specification is a dictionary containing:
+
         - name: The name of the parameter (str).
         - default: The default value of the parameter (str, optional).
         - annotation: The type annotation for the parameter (str, optional).
         - description: A description of the parameter (str).
 
-    Examples:
+    **Examples**
 
     >>> docstring = '''
     ... Parameters
@@ -830,7 +852,6 @@ def split_text_and_doctests(doc_string: str):
 
     >>> str(block)
     '    >>> 2 + 3\n    5\n    >>> t = 5\n    >>> tt = 10\n'
-
     """
 
     def is_string(item):
@@ -893,11 +914,21 @@ def non_doctest_lines(doc):
 
 
 def strip_comments(code):
+    r"""Remove whole-line ``#`` comments from ``code`` (inline comments are kept).
+
+    >>> strip_comments("# header\nx = 1  # set x\n")
+    'x = 1  # set x\n'
+    """
     code = str(code)
     return comment_strip_p.sub("", code)
 
 
 def mk_example_wants_callback(source_want_func: Callable[[str, str], Callable]):
+    """Make a ``doctest.Example`` callback from a ``(source, want) -> str`` function.
+
+    The callback returns the example's source untouched when the example expects no
+    output.
+    """
     def example_wants_callback(example, *args, **kwargs):
         want = example.want.strip()
         if want:
@@ -910,6 +941,11 @@ def mk_example_wants_callback(source_want_func: Callable[[str, str], Callable]):
 
 
 def split_line_comments(s):
+    """Split a single line into its code and its ``#`` comment (empty if none).
+
+    >>> split_line_comments("f(1)  # a comment")
+    ('f(1)  ', ' a comment')
+    """
     t = s.split("#")
     if len(t) == 1:
         comment = ""
@@ -950,7 +986,19 @@ def _output_prefix(source, want, prefix="# OUTPUT: "):
 
 
 output_prefix = mk_example_wants_callback(_output_prefix)
+output_prefix.__doc__ = (
+    "Render a ``doctest.Example`` as its source followed by a ``# OUTPUT:`` line.\n\n"
+    "    >>> import doctest\n"
+    "    >>> output_prefix(doctest.Example(source='1 + 1\\n', want='2\\n'))\n"
+    "    '1 + 1\\n# OUTPUT: 2\\n'\n"
+)
 assert_wants = mk_example_wants_callback(_assert_wants)
+assert_wants.__doc__ = (
+    "Render a ``doctest.Example`` as an ``assert`` comparing its source to its want.\n\n"
+    "    >>> import doctest\n"
+    "    >>> assert_wants(doctest.Example(source='1 + 1\\n', want='2\\n'))\n"
+    "    'assert (1 + 1) == 2 #'\n"
+)
 
 # def example_to_doctest_string(source, want):
 #     want.replace()
@@ -960,6 +1008,7 @@ assert_wants = mk_example_wants_callback(_assert_wants)
 def doctest_string_trans_lines(
     doctest_obj: doctest.DocTest, example_callback=assert_wants
 ):
+    """Yield ``example_callback(example)`` for each example of a ``doctest.DocTest``."""
     for example in doctest_obj.examples:
         yield example_callback(example)
 
@@ -994,6 +1043,7 @@ doctest_string.for_assert_wants = partial(doctest_string, example_callback=asser
 def doctest_string_print(obj, example_callback=assert_wants, recurse=True):
     """
     Extract the doctests found in given object.
+
     :param obj: Object (module, class, function, etc.) you want to extract doctests from.
     :param recurse: Whether the process should find doctests in the attributes of the object, recursively.
     :return: A string containing the doctests, with output lines prefixed by '# Output:'
@@ -1009,6 +1059,7 @@ def old_doctest_string(
 ):
     """
     Extract the doctests found in given object.
+
     :param obj: Object (module, class, function, etc.) you want to extract doctests from.
     :param output_prefix:
     :param recurse: Whether the process should find doctests in the attributes of the object, recursively.

@@ -1,7 +1,14 @@
-"""
-Tools to provide meta-interfaces of python objects.
-See also:
-    py2misc/py2store/tree_store.py
+"""Tools to provide meta-interfaces ("mints") of python objects.
+
+A mint is a ``Mapping`` view of the (meta-)information describing the interface of
+an object: for a callable, its parameters (name, kind, default, annotation) and its
+return annotation.
+
+Main entry points:
+
+- ``Mint``: mint of any python object
+- ``MintOfCallable``: mint of a callable, with parameter information
+- ``ParametersMint``: mint of the parameters of a callable
 """
 
 import inspect
@@ -14,6 +21,8 @@ inspect_empty = Parameter.empty
 
 
 class NotFoundType:
+    """Type of the ``not_found`` sentinel: falsy, repr ``NotFound``."""
+
     def __bool__(self):
         return False
 
@@ -29,6 +38,7 @@ inspect_is_empty = inspect._empty
 
 
 def is_not_empty(obj):
+    """False for ``inspect.Parameter.empty`` and ``NotFoundType`` instances, True otherwise."""
     if obj is inspect_is_empty or isinstance(obj, NotFoundType):
         return False
     else:
@@ -52,6 +62,7 @@ def _property_names_of(obj):
 #  see `i2.signatures.name_of_obj`.
 # TODO: Analyse usages and reroute to i2.signatures.name_of_obj instead.
 def name_of_obj(o):
+    """Deprecated alias of ``i2.signatures.name_of_obj`` (emits a ``DeprecationWarning``)."""
     from warnings import warn
 
     warn(
@@ -65,6 +76,8 @@ def name_of_obj(o):
 
 
 class AttrFromKey:
+    """Expose the keys of a mapping as attributes (``obj.k`` reads ``d[k]``)."""
+
     def __init__(self, d):
         self._d = d
 
@@ -75,6 +88,8 @@ class AttrFromKey:
 
 
 class KeyFromAttr:
+    """Expose the attributes of an object as mapping keys (``obj[k]`` reads ``getattr(d, k)``)."""
+
     def __init__(self, d):
         self._d = d
 
@@ -119,6 +134,12 @@ class _ParameterMintLazy:  # Note: Experimental
 
 
 class ParameterMint:
+    """Mint of one parameter: its name, kind, default and annotation (and position, if given).
+
+    Accepts an ``inspect.Parameter``-like object or a mapping with those keys; missing
+    attributes are set to ``inspect.Parameter.empty``.
+    """
+
     _attrs = ["name", "kind", "default", "annotation"]
 
     def __init__(self, param, position=None):
@@ -342,6 +363,8 @@ class Mint(Mapping):
 
 
 class MintOfCallableMixin:
+    """Mint attributes computed from a callable's signature (parameters, return annotation, doc)."""
+
     @lazyprop
     def _signature(self):
         """Here's some doc"""
@@ -381,6 +404,8 @@ class MintOfCallableMixin:
 
 
 class MintOfDocMixin:
+    """Placeholder mixin for parsed-docstring mint attributes (not implemented yet)."""
+
     @lazyprop
     def _parsed_doc(self):
         return "Not yet implemented (correctly)"

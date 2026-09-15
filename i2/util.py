@@ -27,21 +27,34 @@ T = TypeVar("T")
 
 
 def asis(x: T) -> T:
-    """the identity function: f(x) := x (takes only one argument, and returns it)"""
+    """The identity function: f(x) := x (takes only one argument, and returns it).
+
+    >>> asis(3)
+    3
+    """
     return x
 
 
 def return_false(*args, **kwargs):
-    """a function that returns True (takes any number of arguments)"""
+    """Return False, whatever the arguments.
+
+    >>> return_false(1, x=2)
+    False
+    """
     return False
 
 
 def return_true(*args, **kwargs):
-    """a function that returns False (takes any number of arguments)"""
-    return False
+    """Return True, whatever the arguments.
+
+    >>> return_true(1, x=2)
+    True
+    """
+    return True
 
 
 def return_none(*args, **kwargs) -> None:
+    """Return None, whatever the arguments."""
     return None
 
 
@@ -96,7 +109,6 @@ def name_of_obj(
     >>> alt = partial(name_of_obj, base_name_of_obj=attrgetter('__qualname__'))
     >>> alt(Signature.replace)
     'Signature.replace'
-
     """
     try:
         return base_name_of_obj(o)
@@ -205,7 +217,7 @@ class ConditionalExceptionCatcher:
     :param prevent_propagation: Whether to prevent the exception from propagating. Defaults
         to ``True``.
 
-    Example:
+    .. rubric:: Example
 
     >>> exception_catcher = ConditionalExceptionCatcher(
     ...     ValueError, lambda e: e.args[0] == 'foo', handlers=print
@@ -223,7 +235,6 @@ class ConditionalExceptionCatcher:
     Traceback (most recent call last):
         ...
     ValueError: bar
-
     """
 
     def __init__(
@@ -274,7 +285,7 @@ class AttributeMapping(SimpleNamespace, Mapping[str, Any]):
 
     Useful when you want mapping interface but don't need mutation.
 
-    Examples:
+    .. rubric:: Examples
 
     >>> ns = AttributeMapping(x=10, y=20)
     >>> ns.x
@@ -315,7 +326,7 @@ class AttributeMutableMapping(AttributeMapping, MutableMapping[str, Any]):
     Extends AttributeMapping with mutation capabilities,
     ensuring proper error handling and protocol compliance.
 
-    Examples:
+    .. rubric:: Examples
 
     >>> ns = AttributeMutableMapping(apple=1, banana=2)
     >>> ns.apple
@@ -373,10 +384,13 @@ def FileLikeObject(file, *, io_cls=io.BytesIO, open_mode="rb"):
     bytes of a file, or an open file pointer.
 
     Args:
-        file (str, bytes, io.IOBase): The file path, bytes of a file, or an open file pointer.
+        file: The file path, bytes of a file, or an open file pointer.
+        io_cls: Accepted for interface compatibility; not used by the current
+            implementation (bytes are always wrapped in ``io.BytesIO``).
+        open_mode: The mode ``open`` is called with when ``file`` is a path.
 
     Yields:
-        io.IOBase: A file-like object.
+        A file-like object.
     """
     if isinstance(file, str):
         # If file is a string, open the file and yield the file pointer
@@ -415,24 +429,20 @@ def copy_func(
 
     :param func: The function to be copied.
     :param copy_dict: Indicates whether to copy the ``__dict__`` attribute of the
-        function. Defaults to ``True``.
-    :param code: The value to be use as the ``__code__`` attribute of the copy.
-    :param globals_: The value to be use as the ``__globals__`` attribute of the copy.
+        function (any attributes set on the function instance). Defaults to ``True``.
+    :param code: The value to be used as the ``__code__`` attribute of the copy.
+    :param globals\\_: The value to be used as the ``__globals__`` attribute of the copy.
     :return: A shallow copy of the function.
 
     Note that it should always work with proper functions and attempts to do the
     best job it can with other callables, but there are no guarantees on how
-    ``copy_function`` will behave with custom callables.
+    ``copy_func`` will behave with custom callables.
 
     If these custom callables don't have a `__code__` attribute, the copy will fail.
     Furthermore, if the custom callable  doesn't have ``__globals__``, the empty
     dictionary will be used as the globals.
     We provide a ``code`` and ``globals`` argument to allow the user to provide
     the ``__code__`` and ``__globals__`` attributes of the function to be copied.
-
-    :param func: The function to be copied. Must be a function, not just any method or callable.
-    :param copy_dict: Also copy any attributes set on the function instance. Defaults to ``True``.
-    :return: A shallow copy of the function.
     """
     from types import FunctionType
 
@@ -459,6 +469,7 @@ class OverwritesForbidden(ValueError):
 
 
 def is_lambda(func):
+    """Whether ``func`` is a lambda (its ``__name__`` is ``"<lambda>"``)."""
     return getattr(func, "__name__", None) == "<lambda>"
 
 
@@ -467,7 +478,6 @@ def lambda_code(lambda_func) -> str:
     """Extract code of expression from lambda function.
     For lambda code-extraction see:
     https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function
-
     """
     func_str = str(inspect.getsourcelines(lambda_func)[0])
     return func_str.strip("['\\n']").split(" = ")[1]
@@ -488,7 +498,6 @@ class PicklableLambda:
 
     For lambda code-extraction see:
     https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function
-
     """
 
     def __init__(self, func, name=None):
@@ -545,7 +554,6 @@ def ensure_identifiers(
     Traceback (most recent call last):
       ...
     ValueError: too_long isn't an identifier according toless_than_6_chars
-
     """
     for obj in objs:
         for identifier in get_identfiers(obj):
@@ -599,7 +607,7 @@ def insert_name_based_objects_in_scope(
     ... )
     >>> insert_namedtuples_in_locals('foo bar', 'baz')
 
-    And now ``foo` exists!
+    And now ``foo`` exists!
 
     >>> 'foo' in locals()
     True
@@ -630,7 +638,6 @@ class LiteralVal:
     42
     >>> t()
     42
-
     """
 
     def __init__(self, val):
@@ -652,6 +659,15 @@ class LiteralVal:
 
 
 def dflt_idx_preprocessor(obj, idx):
+    """Get ``idx`` from ``obj``: by item for ints, digit strings and Mappings, else by attribute.
+
+    The default ``getter`` of ``path_extractor``.
+
+    >>> dflt_idx_preprocessor({"a": 1}, "a"), dflt_idx_preprocessor([10, 20], "1")
+    (1, 20)
+
+    :raises KeyError: If ``idx`` is neither an item nor an attribute of ``obj``.
+    """
     if isinstance(idx, str) and str.isdigit(idx):
         idx = int(idx)
     if isinstance(idx, int) or isinstance(obj, Mapping):
@@ -742,7 +758,7 @@ def path_extractor(tree, path, getter=dflt_idx_preprocessor, *, path_sep="."):
 # Note: Specialization of path_extractor for Mappings
 def dp_get(d, dot_path):
     """Get stuff from a dict (or any Mapping), using dot_paths (i.e. 'foo.bar' instead of
-     ['foo']['bar'])
+    ['foo']['bar']).
 
     >>> d = {'foo': {'bar': 2, 'alice': 'bob'}, 3: {'pi': 3.14}}
     >>> assert dp_get(d, 'foo') == {'bar': 2, 'alice': 'bob'}
@@ -797,7 +813,7 @@ class lazyprop:
 
 
 class FrozenHashError(TypeError):
-    pass
+    """Raised (and cached) when a ``frozendict`` holds an unhashable value and is hashed."""
 
 
 class FrozenDict(dict):
@@ -811,7 +827,6 @@ class FrozenDict(dict):
 
     Because FrozenDict is a :class:`dict` subtype, it automatically
     works everywhere a dict would, including JSON serialization.
-
     """
 
     __slots__ = ("_hash",)
@@ -876,6 +891,8 @@ function_type = type(
 
 
 class NoDefault:
+    """Type of the ``no_default`` sentinel, marking the absence of a default value."""
+
     def __repr__(self):
         return "no_default"
 
@@ -884,6 +901,8 @@ no_default = NoDefault()
 
 
 class imdict(dict):
+    """A dict whose mutating methods raise ``TypeError``, hashable by identity."""
+
     def __hash__(self):
         return id(self)
 
@@ -901,12 +920,26 @@ class imdict(dict):
 
 def inject_method(self, method_function, method_name=None):
     """
-    Inject a method into an object instance.
+    Inject a method into an object instance (binding the function to it).
 
-    method_function could be:
-        * a function
-        * a {method_name: function, ...} dict (for multiple injections)
-        * a list of functions or (function, method_name) pairs
+    ``method_function`` can be:
+
+        * a function (the method name is ``method_name``, or the function's name)
+        * a ``{method_name: function, ...}`` dict (for multiple injections)
+        * a list of functions or ``(function, method_name)`` pairs
+
+    Returns the instance, mutated.
+
+    >>> class A: ...
+    >>> a = A()
+    >>> def greet(self, name):
+    ...     return f"hi {name} from {type(self).__name__}"
+    >>> _ = inject_method(a, greet)
+    >>> a.greet("bob")
+    'hi bob from A'
+    >>> _ = inject_method(a, {"shout": lambda self, s: s.upper()})
+    >>> a.shout("x")
+    'X'
     """
     if isinstance(method_function, function_type):
         if method_name is None:
@@ -931,12 +964,18 @@ def inject_method(self, method_function, method_name=None):
 
 def get_function_body(func):
     """
-    Get the body of a function as a string.
+    Get the body of a function as a (dedented) string, from its source code.
 
-    :param func: The function to get the body of.
+    Decorator lines and the ``def`` line(s) are dropped. Requires the source to be
+    available through ``inspect`` (not the case for functions defined in a REPL).
 
-    :return: The body of the function as a string.
-
+    >>> def f(x):
+    ...     y = x + 1
+    ...     return y * 2
+    >>> print(get_function_body(f))
+    y = x + 1
+    return y * 2
+    <BLANKLINE>
     """
     source_lines = inspect.getsourcelines(func)[0]
     source_lines = itertools.dropwhile(lambda x: x.startswith("@"), source_lines)
@@ -958,11 +997,11 @@ def get_function_body(func):
 
 
 class ExistingArgument(ValueError):
-    pass
+    """Raised by ``FunctionBuilder.add_arg`` when the argument name is already taken."""
 
 
 class MissingArgument(ValueError):
-    pass
+    """Raised by ``FunctionBuilder.remove_arg`` when the argument is not in the function."""
 
 
 def _default_sentinel_repr_method(self):
@@ -990,8 +1029,9 @@ def mk_sentinel(
 
     :param name: The name of your sentinel. Will be used for ``__name__`` attribute.
     :param boolean_value: The boolean value that the sentinel instance should resolve to.
-    :param repr_: The method or string that should be used for the repr.
-    :param module:
+    :param repr\\_: The method or string that should be used for the repr.
+    :param module: The ``__module__`` to give the sentinel's class (needed for
+        pickling). By default it is taken from the calling frame's ``__name__``.
     :return: A sentinel instance
 
     >>> Empty = mk_sentinel('Empty')
@@ -1086,7 +1126,6 @@ def mk_sentinel(
 
     Thanks: Inspired greately from the ``make_sentinel`` function of ``boltons``:
     See https://boltons.readthedocs.io/.
-
     """
 
     class Sentinel:
@@ -1198,7 +1237,8 @@ class FunctionBuilder:
     creating new functions, either based on existing functions or from
     scratch.
 
-    Note: Based on https://boltons.readthedocs.io
+    Note:
+        Based on https://boltons.readthedocs.io
 
     Values are passed in at construction or set as attributes on the
     instance. For creating a new function based of an existing one,
@@ -1256,7 +1296,6 @@ class FunctionBuilder:
     can be mutated as necessary.
 
     .. _Docstring: https://en.wikipedia.org/wiki/Docstring#Python
-
     """
 
     _argspec_defaults = {
@@ -1482,7 +1521,6 @@ class FunctionBuilder:
             arg_name (str): The name of the argument to remove.
 
         Raises a :exc:`ValueError` if the argument is not present.
-
         """
         args = self.args
         d_dict = self.get_defaults_dict()
@@ -1520,6 +1558,10 @@ class FunctionBuilder:
 
 
 def deprecation_of(func, old_name):
+    """Wrap ``func`` so that each call emits a DeprecationWarning naming ``old_name``.
+
+    Bind the result to the old name to keep it importable while pointing users to ``func``.
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         from warnings import warn

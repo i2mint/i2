@@ -1,7 +1,4 @@
 """
-castgraph
-=========
-
 A lightweight transformation service for Python that solves the "stable role,
 unstable representation" problem: a resource has a consistent semantic role
 (e.g., configuration, text, structured record) but appears in many forms
@@ -9,15 +6,17 @@ unstable representation" problem: a resource has a consistent semantic role
 representations. castgraph organizes transformations as a graph of "kinds"
 (data representations) and routes requests through the best available path.
 
-Key concepts
-------------
+**Key concepts**
+
+
 - **Kind**: Any hashable identifier for a data representation (type, string, custom marker)
 - **Transformation**: An edge in the graph that converts one kind to another
 - **Kind Predicate (isa)**: A function that determines if an object is of a kind
 - **TransformationGraph**: The main registry with graph-oriented interface
 
-Solution patterns
------------------
+**Solution patterns**
+
+
 - **Type Converter / Conversion Service**: central registry mapping (FromKind, ToKind) to transformer functions.
 - **Adapter**: each edge adapts one representation to another.
 - **Strategy**: routing/selection among multiple possible transformations via cost/priority.
@@ -25,8 +24,8 @@ Solution patterns
 - **DDD Anti-Corruption Layer (ACL)**: keep external formats outside the core domain.
 - **Typeclass / Multimethod idiom**: dispatch based on (source kind, target kind).
 
-Minimal example (new kind-based interface)
--------------------------------------------
+**Minimal example (new kind-based interface)**
+
 Use the new TransformationGraph with flexible kinds (not limited to types).
 
     >>> from i2.castgraph import TransformationGraph
@@ -44,8 +43,8 @@ Use the new TransformationGraph with flexible kinds (not limited to types).
     >>> result["x"]
     1
 
-Legacy example (type-based interface)
---------------------------------------
+**Legacy example (type-based interface)**
+
 The old ConversionRegistry interface still works but is deprecated.
 
     >>> from i2.castgraph import ConversionRegistry
@@ -71,9 +70,11 @@ The old ConversionRegistry interface still works but is deprecated.
     >>> isinstance(out, Record) and out["x"] == 1
     True
 
-Main tools
-----------
+**Main tools**
+
+
 - **TransformationGraph**: the main graph-based registry (recommended).
+
   - `.add_node(kind, isa=None)`: add a kind with optional predicate.
   - `.add_edge(src, dst, func, cost=1.0)`: add a transformation edge.
   - `.register_edge(src, dst, cost=1.0)`: decorator to add an edge.
@@ -86,6 +87,7 @@ Main tools
   - `.kinds()`: get all registered kinds.
 
 - **ConversionRegistry**: DEPRECATED - use TransformationGraph instead.
+
   - `.register(From, To, cost=1.0)`: DEPRECATED - use `.register_edge()` instead.
   - `.convert(obj, ToType, context=None)`: DEPRECATED - use `.transform()` instead.
 
@@ -93,8 +95,9 @@ Main tools
 - **KindMatch**: Truthy result from kind predicates that can carry metadata.
 - **ConversionError**: raised when no route exists between kinds.
 
-Design guidelines
------------------
+**Design guidelines**
+
+
 - Define a single TransformationGraph per bounded context; keep edges local.
 - Prefer small, testable transformer functions with explicit kinds.
 - Use a canonical domain kind as a **hub** when many formats interoperate.
@@ -106,8 +109,8 @@ Design guidelines
 - Write doctests on each transformer to lock behavior and invariants.
 - Use bare hashables (types, strings) as kinds; Kind class is optional.
 
-Migration guide
----------------
+**Migration guide**
+
 Old code using ConversionRegistry::
 
     reg = ConversionRegistry()
@@ -130,14 +133,15 @@ Or with string kinds::
     def transform_func(obj, ctx): ...
     result = graph.transform(obj, 'dst_format')
 
-Design heritage
----------------
+**Design heritage**
+
 castgraph is a composition of well-known patterns centered on a **Type Converter /
 Conversion Service**, with **Adapter** edges and **Strategy**-based route selection.
 At system boundaries, it complements DDD’s **Anti-Corruption Layer** and can employ
 an integration **Canonical Data Model** to curb O(n²) pairwise mappings.
 Its (FromType, ToType) dispatch style mirrors **typeclass/multimethod** idioms.
 For background reading, see:
+
 - .NET TypeConverter: https://learn.microsoft.com/dotnet/api/system.componentmodel.typeconverter
 - Spring ConversionService: https://docs.spring.io/spring-framework/reference/core/validation/convert.html
 - Apache Camel Type Converter: https://camel.apache.org/manual/type-converter.html
@@ -147,13 +151,12 @@ For background reading, see:
 - Canonical Data Model: https://www.enterpriseintegrationpatterns.com/patterns/messaging/CanonicalDataModel.html
 - PEP 443 singledispatch: https://peps.python.org/pep-0443/
 
-Related
--------
+**Related**
+
 
 - Issue that sparked this implementation: https://github.com/i2mint/i2/issues/79
 - Computational path resolution: https://github.com/i2mint/meshed/discussions/71
 - Subsuming concept - "routing": https://github.com/i2mint/i2/discussions/68
-
 """
 
 from __future__ import annotations
@@ -445,6 +448,7 @@ class TransformationGraph:
 
     A "kind" is any hashable identifier for a data representation - it can be a type,
     a string, or any custom marker. The graph supports:
+
       - Flexible kind system (not limited to Python types)
       - Graph-oriented interface (add_node, add_edge)
       - Pluggable kind detection via predicates
@@ -453,6 +457,7 @@ class TransformationGraph:
       - Caching of paths and (optionally) results
 
     Design notes:
+
     - Each transformer has signature: func(obj, context) -> transformed_obj
     - Identity edges are implicit (K -> K) with cost 0
     - If multiple routes exist, the minimum total cost path is chosen
@@ -490,6 +495,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> graph.add_node('text', isa=lambda x: isinstance(x, str))
         >>> graph.add_node(int)  # Type implies isinstance check
@@ -538,6 +544,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> def text_to_int(s, ctx): return int(s)
         >>> graph.add_edge('text', int, text_to_int)
@@ -579,6 +586,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> @graph.register_edge('text', int)
         ... def text_to_int(s, ctx): return int(s)
@@ -636,6 +644,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> @graph.register_edge(str, int)
         ... def str_to_int(s, ctx): return int(s)
@@ -691,6 +700,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> @graph.register_edge(str, int)
         ... def str_to_int(s, ctx): return int(s)
@@ -767,6 +777,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> graph.add_node('text', isa=lambda x: isinstance(x, str))
         >>> @graph.register_edge('text', int)
@@ -801,6 +812,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> def my_detector(obj):
         ...     if isinstance(obj, str) and obj.startswith('{"'):
@@ -828,6 +840,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> graph.add_node('text', isa=lambda x: isinstance(x, str))
         >>> graph.detect_kind("hello")
@@ -877,6 +890,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> # ... register transformations ...
         >>> reachable = graph.reachable_from('text')
@@ -913,6 +927,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> # ... register transformations ...
         >>> sources = graph.sources_for(int)
@@ -937,6 +952,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> graph.add_node('text')
         >>> graph.add_node(int)
@@ -980,6 +996,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> graph = TransformationGraph()
         >>> graph.add_node('text', isa=lambda x: isinstance(x, str))
         >>> graph.add_node(int)
@@ -1096,6 +1113,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> import warnings
         >>> graph = TransformationGraph()
         >>> with warnings.catch_warnings():
@@ -1125,6 +1143,7 @@ class TransformationGraph:
 
         Examples
         --------
+
         >>> import warnings
         >>> graph = TransformationGraph()
         >>> @graph.register_edge(str, int)
@@ -1233,12 +1252,14 @@ class ConversionRegistry:
     DEPRECATED: Use TransformationGraph instead.
 
     A graph-based registry of converters between Python types with:
+
       - registration decorator
       - shortest-path (by total cost) routing
       - MRO-aware fallback for source types
       - caching of paths and (optionally) results
 
     Design notes:
+
     - Each converter has signature: func(obj, context) -> converted_obj
     - Identity edges are implicit (T -> T) with cost 0.
     - If multiple routes exist, the minimum total cost path is chosen.
@@ -1267,6 +1288,7 @@ class ConversionRegistry:
 
         Example
         -------
+
         >>> reg = ConversionRegistry()
         >>> class A: ...
         >>> class B: ...
@@ -1276,7 +1298,8 @@ class ConversionRegistry:
         >>> isinstance(reg.convert(A(), B), B)
         True
 
-        # Can infer types from annotations:
+        Types can be inferred from annotations:
+
         >>> class X: ...
         >>> class Y: ...
         >>> @reg.register()
@@ -1338,6 +1361,7 @@ class ConversionRegistry:
 
         Examples
         --------
+
         >>> reg = ConversionRegistry()
         >>> class X: ...
         >>> class Y: ...
@@ -1352,6 +1376,7 @@ class ConversionRegistry:
         True
 
         MRO fallback: if a converter is registered for a base class, it applies to a subclass.
+
         >>> class Base: ...
         >>> class Sub(Base): ...
         >>> class Out: ...
@@ -1477,11 +1502,8 @@ class ConversionRegistry:
         *,
         cost: float = 1.0,
     ) -> Callable[[Converter], Converter]:
-        """
-            Decorator to register a converter function.
+        """Decorator to register a converter function.
 
-            Example
-            -------
         >>> reg = ConversionRegistry()
         >>> class A: ...
         >>> class B: ...
@@ -1491,7 +1513,8 @@ class ConversionRegistry:
         >>> isinstance(reg.convert(A(), B), B)
         True
 
-        # Can infer types from annotations:
+        Types can be inferred from annotations:
+
         >>> class X: ...
         >>> class Y: ...
         >>> @reg.register()
@@ -1553,6 +1576,7 @@ class ConversionRegistry:
 
         Examples
         --------
+
         >>> reg = ConversionRegistry()
         >>> class X: ...
         >>> class Y: ...
@@ -1567,6 +1591,7 @@ class ConversionRegistry:
         True
 
         MRO fallback: if a converter is registered for a base class, it applies to a subclass.
+
         >>> class Base: ...
         >>> class Sub(Base): ...
         >>> class Out: ...

@@ -23,6 +23,7 @@ _dunders = Pipe(dir, dunder_filt, set)
 
 
 def module_if_string(x):
+    """Import ``x`` if it is a module name string; otherwise return it as is."""
     if isinstance(x, str):
         return __import__(x)
     else:
@@ -33,6 +34,7 @@ dunders = Pipe(module_if_string, _dunders)
 
 
 def dunders_diff(x, y):
+    """The set of dunder names ``x`` has and ``y`` does not (module names are imported)."""
     return dunders(x) - dunders(y)
 
 
@@ -101,8 +103,10 @@ def trace_class_decorator(
     names_and_sigs=tuple(_dflt_methods.items()),
     method_factory=_dflt_method_factory,
 ):
-    """A decorator that adds methods to a class that trace the operations that are
-    performed on an instance of that class.
+    """Add tracing methods to ``cls``, each appending ``(name, *args)`` to the instance's ``.trace``.
+
+    By default the methods are the operator, dict and reflected-operator dunders, made
+    by ``method_factory(name, sig)``; each returns the instance so calls can be chained.
     """
     for name, sig in dict(names_and_sigs).items():
         setattr(cls, name, method_factory(name, sig))
@@ -112,7 +116,7 @@ def trace_class_decorator(
 
 @trace_class_decorator
 class MethodTrace:
-    """A class that can be used to trace the methods that are called on it.
+    """Record the operator dunders applied to an instance, as ``(name, *args)`` tuples in ``.trace``.
 
     See: https://github.com/i2mint/i2/issues/56 for more details.
 
@@ -135,7 +139,6 @@ class MethodTrace:
     ... ('__getitem__', 42), ('__setitem__', 42, 'mol'), ('__invert__',)
     ... ]
     >>>
-
     """
 
     def __init__(self):
@@ -182,6 +185,12 @@ def get_class_that_defined_method(method):
 
 
 def cls_and_method_name_of_method(method):
+    """The ``(class, name)`` pair of a method, bound method or property.
+
+    >>> from i2.tests.footprints_test import A
+    >>> cls_and_method_name_of_method(A().target_method) == (A, "target_method")
+    True
+    """
     if isinstance(method, property):
         return get_class_that_defined_method(method.fget), name_of_obj(method.fget)
     return get_class_that_defined_method(method), name_of_obj(method)
@@ -216,6 +225,12 @@ def get_class_that_defined_method(method):
 
 
 def cls_and_method_name_of_method(method):
+    """The ``(class, name)`` pair of a method, bound method or property.
+
+    >>> from i2.tests.footprints_test import A
+    >>> cls_and_method_name_of_method(A().target_method) == (A, "target_method")
+    True
+    """
     if isinstance(method, property):
         return get_class_that_defined_method(method.fget), name_of_obj(method.fget)
     return get_class_that_defined_method(method), name_of_obj(method)
@@ -285,6 +300,7 @@ def _alt_cls_and_method_name_of_method(
 def list_func_calls(fn):
     """
     Extracts functions and methods called from fn
+
     :param fn: reference to function or method
     :return: a list of functions or methods names
     """
@@ -302,6 +318,7 @@ def list_func_calls(fn):
 def attr_list(root, func_name):
     """
     Extracts attributes from ast tree processing only func_name function or method
+
     :param root: root node of ast tree
     :param func_name: name of the function
     :return: a list of attributes names
@@ -499,7 +516,6 @@ def ensure_ast(o, src_code=None) -> ast.AST:
     ... a = 10
     ... '''
     >>> assert isinstance(ensure_ast('MyClass', src_code), ast.AST)
-
     """
 
     if isinstance(o, ast.AST):
@@ -510,6 +526,8 @@ def ensure_ast(o, src_code=None) -> ast.AST:
 
 
 class AttributeVisitor(ast.NodeVisitor):
+    """Collect, in ``.attributes``, the attribute names accessed on ``object_name`` in an AST."""
+
     def __init__(self, object_name):
         self.object_name = object_name
         self.attributes = set()
@@ -541,7 +559,6 @@ def accessed_attributes(func, object_name=None):
     ...     return a + func(x, self, y)
     ...
     >>> assert accessed_attributes(foo, 'self') == {'method', 'prop'}
-
     """
     if object_name is None:
         object_name = next(iter(Sig(func)), None)
@@ -593,16 +610,17 @@ def init_argument_names(cls, *, no_error_action=None) -> list[str]:
     >>> init_argument_names(DataClass)
     ['x', 'y']
 
-    Note: Some builtin types don't have signatures, so we get:
+    Note:
+        Some builtin types don't have signatures, so we get:
 
-    ```
-    ValueError: no signature found for builtin type ...
-    ```
+    .. code-block:: text
+
+        ValueError: no signature found for builtin type ...
+
 
     By default, we handle this by returning an empty list, but a callable
     no_error_action will call that function and return its result.
     Anything else will result in raising the error.
-
     """
     try:
         return Sig(cls).names
@@ -654,7 +672,6 @@ def attribute_dependencies(
     :param exclude_names: A list of names to exclude from the analysis or a function that
         returns such a list given the class
     :return: A generator of (method_name, accessed_attributes) pairs
-
     """
     for func in _get_class_attributes(cls, filt=filt, exclude_names=exclude_names):
         with skip_signature_errors:
@@ -686,50 +703,48 @@ def attrs_used_by_method(method, *, src_code=None):
 
     Args:
         method: The method (object) to analyze
+        src_code: The source code in which the method's class is defined, when
+            ``inspect`` cannot retrieve it (for example in a notebook).
 
     Returns:
         A list of attribute names (of the class or instance thereof) that are accessed in the code of the said method.
 
-    Example:
+    Consider the method ``A.target_method`` coming from the following code in
+    ``i2.tests.footprints_test``::
 
-    Consider the method `A.target_method` coming from the following code in
-    `i2.tests.footprints_test`:
-    ```python
-    def func(obj):
-        \"\"\"Accesses attributes 'a' and 'b' of obj\"\"\"
-        return obj.a + obj.b
+        def func(obj):
+            \"\"\"Accesses attributes 'a' and 'b' of obj\"\"\"
+            return obj.a + obj.b
 
-    class A:
-        e = 2
+        class A:
+            e = 2
 
-        def __init__(self, a=1, b=0, c=1, d=10):
-            self.a = a
-            self.b = b
-            self.c = c
-            self.d = d
+            def __init__(self, a=1, b=0, c=1, d=10):
+                self.a = a
+                self.b = b
+                self.c = c
+                self.d = d
 
-        def target_method(self, x):
-            \"\"\"Accesses ['a', 'b', 'c', 'e']\"\"\"
-            t = func(self)  # and this function will access some attributes!
-            tt = self.other_method(t)
-            return x * tt / self.e
+            def target_method(self, x):
+                \"\"\"Accesses ['a', 'b', 'c', 'e']\"\"\"
+                t = func(self)  # and this function will access some attributes!
+                tt = self.other_method(t)
+                return x * tt / self.e
 
-        def other_method(self, x=1):
-            \"\"\"Accesses ['c', 'e']\"\"\"
-            w = self.c * 2  # c is accessed first
-            return self.e + self.c * x - w  # and c is accessed again
+            def other_method(self, x=1):
+                \"\"\"Accesses ['c', 'e']\"\"\"
+                w = self.c * 2  # c is accessed first
+                return self.e + self.c * x - w  # and c is accessed again
 
-        @classmethod
-        def a_class_method(cls, y):
-            \"\"\"Accesses ['e']\"\"\"
-            return cls.e + y
-    ```
-
+            @classmethod
+            def a_class_method(cls, y):
+                \"\"\"Accesses ['e']\"\"\"
+                return cls.e + y
+    """
     # TODO: Stopped working in 3.12 (worked in 3.10). See why
     # >>> from i2.tests.footprints_test import A
     # >>> assert attrs_used_by_method(A.target_method) == {'a', 'b', 'c', 'e'}
-
-    """
+    #
     return _attrs_used_by_method(
         *cls_and_method_name_of_method(method), src_code=src_code
     )
@@ -751,6 +766,22 @@ def get_source(obj: object) -> str:
 # TODO: Break into two functions (one doing the work of the loop for a single method)
 # TODO: Routing pattern. Extract conditional logic to make it parametrizable
 def object_dependencies(obj, *, get_source=get_source):
+    """Map each method of a class (or of an instance's class) to the attributes it reads.
+
+    Attributes accessed through the method's first argument (usually ``self``) count;
+    attributes that are only assigned to do not. Members for which ``get_source`` raises
+    ``TypeError`` (builtins, descriptors) are skipped.
+
+    >>> class C:
+    ...     def __init__(self):
+    ...         self.a = 1
+    ...     def m(self):
+    ...         return self.a + self.helper()
+    ...     def helper(self):
+    ...         return 2
+    >>> object_dependencies(C)["m"] == {"a", "helper"}
+    True
+    """
     import ast
     import inspect
     import textwrap
@@ -837,10 +868,10 @@ def dict_to_graph(
     suffix: str = "",
     display: bool | Callable = False,
 ) -> str:
-    """A function to convert a dictionary to a graphviz string.
+    """Convert a ``{node: neighbours}`` dictionary to a graphviz (or mermaid) graph string.
 
-    You privide a graph in the form of a ``{from_node: to_nodes, ...`` or
-    ``{to_node: from_nodes, ...``` dictionary, and will get a graphviz string.
+    You provide a graph in the form of a ``{from_node: to_nodes, ...}`` or
+    ``{to_node: from_nodes, ...}`` dictionary, and will get a graphviz string.
     You can use this to visualize a graph (e.g. a dependency graph) in a jupyter notebook.
 
     :param graph: The graph, in the form of a to convert to graphviz.
@@ -893,7 +924,6 @@ def dict_to_graph(
         C --> D;
         C --> E;
         C --> F;
-
     """
     # TODO: Could make these specs open-closed (routing pattern)
     if kind == "graphviz":

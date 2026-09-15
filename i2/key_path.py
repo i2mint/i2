@@ -38,7 +38,6 @@ def obj_to_str_path(
     Note, thought, that ``str_path_to_obj`` might not work as an inverse for
     custom ``name_of_obj`` and ``path_of_module`` functions.
     You may have to write your own inverse function in this case.
-
     """
     return sep.join((path_of_module(obj), name_of_obj(obj)))
 
@@ -73,6 +72,7 @@ from collections.abc import MutableMapping
 
 
 def trans_generator_output(trans):
+    """Make a decorator that applies ``trans`` to every item a generator function yields."""
     def decorator(func):
         @wraps(func)
         def wrapped(*args, **kwargs):
@@ -84,7 +84,7 @@ def trans_generator_output(trans):
 
 
 class NoDefault:
-    pass
+    """Type of the ``NO_DFLT`` sentinel (no default value given)."""
 
 
 NO_DFLT = NoDefault()
@@ -219,6 +219,7 @@ class KeyPathMap(MutableMapping):
     ):
         """
         Initialize a KeyPathMap.
+
         :param store: Your mapping, or the type of your mapping.
         :param key_type: The type of the keys
         :param node_type: The node type (typically the same as the store type
@@ -499,6 +500,7 @@ class KeyPathTrans:
         store types.
         That is, if a value is a store_type, it won't generate a yield, but rather, will be iterated through
         recursively.
+
         :param d: input store
         :param key_path_so_far: string to be prepended to all key paths (for use in recursion, not meant for direct use)
         :return: a (key_path, val) iterator
@@ -544,6 +546,7 @@ class KeyPathTrans:
     def getitem(self, d, key_path, default_val=None):
         """
         getting with a key list or "."-separated string
+
         :param d: dict-like
         :param key_path: list or "."-separated string of keys
         :return:
@@ -558,6 +561,7 @@ class KeyPathTrans:
     def setitem(self, d, key_path, val):
         """
         setting with a key list or "."-separated string
+
         :param d: dict
         :param key_path: list or "."-separated string of keys
         :param val: value to assign
@@ -621,6 +625,7 @@ class KeyPathTrans:
     ):
         """
         getting with a key list or "."-separated string
+
         :param d: dict-like
         :param key_path: list or "."-separated string of keys
         :param field_naming: 'full' (default) will use key_path strings as is, leaf will only use the last dot item

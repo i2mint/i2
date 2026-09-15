@@ -29,7 +29,6 @@ def _arg_name_and_val_dict(func, *args, **kwargs):
     >>> def foo(x, /, y, *, z=3): ...
     >>> _arg_name_and_val_dict(foo, 1, 2, z=4)
     {'x': 1, 'y': 2, 'z': 4}
-
     """
     b = signature(func).bind(*args, **kwargs)
     b.apply_defaults()
@@ -89,7 +88,6 @@ def validate_literal(func):
     Traceback (most recent call last):
         ...
     ValueError: 4 is an invalid value for x. Values should be one of the following: (1, 2, 3)
-
     """
 
     @wraps(func)
@@ -110,7 +108,6 @@ def iterable_to_literal(iterable: Iterable):
 
     >>> iterable_to_literal([1, 2, 3])
     typing.Literal[1, 2, 3]
-
     """
     return Literal.__getitem__(tuple(iterable))
 
@@ -132,8 +129,11 @@ def new_type(
         doc: Optional string to put in __doc__ attribute
         aka: Optional set (or any iterable) to put in _aka attribute,
             meant to list names the variables of this type often appear as.
+        assign_to_globals: If True, also bind the new type to ``name`` in the
+            globals of the ``i2.itypes`` module (not the caller's).
 
-    Returns: None
+    Returns:
+        The new type.
 
     >>> from typing import Any, Union, List
     >>> MyType = new_type('MyType', int)
@@ -169,7 +169,7 @@ class HasAttrs:
     >>> assert isinstance([1, 2, 3], SizedAndAppendable)  # lists have both a length and an append
     >>> assert not isinstance((1, 2, 3), SizedAndAppendable)  # tuples don't have an append
 
-    [Python Protocols](https://www.python.org/dev/peps/pep-0544/) are a way to be able to do
+    `Python Protocols <https://www.python.org/dev/peps/pep-0544/>`_ are a way to be able to do
     "behavior typing" (my bad terminology).
     Basically, if you want your static analyzer
     (the swingles in your IDE, or linter validation process...)
@@ -195,7 +195,6 @@ class HasAttrs:
     >>> assert isinstance(a, HasAttrs["method"])
     >>> assert isinstance(a, HasAttrs["method", "prop"])
     >>> assert not isinstance(a, HasAttrs["method", "prop", "this_attr_does_not_exist"])
-
     """
 
     def __class_getitem__(self, attr_names):
@@ -226,6 +225,7 @@ class HasAttrs:
 
 # TODO: Complete scary hack: Find another way (see uses)
 def is_a_new_type(typ):
+    """Whether ``typ`` is a ``typing.NewType`` (checked through its ``__qualname__`` and ``__supertype__``)."""
     return (
         callable(typ)
         and getattr(typ, "__qualname__", "").startswith("NewType")
@@ -234,6 +234,7 @@ def is_a_new_type(typ):
 
 
 def typ_name(typ):
+    """The name of a typing generic (its ``_name``) or of a NewType (its ``__name__``)."""
     if is_a_new_type(typ):
         return typ.__name__
     else:
@@ -257,7 +258,7 @@ def is_callable_kind(typ):
 
 
 def input_and_output_types(typ: type):
-    """Returns the input and output types
+    """The ``(input_types, output_type)`` pair of a parametrized ``typing.Callable``.
 
     >>> from typing import Callable, Tuple
     >>> input_types, output_type = input_and_output_types(Callable[[float, int], str])
@@ -278,7 +279,6 @@ def input_and_output_types(typ: type):
     Traceback (most recent call last):
       ...
     AssertionError: Can only be used on a Callable[[...],...] kind: typing.Callable
-
     """
     if is_a_new_type(typ):
         return input_and_output_types(typ.__supertype__)
@@ -289,6 +289,12 @@ def input_and_output_types(typ: type):
 
 
 def dot_string_of_callable_typ(typ):
+    """A ``inputs -> Callable -> output`` string, with typing-generic names, for a parametrized Callable.
+
+    >>> from typing import Callable, List, Dict
+    >>> dot_string_of_callable_typ(Callable[[List, Dict], List])
+    'List,Dict -> Callable -> List'
+    """
     input_types, output_type = input_and_output_types(typ)
     return (
         ",".join(map(typ_name, input_types))
@@ -298,6 +304,7 @@ def dot_string_of_callable_typ(typ):
 
 
 def dot_strings_of_callable_types(*typs, func_shape="box"):
+    """Yield, for each parametrized Callable, its ``dot_string_of_callable_typ`` line and a node-shape line."""
     for typ in typs:
         yield dot_string_of_callable_typ(typ)
         yield f'{typ_name(typ)} [shape="{func_shape}"]'
@@ -365,7 +372,6 @@ class ObjectClassifier:
 
     >>> classifier.matching_kind(obj, assert_unique=False)
     'str'
-
     """
 
     def __init__(self, verifiers: dict[KT, Callable[[ObjectType], bool]]):

@@ -60,7 +60,6 @@ How the ``Ingress`` class (ingress templated function maker) works:
                      │
                      ▼
           *inner_args, **inner_kwargs
-
 """
 
 from functools import wraps, partial
@@ -110,7 +109,11 @@ AUTO_PRESERVE_SIGNATURE = "auto"
 
 
 def identity(x):
-    """Transparent function, returning what's been input"""
+    """Return the input unchanged.
+
+    >>> identity('x')
+    'x'
+    """
     return x
 
 
@@ -319,13 +322,15 @@ class Wrap(_Wrap):
         wrapped function to determine the return annotation of the ``Wrap`` instance
     :param name: Name to give the wrapper (will use wrapped func name by default)
     :param preserve_signature: Controls signature preservation from the wrapped function.
-        - 'auto' (default): Automatically preserve if ingress has (*args, **kwargs) signature
+
+        - 'auto' (default): Automatically preserve if ingress has ``(*args, **kwargs)`` signature
         - True: Always preserve signature from func (copies __signature__)
         - False: Don't preserve (use ingress's natural signature)
 
         When signature is preserved, both __signature__ and __annotations__ are
         copied from func to the wrapper, ensuring type checkers and IDEs see
         the original signature.
+
     :return: A callable instance wrapping ``func``
 
     Some examples:
@@ -409,14 +414,12 @@ class Wrap(_Wrap):
     explicitly (as in the examples above), but through a factory -- a function that
     will be called on ``func`` to produce the ingress that should be used to wrap it.
 
-    Common Patterns and Best Practices
-    -----------------------------------
+    **Common Patterns and Best Practices**
 
-    Pattern 1: Transform inputs while preserving signature
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    **Pattern 1: Transform inputs while preserving signature**
 
     By default (with preserve_signature='auto'), Wrap automatically preserves
-    signatures when your ingress uses (*args, **kwargs):
+    signatures when your ingress uses ``(*args, **kwargs)``:
 
     >>> def uppercase_args(func):
     ...     def ingress(*args, **kwargs):
@@ -431,8 +434,7 @@ class Wrap(_Wrap):
     >>> greet("alice")  # Signature preserved, input transformed
     'Hello, ALICE!'
 
-    Pattern 2: Keep return annotation with transparent egress
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    **Pattern 2: Keep return annotation with transparent egress**
 
     When using an egress that doesn't transform the type, return annotations
     are automatically preserved:
@@ -451,8 +453,7 @@ class Wrap(_Wrap):
     >>> result
     10
 
-    Pattern 3: Validation without transformation
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    **Pattern 3: Validation without transformation**
 
     Use ingress for validation without modifying arguments:
 
@@ -470,8 +471,7 @@ class Wrap(_Wrap):
     >>> multiply(2, 3)
     6
 
-    Pattern 4: Error handling and logging
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    **Pattern 4: Error handling and logging**
 
     Wrap both ends for comprehensive error handling:
 
@@ -489,10 +489,9 @@ class Wrap(_Wrap):
     Common Pitfalls and Solutions
     ------------------------------
 
-    Pitfall 1: Losing signatures with explicit non-generic ingress
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    **Pitfall 1: Losing signatures with explicit non-generic ingress**
 
-    If your ingress doesn't use (*args, **kwargs), the auto mode won't preserve
+    If your ingress doesn't use ``(*args, **kwargs)``, the auto mode won't preserve
     the signature. Use preserve_signature=True explicitly:
 
     >>> # WRONG: Signature lost with non-generic ingress
@@ -510,8 +509,7 @@ class Wrap(_Wrap):
     >>> wrapped = Wrap(my_func, ingress=ingress, preserve_signature=True)
     >>> # Now signature is correctly (x: int, y: int = 5) -> int
 
-    Pitfall 2: Type-changing egress without annotation
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    **Pitfall 2: Type-changing egress without annotation**
 
     If your egress changes the output type, annotate it. Otherwise, the function's
     original return type will be preserved, creating incorrect type hints:
@@ -529,8 +527,7 @@ class Wrap(_Wrap):
     >>> isinstance(calc(5), str)
     True
 
-    Pitfall 3: Forgetting to return (args, kwargs) from ingress
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    **Pitfall 3: Forgetting to return (args, kwargs) from ingress**
 
     Ingress MUST return a tuple of (args, kwargs) for the wrapped function:
 
@@ -544,8 +541,7 @@ class Wrap(_Wrap):
     ...     # Do any processing here
     ...     return args, kwargs  # CORRECT
 
-    Pitfall 4: Modifying mutable arguments in place
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    **Pitfall 4: Modifying mutable arguments in place**
 
     Be careful when modifying arguments - changes affect the original objects:
 
@@ -563,12 +559,13 @@ class Wrap(_Wrap):
     **Signature Preservation (v3.0):**
 
     Currently, preserve_signature defaults to 'auto' which only preserves
-    signatures for generic (*args, **kwargs) ingress functions. In v3.0,
+    signatures for generic ``(*args, **kwargs)`` ingress functions. In v3.0,
     we may change the default to True to always preserve signatures unless
     explicitly disabled. This matches user expectations that decorators
     should preserve signatures by default.
 
     To prepare for this change:
+
     - If you want current behavior: explicitly set preserve_signature='auto'
     - If you want v3.0 behavior: explicitly set preserve_signature=True
     - If you never want preservation: explicitly set preserve_signature=False
@@ -576,7 +573,6 @@ class Wrap(_Wrap):
     .. seealso::
 
         ``wrap`` function.
-
     """
 
     def __init__(
@@ -683,11 +679,11 @@ def wrap(
     The ingress function serves two purposes:
 
     - Redefining the signature (i.e. the argument names, kinds, defaults,
-    and annotations (not including the return annotation, which is taken care of by the
-    egress argument).
+      and annotations (not including the return annotation, which is taken care of by the
+      egress argument).
 
     - Telling the wrapper how to get from that interface to the interface of the
-    wrapped function.
+      wrapped function.
 
     If we also wanted to add a return_annotation, we could do so via an ``egress``
     function argument:
@@ -742,7 +738,6 @@ def wrap(
 
         ``Wrap`` class.
         ``Wrapx`` class.
-
     """
     if _should_use_wrapx(func, ingress, egress, caller):
         return Wrapx(func, ingress, egress, caller=caller, name=name)
@@ -933,7 +928,6 @@ class Ingress:
         Namely, ``kwargs_trans`` must be able to handle outputs of
         ``outer_sig.map_arguments`` and itself output kwargs that
         can be handled by ``inner_sig.mk_args_and_kwargs``.
-
         """
         self.inner_sig = Sig(inner_sig)
 
@@ -995,7 +989,6 @@ class Ingress:
         >>> wrapped_f = ingress.wrap(f)
         >>> wrapped_f(1, 2, y=3, Zee=4)
         '(w:=1) + (x:=2) * (y:=3) ** (z:=4) == 163'
-
         """
         new_to_old_name = {v: k for k, v in old_to_new_name.items()}
         assert len(new_to_old_name) == len(
@@ -1034,7 +1027,6 @@ def items_with_mapped_keys(d: dict, key_mapper):
     ...     {'a': 'Ay', 'd': 'Dee'})
     ... )
     {'Ay': 1, 'b': 2, 'c': 3, 'Dee': 4}
-
     """
     for k, v in d.items():
         # key_mapper.get(k, k) will give the new key name if present,
@@ -1043,6 +1035,11 @@ def items_with_mapped_keys(d: dict, key_mapper):
 
 
 def invert_map(d: dict):
+    """Swap keys and values of a mapping, raising ``ValueError`` if values are not unique.
+
+    >>> invert_map({'a': 1, 'b': 2})
+    {1: 'a', 2: 'b'}
+    """
     new_d = {v: k for k, v in d.items()}
     if len(new_d) == len(d):
         return new_d
@@ -1051,6 +1048,7 @@ def invert_map(d: dict):
 
 
 def parameters_to_dict(parameters):
+    """Map each parameter name to its ``parameter_to_dict`` (name, kind, default, annotation) dict."""
     return {name: parameter_to_dict(param) for name, param in parameters.items()}
 
 
@@ -1084,7 +1082,7 @@ def _handle_ingress_class_inputs(
 
 # TODO: See what this adds over ``Ingress`` class. Consider merging or reusing.
 class InnerMapIngress:
-    """A class to help build ingresses systematically by mapping the inner signature.
+    """Build an ingress from the wrapped function's signature and a spec of changes to it.
 
     *Systematically*, i.e. "according to a fixed plan/system" is what it's about here.
     As we'll see below, if you need to write a particular adapter for a specific case,
@@ -1102,8 +1100,8 @@ class InnerMapIngress:
         The parameter kind restrictions are taken care of automatically.
     :param _allow_reordering: Whether we want to allow reordering of variables
     :param in_to_out_sig_changes: The ``inner_name=dict_of_changes_for_that_name``
-    pairs, the ``dict_of_changes_for_that_name`` is a ``dict`` with keys being valid
-    ``inspect.Parameter``
+        pairs, the ``dict_of_changes_for_that_name`` is a ``dict`` with keys being valid
+        ``inspect.Parameter``
 
     Consider the following function that has a position only, a keyword only,
     two arguments with annotations, and three with a default.
@@ -1120,7 +1118,7 @@ class InnerMapIngress:
     - where ``y`` was named ``you`` instead, and has an annotation (``int``).
 
     - where the default of ``z`` was ``10`` instead of ``3``, and doesn't have an
-        annotation.
+      annotation.
 
     In order to get a version of this function we wanted (more lenient kinds,
     with some annotations and a default change), we can use the ingress function:
@@ -1153,19 +1151,19 @@ class InnerMapIngress:
     ...     z=dict(kind=PK, default=10, annotation=empty),
     ... )
 
-    Note:
+    **Note**
 
     - Only the changes we wish to make to the parameters are mentioned.
-        You could also define the parameters explicitly by simply listing all three
-        of the dimensions (kind, annotation, and default)
+      You could also define the parameters explicitly by simply listing all three
+      of the dimensions (kind, annotation, and default)
 
     - Three? But a ``Parameter`` object has four; what about the name?
-        Indeed, you can use name as well, more on that later.
+      Indeed, you can use name as well, more on that later.
 
     - Note that in order to specify that you want no default, or no annotation,
-        you cannot use ``None`` since ``None`` is both a valid default and a valid
-        annotation; So instead you need to use ``Parameter.empty`` (conveniently
-        assigned to a constant named ``empty`` in the ``wrapping`` module.
+      you cannot use ``None`` since ``None`` is both a valid default and a valid
+      annotation; So instead you need to use ``Parameter.empty`` (conveniently
+      assigned to a constant named ``empty`` in the ``wrapping`` module.
 
     Now see that all arguments are ``POSITIONAL_OR_KEYWORD``, ``x`` and ``y`` are
     ``int``, and default of ``z`` is 10:
@@ -1184,8 +1182,6 @@ class InnerMapIngress:
     ...     == directly_defined_ingress(0,1,2,3)
     ...     == ((0,), {'x': 1, 'y': 2, 'z': 3})
     ... )
-
-
     """
 
     def __init__(
@@ -1245,12 +1241,12 @@ class InnerMapIngress:
         independently.
 
         :param inner_sig: The signature of wrapped, inner function (or the inner
-        function itself)
+            function itself)
         :param outer_sig: The desired outer signature. Can also use a function (will
-        only take it's signature though).
+            only take it's signature though).
         :param _allow_reordering: Whether to allow ``outer_sig`` to reorder arguments.
         :return: An ingress that will allow one to use a function having the
-        ``inner_sig`` signature to
+            ``inner_sig`` signature to
 
         Say we wanted to get a version of the function:
 
@@ -1279,7 +1275,6 @@ class InnerMapIngress:
         >>> assert h(1,2,3,4) == g(1,2,3,4) == 1 + 2 * 3 ** 4
         >>>
         >>> assert h(w=1,x=2,y=3,z=4) == g(1,2,3,4) == 1 + 2 * 3 ** 4  # w keyword arg!
-
         """
         outer_sig = Sig(outer_sig)
         return cls(
@@ -1291,6 +1286,12 @@ class InnerMapIngress:
 
 # TODO: Fits global pattern -- merge
 class ArgNameMappingIngress:
+    """Ingress that renames parameters: called with outer names, returns inner (args, kwargs).
+
+    Unless ``conserve_kind=True``, all parameter kinds of the outer signature become
+    POSITIONAL_OR_KEYWORD. ``mk_ingress_from_name_mapper`` is the function form.
+    """
+
     def __init__(self, inner_sig, *, conserve_kind=False, **outer_name_for_inner_name):
         self.inner_sig = Sig(inner_sig)
         self.outer_sig = self.inner_sig.ch_names(**outer_name_for_inner_name)
@@ -1314,6 +1315,21 @@ class ArgNameMappingIngress:
 
 
 def mk_ingress_from_name_mapper(func, name_mapper: Mapping, *, conserve_kind=False):
+    """Make an ingress that renames ``func``'s parameters (``{inner_name: outer_name}``).
+
+    >>> def foo(a, b: int, c=7):
+    ...     return (a, b, c)
+    >>> ingress = mk_ingress_from_name_mapper(foo, dict(a='aa', c='cc'))
+    >>> Sig(ingress)
+    <Sig (aa, b: int, cc=7)>
+    >>> ingress(1, b=2, cc=3)
+    ((), {'a': 1, 'b': 2, 'c': 3})
+    >>> wrap(foo, ingress=ingress)(1, 2, cc=3)
+    (1, 2, 3)
+
+    By default the outer signature loses positional-only and keyword-only kinds;
+    ``conserve_kind=True`` keeps them.
+    """
     return ArgNameMappingIngress(func, conserve_kind=conserve_kind, **name_mapper)
 
 
@@ -1322,6 +1338,7 @@ def mk_ingress_from_name_mapper(func, name_mapper: Mapping, *, conserve_kind=Fal
 
 
 def apply_func_on_cond(func, cond, k, v):
+    """Return ``func(v)`` if ``cond(k, v)`` is true, else ``v`` unchanged."""
     if cond(k, v):
         return func(v)
     else:
@@ -1329,10 +1346,12 @@ def apply_func_on_cond(func, cond, k, v):
 
 
 def modify_dict_on_cond(d, cond, func):
+    """Copy ``d``, applying ``func`` to the values whose ``(key, value)`` satisfy ``cond``."""
     return {k: apply_func_on_cond(func, cond, k, v) for k, v in d.items()}
 
 
 def convert_VK_to_KO(kinds):
+    """In a ``{name: kind}`` dict, replace VAR_KEYWORD kinds with KEYWORD_ONLY."""
     cond = lambda k, v: v == VK
     func = lambda v: KO
 
@@ -1343,6 +1362,16 @@ nice_kinds = deprecation_of(kind_forgiving_func, "nice_kinds")
 
 
 def wrap_from_sig(func, new_sig):
+    """Give ``func`` the signature ``new_sig``, calling it with only the arguments it takes.
+
+    >>> def f(x, y=1):
+    ...     return x + y
+    >>> h = wrap_from_sig(f, Sig('(x, y=1, z=0)'))
+    >>> Sig(h)
+    <Sig (x, y=1, z=0)>
+    >>> h(1, 2, 3), h(1, z=5)
+    (3, 2)
+    """
     from i2 import call_somewhat_forgivingly
 
     @wraps(func)
@@ -1375,6 +1404,7 @@ def ch_names(func=None, **old_to_new_name):
     '(w:=1) + (x:=2) * (y:=3) ** (z:=4) == 163'
 
     Can also be used as a factory:
+
     >>> @ch_names(a='alpha', g='gamma')
     ... def foo(a, b, g=1):
     ...     return a + b * g
@@ -1429,7 +1459,6 @@ def include_exclude(func=None, *, include=None, exclude=None):
 
     >>> bar('B', 'A')
     a='A',b='B',c='C',d='D'
-
     """
     return wrap(func, ingress=include_exclude_ingress_factory(func, include, exclude))
 
@@ -1467,7 +1496,6 @@ def rm_params(
     Traceback (most recent call last):
     ...
     AssertionError: Some of the params you want to remove don't have defaults: {'x'}
-
     """
     if isinstance(params_to_remove, str):
         params_to_remove = params_to_remove.split()
@@ -1494,10 +1522,19 @@ def rm_params(
 
 
 def arg_val_converter(func, **conversion_for_arg):
+    """Wrap ``func`` so that the given arguments are converted (``name=converter``) before the call.
+
+    >>> def f(x, y=1):
+    ...     return x + y
+    >>> g = arg_val_converter(f, x=int)
+    >>> g('2', 3)
+    5
+    """
     return Wrap(func, ingress=ArgValConverterIngress(func, **conversion_for_arg))
 
 
 def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
+    """Function form of ``ArgValConverterIngress``: an ingress converting the named arguments."""
     sig = Sig(func)
     if __strict:
         conversion_names_that_are_not_func_args = conversion_for_arg.keys() - sig.names
@@ -1519,6 +1556,14 @@ def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
 
 # TODO: Fits global pattern -- merge
 class ArgValConverterIngress:
+    """Ingress with ``func``'s signature that applies ``name=converter`` functions to arguments.
+
+    Names that are not parameters of ``func`` are rejected with an ``AssertionError``
+    at construction (the ``__strict`` parameter cannot be passed by keyword from outside
+    the class, since the name is mangled; use ``arg_val_converter_ingress`` to switch it
+    off).
+    """
+
     def __init__(self, func, __strict=True, **conversion_for_arg):
         sig = Sig(func)
         if __strict:
@@ -1546,6 +1591,11 @@ class ArgValConverterIngress:
 
 
 def convert_dict_values(to_convert: dict, key_to_conversion_function: dict):
+    """Yield ``(key, value)`` pairs of ``to_convert``, converting the values whose key has a function.
+
+    >>> dict(convert_dict_values({'x': '2', 'y': 3}, {'x': int}))
+    {'x': 2, 'y': 3}
+    """
     for k, v in to_convert.items():
         if k in key_to_conversion_function:
             conversion_func = key_to_conversion_function[k]
@@ -1562,10 +1612,12 @@ def _alt_convert_dict_values(to_convert: dict, key_to_conversion_function: dict)
 
 
 def params_used_in_funcs(funcs):
+    """The set of parameter names of all the given functions."""
     return {name for func in funcs for name in Sig(func).names}
 
 
 def required_params_used_in_funcs(funcs):
+    """The set of names that are required (no default) in at least one of the given functions."""
     return {name for func in funcs for name in Sig(func).required_names}
 
 
@@ -1671,6 +1723,15 @@ def camelize(s):
 def kwargs_trans_to_extract_args_from_attrs(
     outer_kwargs: dict, attr_names=(), obj_param="self"
 ):
+    """Pop the ``obj_param`` object out of ``outer_kwargs`` and source ``attr_names`` from its attributes.
+
+    Mutates ``outer_kwargs`` (the object is popped). Explicit kwargs win over attributes.
+
+    >>> class O: pass
+    >>> o = O(); o.a = 1; o.b = 2
+    >>> kwargs_trans_to_extract_args_from_attrs({'self': o, 'c': 3}, attr_names=('a', 'b'))
+    {'a': 1, 'b': 2, 'c': 3}
+    """
     self = outer_kwargs.pop(obj_param)
     arguments_extracted_from_obj = {name: getattr(self, name) for name in attr_names}
     # The kwargs we need are the union of the extracted arguments with the remaining outer_kwargs
@@ -1680,6 +1741,7 @@ def kwargs_trans_to_extract_args_from_attrs(
 # TODO: kind lost here, only 3.10 offers dataclasses with some control over kind:
 #   See: https://stackoverflow.com/questions/49908182/how-to-make-keyword-only-fields-with-dataclasses
 def param_to_dataclass_field_tuple(param: Parameter):
+    """The ``(name, annotation, default)`` tuple ``dataclasses.make_dataclass`` expects for a field."""
     return param.name, param.annotation, param.default
 
 
@@ -1770,7 +1832,6 @@ def func_to_method_func(
     >>> instance = Klass(1, 3)
     >>> instance.method_func(2, d='hello')
     'hello: 9'
-
     """
     # get a signature object for func
     sig = Sig(func)
@@ -1896,6 +1957,8 @@ def bind_funcs_object_attrs(
 
 
 class PickleHelperMixin:
+    """Mixin whose ``__reduce__`` pickles an instance by its ``__name__`` (a global reference)."""
+
     def __reduce__(self):
         return self.__name__
 
@@ -1935,6 +1998,7 @@ def bind_funcs_object_attrs_old(
 ):
     """Transform one or several functions into a class that contains them as methods
     sourcing specific arguments from the instance's attributes.
+
     >>> from inspect import signature
     >>> from dataclasses import dataclass
     >>>
@@ -2119,94 +2183,93 @@ def _all_kinds_are_keyword_only_or_variadic_keyword(sig):
 
 # TODO: Factor out more common parts with Wrap and reuse (possibly through _Wrap)
 class Wrapx(_Wrap):
+    """An extended wrapping object that allows more complex wrapping mechanisms.
+
+    :param func: The wrapped function
+    :param ingress: The incoming data transformer. It determines the argument properties
+        (name, kind, default and annotation) as well as the actual input of the
+        wrapped function.
+    :param egress: The outgoing data transformer. It also takes precedence over the
+        wrapped function to determine the return annotation of the ``Wrap`` instance
+    :param caller: A caller defines what it means to call the ``func`` on the
+        arguments it is given. It should be of the form
+        ``caller(func, args, kwargs, *, ...extra_keyword_only_params)``.
+        By default, the caller will simply return ``func(*args, **kwargs)``.
+    :param name: Name to give the wrapper (will use wrapped func name by default)
+
+    :return: A callable instance wrapping ``func``
+
+    >>> from inspect import signature
+    >>>
+    >>> def func(x, y):
+    ...     return x + y
+    ...
+    >>> def save_on_output_egress(v, *, k, s):
+    ...     s[k] = v
+    ...     return v
+    ...
+    >>> save_on_output = Wrapx(func, egress=save_on_output_egress)
+    >>> # TODO: should be `(x, y, *, k, s)` --> Need to work on the merge for this.
+    >>> str(signature(save_on_output))
+    '(x, y, k, s)'
+    >>>
+    >>> store = dict()
+    >>> save_on_output(1, 2, k='save_here', s=store)
+    3
+    >>> assert save_on_output(1, 2, k='save_here', s=store) == 3 == func(1, 2)
+    >>> store  # see what's in the store now!
+    {'save_here': 3}
+
+    A caller is meant to control the way the function is called.
+    It is given the ``func`` and the ``func_args`` and ``func_kwargs``
+    (whatever the ingress function gives it, if present) and possibly additional
+    params and will return... well, what ever you tell it to.
+
+    This can be used, for example, to call the function in a subprocess,
+    or on a remote system, differ computation (command pattern, for example, using
+    ``functools.partial``, or do what ever needs to have a view both on the function
+    and its inputs.
+
+    Here, we will wrap the function so it will apply to an iterable of inputs
+    (of the first argument), returning a list of results
+
+    >>> def func(x, y=2):
+    ...     return x + y
+    ...
+    >>> def iterize(func, args, kwargs):
+    ...     first_arg_val = next(iter(kwargs.values()))
+    ...     return list(map(func, first_arg_val))
+    ...
+    >>> iterized_func = Wrapx(func, caller=iterize)
+    >>> iterized_func([1, 2, 3, 4])
+    [3, 4, 5, 6]
+
+    Let's do the same as above, but allow other variables (here ``y``) to be input as
+    well. This takes a bit more work...
+
+    >>> from functools import partial
+    >>> def _iterize_first_arg(func, args, kwargs):
+    ...     first_arg_name = next(iter(kwargs))
+    ...     remaining_kwargs = {
+    ...         k: v for k, v in kwargs.items() if k != first_arg_name
+    ...     }
+    ...     return list(
+    ...         map(partial(func, **remaining_kwargs), kwargs[first_arg_name])
+    ...     )
+
+    Let's demo a different way of using Wrapx: Making a wrapper to apply at
+    function definition time
+
+    >>> iterize_first_arg = partial(Wrapx, caller=_iterize_first_arg)
+    >>> @iterize_first_arg
+    ... def func(x, y):
+    ...     return x + y
+    >>>
+    >>> func([1, 2, 3, 4], 10)
+    [11, 12, 13, 14]
+    """
+
     def __init__(self, func, ingress=None, egress=None, *, caller=None, name=None):
-        """An extended wrapping object that allows more complex wrapping mechanisms.
-
-        :param func: The wrapped function
-        :param ingress: The incoming data transformer. It determines the argument properties
-            (name, kind, default and annotation) as well as the actual input of the
-            wrapped function.
-        :param egress: The outgoing data transformer. It also takes precedence over the
-            wrapped function to determine the return annotation of the ``Wrap`` instance
-        :param caller: A caller defines what it means to call the ``func`` on the
-            arguments it is given. It should be of the form
-            ``caller(func, args, kwargs, *, ...extra_keyword_only_params)``.
-            By default, the caller will simply return ``func(*args, **kwargs)``.
-        :param name: Name to give the wrapper (will use wrapped func name by default)
-
-        :return: A callable instance wrapping ``func``
-
-        >>> from inspect import signature
-        >>>
-        >>> def func(x, y):
-        ...     return x + y
-        ...
-        >>> def save_on_output_egress(v, *, k, s):
-        ...     s[k] = v
-        ...     return v
-        ...
-        >>> save_on_output = Wrapx(func, egress=save_on_output_egress)
-        >>> # TODO: should be `(x, y, *, k, s)` --> Need to work on the merge for this.
-        >>> str(signature(save_on_output))
-        '(x, y, k, s)'
-        >>>
-        >>> store = dict()
-        >>> save_on_output(1, 2, k='save_here', s=store)
-        3
-        >>> assert save_on_output(1, 2, k='save_here', s=store) == 3 == func(1, 2)
-        >>> store  # see what's in the store now!
-        {'save_here': 3}
-
-        A caller is meant to control the way the function is called.
-        It is given the ``func`` and the ``func_args`` and ``func_kwargs``
-        (whatever the ingress function gives it, if present) and possibly additional
-        params and will return... well, what ever you tell it to.
-
-        This can be used, for example, to call the function in a subprocess,
-        or on a remote system, differ computation (command pattern, for example, using
-        ``functools.partial``, or do what ever needs to have a view both on the function
-        and its inputs.
-
-        Here, we will wrap the function so it will apply to an iterable of inputs
-        (of the first argument), returning a list of results
-
-        >>> def func(x, y=2):
-        ...     return x + y
-        ...
-        >>> def iterize(func, args, kwargs):
-        ...     first_arg_val = next(iter(kwargs.values()))
-        ...     return list(map(func, first_arg_val))
-        ...
-        >>> iterized_func = Wrapx(func, caller=iterize)
-        >>> iterized_func([1, 2, 3, 4])
-        [3, 4, 5, 6]
-
-        Let's do the same as above, but allow other variables (here ``y``) to be input as
-        well. This takes a bit more work...
-
-        >>> from functools import partial
-        >>> def _iterize_first_arg(func, args, kwargs):
-        ...     first_arg_name = next(iter(kwargs))
-        ...     remaining_kwargs = {
-        ...         k: v for k, v in kwargs.items() if k != first_arg_name
-        ...     }
-        ...     return list(
-        ...         map(partial(func, **remaining_kwargs), kwargs[first_arg_name])
-        ...     )
-
-        Let's demo a different way of using Wrapx: Making a wrapper to apply at
-        function definition time
-
-        >>> iterize_first_arg = partial(Wrapx, caller=_iterize_first_arg)
-        >>> @iterize_first_arg
-        ... def func(x, y):
-        ...     return x + y
-        >>>
-        >>> func([1, 2, 3, 4], 10)
-        [11, 12, 13, 14]
-
-
-        """
         super().__init__(func, ingress, egress, caller=caller, name=name)
         self.ingress, self.egress, self.caller, self.sig = _process_wrapx_params(
             func, ingress, egress, caller
@@ -2332,7 +2395,7 @@ def partialx(
     """
     Extends the functionality of builtin ``functools.partial`` with the ability to
 
-    - set ``__name__ ``
+    - set ``__name__``
 
     - remove partialized arguments from signature
 
@@ -2363,7 +2426,6 @@ def partialx(
     >>> g = partialx(f, a=1, _allow_reordering=True)
     >>> str(Sig(g))
     '(*, b, a=1, c=3)'
-
     """
     f = partial(func, *args, **kwargs)
     if _rm_partialize:
@@ -2393,7 +2455,6 @@ def move_params_to_the_end(func: Callable, names_to_move: Callable | Iterable[st
     >>> h = move_params_to_the_end(g, Sig(g).defaults)
     >>> assert str(Sig(g)) == '(a, *, b=4, c)'
     >>> assert str(Sig(h)) == '(a, *, c, b=4)'
-
     """
     if callable(names_to_move):
         names_to_move = names_to_move(func)
@@ -2420,7 +2481,6 @@ def move_names_to_the_end(names, names_to_move_to_the_end):
     >>> names_to_move_to_the_end = 'c e'
     >>> move_names_to_the_end(names, names_to_move_to_the_end)
     ['a', 'd', 'c', 'e']
-
     """
     if isinstance(names_to_move_to_the_end, str):
         names_to_move_to_the_end = names_to_move_to_the_end.split()
@@ -2437,6 +2497,12 @@ def move_names_to_the_end(names, names_to_move_to_the_end):
 # IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode
 @dataclass
 class SmartDefault:
+    """Placeholder default for a parameter whose value ``add_smart_defaults`` computes from the other arguments.
+
+    Holds the function that computes the value and, if the parameter had one, its
+    original default (shown in the repr).
+    """
+
     func_computing_default: Callable
     original_default: Any = empty
 
@@ -2499,7 +2565,6 @@ def complete_dict_applying_functions(
     ...     _only_if_name_missing=False, _allow_overwrites=True
     ... )
     {'a': 1, 'b': 10, 'c': 11, 'd': 22}
-
     """
 
     if _only_if_name_missing:
@@ -2562,7 +2627,6 @@ def add_smart_defaults(
     'aaaZ'
     >>> f
     <i2.Wrap xyz_sum(x, y=SmartDefault(times_two), z=SmartDefault(just_z, 'c'))>
-
     """
     names_not_in_func_arguments = smart_defaults.keys() - Sig(func).names
     assert (
