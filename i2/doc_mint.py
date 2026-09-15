@@ -363,6 +363,12 @@ _MAX_LENGTH_FOR_LITERAL_EVAL = 1000
 
 
 def literal_eval_converter(s: str, max_length=_MAX_LENGTH_FOR_LITERAL_EVAL):
+    """Evaluate ``s`` as a Python literal, or return None when it is not one (or is
+    longer than ``max_length``, or contains a newline or ``;``).
+
+    >>> literal_eval_converter("[1, 2]"), literal_eval_converter("foo")
+    ([1, 2], None)
+    """
     if len(s) > max_length:  # Restrict long strings for extra safety
         return None
     elif "\n" in s or "\r" in s or ";" in s:  # extra safety
@@ -389,6 +395,14 @@ register_converter(literal_eval_converter)
 
 
 def convert_string(s: str, converters: list[dict | Callable]) -> object:
+    """Convert ``s`` with the first converter that matches (a dict containing ``s`` as a
+    key, or a callable returning something other than None); return ``s`` if none does.
+
+    >>> convert_string("None", dflt_str_to_obj_converters), convert_string("3.5", dflt_str_to_obj_converters)
+    (None, 3.5)
+    >>> convert_string("hello", dflt_str_to_obj_converters)
+    'hello'
+    """
     for converter in converters:
         # If converter is a dict
         if isinstance(converter, dict):
@@ -900,11 +914,18 @@ def non_doctest_lines(doc):
 
 
 def strip_comments(code):
+    r"""Remove whole-line ``#`` comments from ``code`` (inline comments are kept).
+
+    >>> strip_comments("# header\nx = 1  # set x\n")
+    'x = 1  # set x\n'
+    """
     code = str(code)
     return comment_strip_p.sub("", code)
 
 
 def mk_example_wants_callback(source_want_func: Callable[[str, str], Callable]):
+    """Turn a ``(source, want) -> str`` function into a ``doctest.Example`` callback that
+    returns the example's source untouched when the example expects no output."""
     def example_wants_callback(example, *args, **kwargs):
         want = example.want.strip()
         if want:
@@ -917,6 +938,11 @@ def mk_example_wants_callback(source_want_func: Callable[[str, str], Callable]):
 
 
 def split_line_comments(s):
+    """Split a single line into its code and its ``#`` comment (empty if none).
+
+    >>> split_line_comments("f(1)  # a comment")
+    ('f(1)  ', ' a comment')
+    """
     t = s.split("#")
     if len(t) == 1:
         comment = ""
@@ -957,7 +983,19 @@ def _output_prefix(source, want, prefix="# OUTPUT: "):
 
 
 output_prefix = mk_example_wants_callback(_output_prefix)
+output_prefix.__doc__ = (
+    "Render a ``doctest.Example`` as its source followed by a ``# OUTPUT: `` line.\n\n"
+    "    >>> import doctest\n"
+    "    >>> output_prefix(doctest.Example(source='1 + 1\\n', want='2\\n'))\n"
+    "    '1 + 1\\n# OUTPUT: 2\\n'\n"
+)
 assert_wants = mk_example_wants_callback(_assert_wants)
+assert_wants.__doc__ = (
+    "Render a ``doctest.Example`` as an ``assert`` comparing its source to its want.\n\n"
+    "    >>> import doctest\n"
+    "    >>> assert_wants(doctest.Example(source='1 + 1\\n', want='2\\n'))\n"
+    "    'assert (1 + 1) == 2 #'\n"
+)
 
 # def example_to_doctest_string(source, want):
 #     want.replace()
@@ -967,6 +1005,7 @@ assert_wants = mk_example_wants_callback(_assert_wants)
 def doctest_string_trans_lines(
     doctest_obj: doctest.DocTest, example_callback=assert_wants
 ):
+    """Yield ``example_callback(example)`` for each example of a ``doctest.DocTest``."""
     for example in doctest_obj.examples:
         yield example_callback(example)
 

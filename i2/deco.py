@@ -20,6 +20,7 @@ T = TypeVar("T")  # Can be anything
 
 
 def identity(obj: T) -> T:
+    """Return the input unchanged."""
     return obj
 
 
@@ -34,6 +35,7 @@ from functools import WRAPPER_ASSIGNMENTS, WRAPPER_UPDATES, update_wrapper
 
 # Overwrites the imported functools.wraps
 def wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
+    """Copy of ``functools.wraps`` (kept local: it avoids a Jupyter tab-completion issue)."""
     return partial(update_wrapper, wrapped=wrapped, assigned=assigned, updated=updated)
 
 
@@ -205,6 +207,7 @@ class FuncFactory:
         return cls(identity)(obj)
 
     def to_jdict(self):
+        """Return a ``{"func": ...}`` dict from which ``from_jdict`` rebuilds the factory."""
         return {"func": self.func}
 
     @classmethod
@@ -433,6 +436,7 @@ def ensure_iterable_args(func=None, **condition_of_argname):
 
 
 def transparently_wrapped(func):
+    """Wrap ``func`` so it is called with its positional arguments packed in one tuple."""
     @wraps(func)
     def transparently_wrapped_func(*args, **kwargs):
         return func(args, **kwargs)
@@ -547,7 +551,23 @@ def assert_attrs(attrs):
 
 
 def preprocess_arguments(pre):
-    """Apply a function to args, kwargs and use the transformed in the decorated function"""
+    """Make a decorator that lets ``pre`` rewrite the ``(args, kwargs)`` of every call.
+
+    ``pre(*args, **kwargs)`` must return an ``(args, kwargs)`` pair; the wrapped
+    function is then called with that pair.
+
+    >>> @preprocess_arguments(lambda *args, **kwargs: (
+    ...     tuple(int(a) for a in args), {k: int(v) for k, v in kwargs.items()}
+    ... ))
+    ... def add(a, b):
+    ...     return a + b
+    >>> add("1", b="2")
+    3
+
+    See Also:
+        ``preprocess``: ``pre`` returns a single value that becomes the only argument.
+        ``transform_args``: transform named arguments one by one.
+    """
 
     def decorator(func):
         def wrapper(*args, **kwargs):
@@ -612,7 +632,8 @@ def _return_annotation_of(func):
             return Parameter.empty
 
 
-class OutputPostProcessingError(RuntimeError): ...
+class OutputPostProcessingError(RuntimeError):
+    """Raised by ``postprocess`` when the post-processing function fails."""
 
 
 def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=False):
@@ -910,6 +931,7 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
 
 
 def wrap_method_output(wrapper_func):
+    """Make a method decorator that applies ``wrapper_func`` to the method's output."""
     def _wrap_output(wrapped):
         @wraps(wrapped)
         def _wrapped(self, *args, **kwargs):
@@ -1005,6 +1027,8 @@ def wrap_class_methods(
 
 
 def mk_input_and_output_method_wrapper(method_output_trans=None, **arg_trans):
+    """Make a method decorator transforming named arguments (``arg_trans``) and, if
+    given, the output (``method_output_trans``)."""
     def wrap_method(method_func):
         wrapped_method = transform_args(**arg_trans)(method_func)
         if method_output_trans is not None:
@@ -1018,6 +1042,8 @@ def mk_input_and_output_method_wrapper(method_output_trans=None, **arg_trans):
 def transform_class_method_input_and_output(
     cls, method, method_output_trans=None, **arg_trans
 ):
+    """Replace ``cls.method`` in place with a version whose named arguments are
+    transformed by ``arg_trans`` and whose output by ``method_output_trans``."""
     wrapped_method = transform_args(**arg_trans)(getattr(cls, method))
     if method_output_trans is not None:
         setattr(
@@ -1308,6 +1334,8 @@ def add_method(obj, method_func, method_name=None, class_name=None):
 def transform_instance_method_input_and_output(
     obj, method, method_output_trans=None, **arg_trans
 ):
+    """Instance-level counterpart of ``transform_class_method_input_and_output``;
+    experimental (it emits a warning saying so)."""
     from warnings import warn
 
     warn("Not sure transform_instance_method_input_and_output works yet")
@@ -1328,6 +1356,11 @@ def wrap_instance_methods(
     _raise_error_if_non_existent_method=True,
     **method_trans_spec,
 ):
+    """Make a function that wraps the named methods of an instance, as
+    ``wrap_class_methods_input_and_output`` does for a class (experimental).
+
+    ``_return_a_copy_of_the_class`` is accepted for symmetry but not used.
+    """
     def obj_wrapper(obj):
         for method, method_trans in method_trans_spec.items():
             if hasattr(obj, method):
