@@ -1108,7 +1108,7 @@ class InnerMapIngress:
     - where ``y`` was named ``you`` instead, and has an annotation (``int``).
 
     - where the default of ``z`` was ``10`` instead of ``3``, and doesn't have an
-        annotation.
+      annotation.
 
     In order to get a version of this function we wanted (more lenient kinds,
     with some annotations and a default change), we can use the ingress function:
@@ -1144,8 +1144,8 @@ class InnerMapIngress:
     **Note**
 
     - Only the changes we wish to make to the parameters are mentioned.
-        You could also define the parameters explicitly by simply listing all three
-        of the dimensions (kind, annotation, and default)
+      You could also define the parameters explicitly by simply listing all three
+      of the dimensions (kind, annotation, and default)
 
     - Three? But a ``Parameter`` object has four; what about the name?
       Indeed, you can use name as well, more on that later.

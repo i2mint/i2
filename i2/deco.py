@@ -668,7 +668,7 @@ def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=Fal
     >>> assert t == [0, 1]
 
     - Using a function that does a lot to make several functions that do less.
-        (e.g. Extracting/making a python object from a function returning a raw http response)
+      (e.g. Extracting/making a python object from a function returning a raw http response)
     """
 
     def decorator(func):

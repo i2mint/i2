@@ -967,11 +967,11 @@ class Sig(Signature, Mapping):
     inputs are:
 
         - `map_arguments`: Map some args/kwargs input to a keyword-only
-            expression of the inputs. This is useful if you need to do some processing
-            based on the argument names.
+          expression of the inputs. This is useful if you need to do some processing
+          based on the argument names.
         - `mk_args_and_kwargs`: Translate a fully keyword expression of some
-            inputs into an (args, kwargs) pair that can be used to call the function.
-            (Remember, your function can have constraints, so you may need to do this.
+          inputs into an (args, kwargs) pair that can be used to call the function.
+          (Remember, your function can have constraints, so you may need to do this.
 
     The usual pattern of use of these methods is to use `map_arguments`
     to map all the inputs to their corresponding name, do what needs to be done with
@@ -2208,8 +2208,8 @@ class Sig(Signature, Mapping):
         Important Notes:
 
         - The resulting Sig will loose it's return_annotation if it had one.
-            This is to avoid making too many assumptions about how the sig sum will be
-            used.
+          This is to avoid making too many assumptions about how the sig sum will be
+          used.
           If a return_annotation is needed (say, for composition, the last
           return_annotation
           summed), one can subclass Sig and overwrite __add__
@@ -2646,7 +2646,7 @@ class Sig(Signature, Mapping):
             be searched for.
 
             - args_limit==0: Take the minimum number possible of args (positional
-                arguments). Only those that are position only or before a var-positional.
+              arguments). Only those that are position only or before a var-positional.
             - args_limit is None: Take the maximum number of args (positional arguments).
               The only kwargs (keyword arguments) you should have are keyword-only
               and var-keyword arguments.
