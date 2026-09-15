@@ -929,6 +929,7 @@ def mk_example_wants_callback(source_want_func: Callable[[str, str], Callable]):
     The callback returns the example's source untouched when the example expects no
     output.
     """
+
     def example_wants_callback(example, *args, **kwargs):
         want = example.want.strip()
         if want:

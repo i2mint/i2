@@ -112,6 +112,7 @@ from functools import (
 
 def deprecation_of(func, old_name):
     """Wrap ``func`` so that calling it warns that ``old_name`` is deprecated in favour of ``func``."""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         from warnings import warn

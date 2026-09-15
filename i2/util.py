@@ -1562,6 +1562,7 @@ def deprecation_of(func, old_name):
 
     Bind the result to the old name to keep it importable while pointing users to ``func``.
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         from warnings import warn

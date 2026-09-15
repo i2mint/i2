@@ -73,6 +73,7 @@ from collections.abc import MutableMapping
 
 def trans_generator_output(trans):
     """Make a decorator that applies ``trans`` to every item a generator function yields."""
+
     def decorator(func):
         @wraps(func)
         def wrapped(*args, **kwargs):

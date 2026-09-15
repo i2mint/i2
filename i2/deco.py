@@ -437,6 +437,7 @@ def ensure_iterable_args(func=None, **condition_of_argname):
 
 def transparently_wrapped(func):
     """Wrap ``func`` so it is called with its positional arguments packed in one tuple."""
+
     @wraps(func)
     def transparently_wrapped_func(*args, **kwargs):
         return func(args, **kwargs)
@@ -596,6 +597,7 @@ def preprocess(pre):
         ``preprocess_arguments``: ``pre`` returns the ``(args, kwargs)`` pair to call the
         wrapped function with, instead of a single value.
     """
+
     def decorator(func):
         if inspect.ismethod(func):
 
@@ -931,6 +933,7 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
 
 def wrap_method_output(wrapper_func):
     """Make a method decorator that applies ``wrapper_func`` to the method's output."""
+
     def _wrap_output(wrapped):
         @wraps(wrapped)
         def _wrapped(self, *args, **kwargs):
@@ -1028,6 +1031,7 @@ def wrap_class_methods(
 def mk_input_and_output_method_wrapper(method_output_trans=None, **arg_trans):
     """Make a method decorator transforming named arguments (``arg_trans``) and, if
     given, the output (``method_output_trans``)."""
+
     def wrap_method(method_func):
         wrapped_method = transform_args(**arg_trans)(method_func)
         if method_output_trans is not None:
@@ -1360,6 +1364,7 @@ def wrap_instance_methods(
 
     ``_return_a_copy_of_the_class`` is accepted for symmetry but not used.
     """
+
     def obj_wrapper(obj):
         for method, method_trans in method_trans_spec.items():
             if hasattr(obj, method):

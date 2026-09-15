@@ -624,6 +624,7 @@ def wrap_leafs_with_final_node(x):
 
 def test_routing_forest():
     """Exercise the routing nodes end to end (kept here as a runnable example)."""
+
     def could_be_int(obj):
         if isinstance(obj, int):
             b = True

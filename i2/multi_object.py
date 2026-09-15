@@ -947,6 +947,7 @@ class ContextFanout(MultiObj):
     open
     close
     """
+
     # Not yet working (kept as notes, not doctests):
     # Further, know that within the context's scope, a `ContextFanout`
     #
