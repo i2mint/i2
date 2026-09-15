@@ -54,6 +54,7 @@ def return_true(*args, **kwargs):
 
 
 def return_none(*args, **kwargs) -> None:
+    """Return None, whatever the arguments."""
     return None
 
 
@@ -383,10 +384,13 @@ def FileLikeObject(file, *, io_cls=io.BytesIO, open_mode="rb"):
     bytes of a file, or an open file pointer.
 
     Args:
-        file (str, bytes, io.IOBase): The file path, bytes of a file, or an open file pointer.
+        file: The file path, bytes of a file, or an open file pointer.
+        io_cls: Accepted for interface compatibility; not used by the current
+            implementation (bytes are always wrapped in ``io.BytesIO``).
+        open_mode: The mode ``open`` is called with when ``file`` is a path.
 
     Yields:
-        io.IOBase: A file-like object.
+        A file-like object.
     """
     if isinstance(file, str):
         # If file is a string, open the file and yield the file pointer
@@ -427,7 +431,7 @@ def copy_func(
     :param copy_dict: Indicates whether to copy the ``__dict__`` attribute of the
         function (any attributes set on the function instance). Defaults to ``True``.
     :param code: The value to be used as the ``__code__`` attribute of the copy.
-    :param globals\_: The value to be used as the ``__globals__`` attribute of the copy.
+    :param globals\\_: The value to be used as the ``__globals__`` attribute of the copy.
     :return: A shallow copy of the function.
 
     Note that it should always work with proper functions and attempts to do the
@@ -465,6 +469,7 @@ class OverwritesForbidden(ValueError):
 
 
 def is_lambda(func):
+    """Whether ``func`` is a lambda (its ``__name__`` is ``"<lambda>"``)."""
     return getattr(func, "__name__", None) == "<lambda>"
 
 
@@ -654,6 +659,15 @@ class LiteralVal:
 
 
 def dflt_idx_preprocessor(obj, idx):
+    """Get ``idx`` from ``obj``: by item for ints, digit strings and Mappings, else by attribute.
+
+    The default ``getter`` of ``path_extractor``.
+
+    >>> dflt_idx_preprocessor({"a": 1}, "a"), dflt_idx_preprocessor([10, 20], "1")
+    (1, 20)
+
+    :raises KeyError: If ``idx`` is neither an item nor an attribute of ``obj``.
+    """
     if isinstance(idx, str) and str.isdigit(idx):
         idx = int(idx)
     if isinstance(idx, int) or isinstance(obj, Mapping):
@@ -799,7 +813,7 @@ class lazyprop:
 
 
 class FrozenHashError(TypeError):
-    pass
+    """Raised (and cached) when a ``frozendict`` holds an unhashable value and is hashed."""
 
 
 class FrozenDict(dict):
@@ -877,6 +891,8 @@ function_type = type(
 
 
 class NoDefault:
+    """Type of the ``no_default`` sentinel, marking the absence of a default value."""
+
     def __repr__(self):
         return "no_default"
 
@@ -885,6 +901,8 @@ no_default = NoDefault()
 
 
 class imdict(dict):
+    """A dict whose mutating methods raise ``TypeError``, hashable by identity."""
+
     def __hash__(self):
         return id(self)
 
@@ -902,13 +920,26 @@ class imdict(dict):
 
 def inject_method(self, method_function, method_name=None):
     """
-    Inject a method into an object instance.
+    Inject a method into an object instance (binding the function to it).
 
-    method_function could be:
+    ``method_function`` can be:
 
-        * a function
-        * a {method_name: function, ...} dict (for multiple injections)
-        * a list of functions or (function, method_name) pairs
+        * a function (the method name is ``method_name``, or the function's name)
+        * a ``{method_name: function, ...}`` dict (for multiple injections)
+        * a list of functions or ``(function, method_name)`` pairs
+
+    Returns the instance, mutated.
+
+    >>> class A: ...
+    >>> a = A()
+    >>> def greet(self, name):
+    ...     return f"hi {name} from {type(self).__name__}"
+    >>> _ = inject_method(a, greet)
+    >>> a.greet("bob")
+    'hi bob from A'
+    >>> _ = inject_method(a, {"shout": lambda self, s: s.upper()})
+    >>> a.shout("x")
+    'X'
     """
     if isinstance(method_function, function_type):
         if method_name is None:
@@ -933,11 +964,18 @@ def inject_method(self, method_function, method_name=None):
 
 def get_function_body(func):
     """
-    Get the body of a function as a string.
+    Get the body of a function as a (dedented) string, from its source code.
 
-    :param func: The function to get the body of.
+    Decorator lines and the ``def`` line(s) are dropped. Requires the source to be
+    available through ``inspect`` (not the case for functions defined in a REPL).
 
-    :return: The body of the function as a string.
+    >>> def f(x):
+    ...     y = x + 1
+    ...     return y * 2
+    >>> print(get_function_body(f))
+    y = x + 1
+    return y * 2
+    <BLANKLINE>
     """
     source_lines = inspect.getsourcelines(func)[0]
     source_lines = itertools.dropwhile(lambda x: x.startswith("@"), source_lines)
@@ -959,11 +997,11 @@ def get_function_body(func):
 
 
 class ExistingArgument(ValueError):
-    pass
+    """Raised by ``FunctionBuilder.add_arg`` when the argument name is already taken."""
 
 
 class MissingArgument(ValueError):
-    pass
+    """Raised by ``FunctionBuilder.remove_arg`` when the argument is not in the function."""
 
 
 def _default_sentinel_repr_method(self):
@@ -991,7 +1029,7 @@ def mk_sentinel(
 
     :param name: The name of your sentinel. Will be used for ``__name__`` attribute.
     :param boolean_value: The boolean value that the sentinel instance should resolve to.
-    :param repr\_: The method or string that should be used for the repr.
+    :param repr\\_: The method or string that should be used for the repr.
     :param module: The ``__module__`` to give the sentinel's class (needed for
         pickling). By default it is taken from the calling frame's ``__name__``.
     :return: A sentinel instance
@@ -1520,6 +1558,10 @@ class FunctionBuilder:
 
 
 def deprecation_of(func, old_name):
+    """Wrap ``func`` so that each call emits a DeprecationWarning naming ``old_name``.
+
+    Bind the result to the old name to keep it importable while pointing users to ``func``.
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         from warnings import warn

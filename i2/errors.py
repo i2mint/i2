@@ -8,19 +8,19 @@ from contextlib import AbstractContextManager
 
 
 class DataError(Exception):
-    pass
+    """Base class for errors about the data itself."""
 
 
 class DuplicateRecordError(DataError):
-    pass
+    """A ``DataError`` for a record that already exists."""
 
 
 class NotFoundError(DataError):
-    pass
+    """A ``DataError`` for a record that does not exist."""
 
 
 class AuthorizationError(Exception):
-    pass
+    """Base class for errors about what the caller is allowed to do."""
 
 
 class OverwritesNotAllowed(AuthorizationError):
@@ -46,11 +46,11 @@ class OverwritesNotAllowed(AuthorizationError):
 
 
 class ForbiddenError(AuthorizationError):
-    pass
+    """An ``AuthorizationError`` for an operation that is not allowed."""
 
 
 class InputError(Exception):
-    pass
+    """Raised for invalid input."""
 
 
 class ModuleNotFoundIgnore:
@@ -72,12 +72,21 @@ ExceptionType = type[BaseException]
 
 
 def log_and_return(msg, logger=print):
+    """Pass ``msg`` to ``logger`` (``print`` by default) and return it."""
     logger(msg)
     return msg
 
 
 class InterruptWithBlock(BaseException):
-    """To be used to interrupt the march of a with"""
+    """Raise inside a ``with`` block to leave it early; pair with ``HandleExceptions``.
+
+    >>> with HandleExceptions({InterruptWithBlock: "stopped early"}) as h:
+    ...     raise InterruptWithBlock()
+    ...     print("never printed")
+    stopped early
+    >>> h.exit_value
+    'stopped early'
+    """
 
 
 # Note: Can be extended to have more precise handled conditions and callbacks
@@ -211,9 +220,11 @@ class HandleExceptions(AbstractContextManager):
             raise
 
     def exited_with_handled_exception(self):
+        """Whether the last ``with`` block ended on an exception listed in ``on_error``."""
         return hasattr(self, "exit_value")
 
     def initialize(self):
+        """Forget the outcome of a previous ``with`` block (done on every ``__enter__``)."""
         if hasattr(self, "exit_value"):
             delattr(self, "exit_value")
         self.exited_with_exception = None

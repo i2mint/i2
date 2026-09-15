@@ -383,6 +383,7 @@ class MultiObj(Mapping):
 
 
 def iterable_of_callables_validation(funcs: Iterable[Callable]):
+    """Raise ``TypeError`` unless ``funcs`` is an iterable whose elements are all callable."""
     if not isinstance(funcs, Iterable):
         raise TypeError(f"Not an iterable: {funcs}")
     elif not all(callable(xx) for xx in funcs):
@@ -391,7 +392,18 @@ def iterable_of_callables_validation(funcs: Iterable[Callable]):
 
 
 class MultiFunc(MultiObj):
-    """A MultiObj, but specialized to contain callable objects only"""
+    """A ``MultiObj`` that only accepts callables; the base of ``Pipe``, ``FuncFanout`` and friends.
+
+    >>> mf = MultiFunc(len, up=str.upper)
+    >>> list(mf)
+    ['len', 'up']
+    >>> mf.up("a")
+    'A'
+    >>> MultiFunc(len, 3)
+    Traceback (most recent call last):
+      ...
+    TypeError: These were not callable: [3]
+    """
 
     def __init__(self, *unnamed_funcs, **named_funcs):
         # The basic MultiObj initialization

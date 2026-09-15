@@ -23,6 +23,7 @@ _dunders = Pipe(dir, dunder_filt, set)
 
 
 def module_if_string(x):
+    """Import ``x`` if it is a module name string; otherwise return it as is."""
     if isinstance(x, str):
         return __import__(x)
     else:
@@ -33,6 +34,7 @@ dunders = Pipe(module_if_string, _dunders)
 
 
 def dunders_diff(x, y):
+    """The set of dunder names ``x`` has and ``y`` does not (module names are imported)."""
     return dunders(x) - dunders(y)
 
 
@@ -101,8 +103,10 @@ def trace_class_decorator(
     names_and_sigs=tuple(_dflt_methods.items()),
     method_factory=_dflt_method_factory,
 ):
-    """A decorator that adds methods to a class that trace the operations that are
-    performed on an instance of that class.
+    """Add tracing methods to ``cls``, each appending ``(name, *args)`` to the instance's ``.trace``.
+
+    By default the methods are the operator, dict and reflected-operator dunders, made
+    by ``method_factory(name, sig)``; each returns the instance so calls can be chained.
     """
     for name, sig in dict(names_and_sigs).items():
         setattr(cls, name, method_factory(name, sig))
@@ -112,7 +116,7 @@ def trace_class_decorator(
 
 @trace_class_decorator
 class MethodTrace:
-    """A class that can be used to trace the methods that are called on it.
+    """Record the operator dunders applied to an instance, as ``(name, *args)`` tuples in ``.trace``.
 
     See: https://github.com/i2mint/i2/issues/56 for more details.
 
@@ -181,6 +185,12 @@ def get_class_that_defined_method(method):
 
 
 def cls_and_method_name_of_method(method):
+    """The ``(class, name)`` pair of a method, bound method or property.
+
+    >>> from i2.tests.footprints_test import A
+    >>> cls_and_method_name_of_method(A().target_method) == (A, "target_method")
+    True
+    """
     if isinstance(method, property):
         return get_class_that_defined_method(method.fget), name_of_obj(method.fget)
     return get_class_that_defined_method(method), name_of_obj(method)
@@ -215,6 +225,12 @@ def get_class_that_defined_method(method):
 
 
 def cls_and_method_name_of_method(method):
+    """The ``(class, name)`` pair of a method, bound method or property.
+
+    >>> from i2.tests.footprints_test import A
+    >>> cls_and_method_name_of_method(A().target_method) == (A, "target_method")
+    True
+    """
     if isinstance(method, property):
         return get_class_that_defined_method(method.fget), name_of_obj(method.fget)
     return get_class_that_defined_method(method), name_of_obj(method)
@@ -510,6 +526,8 @@ def ensure_ast(o, src_code=None) -> ast.AST:
 
 
 class AttributeVisitor(ast.NodeVisitor):
+    """Collect, in ``.attributes``, the attribute names accessed on ``object_name`` in an AST."""
+
     def __init__(self, object_name):
         self.object_name = object_name
         self.attributes = set()
@@ -685,6 +703,8 @@ def attrs_used_by_method(method, *, src_code=None):
 
     Args:
         method: The method (object) to analyze
+        src_code: The source code in which the method's class is defined, when
+            ``inspect`` cannot retrieve it (for example in a notebook).
 
     Returns:
         A list of attribute names (of the class or instance thereof) that are accessed in the code of the said method.
@@ -746,6 +766,22 @@ def get_source(obj: object) -> str:
 # TODO: Break into two functions (one doing the work of the loop for a single method)
 # TODO: Routing pattern. Extract conditional logic to make it parametrizable
 def object_dependencies(obj, *, get_source=get_source):
+    """Map each method of a class (or of an instance's class) to the attributes it reads.
+
+    Attributes accessed through the method's first argument (usually ``self``) count;
+    attributes that are only assigned to do not. Methods without retrievable source
+    are skipped.
+
+    >>> class C:
+    ...     def __init__(self):
+    ...         self.a = 1
+    ...     def m(self):
+    ...         return self.a + self.helper()
+    ...     def helper(self):
+    ...         return 2
+    >>> object_dependencies(C)["m"] == {"a", "helper"}
+    True
+    """
     import ast
     import inspect
     import textwrap
@@ -832,7 +868,7 @@ def dict_to_graph(
     suffix: str = "",
     display: bool | Callable = False,
 ) -> str:
-    """A function to convert a dictionary to a graphviz string.
+    """Convert a ``{node: neighbours}`` dictionary to a graphviz (or mermaid) graph string.
 
     You provide a graph in the form of a ``{from_node: to_nodes, ...}`` or
     ``{to_node: from_nodes, ...}`` dictionary, and will get a graphviz string.
