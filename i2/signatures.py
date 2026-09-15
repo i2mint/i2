@@ -111,6 +111,7 @@ from functools import (
 
 
 def deprecation_of(func, old_name):
+    """Wrap ``func`` so that calling it warns that ``old_name`` is deprecated in favour of ``func``."""
     @wraps(func)
     def wrapper(*args, **kwargs):
         from warnings import warn
@@ -331,6 +332,12 @@ def name_of_obj(
 
 
 def ensure_callable(obj: SignatureAble):
+    """Return ``obj`` if callable, else an empty function carrying the signature ``obj`` specifies.
+
+    >>> f = ensure_callable(["a", ("b", 2)])
+    >>> Sig(f)
+    <Sig (a, b=2)>
+    """
     if isinstance(obj, Callable):
         return obj
     else:
@@ -346,6 +353,17 @@ assure_callable = ensure_callable  # alias for backcompatibility
 
 
 def ensure_signature(obj: SignatureAble) -> Signature:
+    """Make an ``inspect.Signature`` from a signature, callable, parameter, iterable of
+    parameter specs, or ``None`` (empty signature). Unlike ``Sig``, a signature string is
+    not accepted.
+
+    >>> ensure_signature(["a", "b"])
+    <Signature (a, b)>
+    >>> ensure_signature(None)
+    <Signature ()>
+
+    :raises TypeError: If ``obj`` is none of the above.
+    """
     if isinstance(obj, Signature):
         return obj
     elif isinstance(obj, Callable):
@@ -370,6 +388,14 @@ assure_signature = ensure_signature  # alias for backcompatibility
 
 
 def ensure_param(p):
+    """Make a ``Param`` from a parameter, a name, a ``(name, default[, annotation])`` tuple,
+    or a dict of ``Param`` keyword arguments.
+
+    >>> ensure_param("x"), ensure_param(("x", 1, int)), ensure_param({"name": "y", "default": 2})
+    (<Param "x">, <Param "x: int = 1">, <Param "y=2">)
+
+    :raises TypeError: If ``p`` is none of the above.
+    """
     if isinstance(p, Parameter):
         return p
     elif isinstance(p, dict):
@@ -803,6 +829,7 @@ from collections.abc import Iterable
 
 
 def function_caller(func, args, kwargs):
+    """Call ``func(*args, **kwargs)``; the default "caller" of the wrapping tools."""
     return func(*args, **kwargs)
 
 
@@ -865,10 +892,12 @@ P = Param  # useful shorthand alias
 
 
 def param_has_default_or_is_var_kind(p: Parameter):
+    """Whether the parameter is optional in a call: it has a default or is variadic."""
     return p.default is not p.empty or p.kind in var_param_kinds
 
 
 def parameter_to_dict(p: Parameter) -> dict:
+    """The ``name``, ``kind``, ``default`` and ``annotation`` of a parameter, as a dict."""
     return dict(name=p.name, kind=p.kind, default=p.default, annotation=p.annotation)
 
 
@@ -892,10 +921,12 @@ def _names_of_kind(sig):
 
 
 def maybe_first(items):
+    """The first item of ``items``, or ``None`` if there is none."""
     return next(iter(items), None)
 
 
 def name_of_var_kw_argument(sig):
+    """The name of the VAR_KEYWORD parameter of ``sig``, or ``None`` if it has none."""
     var_kw_list = [param.name for param in sig.params if param.kind == VK]
     result = maybe_first(var_kw_list)
     return result
@@ -912,6 +943,7 @@ def _map_action_on_cond(kvs, cond, expand):
 
 
 def expand_nested_key(d, k):
+    """Items of ``d``, except that a lone ``{k: {k: ...}}`` nesting is unwrapped first."""
     for key in d:
         if key == k and isinstance(d[k], dict) and k in d[k]:
             pass
@@ -929,6 +961,7 @@ def expand_nested_key(d, k):
 
 
 def flatten_if_var_kw(kvs, var_kw_name):
+    """Yield ``(key, value)`` pairs, replacing a ``(var_kw_name, {var_kw_name: d})`` pair by the items of ``d``."""
     cond = lambda k: k == var_kw_name
     expand = lambda k: k.items()
     # expand = lambda k: k.values()
@@ -1500,6 +1533,11 @@ class Sig(Signature, Mapping):
         return_annotation=empty,
         **name_and_dflts,
     ):
+        """Merge signatures of several objects into one; ``name=default`` kwargs add PK params.
+
+        >>> Sig.from_objs(lambda a: None, ["b"], c=2)
+        <Sig (a, b, c=2)>
+        """
         objs = list(objs)
         for name, default in name_and_dflts.items():
             objs.append([{"name": name, "kind": PK, "default": default}])
@@ -1517,6 +1555,7 @@ class Sig(Signature, Mapping):
 
     @classmethod
     def from_params(cls, params):
+        """Make a ``Sig`` from a ``Parameter`` or an iterable of parameter specs."""
         if isinstance(params, Parameter):
             params = (params,)
         return cls(params)
@@ -1537,10 +1576,12 @@ class Sig(Signature, Mapping):
 
     @property
     def names(self):
+        """The parameter names, in signature order."""
         return list(self.keys())
 
     @property
     def kinds(self):
+        """A ``{name: kind}`` dict of the parameters."""
         return {p.name: p.kind for p in self.values()}
 
     @property
@@ -1576,6 +1617,12 @@ class Sig(Signature, Mapping):
         }
 
     def detail_names_by_kind(self):
+        """Names grouped by kind: ``(po_names, pk_names, vp_name, ko_names, vk_name)``, the
+        variadic ones as a single name or ``None``.
+
+        >>> Sig(lambda a, /, b, *args, c=1, **kw: None).detail_names_by_kind()
+        (('a',), ('b',), 'args', ('c',), 'kw')
+        """
         return (
             self.names_of_kind[PO],
             self.names_of_kind[PK],
@@ -1721,6 +1768,7 @@ class Sig(Signature, Mapping):
 
     @property
     def var_positional_name(self):
+        """The name of the VAR_POSITIONAL parameter, or ``None`` if there is none."""
         idx = self.index_of_var_positional
         if idx is not None:
             return self.names[idx]
@@ -1755,6 +1803,7 @@ class Sig(Signature, Mapping):
 
     @property
     def var_keyword_name(self):
+        """The name of the VAR_KEYWORD parameter, or ``None`` if there is none."""
         idx = self.index_of_var_keyword
         if idx is not None:
             return self.names[idx]
@@ -1809,10 +1858,12 @@ class Sig(Signature, Mapping):
 
     @property
     def positional_names(self):
+        """Names of the parameters that can be given positionally (PO and PK kinds)."""
         return self.names_of_kind[PO] + self.names_of_kind[PK]
 
     @property
     def keyword_names(self):
+        """Names of the parameters that can be given by keyword (PK and KO kinds)."""
         return self.names_of_kind[PK] + self.names_of_kind[KO]
 
     def _transform_params(self, changes_for_name: dict):
@@ -2340,6 +2391,11 @@ class Sig(Signature, Mapping):
         return sig.merge_with_sig(self)
 
     def remove_names(self, names):
+        """A new ``Sig`` without the given parameter names.
+
+        >>> Sig(lambda a, /, b, *args, c=1, **kw: None).remove_names(["b", "c"])
+        <Sig (a, /, *args, **kw)>
+        """
         names = {p.name for p in ensure_params(names)}
         new_params = {
             name: p for name, p in self.parameters.items() if name not in names
@@ -2424,6 +2480,13 @@ class Sig(Signature, Mapping):
         argname_to_default=None,
         allow_reordering=False,
     ):
+        """A new ``Sig`` with every parameter set to ``kind`` (POSITIONAL_OR_KEYWORD by
+        default), except those whose kind is in ``except_kinds`` (the variadic kinds by
+        default).
+
+        >>> Sig(lambda a, /, b, *, c: None).normalize_kind()
+        <Sig (a, b, c)>
+        """
         except_kinds = except_kinds or set()
         if add_defaults_if_necessary:
             if argname_to_default is None:
@@ -3527,6 +3590,7 @@ def call_somewhat_forgivingly(
 
 
 def convert_to_PK(kinds):
+    """A ``{name: POSITIONAL_OR_KEYWORD}`` dict for every name in ``kinds`` (a ``kinds_modifier``)."""
     return {name: PK for name in kinds}
 
 
@@ -3738,6 +3802,11 @@ ch_signature_to_all_pk = all_pk_signature  # alias for back-compatibility
 
 
 def normalized_func(func):
+    """Wrap ``func`` so its call arguments are re-bound through ``func``'s own signature.
+
+    Work in progress: the wrapper has a ``(*args, **kwargs)`` signature and the tests
+    that would let it relax argument kinds are marked ``xfail``.
+    """
     sig = Sig(func)
 
     def argument_values_tuple(args, kwargs):
@@ -4019,7 +4088,15 @@ def ch_func_to_all_pk(func):
 
 
 def copy_func(f):
-    """Copy a function (not sure it works with all types of callables)"""
+    """Copy a function (not sure it works with all types of callables).
+
+    >>> def h(x, y=2):
+    ...     return x + y
+    >>> h.an_attr = 42
+    >>> hc = copy_func(h)
+    >>> hc(1), hc.__name__, hc.an_attr, hc is h
+    (3, 'h', 42, False)
+    """
     g = FunctionType(
         f.__code__,
         f.__globals__,
@@ -4036,6 +4113,11 @@ def copy_func(f):
 
 # TODO: Similar to other function in this module -- merge.
 def params_of(obj: HasParams):
+    """The list of ``Parameter`` objects of a signature, a name-to-parameter mapping, or a callable.
+
+    >>> params_of(lambda a, b=1: None)
+    [<Parameter "a">, <Parameter "b=1">]
+    """
     if isinstance(obj, Signature):
         obj = list(obj.parameters.values())
     elif isinstance(obj, Mapping):
@@ -4125,9 +4207,8 @@ def set_signature_of_func(
 
     Args:
         func: Function whose signature you want to set
-        signature: A list of parameter specifications. This could be an
-        inspect.Parameter object or anything that
-            the mk_param function can resolve into an inspect.Parameter object.
+        parameters: A list of parameter specifications: ``inspect.Parameter`` objects
+            or anything ``ensure_param`` can resolve into one.
 
         return_annotation: Passed on to inspect.Signature.
         __validate_parameters__: Passed on to inspect.Signature.
@@ -4481,7 +4562,7 @@ def resolve_function(obj: T) -> T | Callable:
 
 def dict_of_attribute_signatures(cls: type) -> dict[str, Signature]:
     """
-    A function that extracts the signatures of all callable attributes of a class.
+    Extract the signatures of all callable attributes of a class, as a ``{name: signature}`` dict.
 
     :param cls: The class that holds the the ``(name, func)`` pairs we want to extract.
     :return: A dict of ``(name, signature(func))`` pairs extracted from class.
@@ -4723,7 +4804,7 @@ def param_for_kind(
     with_default=False,
     annotation=Parameter.empty,
 ):
-    """Function to easily and flexibly make inspect.Parameter objects for testing.
+    """Make an ``inspect.Parameter`` of a given kind, with a generated name and default if not given (handy in tests).
 
     It's annoying to have to compose parameters from scratch to testing things.
     This tool should help making it less annoying.
@@ -4799,6 +4880,7 @@ KeyFunction = Callable[[CT], Compared]
 
 
 def compare_signatures(func1, func2, signature_comparator: SignatureComparator = eq):
+    """Compare the ``Sig`` of two callables with ``signature_comparator`` (equality by default)."""
     return signature_comparator(Sig(func1), Sig(func2))
 
 
@@ -4806,6 +4888,7 @@ def compare_signatures(func1, func2, signature_comparator: SignatureComparator =
 def mk_func_comparator_based_on_signature_comparator(
     signature_comparator: SignatureComparator,
 ) -> CallableComparator:
+    """Make a function comparator that compares two callables through their signatures."""
     return partial(compare_signatures, signature_comparator=signature_comparator)
 
 
@@ -4934,6 +5017,7 @@ def dflt1_is_empty_or_dflt2_is_not(dflt1, dflt2):
 
 # TODO: Implement annotation compatibility
 def ignore_any_differences(x, y):
+    """A comparator that always returns ``True`` (used to ignore a parameter attribute)."""
     return True
 
 
@@ -4958,6 +5042,7 @@ dflt1_is_empty_or_dflt2_is_not_param_comparator = partial(
 
 
 def return_tuple(x, y):
+    """A comparator that returns the ``(x, y)`` pair itself instead of a verdict."""
     return x, y
 
 
@@ -4965,6 +5050,7 @@ param_attribute_dict: ComparisonAggreg
 
 
 def param_attribute_dict(name_kind_default_annotation: Iterable[Comparison]) -> dict:
+    """Zip four comparison results into a ``{name, kind, default, annotation}`` dict (an ``aggreg``)."""
     keys = ["name", "kind", "default", "annotation"]
     return {key: value for key, value in zip(keys, name_kind_default_annotation)}
 
@@ -5040,7 +5126,14 @@ def defaults_are_the_same_when_not_empty(dflt1, dflt2):
 
 
 def postprocess(egress: Callable):
-    """A decorator that will process the output of the wrapped function with egress"""
+    """Make a decorator that applies ``egress`` to the output of the wrapped function.
+
+    >>> @postprocess(list)
+    ... def r(n):
+    ...     return range(n)
+    >>> r(3)
+    [0, 1, 2]
+    """
 
     # Note: Vendorized version equivalent ones in i2.deco and i2.wrapper
     def postprocessed(func):
@@ -5244,7 +5337,7 @@ from inspect import Parameter
 @dataclass
 class SigPair:
     """
-    Class that operates on a pair of signatures.
+    Compare two signatures: shared and missing names, and per-parameter differences.
 
     For example, offers methods to compare two signatures in various ways.
 
