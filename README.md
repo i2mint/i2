@@ -40,7 +40,7 @@ def f(a, b=2, *, c=3):
 
 Sig(f)               # <Sig (a, b=2, *, c=3)>
 Sig(f).names         # ['a', 'b', 'c']
-g = Sig(f).ch_names(a="x")(f)   # same function, first parameter renamed
+g = Sig(f).ch_names(a="x")(f)   # f itself, with its signature rewritten (g is f)
 Sig(g)               # <Sig (x, b=2, *, c=3)>
 g(1)                 # 7
 ```

@@ -5,9 +5,10 @@ an object: for a callable, its parameters (name, kind, default, annotation) and 
 return annotation.
 
 Main entry points:
-    Mint: mint of any python object
-    MintOfCallable: mint of a callable, with parameter information
-    ParametersMint: mint of the parameters of a callable
+
+- ``Mint``: mint of any python object
+- ``MintOfCallable``: mint of a callable, with parameter information
+- ``ParametersMint``: mint of the parameters of a callable
 """
 
 import inspect

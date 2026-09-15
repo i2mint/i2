@@ -583,8 +583,7 @@ def preprocess(pre):
     """Make a decorator that feeds the wrapped function the output of ``pre``.
 
     The wrapped function receives a single argument: ``pre(*args, **kwargs)``, computed
-    from whatever the caller passed. For a bound method, ``self`` is passed through
-    untouched and ``pre`` gets the remaining arguments.
+    from whatever the caller passed.
 
     >>> @preprocess(int)
     ... def double(x):

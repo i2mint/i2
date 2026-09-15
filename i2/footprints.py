@@ -769,8 +769,8 @@ def object_dependencies(obj, *, get_source=get_source):
     """Map each method of a class (or of an instance's class) to the attributes it reads.
 
     Attributes accessed through the method's first argument (usually ``self``) count;
-    attributes that are only assigned to do not. Methods without retrievable source
-    are skipped.
+    attributes that are only assigned to do not. Members for which ``get_source`` raises
+    ``TypeError`` (builtins, descriptors) are skipped.
 
     >>> class C:
     ...     def __init__(self):

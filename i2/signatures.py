@@ -362,7 +362,8 @@ def ensure_signature(obj: SignatureAble) -> Signature:
     >>> ensure_signature(None)
     <Signature ()>
 
-    :raises TypeError: If ``obj`` is none of the above.
+    :raises TypeError: If ``obj`` is none of the above (a signature string raises
+        ``ValueError`` instead, from ``ensure_param``).
     """
     if isinstance(obj, Signature):
         return obj

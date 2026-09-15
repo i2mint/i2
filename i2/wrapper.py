@@ -1558,8 +1558,10 @@ def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
 class ArgValConverterIngress:
     """Ingress with ``func``'s signature that applies ``name=converter`` functions to arguments.
 
-    With ``__strict`` (the default), names that are not parameters of ``func`` are
-    rejected with an ``AssertionError`` at construction.
+    Names that are not parameters of ``func`` are rejected with an ``AssertionError``
+    at construction (the ``__strict`` parameter cannot be passed by keyword from outside
+    the class, since the name is mangled; use ``arg_val_converter_ingress`` to switch it
+    off).
     """
 
     def __init__(self, func, __strict=True, **conversion_for_arg):

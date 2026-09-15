@@ -19,7 +19,7 @@ For context managers you have:
 - ``ContextFanout``: To hold multiple context managers as one (entering and exiting
   together)
 
-!`image <https://user-images.githubusercontent.com/1906276/138004878-bfe17115-c25f-4d22-9740-0fef983507c0.png>`_
+.. image:: https://user-images.githubusercontent.com/1906276/138004878-bfe17115-c25f-4d22-9740-0fef983507c0.png
 """
 
 from typing import Union, Any, TypeVar
