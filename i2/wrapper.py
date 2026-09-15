@@ -109,7 +109,11 @@ AUTO_PRESERVE_SIGNATURE = "auto"
 
 
 def identity(x):
-    """Transparent function, returning what's been input"""
+    """Return the input unchanged.
+
+    >>> identity('x')
+    'x'
+    """
     return x
 
 
@@ -1031,6 +1035,11 @@ def items_with_mapped_keys(d: dict, key_mapper):
 
 
 def invert_map(d: dict):
+    """Swap keys and values of a mapping, raising ``ValueError`` if values are not unique.
+
+    >>> invert_map({'a': 1, 'b': 2})
+    {1: 'a', 2: 'b'}
+    """
     new_d = {v: k for k, v in d.items()}
     if len(new_d) == len(d):
         return new_d
@@ -1039,6 +1048,7 @@ def invert_map(d: dict):
 
 
 def parameters_to_dict(parameters):
+    """Map each parameter name to its ``parameter_to_dict`` (name, kind, default, annotation) dict."""
     return {name: parameter_to_dict(param) for name, param in parameters.items()}
 
 
@@ -1276,6 +1286,12 @@ class InnerMapIngress:
 
 # TODO: Fits global pattern -- merge
 class ArgNameMappingIngress:
+    """Ingress that renames parameters: called with outer names, returns inner (args, kwargs).
+
+    Unless ``conserve_kind=True``, all parameter kinds of the outer signature become
+    POSITIONAL_OR_KEYWORD. ``mk_ingress_from_name_mapper`` is the function form.
+    """
+
     def __init__(self, inner_sig, *, conserve_kind=False, **outer_name_for_inner_name):
         self.inner_sig = Sig(inner_sig)
         self.outer_sig = self.inner_sig.ch_names(**outer_name_for_inner_name)
@@ -1299,6 +1315,21 @@ class ArgNameMappingIngress:
 
 
 def mk_ingress_from_name_mapper(func, name_mapper: Mapping, *, conserve_kind=False):
+    """Make an ingress that renames ``func``'s parameters (``{inner_name: outer_name}``).
+
+    >>> def foo(a, b: int, c=7):
+    ...     return (a, b, c)
+    >>> ingress = mk_ingress_from_name_mapper(foo, dict(a='aa', c='cc'))
+    >>> Sig(ingress)
+    <Sig (aa, b: int, cc=7)>
+    >>> ingress(1, b=2, cc=3)
+    ((), {'a': 1, 'b': 2, 'c': 3})
+    >>> wrap(foo, ingress=ingress)(1, 2, cc=3)
+    (1, 2, 3)
+
+    By default the outer signature loses positional-only and keyword-only kinds;
+    ``conserve_kind=True`` keeps them.
+    """
     return ArgNameMappingIngress(func, conserve_kind=conserve_kind, **name_mapper)
 
 
@@ -1307,6 +1338,7 @@ def mk_ingress_from_name_mapper(func, name_mapper: Mapping, *, conserve_kind=Fal
 
 
 def apply_func_on_cond(func, cond, k, v):
+    """Return ``func(v)`` if ``cond(k, v)`` is true, else ``v`` unchanged."""
     if cond(k, v):
         return func(v)
     else:
@@ -1314,10 +1346,12 @@ def apply_func_on_cond(func, cond, k, v):
 
 
 def modify_dict_on_cond(d, cond, func):
+    """Copy ``d``, applying ``func`` to the values whose ``(key, value)`` satisfy ``cond``."""
     return {k: apply_func_on_cond(func, cond, k, v) for k, v in d.items()}
 
 
 def convert_VK_to_KO(kinds):
+    """In a ``{name: kind}`` dict, replace VAR_KEYWORD kinds with KEYWORD_ONLY."""
     cond = lambda k, v: v == VK
     func = lambda v: KO
 
@@ -1328,6 +1362,16 @@ nice_kinds = deprecation_of(kind_forgiving_func, "nice_kinds")
 
 
 def wrap_from_sig(func, new_sig):
+    """Give ``func`` the signature ``new_sig``, calling it with only the arguments it takes.
+
+    >>> def f(x, y=1):
+    ...     return x + y
+    >>> h = wrap_from_sig(f, Sig('(x, y=1, z=0)'))
+    >>> Sig(h)
+    <Sig (x, y=1, z=0)>
+    >>> h(1, 2, 3), h(1, z=5)
+    (3, 2)
+    """
     from i2 import call_somewhat_forgivingly
 
     @wraps(func)
@@ -1478,10 +1522,19 @@ def rm_params(
 
 
 def arg_val_converter(func, **conversion_for_arg):
+    """Wrap ``func`` so that the given arguments are converted (``name=converter``) before the call.
+
+    >>> def f(x, y=1):
+    ...     return x + y
+    >>> g = arg_val_converter(f, x=int)
+    >>> g('2', 3)
+    5
+    """
     return Wrap(func, ingress=ArgValConverterIngress(func, **conversion_for_arg))
 
 
 def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
+    """Function form of ``ArgValConverterIngress``: an ingress converting the named arguments."""
     sig = Sig(func)
     if __strict:
         conversion_names_that_are_not_func_args = conversion_for_arg.keys() - sig.names
@@ -1503,6 +1556,12 @@ def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):
 
 # TODO: Fits global pattern -- merge
 class ArgValConverterIngress:
+    """Ingress with ``func``'s signature that applies ``name=converter`` functions to arguments.
+
+    With ``__strict`` (the default), names that are not parameters of ``func`` are
+    rejected with an ``AssertionError`` at construction.
+    """
+
     def __init__(self, func, __strict=True, **conversion_for_arg):
         sig = Sig(func)
         if __strict:
@@ -1530,6 +1589,11 @@ class ArgValConverterIngress:
 
 
 def convert_dict_values(to_convert: dict, key_to_conversion_function: dict):
+    """Yield ``(key, value)`` pairs of ``to_convert``, converting the values whose key has a function.
+
+    >>> dict(convert_dict_values({'x': '2', 'y': 3}, {'x': int}))
+    {'x': 2, 'y': 3}
+    """
     for k, v in to_convert.items():
         if k in key_to_conversion_function:
             conversion_func = key_to_conversion_function[k]
@@ -1546,10 +1610,12 @@ def _alt_convert_dict_values(to_convert: dict, key_to_conversion_function: dict)
 
 
 def params_used_in_funcs(funcs):
+    """The set of parameter names of all the given functions."""
     return {name for func in funcs for name in Sig(func).names}
 
 
 def required_params_used_in_funcs(funcs):
+    """The set of names that are required (no default) in at least one of the given functions."""
     return {name for func in funcs for name in Sig(func).required_names}
 
 
@@ -1655,6 +1721,15 @@ def camelize(s):
 def kwargs_trans_to_extract_args_from_attrs(
     outer_kwargs: dict, attr_names=(), obj_param="self"
 ):
+    """Pop the ``obj_param`` object out of ``outer_kwargs`` and source ``attr_names`` from its attributes.
+
+    Mutates ``outer_kwargs`` (the object is popped). Explicit kwargs win over attributes.
+
+    >>> class O: pass
+    >>> o = O(); o.a = 1; o.b = 2
+    >>> kwargs_trans_to_extract_args_from_attrs({'self': o, 'c': 3}, attr_names=('a', 'b'))
+    {'a': 1, 'b': 2, 'c': 3}
+    """
     self = outer_kwargs.pop(obj_param)
     arguments_extracted_from_obj = {name: getattr(self, name) for name in attr_names}
     # The kwargs we need are the union of the extracted arguments with the remaining outer_kwargs
@@ -1664,6 +1739,7 @@ def kwargs_trans_to_extract_args_from_attrs(
 # TODO: kind lost here, only 3.10 offers dataclasses with some control over kind:
 #   See: https://stackoverflow.com/questions/49908182/how-to-make-keyword-only-fields-with-dataclasses
 def param_to_dataclass_field_tuple(param: Parameter):
+    """The ``(name, annotation, default)`` tuple ``dataclasses.make_dataclass`` expects for a field."""
     return param.name, param.annotation, param.default
 
 
@@ -1879,6 +1955,8 @@ def bind_funcs_object_attrs(
 
 
 class PickleHelperMixin:
+    """Mixin whose ``__reduce__`` pickles an instance by its ``__name__`` (a global reference)."""
+
     def __reduce__(self):
         return self.__name__
 
@@ -2417,6 +2495,12 @@ def move_names_to_the_end(names, names_to_move_to_the_end):
 # IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode
 @dataclass
 class SmartDefault:
+    """Placeholder default for a parameter whose value ``add_smart_defaults`` computes from the other arguments.
+
+    Holds the function that computes the value and, if the parameter had one, its
+    original default (shown in the repr).
+    """
+
     func_computing_default: Callable
     original_default: Any = empty
 
