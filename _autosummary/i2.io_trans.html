@@ -140,11 +140,11 @@ wrapped function itself.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.io_trans.cast_to_list" title="i2.io_trans.cast_to_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cast_to_list</span></code></a>(value)</p></td>
 <td><p>Tries to case to a list (with json friendly elements)</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity_func</span></code>(x)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.io_trans.identity_func" title="i2.io_trans.identity_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity_func</span></code></a>(x)</p></td>
+<td><p>Return the input unchanged.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pickle_out_trans</span></code>(self, argval, func)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.io_trans.pickle_out_trans" title="i2.io_trans.pickle_out_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pickle_out_trans</span></code></a>(self, argval, func)</p></td>
+<td><p>Output transformer that pickles the value (<code class="docutils literal notranslate"><span class="pre">pickle.dumps</span></code>).</p></td>
 </tr>
 </tbody>
 </table>
@@ -211,7 +211,7 @@ wrapped function itself.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.io_trans.IoTrans">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.io_trans.</span></span><span class="sig-name descname"><span class="pre">IoTrans</span></span><a class="reference internal" href="../_modules/i2/io_trans.html#IoTrans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.io_trans.IoTrans" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.io_trans.IoTrans'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
 <dl class="field-list simple">
 </dl>
 </dd></dl>
@@ -286,6 +286,16 @@ including lists, iterables, dicts, and booleans</p>
 </span></code></pre></div>
 </div>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.io_trans.identity_func">
+<span class="sig-prename descclassname"><span class="pre">i2.io_trans.</span></span><span class="sig-name descname"><span class="pre">identity_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/io_trans.html#identity_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.io_trans.identity_func" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.io_trans.identity_func'">¶</a></dt>
+<dd><p>Return the input unchanged.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.io_trans.pickle_out_trans">
+<span class="sig-prename descclassname"><span class="pre">i2.io_trans.</span></span><span class="sig-name descname"><span class="pre">pickle_out_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">argval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/io_trans.html#pickle_out_trans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.io_trans.pickle_out_trans" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.io_trans.pickle_out_trans'">¶</a></dt>
+<dd><p>Output transformer that pickles the value (<code class="docutils literal notranslate"><span class="pre">pickle.dumps</span></code>).</p>
+</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
@@ -297,6 +307,8 @@ including lists, iterables, dicts, and booleans</p>
 <li><a :data-current="activeSection === '#i2.io_trans.TypedBasedOutIoTrans'" class="reference internal" href="#i2.io_trans.TypedBasedOutIoTrans"><code class="docutils literal notranslate"><span class="pre">TypedBasedOutIoTrans</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.io_trans.cast_to_jdict'" class="reference internal" href="#i2.io_trans.cast_to_jdict"><code class="docutils literal notranslate"><span class="pre">cast_to_jdict()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.io_trans.cast_to_list'" class="reference internal" href="#i2.io_trans.cast_to_list"><code class="docutils literal notranslate"><span class="pre">cast_to_list()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.io_trans.identity_func'" class="reference internal" href="#i2.io_trans.identity_func"><code class="docutils literal notranslate"><span class="pre">identity_func()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.io_trans.pickle_out_trans'" class="reference internal" href="#i2.io_trans.pickle_out_trans"><code class="docutils literal notranslate"><span class="pre">pickle_out_trans()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -310,7 +322,7 @@ including lists, iterables, dicts, and booleans</p>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=946d7960"></script>
+<script src="../_static/documentation_options.js?v=d80f5ebb"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

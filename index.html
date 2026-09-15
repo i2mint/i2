@@ -118,22 +118,59 @@
 <h1>i2<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2">¶</a></h1>
 <p>Core tools for minting code.</p>
 <p>For human readers: <a class="reference external" href="https://i2mint.github.io/i2/" rel="nofollow noopener">Documentation here.<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
-<p>For AI agents, and humans that use them: this repo ships
-<a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills" rel="nofollow noopener">agent skills<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> —
-focused, task-oriented guides that tell a coding agent when and how to reach
-for <code class="docutils literal notranslate"><span class="pre">i2</span></code>’s tools:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills/i2-signatures" rel="nofollow noopener">i2-signatures<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>
-— introspect signatures and bind a call’s <code class="docutils literal notranslate"><span class="pre">*args,</span> <span class="pre">**kwargs</span></code> to named arguments.</p></li>
-<li><p><a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills/i2-sig-arithmetic" rel="nofollow noopener">i2-sig-arithmetic<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>
-— build, merge (<code class="docutils literal notranslate"><span class="pre">+</span></code>/<code class="docutils literal notranslate"><span class="pre">-</span></code>) and edit function signatures.</p></li>
-<li><p><a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills/i2-wrapper" rel="nofollow noopener">i2-wrapper<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>
-— wrap functions to transform their interface, inputs and output.</p></li>
-<li><p><a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills/i2-castgraph" rel="nofollow noopener">i2-castgraph<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>
-— route data through a graph of type/representation conversions.</p></li>
-<li><p><a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills/i2-multi-object" rel="nofollow noopener">i2-multi-object<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>
-— compose a fixed set of functions or context managers (<code class="docutils literal notranslate"><span class="pre">Pipe</span></code>, <code class="docutils literal notranslate"><span class="pre">FuncFanout</span></code>, …).</p></li>
-</ul>
+
+<section id="for-ai-agents">
+<h2>For AI agents<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#for-ai-agents" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#for-ai-agents'">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">i2</span></code> ships tooling for coding agents. If you are one, start here.</p>
+<p><strong>Skills</strong> (<a class="reference external" href="https://agentskills.io" rel="nofollow noopener">Agent Skills<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> format), for any agent host.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Skill</p></th>
+<th class="head"><p>Use it to</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i2-castgraph</span></code></p></td>
+<td><p>routing data through a graph of type/representation conversions with i2.castgraph’s TransformationGraph — register pairwise transformers</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">i2-multi-object</span></code></p></td>
+<td><p>composing and combining a fixed collection of functions</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i2-sig-arithmetic</span></code></p></td>
+<td><p>building, merging, and editing function signatures with i2’s Sig — signature “+/-” arithmetic</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">i2-signatures</span></code></p></td>
+<td><p>introspecting function signatures and binding call arguments to parameter names with i2’s Sig class — turning an arbitrary</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i2-wrapper</span></code></p></td>
+<td><p>wrapping functions to transform their interface</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>The documentation, machine-readable</strong>: <a class="reference external" href="https://i2mint.github.io/i2/llms.txt" rel="nofollow noopener"><code class="docutils literal notranslate"><span class="pre">llms.txt</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> indexes every page; <a class="reference external" href="https://i2mint.github.io/i2/i2.md" rel="nofollow noopener"><code class="docutils literal notranslate"><span class="pre">i2.md</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> is the whole documentation in one file; every page has a <code class="docutils literal notranslate"><span class="pre">.md</span></code> twin; <a class="reference external" href="https://i2mint.github.io/i2/objects.inv" rel="nofollow noopener"><code class="docutils literal notranslate"><span class="pre">objects.inv</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> maps symbols to URLs. The full list, with install lines, is on the site’s <a class="reference external" href="https://i2mint.github.io/i2/ai-agents.html" rel="nofollow noopener">For AI agents<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> page.</p>
+<p>If you identify as a dinosaur, the rest of this README is written for you, starting at <a class="reference internal" href="#key-modules-overview">Key Modules Overview</a>.</p>
+
+</section>
+<section id="install">
+<h2>Install<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#install" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#install'">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">pip</span> <span class="n">install</span> <span class="n">i2</span>
+</span></code></pre></div>
+</div>
+<p>The smallest useful thing: read, edit and re-apply a function’s signature with <code class="docutils literal notranslate"><span class="pre">Sig</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+</span><span id="line-4">    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">c</span>
+</span><span id="line-5">
+</span><span id="line-6"><span class="n">Sig</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>               <span class="c1"># &lt;Sig (a, b=2, *, c=3)&gt;</span>
+</span><span id="line-7"><span class="n">Sig</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">names</span>         <span class="c1"># ['a', 'b', 'c']</span>
+</span><span id="line-8"><span class="n">g</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">ch_names</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>   <span class="c1"># f itself, with its signature rewritten (g is f)</span>
+</span><span id="line-9"><span class="n">Sig</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>               <span class="c1"># &lt;Sig (x, b=2, *, c=3)&gt;</span>
+</span><span id="line-10"><span class="n">g</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>                 <span class="c1"># 7</span>
+</span></code></pre></div>
+</div>
+<p>The flat, single-file view of the whole documentation is <a class="reference external" href="https://i2mint.github.io/i2/i2.md" rel="nofollow noopener">i2.md<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>.</p>
+</section>
 <section id="key-modules-overview">
 <h2>Key Modules Overview<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#key-modules-overview" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#key-modules-overview'">¶</a></h2>
 <section id="i2-castgraph-type-kind-based-transformation-graphs">
@@ -559,9 +596,12 @@ leaves are base types, which can in turn be represented by a C struct.</p>
 
 </section>
 </section>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-09-15 09:51 UTC from <a href="https://github.com/i2mint/i2/commit/50ffc01159f4294eb8fcaf9253df3dfee9160823">50ffc01</a> (master) · i2 0.1.69 · <a href="about-this-build.html">about this build</a></p>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
+<li><a :data-current="activeSection === '#for-ai-agents'" class="reference internal" href="#for-ai-agents">For AI agents</a></li>
+<li><a :data-current="activeSection === '#install'" class="reference internal" href="#install">Install</a></li>
 <li><a :data-current="activeSection === '#key-modules-overview'" class="reference internal" href="#key-modules-overview">Key Modules Overview</a><ul>
 <li><a :data-current="activeSection === '#i2-castgraph-type-kind-based-transformation-graphs'" class="reference internal" href="#i2-castgraph-type-kind-based-transformation-graphs">i2.castgraph - Type/Kind-Based Transformation Graphs</a></li>
 <li><a :data-current="activeSection === '#i2-signatures-function-signature-manipulation'" class="reference internal" href="#i2-signatures-function-signature-manipulation">i2.signatures - Function Signature Manipulation</a></li>
@@ -590,7 +630,7 @@ leaves are base types, which can in turn be represented by a C struct.</p>
 </div>
 </footer>
 </div>
-<script src="_static/documentation_options.js?v=946d7960"></script>
+<script src="_static/documentation_options.js?v=d80f5ebb"></script>
 <script src="_static/doctools.js?v=fd6eb6e6"></script>
 <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>

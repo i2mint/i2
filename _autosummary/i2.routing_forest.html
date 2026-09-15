@@ -273,17 +273,17 @@ you can wrap it in <code class="docutils literal notranslate"><span class="pre">
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code>(obj)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.routing_forest.identity" title="i2.routing_forest.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(obj)</p></td>
+<td><p>Return the input unchanged (the default leaf function).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.routing_forest.return_sentinel" title="i2.routing_forest.return_sentinel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_sentinel</span></code></a>(obj[, sentinel])</p></td>
 <td><p>Return a constanc sentinel value when called.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_routing_forest</span></code>()</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.routing_forest.test_routing_forest" title="i2.routing_forest.test_routing_forest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_routing_forest</span></code></a>()</p></td>
+<td><p>Exercise the routing nodes end to end (kept here as a runnable example).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_leafs_with_final_node</span></code>(x)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.routing_forest.wrap_leafs_with_final_node" title="i2.routing_forest.wrap_leafs_with_final_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_leafs_with_final_node</span></code></a>(x)</p></td>
+<td><p>Yield the items of <code class="docutils literal notranslate"><span class="pre">x</span></code>, wrapping those that are not <code class="docutils literal notranslate"><span class="pre">RoutingNode</span></code> in <code class="docutils literal notranslate"><span class="pre">FinalNode</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -330,7 +330,7 @@ you can wrap it in <code class="docutils literal notranslate"><span class="pre">
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.routing_forest.DelegateToMappingAttrMixin">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.routing_forest.</span></span><span class="sig-name descname"><span class="pre">DelegateToMappingAttrMixin</span></span><a class="reference internal" href="../_modules/i2/routing_forest.html#DelegateToMappingAttrMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.routing_forest.DelegateToMappingAttrMixin" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.routing_forest.DelegateToMappingAttrMixin'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
 <p>A mixin to delegate <code class="docutils literal notranslate"><span class="pre">Mapping</span></code> methods to a mapping attribute called <code class="docutils literal notranslate"><span class="pre">mapping</span></code></p>
 </dd></dl>
 <dl class="py class">
@@ -475,6 +475,13 @@ and <code class="docutils literal notranslate"><span class="pre">tuple</span></c
 <dl class="field-list simple">
 </dl>
 </dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.routing_forest.KeyFuncMapping.key">
+<span class="sig-name descname"><span class="pre">key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.routing_forest.KeyFuncMapping.key" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.routing_forest.KeyFuncMapping.key'">¶</a></dt>
+<dd><p>Return the input unchanged (the default leaf function).</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.routing_forest.RoutingForest">
@@ -502,7 +509,7 @@ and <code class="docutils literal notranslate"><span class="pre">tuple</span></c
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.routing_forest.RoutingNode">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.routing_forest.</span></span><span class="sig-name descname"><span class="pre">RoutingNode</span></span><a class="reference internal" href="../_modules/i2/routing_forest.html#RoutingNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.routing_forest.RoutingNode" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.routing_forest.RoutingNode'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
 <p>A RoutingNode instance needs to be callable on a single object,
 yielding an iterable or a final value</p>
 <dl class="py method">
@@ -550,11 +557,28 @@ feature. It is often a dict, but only requirement is that it implements the
 </div>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.routing_forest.identity">
+<span class="sig-prename descclassname"><span class="pre">i2.routing_forest.</span></span><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/routing_forest.html#identity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.routing_forest.identity" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.routing_forest.identity'">¶</a></dt>
+<dd><p>Return the input unchanged (the default leaf function).</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.routing_forest.return_sentinel">
 <span class="sig-prename descclassname"><span class="pre">i2.routing_forest.</span></span><span class="sig-name descname"><span class="pre">return_sentinel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sentinel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/routing_forest.html#return_sentinel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.routing_forest.return_sentinel" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.routing_forest.return_sentinel'">¶</a></dt>
 <dd><p>Return a constanc sentinel value when called. Use partial to set sentinel</p>
 <dl class="field-list simple">
 </dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.routing_forest.test_routing_forest">
+<span class="sig-prename descclassname"><span class="pre">i2.routing_forest.</span></span><span class="sig-name descname"><span class="pre">test_routing_forest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/routing_forest.html#test_routing_forest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.routing_forest.test_routing_forest" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.routing_forest.test_routing_forest'">¶</a></dt>
+<dd><p>Exercise the routing nodes end to end (kept here as a runnable example).</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.routing_forest.wrap_leafs_with_final_node">
+<span class="sig-prename descclassname"><span class="pre">i2.routing_forest.</span></span><span class="sig-name descname"><span class="pre">wrap_leafs_with_final_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/routing_forest.html#wrap_leafs_with_final_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.routing_forest.wrap_leafs_with_final_node" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.routing_forest.wrap_leafs_with_final_node'">¶</a></dt>
+<dd><p>Yield the items of <code class="docutils literal notranslate"><span class="pre">x</span></code>, wrapping those that are not <code class="docutils literal notranslate"><span class="pre">RoutingNode</span></code> in <code class="docutils literal notranslate"><span class="pre">FinalNode</span></code>.</p>
 </dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
@@ -569,6 +593,7 @@ feature. It is often a dict, but only requirement is that it implements the
 <li><a :data-current="activeSection === '#i2.routing_forest.FinalNode'" class="reference internal" href="#i2.routing_forest.FinalNode"><code class="docutils literal notranslate"><span class="pre">FinalNode</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.routing_forest.KeyFuncMapping'" class="reference internal" href="#i2.routing_forest.KeyFuncMapping"><code class="docutils literal notranslate"><span class="pre">KeyFuncMapping</span></code></a><ul>
 <li><a :data-current="activeSection === '#i2.routing_forest.KeyFuncMapping.default_factory'" class="reference internal" href="#i2.routing_forest.KeyFuncMapping.default_factory"><code class="docutils literal notranslate"><span class="pre">KeyFuncMapping.default_factory()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.routing_forest.KeyFuncMapping.key'" class="reference internal" href="#i2.routing_forest.KeyFuncMapping.key"><code class="docutils literal notranslate"><span class="pre">KeyFuncMapping.key()</span></code></a></li>
 </ul>
 </li>
 <li><a :data-current="activeSection === '#i2.routing_forest.RoutingForest'" class="reference internal" href="#i2.routing_forest.RoutingForest"><code class="docutils literal notranslate"><span class="pre">RoutingForest</span></code></a></li>
@@ -577,7 +602,10 @@ feature. It is often a dict, but only requirement is that it implements the
 </ul>
 </li>
 <li><a :data-current="activeSection === '#i2.routing_forest.SwitchCaseNode'" class="reference internal" href="#i2.routing_forest.SwitchCaseNode"><code class="docutils literal notranslate"><span class="pre">SwitchCaseNode</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.routing_forest.identity'" class="reference internal" href="#i2.routing_forest.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.routing_forest.return_sentinel'" class="reference internal" href="#i2.routing_forest.return_sentinel"><code class="docutils literal notranslate"><span class="pre">return_sentinel()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.routing_forest.test_routing_forest'" class="reference internal" href="#i2.routing_forest.test_routing_forest"><code class="docutils literal notranslate"><span class="pre">test_routing_forest()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.routing_forest.wrap_leafs_with_final_node'" class="reference internal" href="#i2.routing_forest.wrap_leafs_with_final_node"><code class="docutils literal notranslate"><span class="pre">wrap_leafs_with_final_node()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -591,7 +619,7 @@ feature. It is often a dict, but only requirement is that it implements the
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=946d7960"></script>
+<script src="../_static/documentation_options.js?v=d80f5ebb"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

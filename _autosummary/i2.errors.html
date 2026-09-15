@@ -131,8 +131,8 @@
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_and_return</span></code>(msg[, logger])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.errors.log_and_return" title="i2.errors.log_and_return"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_and_return</span></code></a>(msg[, logger])</p></td>
+<td><p>Pass <code class="docutils literal notranslate"><span class="pre">msg</span></code> to <code class="docutils literal notranslate"><span class="pre">logger</span></code> (<code class="docutils literal notranslate"><span class="pre">print</span></code> by default) and return it.</p></td>
 </tr>
 </tbody>
 </table>
@@ -151,25 +151,25 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.errors.AuthorizationError" title="i2.errors.AuthorizationError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuthorizationError</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Base class for errors about what the caller is allowed to do.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.errors.DataError" title="i2.errors.DataError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataError</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Base class for errors about the data itself.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.errors.DuplicateRecordError" title="i2.errors.DuplicateRecordError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DuplicateRecordError</span></code></a></p></td>
-<td><p></p></td>
+<td><p>A <code class="docutils literal notranslate"><span class="pre">DataError</span></code> for a record that already exists.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.errors.ForbiddenError" title="i2.errors.ForbiddenError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ForbiddenError</span></code></a></p></td>
-<td><p></p></td>
+<td><p>An <code class="docutils literal notranslate"><span class="pre">AuthorizationError</span></code> for an operation that is not allowed.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.errors.InputError" title="i2.errors.InputError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InputError</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Raised for invalid input.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.errors.InterruptWithBlock" title="i2.errors.InterruptWithBlock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InterruptWithBlock</span></code></a></p></td>
-<td><p>To be used to interrupt the march of a with</p></td>
+<td><p>Raise inside a <code class="docutils literal notranslate"><span class="pre">with</span></code> block to leave it early; pair with <code class="docutils literal notranslate"><span class="pre">HandleExceptions</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.errors.NotFoundError" title="i2.errors.NotFoundError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NotFoundError</span></code></a></p></td>
-<td><p></p></td>
+<td><p>A <code class="docutils literal notranslate"><span class="pre">DataError</span></code> for a record that does not exist.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.errors.OverwritesNotAllowed" title="i2.errors.OverwritesNotAllowed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OverwritesNotAllowed</span></code></a>(*args[, forbidden_keys])</p></td>
 <td><p>To raise when writes are only allowed if the item doesn't already exist</p></td>
@@ -179,22 +179,26 @@
 <dl class="py exception">
 <dt class="sig sig-object py" id="i2.errors.AuthorizationError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.errors.</span></span><span class="sig-name descname"><span class="pre">AuthorizationError</span></span><a class="reference internal" href="../_modules/i2/errors.html#AuthorizationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.AuthorizationError" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.AuthorizationError'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Base class for errors about what the caller is allowed to do.</p>
 </dd></dl>
 <dl class="py exception">
 <dt class="sig sig-object py" id="i2.errors.DataError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.errors.</span></span><span class="sig-name descname"><span class="pre">DataError</span></span><a class="reference internal" href="../_modules/i2/errors.html#DataError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.DataError" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.DataError'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Base class for errors about the data itself.</p>
 </dd></dl>
 <dl class="py exception">
 <dt class="sig sig-object py" id="i2.errors.DuplicateRecordError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.errors.</span></span><span class="sig-name descname"><span class="pre">DuplicateRecordError</span></span><a class="reference internal" href="../_modules/i2/errors.html#DuplicateRecordError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.DuplicateRecordError" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.DuplicateRecordError'">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#i2.errors.DataError" title="i2.errors.DataError"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataError</span></code></a></p>
+<p>A <code class="docutils literal notranslate"><span class="pre">DataError</span></code> for a record that already exists.</p>
 </dd></dl>
 <dl class="py exception">
 <dt class="sig sig-object py" id="i2.errors.ForbiddenError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.errors.</span></span><span class="sig-name descname"><span class="pre">ForbiddenError</span></span><a class="reference internal" href="../_modules/i2/errors.html#ForbiddenError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.ForbiddenError" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.ForbiddenError'">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#i2.errors.AuthorizationError" title="i2.errors.AuthorizationError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthorizationError</span></code></a></p>
+<p>An <code class="docutils literal notranslate"><span class="pre">AuthorizationError</span></code> for an operation that is not allowed.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.errors.HandleExceptions">
@@ -295,22 +299,41 @@ still do that in your callback. Just say <code class="code docutils literal notr
 </div>
 <dl class="field-list simple">
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.errors.HandleExceptions.exited_with_handled_exception">
+<span class="sig-name descname"><span class="pre">exited_with_handled_exception</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/errors.html#HandleExceptions.exited_with_handled_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.HandleExceptions.exited_with_handled_exception" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.HandleExceptions.exited_with_handled_exception'">¶</a></dt>
+<dd><p>Whether the last <code class="docutils literal notranslate"><span class="pre">with</span></code> block ended on an exception listed in <code class="docutils literal notranslate"><span class="pre">on_error</span></code>.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.errors.HandleExceptions.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/errors.html#HandleExceptions.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.HandleExceptions.initialize" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.HandleExceptions.initialize'">¶</a></dt>
+<dd><p>Forget the outcome of a previous <code class="docutils literal notranslate"><span class="pre">with</span></code> block (done on every <code class="docutils literal notranslate"><span class="pre">__enter__</span></code>).</p>
+</dd></dl>
 </dd></dl>
 <dl class="py exception">
 <dt class="sig sig-object py" id="i2.errors.InputError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.errors.</span></span><span class="sig-name descname"><span class="pre">InputError</span></span><a class="reference internal" href="../_modules/i2/errors.html#InputError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.InputError" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.InputError'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Raised for invalid input.</p>
 </dd></dl>
 <dl class="py exception">
 <dt class="sig sig-object py" id="i2.errors.InterruptWithBlock">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.errors.</span></span><span class="sig-name descname"><span class="pre">InterruptWithBlock</span></span><a class="reference internal" href="../_modules/i2/errors.html#InterruptWithBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.InterruptWithBlock" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.InterruptWithBlock'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#BaseException" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseException</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
-<p>To be used to interrupt the march of a with</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#BaseException" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseException</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Raise inside a <code class="docutils literal notranslate"><span class="pre">with</span></code> block to leave it early; pair with <code class="docutils literal notranslate"><span class="pre">HandleExceptions</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">HandleExceptions</span><span class="p">({</span><span class="n">InterruptWithBlock</span><span class="p">:</span> <span class="s2">"stopped early"</span><span class="p">})</span> <span class="k">as</span> <span class="n">h</span><span class="p">:</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">raise</span> <span class="n">InterruptWithBlock</span><span class="p">()</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">"never printed"</span><span class="p">)</span>
+</span><span id="line-4"><span class="go">stopped early</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">exit_value</span>
+</span><span id="line-6"><span class="go">'stopped early'</span>
+</span></code></pre></div>
+</div>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.errors.ModuleNotFoundIgnore">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.errors.</span></span><span class="sig-name descname"><span class="pre">ModuleNotFoundIgnore</span></span><a class="reference internal" href="../_modules/i2/errors.html#ModuleNotFoundIgnore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.ModuleNotFoundIgnore" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.ModuleNotFoundIgnore'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
 <p>Context manager meant to ignore import errors.
 The use case in mind is when we want to condition some code on the existence of some package.</p>
 </dd></dl>
@@ -318,12 +341,18 @@ The use case in mind is when we want to condition some code on the existence of 
 <dt class="sig sig-object py" id="i2.errors.NotFoundError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.errors.</span></span><span class="sig-name descname"><span class="pre">NotFoundError</span></span><a class="reference internal" href="../_modules/i2/errors.html#NotFoundError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.NotFoundError" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.NotFoundError'">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#i2.errors.DataError" title="i2.errors.DataError"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataError</span></code></a></p>
+<p>A <code class="docutils literal notranslate"><span class="pre">DataError</span></code> for a record that does not exist.</p>
 </dd></dl>
 <dl class="py exception">
 <dt class="sig sig-object py" id="i2.errors.OverwritesNotAllowed">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.errors.</span></span><span class="sig-name descname"><span class="pre">OverwritesNotAllowed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forbidden_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/errors.html#OverwritesNotAllowed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.OverwritesNotAllowed" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.OverwritesNotAllowed'">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#i2.errors.AuthorizationError" title="i2.errors.AuthorizationError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthorizationError</span></code></a></p>
 <p>To raise when writes are only allowed if the item doesn’t already exist</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.errors.log_and_return">
+<span class="sig-prename descclassname"><span class="pre">i2.errors.</span></span><span class="sig-name descname"><span class="pre">log_and_return</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;built-in</span> <span class="pre">function</span> <span class="pre">print&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/errors.html#log_and_return"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.errors.log_and_return" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.errors.log_and_return'">¶</a></dt>
+<dd><p>Pass <code class="docutils literal notranslate"><span class="pre">msg</span></code> to <code class="docutils literal notranslate"><span class="pre">logger</span></code> (<code class="docutils literal notranslate"><span class="pre">print</span></code> by default) and return it.</p>
 </dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
@@ -333,12 +362,17 @@ The use case in mind is when we want to condition some code on the existence of 
 <li><a :data-current="activeSection === '#i2.errors.DataError'" class="reference internal" href="#i2.errors.DataError"><code class="docutils literal notranslate"><span class="pre">DataError</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.errors.DuplicateRecordError'" class="reference internal" href="#i2.errors.DuplicateRecordError"><code class="docutils literal notranslate"><span class="pre">DuplicateRecordError</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.errors.ForbiddenError'" class="reference internal" href="#i2.errors.ForbiddenError"><code class="docutils literal notranslate"><span class="pre">ForbiddenError</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.errors.HandleExceptions'" class="reference internal" href="#i2.errors.HandleExceptions"><code class="docutils literal notranslate"><span class="pre">HandleExceptions</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.errors.HandleExceptions'" class="reference internal" href="#i2.errors.HandleExceptions"><code class="docutils literal notranslate"><span class="pre">HandleExceptions</span></code></a><ul>
+<li><a :data-current="activeSection === '#i2.errors.HandleExceptions.exited_with_handled_exception'" class="reference internal" href="#i2.errors.HandleExceptions.exited_with_handled_exception"><code class="docutils literal notranslate"><span class="pre">HandleExceptions.exited_with_handled_exception()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.errors.HandleExceptions.initialize'" class="reference internal" href="#i2.errors.HandleExceptions.initialize"><code class="docutils literal notranslate"><span class="pre">HandleExceptions.initialize()</span></code></a></li>
+</ul>
+</li>
 <li><a :data-current="activeSection === '#i2.errors.InputError'" class="reference internal" href="#i2.errors.InputError"><code class="docutils literal notranslate"><span class="pre">InputError</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.errors.InterruptWithBlock'" class="reference internal" href="#i2.errors.InterruptWithBlock"><code class="docutils literal notranslate"><span class="pre">InterruptWithBlock</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.errors.ModuleNotFoundIgnore'" class="reference internal" href="#i2.errors.ModuleNotFoundIgnore"><code class="docutils literal notranslate"><span class="pre">ModuleNotFoundIgnore</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.errors.NotFoundError'" class="reference internal" href="#i2.errors.NotFoundError"><code class="docutils literal notranslate"><span class="pre">NotFoundError</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.errors.OverwritesNotAllowed'" class="reference internal" href="#i2.errors.OverwritesNotAllowed"><code class="docutils literal notranslate"><span class="pre">OverwritesNotAllowed</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.errors.log_and_return'" class="reference internal" href="#i2.errors.log_and_return"><code class="docutils literal notranslate"><span class="pre">log_and_return()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -352,7 +386,7 @@ The use case in mind is when we want to condition some code on the existence of 
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=946d7960"></script>
+<script src="../_static/documentation_options.js?v=d80f5ebb"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

@@ -206,119 +206,119 @@
 </span><span id="line-29"><span class="sd">    &gt;&gt;&gt; def foo(x, /, y, *, z=3): ...</span>
 </span><span id="line-30"><span class="sd">    &gt;&gt;&gt; _arg_name_and_val_dict(foo, 1, 2, z=4)</span>
 </span><span id="line-31"><span class="sd">    {'x': 1, 'y': 2, 'z': 4}</span>
-</span><span id="line-32">
-</span><span id="line-33"><span class="sd">    """</span>
-</span><span id="line-34">    <span class="n">b</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span id="line-35">    <span class="n">b</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
-</span><span id="line-36">    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+</span><span id="line-32"><span class="sd">    """</span>
+</span><span id="line-33">    <span class="n">b</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="line-34">    <span class="n">b</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
+</span><span id="line-35">    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+</span><span id="line-36">
 </span><span id="line-37">
-</span><span id="line-38">
-</span><span id="line-39"><span class="k">def</span><span class="w"> </span><span class="nf">_annotation_is_literal</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
-</span><span id="line-40">    <span class="k">return</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Literal</span>
+</span><span id="line-38"><span class="k">def</span><span class="w"> </span><span class="nf">_annotation_is_literal</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
+</span><span id="line-39">    <span class="k">return</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Literal</span>
+</span><span id="line-40">
 </span><span id="line-41">
-</span><span id="line-42">
-</span><span id="line-43"><span class="k">def</span><span class="w"> </span><span class="nf">_literal_values</span><span class="p">(</span><span class="n">literal</span><span class="p">):</span>
-</span><span id="line-44"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-45"><span class="sd">    Get the values of a Literal type.</span>
-</span><span id="line-46">
-</span><span id="line-47"><span class="sd">    :param literal:</span>
-</span><span id="line-48"><span class="sd">    :return:</span>
-</span><span id="line-49">
-</span><span id="line-50"><span class="sd">    &gt;&gt;&gt; from typing import Literal</span>
-</span><span id="line-51"><span class="sd">    &gt;&gt;&gt; _literal_values(Literal[1, 2, 3])</span>
-</span><span id="line-52"><span class="sd">    (1, 2, 3)</span>
-</span><span id="line-53"><span class="sd">    """</span>
-</span><span id="line-54">    <span class="k">return</span> <span class="n">literal</span><span class="o">.</span><span class="n">__args__</span>
+</span><span id="line-42"><span class="k">def</span><span class="w"> </span><span class="nf">_literal_values</span><span class="p">(</span><span class="n">literal</span><span class="p">):</span>
+</span><span id="line-43"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-44"><span class="sd">    Get the values of a Literal type.</span>
+</span><span id="line-45">
+</span><span id="line-46"><span class="sd">    :param literal:</span>
+</span><span id="line-47"><span class="sd">    :return:</span>
+</span><span id="line-48">
+</span><span id="line-49"><span class="sd">    &gt;&gt;&gt; from typing import Literal</span>
+</span><span id="line-50"><span class="sd">    &gt;&gt;&gt; _literal_values(Literal[1, 2, 3])</span>
+</span><span id="line-51"><span class="sd">    (1, 2, 3)</span>
+</span><span id="line-52"><span class="sd">    """</span>
+</span><span id="line-53">    <span class="k">return</span> <span class="n">literal</span><span class="o">.</span><span class="n">__args__</span>
+</span><span id="line-54">
 </span><span id="line-55">
-</span><span id="line-56">
-</span><span id="line-57"><span class="k">def</span><span class="w"> </span><span class="nf">_value_is_in_literal</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">literal</span><span class="p">):</span>
-</span><span id="line-58">    <span class="k">return</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">_literal_values</span><span class="p">(</span><span class="n">literal</span><span class="p">)</span>
+</span><span id="line-56"><span class="k">def</span><span class="w"> </span><span class="nf">_value_is_in_literal</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">literal</span><span class="p">):</span>
+</span><span id="line-57">    <span class="k">return</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">_literal_values</span><span class="p">(</span><span class="n">literal</span><span class="p">)</span>
+</span><span id="line-58">
 </span><span id="line-59">
-</span><span id="line-60">
-</span><span id="line-61"><span class="k">def</span><span class="w"> </span><span class="nf">_validate_that_value_is_in_literal</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">literal</span><span class="p">):</span>
-</span><span id="line-62">    <span class="k">if</span> <span class="ow">not</span> <span class="n">_value_is_in_literal</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">literal</span><span class="p">):</span>
-</span><span id="line-63">        <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="line-64">            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is an invalid value for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">. "</span>
-</span><span id="line-65">            <span class="sa">f</span><span class="s2">"Values should be one of the following: </span><span class="si">{</span><span class="n">literal</span><span class="o">.</span><span class="n">__args__</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-66">        <span class="p">)</span>
-</span><span id="line-67">        <span class="n">error</span><span class="o">.</span><span class="n">allowed_values</span> <span class="o">=</span> <span class="n">literal</span><span class="o">.</span><span class="n">__args__</span>
-</span><span id="line-68">        <span class="n">error</span><span class="o">.</span><span class="n">input_value</span> <span class="o">=</span> <span class="n">value</span>
-</span><span id="line-69">        <span class="k">raise</span> <span class="n">error</span>
+</span><span id="line-60"><span class="k">def</span><span class="w"> </span><span class="nf">_validate_that_value_is_in_literal</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">literal</span><span class="p">):</span>
+</span><span id="line-61">    <span class="k">if</span> <span class="ow">not</span> <span class="n">_value_is_in_literal</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">literal</span><span class="p">):</span>
+</span><span id="line-62">        <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="line-63">            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is an invalid value for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">. "</span>
+</span><span id="line-64">            <span class="sa">f</span><span class="s2">"Values should be one of the following: </span><span class="si">{</span><span class="n">literal</span><span class="o">.</span><span class="n">__args__</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-65">        <span class="p">)</span>
+</span><span id="line-66">        <span class="n">error</span><span class="o">.</span><span class="n">allowed_values</span> <span class="o">=</span> <span class="n">literal</span><span class="o">.</span><span class="n">__args__</span>
+</span><span id="line-67">        <span class="n">error</span><span class="o">.</span><span class="n">input_value</span> <span class="o">=</span> <span class="n">value</span>
+</span><span id="line-68">        <span class="k">raise</span> <span class="n">error</span>
+</span><span id="line-69">
 </span><span id="line-70">
-</span><span id="line-71">
-</span><span id="line-72"><span class="c1"># TODO: Not picklable. Make with wrapper module, or let this module be independent?</span>
-</span><span id="line-73"><span class="c1"># TODO: Could use Sig. Should we, or let this module be independent?</span>
-</span><span id="line-74"><span class="c1"># TODO: Add control over error message/type?</span>
+</span><span id="line-71"><span class="c1"># TODO: Not picklable. Make with wrapper module, or let this module be independent?</span>
+</span><span id="line-72"><span class="c1"># TODO: Could use Sig. Should we, or let this module be independent?</span>
+</span><span id="line-73"><span class="c1"># TODO: Add control over error message/type?</span>
 <div class="viewcode-block" id="validate_literal">
 <a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.validate_literal">[docs]</a>
-</span><span id="line-75"><span class="k">def</span><span class="w"> </span><span class="nf">validate_literal</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-</span><span id="line-76"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-77"><span class="sd">    Decorator to validate (Literal-annotated) argument values at call time.</span>
-</span><span id="line-78">
-</span><span id="line-79"><span class="sd">    Wraps a function to add validation of the input arguments annotated with Literal</span>
-</span><span id="line-80"><span class="sd">    against the values listed by the literal. If the input argument is not one of the</span>
-</span><span id="line-81"><span class="sd">    literal values, a ValueError is raised.</span>
-</span><span id="line-82">
-</span><span id="line-83"><span class="sd">    &gt;&gt;&gt; @validate_literal</span>
-</span><span id="line-84"><span class="sd">    ... def f(x: Literal[1, 2, 3]):</span>
-</span><span id="line-85"><span class="sd">    ...     return x</span>
-</span><span id="line-86"><span class="sd">    &gt;&gt;&gt; f(1)</span>
-</span><span id="line-87"><span class="sd">    1</span>
-</span><span id="line-88"><span class="sd">    &gt;&gt;&gt; f(4)  # doctest: +NORMALIZE_WHITESPACE</span>
-</span><span id="line-89"><span class="sd">    Traceback (most recent call last):</span>
-</span><span id="line-90"><span class="sd">        ...</span>
-</span><span id="line-91"><span class="sd">    ValueError: 4 is an invalid value for x. Values should be one of the following: (1, 2, 3)</span>
+</span><span id="line-74"><span class="k">def</span><span class="w"> </span><span class="nf">validate_literal</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span id="line-75"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-76"><span class="sd">    Decorator to validate (Literal-annotated) argument values at call time.</span>
+</span><span id="line-77">
+</span><span id="line-78"><span class="sd">    Wraps a function to add validation of the input arguments annotated with Literal</span>
+</span><span id="line-79"><span class="sd">    against the values listed by the literal. If the input argument is not one of the</span>
+</span><span id="line-80"><span class="sd">    literal values, a ValueError is raised.</span>
+</span><span id="line-81">
+</span><span id="line-82"><span class="sd">    &gt;&gt;&gt; @validate_literal</span>
+</span><span id="line-83"><span class="sd">    ... def f(x: Literal[1, 2, 3]):</span>
+</span><span id="line-84"><span class="sd">    ...     return x</span>
+</span><span id="line-85"><span class="sd">    &gt;&gt;&gt; f(1)</span>
+</span><span id="line-86"><span class="sd">    1</span>
+</span><span id="line-87"><span class="sd">    &gt;&gt;&gt; f(4)  # doctest: +NORMALIZE_WHITESPACE</span>
+</span><span id="line-88"><span class="sd">    Traceback (most recent call last):</span>
+</span><span id="line-89"><span class="sd">        ...</span>
+</span><span id="line-90"><span class="sd">    ValueError: 4 is an invalid value for x. Values should be one of the following: (1, 2, 3)</span>
+</span><span id="line-91"><span class="sd">    """</span>
 </span><span id="line-92">
-</span><span id="line-93"><span class="sd">    """</span>
-</span><span id="line-94">
-</span><span id="line-95">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span id="line-96">    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="line-97">        <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">_arg_name_and_val_dict</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span id="line-98">        <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_type</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-99">            <span class="k">if</span> <span class="n">_annotation_is_literal</span><span class="p">(</span><span class="n">arg_type</span><span class="p">):</span>
-</span><span id="line-100">                <span class="n">arg_val</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
-</span><span id="line-101">                <span class="n">_validate_that_value_is_in_literal</span><span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_val</span><span class="p">,</span> <span class="n">arg_type</span><span class="p">)</span>
-</span><span id="line-102">        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span id="line-103">
-</span><span id="line-104">    <span class="k">return</span> <span class="n">wrapper</span></div>
+</span><span id="line-93">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="line-94">    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-95">        <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">_arg_name_and_val_dict</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="line-96">        <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_type</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-97">            <span class="k">if</span> <span class="n">_annotation_is_literal</span><span class="p">(</span><span class="n">arg_type</span><span class="p">):</span>
+</span><span id="line-98">                <span class="n">arg_val</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
+</span><span id="line-99">                <span class="n">_validate_that_value_is_in_literal</span><span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_val</span><span class="p">,</span> <span class="n">arg_type</span><span class="p">)</span>
+</span><span id="line-100">        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="line-101">
+</span><span id="line-102">    <span class="k">return</span> <span class="n">wrapper</span></div>
 
-</span><span id="line-105">
-</span><span id="line-106">
+</span><span id="line-103">
+</span><span id="line-104">
 <div class="viewcode-block" id="iterable_to_literal">
 <a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.iterable_to_literal">[docs]</a>
-</span><span id="line-107"><span class="k">def</span><span class="w"> </span><span class="nf">iterable_to_literal</span><span class="p">(</span><span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">):</span>
-</span><span id="line-108"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-109"><span class="sd">    Convert an iterable to a Literal type.</span>
-</span><span id="line-110">
-</span><span id="line-111"><span class="sd">    &gt;&gt;&gt; iterable_to_literal([1, 2, 3])</span>
-</span><span id="line-112"><span class="sd">    typing.Literal[1, 2, 3]</span>
-</span><span id="line-113">
-</span><span id="line-114"><span class="sd">    """</span>
-</span><span id="line-115">    <span class="k">return</span> <span class="n">Literal</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">iterable</span><span class="p">))</span></div>
+</span><span id="line-105"><span class="k">def</span><span class="w"> </span><span class="nf">iterable_to_literal</span><span class="p">(</span><span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">):</span>
+</span><span id="line-106"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-107"><span class="sd">    Convert an iterable to a Literal type.</span>
+</span><span id="line-108">
+</span><span id="line-109"><span class="sd">    &gt;&gt;&gt; iterable_to_literal([1, 2, 3])</span>
+</span><span id="line-110"><span class="sd">    typing.Literal[1, 2, 3]</span>
+</span><span id="line-111"><span class="sd">    """</span>
+</span><span id="line-112">    <span class="k">return</span> <span class="n">Literal</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">iterable</span><span class="p">))</span></div>
 
-</span><span id="line-116">
-</span><span id="line-117">
+</span><span id="line-113">
+</span><span id="line-114">
 <div class="viewcode-block" id="new_type">
 <a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.new_type">[docs]</a>
-</span><span id="line-118"><span class="k">def</span><span class="w"> </span><span class="nf">new_type</span><span class="p">(</span>
-</span><span id="line-119">    <span class="n">name</span><span class="p">,</span>
-</span><span id="line-120">    <span class="n">tp</span><span class="p">,</span>
-</span><span id="line-121">    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-122">    <span class="n">aka</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-123">    <span class="n">assign_to_globals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="line-124"><span class="p">):</span>
-</span><span id="line-125"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-126"><span class="sd">    Make a new type with (optional) doc and (optional) aka, set of var names it often</span>
-</span><span id="line-127"><span class="sd">    appears as</span>
-</span><span id="line-128">
-</span><span id="line-129"><span class="sd">    Args:</span>
-</span><span id="line-130"><span class="sd">        name: Name to give the variable</span>
-</span><span id="line-131"><span class="sd">        tp: type (see typing module)</span>
-</span><span id="line-132"><span class="sd">        doc: Optional string to put in __doc__ attribute</span>
-</span><span id="line-133"><span class="sd">        aka: Optional set (or any iterable) to put in _aka attribute,</span>
-</span><span id="line-134"><span class="sd">            meant to list names the variables of this type often appear as.</span>
-</span><span id="line-135">
-</span><span id="line-136"><span class="sd">    Returns: None</span>
+</span><span id="line-115"><span class="k">def</span><span class="w"> </span><span class="nf">new_type</span><span class="p">(</span>
+</span><span id="line-116">    <span class="n">name</span><span class="p">,</span>
+</span><span id="line-117">    <span class="n">tp</span><span class="p">,</span>
+</span><span id="line-118">    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="line-119">    <span class="n">aka</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="line-120">    <span class="n">assign_to_globals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="line-121"><span class="p">):</span>
+</span><span id="line-122"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-123"><span class="sd">    Make a new type with (optional) doc and (optional) aka, set of var names it often</span>
+</span><span id="line-124"><span class="sd">    appears as</span>
+</span><span id="line-125">
+</span><span id="line-126"><span class="sd">    Args:</span>
+</span><span id="line-127"><span class="sd">        name: Name to give the variable</span>
+</span><span id="line-128"><span class="sd">        tp: type (see typing module)</span>
+</span><span id="line-129"><span class="sd">        doc: Optional string to put in __doc__ attribute</span>
+</span><span id="line-130"><span class="sd">        aka: Optional set (or any iterable) to put in _aka attribute,</span>
+</span><span id="line-131"><span class="sd">            meant to list names the variables of this type often appear as.</span>
+</span><span id="line-132"><span class="sd">        assign_to_globals: If True, also bind the new type to ``name`` in the</span>
+</span><span id="line-133"><span class="sd">            globals of the ``i2.itypes`` module (not the caller's).</span>
+</span><span id="line-134">
+</span><span id="line-135"><span class="sd">    Returns:</span>
+</span><span id="line-136"><span class="sd">        The new type.</span>
 </span><span id="line-137">
 </span><span id="line-138"><span class="sd">    &gt;&gt;&gt; from typing import Any, Union, List</span>
 </span><span id="line-139"><span class="sd">    &gt;&gt;&gt; MyType = new_type('MyType', int)</span>
@@ -357,7 +357,7 @@
 </span><span id="line-169"><span class="sd">    &gt;&gt;&gt; assert isinstance([1, 2, 3], SizedAndAppendable)  # lists have both a length and an append</span>
 </span><span id="line-170"><span class="sd">    &gt;&gt;&gt; assert not isinstance((1, 2, 3), SizedAndAppendable)  # tuples don't have an append</span>
 </span><span id="line-171">
-</span><span id="line-172"><span class="sd">    [Python Protocols](https://www.python.org/dev/peps/pep-0544/) are a way to be able to do</span>
+</span><span id="line-172"><span class="sd">    `Python Protocols &lt;https://www.python.org/dev/peps/pep-0544/&gt;`_ are a way to be able to do</span>
 </span><span id="line-173"><span class="sd">    "behavior typing" (my bad terminology).</span>
 </span><span id="line-174"><span class="sd">    Basically, if you want your static analyzer</span>
 </span><span id="line-175"><span class="sd">    (the swingles in your IDE, or linter validation process...)</span>
@@ -383,96 +383,102 @@
 </span><span id="line-195"><span class="sd">    &gt;&gt;&gt; assert isinstance(a, HasAttrs["method"])</span>
 </span><span id="line-196"><span class="sd">    &gt;&gt;&gt; assert isinstance(a, HasAttrs["method", "prop"])</span>
 </span><span id="line-197"><span class="sd">    &gt;&gt;&gt; assert not isinstance(a, HasAttrs["method", "prop", "this_attr_does_not_exist"])</span>
-</span><span id="line-198">
-</span><span id="line-199"><span class="sd">    """</span>
-</span><span id="line-200">
-</span><span id="line-201">    <span class="k">def</span><span class="w"> </span><span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_names</span><span class="p">):</span>
-</span><span id="line-202">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-203">            <span class="n">attr_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr_names</span><span class="p">]</span>
-</span><span id="line-204">        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">,</span> <span class="n">attr_names</span><span class="p">)),</span> <span class="p">(</span>
-</span><span id="line-205">            <span class="sa">f</span><span class="s2">"The following are not valid python 'identifiers' "</span>
-</span><span id="line-206">            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">attr_names</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">a</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-207">        <span class="p">)</span>
-</span><span id="line-208">
-</span><span id="line-209">        <span class="n">annotations</span> <span class="o">=</span> <span class="p">{</span><span class="n">attr</span><span class="p">:</span> <span class="n">Any</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attr_names</span><span class="p">}</span>
-</span><span id="line-210">
-</span><span id="line-211">        <span class="nd">@runtime_checkable</span>
-</span><span id="line-212">        <span class="k">class</span><span class="w"> </span><span class="nc">HasAttrs</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="line-213">            <span class="vm">__annotations__</span> <span class="o">=</span> <span class="n">annotations</span>
-</span><span id="line-214">
-</span><span id="line-215">            <span class="c1"># def __repr__(self):  # TODO: This is for the instance, need it for the class</span>
-</span><span id="line-216">            <span class="c1">#     return "HasAttrs[{', '.join(annotations)}]"</span>
-</span><span id="line-217">
-</span><span id="line-218">        <span class="k">return</span> <span class="n">HasAttrs</span></div>
+</span><span id="line-198"><span class="sd">    """</span>
+</span><span id="line-199">
+</span><span id="line-200">    <span class="k">def</span><span class="w"> </span><span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_names</span><span class="p">):</span>
+</span><span id="line-201">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-202">            <span class="n">attr_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr_names</span><span class="p">]</span>
+</span><span id="line-203">        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">,</span> <span class="n">attr_names</span><span class="p">)),</span> <span class="p">(</span>
+</span><span id="line-204">            <span class="sa">f</span><span class="s2">"The following are not valid python 'identifiers' "</span>
+</span><span id="line-205">            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">attr_names</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">a</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-206">        <span class="p">)</span>
+</span><span id="line-207">
+</span><span id="line-208">        <span class="n">annotations</span> <span class="o">=</span> <span class="p">{</span><span class="n">attr</span><span class="p">:</span> <span class="n">Any</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attr_names</span><span class="p">}</span>
+</span><span id="line-209">
+</span><span id="line-210">        <span class="nd">@runtime_checkable</span>
+</span><span id="line-211">        <span class="k">class</span><span class="w"> </span><span class="nc">HasAttrs</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="line-212">            <span class="vm">__annotations__</span> <span class="o">=</span> <span class="n">annotations</span>
+</span><span id="line-213">
+</span><span id="line-214">            <span class="c1"># def __repr__(self):  # TODO: This is for the instance, need it for the class</span>
+</span><span id="line-215">            <span class="c1">#     return "HasAttrs[{', '.join(annotations)}]"</span>
+</span><span id="line-216">
+</span><span id="line-217">        <span class="k">return</span> <span class="n">HasAttrs</span></div>
 
-</span><span id="line-219">
-</span><span id="line-220">        <span class="c1"># return type(</span>
-</span><span id="line-221">        <span class="c1">#     "HasAttrs",</span>
-</span><span id="line-222">        <span class="c1">#     (Protocol,),</span>
-</span><span id="line-223">        <span class="c1">#     {"__annotations__": {attr: Any for attr in attr_names}},</span>
-</span><span id="line-224">        <span class="c1"># )</span>
+</span><span id="line-218">
+</span><span id="line-219">        <span class="c1"># return type(</span>
+</span><span id="line-220">        <span class="c1">#     "HasAttrs",</span>
+</span><span id="line-221">        <span class="c1">#     (Protocol,),</span>
+</span><span id="line-222">        <span class="c1">#     {"__annotations__": {attr: Any for attr in attr_names}},</span>
+</span><span id="line-223">        <span class="c1"># )</span>
+</span><span id="line-224">
 </span><span id="line-225">
-</span><span id="line-226">
-</span><span id="line-227"><span class="c1"># TODO: Complete scary hack: Find another way (see uses)</span>
-</span><span id="line-228"><span class="k">def</span><span class="w"> </span><span class="nf">is_a_new_type</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
+</span><span id="line-226"><span class="c1"># TODO: Complete scary hack: Find another way (see uses)</span>
+<div class="viewcode-block" id="is_a_new_type">
+<a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.is_a_new_type">[docs]</a>
+</span><span id="line-227"><span class="k">def</span><span class="w"> </span><span class="nf">is_a_new_type</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
+</span><span id="line-228"><span class="w">    </span><span class="sd">"""Whether ``typ`` is a ``typing.NewType`` (checked through its ``__qualname__`` and ``__supertype__``)."""</span>
 </span><span id="line-229">    <span class="k">return</span> <span class="p">(</span>
 </span><span id="line-230">        <span class="nb">callable</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
 </span><span id="line-231">        <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="s2">"__qualname__"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"NewType"</span><span class="p">)</span>
 </span><span id="line-232">        <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="s2">"__supertype__"</span><span class="p">)</span>
-</span><span id="line-233">    <span class="p">)</span>
+</span><span id="line-233">    <span class="p">)</span></div>
+
 </span><span id="line-234">
 </span><span id="line-235">
+<div class="viewcode-block" id="typ_name">
+<a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.typ_name">[docs]</a>
 </span><span id="line-236"><span class="k">def</span><span class="w"> </span><span class="nf">typ_name</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
-</span><span id="line-237">    <span class="k">if</span> <span class="n">is_a_new_type</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
-</span><span id="line-238">        <span class="k">return</span> <span class="n">typ</span><span class="o">.</span><span class="vm">__name__</span>
-</span><span id="line-239">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-240">        <span class="k">return</span> <span class="n">typ</span><span class="o">.</span><span class="n">_name</span>
-</span><span id="line-241">
+</span><span id="line-237"><span class="w">    </span><span class="sd">"""The name of a typing generic (its ``_name``) or of a NewType (its ``__name__``)."""</span>
+</span><span id="line-238">    <span class="k">if</span> <span class="n">is_a_new_type</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
+</span><span id="line-239">        <span class="k">return</span> <span class="n">typ</span><span class="o">.</span><span class="vm">__name__</span>
+</span><span id="line-240">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-241">        <span class="k">return</span> <span class="n">typ</span><span class="o">.</span><span class="n">_name</span></div>
+
 </span><span id="line-242">
+</span><span id="line-243">
 <div class="viewcode-block" id="is_callable_kind">
 <a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.is_callable_kind">[docs]</a>
-</span><span id="line-243"><span class="k">def</span><span class="w"> </span><span class="nf">is_callable_kind</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
-</span><span id="line-244"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-245"><span class="sd">    &gt;&gt;&gt; from typing import Callable, Tuple</span>
-</span><span id="line-246"><span class="sd">    &gt;&gt;&gt; is_callable_kind(Callable)</span>
-</span><span id="line-247"><span class="sd">    True</span>
-</span><span id="line-248"><span class="sd">    &gt;&gt;&gt; is_callable_kind(Callable[[int, float], str])</span>
-</span><span id="line-249"><span class="sd">    True</span>
-</span><span id="line-250"><span class="sd">    &gt;&gt;&gt; is_callable_kind(Tuple[int, float, str])</span>
-</span><span id="line-251"><span class="sd">    False</span>
-</span><span id="line-252"><span class="sd">    """</span>
-</span><span id="line-253">    <span class="k">if</span> <span class="n">is_a_new_type</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
-</span><span id="line-254">        <span class="k">return</span> <span class="n">is_callable_kind</span><span class="p">(</span><span class="n">typ</span><span class="o">.</span><span class="n">__supertype__</span><span class="p">)</span>
-</span><span id="line-255">    <span class="k">return</span> <span class="n">typ_name</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"Callable"</span></div>
+</span><span id="line-244"><span class="k">def</span><span class="w"> </span><span class="nf">is_callable_kind</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
+</span><span id="line-245"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-246"><span class="sd">    &gt;&gt;&gt; from typing import Callable, Tuple</span>
+</span><span id="line-247"><span class="sd">    &gt;&gt;&gt; is_callable_kind(Callable)</span>
+</span><span id="line-248"><span class="sd">    True</span>
+</span><span id="line-249"><span class="sd">    &gt;&gt;&gt; is_callable_kind(Callable[[int, float], str])</span>
+</span><span id="line-250"><span class="sd">    True</span>
+</span><span id="line-251"><span class="sd">    &gt;&gt;&gt; is_callable_kind(Tuple[int, float, str])</span>
+</span><span id="line-252"><span class="sd">    False</span>
+</span><span id="line-253"><span class="sd">    """</span>
+</span><span id="line-254">    <span class="k">if</span> <span class="n">is_a_new_type</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
+</span><span id="line-255">        <span class="k">return</span> <span class="n">is_callable_kind</span><span class="p">(</span><span class="n">typ</span><span class="o">.</span><span class="n">__supertype__</span><span class="p">)</span>
+</span><span id="line-256">    <span class="k">return</span> <span class="n">typ_name</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"Callable"</span></div>
 
-</span><span id="line-256">    <span class="c1"># Also possible: typ.mro()[0] == __import__('collections.abc').Callable</span>
-</span><span id="line-257">
+</span><span id="line-257">    <span class="c1"># Also possible: typ.mro()[0] == __import__('collections.abc').Callable</span>
 </span><span id="line-258">
+</span><span id="line-259">
 <div class="viewcode-block" id="input_and_output_types">
 <a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.input_and_output_types">[docs]</a>
-</span><span id="line-259"><span class="k">def</span><span class="w"> </span><span class="nf">input_and_output_types</span><span class="p">(</span><span class="n">typ</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
-</span><span id="line-260"><span class="w">    </span><span class="sd">"""Returns the input and output types</span>
-</span><span id="line-261">
-</span><span id="line-262"><span class="sd">    &gt;&gt;&gt; from typing import Callable, Tuple</span>
-</span><span id="line-263"><span class="sd">    &gt;&gt;&gt; input_types, output_type = input_and_output_types(Callable[[float, int], str])</span>
-</span><span id="line-264"><span class="sd">    &gt;&gt;&gt; assert input_types == [float, int] and output_type == str</span>
-</span><span id="line-265"><span class="sd">    &gt;&gt;&gt; input_types, output_type = input_and_output_types(Callable[[], str])</span>
-</span><span id="line-266"><span class="sd">    &gt;&gt;&gt; assert input_types == [] and output_type == str</span>
-</span><span id="line-267">
-</span><span id="line-268"><span class="sd">    But will fail if `typ` isn't a `Callable`:</span>
-</span><span id="line-269">
-</span><span id="line-270"><span class="sd">    &gt;&gt;&gt; input_and_output_types(Tuple[float, int, str])  # doctest: +NORMALIZE_WHITESPACE</span>
-</span><span id="line-271"><span class="sd">    Traceback (most recent call last):</span>
-</span><span id="line-272"><span class="sd">      ...</span>
-</span><span id="line-273"><span class="sd">    AssertionError: Is not a typing.Callable kind: typing.Tuple[float, int, str]</span>
-</span><span id="line-274">
-</span><span id="line-275"><span class="sd">    Will also fail if `typ` is a Callable but not "parametrized".</span>
-</span><span id="line-276">
-</span><span id="line-277"><span class="sd">    &gt;&gt;&gt; input_and_output_types(Callable)  # doctest: +NORMALIZE_WHITESPACE</span>
-</span><span id="line-278"><span class="sd">    Traceback (most recent call last):</span>
-</span><span id="line-279"><span class="sd">      ...</span>
-</span><span id="line-280"><span class="sd">    AssertionError: Can only be used on a Callable[[...],...] kind: typing.Callable</span>
-</span><span id="line-281">
+</span><span id="line-260"><span class="k">def</span><span class="w"> </span><span class="nf">input_and_output_types</span><span class="p">(</span><span class="n">typ</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
+</span><span id="line-261"><span class="w">    </span><span class="sd">"""The ``(input_types, output_type)`` pair of a parametrized ``typing.Callable``.</span>
+</span><span id="line-262">
+</span><span id="line-263"><span class="sd">    &gt;&gt;&gt; from typing import Callable, Tuple</span>
+</span><span id="line-264"><span class="sd">    &gt;&gt;&gt; input_types, output_type = input_and_output_types(Callable[[float, int], str])</span>
+</span><span id="line-265"><span class="sd">    &gt;&gt;&gt; assert input_types == [float, int] and output_type == str</span>
+</span><span id="line-266"><span class="sd">    &gt;&gt;&gt; input_types, output_type = input_and_output_types(Callable[[], str])</span>
+</span><span id="line-267"><span class="sd">    &gt;&gt;&gt; assert input_types == [] and output_type == str</span>
+</span><span id="line-268">
+</span><span id="line-269"><span class="sd">    But will fail if `typ` isn't a `Callable`:</span>
+</span><span id="line-270">
+</span><span id="line-271"><span class="sd">    &gt;&gt;&gt; input_and_output_types(Tuple[float, int, str])  # doctest: +NORMALIZE_WHITESPACE</span>
+</span><span id="line-272"><span class="sd">    Traceback (most recent call last):</span>
+</span><span id="line-273"><span class="sd">      ...</span>
+</span><span id="line-274"><span class="sd">    AssertionError: Is not a typing.Callable kind: typing.Tuple[float, int, str]</span>
+</span><span id="line-275">
+</span><span id="line-276"><span class="sd">    Will also fail if `typ` is a Callable but not "parametrized".</span>
+</span><span id="line-277">
+</span><span id="line-278"><span class="sd">    &gt;&gt;&gt; input_and_output_types(Callable)  # doctest: +NORMALIZE_WHITESPACE</span>
+</span><span id="line-279"><span class="sd">    Traceback (most recent call last):</span>
+</span><span id="line-280"><span class="sd">      ...</span>
+</span><span id="line-281"><span class="sd">    AssertionError: Can only be used on a Callable[[...],...] kind: typing.Callable</span>
 </span><span id="line-282"><span class="sd">    """</span>
 </span><span id="line-283">    <span class="k">if</span> <span class="n">is_a_new_type</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
 </span><span id="line-284">        <span class="k">return</span> <span class="n">input_and_output_types</span><span class="p">(</span><span class="n">typ</span><span class="o">.</span><span class="n">__supertype__</span><span class="p">)</span>
@@ -483,158 +489,170 @@
 
 </span><span id="line-289">
 </span><span id="line-290">
+<div class="viewcode-block" id="dot_string_of_callable_typ">
+<a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.dot_string_of_callable_typ">[docs]</a>
 </span><span id="line-291"><span class="k">def</span><span class="w"> </span><span class="nf">dot_string_of_callable_typ</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
-</span><span id="line-292">    <span class="n">input_types</span><span class="p">,</span> <span class="n">output_type</span> <span class="o">=</span> <span class="n">input_and_output_types</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
-</span><span id="line-293">    <span class="k">return</span> <span class="p">(</span>
-</span><span id="line-294">        <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">typ_name</span><span class="p">,</span> <span class="n">input_types</span><span class="p">))</span>
-</span><span id="line-295">        <span class="o">+</span> <span class="sa">f</span><span class="s2">" -&gt; </span><span class="si">{</span><span class="n">typ_name</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span><span class="si">}</span><span class="s2"> -&gt; "</span>
-</span><span id="line-296">        <span class="o">+</span> <span class="n">typ_name</span><span class="p">(</span><span class="n">output_type</span><span class="p">)</span>
-</span><span id="line-297">    <span class="p">)</span>
-</span><span id="line-298">
-</span><span id="line-299">
-</span><span id="line-300"><span class="k">def</span><span class="w"> </span><span class="nf">dot_strings_of_callable_types</span><span class="p">(</span><span class="o">*</span><span class="n">typs</span><span class="p">,</span> <span class="n">func_shape</span><span class="o">=</span><span class="s2">"box"</span><span class="p">):</span>
-</span><span id="line-301">    <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="n">typs</span><span class="p">:</span>
-</span><span id="line-302">        <span class="k">yield</span> <span class="n">dot_string_of_callable_typ</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
-</span><span id="line-303">        <span class="k">yield</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">typ_name</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span><span class="si">}</span><span class="s1"> [shape="</span><span class="si">{</span><span class="n">func_shape</span><span class="si">}</span><span class="s1">"]'</span>
+</span><span id="line-292"><span class="w">    </span><span class="sd">"""A ``inputs -&gt; Callable -&gt; output`` string, with typing-generic names, for a parametrized Callable.</span>
+</span><span id="line-293">
+</span><span id="line-294"><span class="sd">    &gt;&gt;&gt; from typing import Callable, List, Dict</span>
+</span><span id="line-295"><span class="sd">    &gt;&gt;&gt; dot_string_of_callable_typ(Callable[[List, Dict], List])</span>
+</span><span id="line-296"><span class="sd">    'List,Dict -&gt; Callable -&gt; List'</span>
+</span><span id="line-297"><span class="sd">    """</span>
+</span><span id="line-298">    <span class="n">input_types</span><span class="p">,</span> <span class="n">output_type</span> <span class="o">=</span> <span class="n">input_and_output_types</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
+</span><span id="line-299">    <span class="k">return</span> <span class="p">(</span>
+</span><span id="line-300">        <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">typ_name</span><span class="p">,</span> <span class="n">input_types</span><span class="p">))</span>
+</span><span id="line-301">        <span class="o">+</span> <span class="sa">f</span><span class="s2">" -&gt; </span><span class="si">{</span><span class="n">typ_name</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span><span class="si">}</span><span class="s2"> -&gt; "</span>
+</span><span id="line-302">        <span class="o">+</span> <span class="n">typ_name</span><span class="p">(</span><span class="n">output_type</span><span class="p">)</span>
+</span><span id="line-303">    <span class="p">)</span></div>
+
 </span><span id="line-304">
 </span><span id="line-305">
-</span><span id="line-306"><span class="c1"># --------------------------------------------------------------------------------------</span>
-</span><span id="line-307"><span class="c1"># Misc</span>
-</span><span id="line-308">
-</span><span id="line-309"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">KT</span>
-</span><span id="line-310"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Iterable</span>
+<div class="viewcode-block" id="dot_strings_of_callable_types">
+<a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.dot_strings_of_callable_types">[docs]</a>
+</span><span id="line-306"><span class="k">def</span><span class="w"> </span><span class="nf">dot_strings_of_callable_types</span><span class="p">(</span><span class="o">*</span><span class="n">typs</span><span class="p">,</span> <span class="n">func_shape</span><span class="o">=</span><span class="s2">"box"</span><span class="p">):</span>
+</span><span id="line-307"><span class="w">    </span><span class="sd">"""Yield, for each parametrized Callable, its ``dot_string_of_callable_typ`` line and a node-shape line."""</span>
+</span><span id="line-308">    <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="n">typs</span><span class="p">:</span>
+</span><span id="line-309">        <span class="k">yield</span> <span class="n">dot_string_of_callable_typ</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
+</span><span id="line-310">        <span class="k">yield</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">typ_name</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span><span class="si">}</span><span class="s1"> [shape="</span><span class="si">{</span><span class="n">func_shape</span><span class="si">}</span><span class="s1">"]'</span></div>
+
 </span><span id="line-311">
-</span><span id="line-312"><span class="c1"># Define a type alias for clarity in the code</span>
-</span><span id="line-313"><span class="n">ObjectType</span> <span class="o">=</span> <span class="n">Any</span>
-</span><span id="line-314">
+</span><span id="line-312">
+</span><span id="line-313"><span class="c1"># --------------------------------------------------------------------------------------</span>
+</span><span id="line-314"><span class="c1"># Misc</span>
 </span><span id="line-315">
+</span><span id="line-316"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">KT</span>
+</span><span id="line-317"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Iterable</span>
+</span><span id="line-318">
+</span><span id="line-319"><span class="c1"># Define a type alias for clarity in the code</span>
+</span><span id="line-320"><span class="n">ObjectType</span> <span class="o">=</span> <span class="n">Any</span>
+</span><span id="line-321">
+</span><span id="line-322">
 <div class="viewcode-block" id="ObjectClassifier">
 <a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.ObjectClassifier">[docs]</a>
-</span><span id="line-316"><span class="k">class</span><span class="w"> </span><span class="nc">ObjectClassifier</span><span class="p">:</span>
-</span><span id="line-317"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-318"><span class="sd">    A general-purpose classifier for objects based on a set of verifying functions.</span>
-</span><span id="line-319">
-</span><span id="line-320"><span class="sd">    Each "verifier" checks whether an object belongs to a certain kind (category).</span>
-</span><span id="line-321">
-</span><span id="line-322"><span class="sd">    Example usage:</span>
-</span><span id="line-323">
-</span><span id="line-324"><span class="sd">    &gt;&gt;&gt; from typing import Mapping, Iterable</span>
-</span><span id="line-325"><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="line-326"><span class="sd">    &gt;&gt;&gt; obj = "test"</span>
-</span><span id="line-327"><span class="sd">    &gt;&gt;&gt; isa = lambda typ: lambda obj: isinstance(obj, typ)</span>
-</span><span id="line-328"><span class="sd">    &gt;&gt;&gt; verifiers = {</span>
-</span><span id="line-329"><span class="sd">    ...     'str': isa(str),</span>
-</span><span id="line-330"><span class="sd">    ...     'mapping': isa(Mapping),</span>
-</span><span id="line-331"><span class="sd">    ...     'iterable': isa(Iterable)</span>
-</span><span id="line-332"><span class="sd">    ... }</span>
-</span><span id="line-333"><span class="sd">    &gt;&gt;&gt; classifier = ObjectClassifier(verifiers)</span>
-</span><span id="line-334">
-</span><span id="line-335"><span class="sd">    Check if the object matches any kind</span>
-</span><span id="line-336">
-</span><span id="line-337"><span class="sd">    &gt;&gt;&gt; classifier.matches(obj)</span>
-</span><span id="line-338"><span class="sd">    True</span>
-</span><span id="line-339">
-</span><span id="line-340"><span class="sd">    Check if the object matches a specific kind</span>
+</span><span id="line-323"><span class="k">class</span><span class="w"> </span><span class="nc">ObjectClassifier</span><span class="p">:</span>
+</span><span id="line-324"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-325"><span class="sd">    A general-purpose classifier for objects based on a set of verifying functions.</span>
+</span><span id="line-326">
+</span><span id="line-327"><span class="sd">    Each "verifier" checks whether an object belongs to a certain kind (category).</span>
+</span><span id="line-328">
+</span><span id="line-329"><span class="sd">    Example usage:</span>
+</span><span id="line-330">
+</span><span id="line-331"><span class="sd">    &gt;&gt;&gt; from typing import Mapping, Iterable</span>
+</span><span id="line-332"><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="line-333"><span class="sd">    &gt;&gt;&gt; obj = "test"</span>
+</span><span id="line-334"><span class="sd">    &gt;&gt;&gt; isa = lambda typ: lambda obj: isinstance(obj, typ)</span>
+</span><span id="line-335"><span class="sd">    &gt;&gt;&gt; verifiers = {</span>
+</span><span id="line-336"><span class="sd">    ...     'str': isa(str),</span>
+</span><span id="line-337"><span class="sd">    ...     'mapping': isa(Mapping),</span>
+</span><span id="line-338"><span class="sd">    ...     'iterable': isa(Iterable)</span>
+</span><span id="line-339"><span class="sd">    ... }</span>
+</span><span id="line-340"><span class="sd">    &gt;&gt;&gt; classifier = ObjectClassifier(verifiers)</span>
 </span><span id="line-341">
-</span><span id="line-342"><span class="sd">    &gt;&gt;&gt; classifier.matches(obj, 'str')</span>
-</span><span id="line-343"><span class="sd">    True</span>
-</span><span id="line-344"><span class="sd">    &gt;&gt;&gt; classifier.matches(obj, 'mapping')</span>
-</span><span id="line-345"><span class="sd">    False</span>
+</span><span id="line-342"><span class="sd">    Check if the object matches any kind</span>
+</span><span id="line-343">
+</span><span id="line-344"><span class="sd">    &gt;&gt;&gt; classifier.matches(obj)</span>
+</span><span id="line-345"><span class="sd">    True</span>
 </span><span id="line-346">
-</span><span id="line-347"><span class="sd">    Get all matches</span>
+</span><span id="line-347"><span class="sd">    Check if the object matches a specific kind</span>
 </span><span id="line-348">
-</span><span id="line-349"><span class="sd">    &gt;&gt;&gt; classifier.all_matches(obj)</span>
-</span><span id="line-350"><span class="sd">    {'str': True, 'mapping': False, 'iterable': True}</span>
-</span><span id="line-351">
-</span><span id="line-352"><span class="sd">    Find all matching kinds</span>
+</span><span id="line-349"><span class="sd">    &gt;&gt;&gt; classifier.matches(obj, 'str')</span>
+</span><span id="line-350"><span class="sd">    True</span>
+</span><span id="line-351"><span class="sd">    &gt;&gt;&gt; classifier.matches(obj, 'mapping')</span>
+</span><span id="line-352"><span class="sd">    False</span>
 </span><span id="line-353">
-</span><span id="line-354"><span class="sd">    &gt;&gt;&gt; list(classifier.matching_kinds(obj))</span>
-</span><span id="line-355"><span class="sd">    ['str', 'iterable']</span>
-</span><span id="line-356">
-</span><span id="line-357"><span class="sd">    Find the first matching kind (default is to ensure uniqueness, which will fail here)</span>
+</span><span id="line-354"><span class="sd">    Get all matches</span>
+</span><span id="line-355">
+</span><span id="line-356"><span class="sd">    &gt;&gt;&gt; classifier.all_matches(obj)</span>
+</span><span id="line-357"><span class="sd">    {'str': True, 'mapping': False, 'iterable': True}</span>
 </span><span id="line-358">
-</span><span id="line-359"><span class="sd">    &gt;&gt;&gt; classifier.matching_kind(obj)</span>
-</span><span id="line-360"><span class="sd">    Traceback (most recent call last):</span>
-</span><span id="line-361"><span class="sd">      ...</span>
-</span><span id="line-362"><span class="sd">    ValueError: Multiple matches found: ['str', 'iterable']</span>
+</span><span id="line-359"><span class="sd">    Find all matching kinds</span>
+</span><span id="line-360">
+</span><span id="line-361"><span class="sd">    &gt;&gt;&gt; list(classifier.matching_kinds(obj))</span>
+</span><span id="line-362"><span class="sd">    ['str', 'iterable']</span>
 </span><span id="line-363">
-</span><span id="line-364"><span class="sd">    Find the first matching kind without uniqueness check</span>
+</span><span id="line-364"><span class="sd">    Find the first matching kind (default is to ensure uniqueness, which will fail here)</span>
 </span><span id="line-365">
-</span><span id="line-366"><span class="sd">    &gt;&gt;&gt; classifier.matching_kind(obj, assert_unique=False)</span>
-</span><span id="line-367"><span class="sd">    'str'</span>
-</span><span id="line-368">
-</span><span id="line-369"><span class="sd">    """</span>
+</span><span id="line-366"><span class="sd">    &gt;&gt;&gt; classifier.matching_kind(obj)</span>
+</span><span id="line-367"><span class="sd">    Traceback (most recent call last):</span>
+</span><span id="line-368"><span class="sd">      ...</span>
+</span><span id="line-369"><span class="sd">    ValueError: Multiple matches found: ['str', 'iterable']</span>
 </span><span id="line-370">
-</span><span id="line-371">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verifiers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObjectType</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]):</span>
-</span><span id="line-372"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-373"><span class="sd">        Initialize with a dictionary of verifiers. Each verifier is a function</span>
-</span><span id="line-374"><span class="sd">        that returns True or False based on the object's classification.</span>
-</span><span id="line-375">
-</span><span id="line-376"><span class="sd">        :param verifiers: A dictionary mapping kind names (keys) to verifying functions (values).</span>
-</span><span id="line-377"><span class="sd">        """</span>
-</span><span id="line-378">        <span class="bp">self</span><span class="o">.</span><span class="n">verifiers</span> <span class="o">=</span> <span class="n">verifiers</span>
-</span><span id="line-379">
+</span><span id="line-371"><span class="sd">    Find the first matching kind without uniqueness check</span>
+</span><span id="line-372">
+</span><span id="line-373"><span class="sd">    &gt;&gt;&gt; classifier.matching_kind(obj, assert_unique=False)</span>
+</span><span id="line-374"><span class="sd">    'str'</span>
+</span><span id="line-375"><span class="sd">    """</span>
+</span><span id="line-376">
+</span><span id="line-377">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verifiers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObjectType</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]):</span>
+</span><span id="line-378"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-379"><span class="sd">        Initialize with a dictionary of verifiers. Each verifier is a function</span>
+</span><span id="line-380"><span class="sd">        that returns True or False based on the object's classification.</span>
+</span><span id="line-381">
+</span><span id="line-382"><span class="sd">        :param verifiers: A dictionary mapping kind names (keys) to verifying functions (values).</span>
+</span><span id="line-383"><span class="sd">        """</span>
+</span><span id="line-384">        <span class="bp">self</span><span class="o">.</span><span class="n">verifiers</span> <span class="o">=</span> <span class="n">verifiers</span>
+</span><span id="line-385">
 <div class="viewcode-block" id="ObjectClassifier.matches">
 <a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.ObjectClassifier.matches">[docs]</a>
-</span><span id="line-380">    <span class="k">def</span><span class="w"> </span><span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">ObjectType</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">KT</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="line-381"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-382"><span class="sd">        Returns True if the object matches the given kind, or matches any kind</span>
-</span><span id="line-383"><span class="sd">        if kind is None.</span>
-</span><span id="line-384">
-</span><span id="line-385"><span class="sd">        :param obj: The object to classify.</span>
-</span><span id="line-386"><span class="sd">        :param kind: The specific kind (verifier key) to check.</span>
-</span><span id="line-387"><span class="sd">        :return: True if the object matches the given or any kind.</span>
-</span><span id="line-388"><span class="sd">        """</span>
-</span><span id="line-389">        <span class="k">if</span> <span class="n">kind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-390">            <span class="c1"># Check against all kinds if kind is not specified</span>
-</span><span id="line-391">            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">verifier</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">verifier</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">verifiers</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-</span><span id="line-392">        <span class="c1"># Check for the specific kind</span>
-</span><span id="line-393">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">verifiers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">False</span><span class="p">)(</span><span class="n">obj</span><span class="p">)</span></div>
+</span><span id="line-386">    <span class="k">def</span><span class="w"> </span><span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">ObjectType</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">KT</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="line-387"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-388"><span class="sd">        Returns True if the object matches the given kind, or matches any kind</span>
+</span><span id="line-389"><span class="sd">        if kind is None.</span>
+</span><span id="line-390">
+</span><span id="line-391"><span class="sd">        :param obj: The object to classify.</span>
+</span><span id="line-392"><span class="sd">        :param kind: The specific kind (verifier key) to check.</span>
+</span><span id="line-393"><span class="sd">        :return: True if the object matches the given or any kind.</span>
+</span><span id="line-394"><span class="sd">        """</span>
+</span><span id="line-395">        <span class="k">if</span> <span class="n">kind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-396">            <span class="c1"># Check against all kinds if kind is not specified</span>
+</span><span id="line-397">            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">verifier</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">verifier</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">verifiers</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</span><span id="line-398">        <span class="c1"># Check for the specific kind</span>
+</span><span id="line-399">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">verifiers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">False</span><span class="p">)(</span><span class="n">obj</span><span class="p">)</span></div>
 
-</span><span id="line-394">
+</span><span id="line-400">
 <div class="viewcode-block" id="ObjectClassifier.all_matches">
 <a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.ObjectClassifier.all_matches">[docs]</a>
-</span><span id="line-395">    <span class="k">def</span><span class="w"> </span><span class="nf">all_matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">ObjectType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
-</span><span id="line-396"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-397"><span class="sd">        Returns a dictionary indicating if the object matches each kind.</span>
-</span><span id="line-398">
-</span><span id="line-399"><span class="sd">        :param obj: The object to classify.</span>
-</span><span id="line-400"><span class="sd">        :return: A dictionary with kind names as keys and True/False as values.</span>
-</span><span id="line-401"><span class="sd">        """</span>
-</span><span id="line-402">        <span class="k">return</span> <span class="p">{</span><span class="n">kind</span><span class="p">:</span> <span class="n">verifier</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">verifier</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">verifiers</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+</span><span id="line-401">    <span class="k">def</span><span class="w"> </span><span class="nf">all_matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">ObjectType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="line-402"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-403"><span class="sd">        Returns a dictionary indicating if the object matches each kind.</span>
+</span><span id="line-404">
+</span><span id="line-405"><span class="sd">        :param obj: The object to classify.</span>
+</span><span id="line-406"><span class="sd">        :return: A dictionary with kind names as keys and True/False as values.</span>
+</span><span id="line-407"><span class="sd">        """</span>
+</span><span id="line-408">        <span class="k">return</span> <span class="p">{</span><span class="n">kind</span><span class="p">:</span> <span class="n">verifier</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">verifier</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">verifiers</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
-</span><span id="line-403">
+</span><span id="line-409">
 <div class="viewcode-block" id="ObjectClassifier.matching_kind">
 <a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.ObjectClassifier.matching_kind">[docs]</a>
-</span><span id="line-404">    <span class="k">def</span><span class="w"> </span><span class="nf">matching_kind</span><span class="p">(</span>
-</span><span id="line-405">        <span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">ObjectType</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">assert_unique</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="line-406">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KT</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-407"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-408"><span class="sd">        Returns the first kind that matches the object. If assert_unique is True,</span>
-</span><span id="line-409"><span class="sd">        it asserts that only one match exists. Optionally, it can return the value instead of the key.</span>
-</span><span id="line-410">
-</span><span id="line-411"><span class="sd">        :param obj: The object to classify.</span>
-</span><span id="line-412"><span class="sd">        :param assert_unique: Ensures only one kind matches, if True.</span>
-</span><span id="line-413"><span class="sd">        :return: The key of the first matching kind, or None if no match.</span>
-</span><span id="line-414"><span class="sd">        """</span>
-</span><span id="line-415">        <span class="n">matches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matching_kinds</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
-</span><span id="line-416">        <span class="k">if</span> <span class="n">assert_unique</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="line-417">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Multiple matches found: </span><span class="si">{</span><span class="n">matches</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="line-418">        <span class="k">return</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">matches</span> <span class="k">else</span> <span class="kc">None</span></div>
+</span><span id="line-410">    <span class="k">def</span><span class="w"> </span><span class="nf">matching_kind</span><span class="p">(</span>
+</span><span id="line-411">        <span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">ObjectType</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">assert_unique</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="line-412">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KT</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-413"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-414"><span class="sd">        Returns the first kind that matches the object. If assert_unique is True,</span>
+</span><span id="line-415"><span class="sd">        it asserts that only one match exists. Optionally, it can return the value instead of the key.</span>
+</span><span id="line-416">
+</span><span id="line-417"><span class="sd">        :param obj: The object to classify.</span>
+</span><span id="line-418"><span class="sd">        :param assert_unique: Ensures only one kind matches, if True.</span>
+</span><span id="line-419"><span class="sd">        :return: The key of the first matching kind, or None if no match.</span>
+</span><span id="line-420"><span class="sd">        """</span>
+</span><span id="line-421">        <span class="n">matches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matching_kinds</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+</span><span id="line-422">        <span class="k">if</span> <span class="n">assert_unique</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="line-423">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Multiple matches found: </span><span class="si">{</span><span class="n">matches</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="line-424">        <span class="k">return</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">matches</span> <span class="k">else</span> <span class="kc">None</span></div>
 
-</span><span id="line-419">
+</span><span id="line-425">
 <div class="viewcode-block" id="ObjectClassifier.matching_kinds">
 <a class="viewcode-back" href="../../_autosummary/i2.itypes.html#i2.itypes.ObjectClassifier.matching_kinds">[docs]</a>
-</span><span id="line-420">    <span class="k">def</span><span class="w"> </span><span class="nf">matching_kinds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">ObjectType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">KT</span><span class="p">]:</span>
-</span><span id="line-421"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-422"><span class="sd">        Returns an iterator of kinds that match the object.</span>
-</span><span id="line-423">
-</span><span id="line-424"><span class="sd">        :param obj: The object to classify.</span>
-</span><span id="line-425"><span class="sd">        :return: An iterator of matching kinds.</span>
-</span><span id="line-426"><span class="sd">        """</span>
-</span><span id="line-427">        <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">verifier</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">verifiers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-428">            <span class="k">if</span> <span class="n">verifier</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-</span><span id="line-429">                <span class="k">yield</span> <span class="n">kind</span></div>
+</span><span id="line-426">    <span class="k">def</span><span class="w"> </span><span class="nf">matching_kinds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">ObjectType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">KT</span><span class="p">]:</span>
+</span><span id="line-427"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-428"><span class="sd">        Returns an iterator of kinds that match the object.</span>
+</span><span id="line-429">
+</span><span id="line-430"><span class="sd">        :param obj: The object to classify.</span>
+</span><span id="line-431"><span class="sd">        :return: An iterator of matching kinds.</span>
+</span><span id="line-432"><span class="sd">        """</span>
+</span><span id="line-433">        <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">verifier</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">verifiers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-434">            <span class="k">if</span> <span class="n">verifier</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span id="line-435">                <span class="k">yield</span> <span class="n">kind</span></div>
 </div>
 
 </span></code></pre></div>
@@ -650,7 +668,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=946d7960"></script>
+    <script src="../../_static/documentation_options.js?v=d80f5ebb"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

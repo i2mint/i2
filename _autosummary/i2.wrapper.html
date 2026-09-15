@@ -201,14 +201,14 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.append_empty_args" title="i2.wrapper.append_empty_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append_empty_args</span></code></a>(func)</p></td>
 <td><p>To use to transform an ingress function that only returns kwargs to one that returns the normal form of ingress functions: ((), kwargs)</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_func_on_cond</span></code>(func, cond, k, v)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.apply_func_on_cond" title="i2.wrapper.apply_func_on_cond"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_func_on_cond</span></code></a>(func, cond, k, v)</p></td>
+<td><p>Return <code class="docutils literal notranslate"><span class="pre">func(v)</span></code> if <code class="docutils literal notranslate"><span class="pre">cond(k,</span> <span class="pre">v)</span></code> is true, else <code class="docutils literal notranslate"><span class="pre">v</span></code> unchanged.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">arg_val_converter</span></code>(func, **conversion_for_arg)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.arg_val_converter" title="i2.wrapper.arg_val_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arg_val_converter</span></code></a>(func, **conversion_for_arg)</p></td>
+<td><p>Wrap <code class="docutils literal notranslate"><span class="pre">func</span></code> so that the given arguments are converted (<code class="docutils literal notranslate"><span class="pre">name=converter</span></code>) before the call.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">arg_val_converter_ingress</span></code>(func[, __strict])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.arg_val_converter_ingress" title="i2.wrapper.arg_val_converter_ingress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arg_val_converter_ingress</span></code></a>(func[, __strict])</p></td>
+<td><p>Function form of <code class="docutils literal notranslate"><span class="pre">ArgValConverterIngress</span></code>: an ingress converting the named arguments.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.bind_funcs_object_attrs" title="i2.wrapper.bind_funcs_object_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bind_funcs_object_attrs</span></code></a>(funcs[, ...])</p></td>
 <td><p>Transform one or several functions into a class that contains them as methods sourcing specific arguments from the instance's attributes.</p></td>
@@ -225,17 +225,17 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.complete_dict_applying_functions" title="i2.wrapper.complete_dict_applying_functions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">complete_dict_applying_functions</span></code></a>(d, /[, ...])</p></td>
 <td><p>Complete dict <code class="docutils literal notranslate"><span class="pre">d</span></code> by applying function to variables in <code class="docutils literal notranslate"><span class="pre">d</span></code>, sequentially.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_VK_to_KO</span></code>(kinds)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.convert_VK_to_KO" title="i2.wrapper.convert_VK_to_KO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_VK_to_KO</span></code></a>(kinds)</p></td>
+<td><p>In a <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">kind}</span></code> dict, replace VAR_KEYWORD kinds with KEYWORD_ONLY.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_dict_values</span></code>(to_convert, ...)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.convert_dict_values" title="i2.wrapper.convert_dict_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_dict_values</span></code></a>(to_convert, ...)</p></td>
+<td><p>Yield <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> pairs of <code class="docutils literal notranslate"><span class="pre">to_convert</span></code>, converting the values whose key has a function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.func_to_method_func" title="i2.wrapper.func_to_method_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">func_to_method_func</span></code></a>(func[, instance_params, ...])</p></td>
 <td><p>Get a 'method function' from a 'normal function'.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.identity" title="i2.wrapper.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(x)</p></td>
-<td><p>Transparent function, returning what's been input</p></td>
+<td><p>Return the input unchanged.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">include_exclude</span></code>([func, include, exclude])</p></td>
 <td><p>Reorder and/or remove parameters.</p></td>
@@ -243,8 +243,8 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.include_exclude_ingress_factory" title="i2.wrapper.include_exclude_ingress_factory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">include_exclude_ingress_factory</span></code></a>(func[, ...])</p></td>
 <td><p>A pattern underlying any ingress that takes a subset of parameters (possibly reordering them).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert_map</span></code>(d)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.invert_map" title="i2.wrapper.invert_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert_map</span></code></a>(d)</p></td>
+<td><p>Swap keys and values of a mapping, raising <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if values are not unique.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.items_with_mapped_keys" title="i2.wrapper.items_with_mapped_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items_with_mapped_keys</span></code></a>(d, key_mapper)</p></td>
 <td><p>Transform dict keys.</p></td>
@@ -252,17 +252,17 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.kwargs_trans" title="i2.wrapper.kwargs_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs_trans</span></code></a>([kwargs, _recursive, _inplace])</p></td>
 <td><p>Transform a kwargs dict or build a transformer.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs_trans_to_extract_args_from_attrs</span></code>(...)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.kwargs_trans_to_extract_args_from_attrs" title="i2.wrapper.kwargs_trans_to_extract_args_from_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs_trans_to_extract_args_from_attrs</span></code></a>(...)</p></td>
+<td><p>Pop the <code class="docutils literal notranslate"><span class="pre">obj_param</span></code> object out of <code class="docutils literal notranslate"><span class="pre">outer_kwargs</span></code> and source <code class="docutils literal notranslate"><span class="pre">attr_names</span></code> from its attributes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_names</span></code>([func])</p></td>
 <td><p>Change the argument names of a function.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_ingress_from_name_mapper</span></code>(func, name_mapper, *)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.mk_ingress_from_name_mapper" title="i2.wrapper.mk_ingress_from_name_mapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_ingress_from_name_mapper</span></code></a>(func, name_mapper, *)</p></td>
+<td><p>Make an ingress that renames <code class="docutils literal notranslate"><span class="pre">func</span></code>'s parameters (<code class="docutils literal notranslate"><span class="pre">{inner_name:</span> <span class="pre">outer_name}</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">modify_dict_on_cond</span></code>(d, cond, func)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.modify_dict_on_cond" title="i2.wrapper.modify_dict_on_cond"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modify_dict_on_cond</span></code></a>(d, cond, func)</p></td>
+<td><p>Copy <code class="docutils literal notranslate"><span class="pre">d</span></code>, applying <code class="docutils literal notranslate"><span class="pre">func</span></code> to the values whose <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> satisfy <code class="docutils literal notranslate"><span class="pre">cond</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.move_names_to_the_end" title="i2.wrapper.move_names_to_the_end"><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_names_to_the_end</span></code></a>(names, ...)</p></td>
 <td><p>Remove the items of <code class="docutils literal notranslate"><span class="pre">names_to_move_to_the_end</span></code> from <code class="docutils literal notranslate"><span class="pre">names</span></code> and append to the right of names</p></td>
@@ -270,20 +270,20 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.move_params_to_the_end" title="i2.wrapper.move_params_to_the_end"><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_params_to_the_end</span></code></a>(func, names_to_move)</p></td>
 <td><p>Choose args from func, according to choice_args_func and move them to the right</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">param_to_dataclass_field_tuple</span></code>(param)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.param_to_dataclass_field_tuple" title="i2.wrapper.param_to_dataclass_field_tuple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">param_to_dataclass_field_tuple</span></code></a>(param)</p></td>
+<td><p>The <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">annotation,</span> <span class="pre">default)</span></code> tuple <code class="docutils literal notranslate"><span class="pre">dataclasses.make_dataclass</span></code> expects for a field.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters_to_dict</span></code>(parameters)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.parameters_to_dict" title="i2.wrapper.parameters_to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters_to_dict</span></code></a>(parameters)</p></td>
+<td><p>Map each parameter name to its <code class="docutils literal notranslate"><span class="pre">parameter_to_dict</span></code> (name, kind, default, annotation) dict.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">params_used_in_funcs</span></code>(funcs)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.params_used_in_funcs" title="i2.wrapper.params_used_in_funcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params_used_in_funcs</span></code></a>(funcs)</p></td>
+<td><p>The set of parameter names of all the given functions.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.partialx" title="i2.wrapper.partialx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partialx</span></code></a>(func, *args[, __name__, ...])</p></td>
 <td><p>Extends the functionality of builtin <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code> with the ability to</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">required_params_used_in_funcs</span></code>(funcs)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.required_params_used_in_funcs" title="i2.wrapper.required_params_used_in_funcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">required_params_used_in_funcs</span></code></a>(funcs)</p></td>
+<td><p>The set of names that are required (no default) in at least one of the given functions.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rm_params</span></code>([func, params_to_remove, ...])</p></td>
 <td><p>Get a function with some parameters removed.</p></td>
@@ -297,40 +297,40 @@
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap</span></code>([func, ingress, egress, caller, name, ...])</p></td>
 <td><p>Wrap a function, optionally transforming interface, input and output.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_from_sig</span></code>(func, new_sig)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.wrap_from_sig" title="i2.wrapper.wrap_from_sig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_from_sig</span></code></a>(func, new_sig)</p></td>
+<td><p>Give <code class="docutils literal notranslate"><span class="pre">func</span></code> the signature <code class="docutils literal notranslate"><span class="pre">new_sig</span></code>, calling it with only the arguments it takes.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Classes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ArgNameMappingIngress</span></code>(inner_sig, *[, ...])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.ArgNameMappingIngress" title="i2.wrapper.ArgNameMappingIngress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ArgNameMappingIngress</span></code></a>(inner_sig, *[, ...])</p></td>
+<td><p>Ingress that renames parameters: called with outer names, returns inner (args, kwargs).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ArgValConverterIngress</span></code>(func[, ...])</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.ArgValConverterIngress" title="i2.wrapper.ArgValConverterIngress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ArgValConverterIngress</span></code></a>(func[, ...])</p></td>
+<td><p>Ingress with <code class="docutils literal notranslate"><span class="pre">func</span></code>'s signature that applies <code class="docutils literal notranslate"><span class="pre">name=converter</span></code> functions to arguments.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.Ingress" title="i2.wrapper.Ingress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ingress</span></code></a>(inner_sig[, kwargs_trans, ...])</p></td>
 <td><p>The Ingress class offers a template for creating ingress classes.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.InnerMapIngress" title="i2.wrapper.InnerMapIngress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InnerMapIngress</span></code></a>(inner_sig[, kwargs_trans, ...])</p></td>
-<td><p>A class to help build ingresses systematically by mapping the inner signature.</p></td>
+<td><p>Build an ingress from the wrapped function's signature and a spec of changes to it.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.MakeFromFunc" title="i2.wrapper.MakeFromFunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MakeFromFunc</span></code></a>(func_to_obj)</p></td>
 <td><p>Used to indicate that an object should be made as a function of an input func</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PickleHelperMixin</span></code>()</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.PickleHelperMixin" title="i2.wrapper.PickleHelperMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PickleHelperMixin</span></code></a>()</p></td>
+<td><p>Mixin whose <code class="docutils literal notranslate"><span class="pre">__reduce__</span></code> pickles an instance by its <code class="docutils literal notranslate"><span class="pre">__name__</span></code> (a global reference).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.SmartDefault" title="i2.wrapper.SmartDefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SmartDefault</span></code></a>(func_computing_default, ...)</p></td>
-<td><p></p></td>
+<td><p>Placeholder default for a parameter whose value <code class="docutils literal notranslate"><span class="pre">add_smart_defaults</span></code> computes from the other arguments.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.Wrap" title="i2.wrapper.Wrap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Wrap</span></code></a>(func[, ingress, egress, name, ...])</p></td>
 <td><p>A function wrapper with interface modifiers.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.Wrapx" title="i2.wrapper.Wrapx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Wrapx</span></code></a>(func[, ingress, egress, caller, name])</p></td>
-<td><p></p></td>
+<td><p>An extended wrapping object that allows more complex wrapping mechanisms.</p></td>
 </tr>
 </tbody>
 </table>
@@ -358,6 +358,24 @@
 <code class="xref py py-func docutils literal notranslate"><span class="pre">_should_preserve_signature()</span></code>). Named rather than spelled <code class="docutils literal notranslate"><span class="pre">'auto'</span></code> at each
 use so the sentinel has exactly one definition.</p>
 </dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.wrapper.ArgNameMappingIngress">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">ArgNameMappingIngress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inner_sig</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">conserve_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">outer_name_for_inner_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#ArgNameMappingIngress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.ArgNameMappingIngress" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.ArgNameMappingIngress'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Ingress that renames parameters: called with outer names, returns inner (args, kwargs).</p>
+<p>Unless <code class="docutils literal notranslate"><span class="pre">conserve_kind=True</span></code>, all parameter kinds of the outer signature become
+POSITIONAL_OR_KEYWORD. <code class="docutils literal notranslate"><span class="pre">mk_ingress_from_name_mapper</span></code> is the function form.</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.wrapper.ArgValConverterIngress">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">ArgValConverterIngress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ArgValConverterIngress__strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">conversion_for_arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#ArgValConverterIngress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.ArgValConverterIngress" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.ArgValConverterIngress'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Ingress with <code class="docutils literal notranslate"><span class="pre">func</span></code>’s signature that applies <code class="docutils literal notranslate"><span class="pre">name=converter</span></code> functions to arguments.</p>
+<p>Names that are not parameters of <code class="docutils literal notranslate"><span class="pre">func</span></code> are rejected with an <code class="docutils literal notranslate"><span class="pre">AssertionError</span></code>
+at construction (the <code class="docutils literal notranslate"><span class="pre">__strict</span></code> parameter cannot be passed by keyword from outside
+the class, since the name is mangled; use <code class="docutils literal notranslate"><span class="pre">arg_val_converter_ingress</span></code> to switch it
+off).</p>
+</dd></dl>
 <dl class="py exception">
 <dt class="sig sig-object py" id="i2.wrapper.CallerValidationError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">CallerValidationError</span></span><a class="reference internal" href="../_modules/i2/wrapper.html#CallerValidationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.CallerValidationError" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.CallerValidationError'">¶</a></dt>
@@ -373,7 +391,7 @@ use so the sentinel has exactly one definition.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.wrapper.Ingress">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">Ingress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inner_sig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_trans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outer_sig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_excess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_partial</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#Ingress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.Ingress" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.Ingress'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
 <p>The Ingress class offers a template for creating ingress classes.</p>
 <p>Note that when writing a decorator with <code class="docutils literal notranslate"><span class="pre">i2.wrapper</span></code>, you’re usually better off
 writing an ingress function for the purpose. As a result, your code will usually
@@ -530,8 +548,8 @@ Instead, they can be</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.wrapper.InnerMapIngress">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">InnerMapIngress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inner_sig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_trans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">_allow_reordering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">changes_for_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#InnerMapIngress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.InnerMapIngress" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.InnerMapIngress'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
-<p>A class to help build ingresses systematically by mapping the inner signature.</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Build an ingress from the wrapped function’s signature and a spec of changes to it.</p>
 <p><em>Systematically</em>, i.e. “according to a fixed plan/system” is what it’s about here.
 As we’ll see below, if you need to write a particular adapter for a specific case,
 you probably should do by writing an actual ingress function directly.
@@ -542,7 +560,7 @@ way to do this.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inner_sig</strong> – The signature of the wrapped function.</p></li>
-<li><p><strong>kwargs_trans</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span>) – A dict-to-dict transformation of the outer kwargs to
+<li><p><strong>kwargs_trans</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>], <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>] | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span>) – A dict-to-dict transformation of the outer kwargs to
 the kwargs that should be input to the inner function.
 That is <code class="docutils literal notranslate"><span class="pre">kwargs_trans</span></code> is <code class="docutils literal notranslate"><span class="pre">outer_kwargs</span> <span class="pre">-&gt;</span> <span class="pre">inner_kwargs</span></code>.
 Note that though both outer and inner signatures could have those annoying
@@ -566,11 +584,8 @@ two arguments with annotations, and three with a default.</p>
 <li><p>that didn’t have the argument kind restrinctions (all POSITION_OR_KEYWORD),</p></li>
 <li><p>where the annotation of <code class="docutils literal notranslate"><span class="pre">x</span></code> was changed <code class="docutils literal notranslate"><span class="pre">int</span></code> and the default removed</p></li>
 <li><p>where <code class="docutils literal notranslate"><span class="pre">y</span></code> was named <code class="docutils literal notranslate"><span class="pre">you</span></code> instead, and has an annotation (<code class="docutils literal notranslate"><span class="pre">int</span></code>).</p></li>
-<li><dl class="simple">
-<dt>where the default of <code class="docutils literal notranslate"><span class="pre">z</span></code> was <code class="docutils literal notranslate"><span class="pre">10</span></code> instead of <code class="docutils literal notranslate"><span class="pre">3</span></code>, and doesn’t have an</dt><dd><p>annotation.</p>
-</dd>
-</dl>
-</li>
+<li><p>where the default of <code class="docutils literal notranslate"><span class="pre">z</span></code> was <code class="docutils literal notranslate"><span class="pre">10</span></code> instead of <code class="docutils literal notranslate"><span class="pre">3</span></code>, and doesn’t have an
+annotation.</p></li>
 </ul>
 <p>In order to get a version of this function we wanted (more lenient kinds,
 with some annotations and a default change), we can use the ingress function:</p>
@@ -600,26 +615,17 @@ rule/protocol to make applying the rule/protocol systematic.</p>
 </span><span id="line-14"><span class="gp">... </span><span class="p">)</span>
 </span></code></pre></div>
 </div>
-<p class="rubric">Note</p>
+<p><strong>Note</strong></p>
 <ul class="simple">
-<li><dl class="simple">
-<dt>Only the changes we wish to make to the parameters are mentioned.</dt><dd><p>You could also define the parameters explicitly by simply listing all three
-of the dimensions (kind, annotation, and default)</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>Three? But a <code class="docutils literal notranslate"><span class="pre">Parameter</span></code> object has four; what about the name?</dt><dd><p>Indeed, you can use name as well, more on that later.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>Note that in order to specify that you want no default, or no annotation,</dt><dd><p>you cannot use <code class="docutils literal notranslate"><span class="pre">None</span></code> since <code class="docutils literal notranslate"><span class="pre">None</span></code> is both a valid default and a valid
+<li><p>Only the changes we wish to make to the parameters are mentioned.
+You could also define the parameters explicitly by simply listing all three
+of the dimensions (kind, annotation, and default)</p></li>
+<li><p>Three? But a <code class="docutils literal notranslate"><span class="pre">Parameter</span></code> object has four; what about the name?
+Indeed, you can use name as well, more on that later.</p></li>
+<li><p>Note that in order to specify that you want no default, or no annotation,
+you cannot use <code class="docutils literal notranslate"><span class="pre">None</span></code> since <code class="docutils literal notranslate"><span class="pre">None</span></code> is both a valid default and a valid
 annotation; So instead you need to use <code class="docutils literal notranslate"><span class="pre">Parameter.empty</span></code> (conveniently
-assigned to a constant named <code class="docutils literal notranslate"><span class="pre">empty</span></code> in the <code class="docutils literal notranslate"><span class="pre">wrapping</span></code> module.</p>
-</dd>
-</dl>
-</li>
+assigned to a constant named <code class="docutils literal notranslate"><span class="pre">empty</span></code> in the <code class="docutils literal notranslate"><span class="pre">wrapping</span></code> module.</p></li>
 </ul>
 <p>Now see that all arguments are <code class="docutils literal notranslate"><span class="pre">POSITIONAL_OR_KEYWORD</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are
 <code class="docutils literal notranslate"><span class="pre">int</span></code>, and default of <code class="docutils literal notranslate"><span class="pre">z</span></code> is 10:</p>
@@ -692,13 +698,22 @@ can doesn’t have the position only restriction on <code class="docutils litera
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.wrapper.MakeFromFunc">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">MakeFromFunc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_to_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#MakeFromFunc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.MakeFromFunc" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.MakeFromFunc'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
 <p>Used to indicate that an object should be made as a function of an input func</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.wrapper.PickleHelperMixin">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">PickleHelperMixin</span></span><a class="reference internal" href="../_modules/i2/wrapper.html#PickleHelperMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.PickleHelperMixin" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.PickleHelperMixin'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Mixin whose <code class="docutils literal notranslate"><span class="pre">__reduce__</span></code> pickles an instance by its <code class="docutils literal notranslate"><span class="pre">__name__</span></code> (a global reference).</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.wrapper.SmartDefault">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">SmartDefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_computing_default</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_default</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#SmartDefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.SmartDefault" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.SmartDefault'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Placeholder default for a parameter whose value <code class="docutils literal notranslate"><span class="pre">add_smart_defaults</span></code> computes from the other arguments.</p>
+<p>Holds the function that computes the value and, if the parameter had one, its
+original default (shown in the repr).</p>
 <dl class="field-list simple">
 </dl>
 <dl class="py attribute">
@@ -724,7 +739,7 @@ wrapped function to determine the return annotation of the <code class="docutils
 <li><p><strong>name</strong> – Name to give the wrapper (will use wrapped func name by default)</p></li>
 <li><p><strong>preserve_signature</strong> – <p>Controls signature preservation from the wrapped function.</p>
 <ul>
-<li><p>’auto’ (default): Automatically preserve if ingress has (*args, **kwargs) signature</p></li>
+<li><p>’auto’ (default): Automatically preserve if ingress has <code class="docutils literal notranslate"><span class="pre">(*args,</span> <span class="pre">**kwargs)</span></code> signature</p></li>
 <li><p>True: Always preserve signature from func (copies __signature__)</p></li>
 <li><p>False: Don’t preserve (use ingress’s natural signature)</p></li>
 </ul>
@@ -820,12 +835,10 @@ wrapped func; therefore it’s definition often depends on information of both,
 and for that reason, we provide the ability to specify the ingress not only
 explicitly (as in the examples above), but through a factory – a function that
 will be called on <code class="docutils literal notranslate"><span class="pre">func</span></code> to produce the ingress that should be used to wrap it.</p>
-<section id="common-patterns-and-best-practices">
-<h2>Common Patterns and Best Practices<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#common-patterns-and-best-practices" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#common-patterns-and-best-practices'">¶</a></h2>
-<section id="pattern-1-transform-inputs-while-preserving-signature">
-<h3>Pattern 1: Transform inputs while preserving signature<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#pattern-1-transform-inputs-while-preserving-signature" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#pattern-1-transform-inputs-while-preserving-signature'">¶</a></h3>
+<p><strong>Common Patterns and Best Practices</strong></p>
+<p><strong>Pattern 1: Transform inputs while preserving signature</strong></p>
 <p>By default (with preserve_signature=’auto’), Wrap automatically preserves
-signatures when your ingress uses (*args, **kwargs):</p>
+signatures when your ingress uses <code class="docutils literal notranslate"><span class="pre">(*args,</span> <span class="pre">**kwargs)</span></code>:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">uppercase_args</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 </span><span id="line-2"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span id="line-3"><span class="gp">... </span>        <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">)</span>
@@ -840,9 +853,7 @@ signatures when your ingress uses (*args, **kwargs):</p>
 </span><span id="line-12"><span class="go">'Hello, ALICE!'</span>
 </span></code></pre></div>
 </div>
-</section>
-<section id="pattern-2-keep-return-annotation-with-transparent-egress">
-<h3>Pattern 2: Keep return annotation with transparent egress<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#pattern-2-keep-return-annotation-with-transparent-egress" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#pattern-2-keep-return-annotation-with-transparent-egress'">¶</a></h3>
+<p><strong>Pattern 2: Keep return annotation with transparent egress</strong></p>
 <p>When using an egress that doesn’t transform the type, return annotations
 are automatically preserved:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">add_logging</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
@@ -860,9 +871,7 @@ are automatically preserved:</p>
 </span><span id="line-13"><span class="go">10</span>
 </span></code></pre></div>
 </div>
-</section>
-<section id="pattern-3-validation-without-transformation">
-<h3>Pattern 3: Validation without transformation<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#pattern-3-validation-without-transformation" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#pattern-3-validation-without-transformation'">¶</a></h3>
+<p><strong>Pattern 3: Validation without transformation</strong></p>
 <p>Use ingress for validation without modifying arguments:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">validate_positive</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 </span><span id="line-2"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -879,9 +888,7 @@ are automatically preserved:</p>
 </span><span id="line-13"><span class="go">6</span>
 </span></code></pre></div>
 </div>
-</section>
-<section id="pattern-4-error-handling-and-logging">
-<h3>Pattern 4: Error handling and logging<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#pattern-4-error-handling-and-logging" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#pattern-4-error-handling-and-logging'">¶</a></h3>
+<p><strong>Pattern 4: Error handling and logging</strong></p>
 <p>Wrap both ends for comprehensive error handling:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">safe_call</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 </span><span id="line-2"><span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">ingress</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -895,13 +902,10 @@ are automatically preserved:</p>
 </span><span id="line-10"><span class="gp">... </span>    <span class="k">return</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
-</section>
-</section>
 <section id="common-pitfalls-and-solutions">
 <h2>Common Pitfalls and Solutions<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#common-pitfalls-and-solutions" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#common-pitfalls-and-solutions'">¶</a></h2>
-<section id="pitfall-1-losing-signatures-with-explicit-non-generic-ingress">
-<h3>Pitfall 1: Losing signatures with explicit non-generic ingress<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#pitfall-1-losing-signatures-with-explicit-non-generic-ingress" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#pitfall-1-losing-signatures-with-explicit-non-generic-ingress'">¶</a></h3>
-<p>If your ingress doesn’t use (*args, **kwargs), the auto mode won’t preserve
+<p><strong>Pitfall 1: Losing signatures with explicit non-generic ingress</strong></p>
+<p>If your ingress doesn’t use <code class="docutils literal notranslate"><span class="pre">(*args,</span> <span class="pre">**kwargs)</span></code>, the auto mode won’t preserve
 the signature. Use preserve_signature=True explicitly:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># WRONG: Signature lost with non-generic ingress</span>
 </span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">my_func</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -919,9 +923,7 @@ the signature. Use preserve_signature=True explicitly:</p>
 </span><span id="line-14"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Now signature is correctly (x: int, y: int = 5) -&gt; int</span>
 </span></code></pre></div>
 </div>
-</section>
-<section id="pitfall-2-type-changing-egress-without-annotation">
-<h3>Pitfall 2: Type-changing egress without annotation<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#pitfall-2-type-changing-egress-without-annotation" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#pitfall-2-type-changing-egress-without-annotation'">¶</a></h3>
+<p><strong>Pitfall 2: Type-changing egress without annotation</strong></p>
 <p>If your egress changes the output type, annotate it. Otherwise, the function’s
 original return type will be preserved, creating incorrect type hints:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># RIGHT: Egress annotated with correct return type</span>
@@ -938,9 +940,7 @@ original return type will be preserved, creating incorrect type hints:</p>
 </span><span id="line-12"><span class="go">True</span>
 </span></code></pre></div>
 </div>
-</section>
-<section id="pitfall-3-forgetting-to-return-args-kwargs-from-ingress">
-<h3>Pitfall 3: Forgetting to return (args, kwargs) from ingress<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#pitfall-3-forgetting-to-return-args-kwargs-from-ingress" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#pitfall-3-forgetting-to-return-args-kwargs-from-ingress'">¶</a></h3>
+<p><strong>Pitfall 3: Forgetting to return (args, kwargs) from ingress</strong></p>
 <p>Ingress MUST return a tuple of (args, kwargs) for the wrapped function:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># WRONG: ingress doesn't return (args, kwargs)</span>
 </span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># def broken_ingress(*args, **kwargs):</span>
@@ -953,9 +953,7 @@ original return type will be preserved, creating incorrect type hints:</p>
 </span><span id="line-9"><span class="gp">... </span>    <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>  <span class="c1"># CORRECT</span>
 </span></code></pre></div>
 </div>
-</section>
-<section id="pitfall-4-modifying-mutable-arguments-in-place">
-<h3>Pitfall 4: Modifying mutable arguments in place<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#pitfall-4-modifying-mutable-arguments-in-place" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#pitfall-4-modifying-mutable-arguments-in-place'">¶</a></h3>
+<p><strong>Pitfall 4: Modifying mutable arguments in place</strong></p>
 <p>Be careful when modifying arguments - changes affect the original objects:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># RIGHT: Create new objects</span>
 </span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">fixed</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
@@ -967,12 +965,11 @@ original return type will be preserved, creating incorrect type hints:</p>
 </span></code></pre></div>
 </div>
 </section>
-</section>
 <section id="backward-compatibility-notes">
 <h2>Backward Compatibility Notes<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#backward-compatibility-notes" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#backward-compatibility-notes'">¶</a></h2>
 <p><strong>Signature Preservation (v3.0):</strong></p>
 <p>Currently, preserve_signature defaults to ‘auto’ which only preserves
-signatures for generic (*args, **kwargs) ingress functions. In v3.0,
+signatures for generic <code class="docutils literal notranslate"><span class="pre">(*args,</span> <span class="pre">**kwargs)</span></code> ingress functions. In v3.0,
 we may change the default to True to always preserve signatures unless
 explicitly disabled. This matches user expectations that decorators
 should preserve signatures by default.</p>
@@ -991,19 +988,130 @@ should preserve signatures by default.</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="i2.wrapper.WrapperValidationError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">WrapperValidationError</span></span><a class="reference internal" href="../_modules/i2/wrapper.html#WrapperValidationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.WrapperValidationError" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.WrapperValidationError'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
 <p>Raised when wrapper some construction params are not valid</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.wrapper.Wrapx">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">Wrapx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ingress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">caller</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#Wrapx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.Wrapx" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.Wrapx'">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_Wrap</span></code></p>
+<p>An extended wrapping object that allows more complex wrapping mechanisms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> – The wrapped function</p></li>
+<li><p><strong>ingress</strong> – The incoming data transformer. It determines the argument properties
+(name, kind, default and annotation) as well as the actual input of the
+wrapped function.</p></li>
+<li><p><strong>egress</strong> – The outgoing data transformer. It also takes precedence over the
+wrapped function to determine the return annotation of the <code class="docutils literal notranslate"><span class="pre">Wrap</span></code> instance</p></li>
+<li><p><strong>caller</strong> – A caller defines what it means to call the <code class="docutils literal notranslate"><span class="pre">func</span></code> on the
+arguments it is given. It should be of the form
+<code class="docutils literal notranslate"><span class="pre">caller(func,</span> <span class="pre">args,</span> <span class="pre">kwargs,</span> <span class="pre">*,</span> <span class="pre">...extra_keyword_only_params)</span></code>.
+By default, the caller will simply return <code class="docutils literal notranslate"><span class="pre">func(*args,</span> <span class="pre">**kwargs)</span></code>.</p></li>
+<li><p><strong>name</strong> – Name to give the wrapper (will use wrapped func name by default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A callable instance wrapping <code class="docutils literal notranslate"><span class="pre">func</span></code></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span id="line-4"><span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</span><span id="line-5"><span class="gp">...</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">save_on_output_egress</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+</span><span id="line-7"><span class="gp">... </span>    <span class="n">s</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+</span><span id="line-8"><span class="gp">... </span>    <span class="k">return</span> <span class="n">v</span>
+</span><span id="line-9"><span class="gp">...</span>
+</span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="n">save_on_output</span> <span class="o">=</span> <span class="n">Wrapx</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="n">save_on_output_egress</span><span class="p">)</span>
+</span><span id="line-11"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># TODO: should be `(x, y, *, k, s)` --&gt; Need to work on the merge for this.</span>
+</span><span id="line-12"><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">save_on_output</span><span class="p">))</span>
+</span><span id="line-13"><span class="go">'(x, y, k, s)'</span>
+</span><span id="line-14"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-15"><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+</span><span id="line-16"><span class="gp">&gt;&gt;&gt; </span><span class="n">save_on_output</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="s1">'save_here'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">store</span><span class="p">)</span>
+</span><span id="line-17"><span class="go">3</span>
+</span><span id="line-18"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">save_on_output</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="s1">'save_here'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">store</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="o">==</span> <span class="n">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span id="line-19"><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span>  <span class="c1"># see what's in the store now!</span>
+</span><span id="line-20"><span class="go">{'save_here': 3}</span>
+</span></code></pre></div>
+</div>
+<p>A caller is meant to control the way the function is called.
+It is given the <code class="docutils literal notranslate"><span class="pre">func</span></code> and the <code class="docutils literal notranslate"><span class="pre">func_args</span></code> and <code class="docutils literal notranslate"><span class="pre">func_kwargs</span></code>
+(whatever the ingress function gives it, if present) and possibly additional
+params and will return… well, what ever you tell it to.</p>
+<p>This can be used, for example, to call the function in a subprocess,
+or on a remote system, differ computation (command pattern, for example, using
+<code class="docutils literal notranslate"><span class="pre">functools.partial</span></code>, or do what ever needs to have a view both on the function
+and its inputs.</p>
+<p>Here, we will wrap the function so it will apply to an iterable of inputs
+(of the first argument), returning a list of results</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</span><span id="line-3"><span class="gp">...</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">iterize</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-5"><span class="gp">... </span>    <span class="n">first_arg_val</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+</span><span id="line-6"><span class="gp">... </span>    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">first_arg_val</span><span class="p">))</span>
+</span><span id="line-7"><span class="gp">...</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="n">iterized_func</span> <span class="o">=</span> <span class="n">Wrapx</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">caller</span><span class="o">=</span><span class="n">iterize</span><span class="p">)</span>
+</span><span id="line-9"><span class="gp">&gt;&gt;&gt; </span><span class="n">iterized_func</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+</span><span id="line-10"><span class="go">[3, 4, 5, 6]</span>
+</span></code></pre></div>
+</div>
+<p>Let’s do the same as above, but allow other variables (here <code class="docutils literal notranslate"><span class="pre">y</span></code>) to be input as
+well. This takes a bit more work…</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">_iterize_first_arg</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="n">first_arg_name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span>
+</span><span id="line-4"><span class="gp">... </span>    <span class="n">remaining_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-5"><span class="gp">... </span>        <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">first_arg_name</span>
+</span><span id="line-6"><span class="gp">... </span>    <span class="p">}</span>
+</span><span id="line-7"><span class="gp">... </span>    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+</span><span id="line-8"><span class="gp">... </span>        <span class="nb">map</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">remaining_kwargs</span><span class="p">),</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">first_arg_name</span><span class="p">])</span>
+</span><span id="line-9"><span class="gp">... </span>    <span class="p">)</span>
+</span></code></pre></div>
+</div>
+<p>Let’s demo a different way of using Wrapx: Making a wrapper to apply at
+function definition time</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">iterize_first_arg</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">Wrapx</span><span class="p">,</span> <span class="n">caller</span><span class="o">=</span><span class="n">_iterize_first_arg</span><span class="p">)</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@iterize_first_arg</span>
+</span><span id="line-3"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span id="line-4"><span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt;</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">func</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="mi">10</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">[11, 12, 13, 14]</span>
+</span></code></pre></div>
+</div>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.append_empty_args">
 <span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">append_empty_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#append_empty_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.append_empty_args" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.append_empty_args'">¶</a></dt>
 <dd><p>To use to transform an ingress function that only returns kwargs to one that
 returns the normal form of ingress functions: ((), kwargs)</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.apply_func_on_cond">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">apply_func_on_cond</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cond</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#apply_func_on_cond"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.apply_func_on_cond" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.apply_func_on_cond'">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">func(v)</span></code> if <code class="docutils literal notranslate"><span class="pre">cond(k,</span> <span class="pre">v)</span></code> is true, else <code class="docutils literal notranslate"><span class="pre">v</span></code> unchanged.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.arg_val_converter">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">arg_val_converter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">conversion_for_arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#arg_val_converter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.arg_val_converter" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.arg_val_converter'">¶</a></dt>
+<dd><p>Wrap <code class="docutils literal notranslate"><span class="pre">func</span></code> so that the given arguments are converted (<code class="docutils literal notranslate"><span class="pre">name=converter</span></code>) before the call.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">arg_val_converter</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="s1">'2'</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span><span id="line-5"><span class="go">5</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.arg_val_converter_ingress">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">arg_val_converter_ingress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">__strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">conversion_for_arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#arg_val_converter_ingress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.arg_val_converter_ingress" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.arg_val_converter_ingress'">¶</a></dt>
+<dd><p>Function form of <code class="docutils literal notranslate"><span class="pre">ArgValConverterIngress</span></code>: an ingress converting the named arguments.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.bind_funcs_object_attrs">
@@ -1169,6 +1277,22 @@ key or not, resulting in an error:</p>
 </dl>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.convert_VK_to_KO">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">convert_VK_to_KO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kinds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#convert_VK_to_KO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.convert_VK_to_KO" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.convert_VK_to_KO'">¶</a></dt>
+<dd><p>In a <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">kind}</span></code> dict, replace VAR_KEYWORD kinds with KEYWORD_ONLY.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.convert_dict_values">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">convert_dict_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">to_convert</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_to_conversion_function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#convert_dict_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.convert_dict_values" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.convert_dict_values'">¶</a></dt>
+<dd><p>Yield <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> pairs of <code class="docutils literal notranslate"><span class="pre">to_convert</span></code>, converting the values whose key has a function.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">convert_dict_values</span><span class="p">({</span><span class="s1">'x'</span><span class="p">:</span> <span class="s1">'2'</span><span class="p">,</span> <span class="s1">'y'</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="p">{</span><span class="s1">'x'</span><span class="p">:</span> <span class="nb">int</span><span class="p">}))</span>
+</span><span id="line-2"><span class="go">{'x': 2, 'y': 3}</span>
+</span></code></pre></div>
+</div>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.func_to_method_func">
 <span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">func_to_method_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_arg_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'self'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#func_to_method_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.func_to_method_func" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.func_to_method_func'">¶</a></dt>
 <dd><p>Get a ‘method function’ from a ‘normal function’. Also known as “methodize”.</p>
@@ -1252,7 +1376,11 @@ to attributes of the instance):</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.identity">
 <span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#identity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.identity" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.identity'">¶</a></dt>
-<dd><p>Transparent function, returning what’s been input</p>
+<dd><p>Return the input unchanged.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">identity</span><span class="p">(</span><span class="s1">'x'</span><span class="p">)</span>
+</span><span id="line-2"><span class="go">'x'</span>
+</span></code></pre></div>
+</div>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.include_exclude_ingress_factory">
@@ -1263,13 +1391,24 @@ reordering them).</p>
 partialize #3 (without having to partialize #1 and #2)</p>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.invert_map">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">invert_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#invert_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.invert_map" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.invert_map'">¶</a></dt>
+<dd><p>Swap keys and values of a mapping, raising <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if values are not unique.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">invert_map</span><span class="p">({</span><span class="s1">'a'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">:</span> <span class="mi">2</span><span class="p">})</span>
+</span><span id="line-2"><span class="go">{1: 'a', 2: 'b'}</span>
+</span></code></pre></div>
+</div>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.items_with_mapped_keys">
 <span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">items_with_mapped_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_mapper</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#items_with_mapped_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.items_with_mapped_keys" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.items_with_mapped_keys'">¶</a></dt>
 <dd><p>Transform dict keys. More precisely yield (new_k,v) pairs from a key mapper dict.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>d</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span>) – src dict</p></li>
+<li><p><strong>d</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span>) – src dict</p></li>
 <li><p><strong>key_mapper</strong> – {old_name: new_name, …} mapping</p></li>
 </ul>
 </dd>
@@ -1293,7 +1432,7 @@ partialize #3 (without having to partialize #1 and #2)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span>) – The dict containing the input kwargs that we will transform</p></li>
+<li><p><strong>kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span>) – The dict containing the input kwargs that we will transform</p></li>
 <li><p><strong>_recursive</strong> – Whether the transformations listed in <code class="docutils literal notranslate"><span class="pre">key_and_val_func</span></code> should
 be applied “recursively”. When set to <code class="docutils literal notranslate"><span class="pre">False</span></code> (default), each transformation
 function applies to the original <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>, not the one that was transformed,
@@ -1363,6 +1502,45 @@ therein to use for the corresponding inputs of that <code class="docutils litera
 </div>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.kwargs_trans_to_extract_args_from_attrs">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">kwargs_trans_to_extract_args_from_attrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outer_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'self'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#kwargs_trans_to_extract_args_from_attrs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.kwargs_trans_to_extract_args_from_attrs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.kwargs_trans_to_extract_args_from_attrs'">¶</a></dt>
+<dd><p>Pop the <code class="docutils literal notranslate"><span class="pre">obj_param</span></code> object out of <code class="docutils literal notranslate"><span class="pre">outer_kwargs</span></code> and source <code class="docutils literal notranslate"><span class="pre">attr_names</span></code> from its attributes.</p>
+<p>Mutates <code class="docutils literal notranslate"><span class="pre">outer_kwargs</span></code> (the object is popped). Explicit kwargs win over attributes.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">O</span><span class="p">:</span> <span class="k">pass</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">o</span> <span class="o">=</span> <span class="n">O</span><span class="p">();</span> <span class="n">o</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">o</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">kwargs_trans_to_extract_args_from_attrs</span><span class="p">({</span><span class="s1">'self'</span><span class="p">:</span> <span class="n">o</span><span class="p">,</span> <span class="s1">'c'</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="n">attr_names</span><span class="o">=</span><span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">))</span>
+</span><span id="line-4"><span class="go">{'a': 1, 'b': 2, 'c': 3}</span>
+</span></code></pre></div>
+</div>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.mk_ingress_from_name_mapper">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">mk_ingress_from_name_mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_mapper</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">conserve_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#mk_ingress_from_name_mapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.mk_ingress_from_name_mapper" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.mk_ingress_from_name_mapper'">¶</a></dt>
+<dd><p>Make an ingress that renames <code class="docutils literal notranslate"><span class="pre">func</span></code>’s parameters (<code class="docutils literal notranslate"><span class="pre">{inner_name:</span> <span class="pre">outer_name}</span></code>).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">7</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">ingress</span> <span class="o">=</span> <span class="n">mk_ingress_from_name_mapper</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="s1">'aa'</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">'cc'</span><span class="p">))</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">(</span><span class="n">ingress</span><span class="p">)</span>
+</span><span id="line-5"><span class="go">&lt;Sig (aa, b: int, cc=7)&gt;</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">ingress</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">((), {'a': 1, 'b': 2, 'c': 3})</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="n">wrap</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress</span><span class="p">)(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-9"><span class="go">(1, 2, 3)</span>
+</span></code></pre></div>
+</div>
+<p>By default the outer signature loses positional-only and keyword-only kinds;
+<code class="docutils literal notranslate"><span class="pre">conserve_kind=True</span></code> keeps them.</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.modify_dict_on_cond">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">modify_dict_on_cond</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cond</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#modify_dict_on_cond"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.modify_dict_on_cond" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.modify_dict_on_cond'">¶</a></dt>
+<dd><p>Copy <code class="docutils literal notranslate"><span class="pre">d</span></code>, applying <code class="docutils literal notranslate"><span class="pre">func</span></code> to the values whose <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> satisfy <code class="docutils literal notranslate"><span class="pre">cond</span></code>.</p>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.move_names_to_the_end">
 <span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">move_names_to_the_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names_to_move_to_the_end</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#move_names_to_the_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.move_names_to_the_end" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.move_names_to_the_end'">¶</a></dt>
 <dd><p>Remove the items of <code class="docutils literal notranslate"><span class="pre">names_to_move_to_the_end</span></code> from <code class="docutils literal notranslate"><span class="pre">names</span></code>
@@ -1396,11 +1574,28 @@ to the right</p>
 </dl>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.param_to_dataclass_field_tuple">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">param_to_dataclass_field_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#param_to_dataclass_field_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.param_to_dataclass_field_tuple" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.param_to_dataclass_field_tuple'">¶</a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">annotation,</span> <span class="pre">default)</span></code> tuple <code class="docutils literal notranslate"><span class="pre">dataclasses.make_dataclass</span></code> expects for a field.</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.parameters_to_dict">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">parameters_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#parameters_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.parameters_to_dict" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.parameters_to_dict'">¶</a></dt>
+<dd><p>Map each parameter name to its <code class="docutils literal notranslate"><span class="pre">parameter_to_dict</span></code> (name, kind, default, annotation) dict.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.params_used_in_funcs">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">params_used_in_funcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">funcs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#params_used_in_funcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.params_used_in_funcs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.params_used_in_funcs'">¶</a></dt>
+<dd><p>The set of parameter names of all the given functions.</p>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.partialx">
 <span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">partialx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">__name__</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_rm_partialize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_allow_reordering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#partialx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.partialx" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.partialx'">¶</a></dt>
 <dd><p>Extends the functionality of builtin <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code> with the ability to</p>
 <ul class="simple">
-<li><p>set <a href="#id1"><span class="problematic" id="id2">``</span></a>__name__ ``</p></li>
+<li><p>set <code class="docutils literal notranslate"><span class="pre">__name__</span></code></p></li>
 <li><p>remove partialized arguments from signature</p></li>
 <li><p>reorder params (so that defaults are at the end)</p></li>
 </ul>
@@ -1434,6 +1629,11 @@ as usual, you can do so using <code class="docutils literal notranslate"><span c
 </div>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.required_params_used_in_funcs">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">required_params_used_in_funcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">funcs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#required_params_used_in_funcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.required_params_used_in_funcs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.required_params_used_in_funcs'">¶</a></dt>
+<dd><p>The set of names that are required (no default) in at least one of the given functions.</p>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.transparent_egress">
 <span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">transparent_egress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#transparent_egress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.transparent_egress" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.transparent_egress'">¶</a></dt>
 <dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">transparent_egress</span><span class="p">(</span><span class="s1">'unnecessary_doctest'</span><span class="p">)</span>
@@ -1449,11 +1649,27 @@ as usual, you can do so using <code class="docutils literal notranslate"><span c
 </span></code></pre></div>
 </div>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.wrap_from_sig">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">wrap_from_sig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_sig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#wrap_from_sig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.wrap_from_sig" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.wrap_from_sig'">¶</a></dt>
+<dd><p>Give <code class="docutils literal notranslate"><span class="pre">func</span></code> the signature <code class="docutils literal notranslate"><span class="pre">new_sig</span></code>, calling it with only the arguments it takes.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">wrap_from_sig</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Sig</span><span class="p">(</span><span class="s1">'(x, y=1, z=0)'</span><span class="p">))</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+</span><span id="line-5"><span class="go">&lt;Sig (x, y=1, z=0)&gt;</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">h</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">(3, 2)</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
 <li><a :data-current="activeSection === '#i2.wrapper.AUTO_PRESERVE_SIGNATURE'" class="reference internal" href="#i2.wrapper.AUTO_PRESERVE_SIGNATURE"><code class="docutils literal notranslate"><span class="pre">AUTO_PRESERVE_SIGNATURE</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.ArgNameMappingIngress'" class="reference internal" href="#i2.wrapper.ArgNameMappingIngress"><code class="docutils literal notranslate"><span class="pre">ArgNameMappingIngress</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.ArgValConverterIngress'" class="reference internal" href="#i2.wrapper.ArgValConverterIngress"><code class="docutils literal notranslate"><span class="pre">ArgValConverterIngress</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.CallerValidationError'" class="reference internal" href="#i2.wrapper.CallerValidationError"><code class="docutils literal notranslate"><span class="pre">CallerValidationError</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.EgressValidationError'" class="reference internal" href="#i2.wrapper.EgressValidationError"><code class="docutils literal notranslate"><span class="pre">EgressValidationError</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.Ingress'" class="reference internal" href="#i2.wrapper.Ingress"><code class="docutils literal notranslate"><span class="pre">Ingress</span></code></a><ul>
@@ -1467,6 +1683,7 @@ as usual, you can do so using <code class="docutils literal notranslate"><span c
 </ul>
 </li>
 <li><a :data-current="activeSection === '#i2.wrapper.MakeFromFunc'" class="reference internal" href="#i2.wrapper.MakeFromFunc"><code class="docutils literal notranslate"><span class="pre">MakeFromFunc</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.PickleHelperMixin'" class="reference internal" href="#i2.wrapper.PickleHelperMixin"><code class="docutils literal notranslate"><span class="pre">PickleHelperMixin</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.SmartDefault'" class="reference internal" href="#i2.wrapper.SmartDefault"><code class="docutils literal notranslate"><span class="pre">SmartDefault</span></code></a><ul>
 <li><a :data-current="activeSection === '#i2.wrapper.SmartDefault.original_default'" class="reference internal" href="#i2.wrapper.SmartDefault.original_default"><code class="docutils literal notranslate"><span class="pre">SmartDefault.original_default</span></code></a></li>
 </ul>
@@ -1475,20 +1692,34 @@ as usual, you can do so using <code class="docutils literal notranslate"><span c
 <li><a :data-current="activeSection === '#i2.wrapper.WrapperValidationError'" class="reference internal" href="#i2.wrapper.WrapperValidationError"><code class="docutils literal notranslate"><span class="pre">WrapperValidationError</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.Wrapx'" class="reference internal" href="#i2.wrapper.Wrapx"><code class="docutils literal notranslate"><span class="pre">Wrapx</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.append_empty_args'" class="reference internal" href="#i2.wrapper.append_empty_args"><code class="docutils literal notranslate"><span class="pre">append_empty_args()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.apply_func_on_cond'" class="reference internal" href="#i2.wrapper.apply_func_on_cond"><code class="docutils literal notranslate"><span class="pre">apply_func_on_cond()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.arg_val_converter'" class="reference internal" href="#i2.wrapper.arg_val_converter"><code class="docutils literal notranslate"><span class="pre">arg_val_converter()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.arg_val_converter_ingress'" class="reference internal" href="#i2.wrapper.arg_val_converter_ingress"><code class="docutils literal notranslate"><span class="pre">arg_val_converter_ingress()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.bind_funcs_object_attrs'" class="reference internal" href="#i2.wrapper.bind_funcs_object_attrs"><code class="docutils literal notranslate"><span class="pre">bind_funcs_object_attrs()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.bind_funcs_object_attrs_old'" class="reference internal" href="#i2.wrapper.bind_funcs_object_attrs_old"><code class="docutils literal notranslate"><span class="pre">bind_funcs_object_attrs_old()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.camelize'" class="reference internal" href="#i2.wrapper.camelize"><code class="docutils literal notranslate"><span class="pre">camelize()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.complete_dict_applying_functions'" class="reference internal" href="#i2.wrapper.complete_dict_applying_functions"><code class="docutils literal notranslate"><span class="pre">complete_dict_applying_functions()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.convert_VK_to_KO'" class="reference internal" href="#i2.wrapper.convert_VK_to_KO"><code class="docutils literal notranslate"><span class="pre">convert_VK_to_KO()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.convert_dict_values'" class="reference internal" href="#i2.wrapper.convert_dict_values"><code class="docutils literal notranslate"><span class="pre">convert_dict_values()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.func_to_method_func'" class="reference internal" href="#i2.wrapper.func_to_method_func"><code class="docutils literal notranslate"><span class="pre">func_to_method_func()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.identity'" class="reference internal" href="#i2.wrapper.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.include_exclude_ingress_factory'" class="reference internal" href="#i2.wrapper.include_exclude_ingress_factory"><code class="docutils literal notranslate"><span class="pre">include_exclude_ingress_factory()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.invert_map'" class="reference internal" href="#i2.wrapper.invert_map"><code class="docutils literal notranslate"><span class="pre">invert_map()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.items_with_mapped_keys'" class="reference internal" href="#i2.wrapper.items_with_mapped_keys"><code class="docutils literal notranslate"><span class="pre">items_with_mapped_keys()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.kwargs_trans'" class="reference internal" href="#i2.wrapper.kwargs_trans"><code class="docutils literal notranslate"><span class="pre">kwargs_trans()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.kwargs_trans_to_extract_args_from_attrs'" class="reference internal" href="#i2.wrapper.kwargs_trans_to_extract_args_from_attrs"><code class="docutils literal notranslate"><span class="pre">kwargs_trans_to_extract_args_from_attrs()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.mk_ingress_from_name_mapper'" class="reference internal" href="#i2.wrapper.mk_ingress_from_name_mapper"><code class="docutils literal notranslate"><span class="pre">mk_ingress_from_name_mapper()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.modify_dict_on_cond'" class="reference internal" href="#i2.wrapper.modify_dict_on_cond"><code class="docutils literal notranslate"><span class="pre">modify_dict_on_cond()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.move_names_to_the_end'" class="reference internal" href="#i2.wrapper.move_names_to_the_end"><code class="docutils literal notranslate"><span class="pre">move_names_to_the_end()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.move_params_to_the_end'" class="reference internal" href="#i2.wrapper.move_params_to_the_end"><code class="docutils literal notranslate"><span class="pre">move_params_to_the_end()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.param_to_dataclass_field_tuple'" class="reference internal" href="#i2.wrapper.param_to_dataclass_field_tuple"><code class="docutils literal notranslate"><span class="pre">param_to_dataclass_field_tuple()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.parameters_to_dict'" class="reference internal" href="#i2.wrapper.parameters_to_dict"><code class="docutils literal notranslate"><span class="pre">parameters_to_dict()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.params_used_in_funcs'" class="reference internal" href="#i2.wrapper.params_used_in_funcs"><code class="docutils literal notranslate"><span class="pre">params_used_in_funcs()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.partialx'" class="reference internal" href="#i2.wrapper.partialx"><code class="docutils literal notranslate"><span class="pre">partialx()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.required_params_used_in_funcs'" class="reference internal" href="#i2.wrapper.required_params_used_in_funcs"><code class="docutils literal notranslate"><span class="pre">required_params_used_in_funcs()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.transparent_egress'" class="reference internal" href="#i2.wrapper.transparent_egress"><code class="docutils literal notranslate"><span class="pre">transparent_egress()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.transparent_ingress'" class="reference internal" href="#i2.wrapper.transparent_ingress"><code class="docutils literal notranslate"><span class="pre">transparent_ingress()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.wrap_from_sig'" class="reference internal" href="#i2.wrapper.wrap_from_sig"><code class="docutils literal notranslate"><span class="pre">wrap_from_sig()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -1502,7 +1733,7 @@ as usual, you can do so using <code class="docutils literal notranslate"><span c
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=946d7960"></script>
+<script src="../_static/documentation_options.js?v=d80f5ebb"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

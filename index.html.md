@@ -6,21 +6,50 @@ Core tools for minting code.
 
 For human readers: [Documentation here.](https://i2mint.github.io/i2/)
 
-For AI agents, and humans that use them: this repo ships
-[agent skills](https://github.com/i2mint/i2/tree/master/.claude/skills) —
-focused, task-oriented guides that tell a coding agent when and how to reach
-for `i2`’s tools:
+<!-- epythet:agentic-readme:start -->
 
-- [i2-signatures](https://github.com/i2mint/i2/tree/master/.claude/skills/i2-signatures)
-  — introspect signatures and bind a call’s `*args, **kwargs` to named arguments.
-- [i2-sig-arithmetic](https://github.com/i2mint/i2/tree/master/.claude/skills/i2-sig-arithmetic)
-  — build, merge (`+`/`-`) and edit function signatures.
-- [i2-wrapper](https://github.com/i2mint/i2/tree/master/.claude/skills/i2-wrapper)
-  — wrap functions to transform their interface, inputs and output.
-- [i2-castgraph](https://github.com/i2mint/i2/tree/master/.claude/skills/i2-castgraph)
-  — route data through a graph of type/representation conversions.
-- [i2-multi-object](https://github.com/i2mint/i2/tree/master/.claude/skills/i2-multi-object)
-  — compose a fixed set of functions or context managers (`Pipe`, `FuncFanout`, …).
+## For AI agents
+
+`i2` ships tooling for coding agents. If you are one, start here.
+
+**Skills** ([Agent Skills](https://agentskills.io) format), for any agent host.
+
+| Skill               | Use it to                                                                                                                                |
+|---------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| `i2-castgraph`      | routing data through a graph of type/representation conversions with i2.castgraph’s TransformationGraph — register pairwise transformers |
+| `i2-multi-object`   | composing and combining a fixed collection of functions                                                                                  |
+| `i2-sig-arithmetic` | building, merging, and editing function signatures with i2’s Sig — signature “+/-” arithmetic                                            |
+| `i2-signatures`     | introspecting function signatures and binding call arguments to parameter names with i2’s Sig class — turning an arbitrary               |
+| `i2-wrapper`        | wrapping functions to transform their interface                                                                                          |
+
+**The documentation, machine-readable**: [`llms.txt`](https://i2mint.github.io/i2/llms.txt) indexes every page; [`i2.md`](https://i2mint.github.io/i2/i2.md) is the whole documentation in one file; every page has a `.md` twin; [`objects.inv`](https://i2mint.github.io/i2/objects.inv) maps symbols to URLs. The full list, with install lines, is on the site’s [For AI agents](https://i2mint.github.io/i2/ai-agents.html) page.
+
+If you identify as a dinosaur, the rest of this README is written for you, starting at [Key Modules Overview]().
+
+<!-- epythet:agentic-readme:end -->
+
+## Install
+
+```default
+pip install i2
+```
+
+The smallest useful thing: read, edit and re-apply a function’s signature with `Sig`.
+
+```python
+from i2 import Sig
+
+def f(a, b=2, *, c=3):
+    return a + b * c
+
+Sig(f)               # <Sig (a, b=2, *, c=3)>
+Sig(f).names         # ['a', 'b', 'c']
+g = Sig(f).ch_names(a="x")(f)   # f itself, with its signature rewritten (g is f)
+Sig(g)               # <Sig (x, b=2, *, c=3)>
+g(1)                 # 7
+```
+
+The flat, single-file view of the whole documentation is [i2.md](https://i2mint.github.io/i2/i2.md).
 
 ## Key Modules Overview
 

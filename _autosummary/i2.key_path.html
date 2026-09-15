@@ -143,8 +143,8 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.key_path.str_path_to_obj" title="i2.key_path.str_path_to_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str_path_to_obj</span></code></a>(str_path, *[, sep])</p></td>
 <td><p>Loads and returns the object referenced by the string DOTPATH_TO_MODULE.OBJ_NAME</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">trans_generator_output</span></code>(trans)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.key_path.trans_generator_output" title="i2.key_path.trans_generator_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trans_generator_output</span></code></a>(trans)</p></td>
+<td><p>Make a decorator that applies <code class="docutils literal notranslate"><span class="pre">trans</span></code> to every item a generator function yields.</p></td>
 </tr>
 </tbody>
 </table>
@@ -157,8 +157,8 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.key_path.KeyPathTrans" title="i2.key_path.KeyPathTrans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KeyPathTrans</span></code></a>([sep, node_type, mk_new_node])</p></td>
 <td><p>Doing what StrKeyPath but where the store that is being operated on is not included in the object, but given to the method as input.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NoDefault</span></code>()</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.key_path.NoDefault" title="i2.key_path.NoDefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NoDefault</span></code></a>()</p></td>
+<td><p>Type of the <code class="docutils literal notranslate"><span class="pre">NO_DFLT</span></code> sentinel (no default value given).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.key_path.StrKeyPath" title="i2.key_path.StrKeyPath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StrKeyPath</span></code></a>([store, key_type, node_type, ...])</p></td>
 <td><p>A KeyPathMap, but where the key paths are expressed as string with a separator.</p></td>
@@ -233,7 +233,7 @@ instead of a nested structure, and do your mapping CRUD with that view.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.key_path.KeyPathTrans">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.key_path.</span></span><span class="sig-name descname"><span class="pre">KeyPathTrans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'dict'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mk_new_node</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/key_path.html#KeyPathTrans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.key_path.KeyPathTrans" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.key_path.KeyPathTrans'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
 <p>Doing what StrKeyPath but where the store that is being operated on is not included in the object, but
 given to the method as input.</p>
 <dl class="field-list simple">
@@ -391,6 +391,12 @@ recursively.</p>
 </span></code></pre></div>
 </div>
 </dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.key_path.NoDefault">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.key_path.</span></span><span class="sig-name descname"><span class="pre">NoDefault</span></span><a class="reference internal" href="../_modules/i2/key_path.html#NoDefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.key_path.NoDefault" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.key_path.NoDefault'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Type of the <code class="docutils literal notranslate"><span class="pre">NO_DFLT</span></code> sentinel (no default value given).</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.key_path.StrKeyPath">
@@ -565,6 +571,11 @@ the separator of string representations of the path</p></li>
 <dl class="field-list simple">
 </dl>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.key_path.trans_generator_output">
+<span class="sig-prename descclassname"><span class="pre">i2.key_path.</span></span><span class="sig-name descname"><span class="pre">trans_generator_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trans</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/key_path.html#trans_generator_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.key_path.trans_generator_output" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.key_path.trans_generator_output'">¶</a></dt>
+<dd><p>Make a decorator that applies <code class="docutils literal notranslate"><span class="pre">trans</span></code> to every item a generator function yields.</p>
+</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
@@ -581,6 +592,7 @@ the separator of string representations of the path</p></li>
 <li><a :data-current="activeSection === '#i2.key_path.KeyPathTrans.setitem_recursive'" class="reference internal" href="#i2.key_path.KeyPathTrans.setitem_recursive"><code class="docutils literal notranslate"><span class="pre">KeyPathTrans.setitem_recursive()</span></code></a></li>
 </ul>
 </li>
+<li><a :data-current="activeSection === '#i2.key_path.NoDefault'" class="reference internal" href="#i2.key_path.NoDefault"><code class="docutils literal notranslate"><span class="pre">NoDefault</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.key_path.StrKeyPath'" class="reference internal" href="#i2.key_path.StrKeyPath"><code class="docutils literal notranslate"><span class="pre">StrKeyPath</span></code></a><ul>
 <li><a :data-current="activeSection === '#i2.key_path.StrKeyPath.items'" class="reference internal" href="#i2.key_path.StrKeyPath.items"><code class="docutils literal notranslate"><span class="pre">StrKeyPath.items()</span></code></a></li>
 </ul>
@@ -589,6 +601,7 @@ the separator of string representations of the path</p></li>
 <li><a :data-current="activeSection === '#i2.key_path.obj_to_str_path'" class="reference internal" href="#i2.key_path.obj_to_str_path"><code class="docutils literal notranslate"><span class="pre">obj_to_str_path()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.key_path.rollout_dict'" class="reference internal" href="#i2.key_path.rollout_dict"><code class="docutils literal notranslate"><span class="pre">rollout_dict()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.key_path.str_path_to_obj'" class="reference internal" href="#i2.key_path.str_path_to_obj"><code class="docutils literal notranslate"><span class="pre">str_path_to_obj()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.key_path.trans_generator_output'" class="reference internal" href="#i2.key_path.trans_generator_output"><code class="docutils literal notranslate"><span class="pre">trans_generator_output()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -602,7 +615,7 @@ the separator of string representations of the path</p></li>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=946d7960"></script>
+<script src="../_static/documentation_options.js?v=d80f5ebb"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

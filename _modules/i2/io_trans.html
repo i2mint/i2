@@ -182,52 +182,55 @@
 </span><span id="line-5"><span class="sd">wrapped function itself.</span>
 </span><span id="line-6">
 </span><span id="line-7"><span class="sd">Output value tranformers can be conditioned on argument value and the wrapped function.</span>
-</span><span id="line-8">
-</span><span id="line-9"><span class="sd">"""</span>
-</span><span id="line-10">
-</span><span id="line-11"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-</span><span id="line-12"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-</span><span id="line-13">    <span class="n">Optional</span><span class="p">,</span>
-</span><span id="line-14">    <span class="n">TypedDict</span><span class="p">,</span>
-</span><span id="line-15"><span class="p">)</span>
-</span><span id="line-16"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Callable</span>
-</span><span id="line-17"><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span><span class="p">,</span> <span class="n">Parameter</span>
-</span><span id="line-18"><span class="kn">from</span><span class="w"> </span><span class="nn">pickle</span><span class="w"> </span><span class="kn">import</span> <span class="n">dumps</span>
-</span><span id="line-19">
-</span><span id="line-20"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span>
-</span><span id="line-21">
-</span><span id="line-22"><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
-</span><span id="line-23">
-</span><span id="line-24"><span class="c1"># from typing import _TypedDictMeta</span>
-</span><span id="line-25"><span class="c1"># Note: When doing the above, lint complains, but TypedDict alone doesn't do the trick.</span>
-</span><span id="line-26"><span class="c1"># _TypedDictMeta = TypedDict  # to show that TypedDict doesn't work</span>
-</span><span id="line-27"><span class="c1"># Raises     TypeError: TypedDict does not support instance and class checks</span>
-</span><span id="line-28"><span class="c1"># So we do the following hack:</span>
-</span><span id="line-29"><span class="n">_TypedDictMeta</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">)</span>
+</span><span id="line-8"><span class="sd">"""</span>
+</span><span id="line-9">
+</span><span id="line-10"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+</span><span id="line-11"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="line-12">    <span class="n">Optional</span><span class="p">,</span>
+</span><span id="line-13">    <span class="n">TypedDict</span><span class="p">,</span>
+</span><span id="line-14"><span class="p">)</span>
+</span><span id="line-15"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Callable</span>
+</span><span id="line-16"><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span><span class="p">,</span> <span class="n">Parameter</span>
+</span><span id="line-17"><span class="kn">from</span><span class="w"> </span><span class="nn">pickle</span><span class="w"> </span><span class="kn">import</span> <span class="n">dumps</span>
+</span><span id="line-18">
+</span><span id="line-19"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span>
+</span><span id="line-20">
+</span><span id="line-21"><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+</span><span id="line-22">
+</span><span id="line-23"><span class="c1"># from typing import _TypedDictMeta</span>
+</span><span id="line-24"><span class="c1"># Note: When doing the above, lint complains, but TypedDict alone doesn't do the trick.</span>
+</span><span id="line-25"><span class="c1"># _TypedDictMeta = TypedDict  # to show that TypedDict doesn't work</span>
+</span><span id="line-26"><span class="c1"># Raises     TypeError: TypedDict does not support instance and class checks</span>
+</span><span id="line-27"><span class="c1"># So we do the following hack:</span>
+</span><span id="line-28"><span class="n">_TypedDictMeta</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">)</span>
+</span><span id="line-29">
 </span><span id="line-30">
-</span><span id="line-31">
-</span><span id="line-32"><span class="c1"># monkey patching WRAPPER_ASSIGNMENTS to get "proper" wrapping (adding defaults and kwdefaults</span>
-</span><span id="line-33"><span class="n">wrapper_assignments</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="line-34">    <span class="s2">"__module__"</span><span class="p">,</span>
-</span><span id="line-35">    <span class="s2">"__name__"</span><span class="p">,</span>
-</span><span id="line-36">    <span class="s2">"__qualname__"</span><span class="p">,</span>
-</span><span id="line-37">    <span class="s2">"__doc__"</span><span class="p">,</span>
-</span><span id="line-38">    <span class="s2">"__annotations__"</span><span class="p">,</span>
-</span><span id="line-39">    <span class="s2">"__defaults__"</span><span class="p">,</span>
-</span><span id="line-40">    <span class="s2">"__kwdefaults__"</span><span class="p">,</span>
-</span><span id="line-41"><span class="p">)</span>
-</span><span id="line-42">
-</span><span id="line-43"><span class="n">update_wrapper</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">update_wrapper</span>
-</span><span id="line-44"><span class="n">update_wrapper</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="line-45">    <span class="n">functools</span><span class="o">.</span><span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span>
-</span><span id="line-46">    <span class="n">functools</span><span class="o">.</span><span class="n">WRAPPER_UPDATES</span><span class="p">,</span>
-</span><span id="line-47"><span class="p">)</span>
-</span><span id="line-48"><span class="n">wraps</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">wraps</span>
-</span><span id="line-49"><span class="n">wraps</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">WRAPPER_UPDATES</span><span class="p">)</span>
+</span><span id="line-31"><span class="c1"># monkey patching WRAPPER_ASSIGNMENTS to get "proper" wrapping (adding defaults and kwdefaults</span>
+</span><span id="line-32"><span class="n">wrapper_assignments</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-33">    <span class="s2">"__module__"</span><span class="p">,</span>
+</span><span id="line-34">    <span class="s2">"__name__"</span><span class="p">,</span>
+</span><span id="line-35">    <span class="s2">"__qualname__"</span><span class="p">,</span>
+</span><span id="line-36">    <span class="s2">"__doc__"</span><span class="p">,</span>
+</span><span id="line-37">    <span class="s2">"__annotations__"</span><span class="p">,</span>
+</span><span id="line-38">    <span class="s2">"__defaults__"</span><span class="p">,</span>
+</span><span id="line-39">    <span class="s2">"__kwdefaults__"</span><span class="p">,</span>
+</span><span id="line-40"><span class="p">)</span>
+</span><span id="line-41">
+</span><span id="line-42"><span class="n">update_wrapper</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">update_wrapper</span>
+</span><span id="line-43"><span class="n">update_wrapper</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-44">    <span class="n">functools</span><span class="o">.</span><span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span>
+</span><span id="line-45">    <span class="n">functools</span><span class="o">.</span><span class="n">WRAPPER_UPDATES</span><span class="p">,</span>
+</span><span id="line-46"><span class="p">)</span>
+</span><span id="line-47"><span class="n">wraps</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">wraps</span>
+</span><span id="line-48"><span class="n">wraps</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">WRAPPER_UPDATES</span><span class="p">)</span>
+</span><span id="line-49">
 </span><span id="line-50">
-</span><span id="line-51">
-</span><span id="line-52"><span class="k">def</span><span class="w"> </span><span class="nf">identity_func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-</span><span id="line-53">    <span class="k">return</span> <span class="n">x</span>
+<div class="viewcode-block" id="identity_func">
+<a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.identity_func">[docs]</a>
+</span><span id="line-51"><span class="k">def</span><span class="w"> </span><span class="nf">identity_func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="line-52"><span class="w">    </span><span class="sd">"""Return the input unchanged."""</span>
+</span><span id="line-53">    <span class="k">return</span> <span class="n">x</span></div>
+
 </span><span id="line-54">
 </span><span id="line-55">
 <div class="viewcode-block" id="IoTrans">
@@ -414,96 +417,100 @@
 
 </span><span id="line-223">
 </span><span id="line-224">
+<div class="viewcode-block" id="pickle_out_trans">
+<a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.pickle_out_trans">[docs]</a>
 </span><span id="line-225"><span class="k">def</span><span class="w"> </span><span class="nf">pickle_out_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-</span><span id="line-226">    <span class="k">return</span> <span class="n">dumps</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span>
-</span><span id="line-227">
+</span><span id="line-226"><span class="w">    </span><span class="sd">"""Output transformer that pickles the value (``pickle.dumps``)."""</span>
+</span><span id="line-227">    <span class="k">return</span> <span class="n">dumps</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span></div>
+
 </span><span id="line-228">
-</span><span id="line-229"><span class="n">PickleFallbackTypedBasedOutIoTrans</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
-</span><span id="line-230">    <span class="n">TypedBasedOutIoTrans</span><span class="p">,</span> <span class="n">dflt_trans_func</span><span class="o">=</span><span class="n">dumps</span>
-</span><span id="line-231"><span class="p">)</span>
-</span><span id="line-232">
-</span><span id="line-233"><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-</span><span id="line-234"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span id="line-235">
+</span><span id="line-229">
+</span><span id="line-230"><span class="n">PickleFallbackTypedBasedOutIoTrans</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+</span><span id="line-231">    <span class="n">TypedBasedOutIoTrans</span><span class="p">,</span> <span class="n">dflt_trans_func</span><span class="o">=</span><span class="n">dumps</span>
+</span><span id="line-232"><span class="p">)</span>
+</span><span id="line-233">
+</span><span id="line-234"><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="line-235"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 </span><span id="line-236">
+</span><span id="line-237">
 <div class="viewcode-block" id="cast_to_jdict">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.cast_to_jdict">[docs]</a>
-</span><span id="line-237"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-</span><span id="line-238"><span class="w">    </span><span class="sd">"""Tries to cast to a json-friendly dictionary.</span>
-</span><span id="line-239">
-</span><span id="line-240"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('3')</span>
-</span><span id="line-241"><span class="sd">    [3]</span>
-</span><span id="line-242"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[3]")</span>
-</span><span id="line-243"><span class="sd">    [3]</span>
-</span><span id="line-244"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[4,2]")</span>
-</span><span id="line-245"><span class="sd">    [4, 2]</span>
-</span><span id="line-246"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
-</span><span id="line-247"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
-</span><span id="line-248"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('{"here": "is", "a": {"nested": "json"}, "with": [null, true, false, 1, 2.3]}')</span>
-</span><span id="line-249"><span class="sd">    {'here': 'is', 'a': {'nested': 'json'}, 'with': [None, True, False, 1, 2.3]}</span>
-</span><span id="line-250">
-</span><span id="line-251"><span class="sd">    And csvs too:</span>
-</span><span id="line-252">
-</span><span id="line-253"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
-</span><span id="line-254"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
-</span><span id="line-255"><span class="sd">    """</span>
-</span><span id="line-256">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-257">        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-258">        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="line-259">            <span class="n">first_char</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="line-260">            <span class="k">if</span> <span class="n">first_char</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"["</span><span class="p">,</span> <span class="s2">"{"</span><span class="p">}:</span>
-</span><span id="line-261">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-262">            <span class="k">elif</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"true"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">,</span> <span class="s2">"null"</span><span class="p">]:</span>
-</span><span id="line-263">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-264">            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-</span><span id="line-265">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-266">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-267">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
-</span><span id="line-268">                    <span class="s2">"["</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s2">"]"</span>
-</span><span id="line-269">                <span class="p">)</span>  <span class="c1"># wrap in brackets and call json.loads</span>
-</span><span id="line-270">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-271">            <span class="k">return</span> <span class="s2">""</span>
-</span><span id="line-272">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-273">        <span class="k">return</span> <span class="n">value</span></div>
+</span><span id="line-238"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span id="line-239"><span class="w">    </span><span class="sd">"""Tries to cast to a json-friendly dictionary.</span>
+</span><span id="line-240">
+</span><span id="line-241"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('3')</span>
+</span><span id="line-242"><span class="sd">    [3]</span>
+</span><span id="line-243"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[3]")</span>
+</span><span id="line-244"><span class="sd">    [3]</span>
+</span><span id="line-245"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[4,2]")</span>
+</span><span id="line-246"><span class="sd">    [4, 2]</span>
+</span><span id="line-247"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
+</span><span id="line-248"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
+</span><span id="line-249"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('{"here": "is", "a": {"nested": "json"}, "with": [null, true, false, 1, 2.3]}')</span>
+</span><span id="line-250"><span class="sd">    {'here': 'is', 'a': {'nested': 'json'}, 'with': [None, True, False, 1, 2.3]}</span>
+</span><span id="line-251">
+</span><span id="line-252"><span class="sd">    And csvs too:</span>
+</span><span id="line-253">
+</span><span id="line-254"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
+</span><span id="line-255"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
+</span><span id="line-256"><span class="sd">    """</span>
+</span><span id="line-257">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-258">        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-259">        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+</span><span id="line-260">            <span class="n">first_char</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="line-261">            <span class="k">if</span> <span class="n">first_char</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"["</span><span class="p">,</span> <span class="s2">"{"</span><span class="p">}:</span>
+</span><span id="line-262">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-263">            <span class="k">elif</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"true"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">,</span> <span class="s2">"null"</span><span class="p">]:</span>
+</span><span id="line-264">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-265">            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span id="line-266">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-267">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-268">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+</span><span id="line-269">                    <span class="s2">"["</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s2">"]"</span>
+</span><span id="line-270">                <span class="p">)</span>  <span class="c1"># wrap in brackets and call json.loads</span>
+</span><span id="line-271">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-272">            <span class="k">return</span> <span class="s2">""</span>
+</span><span id="line-273">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-274">        <span class="k">return</span> <span class="n">value</span></div>
 
-</span><span id="line-274">
 </span><span id="line-275">
+</span><span id="line-276">
 <div class="viewcode-block" id="cast_to_list">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.cast_to_list">[docs]</a>
-</span><span id="line-276"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-</span><span id="line-277"><span class="w">    </span><span class="sd">"""Tries to case to a list (with json friendly elements)</span>
-</span><span id="line-278">
-</span><span id="line-279"><span class="sd">    &gt;&gt;&gt; cast_to_list('3')</span>
-</span><span id="line-280"><span class="sd">    [3]</span>
-</span><span id="line-281"><span class="sd">    &gt;&gt;&gt; cast_to_list("[3]")</span>
-</span><span id="line-282"><span class="sd">    [3]</span>
-</span><span id="line-283"><span class="sd">    &gt;&gt;&gt; cast_to_list("[4,2]")</span>
-</span><span id="line-284"><span class="sd">    [4, 2]</span>
-</span><span id="line-285"><span class="sd">    &gt;&gt;&gt; cast_to_list('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
-</span><span id="line-286"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
-</span><span id="line-287">
-</span><span id="line-288"><span class="sd">    And csvs too:</span>
-</span><span id="line-289">
-</span><span id="line-290"><span class="sd">    &gt;&gt;&gt; cast_to_list('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
-</span><span id="line-291"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
-</span><span id="line-292"><span class="sd">    """</span>
-</span><span id="line-293">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-294">        <span class="n">value</span> <span class="o">=</span> <span class="n">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-295">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-</span><span id="line-296">        <span class="k">return</span> <span class="n">value</span>
-</span><span id="line-297">    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"tolist"</span><span class="p">):</span>  <span class="c1"># meant for numpy arrays</span>
-</span><span id="line-298">        <span class="c1"># what other potential attributes to check for?</span>
-</span><span id="line-299">        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-</span><span id="line-300">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-301">        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
-</span><span id="line-302">            <span class="n">value</span>
-</span><span id="line-303">        <span class="p">)</span>  <span class="c1"># will work with set, tuple, and other iterables (not recursively though: just level 0)</span></div>
+</span><span id="line-277"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span id="line-278"><span class="w">    </span><span class="sd">"""Tries to case to a list (with json friendly elements)</span>
+</span><span id="line-279">
+</span><span id="line-280"><span class="sd">    &gt;&gt;&gt; cast_to_list('3')</span>
+</span><span id="line-281"><span class="sd">    [3]</span>
+</span><span id="line-282"><span class="sd">    &gt;&gt;&gt; cast_to_list("[3]")</span>
+</span><span id="line-283"><span class="sd">    [3]</span>
+</span><span id="line-284"><span class="sd">    &gt;&gt;&gt; cast_to_list("[4,2]")</span>
+</span><span id="line-285"><span class="sd">    [4, 2]</span>
+</span><span id="line-286"><span class="sd">    &gt;&gt;&gt; cast_to_list('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
+</span><span id="line-287"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
+</span><span id="line-288">
+</span><span id="line-289"><span class="sd">    And csvs too:</span>
+</span><span id="line-290">
+</span><span id="line-291"><span class="sd">    &gt;&gt;&gt; cast_to_list('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
+</span><span id="line-292"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
+</span><span id="line-293"><span class="sd">    """</span>
+</span><span id="line-294">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-295">        <span class="n">value</span> <span class="o">=</span> <span class="n">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-296">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+</span><span id="line-297">        <span class="k">return</span> <span class="n">value</span>
+</span><span id="line-298">    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"tolist"</span><span class="p">):</span>  <span class="c1"># meant for numpy arrays</span>
+</span><span id="line-299">        <span class="c1"># what other potential attributes to check for?</span>
+</span><span id="line-300">        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</span><span id="line-301">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-302">        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+</span><span id="line-303">            <span class="n">value</span>
+</span><span id="line-304">        <span class="p">)</span>  <span class="c1"># will work with set, tuple, and other iterables (not recursively though: just level 0)</span></div>
 
-</span><span id="line-304">
 </span><span id="line-305">
-</span><span id="line-306"><span class="c1"># @dataclass</span>
-</span><span id="line-307"><span class="c1"># class PickleFallbackTypedBasedOutIoTrans(TypedBasedOutIoTrans):</span>
-</span><span id="line-308"><span class="c1">#     dflt_trans_func = pickle_out_trans</span>
+</span><span id="line-306">
+</span><span id="line-307"><span class="c1"># @dataclass</span>
+</span><span id="line-308"><span class="c1"># class PickleFallbackTypedBasedOutIoTrans(TypedBasedOutIoTrans):</span>
+</span><span id="line-309"><span class="c1">#     dflt_trans_func = pickle_out_trans</span>
 </span></code></pre></div>
     </div></div>
           </main>
@@ -517,7 +524,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=946d7960"></script>
+    <script src="../../_static/documentation_options.js?v=d80f5ebb"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

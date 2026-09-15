@@ -146,8 +146,8 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.get_callable_from_factory_if_no_arguments" title="i2.deco.get_callable_from_factory_if_no_arguments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_callable_from_factory_if_no_arguments</span></code></a>(...)</p></td>
 <td><p>Will return the input itself if it's a callable with at least one argument.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code>(obj)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.identity" title="i2.deco.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(obj)</p></td>
+<td><p>Return the input unchanged.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.input_output_decorator" title="i2.deco.input_output_decorator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_output_decorator</span></code></a>([preprocess, postprocess])</p></td>
 <td><p>Makes a decorator that preprocesses inputs and postprocesses outputs.</p></td>
@@ -161,8 +161,8 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.mk_call_logger" title="i2.deco.mk_call_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_call_logger</span></code></a>([logger, what_to_log, ...])</p></td>
 <td><p>Makes a decorator that logs each call to the wrapped function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_input_and_output_method_wrapper</span></code>([...])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.mk_input_and_output_method_wrapper" title="i2.deco.mk_input_and_output_method_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_input_and_output_method_wrapper</span></code></a>([...])</p></td>
+<td><p>Make a method decorator transforming named arguments (<code class="docutils literal notranslate"><span class="pre">arg_trans</span></code>) and, if given, the output (<code class="docutils literal notranslate"><span class="pre">method_output_trans</span></code>).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.mk_method_trans_spec_from_methods_specs_dict" title="i2.deco.mk_method_trans_spec_from_methods_specs_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_method_trans_spec_from_methods_specs_dict</span></code></a>(...)</p></td>
 <td><p>Utility to make inputs for wrap_class_methods_input_and_output more easily.</p></td>
@@ -170,23 +170,23 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.postprocess" title="i2.deco.postprocess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess</span></code></a>(post[, caught_post_errors, ...])</p></td>
 <td><p>Add some post-processing after a function</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess</span></code>(pre)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.preprocess" title="i2.deco.preprocess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess</span></code></a>(pre)</p></td>
+<td><p>Make a decorator that feeds the wrapped function the output of <code class="docutils literal notranslate"><span class="pre">pre</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.preprocess_arguments" title="i2.deco.preprocess_arguments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess_arguments</span></code></a>(pre)</p></td>
-<td><p>Apply a function to args, kwargs and use the transformed in the decorated function</p></td>
+<td><p>Make a decorator that lets <code class="docutils literal notranslate"><span class="pre">pre</span></code> rewrite the <code class="docutils literal notranslate"><span class="pre">(args,</span> <span class="pre">kwargs)</span></code> of every call.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.transform_args" title="i2.deco.transform_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_args</span></code></a>([dflt_trans_func])</p></td>
 <td><p>Make a decorator that transforms function arguments before calling the function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_class_method_input_and_output</span></code>(cls, ...)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.transform_class_method_input_and_output" title="i2.deco.transform_class_method_input_and_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_class_method_input_and_output</span></code></a>(cls, ...)</p></td>
+<td><p>Replace <code class="docutils literal notranslate"><span class="pre">cls.method</span></code> in place with a version whose named arguments are transformed by <code class="docutils literal notranslate"><span class="pre">arg_trans</span></code> and whose output by <code class="docutils literal notranslate"><span class="pre">method_output_trans</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_instance_method_input_and_output</span></code>(...)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.transform_instance_method_input_and_output" title="i2.deco.transform_instance_method_input_and_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_instance_method_input_and_output</span></code></a>(...)</p></td>
+<td><p>Instance-level counterpart of <code class="docutils literal notranslate"><span class="pre">transform_class_method_input_and_output</span></code>; experimental (it emits a warning saying so).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transparently_wrapped</span></code>(func)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.transparently_wrapped" title="i2.deco.transparently_wrapped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transparently_wrapped</span></code></a>(func)</p></td>
+<td><p>Wrap <code class="docutils literal notranslate"><span class="pre">func</span></code> so it is called with its positional arguments packed in one tuple.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.wrap_class_methods" title="i2.deco.wrap_class_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_class_methods</span></code></a>([...])</p></td>
 <td><p>Make a decorator that wraps specific methods.</p></td>
@@ -194,14 +194,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.wrap_class_methods_input_and_output" title="i2.deco.wrap_class_methods_input_and_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_class_methods_input_and_output</span></code></a>([...])</p></td>
 <td><p>Make a decorator that wraps specific methods, transforming specific argument values a nd output values.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_instance_methods</span></code>([...])</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.wrap_instance_methods" title="i2.deco.wrap_instance_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_instance_methods</span></code></a>([...])</p></td>
+<td><p>Make a function that wraps the named methods of an instance, as <code class="docutils literal notranslate"><span class="pre">wrap_class_methods_input_and_output</span></code> does for a class (experimental).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_method_output</span></code>(wrapper_func)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.wrap_method_output" title="i2.deco.wrap_method_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_method_output</span></code></a>(wrapper_func)</p></td>
+<td><p>Make a method decorator that applies <code class="docutils literal notranslate"><span class="pre">wrapper_func</span></code> to the method's output.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wraps</span></code>(wrapped[, assigned, updated])</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.wraps" title="i2.deco.wraps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wraps</span></code></a>(wrapped[, assigned, updated])</p></td>
+<td><p>Copy of <code class="docutils literal notranslate"><span class="pre">functools.wraps</span></code> (kept local: it avoids a Jupyter tab-completion issue).</p></td>
 </tr>
 </tbody>
 </table>
@@ -217,14 +217,14 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.OutputPostProcessingError" title="i2.deco.OutputPostProcessingError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OutputPostProcessingError</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Raised by <code class="docutils literal notranslate"><span class="pre">postprocess</span></code> when the post-processing function fails.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.deco.FuncFactory">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">FuncFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#FuncFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.FuncFactory" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.FuncFactory'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
 <p>Make a function factory.</p>
 <p>but more convenient and helpful (e.g. is picklable, produces functions with
 signatures, etc.)</p>
@@ -302,11 +302,22 @@ problematic (e.g. their not picklable).</p>
 </span><span id="line-5"><span class="go">'hello'</span>
 </span></code></pre></div>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.deco.FuncFactory.to_jdict">
+<span class="sig-name descname"><span class="pre">to_jdict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#FuncFactory.to_jdict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.FuncFactory.to_jdict" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.FuncFactory.to_jdict'">¶</a></dt>
+<dd><p>Return a <code class="docutils literal notranslate"><span class="pre">{"func":</span> <span class="pre">...}</span></code> dict from which <code class="docutils literal notranslate"><span class="pre">from_jdict</span></code> rebuilds the factory.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="i2.deco.FuncFactory.wrap">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#FuncFactory.wrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.FuncFactory.wrap" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.FuncFactory.wrap'">¶</a></dt>
+<dd><p>Return a <code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code> constructor with <code class="docutils literal notranslate"><span class="pre">include</span></code> and <code class="docutils literal notranslate"><span class="pre">exclude</span></code> fixed.</p>
+</dd></dl>
 </dd></dl>
 <dl class="py exception">
 <dt class="sig sig-object py" id="i2.deco.OutputPostProcessingError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">OutputPostProcessingError</span></span><a class="reference internal" href="../_modules/i2/deco.html#OutputPostProcessingError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.OutputPostProcessingError" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.OutputPostProcessingError'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Raised by <code class="docutils literal notranslate"><span class="pre">postprocess</span></code> when the post-processing function fails.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.deco.add_method">
@@ -524,6 +535,16 @@ callable object that the user presumably is seeking to get</p>
 </dl>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.identity">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#identity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.identity" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.identity'">¶</a></dt>
+<dd><p>Return the input unchanged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeVar" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>(<code class="docutils literal notranslate"><span class="pre">T</span></code>)</span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.deco.input_output_decorator">
 <span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">input_output_decorator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preprocess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postprocess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#input_output_decorator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.input_output_decorator" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.input_output_decorator'">¶</a></dt>
 <dd><p>Makes a decorator that preprocesses inputs and postprocesses outputs.
@@ -596,11 +617,7 @@ to transform the returned value before returning it.</p>
 </span><span id="line-50"><span class="go">This is not what you'd expect: The doc of the class, not the function</span>
 </span></code></pre></div>
 </div>
-<p># &gt;&gt;&gt;
-# &gt;&gt;&gt; f.static_method = input_output_decorator(preprocess=lambda x: ‘”’ + x + ‘”’,
-# …                                          postprocess=lambda x: x + ‘!!!’)(f.static_method)
-# &gt;&gt;&gt; print(ff.static_method(‘big’, ‘eyes’))</p>
-<p class="rubric">What big “eyes” you have!!!</p>
+<p># &gt;&gt;&gt;</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.deco.kwargs_for_func">
@@ -670,7 +687,7 @@ merging function</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>logger</strong> – The actual function that logs stuff. Default is print. The “stuff” it logs is given by
 the what_to_log argument (a function).</p></li>
-<li><p><strong>what_to_log</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[[<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>]</span>) – A function taking inputs (func, args, kwargs) of the call, and returning something to log
+<li><p><strong>what_to_log</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[[<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>]</span>) – A function taking inputs (func, args, kwargs) of the call, and returning something to log
 (usually, and by default, a string)</p></li>
 <li><p><strong>func_is_bounded</strong> – Whether the function is bounded (like a method) or not</p></li>
 </ul>
@@ -733,6 +750,12 @@ the what_to_log argument (a function).</p></li>
 </div>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.mk_input_and_output_method_wrapper">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">mk_input_and_output_method_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_output_trans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">arg_trans</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#mk_input_and_output_method_wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.mk_input_and_output_method_wrapper" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.mk_input_and_output_method_wrapper'">¶</a></dt>
+<dd><p>Make a method decorator transforming named arguments (<code class="docutils literal notranslate"><span class="pre">arg_trans</span></code>) and, if
+given, the output (<code class="docutils literal notranslate"><span class="pre">method_output_trans</span></code>).</p>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.deco.mk_method_trans_spec_from_methods_specs_dict">
 <span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">mk_method_trans_spec_from_methods_specs_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methods_specs_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#mk_method_trans_spec_from_methods_specs_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.mk_method_trans_spec_from_methods_specs_dict" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.mk_method_trans_spec_from_methods_specs_dict'">¶</a></dt>
 <dd><p>Utility to make inputs for wrap_class_methods_input_and_output more easily.</p>
@@ -783,13 +806,10 @@ values are the trans_spec dicts that should be associated to those methods</p>
 </div>
 <p>Use cases:</p>
 <ul class="simple">
-<li><dl class="simple">
-<dt>Changing a generator into a container returning function</dt><dd><p>In many situations, writing a generator is simpler than writing a function
+<li><p>Changing a generator into a container returning function
+In many situations, writing a generator is simpler than writing a function
 that accumulates a list or a dict etc.
-So here, you just write the generator and tag this decorator on top, to get the same effect.</p>
-</dd>
-</dl>
-</li>
+So here, you just write the generator and tag this decorator on top, to get the same effect.</p></li>
 </ul>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span>
 </span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@postprocess</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
@@ -825,17 +845,50 @@ So here, you just write the generator and tag this decorator on top, to get the 
 </span></code></pre></div>
 </div>
 <ul class="simple">
-<li><dl class="simple">
-<dt>Using a function that does a lot to make several functions that do less.</dt><dd><p>(e.g. Extracting/making a python object from a function returning a raw http <a href="#id1"><span class="problematic" id="id2">response_</span></a></p>
-</dd>
-</dl>
-</li>
+<li><p>Using a function that does a lot to make several functions that do less.
+(e.g. Extracting/making a python object from a function returning a raw http response)</p></li>
 </ul>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.preprocess">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">preprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pre</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#preprocess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.preprocess" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.preprocess'">¶</a></dt>
+<dd><p>Make a decorator that feeds the wrapped function the output of <code class="docutils literal notranslate"><span class="pre">pre</span></code>.</p>
+<p>The wrapped function receives a single argument: <code class="docutils literal notranslate"><span class="pre">pre(*args,</span> <span class="pre">**kwargs)</span></code>, computed
+from whatever the caller passed.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@preprocess</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</span><span id="line-2"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">double</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">double</span><span class="p">(</span><span class="s2">"21"</span><span class="p">)</span>
+</span><span id="line-5"><span class="go">42</span>
+</span></code></pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="docutils literal notranslate"><span class="pre">postprocess</span></code>: apply a function to the output instead.
+<code class="docutils literal notranslate"><span class="pre">preprocess_arguments</span></code>: <code class="docutils literal notranslate"><span class="pre">pre</span></code> returns the <code class="docutils literal notranslate"><span class="pre">(args,</span> <span class="pre">kwargs)</span></code> pair to call the
+wrapped function with, instead of a single value.</p>
+</div>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.deco.preprocess_arguments">
 <span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">preprocess_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pre</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#preprocess_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.preprocess_arguments" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.preprocess_arguments'">¶</a></dt>
-<dd><p>Apply a function to args, kwargs and use the transformed in the decorated function</p>
+<dd><p>Make a decorator that lets <code class="docutils literal notranslate"><span class="pre">pre</span></code> rewrite the <code class="docutils literal notranslate"><span class="pre">(args,</span> <span class="pre">kwargs)</span></code> of every call.</p>
+<p><code class="docutils literal notranslate"><span class="pre">pre(*args,</span> <span class="pre">**kwargs)</span></code> must return an <code class="docutils literal notranslate"><span class="pre">(args,</span> <span class="pre">kwargs)</span></code> pair; the wrapped
+function is then called with that pair.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@preprocess_arguments</span><span class="p">(</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="p">(</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">),</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="line-3"><span class="gp">... </span><span class="p">))</span>
+</span><span id="line-4"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+</span><span id="line-5"><span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">add</span><span class="p">(</span><span class="s2">"1"</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s2">"2"</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">3</span>
+</span></code></pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="docutils literal notranslate"><span class="pre">preprocess</span></code>: <code class="docutils literal notranslate"><span class="pre">pre</span></code> returns a single value that becomes the only argument.
+<code class="docutils literal notranslate"><span class="pre">transform_args</span></code>: transform named arguments one by one.</p>
+</div>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.deco.transform_args">
@@ -897,6 +950,23 @@ For example:</p>
 </span><span id="line-35"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'a=ROOT/foo, b=ROOT/bar, c=default_c'</span>  <span class="c1"># defaults still work</span>
 </span></code></pre></div>
 </div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.transform_class_method_input_and_output">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">transform_class_method_input_and_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_output_trans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">arg_trans</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#transform_class_method_input_and_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.transform_class_method_input_and_output" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.transform_class_method_input_and_output'">¶</a></dt>
+<dd><p>Replace <code class="docutils literal notranslate"><span class="pre">cls.method</span></code> in place with a version whose named arguments are
+transformed by <code class="docutils literal notranslate"><span class="pre">arg_trans</span></code> and whose output by <code class="docutils literal notranslate"><span class="pre">method_output_trans</span></code>.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.transform_instance_method_input_and_output">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">transform_instance_method_input_and_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_output_trans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">arg_trans</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#transform_instance_method_input_and_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.transform_instance_method_input_and_output" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.transform_instance_method_input_and_output'">¶</a></dt>
+<dd><p>Instance-level counterpart of <code class="docutils literal notranslate"><span class="pre">transform_class_method_input_and_output</span></code>;
+experimental (it emits a warning saying so).</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.transparently_wrapped">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">transparently_wrapped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#transparently_wrapped"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.transparently_wrapped" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.transparently_wrapped'">¶</a></dt>
+<dd><p>Wrap <code class="docutils literal notranslate"><span class="pre">func</span></code> so it is called with its positional arguments packed in one tuple.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.deco.wrap_class_methods">
@@ -1165,27 +1235,57 @@ Of course, this is just pretend. Don’t use this with real waveforms. It won’
 </span></code></pre></div>
 </div>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.wrap_instance_methods">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">wrap_instance_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_return_a_copy_of_the_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_raise_error_if_non_existent_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">method_trans_spec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#wrap_instance_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.wrap_instance_methods" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.wrap_instance_methods'">¶</a></dt>
+<dd><p>Make a function that wraps the named methods of an instance, as
+<code class="docutils literal notranslate"><span class="pre">wrap_class_methods_input_and_output</span></code> does for a class (experimental).</p>
+<p><code class="docutils literal notranslate"><span class="pre">_return_a_copy_of_the_class</span></code> is accepted for symmetry but not used.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.wrap_method_output">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">wrap_method_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapper_func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#wrap_method_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.wrap_method_output" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.wrap_method_output'">¶</a></dt>
+<dd><p>Make a method decorator that applies <code class="docutils literal notranslate"><span class="pre">wrapper_func</span></code> to the method’s output.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.wraps">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">wraps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assigned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('__module__',</span> <span class="pre">'__name__',</span> <span class="pre">'__qualname__',</span> <span class="pre">'__doc__',</span> <span class="pre">'__annotations__',</span> <span class="pre">'__type_params__')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('__dict__',)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#wraps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.wraps" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.wraps'">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">functools.wraps</span></code> (kept local: it avoids a Jupyter tab-completion issue).</p>
+</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#i2.deco.FuncFactory'" class="reference internal" href="#i2.deco.FuncFactory"><code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.FuncFactory'" class="reference internal" href="#i2.deco.FuncFactory"><code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code></a><ul>
+<li><a :data-current="activeSection === '#i2.deco.FuncFactory.to_jdict'" class="reference internal" href="#i2.deco.FuncFactory.to_jdict"><code class="docutils literal notranslate"><span class="pre">FuncFactory.to_jdict()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.FuncFactory.wrap'" class="reference internal" href="#i2.deco.FuncFactory.wrap"><code class="docutils literal notranslate"><span class="pre">FuncFactory.wrap()</span></code></a></li>
+</ul>
+</li>
 <li><a :data-current="activeSection === '#i2.deco.OutputPostProcessingError'" class="reference internal" href="#i2.deco.OutputPostProcessingError"><code class="docutils literal notranslate"><span class="pre">OutputPostProcessingError</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.add_method'" class="reference internal" href="#i2.deco.add_method"><code class="docutils literal notranslate"><span class="pre">add_method()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.assert_attrs'" class="reference internal" href="#i2.deco.assert_attrs"><code class="docutils literal notranslate"><span class="pre">assert_attrs()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.double_up_as_factory'" class="reference internal" href="#i2.deco.double_up_as_factory"><code class="docutils literal notranslate"><span class="pre">double_up_as_factory()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.ensure_iterable_args'" class="reference internal" href="#i2.deco.ensure_iterable_args"><code class="docutils literal notranslate"><span class="pre">ensure_iterable_args()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.get_callable_from_factory_if_no_arguments'" class="reference internal" href="#i2.deco.get_callable_from_factory_if_no_arguments"><code class="docutils literal notranslate"><span class="pre">get_callable_from_factory_if_no_arguments()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.identity'" class="reference internal" href="#i2.deco.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.input_output_decorator'" class="reference internal" href="#i2.deco.input_output_decorator"><code class="docutils literal notranslate"><span class="pre">input_output_decorator()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.kwargs_for_func'" class="reference internal" href="#i2.deco.kwargs_for_func"><code class="docutils literal notranslate"><span class="pre">kwargs_for_func()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.mk_args_kwargs_merger'" class="reference internal" href="#i2.deco.mk_args_kwargs_merger"><code class="docutils literal notranslate"><span class="pre">mk_args_kwargs_merger()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.mk_call_logger'" class="reference internal" href="#i2.deco.mk_call_logger"><code class="docutils literal notranslate"><span class="pre">mk_call_logger()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.mk_input_and_output_method_wrapper'" class="reference internal" href="#i2.deco.mk_input_and_output_method_wrapper"><code class="docutils literal notranslate"><span class="pre">mk_input_and_output_method_wrapper()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.mk_method_trans_spec_from_methods_specs_dict'" class="reference internal" href="#i2.deco.mk_method_trans_spec_from_methods_specs_dict"><code class="docutils literal notranslate"><span class="pre">mk_method_trans_spec_from_methods_specs_dict()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.postprocess'" class="reference internal" href="#i2.deco.postprocess"><code class="docutils literal notranslate"><span class="pre">postprocess()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.preprocess'" class="reference internal" href="#i2.deco.preprocess"><code class="docutils literal notranslate"><span class="pre">preprocess()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.preprocess_arguments'" class="reference internal" href="#i2.deco.preprocess_arguments"><code class="docutils literal notranslate"><span class="pre">preprocess_arguments()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.transform_args'" class="reference internal" href="#i2.deco.transform_args"><code class="docutils literal notranslate"><span class="pre">transform_args()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.transform_class_method_input_and_output'" class="reference internal" href="#i2.deco.transform_class_method_input_and_output"><code class="docutils literal notranslate"><span class="pre">transform_class_method_input_and_output()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.transform_instance_method_input_and_output'" class="reference internal" href="#i2.deco.transform_instance_method_input_and_output"><code class="docutils literal notranslate"><span class="pre">transform_instance_method_input_and_output()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.transparently_wrapped'" class="reference internal" href="#i2.deco.transparently_wrapped"><code class="docutils literal notranslate"><span class="pre">transparently_wrapped()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.wrap_class_methods'" class="reference internal" href="#i2.deco.wrap_class_methods"><code class="docutils literal notranslate"><span class="pre">wrap_class_methods()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.wrap_class_methods_input_and_output'" class="reference internal" href="#i2.deco.wrap_class_methods_input_and_output"><code class="docutils literal notranslate"><span class="pre">wrap_class_methods_input_and_output()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.wrap_instance_methods'" class="reference internal" href="#i2.deco.wrap_instance_methods"><code class="docutils literal notranslate"><span class="pre">wrap_instance_methods()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.wrap_method_output'" class="reference internal" href="#i2.deco.wrap_method_output"><code class="docutils literal notranslate"><span class="pre">wrap_method_output()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.wraps'" class="reference internal" href="#i2.deco.wraps"><code class="docutils literal notranslate"><span class="pre">wraps()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -1199,7 +1299,7 @@ Of course, this is just pretend. Don’t use this with real waveforms. It won’
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=946d7960"></script>
+<script src="../_static/documentation_options.js?v=d80f5ebb"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

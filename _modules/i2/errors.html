@@ -187,28 +187,28 @@
 <div class="viewcode-block" id="DataError">
 <a class="viewcode-back" href="../../_autosummary/i2.errors.html#i2.errors.DataError">[docs]</a>
 </span><span id="line-10"><span class="k">class</span><span class="w"> </span><span class="nc">DataError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-</span><span id="line-11">    <span class="k">pass</span></div>
+</span><span id="line-11"><span class="w">    </span><span class="sd">"""Base class for errors about the data itself."""</span></div>
 
 </span><span id="line-12">
 </span><span id="line-13">
 <div class="viewcode-block" id="DuplicateRecordError">
 <a class="viewcode-back" href="../../_autosummary/i2.errors.html#i2.errors.DuplicateRecordError">[docs]</a>
 </span><span id="line-14"><span class="k">class</span><span class="w"> </span><span class="nc">DuplicateRecordError</span><span class="p">(</span><span class="n">DataError</span><span class="p">):</span>
-</span><span id="line-15">    <span class="k">pass</span></div>
+</span><span id="line-15"><span class="w">    </span><span class="sd">"""A ``DataError`` for a record that already exists."""</span></div>
 
 </span><span id="line-16">
 </span><span id="line-17">
 <div class="viewcode-block" id="NotFoundError">
 <a class="viewcode-back" href="../../_autosummary/i2.errors.html#i2.errors.NotFoundError">[docs]</a>
 </span><span id="line-18"><span class="k">class</span><span class="w"> </span><span class="nc">NotFoundError</span><span class="p">(</span><span class="n">DataError</span><span class="p">):</span>
-</span><span id="line-19">    <span class="k">pass</span></div>
+</span><span id="line-19"><span class="w">    </span><span class="sd">"""A ``DataError`` for a record that does not exist."""</span></div>
 
 </span><span id="line-20">
 </span><span id="line-21">
 <div class="viewcode-block" id="AuthorizationError">
 <a class="viewcode-back" href="../../_autosummary/i2.errors.html#i2.errors.AuthorizationError">[docs]</a>
 </span><span id="line-22"><span class="k">class</span><span class="w"> </span><span class="nc">AuthorizationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-</span><span id="line-23">    <span class="k">pass</span></div>
+</span><span id="line-23"><span class="w">    </span><span class="sd">"""Base class for errors about what the caller is allowed to do."""</span></div>
 
 </span><span id="line-24">
 </span><span id="line-25">
@@ -240,14 +240,14 @@
 <div class="viewcode-block" id="ForbiddenError">
 <a class="viewcode-back" href="../../_autosummary/i2.errors.html#i2.errors.ForbiddenError">[docs]</a>
 </span><span id="line-48"><span class="k">class</span><span class="w"> </span><span class="nc">ForbiddenError</span><span class="p">(</span><span class="n">AuthorizationError</span><span class="p">):</span>
-</span><span id="line-49">    <span class="k">pass</span></div>
+</span><span id="line-49"><span class="w">    </span><span class="sd">"""An ``AuthorizationError`` for an operation that is not allowed."""</span></div>
 
 </span><span id="line-50">
 </span><span id="line-51">
 <div class="viewcode-block" id="InputError">
 <a class="viewcode-back" href="../../_autosummary/i2.errors.html#i2.errors.InputError">[docs]</a>
 </span><span id="line-52"><span class="k">class</span><span class="w"> </span><span class="nc">InputError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-</span><span id="line-53">    <span class="k">pass</span></div>
+</span><span id="line-53"><span class="w">    </span><span class="sd">"""Raised for invalid input."""</span></div>
 
 </span><span id="line-54">
 </span><span id="line-55">
@@ -272,156 +272,177 @@
 </span><span id="line-71"><span class="n">ExceptionType</span> <span class="o">=</span> <span class="nb">type</span><span class="p">[</span><span class="ne">BaseException</span><span class="p">]</span>
 </span><span id="line-72">
 </span><span id="line-73">
+<div class="viewcode-block" id="log_and_return">
+<a class="viewcode-back" href="../../_autosummary/i2.errors.html#i2.errors.log_and_return">[docs]</a>
 </span><span id="line-74"><span class="k">def</span><span class="w"> </span><span class="nf">log_and_return</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="nb">print</span><span class="p">):</span>
-</span><span id="line-75">    <span class="n">logger</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="line-76">    <span class="k">return</span> <span class="n">msg</span>
-</span><span id="line-77">
+</span><span id="line-75"><span class="w">    </span><span class="sd">"""Pass ``msg`` to ``logger`` (``print`` by default) and return it."""</span>
+</span><span id="line-76">    <span class="n">logger</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="line-77">    <span class="k">return</span> <span class="n">msg</span></div>
+
 </span><span id="line-78">
+</span><span id="line-79">
 <div class="viewcode-block" id="InterruptWithBlock">
 <a class="viewcode-back" href="../../_autosummary/i2.errors.html#i2.errors.InterruptWithBlock">[docs]</a>
-</span><span id="line-79"><span class="k">class</span><span class="w"> </span><span class="nc">InterruptWithBlock</span><span class="p">(</span><span class="ne">BaseException</span><span class="p">):</span>
-</span><span id="line-80"><span class="w">    </span><span class="sd">"""To be used to interrupt the march of a with"""</span></div>
-
-</span><span id="line-81">
+</span><span id="line-80"><span class="k">class</span><span class="w"> </span><span class="nc">InterruptWithBlock</span><span class="p">(</span><span class="ne">BaseException</span><span class="p">):</span>
+</span><span id="line-81"><span class="w">    </span><span class="sd">"""Raise inside a ``with`` block to leave it early; pair with ``HandleExceptions``.</span>
 </span><span id="line-82">
-</span><span id="line-83"><span class="c1"># Note: Can be extended to have more precise handled conditions and callbacks</span>
-</span><span id="line-84"><span class="c1">#  (involving exc_val and exc_tb)</span>
-</span><span id="line-85"><span class="c1"># Note: Efforts towards a more general version here:</span>
-</span><span id="line-86"><span class="c1">#   https://github.com/thorwhalen/ut/blob/33c20ce76fe0f9dcc6aa197b0a2dbbf3d7b1d5be/errors.py#L90</span>
+</span><span id="line-83"><span class="sd">    &gt;&gt;&gt; with HandleExceptions({InterruptWithBlock: "stopped early"}) as h:</span>
+</span><span id="line-84"><span class="sd">    ...     raise InterruptWithBlock()</span>
+</span><span id="line-85"><span class="sd">    ...     print("never printed")</span>
+</span><span id="line-86"><span class="sd">    stopped early</span>
+</span><span id="line-87"><span class="sd">    &gt;&gt;&gt; h.exit_value</span>
+</span><span id="line-88"><span class="sd">    'stopped early'</span>
+</span><span id="line-89"><span class="sd">    """</span></div>
+
+</span><span id="line-90">
+</span><span id="line-91">
+</span><span id="line-92"><span class="c1"># Note: Can be extended to have more precise handled conditions and callbacks</span>
+</span><span id="line-93"><span class="c1">#  (involving exc_val and exc_tb)</span>
+</span><span id="line-94"><span class="c1"># Note: Efforts towards a more general version here:</span>
+</span><span id="line-95"><span class="c1">#   https://github.com/thorwhalen/ut/blob/33c20ce76fe0f9dcc6aa197b0a2dbbf3d7b1d5be/errors.py#L90</span>
 <div class="viewcode-block" id="HandleExceptions">
 <a class="viewcode-back" href="../../_autosummary/i2.errors.html#i2.errors.HandleExceptions">[docs]</a>
-</span><span id="line-87"><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
-</span><span id="line-88"><span class="k">class</span><span class="w"> </span><span class="nc">HandleExceptions</span><span class="p">(</span><span class="n">AbstractContextManager</span><span class="p">):</span>
-</span><span id="line-89"><span class="w">    </span><span class="sd">"""A context manager that catches and (specifically) handles specific exceptions.</span>
-</span><span id="line-90">
-</span><span id="line-91"><span class="sd">    It takes one argument: A dict (or mapping) of exception type keys and callback</span>
-</span><span id="line-92"><span class="sd">    values. If within a with block, the particular (listed) exception happens,</span>
-</span><span id="line-93"><span class="sd">    the callback is called and it's returned value is assigned to the</span>
-</span><span id="line-94"><span class="sd">    `HandleExceptions` instance's `.exit_value` attribute.</span>
-</span><span id="line-95"><span class="sd">    That attribute will only exist if the with block existed with an exception</span>
-</span><span id="line-96"><span class="sd">    caught by `HandleExceptions`.</span>
-</span><span id="line-97">
-</span><span id="line-98"><span class="sd">    A callback is an argument-less function. If you need to specify arguments, you can</span>
-</span><span id="line-99"><span class="sd">    envoke the command pattern, using `functools.partial` to make a argument-less</span>
-</span><span id="line-100"><span class="sd">    function. See in the example below how we ask `HandleExceptions` to print a</span>
-</span><span id="line-101"><span class="sd">    specific string if a `ZeroDivisionError` happens:</span>
-</span><span id="line-102">
-</span><span id="line-103"><span class="sd">    &gt;&gt;&gt; from functools import partial</span>
-</span><span id="line-104"><span class="sd">    &gt;&gt;&gt; def print_and_return(msg):</span>
-</span><span id="line-105"><span class="sd">    ...     print(msg)</span>
-</span><span id="line-106"><span class="sd">    ...     return msg</span>
-</span><span id="line-107"><span class="sd">    &gt;&gt;&gt; with HandleExceptions({</span>
-</span><span id="line-108"><span class="sd">    ...     ZeroDivisionError: partial(print_and_return, "You interrupted me"),</span>
-</span><span id="line-109"><span class="sd">    ...     KeyboardInterrupt: lambda: 'imagine this is code to notify someone'</span>
-</span><span id="line-110"><span class="sd">    ... }) as he:</span>
-</span><span id="line-111"><span class="sd">    ...     print('This works')</span>
-</span><span id="line-112"><span class="sd">    ...     0 / 0</span>
-</span><span id="line-113"><span class="sd">    ...</span>
-</span><span id="line-114"><span class="sd">    This works</span>
-</span><span id="line-115"><span class="sd">    You interrupted me</span>
-</span><span id="line-116">
-</span><span id="line-117"><span class="sd">    You can check if the context exited with a handled exception, and if so, what</span>
-</span><span id="line-118"><span class="sd">    the callback returned value was.</span>
-</span><span id="line-119">
-</span><span id="line-120"><span class="sd">    &gt;&gt;&gt; he.exited_with_handled_exception()</span>
-</span><span id="line-121"><span class="sd">    True</span>
-</span><span id="line-122"><span class="sd">    &gt;&gt;&gt; he.exit_value</span>
-</span><span id="line-123"><span class="sd">    'You interrupted me'</span>
-</span><span id="line-124">
-</span><span id="line-125"><span class="sd">    Also available, whether the exception was a handled one or not: The exception</span>
-</span><span id="line-126"><span class="sd">    instance itself:</span>
-</span><span id="line-127">
-</span><span id="line-128"><span class="sd">    &gt;&gt;&gt; he.exited_with_exception</span>
-</span><span id="line-129"><span class="sd">    ZeroDivisionError('division by zero')</span>
-</span><span id="line-130">
-</span><span id="line-131"><span class="sd">    If all you want to do though is print a string (and have the same string</span>
-</span><span id="line-132"><span class="sd">    available in the `exit_value` attribute, we got you covered!</span>
-</span><span id="line-133"><span class="sd">    Just specify a string and we'll make that printer callaback for you!</span>
-</span><span id="line-134">
-</span><span id="line-135"><span class="sd">    &gt;&gt;&gt; from functools import partial</span>
-</span><span id="line-136"><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="line-137"><span class="sd">    &gt;&gt;&gt; with HandleExceptions({ZeroDivisionError: "You interrupted me again!"}):</span>
-</span><span id="line-138"><span class="sd">    ...     print('This also works')</span>
-</span><span id="line-139"><span class="sd">    ...     0 / 0</span>
-</span><span id="line-140"><span class="sd">    This also works</span>
-</span><span id="line-141"><span class="sd">    You interrupted me again!</span>
-</span><span id="line-142">
-</span><span id="line-143"><span class="sd">    Note that specifying `partial(print, "some message")` will work as a</span>
-</span><span id="line-144"><span class="sd">    "printing callback", but the string won't be available in `.exit_value` since</span>
-</span><span id="line-145"><span class="sd">    `print` returns None.</span>
-</span><span id="line-146">
-</span><span id="line-147"><span class="sd">    A few recipes now...</span>
-</span><span id="line-148">
-</span><span id="line-149"><span class="sd">    You can also use your own custom exception types to do things like interrupt</span>
-</span><span id="line-150"><span class="sd">    a with block early given some condition(s).</span>
+</span><span id="line-96"><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+</span><span id="line-97"><span class="k">class</span><span class="w"> </span><span class="nc">HandleExceptions</span><span class="p">(</span><span class="n">AbstractContextManager</span><span class="p">):</span>
+</span><span id="line-98"><span class="w">    </span><span class="sd">"""A context manager that catches and (specifically) handles specific exceptions.</span>
+</span><span id="line-99">
+</span><span id="line-100"><span class="sd">    It takes one argument: A dict (or mapping) of exception type keys and callback</span>
+</span><span id="line-101"><span class="sd">    values. If within a with block, the particular (listed) exception happens,</span>
+</span><span id="line-102"><span class="sd">    the callback is called and it's returned value is assigned to the</span>
+</span><span id="line-103"><span class="sd">    `HandleExceptions` instance's `.exit_value` attribute.</span>
+</span><span id="line-104"><span class="sd">    That attribute will only exist if the with block existed with an exception</span>
+</span><span id="line-105"><span class="sd">    caught by `HandleExceptions`.</span>
+</span><span id="line-106">
+</span><span id="line-107"><span class="sd">    A callback is an argument-less function. If you need to specify arguments, you can</span>
+</span><span id="line-108"><span class="sd">    envoke the command pattern, using `functools.partial` to make a argument-less</span>
+</span><span id="line-109"><span class="sd">    function. See in the example below how we ask `HandleExceptions` to print a</span>
+</span><span id="line-110"><span class="sd">    specific string if a `ZeroDivisionError` happens:</span>
+</span><span id="line-111">
+</span><span id="line-112"><span class="sd">    &gt;&gt;&gt; from functools import partial</span>
+</span><span id="line-113"><span class="sd">    &gt;&gt;&gt; def print_and_return(msg):</span>
+</span><span id="line-114"><span class="sd">    ...     print(msg)</span>
+</span><span id="line-115"><span class="sd">    ...     return msg</span>
+</span><span id="line-116"><span class="sd">    &gt;&gt;&gt; with HandleExceptions({</span>
+</span><span id="line-117"><span class="sd">    ...     ZeroDivisionError: partial(print_and_return, "You interrupted me"),</span>
+</span><span id="line-118"><span class="sd">    ...     KeyboardInterrupt: lambda: 'imagine this is code to notify someone'</span>
+</span><span id="line-119"><span class="sd">    ... }) as he:</span>
+</span><span id="line-120"><span class="sd">    ...     print('This works')</span>
+</span><span id="line-121"><span class="sd">    ...     0 / 0</span>
+</span><span id="line-122"><span class="sd">    ...</span>
+</span><span id="line-123"><span class="sd">    This works</span>
+</span><span id="line-124"><span class="sd">    You interrupted me</span>
+</span><span id="line-125">
+</span><span id="line-126"><span class="sd">    You can check if the context exited with a handled exception, and if so, what</span>
+</span><span id="line-127"><span class="sd">    the callback returned value was.</span>
+</span><span id="line-128">
+</span><span id="line-129"><span class="sd">    &gt;&gt;&gt; he.exited_with_handled_exception()</span>
+</span><span id="line-130"><span class="sd">    True</span>
+</span><span id="line-131"><span class="sd">    &gt;&gt;&gt; he.exit_value</span>
+</span><span id="line-132"><span class="sd">    'You interrupted me'</span>
+</span><span id="line-133">
+</span><span id="line-134"><span class="sd">    Also available, whether the exception was a handled one or not: The exception</span>
+</span><span id="line-135"><span class="sd">    instance itself:</span>
+</span><span id="line-136">
+</span><span id="line-137"><span class="sd">    &gt;&gt;&gt; he.exited_with_exception</span>
+</span><span id="line-138"><span class="sd">    ZeroDivisionError('division by zero')</span>
+</span><span id="line-139">
+</span><span id="line-140"><span class="sd">    If all you want to do though is print a string (and have the same string</span>
+</span><span id="line-141"><span class="sd">    available in the `exit_value` attribute, we got you covered!</span>
+</span><span id="line-142"><span class="sd">    Just specify a string and we'll make that printer callaback for you!</span>
+</span><span id="line-143">
+</span><span id="line-144"><span class="sd">    &gt;&gt;&gt; from functools import partial</span>
+</span><span id="line-145"><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="line-146"><span class="sd">    &gt;&gt;&gt; with HandleExceptions({ZeroDivisionError: "You interrupted me again!"}):</span>
+</span><span id="line-147"><span class="sd">    ...     print('This also works')</span>
+</span><span id="line-148"><span class="sd">    ...     0 / 0</span>
+</span><span id="line-149"><span class="sd">    This also works</span>
+</span><span id="line-150"><span class="sd">    You interrupted me again!</span>
 </span><span id="line-151">
-</span><span id="line-152"><span class="sd">    &gt;&gt;&gt; with HandleExceptions(</span>
-</span><span id="line-153"><span class="sd">    ...     {InterruptWithBlock: "The with block was interrupted early."}</span>
-</span><span id="line-154"><span class="sd">    ... ):</span>
-</span><span id="line-155"><span class="sd">    ...     print('before condition')</span>
-</span><span id="line-156"><span class="sd">    ...     x = 5 % 2</span>
-</span><span id="line-157"><span class="sd">    ...     if x:</span>
-</span><span id="line-158"><span class="sd">    ...         raise InterruptWithBlock()</span>
-</span><span id="line-159"><span class="sd">    ...     print('after condition')</span>
-</span><span id="line-160"><span class="sd">    ...</span>
-</span><span id="line-161"><span class="sd">    ...</span>
-</span><span id="line-162"><span class="sd">    before condition</span>
-</span><span id="line-163"><span class="sd">    The with block was interrupted early.</span>
-</span><span id="line-164">
-</span><span id="line-165"><span class="sd">    Tip: If you need to do stuff with an exception, but reraise it, you can</span>
-</span><span id="line-166"><span class="sd">    still do that in your callback. Just say `raise` at the end of the callback!</span>
-</span><span id="line-167">
-</span><span id="line-168"><span class="sd">    &gt;&gt;&gt; def print_and_raise(msg):</span>
-</span><span id="line-169"><span class="sd">    ...     print(msg)</span>
-</span><span id="line-170"><span class="sd">    ...     raise</span>
-</span><span id="line-171"><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="line-172"><span class="sd">    &gt;&gt;&gt; with HandleExceptions({  # doctest: +SKIP</span>
-</span><span id="line-173"><span class="sd">    ...     ZeroDivisionError: partial(print_and_raise, "That again!"),</span>
-</span><span id="line-174"><span class="sd">    ... }):</span>
-</span><span id="line-175"><span class="sd">    ...     print('This also works')</span>
-</span><span id="line-176"><span class="sd">    ...     0 / 0</span>
-</span><span id="line-177"><span class="sd">    This also works</span>
-</span><span id="line-178"><span class="sd">    That again!</span>
-</span><span id="line-179"><span class="sd">    Traceback (most recent call last):</span>
-</span><span id="line-180"><span class="sd">        ...</span>
-</span><span id="line-181"><span class="sd">    ZeroDivisionError: division by zero</span>
-</span><span id="line-182"><span class="sd">    """</span>
-</span><span id="line-183">
-</span><span id="line-184">    <span class="n">on_error</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">ExceptionType</span><span class="p">,</span> <span class="n">OnErrorCallback</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
-</span><span id="line-185">        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
-</span><span id="line-186">    <span class="p">)</span>
-</span><span id="line-187">    <span class="n">exited_with_exception</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-188">
-</span><span id="line-189">    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-190">        <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_error</span><span class="p">)</span>
-</span><span id="line-191">        <span class="k">for</span> <span class="n">handled_exc_type</span><span class="p">,</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-192">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-193">                <span class="n">msg</span> <span class="o">=</span> <span class="n">callback</span>
-</span><span id="line-194">                <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span><span class="p">[</span><span class="n">handled_exc_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">log_and_return</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-</span><span id="line-195">
-</span><span id="line-196">    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-197">        <span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-</span><span id="line-198">        <span class="k">return</span> <span class="bp">self</span>
-</span><span id="line-199">
-</span><span id="line-200">    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
-</span><span id="line-201">        <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-202">            <span class="bp">self</span><span class="o">.</span><span class="n">exited_with_exception</span> <span class="o">=</span> <span class="n">exc_val</span>
-</span><span id="line-203">            <span class="k">for</span> <span class="n">handled_exc_type</span><span class="p">,</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-204">                <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">handled_exc_type</span><span class="p">):</span>
-</span><span id="line-205">                    <span class="c1"># if the exc_type is a subtype of handled_exc_type, call the callback</span>
-</span><span id="line-206">                    <span class="bp">self</span><span class="o">.</span><span class="n">exit_value</span> <span class="o">=</span> <span class="n">callback</span><span class="p">()</span>  <span class="c1"># storing the result in exit_value</span>
-</span><span id="line-207">                    <span class="c1"># and exit with True</span>
-</span><span id="line-208">                    <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># suppress the exception</span>
-</span><span id="line-209">            <span class="c1"># if there was an exception, but a handled one, raise it!</span>
-</span><span id="line-210">            <span class="k">raise</span>
-</span><span id="line-211">
-</span><span id="line-212">    <span class="k">def</span><span class="w"> </span><span class="nf">exited_with_handled_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-213">        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"exit_value"</span><span class="p">)</span>
-</span><span id="line-214">
-</span><span id="line-215">    <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-216">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"exit_value"</span><span class="p">):</span>
-</span><span id="line-217">            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"exit_value"</span><span class="p">)</span>
-</span><span id="line-218">        <span class="bp">self</span><span class="o">.</span><span class="n">exited_with_exception</span> <span class="o">=</span> <span class="kc">None</span></div>
+</span><span id="line-152"><span class="sd">    Note that specifying `partial(print, "some message")` will work as a</span>
+</span><span id="line-153"><span class="sd">    "printing callback", but the string won't be available in `.exit_value` since</span>
+</span><span id="line-154"><span class="sd">    `print` returns None.</span>
+</span><span id="line-155">
+</span><span id="line-156"><span class="sd">    A few recipes now...</span>
+</span><span id="line-157">
+</span><span id="line-158"><span class="sd">    You can also use your own custom exception types to do things like interrupt</span>
+</span><span id="line-159"><span class="sd">    a with block early given some condition(s).</span>
+</span><span id="line-160">
+</span><span id="line-161"><span class="sd">    &gt;&gt;&gt; with HandleExceptions(</span>
+</span><span id="line-162"><span class="sd">    ...     {InterruptWithBlock: "The with block was interrupted early."}</span>
+</span><span id="line-163"><span class="sd">    ... ):</span>
+</span><span id="line-164"><span class="sd">    ...     print('before condition')</span>
+</span><span id="line-165"><span class="sd">    ...     x = 5 % 2</span>
+</span><span id="line-166"><span class="sd">    ...     if x:</span>
+</span><span id="line-167"><span class="sd">    ...         raise InterruptWithBlock()</span>
+</span><span id="line-168"><span class="sd">    ...     print('after condition')</span>
+</span><span id="line-169"><span class="sd">    ...</span>
+</span><span id="line-170"><span class="sd">    ...</span>
+</span><span id="line-171"><span class="sd">    before condition</span>
+</span><span id="line-172"><span class="sd">    The with block was interrupted early.</span>
+</span><span id="line-173">
+</span><span id="line-174"><span class="sd">    Tip:</span>
+</span><span id="line-175"><span class="sd">        If you need to do stuff with an exception, but reraise it, you can</span>
+</span><span id="line-176"><span class="sd">        still do that in your callback. Just say `raise` at the end of the callback!</span>
+</span><span id="line-177">
+</span><span id="line-178"><span class="sd">    &gt;&gt;&gt; def print_and_raise(msg):</span>
+</span><span id="line-179"><span class="sd">    ...     print(msg)</span>
+</span><span id="line-180"><span class="sd">    ...     raise</span>
+</span><span id="line-181"><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="line-182"><span class="sd">    &gt;&gt;&gt; with HandleExceptions({  # doctest: +SKIP</span>
+</span><span id="line-183"><span class="sd">    ...     ZeroDivisionError: partial(print_and_raise, "That again!"),</span>
+</span><span id="line-184"><span class="sd">    ... }):</span>
+</span><span id="line-185"><span class="sd">    ...     print('This also works')</span>
+</span><span id="line-186"><span class="sd">    ...     0 / 0</span>
+</span><span id="line-187"><span class="sd">    This also works</span>
+</span><span id="line-188"><span class="sd">    That again!</span>
+</span><span id="line-189"><span class="sd">    Traceback (most recent call last):</span>
+</span><span id="line-190"><span class="sd">        ...</span>
+</span><span id="line-191"><span class="sd">    ZeroDivisionError: division by zero</span>
+</span><span id="line-192"><span class="sd">    """</span>
+</span><span id="line-193">
+</span><span id="line-194">    <span class="n">on_error</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">ExceptionType</span><span class="p">,</span> <span class="n">OnErrorCallback</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
+</span><span id="line-195">        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+</span><span id="line-196">    <span class="p">)</span>
+</span><span id="line-197">    <span class="n">exited_with_exception</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-198">
+</span><span id="line-199">    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-200">        <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_error</span><span class="p">)</span>
+</span><span id="line-201">        <span class="k">for</span> <span class="n">handled_exc_type</span><span class="p">,</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-202">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-203">                <span class="n">msg</span> <span class="o">=</span> <span class="n">callback</span>
+</span><span id="line-204">                <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span><span class="p">[</span><span class="n">handled_exc_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">log_and_return</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+</span><span id="line-205">
+</span><span id="line-206">    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-207">        <span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+</span><span id="line-208">        <span class="k">return</span> <span class="bp">self</span>
+</span><span id="line-209">
+</span><span id="line-210">    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+</span><span id="line-211">        <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-212">            <span class="bp">self</span><span class="o">.</span><span class="n">exited_with_exception</span> <span class="o">=</span> <span class="n">exc_val</span>
+</span><span id="line-213">            <span class="k">for</span> <span class="n">handled_exc_type</span><span class="p">,</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-214">                <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">handled_exc_type</span><span class="p">):</span>
+</span><span id="line-215">                    <span class="c1"># if the exc_type is a subtype of handled_exc_type, call the callback</span>
+</span><span id="line-216">                    <span class="bp">self</span><span class="o">.</span><span class="n">exit_value</span> <span class="o">=</span> <span class="n">callback</span><span class="p">()</span>  <span class="c1"># storing the result in exit_value</span>
+</span><span id="line-217">                    <span class="c1"># and exit with True</span>
+</span><span id="line-218">                    <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># suppress the exception</span>
+</span><span id="line-219">            <span class="c1"># if there was an exception, but a handled one, raise it!</span>
+</span><span id="line-220">            <span class="k">raise</span>
+</span><span id="line-221">
+<div class="viewcode-block" id="HandleExceptions.exited_with_handled_exception">
+<a class="viewcode-back" href="../../_autosummary/i2.errors.html#i2.errors.HandleExceptions.exited_with_handled_exception">[docs]</a>
+</span><span id="line-222">    <span class="k">def</span><span class="w"> </span><span class="nf">exited_with_handled_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-223"><span class="w">        </span><span class="sd">"""Whether the last ``with`` block ended on an exception listed in ``on_error``."""</span>
+</span><span id="line-224">        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"exit_value"</span><span class="p">)</span></div>
+
+</span><span id="line-225">
+<div class="viewcode-block" id="HandleExceptions.initialize">
+<a class="viewcode-back" href="../../_autosummary/i2.errors.html#i2.errors.HandleExceptions.initialize">[docs]</a>
+</span><span id="line-226">    <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-227"><span class="w">        </span><span class="sd">"""Forget the outcome of a previous ``with`` block (done on every ``__enter__``)."""</span>
+</span><span id="line-228">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"exit_value"</span><span class="p">):</span>
+</span><span id="line-229">            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"exit_value"</span><span class="p">)</span>
+</span><span id="line-230">        <span class="bp">self</span><span class="o">.</span><span class="n">exited_with_exception</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
 
 </span></code></pre></div>
     </div></div>
@@ -436,7 +457,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=946d7960"></script>
+    <script src="../../_static/documentation_options.js?v=d80f5ebb"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

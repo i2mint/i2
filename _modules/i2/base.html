@@ -175,501 +175,550 @@
 
     <div id="content" role="main">
       <h1>Source code for i2.base</h1><div class="highlight"><pre>
-<span></span><code><span id="line-1"><span class="sd">"""</span>
-</span><span id="line-2"><span class="sd">Tools to provide meta-interfaces of python objects.</span>
-</span><span id="line-3"><span class="sd">See also:</span>
-</span><span id="line-4"><span class="sd">    py2misc/py2store/tree_store.py</span>
-</span><span id="line-5"><span class="sd">"""</span>
+<span></span><code><span id="line-1"><span class="sd">"""Tools to provide meta-interfaces ("mints") of python objects.</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="sd">A mint is a ``Mapping`` view of the (meta-)information describing the interface of</span>
+</span><span id="line-4"><span class="sd">an object: for a callable, its parameters (name, kind, default, annotation) and its</span>
+</span><span id="line-5"><span class="sd">return annotation.</span>
 </span><span id="line-6">
-</span><span id="line-7"><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
-</span><span id="line-8"><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span><span class="p">,</span> <span class="n">Parameter</span>
-</span><span id="line-9"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
-</span><span id="line-10">
-</span><span id="line-11"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazyprop</span><span class="p">,</span> <span class="n">FrozenDict</span><span class="p">,</span> <span class="n">get_function_body</span>
-</span><span id="line-12">
-</span><span id="line-13"><span class="n">inspect_empty</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
-</span><span id="line-14">
-</span><span id="line-15">
-</span><span id="line-16"><span class="k">class</span><span class="w"> </span><span class="nc">NotFoundType</span><span class="p">:</span>
-</span><span id="line-17">    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-18">        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="line-7"><span class="sd">Main entry points:</span>
+</span><span id="line-8">
+</span><span id="line-9"><span class="sd">- ``Mint``: mint of any python object</span>
+</span><span id="line-10"><span class="sd">- ``MintOfCallable``: mint of a callable, with parameter information</span>
+</span><span id="line-11"><span class="sd">- ``ParametersMint``: mint of the parameters of a callable</span>
+</span><span id="line-12"><span class="sd">"""</span>
+</span><span id="line-13">
+</span><span id="line-14"><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+</span><span id="line-15"><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span><span class="p">,</span> <span class="n">Parameter</span>
+</span><span id="line-16"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
+</span><span id="line-17">
+</span><span id="line-18"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazyprop</span><span class="p">,</span> <span class="n">FrozenDict</span><span class="p">,</span> <span class="n">get_function_body</span>
 </span><span id="line-19">
-</span><span id="line-20">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-21">        <span class="k">return</span> <span class="s2">"NotFound"</span>
+</span><span id="line-20"><span class="n">inspect_empty</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
+</span><span id="line-21">
 </span><span id="line-22">
-</span><span id="line-23">
-</span><span id="line-24"><span class="c1"># Note, if the "empty" classes the are used to check if an object is empty are not singletons, could lead to bugs</span>
-</span><span id="line-25"><span class="c1"># TODO: Look into metaprogramming tricks for this.</span>
-</span><span id="line-26"><span class="n">not_found</span> <span class="o">=</span> <span class="n">NotFoundType</span><span class="p">()</span>
-</span><span id="line-27"><span class="n">no_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s2">"NoName"</span><span class="p">,</span> <span class="p">(</span><span class="n">NotFoundType</span><span class="p">,),</span> <span class="p">{})()</span>
-</span><span id="line-28"><span class="n">inspect_is_empty</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">_empty</span>
-</span><span id="line-29">
-</span><span id="line-30">
-</span><span id="line-31"><span class="k">def</span><span class="w"> </span><span class="nf">is_not_empty</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-</span><span id="line-32">    <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="n">inspect_is_empty</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">NotFoundType</span><span class="p">):</span>
-</span><span id="line-33">        <span class="k">return</span> <span class="kc">False</span>
-</span><span id="line-34">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-35">        <span class="k">return</span> <span class="kc">True</span>
-</span><span id="line-36">
-</span><span id="line-37">
-</span><span id="line-38"><span class="k">def</span><span class="w"> </span><span class="nf">_is_property</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_val</span><span class="p">):</span>
-</span><span id="line-39">    <span class="k">return</span> <span class="ow">not</span> <span class="n">attr_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_val</span><span class="p">,</span> <span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="n">lazyprop</span><span class="p">))</span>
-</span><span id="line-40">
-</span><span id="line-41">
-</span><span id="line-42"><span class="k">def</span><span class="w"> </span><span class="nf">_property_names_of</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-</span><span id="line-43">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-</span><span id="line-44">        <span class="n">obj</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-</span><span id="line-45">    <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-</span><span id="line-46">        <span class="n">attr_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
-</span><span id="line-47">        <span class="k">if</span> <span class="n">_is_property</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_val</span><span class="p">):</span>
-</span><span id="line-48">            <span class="k">yield</span> <span class="n">attr_name</span>
-</span><span id="line-49">
+<div class="viewcode-block" id="NotFoundType">
+<a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.NotFoundType">[docs]</a>
+</span><span id="line-23"><span class="k">class</span><span class="w"> </span><span class="nc">NotFoundType</span><span class="p">:</span>
+</span><span id="line-24"><span class="w">    </span><span class="sd">"""Type of the ``not_found`` sentinel: falsy, repr ``NotFound``."""</span>
+</span><span id="line-25">
+</span><span id="line-26">    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-27">        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="line-28">
+</span><span id="line-29">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-30">        <span class="k">return</span> <span class="s2">"NotFound"</span></div>
+
+</span><span id="line-31">
+</span><span id="line-32">
+</span><span id="line-33"><span class="c1"># Note, if the "empty" classes the are used to check if an object is empty are not singletons, could lead to bugs</span>
+</span><span id="line-34"><span class="c1"># TODO: Look into metaprogramming tricks for this.</span>
+</span><span id="line-35"><span class="n">not_found</span> <span class="o">=</span> <span class="n">NotFoundType</span><span class="p">()</span>
+</span><span id="line-36"><span class="n">no_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s2">"NoName"</span><span class="p">,</span> <span class="p">(</span><span class="n">NotFoundType</span><span class="p">,),</span> <span class="p">{})()</span>
+</span><span id="line-37"><span class="n">inspect_is_empty</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">_empty</span>
+</span><span id="line-38">
+</span><span id="line-39">
+<div class="viewcode-block" id="is_not_empty">
+<a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.is_not_empty">[docs]</a>
+</span><span id="line-40"><span class="k">def</span><span class="w"> </span><span class="nf">is_not_empty</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span id="line-41"><span class="w">    </span><span class="sd">"""False for ``inspect.Parameter.empty`` and ``NotFoundType`` instances, True otherwise."""</span>
+</span><span id="line-42">    <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="n">inspect_is_empty</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">NotFoundType</span><span class="p">):</span>
+</span><span id="line-43">        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="line-44">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-45">        <span class="k">return</span> <span class="kc">True</span></div>
+
+</span><span id="line-46">
+</span><span id="line-47">
+</span><span id="line-48"><span class="k">def</span><span class="w"> </span><span class="nf">_is_property</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_val</span><span class="p">):</span>
+</span><span id="line-49">    <span class="k">return</span> <span class="ow">not</span> <span class="n">attr_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_val</span><span class="p">,</span> <span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="n">lazyprop</span><span class="p">))</span>
 </span><span id="line-50">
-</span><span id="line-51"><span class="c1"># Note: For a more powerful, and customizable implementation,</span>
-</span><span id="line-52"><span class="c1">#  see `i2.signatures.name_of_obj`.</span>
-</span><span id="line-53"><span class="c1"># TODO: Analyse usages and reroute to i2.signatures.name_of_obj instead.</span>
-</span><span id="line-54"><span class="k">def</span><span class="w"> </span><span class="nf">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
-</span><span id="line-55">    <span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
-</span><span id="line-56">
-</span><span id="line-57">    <span class="n">warn</span><span class="p">(</span>
-</span><span id="line-58">        <span class="s2">"Deprecated: Use i2.name_of_obj or i2.signatures.name_of_object instead"</span><span class="p">,</span>
-</span><span id="line-59">        <span class="ne">DeprecationWarning</span><span class="p">,</span>
-</span><span id="line-60">    <span class="p">)</span>
-</span><span id="line-61">
-</span><span id="line-62">    <span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">name_of_obj</span> <span class="k">as</span> <span class="n">signatures_name_of_obj</span>
-</span><span id="line-63">
-</span><span id="line-64">    <span class="k">return</span> <span class="n">signatures_name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
-</span><span id="line-65">
-</span><span id="line-66">
-</span><span id="line-67"><span class="k">class</span><span class="w"> </span><span class="nc">AttrFromKey</span><span class="p">:</span>
-</span><span id="line-68">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-</span><span id="line-69">        <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">=</span> <span class="n">d</span>
-</span><span id="line-70">
-</span><span id="line-71">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span id="line-72">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-</span><span id="line-73">
-</span><span id="line-74">    <span class="fm">__getitem__</span> <span class="o">=</span> <span class="fm">__getattr__</span>
-</span><span id="line-75">
+</span><span id="line-51">
+</span><span id="line-52"><span class="k">def</span><span class="w"> </span><span class="nf">_property_names_of</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span id="line-53">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+</span><span id="line-54">        <span class="n">obj</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</span><span id="line-55">    <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span id="line-56">        <span class="n">attr_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+</span><span id="line-57">        <span class="k">if</span> <span class="n">_is_property</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_val</span><span class="p">):</span>
+</span><span id="line-58">            <span class="k">yield</span> <span class="n">attr_name</span>
+</span><span id="line-59">
+</span><span id="line-60">
+</span><span id="line-61"><span class="c1"># Note: For a more powerful, and customizable implementation,</span>
+</span><span id="line-62"><span class="c1">#  see `i2.signatures.name_of_obj`.</span>
+</span><span id="line-63"><span class="c1"># TODO: Analyse usages and reroute to i2.signatures.name_of_obj instead.</span>
+<div class="viewcode-block" id="name_of_obj">
+<a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.name_of_obj">[docs]</a>
+</span><span id="line-64"><span class="k">def</span><span class="w"> </span><span class="nf">name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+</span><span id="line-65"><span class="w">    </span><span class="sd">"""Deprecated alias of ``i2.signatures.name_of_obj`` (emits a ``DeprecationWarning``)."""</span>
+</span><span id="line-66">    <span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+</span><span id="line-67">
+</span><span id="line-68">    <span class="n">warn</span><span class="p">(</span>
+</span><span id="line-69">        <span class="s2">"Deprecated: Use i2.name_of_obj or i2.signatures.name_of_object instead"</span><span class="p">,</span>
+</span><span id="line-70">        <span class="ne">DeprecationWarning</span><span class="p">,</span>
+</span><span id="line-71">    <span class="p">)</span>
+</span><span id="line-72">
+</span><span id="line-73">    <span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">name_of_obj</span> <span class="k">as</span> <span class="n">signatures_name_of_obj</span>
+</span><span id="line-74">
+</span><span id="line-75">    <span class="k">return</span> <span class="n">signatures_name_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">)</span></div>
+
 </span><span id="line-76">
-</span><span id="line-77"><span class="k">class</span><span class="w"> </span><span class="nc">KeyFromAttr</span><span class="p">:</span>
-</span><span id="line-78">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-</span><span id="line-79">        <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">=</span> <span class="n">d</span>
+</span><span id="line-77">
+<div class="viewcode-block" id="AttrFromKey">
+<a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.AttrFromKey">[docs]</a>
+</span><span id="line-78"><span class="k">class</span><span class="w"> </span><span class="nc">AttrFromKey</span><span class="p">:</span>
+</span><span id="line-79"><span class="w">    </span><span class="sd">"""Expose the keys of a mapping as attributes (``obj.k`` reads ``d[k]``)."""</span>
 </span><span id="line-80">
-</span><span id="line-81">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span id="line-82">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</span><span id="line-81">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+</span><span id="line-82">        <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">=</span> <span class="n">d</span>
 </span><span id="line-83">
-</span><span id="line-84">    <span class="fm">__getattr__</span> <span class="o">=</span> <span class="fm">__getitem__</span>
-</span><span id="line-85">
+</span><span id="line-84">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-85">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 </span><span id="line-86">
-</span><span id="line-87"><span class="k">class</span><span class="w"> </span><span class="nc">_ParameterMintLazy</span><span class="p">:</span>  <span class="c1"># Note: Experimental</span>
-</span><span id="line-88">    <span class="n">_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">,</span> <span class="s2">"annotation"</span><span class="p">]</span>
+</span><span id="line-87">    <span class="fm">__getitem__</span> <span class="o">=</span> <span class="fm">__getattr__</span></div>
+
+</span><span id="line-88">
 </span><span id="line-89">
-</span><span id="line-90">    <span class="c1">#     find = DelegatedAttribute('_params', '__getattribute__')</span>
-</span><span id="line-91">    <span class="c1">#     __getattribute__ = DelegatedAttribute('_params', '__getattribute__')</span>
-</span><span id="line-92">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">_attrs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="line-93">        <span class="bp">self</span><span class="o">.</span><span class="n">_param</span> <span class="o">=</span> <span class="n">param</span>
-</span><span id="line-94">        <span class="k">if</span> <span class="n">_attrs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-95">            <span class="c1"># usually used to get full attrs: ['name', 'kind', 'default', 'annotation']</span>
-</span><span id="line-96">            <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span> <span class="o">=</span> <span class="n">_attrs</span>
-</span><span id="line-97">
-</span><span id="line-98">    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-99">        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">:</span>
-</span><span id="line-100">            <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-</span><span id="line-101">            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">inspect_empty</span><span class="p">:</span>
-</span><span id="line-102">                <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
-</span><span id="line-103">
-</span><span id="line-104">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span id="line-105">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-</span><span id="line-106">
-</span><span id="line-107">    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span id="line-108">        <span class="k">try</span><span class="p">:</span>
-</span><span id="line-109">            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-</span><span id="line-110">            <span class="k">return</span> <span class="kc">True</span>
-</span><span id="line-111">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span id="line-112">            <span class="k">return</span> <span class="kc">False</span>
-</span><span id="line-113">
-</span><span id="line-114">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>  <span class="c1"># TODO: Use descriptor to make it faster</span>
-</span><span id="line-115">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-</span><span id="line-116">
-</span><span id="line-117">    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-118">        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="line-119">
-</span><span id="line-120">
-</span><span id="line-121"><span class="k">class</span><span class="w"> </span><span class="nc">ParameterMint</span><span class="p">:</span>
-</span><span id="line-122">    <span class="n">_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">,</span> <span class="s2">"annotation"</span><span class="p">]</span>
-</span><span id="line-123">
-</span><span id="line-124">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="line-125">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="s2">"__getitem__"</span><span class="p">):</span>
-</span><span id="line-126">            <span class="n">param</span> <span class="o">=</span> <span class="n">AttrFromKey</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
-</span><span id="line-127">
-</span><span id="line-128">        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">:</span>
-</span><span id="line-129">            <span class="k">try</span><span class="p">:</span>
-</span><span id="line-130">                <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">inspect_empty</span><span class="p">)</span>
-</span><span id="line-131">            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-</span><span id="line-132">                <span class="n">val</span> <span class="o">=</span> <span class="n">inspect_empty</span>
-</span><span id="line-133">            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-</span><span id="line-134">        <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-135">            <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span>
-</span><span id="line-136">
-</span><span id="line-137">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span id="line-138">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-</span><span id="line-139">
-</span><span id="line-140">    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span id="line-141">        <span class="k">try</span><span class="p">:</span>
-</span><span id="line-142">            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-</span><span id="line-143">            <span class="k">return</span> <span class="kc">True</span>
-</span><span id="line-144">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span id="line-145">            <span class="k">return</span> <span class="kc">False</span>
-</span><span id="line-146">
-</span><span id="line-147">    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-148">        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">:</span>
-</span><span id="line-149">            <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-</span><span id="line-150">            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">inspect_empty</span><span class="p">:</span>
-</span><span id="line-151">                <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
-</span><span id="line-152">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"position"</span><span class="p">):</span>
-</span><span id="line-153">            <span class="k">yield</span> <span class="s2">"position"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
-</span><span id="line-154">
-</span><span id="line-155">    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-156">        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+<div class="viewcode-block" id="KeyFromAttr">
+<a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.KeyFromAttr">[docs]</a>
+</span><span id="line-90"><span class="k">class</span><span class="w"> </span><span class="nc">KeyFromAttr</span><span class="p">:</span>
+</span><span id="line-91"><span class="w">    </span><span class="sd">"""Expose the attributes of an object as mapping keys (``obj[k]`` reads ``getattr(d, k)``)."""</span>
+</span><span id="line-92">
+</span><span id="line-93">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+</span><span id="line-94">        <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">=</span> <span class="n">d</span>
+</span><span id="line-95">
+</span><span id="line-96">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-97">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</span><span id="line-98">
+</span><span id="line-99">    <span class="fm">__getattr__</span> <span class="o">=</span> <span class="fm">__getitem__</span></div>
+
+</span><span id="line-100">
+</span><span id="line-101">
+</span><span id="line-102"><span class="k">class</span><span class="w"> </span><span class="nc">_ParameterMintLazy</span><span class="p">:</span>  <span class="c1"># Note: Experimental</span>
+</span><span id="line-103">    <span class="n">_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">,</span> <span class="s2">"annotation"</span><span class="p">]</span>
+</span><span id="line-104">
+</span><span id="line-105">    <span class="c1">#     find = DelegatedAttribute('_params', '__getattribute__')</span>
+</span><span id="line-106">    <span class="c1">#     __getattribute__ = DelegatedAttribute('_params', '__getattribute__')</span>
+</span><span id="line-107">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">_attrs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="line-108">        <span class="bp">self</span><span class="o">.</span><span class="n">_param</span> <span class="o">=</span> <span class="n">param</span>
+</span><span id="line-109">        <span class="k">if</span> <span class="n">_attrs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-110">            <span class="c1"># usually used to get full attrs: ['name', 'kind', 'default', 'annotation']</span>
+</span><span id="line-111">            <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span> <span class="o">=</span> <span class="n">_attrs</span>
+</span><span id="line-112">
+</span><span id="line-113">    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-114">        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">:</span>
+</span><span id="line-115">            <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</span><span id="line-116">            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">inspect_empty</span><span class="p">:</span>
+</span><span id="line-117">                <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+</span><span id="line-118">
+</span><span id="line-119">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-120">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</span><span id="line-121">
+</span><span id="line-122">    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-123">        <span class="k">try</span><span class="p">:</span>
+</span><span id="line-124">            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+</span><span id="line-125">            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="line-126">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="line-127">            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="line-128">
+</span><span id="line-129">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>  <span class="c1"># TODO: Use descriptor to make it faster</span>
+</span><span id="line-130">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</span><span id="line-131">
+</span><span id="line-132">    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-133">        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="line-134">
+</span><span id="line-135">
+<div class="viewcode-block" id="ParameterMint">
+<a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.ParameterMint">[docs]</a>
+</span><span id="line-136"><span class="k">class</span><span class="w"> </span><span class="nc">ParameterMint</span><span class="p">:</span>
+</span><span id="line-137"><span class="w">    </span><span class="sd">"""Mint of one parameter: its name, kind, default and annotation (and position, if given).</span>
+</span><span id="line-138">
+</span><span id="line-139"><span class="sd">    Accepts an ``inspect.Parameter``-like object or a mapping with those keys; missing</span>
+</span><span id="line-140"><span class="sd">    attributes are set to ``inspect.Parameter.empty``.</span>
+</span><span id="line-141"><span class="sd">    """</span>
+</span><span id="line-142">
+</span><span id="line-143">    <span class="n">_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">,</span> <span class="s2">"annotation"</span><span class="p">]</span>
+</span><span id="line-144">
+</span><span id="line-145">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="line-146">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="s2">"__getitem__"</span><span class="p">):</span>
+</span><span id="line-147">            <span class="n">param</span> <span class="o">=</span> <span class="n">AttrFromKey</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+</span><span id="line-148">
+</span><span id="line-149">        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">:</span>
+</span><span id="line-150">            <span class="k">try</span><span class="p">:</span>
+</span><span id="line-151">                <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">inspect_empty</span><span class="p">)</span>
+</span><span id="line-152">            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+</span><span id="line-153">                <span class="n">val</span> <span class="o">=</span> <span class="n">inspect_empty</span>
+</span><span id="line-154">            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+</span><span id="line-155">        <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-156">            <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span>
 </span><span id="line-157">
-</span><span id="line-158">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-159">        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-</span><span id="line-160">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-161">            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">"kind"</span><span class="p">:</span>
-</span><span id="line-162">                <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span>
-</span><span id="line-163">            <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-</span><span id="line-164">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-</span><span id="line-165">
-</span><span id="line-166">
-</span><span id="line-167"><span class="n">dflt_params</span> <span class="o">=</span> <span class="n">FrozenDict</span><span class="p">({})</span>
-</span><span id="line-168">
-</span><span id="line-169">
+</span><span id="line-158">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-159">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</span><span id="line-160">
+</span><span id="line-161">    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-162">        <span class="k">try</span><span class="p">:</span>
+</span><span id="line-163">            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+</span><span id="line-164">            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="line-165">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="line-166">            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="line-167">
+</span><span id="line-168">    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-169">        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">:</span>
+</span><span id="line-170">            <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</span><span id="line-171">            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">inspect_empty</span><span class="p">:</span>
+</span><span id="line-172">                <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+</span><span id="line-173">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"position"</span><span class="p">):</span>
+</span><span id="line-174">            <span class="k">yield</span> <span class="s2">"position"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
+</span><span id="line-175">
+</span><span id="line-176">    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-177">        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="line-178">
+</span><span id="line-179">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-180">        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+</span><span id="line-181">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-182">            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">"kind"</span><span class="p">:</span>
+</span><span id="line-183">                <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span>
+</span><span id="line-184">            <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+</span><span id="line-185">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
+
+</span><span id="line-186">
+</span><span id="line-187">
+</span><span id="line-188"><span class="n">dflt_params</span> <span class="o">=</span> <span class="n">FrozenDict</span><span class="p">({})</span>
+</span><span id="line-189">
+</span><span id="line-190">
 <div class="viewcode-block" id="ParametersMint">
 <a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.ParametersMint">[docs]</a>
-</span><span id="line-170"><span class="k">class</span><span class="w"> </span><span class="nc">ParametersMint</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
-</span><span id="line-171"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-172"><span class="sd">    Get mint of the parameters of a callable.</span>
-</span><span id="line-173">
-</span><span id="line-174"><span class="sd">    &gt;&gt;&gt; import inspect</span>
-</span><span id="line-175"><span class="sd">    &gt;&gt;&gt; from pprint import pprint</span>
-</span><span id="line-176"><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="line-177"><span class="sd">    &gt;&gt;&gt; def g(a, b: 'some_type', c=1, d: int = 1) -&gt; float:</span>
-</span><span id="line-178"><span class="sd">    ...     return a * b * c * d</span>
-</span><span id="line-179"><span class="sd">    &gt;&gt;&gt; mint = ParametersMint(inspect.signature(g).parameters)</span>
-</span><span id="line-180"><span class="sd">    &gt;&gt;&gt; # mint is a mapping (like a read-only dict), so...</span>
-</span><span id="line-181"><span class="sd">    &gt;&gt;&gt; list(mint)</span>
-</span><span id="line-182"><span class="sd">    ['a', 'b', 'c', 'd']</span>
-</span><span id="line-183"><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="line-184"><span class="sd">    &gt;&gt;&gt; for arg_spec in mint.values():</span>
-</span><span id="line-185"><span class="sd">    ...     print(arg_spec)</span>
-</span><span id="line-186"><span class="sd">    {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0}</span>
-</span><span id="line-187"><span class="sd">    {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_type', 'position': 1}</span>
-</span><span id="line-188"><span class="sd">    {'name': 'c', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2}</span>
-</span><span id="line-189"><span class="sd">    {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': &lt;class 'int'&gt;, 'position': 3}</span>
-</span><span id="line-190"><span class="sd">    &gt;&gt;&gt; t = list(mint.items())</span>
-</span><span id="line-191"><span class="sd">    &gt;&gt;&gt; t[0]</span>
-</span><span id="line-192"><span class="sd">    ('a', {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0})</span>
-</span><span id="line-193"><span class="sd">    &gt;&gt;&gt; t[1]</span>
-</span><span id="line-194"><span class="sd">    ('b', {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_type', 'position': 1})</span>
-</span><span id="line-195"><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="line-196"><span class="sd">    &gt;&gt;&gt; mint = ParametersMint(inspect.signature(g).parameters)</span>
-</span><span id="line-197"><span class="sd">    &gt;&gt;&gt; pprint(dict(mint))</span>
-</span><span id="line-198"><span class="sd">    {'a': {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},</span>
-</span><span id="line-199"><span class="sd">     'b': {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_type', 'position': 1},</span>
-</span><span id="line-200"><span class="sd">     'c': {'name': 'c', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2},</span>
-</span><span id="line-201"><span class="sd">     'd': {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': &lt;class 'int'&gt;, 'position': 3}}</span>
-</span><span id="line-202">
-</span><span id="line-203"><span class="sd">    &gt;&gt;&gt; # and now, some cannibalistic fun...</span>
-</span><span id="line-204"><span class="sd">    &gt;&gt;&gt; # The following is skipped because not working in 3.10</span>
-</span><span id="line-205"><span class="sd">    &gt;&gt;&gt; pprint(</span>
-</span><span id="line-206"><span class="sd">    ...     dict(ParametersMint(inspect.signature(ParametersMint).parameters))</span>
-</span><span id="line-207"><span class="sd">    ... )  # doctest: +SKIP</span>
-</span><span id="line-208"><span class="sd">    {'args': {'name': 'args', 'kind': 'VAR_POSITIONAL', 'position': 0},</span>
-</span><span id="line-209"><span class="sd">     'kwds': {'name': 'kwds', 'kind': 'VAR_KEYWORD', 'position': 1}}</span>
-</span><span id="line-210"><span class="sd">    &gt;&gt;&gt; pprint(</span>
-</span><span id="line-211"><span class="sd">    ...     dict(ParametersMint(inspect.signature(ParametersMint.__init__).parameters))</span>
-</span><span id="line-212"><span class="sd">    ... )  # doctest: +SKIP</span>
-</span><span id="line-213"><span class="sd">    {'params': {'name': 'params', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': FrozenDict({}), 'position': 1},</span>
-</span><span id="line-214"><span class="sd">     'self': {'name': 'self', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0}}</span>
-</span><span id="line-215"><span class="sd">    &gt;&gt;&gt; pprint(</span>
-</span><span id="line-216"><span class="sd">    ...     dict(ParametersMint(inspect.signature(ParametersMint.__new__).parameters))</span>
-</span><span id="line-217"><span class="sd">    ... )  # doctest: +SKIP</span>
-</span><span id="line-218"><span class="sd">    {'args': {'name': 'args', 'kind': 'VAR_POSITIONAL', 'position': 1},</span>
-</span><span id="line-219"><span class="sd">     'cls': {'name': 'cls', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},</span>
-</span><span id="line-220"><span class="sd">     'kwds': {'name': 'kwds', 'kind': 'VAR_KEYWORD', 'position': 2}}</span>
-</span><span id="line-221"><span class="sd">    """</span>
-</span><span id="line-222">
-</span><span id="line-223">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">dflt_params</span><span class="p">):</span>
-</span><span id="line-224">        <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-</span><span id="line-225">        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-</span><span id="line-226">            <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-</span><span id="line-227">            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">ParameterMint</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">i</span><span class="p">))</span>
-</span><span id="line-228">
-</span><span id="line-229">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span id="line-230">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-</span><span id="line-231">
-</span><span id="line-232">    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-233">        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span>
-</span><span id="line-234">
+</span><span id="line-191"><span class="k">class</span><span class="w"> </span><span class="nc">ParametersMint</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
+</span><span id="line-192"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-193"><span class="sd">    Get mint of the parameters of a callable.</span>
+</span><span id="line-194">
+</span><span id="line-195"><span class="sd">    &gt;&gt;&gt; import inspect</span>
+</span><span id="line-196"><span class="sd">    &gt;&gt;&gt; from pprint import pprint</span>
+</span><span id="line-197"><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="line-198"><span class="sd">    &gt;&gt;&gt; def g(a, b: 'some_type', c=1, d: int = 1) -&gt; float:</span>
+</span><span id="line-199"><span class="sd">    ...     return a * b * c * d</span>
+</span><span id="line-200"><span class="sd">    &gt;&gt;&gt; mint = ParametersMint(inspect.signature(g).parameters)</span>
+</span><span id="line-201"><span class="sd">    &gt;&gt;&gt; # mint is a mapping (like a read-only dict), so...</span>
+</span><span id="line-202"><span class="sd">    &gt;&gt;&gt; list(mint)</span>
+</span><span id="line-203"><span class="sd">    ['a', 'b', 'c', 'd']</span>
+</span><span id="line-204"><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="line-205"><span class="sd">    &gt;&gt;&gt; for arg_spec in mint.values():</span>
+</span><span id="line-206"><span class="sd">    ...     print(arg_spec)</span>
+</span><span id="line-207"><span class="sd">    {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0}</span>
+</span><span id="line-208"><span class="sd">    {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_type', 'position': 1}</span>
+</span><span id="line-209"><span class="sd">    {'name': 'c', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2}</span>
+</span><span id="line-210"><span class="sd">    {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': &lt;class 'int'&gt;, 'position': 3}</span>
+</span><span id="line-211"><span class="sd">    &gt;&gt;&gt; t = list(mint.items())</span>
+</span><span id="line-212"><span class="sd">    &gt;&gt;&gt; t[0]</span>
+</span><span id="line-213"><span class="sd">    ('a', {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0})</span>
+</span><span id="line-214"><span class="sd">    &gt;&gt;&gt; t[1]</span>
+</span><span id="line-215"><span class="sd">    ('b', {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_type', 'position': 1})</span>
+</span><span id="line-216"><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="line-217"><span class="sd">    &gt;&gt;&gt; mint = ParametersMint(inspect.signature(g).parameters)</span>
+</span><span id="line-218"><span class="sd">    &gt;&gt;&gt; pprint(dict(mint))</span>
+</span><span id="line-219"><span class="sd">    {'a': {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},</span>
+</span><span id="line-220"><span class="sd">     'b': {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_type', 'position': 1},</span>
+</span><span id="line-221"><span class="sd">     'c': {'name': 'c', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2},</span>
+</span><span id="line-222"><span class="sd">     'd': {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': &lt;class 'int'&gt;, 'position': 3}}</span>
+</span><span id="line-223">
+</span><span id="line-224"><span class="sd">    &gt;&gt;&gt; # and now, some cannibalistic fun...</span>
+</span><span id="line-225"><span class="sd">    &gt;&gt;&gt; # The following is skipped because not working in 3.10</span>
+</span><span id="line-226"><span class="sd">    &gt;&gt;&gt; pprint(</span>
+</span><span id="line-227"><span class="sd">    ...     dict(ParametersMint(inspect.signature(ParametersMint).parameters))</span>
+</span><span id="line-228"><span class="sd">    ... )  # doctest: +SKIP</span>
+</span><span id="line-229"><span class="sd">    {'args': {'name': 'args', 'kind': 'VAR_POSITIONAL', 'position': 0},</span>
+</span><span id="line-230"><span class="sd">     'kwds': {'name': 'kwds', 'kind': 'VAR_KEYWORD', 'position': 1}}</span>
+</span><span id="line-231"><span class="sd">    &gt;&gt;&gt; pprint(</span>
+</span><span id="line-232"><span class="sd">    ...     dict(ParametersMint(inspect.signature(ParametersMint.__init__).parameters))</span>
+</span><span id="line-233"><span class="sd">    ... )  # doctest: +SKIP</span>
+</span><span id="line-234"><span class="sd">    {'params': {'name': 'params', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': FrozenDict({}), 'position': 1},</span>
+</span><span id="line-235"><span class="sd">     'self': {'name': 'self', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0}}</span>
+</span><span id="line-236"><span class="sd">    &gt;&gt;&gt; pprint(</span>
+</span><span id="line-237"><span class="sd">    ...     dict(ParametersMint(inspect.signature(ParametersMint.__new__).parameters))</span>
+</span><span id="line-238"><span class="sd">    ... )  # doctest: +SKIP</span>
+</span><span id="line-239"><span class="sd">    {'args': {'name': 'args', 'kind': 'VAR_POSITIONAL', 'position': 1},</span>
+</span><span id="line-240"><span class="sd">     'cls': {'name': 'cls', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},</span>
+</span><span id="line-241"><span class="sd">     'kwds': {'name': 'kwds', 'kind': 'VAR_KEYWORD', 'position': 2}}</span>
+</span><span id="line-242"><span class="sd">    """</span>
+</span><span id="line-243">
+</span><span id="line-244">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">dflt_params</span><span class="p">):</span>
+</span><span id="line-245">        <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+</span><span id="line-246">        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+</span><span id="line-247">            <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+</span><span id="line-248">            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">ParameterMint</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">i</span><span class="p">))</span>
+</span><span id="line-249">
+</span><span id="line-250">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-251">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</span><span id="line-252">
+</span><span id="line-253">    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-254">        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span>
+</span><span id="line-255">
 <div class="viewcode-block" id="ParametersMint.items">
 <a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.ParametersMint.items">[docs]</a>
-</span><span id="line-235">    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-236">        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span><span class="p">:</span>
-</span><span id="line-237">            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span></div>
+</span><span id="line-256">    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-257">        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span><span class="p">:</span>
+</span><span id="line-258">            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span></div>
 
-</span><span id="line-238">
-</span><span id="line-239">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-240">        <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="line-241">        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">():</span>
-</span><span id="line-242">            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-243">        <span class="k">return</span> <span class="n">c</span>
-</span><span id="line-244">
-</span><span id="line-245">    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-246">        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="line-247">
-</span><span id="line-248">    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-</span><span id="line-249">        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">state</span><span class="p">)</span>
-</span><span id="line-250">
-</span><span id="line-251">    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-252">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
-</span><span id="line-253">
-</span><span id="line-254">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-255">        <span class="n">arg_repr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
-</span><span id="line-256">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">arg_repr</span><span class="si">}</span><span class="s2">)"</span></div>
+</span><span id="line-259">
+</span><span id="line-260">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-261">        <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="line-262">        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">():</span>
+</span><span id="line-263">            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-264">        <span class="k">return</span> <span class="n">c</span>
+</span><span id="line-265">
+</span><span id="line-266">    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-267">        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="line-268">
+</span><span id="line-269">    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+</span><span id="line-270">        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">state</span><span class="p">)</span>
+</span><span id="line-271">
+</span><span id="line-272">    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-273">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
+</span><span id="line-274">
+</span><span id="line-275">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-276">        <span class="n">arg_repr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+</span><span id="line-277">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">arg_repr</span><span class="si">}</span><span class="s2">)"</span></div>
 
-</span><span id="line-257">
-</span><span id="line-258">
+</span><span id="line-278">
+</span><span id="line-279">
 <div class="viewcode-block" id="Mint">
 <a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.Mint">[docs]</a>
-</span><span id="line-259"><span class="k">class</span><span class="w"> </span><span class="nc">Mint</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
-</span><span id="line-260"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-261"><span class="sd">    Get a Mint object of a python object.</span>
-</span><span id="line-262"><span class="sd">    A Mint will provide parameters that provide (meta-)information about the interface of the python object.</span>
-</span><span id="line-263">
-</span><span id="line-264"><span class="sd">    &gt;&gt;&gt; from pprint import pprint</span>
-</span><span id="line-265"><span class="sd">    &gt;&gt;&gt; # Mint of a function</span>
-</span><span id="line-266"><span class="sd">    &gt;&gt;&gt; def f(my_arg: int = 7) -&gt; int:</span>
-</span><span id="line-267"><span class="sd">    ...     return my_arg + 10</span>
-</span><span id="line-268"><span class="sd">    &gt;&gt;&gt; mint = Mint(f)</span>
-</span><span id="line-269"><span class="sd">    &gt;&gt;&gt; mint.obj_name, mint.type_name, mint.module_name, mint.obj_name</span>
-</span><span id="line-270"><span class="sd">    ('f', 'function', 'i2.base', 'f')</span>
-</span><span id="line-271"><span class="sd">    &gt;&gt;&gt; # Mint of a module</span>
-</span><span id="line-272"><span class="sd">    &gt;&gt;&gt; import os as myos</span>
-</span><span id="line-273"><span class="sd">    &gt;&gt;&gt; mint = Mint(myos)</span>
-</span><span id="line-274"><span class="sd">    &gt;&gt;&gt; mint.obj_name, mint.type_name, mint.module_name, mint.obj_name</span>
-</span><span id="line-275"><span class="sd">    ('os', 'module', 'os', 'os')</span>
-</span><span id="line-276"><span class="sd">    &gt;&gt;&gt; assert set(list(mint)) == {'module_name', 'module', 'type_name', 'obj_name'}</span>
-</span><span id="line-277"><span class="sd">    &gt;&gt;&gt; # Mint of a variable</span>
-</span><span id="line-278"><span class="sd">    &gt;&gt;&gt; v = 10</span>
-</span><span id="line-279"><span class="sd">    &gt;&gt;&gt; mint = Mint(v)</span>
-</span><span id="line-280"><span class="sd">    &gt;&gt;&gt; mint.obj_name, mint.type_name, mint.module_name, mint.obj_name</span>
-</span><span id="line-281"><span class="sd">    (NotFound, 'int', NotFound, NotFound)</span>
-</span><span id="line-282"><span class="sd">    &gt;&gt;&gt; assert set(list(mint)) == {'type_name'}  # see that there's only one non-null attr!</span>
-</span><span id="line-283"><span class="sd">    """</span>
+</span><span id="line-280"><span class="k">class</span><span class="w"> </span><span class="nc">Mint</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
+</span><span id="line-281"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-282"><span class="sd">    Get a Mint object of a python object.</span>
+</span><span id="line-283"><span class="sd">    A Mint will provide parameters that provide (meta-)information about the interface of the python object.</span>
 </span><span id="line-284">
-</span><span id="line-285">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="line-286">        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="n">obj</span>
-</span><span id="line-287">        <span class="k">if</span> <span class="n">attrs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-288">            <span class="n">attrs</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">_property_names_of</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
-</span><span id="line-289">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-290">            <span class="n">self_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span id="line-291">            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
-</span><span id="line-292">                <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_property</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">self_type</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
-</span><span id="line-293">                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-</span><span id="line-294">                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> doesn't have attribute: </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-295">                    <span class="p">)</span>
-</span><span id="line-296">        <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span> <span class="o">=</span> <span class="n">attrs</span>
-</span><span id="line-297">
-</span><span id="line-298">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-299">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span>
-</span><span id="line-300">
-</span><span id="line-301">    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-302">        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_empty_attrs</span>
-</span><span id="line-303">
-</span><span id="line-304">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span id="line-305">        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_empty_attrs</span><span class="p">:</span>
-</span><span id="line-306">            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-</span><span id="line-307">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-308">            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">"No such key: </span><span class="si">{k}</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="line-309">
+</span><span id="line-285"><span class="sd">    &gt;&gt;&gt; from pprint import pprint</span>
+</span><span id="line-286"><span class="sd">    &gt;&gt;&gt; # Mint of a function</span>
+</span><span id="line-287"><span class="sd">    &gt;&gt;&gt; def f(my_arg: int = 7) -&gt; int:</span>
+</span><span id="line-288"><span class="sd">    ...     return my_arg + 10</span>
+</span><span id="line-289"><span class="sd">    &gt;&gt;&gt; mint = Mint(f)</span>
+</span><span id="line-290"><span class="sd">    &gt;&gt;&gt; mint.obj_name, mint.type_name, mint.module_name, mint.obj_name</span>
+</span><span id="line-291"><span class="sd">    ('f', 'function', 'i2.base', 'f')</span>
+</span><span id="line-292"><span class="sd">    &gt;&gt;&gt; # Mint of a module</span>
+</span><span id="line-293"><span class="sd">    &gt;&gt;&gt; import os as myos</span>
+</span><span id="line-294"><span class="sd">    &gt;&gt;&gt; mint = Mint(myos)</span>
+</span><span id="line-295"><span class="sd">    &gt;&gt;&gt; mint.obj_name, mint.type_name, mint.module_name, mint.obj_name</span>
+</span><span id="line-296"><span class="sd">    ('os', 'module', 'os', 'os')</span>
+</span><span id="line-297"><span class="sd">    &gt;&gt;&gt; assert set(list(mint)) == {'module_name', 'module', 'type_name', 'obj_name'}</span>
+</span><span id="line-298"><span class="sd">    &gt;&gt;&gt; # Mint of a variable</span>
+</span><span id="line-299"><span class="sd">    &gt;&gt;&gt; v = 10</span>
+</span><span id="line-300"><span class="sd">    &gt;&gt;&gt; mint = Mint(v)</span>
+</span><span id="line-301"><span class="sd">    &gt;&gt;&gt; mint.obj_name, mint.type_name, mint.module_name, mint.obj_name</span>
+</span><span id="line-302"><span class="sd">    (NotFound, 'int', NotFound, NotFound)</span>
+</span><span id="line-303"><span class="sd">    &gt;&gt;&gt; assert set(list(mint)) == {'type_name'}  # see that there's only one non-null attr!</span>
+</span><span id="line-304"><span class="sd">    """</span>
+</span><span id="line-305">
+</span><span id="line-306">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="line-307">        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="n">obj</span>
+</span><span id="line-308">        <span class="k">if</span> <span class="n">attrs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-309">            <span class="n">attrs</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">_property_names_of</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+</span><span id="line-310">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-311">            <span class="n">self_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="line-312">            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+</span><span id="line-313">                <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_property</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">self_type</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+</span><span id="line-314">                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+</span><span id="line-315">                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> doesn't have attribute: </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-316">                    <span class="p">)</span>
+</span><span id="line-317">        <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span> <span class="o">=</span> <span class="n">attrs</span>
+</span><span id="line-318">
+</span><span id="line-319">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-320">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span>
+</span><span id="line-321">
+</span><span id="line-322">    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-323">        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_empty_attrs</span>
+</span><span id="line-324">
+</span><span id="line-325">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-326">        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_empty_attrs</span><span class="p">:</span>
+</span><span id="line-327">            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</span><span id="line-328">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-329">            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">"No such key: </span><span class="si">{k}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="line-330">
 <div class="viewcode-block" id="Mint.items">
 <a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.Mint.items">[docs]</a>
-</span><span id="line-310">    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-311">        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_empty_attrs</span><span class="p">:</span>
-</span><span id="line-312">            <span class="k">yield</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
+</span><span id="line-331">    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-332">        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_empty_attrs</span><span class="p">:</span>
+</span><span id="line-333">            <span class="k">yield</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
 
-</span><span id="line-313">
-</span><span id="line-314">    <span class="nd">@lazyprop</span>
-</span><span id="line-315">    <span class="k">def</span><span class="w"> </span><span class="nf">_non_empty_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-316">        <span class="n">non_empty_attrs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-</span><span id="line-317">        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">:</span>
-</span><span id="line-318">            <span class="n">attr_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
-</span><span id="line-319">            <span class="k">if</span> <span class="n">is_not_empty</span><span class="p">(</span><span class="n">attr_val</span><span class="p">):</span>
-</span><span id="line-320">                <span class="n">non_empty_attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="line-321">        <span class="k">return</span> <span class="n">non_empty_attrs</span>
-</span><span id="line-322">
-</span><span id="line-323">    <span class="nd">@lazyprop</span>
-</span><span id="line-324">    <span class="k">def</span><span class="w"> </span><span class="nf">_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-325">        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_non_empty_attrs</span><span class="p">)</span>
-</span><span id="line-326">
-</span><span id="line-327">    <span class="nd">@lazyprop</span>
-</span><span id="line-328">    <span class="k">def</span><span class="w"> </span><span class="nf">obj_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-329">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="n">not_found</span><span class="p">)</span>
-</span><span id="line-330">
-</span><span id="line-331">    <span class="nd">@lazyprop</span>
-</span><span id="line-332">    <span class="k">def</span><span class="w"> </span><span class="nf">type_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-333">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">),</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="n">not_found</span><span class="p">)</span>
 </span><span id="line-334">
 </span><span id="line-335">    <span class="nd">@lazyprop</span>
-</span><span id="line-336">    <span class="k">def</span><span class="w"> </span><span class="nf">module</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-337">        <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">not_found</span>
-</span><span id="line-338">
-</span><span id="line-339">    <span class="nd">@lazyprop</span>
-</span><span id="line-340">    <span class="k">def</span><span class="w"> </span><span class="nf">module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-341">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="n">not_found</span><span class="p">)</span></div>
-
-</span><span id="line-342">
+</span><span id="line-336">    <span class="k">def</span><span class="w"> </span><span class="nf">_non_empty_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-337">        <span class="n">non_empty_attrs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+</span><span id="line-338">        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">:</span>
+</span><span id="line-339">            <span class="n">attr_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+</span><span id="line-340">            <span class="k">if</span> <span class="n">is_not_empty</span><span class="p">(</span><span class="n">attr_val</span><span class="p">):</span>
+</span><span id="line-341">                <span class="n">non_empty_attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+</span><span id="line-342">        <span class="k">return</span> <span class="n">non_empty_attrs</span>
 </span><span id="line-343">
-</span><span id="line-344"><span class="k">class</span><span class="w"> </span><span class="nc">MintOfCallableMixin</span><span class="p">:</span>
-</span><span id="line-345">    <span class="nd">@lazyprop</span>
-</span><span id="line-346">    <span class="k">def</span><span class="w"> </span><span class="nf">_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-347"><span class="w">        </span><span class="sd">"""Here's some doc"""</span>
-</span><span id="line-348">        <span class="k">return</span> <span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">)</span>
-</span><span id="line-349">
-</span><span id="line-350">    <span class="nd">@lazyprop</span>
-</span><span id="line-351">    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-352">        <span class="k">return</span> <span class="n">ParametersMint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
-</span><span id="line-353">
-</span><span id="line-354">    <span class="nd">@lazyprop</span>
-</span><span id="line-355">    <span class="k">def</span><span class="w"> </span><span class="nf">return_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-356">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_signature</span><span class="o">.</span><span class="n">return_annotation</span> <span class="ow">or</span> <span class="n">not_found</span>
-</span><span id="line-357">
-</span><span id="line-358">    <span class="nd">@lazyprop</span>
-</span><span id="line-359">    <span class="k">def</span><span class="w"> </span><span class="nf">doc_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-360">        <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">not_found</span>
-</span><span id="line-361">
-</span><span id="line-362">    <span class="nd">@lazyprop</span>
-</span><span id="line-363">    <span class="k">def</span><span class="w"> </span><span class="nf">comments_preceeding_def</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-364">        <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getcomments</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">not_found</span>
-</span><span id="line-365">
-</span><span id="line-366">    <span class="nd">@lazyprop</span>
-</span><span id="line-367">    <span class="k">def</span><span class="w"> </span><span class="nf">default_of</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-368">        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-</span><span id="line-369">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-370">            <span class="k">if</span> <span class="s2">"default"</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-</span><span id="line-371">                <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s2">"default"</span><span class="p">]</span>
-</span><span id="line-372">        <span class="k">return</span> <span class="n">d</span>
-</span><span id="line-373">
-</span><span id="line-374">    <span class="nd">@lazyprop</span>
-</span><span id="line-375">    <span class="k">def</span><span class="w"> </span><span class="nf">annotation_of</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-376">        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-</span><span id="line-377">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-378">            <span class="k">if</span> <span class="s2">"annotation"</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-</span><span id="line-379">                <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s2">"annotation"</span><span class="p">]</span>
-</span><span id="line-380">        <span class="k">return</span> <span class="n">d</span>
-</span><span id="line-381">
-</span><span id="line-382">
-</span><span id="line-383"><span class="k">class</span><span class="w"> </span><span class="nc">MintOfDocMixin</span><span class="p">:</span>
-</span><span id="line-384">    <span class="nd">@lazyprop</span>
-</span><span id="line-385">    <span class="k">def</span><span class="w"> </span><span class="nf">_parsed_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-386">        <span class="k">return</span> <span class="s2">"Not yet implemented (correctly)"</span>
-</span><span id="line-387">        <span class="kn">from</span><span class="w"> </span><span class="nn">i2.scrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_mint_doc</span>
+</span><span id="line-344">    <span class="nd">@lazyprop</span>
+</span><span id="line-345">    <span class="k">def</span><span class="w"> </span><span class="nf">_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-346">        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_non_empty_attrs</span><span class="p">)</span>
+</span><span id="line-347">
+</span><span id="line-348">    <span class="nd">@lazyprop</span>
+</span><span id="line-349">    <span class="k">def</span><span class="w"> </span><span class="nf">obj_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-350">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="n">not_found</span><span class="p">)</span>
+</span><span id="line-351">
+</span><span id="line-352">    <span class="nd">@lazyprop</span>
+</span><span id="line-353">    <span class="k">def</span><span class="w"> </span><span class="nf">type_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-354">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">),</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="n">not_found</span><span class="p">)</span>
+</span><span id="line-355">
+</span><span id="line-356">    <span class="nd">@lazyprop</span>
+</span><span id="line-357">    <span class="k">def</span><span class="w"> </span><span class="nf">module</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-358">        <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">not_found</span>
+</span><span id="line-359">
+</span><span id="line-360">    <span class="nd">@lazyprop</span>
+</span><span id="line-361">    <span class="k">def</span><span class="w"> </span><span class="nf">module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-362">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="n">not_found</span><span class="p">)</span></div>
+
+</span><span id="line-363">
+</span><span id="line-364">
+<div class="viewcode-block" id="MintOfCallableMixin">
+<a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.MintOfCallableMixin">[docs]</a>
+</span><span id="line-365"><span class="k">class</span><span class="w"> </span><span class="nc">MintOfCallableMixin</span><span class="p">:</span>
+</span><span id="line-366"><span class="w">    </span><span class="sd">"""Mint attributes computed from a callable's signature (parameters, return annotation, doc)."""</span>
+</span><span id="line-367">
+</span><span id="line-368">    <span class="nd">@lazyprop</span>
+</span><span id="line-369">    <span class="k">def</span><span class="w"> </span><span class="nf">_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-370"><span class="w">        </span><span class="sd">"""Here's some doc"""</span>
+</span><span id="line-371">        <span class="k">return</span> <span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">)</span>
+</span><span id="line-372">
+</span><span id="line-373">    <span class="nd">@lazyprop</span>
+</span><span id="line-374">    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-375">        <span class="k">return</span> <span class="n">ParametersMint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+</span><span id="line-376">
+</span><span id="line-377">    <span class="nd">@lazyprop</span>
+</span><span id="line-378">    <span class="k">def</span><span class="w"> </span><span class="nf">return_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-379">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_signature</span><span class="o">.</span><span class="n">return_annotation</span> <span class="ow">or</span> <span class="n">not_found</span>
+</span><span id="line-380">
+</span><span id="line-381">    <span class="nd">@lazyprop</span>
+</span><span id="line-382">    <span class="k">def</span><span class="w"> </span><span class="nf">doc_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-383">        <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">not_found</span>
+</span><span id="line-384">
+</span><span id="line-385">    <span class="nd">@lazyprop</span>
+</span><span id="line-386">    <span class="k">def</span><span class="w"> </span><span class="nf">comments_preceeding_def</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-387">        <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getcomments</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">not_found</span>
 </span><span id="line-388">
-</span><span id="line-389">        <span class="c1"># return parse_mint_doc(self.doc_string)</span>
-</span><span id="line-390">
-</span><span id="line-391">
+</span><span id="line-389">    <span class="nd">@lazyprop</span>
+</span><span id="line-390">    <span class="k">def</span><span class="w"> </span><span class="nf">default_of</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-391">        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+</span><span id="line-392">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-393">            <span class="k">if</span> <span class="s2">"default"</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+</span><span id="line-394">                <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s2">"default"</span><span class="p">]</span>
+</span><span id="line-395">        <span class="k">return</span> <span class="n">d</span>
+</span><span id="line-396">
+</span><span id="line-397">    <span class="nd">@lazyprop</span>
+</span><span id="line-398">    <span class="k">def</span><span class="w"> </span><span class="nf">annotation_of</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-399">        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+</span><span id="line-400">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-401">            <span class="k">if</span> <span class="s2">"annotation"</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+</span><span id="line-402">                <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s2">"annotation"</span><span class="p">]</span>
+</span><span id="line-403">        <span class="k">return</span> <span class="n">d</span></div>
+
+</span><span id="line-404">
+</span><span id="line-405">
+<div class="viewcode-block" id="MintOfDocMixin">
+<a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.MintOfDocMixin">[docs]</a>
+</span><span id="line-406"><span class="k">class</span><span class="w"> </span><span class="nc">MintOfDocMixin</span><span class="p">:</span>
+</span><span id="line-407"><span class="w">    </span><span class="sd">"""Placeholder mixin for parsed-docstring mint attributes (not implemented yet)."""</span>
+</span><span id="line-408">
+</span><span id="line-409">    <span class="nd">@lazyprop</span>
+</span><span id="line-410">    <span class="k">def</span><span class="w"> </span><span class="nf">_parsed_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-411">        <span class="k">return</span> <span class="s2">"Not yet implemented (correctly)"</span>
+</span><span id="line-412">        <span class="kn">from</span><span class="w"> </span><span class="nn">i2.scrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_mint_doc</span></div>
+
+</span><span id="line-413">
+</span><span id="line-414">        <span class="c1"># return parse_mint_doc(self.doc_string)</span>
+</span><span id="line-415">
+</span><span id="line-416">
 <div class="viewcode-block" id="MintOfCallable">
 <a class="viewcode-back" href="../../_autosummary/i2.base.html#i2.base.MintOfCallable">[docs]</a>
-</span><span id="line-392"><span class="k">class</span><span class="w"> </span><span class="nc">MintOfCallable</span><span class="p">(</span><span class="n">Mint</span><span class="p">,</span> <span class="n">MintOfCallableMixin</span><span class="p">,</span> <span class="n">MintOfDocMixin</span><span class="p">):</span>
-</span><span id="line-393"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-394"><span class="sd">    Get a Mint object of a python object.</span>
-</span><span id="line-395"><span class="sd">    A Mint will provide parameters that provide (meta-)information about the interface of the python object.</span>
-</span><span id="line-396">
-</span><span id="line-397"><span class="sd">    &gt;&gt;&gt; from pprint import pprint</span>
-</span><span id="line-398"><span class="sd">    &gt;&gt;&gt; def f(my_arg: int = 7) -&gt; int:</span>
-</span><span id="line-399"><span class="sd">    ...     return my_arg + 10</span>
-</span><span id="line-400"><span class="sd">    &gt;&gt;&gt; f.__doc__ = 'some documentation'</span>
-</span><span id="line-401"><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="line-402"><span class="sd">    &gt;&gt;&gt; mint = MintOfCallable(f)</span>
-</span><span id="line-403"><span class="sd">    &gt;&gt;&gt; mint.obj_name</span>
-</span><span id="line-404"><span class="sd">    'f'</span>
-</span><span id="line-405"><span class="sd">    &gt;&gt;&gt; mint.type_name</span>
-</span><span id="line-406"><span class="sd">    'function'</span>
-</span><span id="line-407"><span class="sd">    &gt;&gt;&gt; mint.module_name</span>
-</span><span id="line-408"><span class="sd">    'i2.base'</span>
-</span><span id="line-409"><span class="sd">    &gt;&gt;&gt; mint.parameters.my_arg</span>
-</span><span id="line-410"><span class="sd">    {'name': 'my_arg', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 7, 'annotation': &lt;class 'int'&gt;, 'position': 0}</span>
-</span><span id="line-411"><span class="sd">    &gt;&gt;&gt; mint.doc_string</span>
-</span><span id="line-412"><span class="sd">    'some documentation'</span>
-</span><span id="line-413"><span class="sd">    &gt;&gt;&gt; mint.return_annotation</span>
-</span><span id="line-414"><span class="sd">    &lt;class 'int'&gt;</span>
-</span><span id="line-415"><span class="sd">    &gt;&gt;&gt; def g(a, b: 'some_string_id_of_a_custom_type', c=1, d: int = 1) -&gt; float:</span>
-</span><span id="line-416"><span class="sd">    ...     return a * b * c * d</span>
-</span><span id="line-417"><span class="sd">    &gt;&gt;&gt; pprint(dict(MintOfCallable(g).parameters))</span>
-</span><span id="line-418"><span class="sd">    {'a': {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},</span>
-</span><span id="line-419"><span class="sd">     'b': {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_string_id_of_a_custom_type', 'position': 1},</span>
-</span><span id="line-420"><span class="sd">     'c': {'name': 'c', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2},</span>
-</span><span id="line-421"><span class="sd">     'd': {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': &lt;class 'int'&gt;, 'position': 3}}</span>
-</span><span id="line-422"><span class="sd">    """</span>
-</span><span id="line-423">
-</span><span id="line-424">    <span class="k">pass</span></div>
+</span><span id="line-417"><span class="k">class</span><span class="w"> </span><span class="nc">MintOfCallable</span><span class="p">(</span><span class="n">Mint</span><span class="p">,</span> <span class="n">MintOfCallableMixin</span><span class="p">,</span> <span class="n">MintOfDocMixin</span><span class="p">):</span>
+</span><span id="line-418"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-419"><span class="sd">    Get a Mint object of a python object.</span>
+</span><span id="line-420"><span class="sd">    A Mint will provide parameters that provide (meta-)information about the interface of the python object.</span>
+</span><span id="line-421">
+</span><span id="line-422"><span class="sd">    &gt;&gt;&gt; from pprint import pprint</span>
+</span><span id="line-423"><span class="sd">    &gt;&gt;&gt; def f(my_arg: int = 7) -&gt; int:</span>
+</span><span id="line-424"><span class="sd">    ...     return my_arg + 10</span>
+</span><span id="line-425"><span class="sd">    &gt;&gt;&gt; f.__doc__ = 'some documentation'</span>
+</span><span id="line-426"><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="line-427"><span class="sd">    &gt;&gt;&gt; mint = MintOfCallable(f)</span>
+</span><span id="line-428"><span class="sd">    &gt;&gt;&gt; mint.obj_name</span>
+</span><span id="line-429"><span class="sd">    'f'</span>
+</span><span id="line-430"><span class="sd">    &gt;&gt;&gt; mint.type_name</span>
+</span><span id="line-431"><span class="sd">    'function'</span>
+</span><span id="line-432"><span class="sd">    &gt;&gt;&gt; mint.module_name</span>
+</span><span id="line-433"><span class="sd">    'i2.base'</span>
+</span><span id="line-434"><span class="sd">    &gt;&gt;&gt; mint.parameters.my_arg</span>
+</span><span id="line-435"><span class="sd">    {'name': 'my_arg', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 7, 'annotation': &lt;class 'int'&gt;, 'position': 0}</span>
+</span><span id="line-436"><span class="sd">    &gt;&gt;&gt; mint.doc_string</span>
+</span><span id="line-437"><span class="sd">    'some documentation'</span>
+</span><span id="line-438"><span class="sd">    &gt;&gt;&gt; mint.return_annotation</span>
+</span><span id="line-439"><span class="sd">    &lt;class 'int'&gt;</span>
+</span><span id="line-440"><span class="sd">    &gt;&gt;&gt; def g(a, b: 'some_string_id_of_a_custom_type', c=1, d: int = 1) -&gt; float:</span>
+</span><span id="line-441"><span class="sd">    ...     return a * b * c * d</span>
+</span><span id="line-442"><span class="sd">    &gt;&gt;&gt; pprint(dict(MintOfCallable(g).parameters))</span>
+</span><span id="line-443"><span class="sd">    {'a': {'name': 'a', 'kind': 'POSITIONAL_OR_KEYWORD', 'position': 0},</span>
+</span><span id="line-444"><span class="sd">     'b': {'name': 'b', 'kind': 'POSITIONAL_OR_KEYWORD', 'annotation': 'some_string_id_of_a_custom_type', 'position': 1},</span>
+</span><span id="line-445"><span class="sd">     'c': {'name': 'c', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'position': 2},</span>
+</span><span id="line-446"><span class="sd">     'd': {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': &lt;class 'int'&gt;, 'position': 3}}</span>
+</span><span id="line-447"><span class="sd">    """</span>
+</span><span id="line-448">
+</span><span id="line-449">    <span class="k">pass</span></div>
 
-</span><span id="line-425">
-</span><span id="line-426">
-</span><span id="line-427"><span class="c1"># class FunctionBuilderMint(Mint):</span>
-</span><span id="line-428"><span class="c1">#     name = lazyprop(Mint.obj_name)</span>
-</span><span id="line-429"><span class="c1">#     module = lazyprop(Mint.module_name)</span>
-</span><span id="line-430"><span class="c1">#     module.__doc__ = 'Name of the module from which this function was imported.'</span>
-</span><span id="line-431"><span class="c1">#     doc = lazyprop(MintOfCallableMixin.doc_string)</span>
-</span><span id="line-432"><span class="c1">#</span>
-</span><span id="line-433"><span class="c1">#     @lazyprop</span>
-</span><span id="line-434"><span class="c1">#     def _signature(self):</span>
-</span><span id="line-435"><span class="c1">#         """ Here's some doc """</span>
-</span><span id="line-436"><span class="c1">#         return signature(self._obj)</span>
-</span><span id="line-437"><span class="c1">#</span>
-</span><span id="line-438"><span class="c1">#     @lazyprop</span>
-</span><span id="line-439"><span class="c1">#     def body(self):</span>
-</span><span id="line-440"><span class="c1">#         """String version of the code representing the body</span>
-</span><span id="line-441"><span class="c1">#         of the function. Defaults to ``'pass'``, which will result</span>
-</span><span id="line-442"><span class="c1">#         in a function which does nothing and returns ``None``."""</span>
-</span><span id="line-443"><span class="c1">#         return get_function_body(self._obj)</span>
-</span><span id="line-444"><span class="c1">#</span>
-</span><span id="line-445"><span class="c1">#     @lazyprop</span>
-</span><span id="line-446"><span class="c1">#     def args(self):</span>
-</span><span id="line-447"><span class="c1">#         return [p['name'] for p in self._signature.parameters]</span>
-</span><span id="line-448"><span class="c1">#</span>
-</span><span id="line-449"><span class="c1">#     @lazyprop</span>
-</span><span id="line-450"><span class="c1">#     def varargs(self):</span>
-</span><span id="line-451"><span class="c1">#         return [p['name'] for p in self._signature.parameters]</span>
-</span><span id="line-452"><span class="c1">#</span>
-</span><span id="line-453"><span class="c1"># """    name (str): Name of the function.</span>
-</span><span id="line-454"><span class="c1">#     doc (str): `Docstring`_ for the function, defaults to empty.</span>
-</span><span id="line-455"><span class="c1">#     module (str): Name of the module from which this function was</span>
-</span><span id="line-456"><span class="c1">#         imported. Defaults to None.</span>
-</span><span id="line-457"><span class="c1">#     body (str): String version of the code representing the body</span>
-</span><span id="line-458"><span class="c1">#         of the function. Defaults to ``'pass'``, which will result</span>
-</span><span id="line-459"><span class="c1">#         in a function which does nothing and returns ``None``.</span>
-</span><span id="line-460"><span class="c1">#     args (list): List of argument names, defaults to empty list,</span>
-</span><span id="line-461"><span class="c1">#         denoting no arguments.</span>
-</span><span id="line-462"><span class="c1">#     varargs (str): Name of the catch-all variable for positional</span>
-</span><span id="line-463"><span class="c1">#         arguments. E.g., "args" if the resultant function is to have</span>
-</span><span id="line-464"><span class="c1">#         ``*args`` in the signature. Defaults to None.</span>
-</span><span id="line-465"><span class="c1">#     varkw (str): Name of the catch-all variable for keyword</span>
-</span><span id="line-466"><span class="c1">#         arguments. E.g., "kwargs" if the resultant function is to have</span>
-</span><span id="line-467"><span class="c1">#         ``**kwargs`` in the signature. Defaults to None.</span>
-</span><span id="line-468"><span class="c1">#     defaults (dict): A mapping of argument names to default values.</span>
-</span><span id="line-469"><span class="c1">#     kwonlyargs (list): Argument names which are only valid as</span>
-</span><span id="line-470"><span class="c1">#         keyword arguments. **Python 3 only.**</span>
-</span><span id="line-471"><span class="c1">#     kwonlydefaults (dict): A mapping, same as normal *defaults*,</span>
-</span><span id="line-472"><span class="c1">#         but only for the *kwonlyargs*. **Python 3 only.**</span>
-</span><span id="line-473"><span class="c1">#     annotations (dict): Mapping of type hints and so</span>
-</span><span id="line-474"><span class="c1">#         forth. **Python 3 only.**</span>
-</span><span id="line-475"><span class="c1">#     filename (str): The filename that will appear in</span>
-</span><span id="line-476"><span class="c1">#         tracebacks. Defaults to "boltons.funcutils.FunctionBuilder".</span>
-</span><span id="line-477"><span class="c1">#     indent (int): Number of spaces with which to indent the</span>
-</span><span id="line-478"><span class="c1">#         function *body*. Values less than 1 will result in an error.</span>
-</span><span id="line-479"><span class="c1">#     dict (dict): Any other attributes which should be added to the</span>
-</span><span id="line-480"><span class="c1">#         functions compiled with this FunctionBuilder."""</span>
+</span><span id="line-450">
+</span><span id="line-451">
+</span><span id="line-452"><span class="c1"># class FunctionBuilderMint(Mint):</span>
+</span><span id="line-453"><span class="c1">#     name = lazyprop(Mint.obj_name)</span>
+</span><span id="line-454"><span class="c1">#     module = lazyprop(Mint.module_name)</span>
+</span><span id="line-455"><span class="c1">#     module.__doc__ = 'Name of the module from which this function was imported.'</span>
+</span><span id="line-456"><span class="c1">#     doc = lazyprop(MintOfCallableMixin.doc_string)</span>
+</span><span id="line-457"><span class="c1">#</span>
+</span><span id="line-458"><span class="c1">#     @lazyprop</span>
+</span><span id="line-459"><span class="c1">#     def _signature(self):</span>
+</span><span id="line-460"><span class="c1">#         """ Here's some doc """</span>
+</span><span id="line-461"><span class="c1">#         return signature(self._obj)</span>
+</span><span id="line-462"><span class="c1">#</span>
+</span><span id="line-463"><span class="c1">#     @lazyprop</span>
+</span><span id="line-464"><span class="c1">#     def body(self):</span>
+</span><span id="line-465"><span class="c1">#         """String version of the code representing the body</span>
+</span><span id="line-466"><span class="c1">#         of the function. Defaults to ``'pass'``, which will result</span>
+</span><span id="line-467"><span class="c1">#         in a function which does nothing and returns ``None``."""</span>
+</span><span id="line-468"><span class="c1">#         return get_function_body(self._obj)</span>
+</span><span id="line-469"><span class="c1">#</span>
+</span><span id="line-470"><span class="c1">#     @lazyprop</span>
+</span><span id="line-471"><span class="c1">#     def args(self):</span>
+</span><span id="line-472"><span class="c1">#         return [p['name'] for p in self._signature.parameters]</span>
+</span><span id="line-473"><span class="c1">#</span>
+</span><span id="line-474"><span class="c1">#     @lazyprop</span>
+</span><span id="line-475"><span class="c1">#     def varargs(self):</span>
+</span><span id="line-476"><span class="c1">#         return [p['name'] for p in self._signature.parameters]</span>
+</span><span id="line-477"><span class="c1">#</span>
+</span><span id="line-478"><span class="c1"># """    name (str): Name of the function.</span>
+</span><span id="line-479"><span class="c1">#     doc (str): `Docstring`_ for the function, defaults to empty.</span>
+</span><span id="line-480"><span class="c1">#     module (str): Name of the module from which this function was</span>
+</span><span id="line-481"><span class="c1">#         imported. Defaults to None.</span>
+</span><span id="line-482"><span class="c1">#     body (str): String version of the code representing the body</span>
+</span><span id="line-483"><span class="c1">#         of the function. Defaults to ``'pass'``, which will result</span>
+</span><span id="line-484"><span class="c1">#         in a function which does nothing and returns ``None``.</span>
+</span><span id="line-485"><span class="c1">#     args (list): List of argument names, defaults to empty list,</span>
+</span><span id="line-486"><span class="c1">#         denoting no arguments.</span>
+</span><span id="line-487"><span class="c1">#     varargs (str): Name of the catch-all variable for positional</span>
+</span><span id="line-488"><span class="c1">#         arguments. E.g., "args" if the resultant function is to have</span>
+</span><span id="line-489"><span class="c1">#         ``*args`` in the signature. Defaults to None.</span>
+</span><span id="line-490"><span class="c1">#     varkw (str): Name of the catch-all variable for keyword</span>
+</span><span id="line-491"><span class="c1">#         arguments. E.g., "kwargs" if the resultant function is to have</span>
+</span><span id="line-492"><span class="c1">#         ``**kwargs`` in the signature. Defaults to None.</span>
+</span><span id="line-493"><span class="c1">#     defaults (dict): A mapping of argument names to default values.</span>
+</span><span id="line-494"><span class="c1">#     kwonlyargs (list): Argument names which are only valid as</span>
+</span><span id="line-495"><span class="c1">#         keyword arguments. **Python 3 only.**</span>
+</span><span id="line-496"><span class="c1">#     kwonlydefaults (dict): A mapping, same as normal *defaults*,</span>
+</span><span id="line-497"><span class="c1">#         but only for the *kwonlyargs*. **Python 3 only.**</span>
+</span><span id="line-498"><span class="c1">#     annotations (dict): Mapping of type hints and so</span>
+</span><span id="line-499"><span class="c1">#         forth. **Python 3 only.**</span>
+</span><span id="line-500"><span class="c1">#     filename (str): The filename that will appear in</span>
+</span><span id="line-501"><span class="c1">#         tracebacks. Defaults to "boltons.funcutils.FunctionBuilder".</span>
+</span><span id="line-502"><span class="c1">#     indent (int): Number of spaces with which to indent the</span>
+</span><span id="line-503"><span class="c1">#         function *body*. Values less than 1 will result in an error.</span>
+</span><span id="line-504"><span class="c1">#     dict (dict): Any other attributes which should be added to the</span>
+</span><span id="line-505"><span class="c1">#         functions compiled with this FunctionBuilder."""</span>
 </span></code></pre></div>
     </div></div>
           </main>
@@ -683,7 +732,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=946d7960"></script>
+    <script src="../../_static/documentation_options.js?v=d80f5ebb"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

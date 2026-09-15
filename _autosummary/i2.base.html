@@ -127,27 +127,35 @@
 <div id="content" role="main">
 <section id="module-i2.base">
 <span id="i2-base"></span><h1>i2.base<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#module-i2.base">¶</a></h1>
-<p>Tools to provide meta-interfaces of python objects.
-.. seealso:: py2misc/py2store/tree_store.py</p>
+<p>Tools to provide meta-interfaces (“mints”) of python objects.</p>
+<p>A mint is a <code class="docutils literal notranslate"><span class="pre">Mapping</span></code> view of the (meta-)information describing the interface of
+an object: for a callable, its parameters (name, kind, default, annotation) and its
+return annotation.</p>
+<p>Main entry points:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Mint</span></code>: mint of any python object</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MintOfCallable</span></code>: mint of a callable, with parameter information</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ParametersMint</span></code>: mint of the parameters of a callable</p></li>
+</ul>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_not_empty</span></code>(obj)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.base.is_not_empty" title="i2.base.is_not_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_not_empty</span></code></a>(obj)</p></td>
+<td><p>False for <code class="docutils literal notranslate"><span class="pre">inspect.Parameter.empty</span></code> and <code class="docutils literal notranslate"><span class="pre">NotFoundType</span></code> instances, True otherwise.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name_of_obj</span></code>(o)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.base.name_of_obj" title="i2.base.name_of_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name_of_obj</span></code></a>(o)</p></td>
+<td><p>Deprecated alias of <code class="docutils literal notranslate"><span class="pre">i2.signatures.name_of_obj</span></code> (emits a <code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>).</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Classes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">AttrFromKey</span></code>(d)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.base.AttrFromKey" title="i2.base.AttrFromKey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AttrFromKey</span></code></a>(d)</p></td>
+<td><p>Expose the keys of a mapping as attributes (<code class="docutils literal notranslate"><span class="pre">obj.k</span></code> reads <code class="docutils literal notranslate"><span class="pre">d[k]</span></code>).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">KeyFromAttr</span></code>(d)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.base.KeyFromAttr" title="i2.base.KeyFromAttr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KeyFromAttr</span></code></a>(d)</p></td>
+<td><p>Expose the attributes of an object as mapping keys (<code class="docutils literal notranslate"><span class="pre">obj[k]</span></code> reads <code class="docutils literal notranslate"><span class="pre">getattr(d,</span> <span class="pre">k)</span></code>).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.base.Mint" title="i2.base.Mint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mint</span></code></a>(obj[, attrs])</p></td>
 <td><p>Get a Mint object of a python object.</p></td>
@@ -155,23 +163,35 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.base.MintOfCallable" title="i2.base.MintOfCallable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MintOfCallable</span></code></a>(obj[, attrs])</p></td>
 <td><p>Get a Mint object of a python object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">MintOfCallableMixin</span></code>()</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.base.MintOfCallableMixin" title="i2.base.MintOfCallableMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MintOfCallableMixin</span></code></a>()</p></td>
+<td><p>Mint attributes computed from a callable's signature (parameters, return annotation, doc).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">MintOfDocMixin</span></code>()</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.base.MintOfDocMixin" title="i2.base.MintOfDocMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MintOfDocMixin</span></code></a>()</p></td>
+<td><p>Placeholder mixin for parsed-docstring mint attributes (not implemented yet).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NotFoundType</span></code>()</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.base.NotFoundType" title="i2.base.NotFoundType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NotFoundType</span></code></a>()</p></td>
+<td><p>Type of the <code class="docutils literal notranslate"><span class="pre">not_found</span></code> sentinel: falsy, repr <code class="docutils literal notranslate"><span class="pre">NotFound</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParameterMint</span></code>(param[, position])</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.base.ParameterMint" title="i2.base.ParameterMint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParameterMint</span></code></a>(param[, position])</p></td>
+<td><p>Mint of one parameter: its name, kind, default and annotation (and position, if given).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.base.ParametersMint" title="i2.base.ParametersMint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParametersMint</span></code></a>([params])</p></td>
 <td><p>Get mint of the parameters of a callable.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.base.AttrFromKey">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.base.</span></span><span class="sig-name descname"><span class="pre">AttrFromKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/base.html#AttrFromKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.base.AttrFromKey" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.base.AttrFromKey'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Expose the keys of a mapping as attributes (<code class="docutils literal notranslate"><span class="pre">obj.k</span></code> reads <code class="docutils literal notranslate"><span class="pre">d[k]</span></code>).</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.base.KeyFromAttr">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.base.</span></span><span class="sig-name descname"><span class="pre">KeyFromAttr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/base.html#KeyFromAttr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.base.KeyFromAttr" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.base.KeyFromAttr'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Expose the attributes of an object as mapping keys (<code class="docutils literal notranslate"><span class="pre">obj[k]</span></code> reads <code class="docutils literal notranslate"><span class="pre">getattr(d,</span> <span class="pre">k)</span></code>).</p>
+</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.base.Mint">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.base.</span></span><span class="sig-name descname"><span class="pre">Mint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/base.html#Mint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.base.Mint" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.base.Mint'">¶</a></dt>
@@ -207,7 +227,7 @@ A Mint will provide parameters that provide (meta-)information about the interfa
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.base.MintOfCallable">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.base.</span></span><span class="sig-name descname"><span class="pre">MintOfCallable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/base.html#MintOfCallable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.base.MintOfCallable" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.base.MintOfCallable'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#i2.base.Mint" title="i2.base.Mint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mint</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MintOfCallableMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MintOfDocMixin</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#i2.base.Mint" title="i2.base.Mint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mint</span></code></a>, <a class="reference internal" href="#i2.base.MintOfCallableMixin" title="i2.base.MintOfCallableMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MintOfCallableMixin</span></code></a>, <a class="reference internal" href="#i2.base.MintOfDocMixin" title="i2.base.MintOfDocMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MintOfDocMixin</span></code></a></p>
 <p>Get a Mint object of a python object.
 A Mint will provide parameters that provide (meta-)information about the interface of the python object.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="kn">import</span> <span class="n">pprint</span>
@@ -237,6 +257,32 @@ A Mint will provide parameters that provide (meta-)information about the interfa
 </span><span id="line-25"><span class="go"> 'd': {'name': 'd', 'kind': 'POSITIONAL_OR_KEYWORD', 'default': 1, 'annotation': &lt;class 'int'&gt;, 'position': 3}}</span>
 </span></code></pre></div>
 </div>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.base.MintOfCallableMixin">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.base.</span></span><span class="sig-name descname"><span class="pre">MintOfCallableMixin</span></span><a class="reference internal" href="../_modules/i2/base.html#MintOfCallableMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.base.MintOfCallableMixin" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.base.MintOfCallableMixin'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Mint attributes computed from a callable’s signature (parameters, return annotation, doc).</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.base.MintOfDocMixin">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.base.</span></span><span class="sig-name descname"><span class="pre">MintOfDocMixin</span></span><a class="reference internal" href="../_modules/i2/base.html#MintOfDocMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.base.MintOfDocMixin" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.base.MintOfDocMixin'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Placeholder mixin for parsed-docstring mint attributes (not implemented yet).</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.base.NotFoundType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.base.</span></span><span class="sig-name descname"><span class="pre">NotFoundType</span></span><a class="reference internal" href="../_modules/i2/base.html#NotFoundType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.base.NotFoundType" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.base.NotFoundType'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Type of the <code class="docutils literal notranslate"><span class="pre">not_found</span></code> sentinel: falsy, repr <code class="docutils literal notranslate"><span class="pre">NotFound</span></code>.</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.base.ParameterMint">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.base.</span></span><span class="sig-name descname"><span class="pre">ParameterMint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/base.html#ParameterMint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.base.ParameterMint" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.base.ParameterMint'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Mint of one parameter: its name, kind, default and annotation (and position, if given).</p>
+<p>Accepts an <code class="docutils literal notranslate"><span class="pre">inspect.Parameter</span></code>-like object or a mapping with those keys; missing
+attributes are set to <code class="docutils literal notranslate"><span class="pre">inspect.Parameter.empty</span></code>.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.base.ParametersMint">
@@ -298,19 +344,37 @@ A Mint will provide parameters that provide (meta-)information about the interfa
 <span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">items</span></span></span><a class="reference internal" href="../_modules/i2/base.html#ParametersMint.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.base.ParametersMint.items" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.base.ParametersMint.items'">¶</a></dt>
 <dd></dd></dl>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.base.is_not_empty">
+<span class="sig-prename descclassname"><span class="pre">i2.base.</span></span><span class="sig-name descname"><span class="pre">is_not_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/base.html#is_not_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.base.is_not_empty" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.base.is_not_empty'">¶</a></dt>
+<dd><p>False for <code class="docutils literal notranslate"><span class="pre">inspect.Parameter.empty</span></code> and <code class="docutils literal notranslate"><span class="pre">NotFoundType</span></code> instances, True otherwise.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.base.name_of_obj">
+<span class="sig-prename descclassname"><span class="pre">i2.base.</span></span><span class="sig-name descname"><span class="pre">name_of_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">o</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/base.html#name_of_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.base.name_of_obj" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.base.name_of_obj'">¶</a></dt>
+<dd><p>Deprecated alias of <code class="docutils literal notranslate"><span class="pre">i2.signatures.name_of_obj</span></code> (emits a <code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>).</p>
+</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
+<li><a :data-current="activeSection === '#i2.base.AttrFromKey'" class="reference internal" href="#i2.base.AttrFromKey"><code class="docutils literal notranslate"><span class="pre">AttrFromKey</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.base.KeyFromAttr'" class="reference internal" href="#i2.base.KeyFromAttr"><code class="docutils literal notranslate"><span class="pre">KeyFromAttr</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.base.Mint'" class="reference internal" href="#i2.base.Mint"><code class="docutils literal notranslate"><span class="pre">Mint</span></code></a><ul>
 <li><a :data-current="activeSection === '#i2.base.Mint.items'" class="reference internal" href="#i2.base.Mint.items"><code class="docutils literal notranslate"><span class="pre">Mint.items()</span></code></a></li>
 </ul>
 </li>
 <li><a :data-current="activeSection === '#i2.base.MintOfCallable'" class="reference internal" href="#i2.base.MintOfCallable"><code class="docutils literal notranslate"><span class="pre">MintOfCallable</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.base.MintOfCallableMixin'" class="reference internal" href="#i2.base.MintOfCallableMixin"><code class="docutils literal notranslate"><span class="pre">MintOfCallableMixin</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.base.MintOfDocMixin'" class="reference internal" href="#i2.base.MintOfDocMixin"><code class="docutils literal notranslate"><span class="pre">MintOfDocMixin</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.base.NotFoundType'" class="reference internal" href="#i2.base.NotFoundType"><code class="docutils literal notranslate"><span class="pre">NotFoundType</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.base.ParameterMint'" class="reference internal" href="#i2.base.ParameterMint"><code class="docutils literal notranslate"><span class="pre">ParameterMint</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.base.ParametersMint'" class="reference internal" href="#i2.base.ParametersMint"><code class="docutils literal notranslate"><span class="pre">ParametersMint</span></code></a><ul>
 <li><a :data-current="activeSection === '#i2.base.ParametersMint.items'" class="reference internal" href="#i2.base.ParametersMint.items"><code class="docutils literal notranslate"><span class="pre">ParametersMint.items()</span></code></a></li>
 </ul>
 </li>
+<li><a :data-current="activeSection === '#i2.base.is_not_empty'" class="reference internal" href="#i2.base.is_not_empty"><code class="docutils literal notranslate"><span class="pre">is_not_empty()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.base.name_of_obj'" class="reference internal" href="#i2.base.name_of_obj"><code class="docutils literal notranslate"><span class="pre">name_of_obj()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -324,7 +388,7 @@ A Mint will provide parameters that provide (meta-)information about the interfa
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=946d7960"></script>
+<script src="../_static/documentation_options.js?v=d80f5ebb"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
