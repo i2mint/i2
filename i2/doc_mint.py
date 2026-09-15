@@ -58,7 +58,7 @@ def indent_lines(string: str, indent: str) -> str:
     :param indent: The string to use for indentation.
     :return: The indented string.
 
-    Examples:
+    .. rubric:: Examples
 
     >>> print(indent_lines('This is a test.\nAnother line.', ' ' * 8))
             This is a test.
@@ -77,7 +77,7 @@ def most_common_indent(string: str, ignore_first_line=True) -> str:
         because of the way python strings appear in code.
     :return: The most common indentation string.
 
-    Examples:
+    .. rubric:: Examples
 
     >>> most_common_indent('    This is a test.\n    Another line.')
     '    '
@@ -95,8 +95,9 @@ def inject_docstring_content(to_inject, *, position=-1, indent=True):
     r"""
     Inject content into the docstring of a function.
 
-    Note: If you use the decorator on a string, it will assume that string is the doc
-    string you want to transform and return the modified string directly.
+    Note:
+        If you use the decorator on a string, it will assume that string is the doc
+        string you want to transform and return the modified string directly.
 
     :param to_inject: The content to inject.
     :param position: The position in the docstring to inject the content.
@@ -108,7 +109,7 @@ def inject_docstring_content(to_inject, *, position=-1, indent=True):
         If a string, it will use that specific string.
     :return: A decorator that injects the content into the docstring of the decorated function.
 
-    Examples:
+    .. rubric:: Examples
 
     >>> @inject_docstring_content('This is a test.')
     ... def test_func():
@@ -179,17 +180,19 @@ def params_to_docstring(
 
     :param params: A list of dictionaries where each dictionary specifies a parameter.
         Each dictionary should contain:
+
           - name: The name of the parameter (str).
           - default: The default value of the parameter (any, optional).
           - annotation: The type annotation for the parameter (str, optional).
           - description: A description of the parameter (str).
+
     :param doc_style: The style of the docstring to generate. One of 'numpy', 'google', or 'rest'.
     :param take_name_of_types: Whether to use the name of the type as the annotation (bool).
     :param quote_string_defaults: Whether to quote string defaults (bool).
 
     :return: A formatted docstring (str).
 
-    Examples:
+    .. rubric:: Examples
 
     >>> params = [
     ...     {"name": "x", "default": 1, "annotation": "int", "description": "An integer value."},
@@ -307,7 +310,7 @@ def string_param_to_obj(string_to_object_mapping: dict, string=None):
     :param string_to_object_mapping: A mapping from string representations to objects.
     :return: The object corresponding to the string representation.
 
-    Examples:
+    .. rubric:: Examples
 
     >>> string_to_object_mapping = {
     ...     'None': None,
@@ -370,6 +373,7 @@ def literal_eval_converter(s: str, max_length=_MAX_LENGTH_FOR_LITERAL_EVAL):
 def register_converter(converter):
     """
     Register a new converter. A converter can be:
+
       - A dict: { "None": None, "int": int, ... }
       - A callable: lambda s: attempt to parse s and return object or None
     """
@@ -415,12 +419,13 @@ def docstring_to_params(
     :param doc_style: The style of the docstring to parse. One of 'numpy', 'google', or 'rest'.
 
     :return: A list of parameter specifications, where each specification is a dictionary containing:
+
         - name: The name of the parameter (str).
         - default: The default value of the parameter (str, optional).
         - annotation: The type annotation for the parameter (str, optional).
         - description: A description of the parameter (str).
 
-    Examples:
+    .. rubric:: Examples
 
     >>> docstring = '''
     ... Parameters
@@ -830,7 +835,6 @@ def split_text_and_doctests(doc_string: str):
 
     >>> str(block)
     '    >>> 2 + 3\n    5\n    >>> t = 5\n    >>> tt = 10\n'
-
     """
 
     def is_string(item):
@@ -994,6 +998,7 @@ doctest_string.for_assert_wants = partial(doctest_string, example_callback=asser
 def doctest_string_print(obj, example_callback=assert_wants, recurse=True):
     """
     Extract the doctests found in given object.
+
     :param obj: Object (module, class, function, etc.) you want to extract doctests from.
     :param recurse: Whether the process should find doctests in the attributes of the object, recursively.
     :return: A string containing the doctests, with output lines prefixed by '# Output:'
@@ -1009,6 +1014,7 @@ def old_doctest_string(
 ):
     """
     Extract the doctests found in given object.
+
     :param obj: Object (module, class, function, etc.) you want to extract doctests from.
     :param output_prefix:
     :param recurse: Whether the process should find doctests in the attributes of the object, recursively.

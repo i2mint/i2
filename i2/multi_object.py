@@ -7,19 +7,19 @@ For functions you have:
 - ``FuncFanout``: To apply multiple functions to the same inputs
 
 - ``FlexFuncFanout``: Like `FuncFanout` but where the application of inputs is flexible.
+
 That is, the functions "draw" their inputs from the a common pool, but don't choke
 if there are extra unrecognized arguments.
 
 - ``ParallelFuncs``: To make a dict-to-dict function, applying a specific function for
-each input key (putting the result in that key in the output.
+  each input key (putting the result in that key in the output.
 
 For context managers you have:
 
 - ``ContextFanout``: To hold multiple context managers as one (entering and exiting
-together)
+  together)
 
-![image](https://user-images.githubusercontent.com/1906276/138004878-bfe17115-c25f-4d22-9740-0fef983507c0.png)
-
+!`image <https://user-images.githubusercontent.com/1906276/138004878-bfe17115-c25f-4d22-9740-0fef983507c0.png>`_
 """
 
 from typing import Union, Any, TypeVar
@@ -98,7 +98,6 @@ def truncate_string_with_marker(
     '12---90'
     >>> truncate_string('supercalifragilisticexpialidocious')
     'su---us'
-
     """
     middle_marker_len = len(middle_marker)
     if len(s) <= left_limit + right_limit:
@@ -141,7 +140,7 @@ def uniquely_named_objects(
     :param exclude_names: Names that can't be used
     :param obj_to_name: Function that tries to get/make a name from an object
     :param name_for_position: A ``{position_idx: name,...}`` mapping that instructs
-    ``uniquely_named_objects`` to use a specific name for a given position.
+        ``uniquely_named_objects`` to use a specific name for a given position.
 
     >>> from functools import partial
     >>> objects = [map, [1], [1, 2], lambda x: x, partial(print, sep=",")]
@@ -189,23 +188,24 @@ def uniquely_named_objects(
     See what ``uniquely_named_objects`` offers as parametrization:
 
     - You can provide an exclusion list (though the handing of a conflict is hardcoded
-    and questionable)
+      and questionable)
 
     - You can provide a ``obj_to_name`` function to control the naming of objects.
+
     One trick to be aware of if objects have unique hashes: Make a
     ``d = {obj: name,...}`` mapping and specify ``obj_to_name=d.get``.
 
     - Any controllable way to decide on a name based on the position of the function
-    in the iterable (this could be useful!)
+      in the iterable (this could be useful!)
 
     What you DO NOT have:
 
     - Any way to choose names non-myopically: An object’s name cannot “see” the
-    objects around it to decide on a name (it can only see the names use by those behind
-    it through ``exclude_names``).
+      objects around it to decide on a name (it can only see the names use by those behind
+      it through ``exclude_names``).
 
     - Any “retries” or “alternative naming logic” if a chosen name conflicts with
-    ``exclude_names``
+      ``exclude_names``
     """
     _exclude_names = set(exclude_names)
     for i, obj in enumerate(objects):
@@ -441,6 +441,7 @@ class Pipe(MultiFunc):
     '10'
 
     Notes:
+
         - Pipe instances don't have a __name__ etc. So some expectations of normal functions are not met.
         - Pipe instance are pickalable (as long as the functions that compose them are)
 
@@ -607,7 +608,6 @@ def pipes_are_equal(p1, p2, *, func_equality=eq, verbose=False):
     ...     Pipe(lambda x: x), Pipe(lambda x: x), func_equality=source_equality
     ... )
     True
-
     """
     p1, p2 = map(flatten_pipe, (p1, p2))
     if len(p1) != len(p2):
@@ -692,7 +692,6 @@ class FuncFanout(MultiFunc):
     >>> f = Pipe(m, partial(map, itemgetter(1)), tuple)
     >>> f(10)
     (12, 20, 'I am groot')
-
     """
 
     def call_generator(self, *args, **kwargs):
@@ -724,12 +723,16 @@ class FlexFuncFanout(MultiFunc):
     Therefore ``FlexFuncFanout`` holds a "normalized" form of the functions; namely one that handles such things as
     postion only and varargs.
 
-    # TODO: Make this work!
-    #   Right now raises: TypeError: formula1() got some positional-only arguments passed as keyword arguments: 'w'
+    .. rubric:: TODO: Make this work!
+
+    .. rubric:: Right now raises: TypeError: formula1() got some positional-only arguments passed as keyword arguments: 'w'
+
     # >>> assert formula1(1, x=2, z=3) == mf1.normalized_funcs[formula1](**kwargs_for_func[formula1])
 
-    Note: In the following, it looks like ``FlexFuncFanout`` instances return dicts whose keys are strings.
-    This is not the case.
+    Note:
+        In the following, it looks like ``FlexFuncFanout`` instances return dicts whose keys are strings.
+        This is not the case.
+
     The keys are functions: The same functions that were input.
     The reason for not using functions is that when printed, they include their hash, which invalidates the doctests.
 
@@ -758,7 +761,6 @@ class FlexFuncFanout(MultiFunc):
     ... 'mult': {'x': 2},
     ... 'addition': {'a': 4, 'b': 5},
     ... 'mysum': {'args': (7, 8), 'kwargs': {'a': 42}}}
-
     """
 
     # FIXME: TODO: This does indeed change the signature, but not the functionality (position only still raise errors!)
@@ -808,7 +810,7 @@ class ParallelFuncs(MultiFunc):
 
     :param spec: A map between a name (str) and a function associated to that name
     :return: A function that takes a dict as an (multi-channel) input and a dict as a
-    (multi-channel) output
+        (multi-channel) output
 
     Q: Why can I specify the specs both with named_funcs_dict and **named_funcs?
     A: Look at the ``dict(...)`` interface. You see the same thing there.
@@ -850,7 +852,6 @@ class ParallelFuncs(MultiFunc):
     {'a': '3', 'b': [12, 12, 12]}
 
     #{'a': '(1, 2)', 'b': [(3, 4), (3, 4), (3, 4)]}
-
     """
 
     def _key_output_gen(self, d: dict):
@@ -889,15 +890,17 @@ class ContextFanout(MultiObj):
     In python 3.10+ you can bundle contexts together by specifying a tuple of context
     managers, as such:
 
-    ```python
-    with (open('file.txt'), another_context_manager):
-        ...
-    ```
+    .. code-block:: python
+
+        with (open('file.txt'), another_context_manager):
+            ...
+
 
     But
+
     - Python will complain if one of the members of the tuple is not a context manager.
     - A tuple of context managers is not a context manager itself, it's just understood
-    by the with (in python 3.10+).
+      by the with (in python 3.10+).
 
     As an example, let's take two objects. One is a context manager, the other not.
 
@@ -931,9 +934,12 @@ class ContextFanout(MultiObj):
     open
     close
 
-    # Further, know that within the context's scope, a `ContextFanout`
-    # instance will have the context managers it contains available, and having the
-    # value it is supposed to have "under context".
+    .. rubric:: Further, know that within the context's scope, a `ContextFanout`
+
+    .. rubric:: instance will have the context managers it contains available, and having the
+
+    .. rubric:: value it is supposed to have "under context".
+
     #
     # >>> with ContextFanout(not_a_context_manager, some_context_manager(2)) as (f, m):
     # ...     print(f(10))
@@ -950,21 +956,29 @@ class ContextFanout(MultiObj):
     # >>> with c:
     # ...     # inside the context, c indeed has the attribute, and it has the expected value
     # ...     assert c.some_context_manager == 'x + 1 = 3'
-    # open
-    # close
+
+    .. rubric:: open
+
+    .. rubric:: close
+
     # >>> # outside the context, c doesn't have the some_context_manager attribute any more again
     # >>> assert not hasattr(c, 'some_context_manager')
     #
-    # If you don't specify a name for a given context manager, you'll still have access
-    # to it via a hidden attribute ("_i" where i is the index of the object when
-    # the `ContextFanout` instance was made.
+
+    .. rubric:: If you don't specify a name for a given context manager, you'll still have access
+
+    .. rubric:: to it via a hidden attribute ("_i" where i is the index of the object when
+
+    .. rubric:: the `ContextFanout` instance was made.
+
     #
     # >>> c = ContextFanout(some_context_manager(10), not_a_context_manager)
     # >>> with c:
     # ...     assert c._0 == 'x + 1 = 11'
-    # open
-    # close
 
+    .. rubric:: open
+
+    .. rubric:: close
     """
 
     def __enter__(self):

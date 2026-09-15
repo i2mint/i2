@@ -147,7 +147,6 @@ could_be_float
 >>> assert list(rf(8)) == ['default_mod_5', 'even']
 >>> assert list(rf(10)) == ['zero_mod_5', 'even']
 >>>
-
 """
 
 from itertools import chain
@@ -264,7 +263,6 @@ class KeyFuncMapping(DelegateToMappingAttrMixin, MutableMapping):
     'url'
     >>> nested('jazz.wav')
     'audio'
-
     """
 
     mapping: MutableMapping
@@ -479,7 +477,6 @@ class FeatCondNode(RoutingNode):
     >>> assert list(fcn(4)) == ['four_mod_5']
     >>> assert list(fcn(5)) == ['zero_mod_5']
     >>> assert list(fcn(6)) == ['one_mod_5']
-
     """
 
     feat: Featurizer
@@ -504,8 +501,6 @@ class FeatCondNode(RoutingNode):
         # >>> assert list(fvn(1)) == ['one_mod_3']
         # >>> assert list(fvn(2)) == ['two_mod_3']
         #
-
-
         """
         feat_cond_map = dict(feat_cond_thens)
         feat_cond_thens = tuple(
@@ -580,8 +575,8 @@ class SwitchCaseNode(RoutingNode):
 
     :param switch: A function returning the feature of an object we want to switch on
     :param cases: The mapping from feature to RoutingNode that should be yield for that
-    feature. It is often a dict, but only requirement is that it implements the
-    ``cases.get(val, default)`` method.
+        feature. It is often a dict, but only requirement is that it implements the
+        ``cases.get(val, default)`` method.
     :param default: Default RoutingNode to yield if no
 
     >>> rf = RoutingForest([

@@ -60,7 +60,6 @@ class Command:
     >>> c()
     hello, world
     Calling <built-in function print>(*('hello', 'world'), **{'sep': ', '}) with result: None
-
     """
 
     def __init__(self, func, *args, **kwargs):
@@ -89,7 +88,6 @@ class Command:
         Command(foo, 'hi')
         >>> ff()
         'hihi'
-
         """
         sig = Sig(func)
         sig = sig.ch_defaults(**kw_defaults)
@@ -225,7 +223,6 @@ def commands_dict(
     7
     >>> d[formula1]()
     13
-
     """
     if callable(funcs):
         funcs = [funcs]

@@ -135,7 +135,6 @@ class MethodTrace:
     ... ('__getitem__', 42), ('__setitem__', 42, 'mol'), ('__invert__',)
     ... ]
     >>>
-
     """
 
     def __init__(self):
@@ -285,6 +284,7 @@ def _alt_cls_and_method_name_of_method(
 def list_func_calls(fn):
     """
     Extracts functions and methods called from fn
+
     :param fn: reference to function or method
     :return: a list of functions or methods names
     """
@@ -302,6 +302,7 @@ def list_func_calls(fn):
 def attr_list(root, func_name):
     """
     Extracts attributes from ast tree processing only func_name function or method
+
     :param root: root node of ast tree
     :param func_name: name of the function
     :return: a list of attributes names
@@ -499,7 +500,6 @@ def ensure_ast(o, src_code=None) -> ast.AST:
     ... a = 10
     ... '''
     >>> assert isinstance(ensure_ast('MyClass', src_code), ast.AST)
-
     """
 
     if isinstance(o, ast.AST):
@@ -541,7 +541,6 @@ def accessed_attributes(func, object_name=None):
     ...     return a + func(x, self, y)
     ...
     >>> assert accessed_attributes(foo, 'self') == {'method', 'prop'}
-
     """
     if object_name is None:
         object_name = next(iter(Sig(func)), None)
@@ -593,16 +592,17 @@ def init_argument_names(cls, *, no_error_action=None) -> list[str]:
     >>> init_argument_names(DataClass)
     ['x', 'y']
 
-    Note: Some builtin types don't have signatures, so we get:
+    Note:
+        Some builtin types don't have signatures, so we get:
 
-    ```
-    ValueError: no signature found for builtin type ...
-    ```
+    .. code-block:: text
+
+        ValueError: no signature found for builtin type ...
+
 
     By default, we handle this by returning an empty list, but a callable
     no_error_action will call that function and return its result.
     Anything else will result in raising the error.
-
     """
     try:
         return Sig(cls).names
@@ -654,7 +654,6 @@ def attribute_dependencies(
     :param exclude_names: A list of names to exclude from the analysis or a function that
         returns such a list given the class
     :return: A generator of (method_name, accessed_attributes) pairs
-
     """
     for func in _get_class_attributes(cls, filt=filt, exclude_names=exclude_names):
         with skip_signature_errors:
@@ -893,7 +892,6 @@ def dict_to_graph(
         C --> D;
         C --> E;
         C --> F;
-
     """
     # TODO: Could make these specs open-closed (routing pattern)
     if kind == "graphviz":

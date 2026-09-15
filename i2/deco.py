@@ -79,9 +79,10 @@ class FuncFactory:
 
     In essence, ``FuncFactory`` is equivalent to:
 
-    ```
-    FuncFactory = lambda func: lambda *args, **kwargs: partial(func, *args, **kwargs)
-    ```
+    .. code-block:: text
+
+        FuncFactory = lambda func: lambda *args, **kwargs: partial(func, *args, **kwargs)
+
 
     but more convenient and helpful. For one, it doesn't use ``lambda``, so is picklable.
     It also has a more helpful signature:
@@ -130,14 +131,14 @@ class FuncFactory:
     >>> get_42()
     42
 
-    Note: A convenience property has been added to implement this recipe:
+    Note:
+        A convenience property has been added to implement this recipe:
 
     >>> get_42, get_hello = map(FuncFactory.func_returning_obj, (42, 'hello'))
     >>> get_42()
     42
     >>> get_hello()
     'hello'
-
     """
 
     def __init__(self, func, *, include=(), exclude=()):
@@ -246,9 +247,10 @@ def double_up_as_factory(decorator_func):
     That is, from a decorator that is defined do ``wrapped_func = decorator(func, **params)``,
     make it also be able to do ``wrapped_func = decorator(**params)(func)``.
 
-    Note: You'll only be able to do this if all but the first argument are keyword-only,
-    and the first argument (the function to decorate) has a default of ``None`` (this is for your own good).
-    This is validated before making the "double up as factory" decorator.
+    Note:
+        You'll only be able to do this if all but the first argument are keyword-only,
+        and the first argument (the function to decorate) has a default of ``None`` (this is for your own good).
+        This is validated before making the "double up as factory" decorator.
 
     >>> @double_up_as_factory
     ... def decorator(func=None, *, multiplier=2):
@@ -340,7 +342,6 @@ def double_up_as_factory(decorator_func):
     with ``TypeError: rename() got multiple values for argument 'func'``.  If a decorator
     needs an argument with the same name as its first parameter, don't use
     ``double_up_as_factory``.
-
     """
 
     def validated_wrapped_param_name(decorator_func):
@@ -371,7 +372,8 @@ def double_up_as_factory(decorator_func):
 def _conditional_arg_trans(func=None, **condition_and_trans_of_argname):
     """
 
-    See also: ensure_iterable_args, for a more complex example of how to use it.
+    See also:
+        ensure_iterable_args, for a more complex example of how to use it.
     """
 
     @wraps(func)
@@ -442,6 +444,7 @@ def mk_args_kwargs_merger(func):
     Make a function that will return a dict containing all {argname: argval} pairs from a function's call.
     That is, it merges all non-keyword arguments with the keyword-arguments, with the right name, so that
     the arguments can be handled more uniformly.
+
     :param func: The function that will be called, whose signature should be looked at to make the
         merging function
     :return: A function merge_args_and_kwargs(args, kwargs) that can be used to merge arguments
@@ -494,6 +497,7 @@ def kwargs_for_func(*funcs, **kwargs):
 def assert_attrs(attrs):
     """
     Asserts, at construction time, that the class contains a specific set of attributes
+
     :param attrs: An attribute name (string) or a list of attribute names whose existence needs to be enforced.
     :return: A class decorator that will enforce the existence of the attrs when an instance is made
 
@@ -605,7 +609,8 @@ def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=Fal
     >>> sum_range(4)
     6
 
-    Note: The decorator also sticks the return annotation of the post function on the wrapped one.
+    Note:
+        The decorator also sticks the return annotation of the post function on the wrapped one.
 
     Use cases:
 
@@ -646,7 +651,6 @@ def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=Fal
 
     - Using a function that does a lot to make several functions that do less.
         (e.g. Extracting/making a python object from a function returning a raw http response_
-
     """
 
     def decorator(func):
@@ -694,10 +698,13 @@ def input_output_decorator(preprocess=None, postprocess=None):
     Makes a decorator that preprocesses inputs and postprocesses outputs.
     Use it if you want to transform the input of a function or method before calling it, or if you want
     to transform the returned value before returning it.
+
     :param preprocess: Function to be applied to input
     :param postprocess: Function to be applied to output
     :return: a decorator that preprocesses inputs and postprocesses outputs
-    See also: preprocess and postprocess decorators if you need only to pre or post process!
+
+    See also:
+        preprocess and postprocess decorators if you need only to pre or post process!
 
     >>> # Examples with "normal functions"
     >>> def f(x=3):
@@ -754,7 +761,8 @@ def input_output_decorator(preprocess=None, postprocess=None):
     # >>> f.static_method = input_output_decorator(preprocess=lambda x: '"' + x + '"',
     # ...                                          postprocess=lambda x: x + '!!!')(f.static_method)
     # >>> print(ff.static_method('big', 'eyes'))
-    # What big "eyes" you have!!!
+
+    .. rubric:: What big "eyes" you have!!!
     """
 
     def decorator(func):
@@ -789,8 +797,10 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
     Make a decorator that transforms function arguments before calling the function.
     Works with plain functions and bounded methods.
     For example:
+
         * original argument: a relative path --> used argument: a full path
         * original argument: a pickle filepath --> used argument: the loaded object
+
     :param rootdir: rootdir to be used for all name arguments of target function
     :param name_arg: the position (int) or argument name of the argument containing the name
     :return: a decorator
@@ -1318,6 +1328,7 @@ def wrap_instance_methods(
 def mk_method_trans_spec_from_methods_specs_dict(methods_specs_dict):
     """
     Utility to make inputs for wrap_class_methods_input_and_output more easily.
+
     :param methods_specs_dict: a dict where
         keys are method names (either a single string, or a tuple of strings)
         values are the trans_spec dicts that should be associated to those methods
@@ -1369,6 +1380,7 @@ def _call_signature(func: Callable, args: Args, kwargs: Kwargs) -> str:
     """
     A util to make a string representation of a call of a function func with given args and kwargs.
     Meant to be the default mk_log_str of mk_call_logger.
+
     :param func: A callable
     :param args: A tuple of positional arguments
     :param kwargs: A dict of key=val arguments

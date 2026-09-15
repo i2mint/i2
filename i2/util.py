@@ -96,7 +96,6 @@ def name_of_obj(
     >>> alt = partial(name_of_obj, base_name_of_obj=attrgetter('__qualname__'))
     >>> alt(Signature.replace)
     'Signature.replace'
-
     """
     try:
         return base_name_of_obj(o)
@@ -205,7 +204,7 @@ class ConditionalExceptionCatcher:
     :param prevent_propagation: Whether to prevent the exception from propagating. Defaults
         to ``True``.
 
-    Example:
+    .. rubric:: Example
 
     >>> exception_catcher = ConditionalExceptionCatcher(
     ...     ValueError, lambda e: e.args[0] == 'foo', handlers=print
@@ -223,7 +222,6 @@ class ConditionalExceptionCatcher:
     Traceback (most recent call last):
         ...
     ValueError: bar
-
     """
 
     def __init__(
@@ -274,7 +272,7 @@ class AttributeMapping(SimpleNamespace, Mapping[str, Any]):
 
     Useful when you want mapping interface but don't need mutation.
 
-    Examples:
+    .. rubric:: Examples
 
     >>> ns = AttributeMapping(x=10, y=20)
     >>> ns.x
@@ -315,7 +313,7 @@ class AttributeMutableMapping(AttributeMapping, MutableMapping[str, Any]):
     Extends AttributeMapping with mutation capabilities,
     ensuring proper error handling and protocol compliance.
 
-    Examples:
+    .. rubric:: Examples
 
     >>> ns = AttributeMutableMapping(apple=1, banana=2)
     >>> ns.apple
@@ -467,7 +465,6 @@ def lambda_code(lambda_func) -> str:
     """Extract code of expression from lambda function.
     For lambda code-extraction see:
     https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function
-
     """
     func_str = str(inspect.getsourcelines(lambda_func)[0])
     return func_str.strip("['\\n']").split(" = ")[1]
@@ -488,7 +485,6 @@ class PicklableLambda:
 
     For lambda code-extraction see:
     https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function
-
     """
 
     def __init__(self, func, name=None):
@@ -545,7 +541,6 @@ def ensure_identifiers(
     Traceback (most recent call last):
       ...
     ValueError: too_long isn't an identifier according toless_than_6_chars
-
     """
     for obj in objs:
         for identifier in get_identfiers(obj):
@@ -630,7 +625,6 @@ class LiteralVal:
     42
     >>> t()
     42
-
     """
 
     def __init__(self, val):
@@ -811,7 +805,6 @@ class FrozenDict(dict):
 
     Because FrozenDict is a :class:`dict` subtype, it automatically
     works everywhere a dict would, including JSON serialization.
-
     """
 
     __slots__ = ("_hash",)
@@ -904,6 +897,7 @@ def inject_method(self, method_function, method_name=None):
     Inject a method into an object instance.
 
     method_function could be:
+
         * a function
         * a {method_name: function, ...} dict (for multiple injections)
         * a list of functions or (function, method_name) pairs
@@ -936,7 +930,6 @@ def get_function_body(func):
     :param func: The function to get the body of.
 
     :return: The body of the function as a string.
-
     """
     source_lines = inspect.getsourcelines(func)[0]
     source_lines = itertools.dropwhile(lambda x: x.startswith("@"), source_lines)
@@ -1086,7 +1079,6 @@ def mk_sentinel(
 
     Thanks: Inspired greately from the ``make_sentinel`` function of ``boltons``:
     See https://boltons.readthedocs.io/.
-
     """
 
     class Sentinel:
@@ -1198,7 +1190,8 @@ class FunctionBuilder:
     creating new functions, either based on existing functions or from
     scratch.
 
-    Note: Based on https://boltons.readthedocs.io
+    Note:
+        Based on https://boltons.readthedocs.io
 
     Values are passed in at construction or set as attributes on the
     instance. For creating a new function based of an existing one,
@@ -1256,7 +1249,6 @@ class FunctionBuilder:
     can be mutated as necessary.
 
     .. _Docstring: https://en.wikipedia.org/wiki/Docstring#Python
-
     """
 
     _argspec_defaults = {
@@ -1482,7 +1474,6 @@ class FunctionBuilder:
             arg_name (str): The name of the argument to remove.
 
         Raises a :exc:`ValueError` if the argument is not present.
-
         """
         args = self.args
         d_dict = self.get_defaults_dict()

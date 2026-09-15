@@ -162,8 +162,9 @@ class HandleExceptions(AbstractContextManager):
     before condition
     The with block was interrupted early.
 
-    Tip: If you need to do stuff with an exception, but reraise it, you can
-    still do that in your callback. Just say `raise` at the end of the callback!
+    Tip:
+        If you need to do stuff with an exception, but reraise it, you can
+        still do that in your callback. Just say `raise` at the end of the callback!
 
     >>> def print_and_raise(msg):
     ...     print(msg)
