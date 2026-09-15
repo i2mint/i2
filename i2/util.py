@@ -27,18 +27,30 @@ T = TypeVar("T")
 
 
 def asis(x: T) -> T:
-    """the identity function: f(x) := x (takes only one argument, and returns it)"""
+    """The identity function: f(x) := x (takes only one argument, and returns it).
+
+    >>> asis(3)
+    3
+    """
     return x
 
 
 def return_false(*args, **kwargs):
-    """a function that returns True (takes any number of arguments)"""
+    """Return False, whatever the arguments.
+
+    >>> return_false(1, x=2)
+    False
+    """
     return False
 
 
 def return_true(*args, **kwargs):
-    """a function that returns False (takes any number of arguments)"""
-    return False
+    """Return True, whatever the arguments.
+
+    >>> return_true(1, x=2)
+    True
+    """
+    return True
 
 
 def return_none(*args, **kwargs) -> None:
@@ -413,24 +425,20 @@ def copy_func(
 
     :param func: The function to be copied.
     :param copy_dict: Indicates whether to copy the ``__dict__`` attribute of the
-        function. Defaults to ``True``.
-    :param code: The value to be use as the ``__code__`` attribute of the copy.
-    :param globals_: The value to be use as the ``__globals__`` attribute of the copy.
+        function (any attributes set on the function instance). Defaults to ``True``.
+    :param code: The value to be used as the ``__code__`` attribute of the copy.
+    :param globals\_: The value to be used as the ``__globals__`` attribute of the copy.
     :return: A shallow copy of the function.
 
     Note that it should always work with proper functions and attempts to do the
     best job it can with other callables, but there are no guarantees on how
-    ``copy_function`` will behave with custom callables.
+    ``copy_func`` will behave with custom callables.
 
     If these custom callables don't have a `__code__` attribute, the copy will fail.
     Furthermore, if the custom callable  doesn't have ``__globals__``, the empty
     dictionary will be used as the globals.
     We provide a ``code`` and ``globals`` argument to allow the user to provide
     the ``__code__`` and ``__globals__`` attributes of the function to be copied.
-
-    :param func: The function to be copied. Must be a function, not just any method or callable.
-    :param copy_dict: Also copy any attributes set on the function instance. Defaults to ``True``.
-    :return: A shallow copy of the function.
     """
     from types import FunctionType
 
@@ -594,7 +602,7 @@ def insert_name_based_objects_in_scope(
     ... )
     >>> insert_namedtuples_in_locals('foo bar', 'baz')
 
-    And now ``foo` exists!
+    And now ``foo`` exists!
 
     >>> 'foo' in locals()
     True
@@ -736,7 +744,7 @@ def path_extractor(tree, path, getter=dflt_idx_preprocessor, *, path_sep="."):
 # Note: Specialization of path_extractor for Mappings
 def dp_get(d, dot_path):
     """Get stuff from a dict (or any Mapping), using dot_paths (i.e. 'foo.bar' instead of
-     ['foo']['bar'])
+    ['foo']['bar']).
 
     >>> d = {'foo': {'bar': 2, 'alice': 'bob'}, 3: {'pi': 3.14}}
     >>> assert dp_get(d, 'foo') == {'bar': 2, 'alice': 'bob'}
@@ -983,8 +991,9 @@ def mk_sentinel(
 
     :param name: The name of your sentinel. Will be used for ``__name__`` attribute.
     :param boolean_value: The boolean value that the sentinel instance should resolve to.
-    :param repr_: The method or string that should be used for the repr.
-    :param module:
+    :param repr\_: The method or string that should be used for the repr.
+    :param module: The ``__module__`` to give the sentinel's class (needed for
+        pickling). By default it is taken from the calling frame's ``__name__``.
     :return: A sentinel instance
 
     >>> Empty = mk_sentinel('Empty')

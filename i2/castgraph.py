@@ -1,7 +1,4 @@
 """
-castgraph
-=========
-
 A lightweight transformation service for Python that solves the "stable role,
 unstable representation" problem: a resource has a consistent semantic role
 (e.g., configuration, text, structured record) but appears in many forms
@@ -9,16 +6,16 @@ unstable representation" problem: a resource has a consistent semantic role
 representations. castgraph organizes transformations as a graph of "kinds"
 (data representations) and routes requests through the best available path.
 
-Key concepts
-------------
+**Key concepts**
+
 
 - **Kind**: Any hashable identifier for a data representation (type, string, custom marker)
 - **Transformation**: An edge in the graph that converts one kind to another
 - **Kind Predicate (isa)**: A function that determines if an object is of a kind
 - **TransformationGraph**: The main registry with graph-oriented interface
 
-Solution patterns
------------------
+**Solution patterns**
+
 
 - **Type Converter / Conversion Service**: central registry mapping (FromKind, ToKind) to transformer functions.
 - **Adapter**: each edge adapts one representation to another.
@@ -27,8 +24,8 @@ Solution patterns
 - **DDD Anti-Corruption Layer (ACL)**: keep external formats outside the core domain.
 - **Typeclass / Multimethod idiom**: dispatch based on (source kind, target kind).
 
-Minimal example (new kind-based interface)
--------------------------------------------
+**Minimal example (new kind-based interface)**
+
 Use the new TransformationGraph with flexible kinds (not limited to types).
 
     >>> from i2.castgraph import TransformationGraph
@@ -46,8 +43,8 @@ Use the new TransformationGraph with flexible kinds (not limited to types).
     >>> result["x"]
     1
 
-Legacy example (type-based interface)
---------------------------------------
+**Legacy example (type-based interface)**
+
 The old ConversionRegistry interface still works but is deprecated.
 
     >>> from i2.castgraph import ConversionRegistry
@@ -73,10 +70,11 @@ The old ConversionRegistry interface still works but is deprecated.
     >>> isinstance(out, Record) and out["x"] == 1
     True
 
-Main tools
-----------
+**Main tools**
+
 
 - **TransformationGraph**: the main graph-based registry (recommended).
+
   - `.add_node(kind, isa=None)`: add a kind with optional predicate.
   - `.add_edge(src, dst, func, cost=1.0)`: add a transformation edge.
   - `.register_edge(src, dst, cost=1.0)`: decorator to add an edge.
@@ -89,6 +87,7 @@ Main tools
   - `.kinds()`: get all registered kinds.
 
 - **ConversionRegistry**: DEPRECATED - use TransformationGraph instead.
+
   - `.register(From, To, cost=1.0)`: DEPRECATED - use `.register_edge()` instead.
   - `.convert(obj, ToType, context=None)`: DEPRECATED - use `.transform()` instead.
 
@@ -96,8 +95,8 @@ Main tools
 - **KindMatch**: Truthy result from kind predicates that can carry metadata.
 - **ConversionError**: raised when no route exists between kinds.
 
-Design guidelines
------------------
+**Design guidelines**
+
 
 - Define a single TransformationGraph per bounded context; keep edges local.
 - Prefer small, testable transformer functions with explicit kinds.
@@ -110,8 +109,8 @@ Design guidelines
 - Write doctests on each transformer to lock behavior and invariants.
 - Use bare hashables (types, strings) as kinds; Kind class is optional.
 
-Migration guide
----------------
+**Migration guide**
+
 Old code using ConversionRegistry::
 
     reg = ConversionRegistry()
@@ -134,8 +133,8 @@ Or with string kinds::
     def transform_func(obj, ctx): ...
     result = graph.transform(obj, 'dst_format')
 
-Design heritage
----------------
+**Design heritage**
+
 castgraph is a composition of well-known patterns centered on a **Type Converter /
 Conversion Service**, with **Adapter** edges and **Strategy**-based route selection.
 At system boundaries, it complements DDD’s **Anti-Corruption Layer** and can employ
@@ -152,8 +151,8 @@ For background reading, see:
 - Canonical Data Model: https://www.enterpriseintegrationpatterns.com/patterns/messaging/CanonicalDataModel.html
 - PEP 443 singledispatch: https://peps.python.org/pep-0443/
 
-Related
--------
+**Related**
+
 
 - Issue that sparked this implementation: https://github.com/i2mint/i2/issues/79
 - Computational path resolution: https://github.com/i2mint/meshed/discussions/71
@@ -1299,7 +1298,7 @@ class ConversionRegistry:
         >>> isinstance(reg.convert(A(), B), B)
         True
 
-        .. rubric:: Can infer types from annotations:
+        Types can be inferred from annotations:
 
         >>> class X: ...
         >>> class Y: ...
@@ -1503,11 +1502,8 @@ class ConversionRegistry:
         *,
         cost: float = 1.0,
     ) -> Callable[[Converter], Converter]:
-        """
-            Decorator to register a converter function.
+        """Decorator to register a converter function.
 
-            Example
-            -------
         >>> reg = ConversionRegistry()
         >>> class A: ...
         >>> class B: ...
@@ -1517,7 +1513,8 @@ class ConversionRegistry:
         >>> isinstance(reg.convert(A(), B), B)
         True
 
-        # Can infer types from annotations:
+        Types can be inferred from annotations:
+
         >>> class X: ...
         >>> class Y: ...
         >>> @reg.register()

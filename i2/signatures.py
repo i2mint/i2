@@ -8,15 +8,13 @@ How to:
 
     - merge two or more signatures
 
-    -
-
     - give a function a specific signature (with a choice of validations)
 
     - get an equivalent function with a different order of arguments
 
     - get an equivalent function with a subset of arguments (like partial)
 
-    - get an equivalent function but with variadic *args and/or **kwargs replaced with
+    - get an equivalent function but with variadic ``*args`` and/or ``**kwargs`` replaced with
       non-variadic args (tuple) and kwargs (dict)
 
     - make an f(a) function in to a f(a, b=None) function with b ignored
@@ -737,8 +735,10 @@ def extract_arguments(
         'ignore': function will return `param_args`, `param_kwargs`
         'assert_empty': function will assert that `remaining_kwargs` is empty and then
         return `param_args`, `param_kwargs`
-        :param include_all_when_var_keywords_in_params=False,
-        :param assert_no_missing_position_only_args=False,
+    :param include_all_when_var_keywords_in_params: If True, and the params have a
+        VAR_KEYWORD kind, include all kwargs in ``param_kwargs`` (nothing remains).
+    :param assert_no_missing_position_only_args: If True, raise an ``AssertionError``
+        when a POSITION_ONLY param has no matching kwarg.
     :param kwargs: The kwargs to extract the args from
     :return: A (param_args, param_kwargs, remaining_kwargs) tuple.
     """
@@ -943,13 +943,13 @@ class Sig(Signature, Mapping):
     such as
 
         - making a signature for a variety of input types (callable,
-            iterable of callables, parameter lists, strings, etc.)
+          iterable of callables, parameter lists, strings, etc.)
         - has a dict-like interface
         - signature merging (with operator interfaces)
         - quick access to signature data
         - positional/keyword argument mapping.
 
-    .. rubric:: Positional/Keyword argument mapping
+    **Positional/Keyword argument mapping**
 
     In python, arguments can be positional (args) or keyword (kwargs).
     ... sometimes both, sometimes a single one is imposed.
@@ -982,7 +982,7 @@ class Sig(Signature, Mapping):
     `call_forgivingly`, `tuple_the_args`, `map_arguments_from_variadics`, `extract_args_and_kwargs`,
     `source_arguments`, and `source_args_and_kwargs`.
 
-    .. rubric:: Making a signature
+    **Making a signature**
 
     You can construct a `Sig` object from a callable,
 
@@ -1197,12 +1197,12 @@ class Sig(Signature, Mapping):
         attribute, here we also write to
 
         - `__defaults__` and `__kwdefaults__`, extracting these from `__signature__`
-            (functools.wraps doesn't do that at the time of writing this
-            (see https://github.com/python/cpython/pull/21379)).
+          (functools.wraps doesn't do that at the time of writing this
+          (see https://github.com/python/cpython/pull/21379)).
         - `__annotations__` (also extracted from `__signature__`)
         - does not write to `__module__`, `__name__`, `__qualname__`, `__doc__`
-            (because again, we're basinig the injecton on a signature, not a function,
-            so we have no name, doc, etc...)
+          (because again, we're basinig the injecton on a signature, not a function,
+          so we have no name, doc, etc...)
 
         WARNING:
             The fact that you've modified the signature of your function doesn't
@@ -1267,9 +1267,6 @@ class Sig(Signature, Mapping):
         Traceback (most recent call last):
           ...
         TypeError: f() takes from 0 to 3 positional arguments but 4 were given
-
-        TODO:
-            Give more explanations why this is.
         """
 
         # TODO: Should we make copy_function=False the default,
@@ -1699,7 +1696,8 @@ class Sig(Signature, Mapping):
 
     @property
     def has_var_kinds(self):
-        """
+        """Whether the signature has a VAR_POSITIONAL or VAR_KEYWORD parameter.
+
         >>> Sig(lambda x, *, y: None).has_var_kinds
         False
         >>> Sig(lambda x, *y: None).has_var_kinds
@@ -1795,7 +1793,7 @@ class Sig(Signature, Mapping):
     def n_required(self):
         """The number of required arguments.
         A required argument is one that doesn't have a default, nor is VAR_POSITIONAL
-        (*args) or VAR_KEYWORD (**kwargs).
+        (``*args``) or VAR_KEYWORD (``**kwargs``).
 
         Note:
             Sometimes a minimum number of arguments in VAR_POSITIONAL and
@@ -1923,8 +1921,7 @@ class Sig(Signature, Mapping):
         <Sig (a, b=2, c=3)>
         >>> special_foo(5)  # should be 5 + 2 * 3 == 11
         11
-
-
+        """
         # TODO: Would like to make this work (reordering)
         # Now, if you want to set a default for a but not b and c for example, you'll
         # get complaints:
@@ -1952,8 +1949,7 @@ class Sig(Signature, Mapping):
         # <Sig (b, c, a=10)>
         # >>> another_foo(2, 3)  # should be 10 + (2 * 3) =
         # 16
-
-        """
+        #
 
         if not param_attr in param_attributes:
             raise ValueError(
@@ -1980,6 +1976,13 @@ class Sig(Signature, Mapping):
     # ch_annotations = partialmethod(ch_param_attrs, param_attr="annotation")
 
     def ch_names(self, /, **changes_for_name):
+        """Rename parameters, given as ``old_name=new_name`` pairs.
+
+        >>> Sig(lambda a, b: None).ch_names(a="x")
+        <Sig (x, b)>
+
+        :raises ValueError: If a name to change is not in the signature.
+        """
         argnames_not_in_sig = changes_for_name.keys() - self.keys()
         if argnames_not_in_sig:
             raise ValueError(
@@ -1988,19 +1991,23 @@ class Sig(Signature, Mapping):
         return self.ch_param_attrs("name", **changes_for_name)
 
     def ch_kinds(self, /, _allow_reordering=True, **changes_for_name):
+        """Change parameter kinds, given as ``name=kind`` pairs (see ``ch_param_attrs``)."""
         return self.ch_param_attrs(
             "kind", _allow_reordering=_allow_reordering, **changes_for_name
         )
 
     def ch_kinds_to_position_or_keyword(self):
+        """Return the signature with all non-variadic kinds set to POSITIONAL_OR_KEYWORD."""
         return all_pk_signature(self)
 
     def ch_defaults(self, /, _allow_reordering=True, **changes_for_name):
+        """Change parameter defaults, given as ``name=default`` pairs (see ``ch_param_attrs``)."""
         return self.ch_param_attrs(
             "default", _allow_reordering=_allow_reordering, **changes_for_name
         )
 
     def ch_annotations(self, /, **changes_for_name):
+        """Change parameter annotations, given as ``name=annotation`` pairs (see ``ch_param_attrs``)."""
         return self.ch_param_attrs("annotation", **changes_for_name)
 
     def add_optional_keywords(
@@ -2199,17 +2206,18 @@ class Sig(Signature, Mapping):
         before hand)
 
         Important Notes:
+
         - The resulting Sig will loose it's return_annotation if it had one.
             This is to avoid making too many assumptions about how the sig sum will be
             used.
-            If a return_annotation is needed (say, for composition, the last
-            return_annotation
-            summed), one can subclass Sig and overwrite __add__
+          If a return_annotation is needed (say, for composition, the last
+          return_annotation
+          summed), one can subclass Sig and overwrite __add__
         - POSITION_ONLY and KEYWORD_ONLY kinds will be replaced by
-        POSITIONAL_OR_KEYWORD kind.
-        This is to simplify the interface and code.
-        If the user really wants to maintain those kinds, they can replace them back
-        after the fact.
+          POSITIONAL_OR_KEYWORD kind.
+          This is to simplify the interface and code.
+          If the user really wants to maintain those kinds, they can replace them back
+          after the fact.
 
         >>> def f(w, /, x: float = 1, y=1, *, z: int = 1):
         ...     ...
@@ -2630,7 +2638,7 @@ class Sig(Signature, Mapping):
         ignore_kind=False,
         args_limit: int | None = 0,
     ) -> tuple[tuple, dict]:
-        """Extract args and kwargs such that func(*args, **kwargs) can be called,
+        """Extract args and kwargs such that ``func(*args, **kwargs)`` can be called,
         where func has instance's signature.
 
         :param arguments: The {param_name: arg_val,...} dict to process
@@ -2640,10 +2648,10 @@ class Sig(Signature, Mapping):
             - args_limit==0: Take the minimum number possible of args (positional
                 arguments). Only those that are position only or before a var-positional.
             - args_limit is None: Take the maximum number of args (positional arguments).
-                The only kwargs (keyword arguments) you should have are keyword-only
-                and var-keyword arguments.
+              The only kwargs (keyword arguments) you should have are keyword-only
+              and var-keyword arguments.
             - args_limit positive integer: Take the args_limit first argument names
-                (of signature) as args, and the rest as kwargs.
+              (of signature) as args, and the rest as kwargs.
 
         >>> def foo(w, /, x: float, y=1, *, z: int = 1):
         ...     return ((w + x) * y) ** z
@@ -3341,8 +3349,8 @@ def _remove_variadics_from_sig(sig, ch_variadic_keyword_to_keyword=True):
     >>> assert sig == Sig(func)
 
 
-    If you only want the variadic positional to be handled, but leave leave any
-    VARIADIC_KEYWORD kinds (**kwargs) alone, you can do so by setting
+    If you only want the variadic positional to be handled, but leave any
+    VARIADIC_KEYWORD kinds (``**kwargs``) alone, you can do so by setting
     `ch_variadic_keyword_to_keyword=False`.
 
     >>> def foo(a, *args, bar=None, **kwargs):
@@ -3403,19 +3411,19 @@ def call_forgivingly(func, *args, **kwargs):
     ...     return x, args1, y, kwargs1
     >>> call_forgivingly(bar, 1, 2, 3, y=4, z=5)
     (1, (2, 3), 4, {'z': 5})
-
+    """
+    # Cases not yet handled (not doctests):
     # >>> def bar(x, y=1, **kwargs1):
     # ...     return x, y, kwargs1
     # >>> call_forgivingly(bar, 1, 2, 3, y=4, z=5)
     # (1, 4, {'z': 5})
-
+    #
     # >>> call_forgivingly(bar, 1, 2, 3, y=4, z=5)
-
+    #
     # >>> def bar(x, *args1, y=1):
     # ...     return x, args1, y
     # >>> call_forgivingly(bar, 1, 2, 3, y=4, z=5)
     # (1, (2, 3), {'z': 5})
-    """
     return _call_forgivingly(func, args, kwargs)
 
 
@@ -3683,7 +3691,7 @@ def all_pk_signature(callable_or_signature: Callable | Signature):
     >>> all_pk_signature(signature(foo))
     <Sig (w, x: float, y=1, z: int = 1, **kwargs)>
 
-    But note that the variadic arguments *args and **kwargs remain variadic:
+    But note that the variadic arguments ``*args`` and ``**kwargs`` remain variadic:
 
     >>> all_pk_signature(signature(bar))
     <Signature (*args, **kwargs)>
@@ -3771,13 +3779,13 @@ def normalized_func(func):
 
 
 def ch_variadics_to_non_variadic_kind(func, *, ch_variadic_keyword_to_keyword=True):
-    """A decorator that will change a VAR_POSITIONAL (*args) argument to a tuple (args)
-    argument of the same name.
+    """Replace a function's variadic parameters with a tuple and a dict parameter of
+    the same names, returning an equivalent function.
 
     Essentially, given a `func(a, *b, c, **d)` function want to get a
     `new_func(a, b=(), c=None, d={})` that has the same functionality
     (in fact, calls the original `func` function behind the scenes), but without
-    where the variadic arguments *b and **d are replaced with a `b` expecting an
+    where the variadic arguments ``*b`` and ``**d`` are replaced with a `b` expecting an
     iterable (e.g. tuple/list) and `d` expecting a `dict` to contain the
     desired inputs.
 
@@ -3828,8 +3836,8 @@ def ch_variadics_to_non_variadic_kind(func, *, ch_variadic_keyword_to_keyword=Tr
     >>> ch_variadics_to_non_variadic_kind(func) == func
     True
 
-    If you only want the variadic positional to be handled, but leave leave any
-    VARIADIC_KEYWORD kinds (**kwargs) alone, you can do so by setting
+    If you only want the variadic positional to be handled, but leave any
+    VARIADIC_KEYWORD kinds (``**kwargs``) alone, you can do so by setting
     `ch_variadic_keyword_to_keyword=False`.
     If you'll need to use `ch_variadics_to_non_variadic_kind` in such a way
     repeatedly, we suggest you use `functools.partial` to not have to specify this
@@ -3948,7 +3956,6 @@ def ch_func_to_all_pk(func):
     (PK: Positional_or_keyword)
 
     :param func: A callable
-    :return:
 
     >>> def f(a, /, b, *, c=None, **kwargs):
     ...     return a + b * c
@@ -3969,18 +3976,18 @@ def ch_func_to_all_pk(func):
     >>> gg = ch_func_to_all_pk(g)
     >>> print(Sig(gg))
     (x, y=1, args=(), **kwargs)
-
+    """
+    # Not yet handled (not doctests):
     # >>> def h(x, *y, z):
     # ...     print(f"{x=}, {y=}, {z=}")
     # >>> h(1, 2, 3, z=4)
-
-    .. rubric:: x=1, y=(2, 3), z=4
-
+    #
+    # x=1, y=(2, 3), z=4
+    #
     # >>> hh = ch_func_to_all_pk(h)
     # >>> hh(1, (2, 3), z=4)
-
-    .. rubric:: x=1, y=(2, 3), z=4
-    """
+    #
+    # x=1, y=(2, 3), z=4
 
     # _func = tuple_the_args(func)
     # sig = Sig(_func)
@@ -4510,15 +4517,13 @@ class sigs_for_builtins:
         """filter(function or None, iterable) --> filter object"""
 
     def map(func, iterable, /, *iterables):
-        """map(func, *iterables) --> map object"""
+        """``map(func, *iterables) --> map object``"""
 
     def print(*value, sep=" ", end="\n", file=sys.stdout, flush=False):
-        """print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)"""
+        r"""``print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)``"""
 
     def zip(*iterables):
-        """
-        zip(*iterables) --> A zip object yielding tuples until an input is exhausted.
-        """
+        """``zip(*iterables) --> A zip object yielding tuples until an input is exhausted.``"""
 
     def bool(x: Any, /) -> bool: ...
 
@@ -5022,21 +5027,14 @@ def defaults_are_the_same_when_not_empty(dflt1, dflt2):
     """
     Check if two defaults are the same when they are not empty.
 
-    # >>> defaults_are_the_same_when_not_empty(1, 1)
-
-    .. rubric:: True
-
-    # >>> defaults_are_the_same_when_not_empty(1, 2)
-
-    .. rubric:: False
-
-    # >>> defaults_are_the_same_when_not_empty(1, None)
-
-    .. rubric:: False
-
-    # >>> defaults_are_the_same_when_not_empty(1, Parameter.empty)
-
-    .. rubric:: True
+    >>> defaults_are_the_same_when_not_empty(1, 1)
+    True
+    >>> defaults_are_the_same_when_not_empty(1, 2)
+    False
+    >>> defaults_are_the_same_when_not_empty(1, None)
+    False
+    >>> defaults_are_the_same_when_not_empty(1, Parameter.empty)
+    True
     """
     return dflt1 is empty or dflt2 is empty or dflt1 == dflt2
 

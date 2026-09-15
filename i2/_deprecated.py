@@ -11,10 +11,10 @@ from i2.signatures import extract_arguments
 
 
 class Command:
-    """A class that holds a `(caller, args, kwargs)` triple and allows one to execute
-    `caller(*args, **kwargs)`
+    """A class that holds a ``(caller, args, kwargs)`` triple and allows one to execute
+    ``caller(*args, **kwargs)``.
 
-    :param func: A callable that will be called with (*args, **kwargs) argument.
+    :param func: A callable that will be called with ``(*args, **kwargs)`` argument.
     :param args: The positional arguments to call the func with.
     :param kwargs: The keyword arguments to call the func with.
 

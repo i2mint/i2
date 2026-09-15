@@ -689,46 +689,42 @@ def attrs_used_by_method(method, *, src_code=None):
     Returns:
         A list of attribute names (of the class or instance thereof) that are accessed in the code of the said method.
 
-    Example:
+    Consider the method ``A.target_method`` coming from the following code in
+    ``i2.tests.footprints_test``::
 
-    Consider the method `A.target_method` coming from the following code in
-    `i2.tests.footprints_test`:
-    ```python
-    def func(obj):
-        \"\"\"Accesses attributes 'a' and 'b' of obj\"\"\"
-        return obj.a + obj.b
+        def func(obj):
+            \"\"\"Accesses attributes 'a' and 'b' of obj\"\"\"
+            return obj.a + obj.b
 
-    class A:
-        e = 2
+        class A:
+            e = 2
 
-        def __init__(self, a=1, b=0, c=1, d=10):
-            self.a = a
-            self.b = b
-            self.c = c
-            self.d = d
+            def __init__(self, a=1, b=0, c=1, d=10):
+                self.a = a
+                self.b = b
+                self.c = c
+                self.d = d
 
-        def target_method(self, x):
-            \"\"\"Accesses ['a', 'b', 'c', 'e']\"\"\"
-            t = func(self)  # and this function will access some attributes!
-            tt = self.other_method(t)
-            return x * tt / self.e
+            def target_method(self, x):
+                \"\"\"Accesses ['a', 'b', 'c', 'e']\"\"\"
+                t = func(self)  # and this function will access some attributes!
+                tt = self.other_method(t)
+                return x * tt / self.e
 
-        def other_method(self, x=1):
-            \"\"\"Accesses ['c', 'e']\"\"\"
-            w = self.c * 2  # c is accessed first
-            return self.e + self.c * x - w  # and c is accessed again
+            def other_method(self, x=1):
+                \"\"\"Accesses ['c', 'e']\"\"\"
+                w = self.c * 2  # c is accessed first
+                return self.e + self.c * x - w  # and c is accessed again
 
-        @classmethod
-        def a_class_method(cls, y):
-            \"\"\"Accesses ['e']\"\"\"
-            return cls.e + y
-    ```
-
+            @classmethod
+            def a_class_method(cls, y):
+                \"\"\"Accesses ['e']\"\"\"
+                return cls.e + y
+    """
     # TODO: Stopped working in 3.12 (worked in 3.10). See why
     # >>> from i2.tests.footprints_test import A
     # >>> assert attrs_used_by_method(A.target_method) == {'a', 'b', 'c', 'e'}
-
-    """
+    #
     return _attrs_used_by_method(
         *cls_and_method_name_of_method(method), src_code=src_code
     )
@@ -838,8 +834,8 @@ def dict_to_graph(
 ) -> str:
     """A function to convert a dictionary to a graphviz string.
 
-    You privide a graph in the form of a ``{from_node: to_nodes, ...`` or
-    ``{to_node: from_nodes, ...``` dictionary, and will get a graphviz string.
+    You provide a graph in the form of a ``{from_node: to_nodes, ...}`` or
+    ``{to_node: from_nodes, ...}`` dictionary, and will get a graphviz string.
     You can use this to visualize a graph (e.g. a dependency graph) in a jupyter notebook.
 
     :param graph: The graph, in the form of a to convert to graphviz.

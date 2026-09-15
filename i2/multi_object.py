@@ -723,11 +723,10 @@ class FlexFuncFanout(MultiFunc):
     Therefore ``FlexFuncFanout`` holds a "normalized" form of the functions; namely one that handles such things as
     postion only and varargs.
 
-    .. rubric:: TODO: Make this work!
+    TODO: Make this work (right now it raises ``TypeError: formula1() got some
+    positional-only arguments passed as keyword arguments: 'w'``)::
 
-    .. rubric:: Right now raises: TypeError: formula1() got some positional-only arguments passed as keyword arguments: 'w'
-
-    # >>> assert formula1(1, x=2, z=3) == mf1.normalized_funcs[formula1](**kwargs_for_func[formula1])
+        # >>> assert formula1(1, x=2, z=3) == mf1.normalized_funcs[formula1](**kwargs_for_func[formula1])
 
     Note:
         In the following, it looks like ``FlexFuncFanout`` instances return dicts whose keys are strings.
@@ -736,9 +735,11 @@ class FlexFuncFanout(MultiFunc):
     The keys are functions: The same functions that were input.
     The reason for not using functions is that when printed, they include their hash, which invalidates the doctests.
 
-    # >>> def print_dict(d):  # just a util for this doctest
-    # ...     from pprint import pprint
-    # ...     pprint({k.__name__: d[k] for k in sorted(d, key=lambda x: x.__name__)})
+    ::
+
+        # >>> def print_dict(d):  # just a util for this doctest
+        # ...     from pprint import pprint
+        # ...     pprint({k.__name__: d[k] for k in sorted(d, key=lambda x: x.__name__)})
 
     >>> mf1 = FlexFuncFanout(formula1, mult=mult, addition=add)
     >>> assert mf1.kwargs_for_func(w=1, x=2, z=3, a=4, b=5) == {
@@ -812,7 +813,7 @@ class ParallelFuncs(MultiFunc):
     :return: A function that takes a dict as an (multi-channel) input and a dict as a
         (multi-channel) output
 
-    Q: Why can I specify the specs both with named_funcs_dict and **named_funcs?
+    Q: Why can I specify the specs both with ``named_funcs_dict`` and ``**named_funcs``?
     A: Look at the ``dict(...)`` interface. You see the same thing there.
     Different reason though (here we assert that the keys don't overlap).
     Usually named_funcs is more convenient, but if you need to use keys that are not
@@ -933,13 +934,14 @@ class ContextFanout(MultiObj):
     ...     pass
     open
     close
-
-    .. rubric:: Further, know that within the context's scope, a `ContextFanout`
-
-    .. rubric:: instance will have the context managers it contains available, and having the
-
-    .. rubric:: value it is supposed to have "under context".
-
+    """
+    # Not yet working (kept as notes, not doctests):
+    # Further, know that within the context's scope, a `ContextFanout`
+    #
+    # instance will have the context managers it contains available, and having the
+    #
+    # value it is supposed to have "under context".
+    #
     #
     # >>> with ContextFanout(not_a_context_manager, some_context_manager(2)) as (f, m):
     # ...     print(f(10))
@@ -956,30 +958,29 @@ class ContextFanout(MultiObj):
     # >>> with c:
     # ...     # inside the context, c indeed has the attribute, and it has the expected value
     # ...     assert c.some_context_manager == 'x + 1 = 3'
-
-    .. rubric:: open
-
-    .. rubric:: close
-
+    #
+    # open
+    #
+    # close
+    #
     # >>> # outside the context, c doesn't have the some_context_manager attribute any more again
     # >>> assert not hasattr(c, 'some_context_manager')
     #
-
-    .. rubric:: If you don't specify a name for a given context manager, you'll still have access
-
-    .. rubric:: to it via a hidden attribute ("_i" where i is the index of the object when
-
-    .. rubric:: the `ContextFanout` instance was made.
-
+    #
+    # If you don't specify a name for a given context manager, you'll still have access
+    #
+    # to it via a hidden attribute ("_i" where i is the index of the object when
+    #
+    # the `ContextFanout` instance was made.
+    #
     #
     # >>> c = ContextFanout(some_context_manager(10), not_a_context_manager)
     # >>> with c:
     # ...     assert c._0 == 'x + 1 = 11'
-
-    .. rubric:: open
-
-    .. rubric:: close
-    """
+    #
+    # open
+    #
+    # close
 
     def __enter__(self):
         for name, obj in self.items():

@@ -179,6 +179,7 @@ class FuncFactory:
 
     @classmethod
     def wrap(cls, include=(), exclude=()):
+        """Return a ``FuncFactory`` constructor with ``include`` and ``exclude`` fixed."""
         return partial(cls, include=include, exclude=exclude)
 
     def _process_args_and_kwargs(self, args, kwargs):
@@ -559,6 +560,23 @@ def preprocess_arguments(pre):
 
 
 def preprocess(pre):
+    """Make a decorator that feeds the wrapped function the output of ``pre``.
+
+    The wrapped function receives a single argument: ``pre(*args, **kwargs)``, computed
+    from whatever the caller passed. For a bound method, ``self`` is passed through
+    untouched and ``pre`` gets the remaining arguments.
+
+    >>> @preprocess(int)
+    ... def double(x):
+    ...     return 2 * x
+    >>> double("21")
+    42
+
+    See Also:
+        ``postprocess``: apply a function to the output instead.
+        ``preprocess_arguments``: ``pre`` returns the ``(args, kwargs)`` pair to call the
+        wrapped function with, instead of a single value.
+    """
     def decorator(func):
         if inspect.ismethod(func):
 
@@ -615,9 +633,9 @@ def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=Fal
     Use cases:
 
     - Changing a generator into a container returning function
-        In many situations, writing a generator is simpler than writing a function
-        that accumulates a list or a dict etc.
-        So here, you just write the generator and tag this decorator on top, to get the same effect.
+      In many situations, writing a generator is simpler than writing a function
+      that accumulates a list or a dict etc.
+      So here, you just write the generator and tag this decorator on top, to get the same effect.
 
     >>> from inspect import signature
     >>> @postprocess(dict)
@@ -650,7 +668,7 @@ def postprocess(post, caught_post_errors=(Exception,), verbose_error_message=Fal
     >>> assert t == [0, 1]
 
     - Using a function that does a lot to make several functions that do less.
-        (e.g. Extracting/making a python object from a function returning a raw http response_
+        (e.g. Extracting/making a python object from a function returning a raw http response)
     """
 
     def decorator(func):
@@ -758,12 +776,13 @@ def input_output_decorator(preprocess=None, postprocess=None):
     This is not what you'd expect: The doc of the class, not the function
 
     # >>>
+    """
+    # Not a doctest (kept as a note):
     # >>> f.static_method = input_output_decorator(preprocess=lambda x: '"' + x + '"',
     # ...                                          postprocess=lambda x: x + '!!!')(f.static_method)
     # >>> print(ff.static_method('big', 'eyes'))
-
-    .. rubric:: What big "eyes" you have!!!
-    """
+    #
+    # What big "eyes" you have!!!
 
     def decorator(func):
         if preprocess and postprocess:
@@ -1040,6 +1059,7 @@ def wrap_class_methods_input_and_output(
         * transform_class_method_input_and_output: The function that is called for every method we wrap.
 
     In the following, we will show two examples.
+
     - The first is a toy example to demonstrate the basic functionality.
     - The second demonstrates a more involved case, but is still a silly example.
     - The third demonstrates more the type of application we'd use wrap_class_methods_input_and_output for in real life.
@@ -1407,6 +1427,7 @@ def mk_call_logger(
 ):
     """
     Makes a decorator that logs each call to the wrapped function.
+
     :param logger: The actual function that logs stuff. Default is print. The "stuff" it logs is given by
         the what_to_log argument (a function).
     :param what_to_log: A function taking inputs (func, args, kwargs) of the call, and returning something to log

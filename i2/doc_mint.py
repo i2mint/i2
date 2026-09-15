@@ -19,24 +19,27 @@ def find_in_params(
     :param query: The query to search for.
     :param params: The list of parameter specifications.
         Params can be provided in two formats:
+
         - A function, from which the params will be extracted from the docstring.
         - A list of dictionaries where each dictionary specifies a parameter, containing:
+
             - name: The name of the parameter (str).
             - default: The default value of the parameter (any, optional).
             - annotation: The type annotation for the parameter (str, optional).
             - description: A description of the parameter (str).
+
         If a callable is provided, it will be used to generate the list of parameter specifications.
     :param search_in: The fields to search in each parameter specification.
     :return: A list of parameter specifications that match the query.
 
     Examples:
 
-    >>> params = [
-    ...     {"name": "x", "default": 1, "annotation": "int", "description": "An integer value."},
-    ...     {"name": "y", "default": None, "annotation": "str", "description": "An optional string."},
-    ... ]
-    >>> find_in_params('int', params)
-    [{'name': 'x', 'default': 1, 'annotation': 'int', 'description': 'An integer value.'}]
+        >>> params = [
+        ...     {"name": "x", "default": 1, "annotation": "int", "description": "An integer value."},
+        ...     {"name": "y", "default": None, "annotation": "str", "description": "An optional string."},
+        ... ]
+        >>> find_in_params('int', params)
+        [{'name': 'x', 'default': 1, 'annotation': 'int', 'description': 'An integer value.'}]
 
     """
     if isinstance(search_in, str):
@@ -58,7 +61,7 @@ def indent_lines(string: str, indent: str) -> str:
     :param indent: The string to use for indentation.
     :return: The indented string.
 
-    .. rubric:: Examples
+    **Examples**
 
     >>> print(indent_lines('This is a test.\nAnother line.', ' ' * 8))
             This is a test.
@@ -77,7 +80,7 @@ def most_common_indent(string: str, ignore_first_line=True) -> str:
         because of the way python strings appear in code.
     :return: The most common indentation string.
 
-    .. rubric:: Examples
+    **Examples**
 
     >>> most_common_indent('    This is a test.\n    Another line.')
     '    '
@@ -109,7 +112,7 @@ def inject_docstring_content(to_inject, *, position=-1, indent=True):
         If a string, it will use that specific string.
     :return: A decorator that injects the content into the docstring of the decorated function.
 
-    .. rubric:: Examples
+    **Examples**
 
     >>> @inject_docstring_content('This is a test.')
     ... def test_func():
@@ -192,7 +195,7 @@ def params_to_docstring(
 
     :return: A formatted docstring (str).
 
-    .. rubric:: Examples
+    **Examples**
 
     >>> params = [
     ...     {"name": "x", "default": 1, "annotation": "int", "description": "An integer value."},
@@ -310,7 +313,7 @@ def string_param_to_obj(string_to_object_mapping: dict, string=None):
     :param string_to_object_mapping: A mapping from string representations to objects.
     :return: The object corresponding to the string representation.
 
-    .. rubric:: Examples
+    **Examples**
 
     >>> string_to_object_mapping = {
     ...     'None': None,
@@ -425,7 +428,7 @@ def docstring_to_params(
         - annotation: The type annotation for the parameter (str, optional).
         - description: A description of the parameter (str).
 
-    .. rubric:: Examples
+    **Examples**
 
     >>> docstring = '''
     ... Parameters

@@ -1,7 +1,13 @@
-"""
-Tools to provide meta-interfaces of python objects.
-See also:
-    py2misc/py2store/tree_store.py
+"""Tools to provide meta-interfaces ("mints") of python objects.
+
+A mint is a ``Mapping`` view of the (meta-)information describing the interface of
+an object: for a callable, its parameters (name, kind, default, annotation) and its
+return annotation.
+
+Main entry points:
+    Mint: mint of any python object
+    MintOfCallable: mint of a callable, with parameter information
+    ParametersMint: mint of the parameters of a callable
 """
 
 import inspect
