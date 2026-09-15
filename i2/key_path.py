@@ -72,6 +72,7 @@ from collections.abc import MutableMapping
 
 
 def trans_generator_output(trans):
+    """Make a decorator that applies ``trans`` to every item a generator function yields."""
     def decorator(func):
         @wraps(func)
         def wrapped(*args, **kwargs):
@@ -83,7 +84,7 @@ def trans_generator_output(trans):
 
 
 class NoDefault:
-    pass
+    """Type of the ``NO_DFLT`` sentinel (no default value given)."""
 
 
 NO_DFLT = NoDefault()

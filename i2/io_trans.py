@@ -49,6 +49,7 @@ wraps.__defaults__ = (functools.WRAPPER_ASSIGNMENTS, functools.WRAPPER_UPDATES)
 
 
 def identity_func(x):
+    """Return the input unchanged."""
     return x
 
 
@@ -222,6 +223,7 @@ class TypedBasedOutIoTrans(IoTrans):
 
 
 def pickle_out_trans(self, argval, func):
+    """Output transformer that pickles the value (``pickle.dumps``)."""
     return dumps(argval)
 
 

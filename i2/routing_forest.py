@@ -163,6 +163,7 @@ def return_sentinel(obj: Any, sentinel: Any = None):
 
 
 def identity(obj: Any):
+    """Return the input unchanged (the default leaf function)."""
     return obj
 
 
@@ -613,6 +614,7 @@ class SwitchCaseNode(RoutingNode):
 
 
 def wrap_leafs_with_final_node(x):
+    """Yield the items of ``x``, wrapping those that are not ``RoutingNode`` in ``FinalNode``."""
     for xx in x:
         if isinstance(xx, RoutingNode):
             yield xx
@@ -621,6 +623,7 @@ def wrap_leafs_with_final_node(x):
 
 
 def test_routing_forest():
+    """Exercise the routing nodes end to end (kept here as a runnable example)."""
     def could_be_int(obj):
         if isinstance(obj, int):
             b = True
