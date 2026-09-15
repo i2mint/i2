@@ -696,12 +696,12 @@ def extract_arguments(
 
     If you're expecting no remainder you might want to just get the args and kwargs (
     not this third
-    expected-to-be-empty remainder). You have two ways to do that, specifying::
+    expected-to-be-empty remainder). You have two ways to do that, specifying:
 
-        `what_to_do_with_remainding='ignore'`, which will just return the (args,
-        kwargs) pair
-        `what_to_do_with_remainding='assert_empty'`, which will do the same, but first
-        assert the remainder is empty
+    - `what_to_do_with_remainding='ignore'`, which will just return the (args,
+      kwargs) pair
+    - `what_to_do_with_remainding='assert_empty'`, which will do the same, but first
+      assert the remainder is empty
 
     We suggest to use `functools.partial` to configure the `argument_argument` you need.
 

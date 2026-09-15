@@ -217,7 +217,7 @@ class ConditionalExceptionCatcher:
     :param prevent_propagation: Whether to prevent the exception from propagating. Defaults
         to ``True``.
 
-    .. rubric:: Example
+    **Example**
 
     >>> exception_catcher = ConditionalExceptionCatcher(
     ...     ValueError, lambda e: e.args[0] == 'foo', handlers=print
@@ -285,7 +285,7 @@ class AttributeMapping(SimpleNamespace, Mapping[str, Any]):
 
     Useful when you want mapping interface but don't need mutation.
 
-    .. rubric:: Examples
+    **Examples**
 
     >>> ns = AttributeMapping(x=10, y=20)
     >>> ns.x
@@ -326,7 +326,7 @@ class AttributeMutableMapping(AttributeMapping, MutableMapping[str, Any]):
     Extends AttributeMapping with mutation capabilities,
     ensuring proper error handling and protocol compliance.
 
-    .. rubric:: Examples
+    **Examples**
 
     >>> ns = AttributeMutableMapping(apple=1, banana=2)
     >>> ns.apple
