@@ -278,10 +278,7 @@ def test_rm_params():
         allow_partial=True,  # wouldn't work without this
     )
 
-    # `chk_size` shows a `NotSet` default: FuncFactory can be called with anywhere
-    # from none to all of its underlying function's arguments, so its signature
-    # shouldn't claim `chk_size` is strictly required (see i2mint/i2#48).
-    assert str(Sig(mk_chunker)) == "(chk_size: int = NotSet)"
+    assert str(Sig(mk_chunker)) == "(chk_size: int)"
 
     wf = range(7)
     chunker = mk_chunker(chk_size=3)
