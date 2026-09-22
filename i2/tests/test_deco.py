@@ -37,3 +37,20 @@ def test_func_factory_signature_keeps_required_params_required():
     # The factory itself can still be called with none to all of the arguments
     assert factory()(1, 2, "a") == [1, 2, "a", "-"]
     assert factory(chk_size=3)(1, name="b") == [1, 3, "b", "-"]
+
+
+def test_not_set_is_exported_and_recognisable():
+    """``NotSet`` and ``is_not_set`` are public, so signature consumers can recognise
+    the sentinel without importing a private object (see i2mint/i2#48)."""
+    import pickle
+
+    import i2
+    from i2.deco import NotSet as deco_not_set
+
+    assert i2.NotSet is deco_not_set
+    assert i2.is_not_set(i2.NotSet)
+    for other in (None, inspect.Parameter.empty, "NotSet", 0, False, object()):
+        assert not i2.is_not_set(other)
+    # Survives pickling as the same object (so identity checks stay valid)
+    assert pickle.loads(pickle.dumps(i2.NotSet)) is i2.NotSet
+    assert repr(i2.NotSet) == "NotSet"

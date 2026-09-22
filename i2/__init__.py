@@ -8,6 +8,8 @@ from i2.deco import (
     input_output_decorator,
     wrap_class_methods_input_and_output,
     double_up_as_factory,
+    NotSet,  # Sentinel for "no value given" (distinct from None and Parameter.empty)
+    is_not_set,  # Test whether a value (e.g. a signature default) is NotSet
 )
 
 from i2.signatures import (

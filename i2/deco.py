@@ -55,6 +55,33 @@ def _not_set_repr(self):
 
 
 NotSet = mk_sentinel("NotSet", repr_=_not_set_repr)
+NotSet.__doc__ = """Sentinel meaning "no value was given for this argument".
+
+It is distinct from ``None`` (which can be a legitimate value) and from
+``inspect.Parameter.empty`` (which means "this parameter has no default").
+Code that reads signature defaults should test for it with :func:`is_not_set`
+rather than by comparing to a private object.
+"""
+
+
+def is_not_set(x) -> bool:
+    """Return ``True`` if ``x`` is the ``NotSet`` sentinel, and ``False`` otherwise.
+
+    Signature consumers (UI or schema generators, for example) can use it to treat a
+    ``NotSet`` default like ``inspect.Parameter.empty``, i.e. "required, no default":
+
+    >>> from inspect import Parameter
+    >>> is_not_set(NotSet)
+    True
+    >>> is_not_set(None), is_not_set(Parameter.empty), is_not_set("NotSet")
+    (False, False, False)
+    >>> def default_or_empty(param):
+    ...     return Parameter.empty if is_not_set(param.default) else param.default
+    >>> p = Parameter('x', Parameter.KEYWORD_ONLY, default=NotSet)
+    >>> default_or_empty(p) is Parameter.empty
+    True
+    """
+    return x is NotSet
 
 
 # ---------------------------------------------------------------------------------------
