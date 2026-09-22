@@ -91,10 +91,16 @@ class FuncFactory:
 
     >>> factory = FuncFactory(foo)
     >>> factory
-    <FuncFactory(foo)>(a, b, *, c=2) -> ...Callable[..., float]
+    <FuncFactory(foo)>(a=NotSet, b=NotSet, *, c=2) -> ...Callable[..., float]
 
     (Note that the repr even reuses ``foo``'s return annotation to tell us that our
     factory will return a callable that returns that type (if the annotation is a type).
+
+    Note also that ``a`` and ``b`` show a ``NotSet`` default, even though ``foo``
+    itself requires them: that's ``FuncFactory`` being truthful about what calling
+    the *factory* requires (nothing -- it can be called with anywhere from none to
+    all of the underlying function's arguments), as opposed to what calling the
+    function it produces requires.
 
     An instance of ``FuncFactory`` is a factory of functions, that is, it can make
     functions for you based on the instance's underlying ``func``:
@@ -114,7 +120,7 @@ class FuncFactory:
 
     >>> factory_no_a = FuncFactory(foo, exclude=['a'])
     >>> factory_no_a
-    <FuncFactory(foo)>(b, *, c=2) -> ...Callable[..., float]
+    <FuncFactory(foo)>(b=NotSet, *, c=2) -> ...Callable[..., float]
     >>> g = factory_no_a(2, 3)  # equivalent to ``factory(b=2, c=3)`` as no ``a`` here
     >>> g(10)
     23
@@ -169,15 +175,17 @@ class FuncFactory:
         self.func_sig = func_sig
         self.factory_sig = actual_factory_sig
 
-        self.__signature__ = actual_factory_sig  # TODO: Delete when #48 solved
-        # TODO: Uncomment below to resolved https://github.com/i2mint/i2/issues/48)
-        ## Add NotSet default to all non-defaulted params:
-        ## (To see why, go to See https://github.com/i2mint/i2/issues/48)
-        # shown_factory_sig = actual_factory_sig.ch_defaults(
-        #     **{name: NotSet for name in actual_factory_sig.required_names}
-        # )
-        # shown_factory_sig = shown_factory_sig[self.include]
-        # self.__signature__ = shown_factory_sig
+        # Give the (required) params that don't have a default a `NotSet` default,
+        # so that the factory's signature is truthful about what's actually required
+        # to call `self.func` (as opposed to what's required to call the factory
+        # itself, which can be called with anything from none to all of these
+        # params -- see https://github.com/i2mint/i2/issues/48).
+        # Note: `actual_factory_sig` is already restricted to `self.include` (see
+        # above), so we don't re-index it here -- doing so would needlessly go
+        # through `Sig.__getitem__`, which drops the return annotation.
+        self.__signature__ = actual_factory_sig.ch_defaults(
+            **{name: NotSet for name in actual_factory_sig.required_names}
+        )
 
     @classmethod
     def wrap(cls, include=(), exclude=()):
@@ -188,8 +196,9 @@ class FuncFactory:
         _kwargs = self.factory_sig.map_arguments(
             args, kwargs, allow_partial=True, ignore_kind=True
         )
-        # Uncomment below to resolved https://github.com/i2mint/i2/issues/48)
-        # _kwargs = {k: v for k, v in _kwargs.items() if v is not NotSet}
+        # Drop the `NotSet`-defaulted params that weren't actually given a value
+        # (see https://github.com/i2mint/i2/issues/48):
+        _kwargs = {k: v for k, v in _kwargs.items() if v is not NotSet}
         __args, __kwargs = self.func_sig.mk_args_and_kwargs(
             _kwargs, allow_partial=True, ignore_kind=False
         )
