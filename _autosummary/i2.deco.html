@@ -252,16 +252,11 @@ arguments of a function <code class="docutils literal notranslate"><span class="
 It also has a more helpful signature:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">factory</span> <span class="o">=</span> <span class="n">FuncFactory</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
 </span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">factory</span>
-</span><span id="line-3"><span class="go">&lt;FuncFactory(foo)&gt;(a=NotSet, b=NotSet, *, c=2) -&gt; ...Callable[..., float]</span>
+</span><span id="line-3"><span class="go">&lt;FuncFactory(foo)&gt;(a, b, *, c=2) -&gt; ...Callable[..., float]</span>
 </span></code></pre></div>
 </div>
 <p>(Note that the repr even reuses <code class="docutils literal notranslate"><span class="pre">foo</span></code>’s return annotation to tell us that our
 factory will return a callable that returns that type (if the annotation is a type).</p>
-<p>Note also that <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> show a <code class="docutils literal notranslate"><span class="pre">NotSet</span></code> default, even though <code class="docutils literal notranslate"><span class="pre">foo</span></code>
-itself requires them: that’s <code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code> being truthful about what calling
-the <em>factory</em> requires (nothing – it can be called with anywhere from none to
-all of the underlying function’s arguments), as opposed to what calling the
-function it produces requires.</p>
 <p>An instance of <code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code> is a factory of functions, that is, it can make
 functions for you based on the instance’s underlying <code class="docutils literal notranslate"><span class="pre">func</span></code>:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">factory</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
@@ -279,7 +274,7 @@ functions for you based on the instance’s underlying <code class="docutils lit
 arguments, using their names or indices to specify them.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">factory_no_a</span> <span class="o">=</span> <span class="n">FuncFactory</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s1">'a'</span><span class="p">])</span>
 </span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">factory_no_a</span>
-</span><span id="line-3"><span class="go">&lt;FuncFactory(foo)&gt;(b=NotSet, *, c=2) -&gt; ...Callable[..., float]</span>
+</span><span id="line-3"><span class="go">&lt;FuncFactory(foo)&gt;(b, *, c=2) -&gt; ...Callable[..., float]</span>
 </span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">factory_no_a</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># equivalent to ``factory(b=2, c=3)`` as no ``a`` here</span>
 </span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </span><span id="line-6"><span class="go">23</span>
@@ -1306,7 +1301,7 @@ Of course, this is just pretend. Don’t use this with real waveforms. It won’
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=9f53bdf0"></script>
+<script src="../_static/documentation_options.js?v=a8ab379a"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
