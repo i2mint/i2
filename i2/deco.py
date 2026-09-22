@@ -60,7 +60,9 @@ NotSet.__doc__ = """Sentinel meaning "no value was given for this argument".
 It is distinct from ``None`` (which can be a legitimate value) and from
 ``inspect.Parameter.empty`` (which means "this parameter has no default").
 Code that reads signature defaults should test for it with :func:`is_not_set`
-rather than by comparing to a private object.
+rather than by comparing to a private object. Note that ``bool(NotSet)`` is
+``False``, so ``if not default:`` would lump it together with ``None``, ``0`` and
+``""``: use :func:`is_not_set` instead.
 """
 
 
