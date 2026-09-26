@@ -217,9 +217,9 @@ def uniquely_named_objects(
         # name = f'lambda_{i}'
         if name is None or not name.isidentifier() or name in _exclude_names:
             name = f"_{i}"
-            assert (
-                name not in _exclude_names
-            ), "{name} already used in {_exclude_names}!"
+            assert name not in _exclude_names, (
+                "{name} already used in {_exclude_names}!"
+            )
         yield name, obj
         _exclude_names.add(name)
 

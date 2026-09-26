@@ -207,9 +207,7 @@ class JSONAnnotAndDfltIoTrans(AnnotAndDfltIoTrans):
 class TypedBasedOutIoTrans(IoTrans):
     """Transform output according to it's type."""
 
-    trans_func_for_type: (
-        Mapping
-    ) = ()  # Todo: Want empty mapping as default (use frozendict or __post_init__?)
+    trans_func_for_type: Mapping = ()  # Todo: Want empty mapping as default (use frozendict or __post_init__?)
     dflt_trans_func: Callable | None = None
 
     def out_trans(self, argval, func):

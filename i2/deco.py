@@ -384,9 +384,9 @@ def double_up_as_factory(decorator_func):
             f"First argument of the decorator function needs to default to None. "
             f"Was {first_param.default}"
         )
-        assert all(
-            p.kind in {p.KEYWORD_ONLY, p.VAR_KEYWORD} for p in other_params
-        ), f"All arguments (besides the first) need to be keyword-only"
+        assert all(p.kind in {p.KEYWORD_ONLY, p.VAR_KEYWORD} for p in other_params), (
+            f"All arguments (besides the first) need to be keyword-only"
+        )
         return first_param.name
 
     return wraps(decorator_func)(
@@ -920,9 +920,9 @@ def transform_args(dflt_trans_func=None, /, **trans_func_for_arg):
         ):  # if no transformations were specified...
             return func  # just return the function itself
         elif dflt_trans_func is not None:
-            assert callable(
-                dflt_trans_func
-            ), "The dflt_trans_func needs to be a callable"
+            assert callable(dflt_trans_func), (
+                "The dflt_trans_func needs to be a callable"
+            )
 
             @wraps(func)
             def transform_args_wrapper(*args, **kwargs):
@@ -1591,9 +1591,9 @@ def get_callable_from_factory_if_no_arguments(func_or_factory_thereof: Callable)
     """Will return the input itself if it's a callable with at least one argument.
     If not, it will consider it to be a factory, call it to get the actual
     callable object that the user presumably is seeking to get"""
-    assert callable(
-        func_or_factory_thereof
-    ), f"{func_or_factory_thereof} needs to be callable"
+    assert callable(func_or_factory_thereof), (
+        f"{func_or_factory_thereof} needs to be callable"
+    )
     if len(Sig(func_or_factory_thereof)) == 0:
         # if func_or_factory_thereof has no arguments, assume it's a factory
         func = func_or_factory_thereof()

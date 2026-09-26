@@ -470,7 +470,6 @@ def _get_source(o, src_code=None) -> str:
                 try:
                     return getsource(o)
                 except Exception as e:
-
                     raise ValueError(
                         f"Could not get source code for object {o}. "
                         "(This can happen if your object was defined in jupyter notebooks, "

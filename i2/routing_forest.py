@@ -296,9 +296,9 @@ class KeyFuncMapping(DelegateToMappingAttrMixin, MutableMapping):
     def __add__(self, other: Callable):
         """Make a copy of the KeyFuncMapping instance with other as default_factory"""
         self_type = type(self)
-        assert callable(
-            other
-        ), f"Can only add a callable (usually a {self_type} itself) to a {self_type}"
+        assert callable(other), (
+            f"Can only add a callable (usually a {self_type} itself) to a {self_type}"
+        )
         return self_type(self.mapping, self.key, default_factory=other)
 
 

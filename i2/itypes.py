@@ -155,9 +155,9 @@ def new_type(
     if aka is not None:
         setattr(new_tp, "_aka", set(aka))
     if assign_to_globals:
-        globals()[
-            name
-        ] = new_tp  # not sure how kosher this is... Should only use at top level of module, for sure!
+        globals()[name] = (
+            new_tp  # not sure how kosher this is... Should only use at top level of module, for sure!
+        )
     return new_tp
 
 
