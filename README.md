@@ -24,6 +24,8 @@ For human readers: [Documentation here.](https://i2mint.github.io/i2/)
 If you identify as a dinosaur, the rest of this README is written for you, starting at [Key Modules Overview](#key-modules-overview).
 <!-- epythet:agentic-readme:end -->
 
+**Working on this repo as an agent?** Read [`.claude/CLAUDE.md`](.claude/CLAUDE.md) first: module map, test command, and the rule that any change to a public signature, default or return type needs the dependents' tests, not just these. The skills above live in [`.claude/skills/`](.claude/skills), so Claude Code picks them up in this repo automatically. To install one elsewhere, use `gh skill install i2mint/i2 i2-signatures --allow-hidden-dirs --agent claude-code` (swap in any skill name). Contributors who still type every character themselves: see [For carbon-based contributors](#for-carbon-based-contributors).
+
 ## Install
 
 ```
@@ -180,7 +182,7 @@ def add(x, y):
 # Transform inputs before function, outputs after
 wrapped = Wrap(
     add,
-    ingress=lambda x, y: (x * 2, y * 2),  # Double inputs
+    ingress=lambda x, y: ((x * 2, y * 2), {}),  # Double inputs; returns (args, kwargs)
     egress=lambda result: result / 2       # Halve output
 )
 
@@ -191,19 +193,19 @@ assert result == 7
 **Signature Transformation:**
 
 ```python
-from i2.wrapper import Ingress
+from i2.wrapper import Ingress, wrap
 
 def process(data: dict):
     return data['value']
 
 # Change signature: accept 'x' instead of 'data'
 ingress = Ingress(
+    inner_sig=process,
     outer_sig='x',
-    inner_sig='data',
-    kwargs_trans=lambda x: {'data': {'value': x}}
+    kwargs_trans=lambda outer_kwargs: {'data': {'value': outer_kwargs['x']}},
 )
 
-new_func = ingress(process)
+new_func = wrap(process, ingress=ingress)
 result = new_func(42)  # Calls process({'value': 42})
 assert result == 42
 ```
@@ -281,7 +283,7 @@ router = RoutingForest([
 
 # Can get all matches or just first
 list(router(15))   # ['≥ 10', 'Odd number']
-next(router(8))    # None (no matches)
+next(router(8), None)    # None (no matches)
 ```
 
 **Pattern Matching Example:**
@@ -331,7 +333,7 @@ assert asis(42) == 42
 assert asis([1, 2, 3]) == [1, 2, 3]
 
 # Constant functions (useful as defaults)
-assert return_true(anything, goes="here") is True
+assert return_true("anything", goes="here") is True
 assert return_false("doesn't", "matter") is False
 assert return_none(1, 2, 3) is None
 ```
@@ -350,15 +352,19 @@ from functools import partial
 assert name_of_obj(partial(print, sep=",")) == 'print'
 ```
 
-**Attribute/Item Access:**
+**Immutable dict:**
 
 ```python
 from i2.util import imdict
 
-# Flexible dict-like access
+# An immutable dict: reads work, mutations raise TypeError
 data = imdict({'a': 1, 'b': 2})
-assert data.a == 1  # Attribute access
-assert data['b'] == 2  # Item access
+assert data['b'] == 2
+try:
+    data['c'] = 3
+    raise AssertionError("imdict should not be mutable")
+except TypeError:
+    pass
 ```
 
 **Laziness Utilities:**
@@ -434,8 +440,8 @@ def process(**kwargs):
 def typed_process(**kwargs):
     return process(**kwargs)
 
-# Now can call with clear parameters
-result = typed_process(1, 2, 3)
+# Now can call with clear (keyword) parameters
+result = typed_process(a=1, b=2, c=3)
 assert result == 6
 ```
 
@@ -457,7 +463,10 @@ def validate_input(value):
         ),
         CondNode(
             cond=lambda x: isinstance(x, int),
-            then=FinalNode(x >= 0)
+            then=RoutingForest([
+                CondNode(lambda x: x >= 0, FinalNode(True)),
+                CondNode(lambda x: x < 0, FinalNode(False))
+            ])
         )
     ])
     return next(router(value), False)
@@ -469,6 +478,21 @@ assert validate_input(-1) is False
 ```
 
 
+
+## For carbon-based contributors
+
+Development setup and the full test run (doctests are most of the suite):
+
+```bash
+uv venv .venv && uv pip install -e ".[dev]"
+.venv/bin/python -m pytest
+```
+
+Packaging lives in `pyproject.toml`. CI is the wads uv workflow in `.github/workflows/ci.yml`, configured by `[tool.wads.ci]`. A merge to `master` publishes to PyPI and bumps the version, so don't edit the version by hand.
+
+About 50 packages depend on `i2` (`dol`, `meshed`, `config2py`, `front`, `py2http` and more). Before changing a public signature, default or return type in `signatures.py`, `deco.py` or `wrapper.py`, run the tests of the heaviest dependents against your branch. i2's own suite has missed breakages there before.
+
+Questions and design discussion go to [GitHub issues](https://github.com/i2mint/i2/issues) and [discussions](https://github.com/i2mint/i2/discussions).
 
 ## What's mint?
 
