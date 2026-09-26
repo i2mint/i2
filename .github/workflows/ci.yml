@@ -1,110 +1,405 @@
-name: Continuous Integration
+name: Continuous Integration (uv)
+# Inline uv CI (wads `github_ci_uv.yml`), not the reusable-workflow stub: the stub's
+# github-pages job can't pass `epythet-spec`, and this repo pilots epythet v2 (see the
+# Pages step). Once the pin is no longer needed, `wads-migrate ci-to-stub` applies.
+# PyPI auth: publish uses secrets.PYPI_PASSWORD as an API token (uv publish).
 on: [push, pull_request]
+
+# Workflow-level env vars from [tool.wads.ci.env] in pyproject.toml.
+# Populated by wads-migrate / wads init via template substitution.
+# Contains ONLY non-secret values: PROJECT_NAME and literal defaults from
+# env.defaults. Secret-backed vars (required/test/extra_envvars) are
+# deliberately scoped to the jobs that run tests — see the validation and
+# windows-validation jobs below. A workflow-level secret would be in scope
+# for the setup job too, and GitHub then refuses to emit any job OUTPUT
+# containing its value: a short value (e.g. a test level of "3") silently
+# blanks python-versions, the matrix expands to nothing, and the run fails
+# with no failing step (i2mint/wads#61).
 env:
   PROJECT_NAME: i2
-  SCRIPTS_REPOSITORY_URL: http://${{ secrets.SCRIPTS_USERNAME }}:${{ secrets.SCRIPTS_TOKEN }}@git.otosense.ai/vferon/ci-scripts.git
+
 jobs:
+  # First job: Read configuration from pyproject.toml
+  setup:
+    name: Read Configuration
+    runs-on: ubuntu-latest
+    outputs:
+      project-name: ${{ steps.config.outputs.project-name }}
+      python-versions: ${{ steps.config.outputs.python-versions }}
+      pytest-args: ${{ steps.config.outputs.pytest-args }}
+      coverage-enabled: ${{ steps.config.outputs.coverage-enabled }}
+      exclude-paths: ${{ steps.config.outputs.exclude-paths }}
+      test-on-windows: ${{ steps.config.outputs.test-on-windows }}
+      windows-blocking: ${{ steps.config.outputs.windows-blocking }}
+      tests-enabled: ${{ steps.config.outputs.tests-enabled }}
+      build-sdist: ${{ steps.config.outputs.build-sdist }}
+      build-wheel: ${{ steps.config.outputs.build-wheel }}
+      metrics-enabled: ${{ steps.config.outputs.metrics-enabled }}
+      metrics-config-path: ${{ steps.config.outputs.metrics-config-path }}
+      metrics-storage-branch: ${{ steps.config.outputs.metrics-storage-branch }}
+      metrics-python-version: ${{ steps.config.outputs.metrics-python-version }}
+      metrics-force-run: ${{ steps.config.outputs.metrics-force-run }}
+      ruff-enabled: ${{ steps.config.outputs.ruff-enabled }}
+      black-enabled: ${{ steps.config.outputs.black-enabled }}
+      mypy-enabled: ${{ steps.config.outputs.mypy-enabled }}
+      docs-enabled: ${{ steps.config.outputs.docs-enabled }}
+      licence-enabled: ${{ steps.config.outputs.licence-enabled }}
+      publish-enabled: ${{ steps.config.outputs.publish-enabled }}
+      skip-ci-marker: ${{ steps.config.outputs.skip-ci-marker }}
+      publish-marker: ${{ steps.config.outputs.publish-marker }}
+      trigger-mode: ${{ steps.config.outputs.trigger-mode }}
+      run-ci-marker: ${{ steps.config.outputs.run-ci-marker }}
+      commit-subject: ${{ steps.commit.outputs.subject }}
+
+    steps:
+      # ------------------------------------------------------------------
+      # The marker gates below (skip-ci, publish) match against the commit
+      # SUBJECT — its first line — and never against the whole message.
+      #
+      # Why: a squash-merge folds the ENTIRE PR BODY into the squash commit
+      # message. A `contains()` over the full message therefore fires on a
+      # PR that merely WRITES ABOUT a marker. That is not hypothetical: a PR
+      # body quoting the publish marker forced a publish on a repo that had
+      # publishing disabled, and turned a default branch that had been green
+      # for the first time in a year red.
+      #
+      # Why not `startsWith()`: this house's marker convention is TRAILING
+      # ("cw v1: an MIT replacement for argh ... [bump minor]") and GitHub
+      # appends " (#N)" to every squash subject. A prefix match would turn a
+      # gate that fires too often into one that SILENTLY NEVER FIRES — the
+      # same defect, in the direction nobody notices.
+      #
+      # Shell safety: the commit message is untrusted, attacker-influenced,
+      # multi-line text. It reaches bash ONLY through the environment, never
+      # spliced into a command line, so quotes, newlines and backticks in it
+      # cannot become shell syntax. The value is written with the
+      # $GITHUB_OUTPUT heredoc form under a per-run random delimiter.
+      #
+      # On events with no head commit (e.g. pull_request) the expression
+      # renders empty, the subject is empty, and every `contains()` gate is
+      # false — the same verdict the full-message form gave.
+      # ------------------------------------------------------------------
+      - name: Extract commit subject
+        id: commit
+        env:
+          HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          subject="${HEAD_COMMIT_MESSAGE%%$'\n'*}"
+          subject="${subject%$'\r'}"
+          delimiter="wads-subject-${RANDOM}${RANDOM}${RANDOM}"
+          {
+            printf 'subject<<%s\n' "$delimiter"
+            printf '%s\n' "$subject"
+            printf '%s\n' "$delimiter"
+          } >> "$GITHUB_OUTPUT"
+          printf 'commit subject: %s\n' "$subject"
+
+      - uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Read CI Config
+        id: config
+        uses: i2mint/wads/actions/read-ci-config@master
+        with:
+          pyproject-path: .
+
+  # TRIGGER GATE. Every job after `setup` carries the same clause:
+  #   (trigger-mode != 'on-demand' || github.event_name == 'workflow_dispatch'
+  #    || contains(commit-subject, run-ci-marker))
+  # [tool.wads.ci.trigger].mode = "auto" (the default) makes it always true, so
+  # auto repos behave exactly as before. "on-demand" means NOTHING RUNS UNLESS
+  # ASKED: the commit SUBJECT must carry run_ci_marker (default "[run ci]"), or
+  # the run must be a manual workflow_dispatch (always allowed). Publishing and
+  # Pages obey the same gate. `!= 'on-demand'` fails OPEN to auto when
+  # read-ci-config installed a wads too old to emit the output: a repo that
+  # never asked for on-demand must not lose its CI to a version skew.
+  #
+  # An on-demand caller stub also pre-filters at zero cost (no runner is
+  # scheduled for an ordinary push). That pre-filter can only test the whole
+  # message (expressions have no split), so THIS clause, over the extracted
+  # subject, is the decision: a marker quoted only in a squash-merged PR body
+  # costs the setup job and runs nothing else.
+
+  # Second job: Validation using the config
   validation:
     name: Validation
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    if: "!contains(needs.setup.outputs.commit-subject, '[skip ci]') && (needs.setup.outputs.trigger-mode != 'on-demand' || github.event_name == 'workflow_dispatch' || contains(needs.setup.outputs.commit-subject, needs.setup.outputs.run-ci-marker))"
+    needs: setup
     runs-on: ubuntu-latest
+    # Secret-backed env vars from [tool.wads.ci.env] land here (test jobs
+    # only, never workflow level — see the note on the top-level env block),
+    # rendered as `KEY: ${{ secrets.NAME || '' }}` (an unset secret renders
+    # as an empty string). The block is omitted entirely when none are
+    # declared. Names also present in env.defaults are not re-emitted here:
+    # the committed default at workflow level stays authoritative (matching
+    # the reusable workflow's export-ci-env). The publish and github-pages
+    # jobs deliberately do not receive these vars either — parity with
+    # uv-ci.yml, where only the test jobs export them.
+
     strategy:
       matrix:
-        python-version: ["3.10", "3.12"]
+        python-version: ${{ fromJson(needs.setup.outputs.python-versions) }}
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: i2mint/wads/actions/setup-python-uv@master
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Necessary for 3.12, since setuptools was removed there
-      - name: Install setuptools
-        run: python -m pip install setuptools
+      - name: Install System Dependencies
+        uses: i2mint/wads/actions/install-system-deps@master
+        with:
+          pyproject-path: .
 
       - name: Install Dependencies
-        uses: i2mint/isee/actions/install-packages@master
-        with:
-          dependency-files: setup.cfg
-          test-requirements-file: ${{ env.PROJECT_NAME }}/tests/test_requirements.txt
+        uses: i2mint/wads/actions/install-deps-uv@master
 
       - name: Format Source Code
-        uses: i2mint/isee/actions/format-source-code@master
+        if: needs.setup.outputs.ruff-enabled != 'false'
+        run: uvx ruff format .
 
-      # Documentation on "enable" codes:
-      #     http://pylint.pycqa.org/en/latest/technical_reference/features.html#basic-checker-messages
-      # - name: Pylint Validation
-      #   uses: i2mint/isee/actions/pylint-validation@master
-      #   with:
-      #     root-dir: ${{ env.PROJECT_NAME }}
-      #     enable: missing-module-docstring
-      #     ignore: tests,examples,scrap
-      #     ignore-patterns: '.*tests.*|.*scrap.*|.examples.*'
+      - name: Format Source Code (black)
+        if: needs.setup.outputs.black-enabled == 'true'
+        run: uvx black .
 
+      - name: Lint Validation
+        if: needs.setup.outputs.ruff-enabled != 'false'
+        run: uvx ruff check --output-format=github ${{ needs.setup.outputs.project-name }}
 
-      - name: Pytest Validation
-        uses: i2mint/isee/actions/pytest-validation@master
+      # Licence perimeter: fail the build if the INSTALLED dependency closure
+      # carries a copyleft / non-commercial licence the project's policy
+      # forbids. Opt-in via [tool.wads.licence].enabled = true, so a repo that
+      # declares nothing sees no change in CI behaviour at all.
+      #
+      # Run once, on the FIRST python-versions entry only: the answer does not
+      # vary by interpreter, and N identical failures across the matrix is
+      # noise. (The Windows job is a separate job and never runs this.)
+      #
+      # `--python` is load-bearing. `uvx` runs the tool in its OWN isolated
+      # environment, which contains wads and nothing of the project; without
+      # pointing it at the project's .venv the check would read the wrong
+      # closure and report a confident, wrong green.
+      - name: Licence Perimeter
+        if: needs.setup.outputs.licence-enabled == 'true' && matrix.python-version == fromJson(needs.setup.outputs.python-versions)[0]
+        run: |
+          if [ ! -f ".venv/bin/activate" ]; then
+            echo "::error::no .venv found; the licence gate must read the project's own installed closure, not uvx's isolated one"
+            exit 1
+          fi
+          source .venv/bin/activate
+          uvx --from wads wads-licence-check . --python "$VIRTUAL_ENV/bin/python"
+
+      - name: Type Check (mypy)
+        if: needs.setup.outputs.mypy-enabled == 'true'
+        run: uvx mypy ${{ needs.setup.outputs.project-name }}
+
+      - name: Run Tests
+        if: needs.setup.outputs.tests-enabled != 'false'
+        uses: i2mint/wads/actions/run-tests-uv@master
         with:
-          root-dir: ${{ env.PROJECT_NAME }}
-          paths-to-ignore: examples,scrap
+          root-dir: ${{ needs.setup.outputs.project-name }}
+          pytest-args: ${{ needs.setup.outputs.pytest-args }}
+          exclude-paths: ${{ needs.setup.outputs.exclude-paths }}
+          coverage: ${{ needs.setup.outputs.coverage-enabled }}
 
+      - name: Track Code Metrics
+        if: needs.setup.outputs.metrics-enabled == 'true'
+        uses: i2mint/umpyre/actions/track-metrics@master
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          config-path: ${{ needs.setup.outputs.metrics-config-path }}
+          storage-branch: ${{ needs.setup.outputs.metrics-storage-branch }}
+          python-version: ${{ needs.setup.outputs.metrics-python-version }}
+          force-run: ${{ needs.setup.outputs.metrics-force-run }}
+
+  # Optional Windows testing (if enabled in config)
+  windows-validation:
+    name: Windows Tests
+    if: "!contains(needs.setup.outputs.commit-subject, '[skip ci]') && needs.setup.outputs.test-on-windows == 'true' && needs.setup.outputs.tests-enabled != 'false' && (needs.setup.outputs.trigger-mode != 'on-demand' || github.event_name == 'workflow_dispatch' || contains(needs.setup.outputs.commit-subject, needs.setup.outputs.run-ci-marker))"
+    needs: setup
+    runs-on: windows-latest
+    # Fail-closed opt-in ([tool.wads.ci.testing].windows_blocking): only the
+    # literal 'true' makes the Windows leg block. An unset output - an older
+    # read-ci-config that does not emit it - yields '' != 'true', i.e. the
+    # historical informational behaviour. Blocking reddens the RUN; publish
+    # still does not depend on this job.
+    continue-on-error: ${{ needs.setup.outputs.windows-blocking != 'true' }}
+    env:
+      # PEP 540 UTF-8 mode: avoid cp1252 UnicodeDecode/EncodeError when test
+      # code reads source files or scripts print non-ASCII characters.
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+      # Secret-backed env vars from [tool.wads.ci.env] (see the note on the
+      # validation job). Empty when none are declared. Names colliding with
+      # the literals above are skipped — a duplicate key in one mapping
+      # would fail the whole workflow at parse time.
+
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: i2mint/wads/actions/setup-python-uv@master
+        with:
+          python-version: ${{ fromJson(needs.setup.outputs.python-versions)[0] }}
+
+      - name: Install System Dependencies
+        uses: i2mint/wads/actions/install-system-deps@master
+        with:
+          pyproject-path: .
+
+      - name: Install Dependencies
+        uses: i2mint/wads/actions/install-deps-uv@master
+
+      - name: Run Tests
+        uses: i2mint/wads/actions/run-tests-uv@master
+        with:
+          root-dir: ${{ needs.setup.outputs.project-name }}
+          pytest-args: ${{ needs.setup.outputs.pytest-args }}
+          exclude-paths: ${{ needs.setup.outputs.exclude-paths }}
+
+  # Publishing job
+  #
+  # Gated by [tool.wads.ci.publish] in pyproject.toml (read via the setup job):
+  #   - skip-ci-marker  : when publishing is enabled, a commit SUBJECT LINE
+  #                       containing this substring skips the publish job
+  #                       (default "[skip ci]").
+  #   - publish-enabled : whether publishing runs at all (default true).
+  #   - publish-marker  : when publishing is disabled, a commit SUBJECT LINE
+  #                       containing this substring forces the publish job
+  #                       (default "[publish]").
+  #   - trigger-mode    : in on-demand mode, publish also needs the run-ci
+  #                       marker in the subject or a workflow_dispatch —
+  #                       the TRIGGER GATE above `validation`.
+  # The publish-enabled check uses `== 'true'` (fail-closed): if an older wads
+  # without these outputs is installed by read-ci-config, publishing is skipped
+  # rather than run unintentionally.
+  #
+  # SUBJECT, not message: both markers are matched against the setup job's
+  # `commit-subject` output (the first line), never the full message, because
+  # a squash-merge folds the whole PR BODY into the squash commit message —
+  # see the note on the extraction step in the setup job.
   publish:
     name: Publish
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && github.ref == 'refs/heads/master'"
-    needs: validation
+    permissions:
+      contents: write
+    if: "!contains(needs.setup.outputs.commit-subject, needs.setup.outputs.skip-ci-marker) && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && (needs.setup.outputs.publish-enabled == 'true' || contains(needs.setup.outputs.commit-subject, needs.setup.outputs.publish-marker)) && (needs.setup.outputs.trigger-mode != 'on-demand' || github.event_name == 'workflow_dispatch' || contains(needs.setup.outputs.commit-subject, needs.setup.outputs.run-ci-marker))"
+    needs: [setup, validation]
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.12"]
+
     steps:
-      - uses: actions/checkout@v3
+      # `actions/checkout@v6` defaults to persist-credentials: true, configuring
+      # HTTPS auth in .git/config using `secrets.GITHUB_TOKEN`. Together with the
+      # job-level `permissions: contents: write`, this is exactly what the
+      # post-publish push-back needs — no per-repo SSH deploy key required. Do
+      # NOT re-add a "Force SSH for git remote" step: rewriting origin to an
+      # SSH URL overrides these credentials and reintroduces the push-back
+      # failure on every repo lacking an SSH_PRIVATE_KEY deploy key.
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Set up Python
+        uses: i2mint/wads/actions/setup-python-uv@master
         with:
-          python-version: ${{ matrix.python-version }}
-
-      # Necessary for 3.12, since setuptools was removed there
-      - name: Install setuptools
-        run: python -m pip install setuptools
+          python-version: ${{ fromJson(needs.setup.outputs.python-versions)[0] }}
+          create-venv: "false"
 
       - name: Format Source Code
-        uses: i2mint/isee/actions/format-source-code@master
+        if: needs.setup.outputs.ruff-enabled != 'false'
+        run: uvx ruff format .
+
+      - name: Format Source Code (black)
+        if: needs.setup.outputs.black-enabled == 'true'
+        run: uvx black .
 
       - name: Update Version Number
+        id: version
         uses: i2mint/isee/actions/bump-version-number@master
 
-      - name: Package
-        uses: i2mint/isee/actions/package@master
-
-      - name: Publish
-        uses: i2mint/isee/actions/publish@master
+      - name: Build Distribution
+        uses: i2mint/wads/actions/build-dist-uv@master
         with:
-          pypi-username: ${{ secrets.PYPI_USERNAME }}
-          pypi-password: ${{ secrets.PYPI_PASSWORD }}
+          sdist: ${{ needs.setup.outputs.build-sdist }}
+          wheel: ${{ needs.setup.outputs.build-wheel }}
 
-      - name: Check In
-        uses: i2mint/isee/actions/check-in@master
+      - name: Publish to PyPI
+        uses: i2mint/wads/actions/pypi-publish-uv@master
         with:
-          commit-message: "**CI** Formatted code + Updated version number and documentation. [skip ci]"
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          pypi-token: ${{ secrets.PYPI_PASSWORD }}
+
+      # A second merge landing on the default branch mid-run used to make this
+      # push-back fail as non-fast-forward: PyPI had the release, but the bump
+      # commit and tag never landed and the run went red (i2mint/wads#81). The
+      # git-commit action replays the bump onto the moved branch and retries;
+      # see its `push-rebase-retries` input, and the note in
+      # i2mint/wads .github/workflows/uv-ci.yml on why no `concurrency` group.
+      - name: Commit Changes
+        uses: i2mint/wads/actions/git-commit@master
+        with:
+          commit-message: "**CI** Formatted code + Updated version to ${{ env.VERSION }} [skip ci]"
+          push: true
 
       - name: Tag Repository
-        uses: i2mint/isee/actions/tag-repository@master
+        uses: i2mint/wads/actions/git-tag@master
         with:
-          tag: $VERSION
+          tag: ${{ env.VERSION }}
+          message: "Release version ${{ env.VERSION }}"
+          push: true
 
+  # Optional GitHub Pages (skipped when [tool.wads.ci.docs].enabled = false)
+  # Depends on validation (not publish) so docs still publish when the publish
+  # job is disabled via [tool.wads.ci.publish].enabled = false.
   github-pages:
     name: Publish GitHub Pages
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)"
-    needs: publish
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    if: "!contains(needs.setup.outputs.commit-subject, '[skip ci]') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && needs.setup.outputs.docs-enabled != 'false' && (needs.setup.outputs.trigger-mode != 'on-demand' || github.event_name == 'workflow_dispatch' || contains(needs.setup.outputs.commit-subject, needs.setup.outputs.run-ci-marker))"
+    needs: [setup, validation]
     runs-on: ubuntu-latest
+
     steps:
+      # Check out first so install-system-deps can read [tool.wads.ops.*] from
+      # pyproject.toml. The epythet action self-checks-out again internally;
+      # apt-installed system deps persist across that re-checkout.
+      - uses: actions/checkout@v6
+
+      # Install [tool.wads.ops.*] system deps (e.g. portaudio for pyaudio) so
+      # the epythet docs build, which pip-installs this package to extract
+      # docstrings, doesn't fail on a missing native library at import time.
+      # No-op when the package declares no system deps.
+      - name: Install System Dependencies
+        uses: i2mint/wads/actions/install-system-deps@master
+        with:
+          pyproject-path: .
+
       - uses: i2mint/epythet/actions/publish-github-pages@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          ignore: "tests/,scrap/,examples/"
           # WP5 pilot: opt into epythet v2 ahead of the fleet default (i2mint/epythet#16)
           epythet-spec: "epythet>=0.2,<0.3"

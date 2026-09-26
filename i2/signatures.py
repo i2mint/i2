@@ -4047,46 +4047,113 @@ def ch_func_to_all_pk(func):
     >>> gg = ch_func_to_all_pk(g)
     >>> print(Sig(gg))
     (x, y=1, args=(), **kwargs)
+
+    The variadic positional is given as a tuple, and the variadic keywords are still
+    given as extra keyword arguments:
+
+    >>> def h(x, *y, z=0, **kwargs):
+    ...     return f"{x=}, {y=}, {z=}, {kwargs=}"
+    >>> hh = ch_func_to_all_pk(h)
+    >>> print(Sig(hh))
+    (x, y=(), z=0, **kwargs)
+    >>> hh(1, (2, 3), z=4, extra=5)
+    "x=1, y=(2, 3), z=4, kwargs={'extra': 5}"
+    >>> assert hh(1, (2, 3), z=4, extra=5) == h(1, 2, 3, z=4, extra=5)
     """
-    # Not yet handled (not doctests):
-    # >>> def h(x, *y, z):
-    # ...     print(f"{x=}, {y=}, {z=}")
-    # >>> h(1, 2, 3, z=4)
-    #
-    # x=1, y=(2, 3), z=4
-    #
-    # >>> hh = ch_func_to_all_pk(h)
-    # >>> hh(1, (2, 3), z=4)
-    #
-    # x=1, y=(2, 3), z=4
-
-    # _func = tuple_the_args(func)
-    # sig = Sig(_func)
-    #
-    # @wraps(func)
-    # def __func(*args, **kwargs):
-    #     # b = Sig(_func).bind_partial(*args, **kwargs)
-    #     # return _func(*b.args, **b.kwargs)
-    #     args, kwargs = Sig(_func).extract_args_and_kwargs(
-    #         *args, **kwargs, _ignore_kind=False
-    #     )
-    #     return _func(*args, **kwargs)
-    #
+    # Not yet handled: a required keyword-only param after the variadic positional,
+    # e.g. ``def h(x, *y, z)``, since ``(x, y=(), z)`` isn't a valid signature.
+    func_sig = Sig(func)
     _func = tuple_the_args(func)
-    sig = Sig(_func)
+    all_pk_sig = all_pk_signature(Sig(_func))  # a Sig, keeping the name of func
 
-    @wraps(func)
-    def __func(*args, **kwargs):
-        args, kwargs = Sig(_func).extract_args_and_kwargs(
-            *args,
-            **kwargs,
-            # _ignore_kind=False,
-            # _allow_partial=True
-        )
-        return _func(*args, **kwargs)
+    if not func_sig.has_var_positional:
+        # Unchanged behavior (dependents rely on it): the variadic keyword is given
+        # by name, as a dict (``kwargs={...}``), and other excess arguments are
+        # ignored.
+        @wraps(func)
+        def __func(*args, **kwargs):
+            args, kwargs = Sig(_func).extract_args_and_kwargs(*args, **kwargs)
+            return _func(*args, **kwargs)
 
-    __func.__signature__ = all_pk_signature(sig)
+    else:
+        # With a variadic positional, the path above can't work: it mangles the
+        # tupled ``*args`` value and drops the variadic keywords (#12). So we bind
+        # to the all-PK signature and rebuild the call to ``func`` ourselves.
+        var_keyword_name = func_sig.var_keyword_name
+
+        @wraps(func)
+        def __func(*args, **kwargs):
+            if var_keyword_name and isinstance(kwargs.get(var_keyword_name), Mapping):
+                # As in the no-variadic-positional case, accept the variadic keywords
+                # given by name, as a dict (and merge any other extras with them)
+                kwargs = dict(kwargs)
+                kwargs = {**kwargs.pop(var_keyword_name), **kwargs}
+            arguments = all_pk_sig.map_arguments(
+                args, kwargs, allow_excess=True, ignore_kind=False
+            )
+            _args, _kwargs = _args_and_kwargs_from_all_pk_arguments(
+                func_sig, arguments
+            )
+            return func(*_args, **_kwargs)
+
+    __func.__signature__ = all_pk_sig
     return __func
+
+
+def _args_and_kwargs_from_all_pk_arguments(sig, arguments):
+    """Make the ``(args, kwargs)`` to call a function of signature ``sig`` from
+    ``arguments`` bound to its ``ch_func_to_all_pk`` signature (where the value of a
+    ``*args`` param is a tuple and the value of a ``**kwargs`` param is a dict).
+
+    Positional(-or-keyword) params are given positionally when they have to be (i.e.
+    when a later positional-only param or a non-empty ``*args`` is given), using their
+    defaults to fill any gaps; the others are given by keyword.
+
+    >>> def f(a, /, b=2, c=3, *args, d, **kwargs):
+    ...     ...
+    >>> _args_and_kwargs_from_all_pk_arguments(
+    ...     Sig(f), dict(a=1, c=4, args=(5, 6), d=7, kwargs={'e': 8})
+    ... )
+    ((1, 2, 4, 5, 6), {'d': 7, 'e': 8})
+    >>> _args_and_kwargs_from_all_pk_arguments(Sig(f), dict(a=1, c=4, d=7))
+    ((1,), {'c': 4, 'd': 7})
+    """
+    positional_params = [p for p in sig.params if p.kind in (PO, PK)]
+    vp_name = sig.var_positional_name
+    vp_values = tuple(arguments.get(vp_name, ())) if vp_name else ()
+
+    # How many of the positional params must be given positionally
+    if vp_values:
+        n_positional = len(positional_params)
+    else:
+        n_positional = max(
+            (
+                i + 1
+                for i, p in enumerate(positional_params)
+                if p.kind == PO and p.name in arguments
+            ),
+            default=0,
+        )
+
+    args, kwargs = [], {}
+    for i, p in enumerate(positional_params):
+        if p.name in arguments:
+            if i < n_positional:
+                args.append(arguments[p.name])
+            else:
+                kwargs[p.name] = arguments[p.name]
+        elif i < n_positional:
+            if p.default is Parameter.empty:
+                raise TypeError(f"missing a required argument: '{p.name}'")
+            args.append(p.default)
+    args.extend(vp_values)
+
+    for p in sig.params:
+        if p.kind == KO and p.name in arguments:
+            kwargs[p.name] = arguments[p.name]
+    if sig.var_keyword_name:
+        kwargs.update(arguments.get(sig.var_keyword_name, {}))
+    return tuple(args), kwargs
 
 
 def copy_func(f):

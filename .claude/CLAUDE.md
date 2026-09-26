@@ -2,8 +2,8 @@
 
 The middleware toolbox: meta-programming tools for building declarative frameworks
 — function signatures as data, decorators, wrapping/routing, multi-object
-composition. Legacy-packaged (`setup.cfg`/`setup.py`, no `pyproject.toml`) but
-heavily depended upon across the fleet — see Dependents below.
+composition. Packaged with `pyproject.toml` (hatchling) and heavily depended upon
+across the fleet — see Dependents below.
 
 ## Module map (`i2/`)
 
@@ -31,15 +31,20 @@ heavily depended upon across the fleet — see Dependents below.
 ## Tests (verified)
 
 ```bash
-uv venv .venv && uv pip install -e . pytest
-.venv/bin/pytest i2/ --ignore=i2/examples --ignore=i2/scrap --doctest-modules -q
-# 756 passed, 2 xfailed
+uv venv .venv && uv pip install -e ".[dev]"
+.venv/bin/python -m pytest
+# 782 passed, 2 xfailed
 ```
-No `ruff`/lint gate in CI — `.github/workflows/ci.yml` uses the legacy
-`i2mint/isee` actions (`install-packages`, `format-source-code`,
-`pytest-validation`), not the `i2mint/wads` reusable workflow other repos use.
-`ruff check i2/` reports hundreds of pre-existing findings; it is not what gates
-merges here.
+`[tool.pytest.ini_options]` supplies `--doctest-modules` and the `i2/examples`,
+`i2/scrap` ignores, so plain `pytest` matches CI. `i2/tests/test_readme.py` runs
+every python block of `README.md` in order, so README examples must run.
+
+CI is the wads **inline** uv workflow (`.github/workflows/ci.yml`), configured by
+`[tool.wads.ci]`. It is inline rather than the reusable-workflow stub only because
+the stub's Pages job can't pass the epythet v2 pilot pin (`epythet-spec`). The
+lint gate is `ruff check i2` with only `D100` (module docstrings) selected; don't
+widen it without fixing what it finds. A merge to `master` bumps the version and
+publishes to PyPI, so never edit the version by hand.
 
 ## Invariant: this package has no safety net for its own breaking changes
 

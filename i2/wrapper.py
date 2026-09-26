@@ -2455,6 +2455,14 @@ def move_params_to_the_end(func: Callable, names_to_move: Callable | Iterable[st
     >>> h = move_params_to_the_end(g, Sig(g).defaults)
     >>> assert str(Sig(g)) == '(a, *, b=4, c)'
     >>> assert str(Sig(h)) == '(a, *, c, b=4)'
+
+    Names are only moved to the end of their own kind: a keyword-only param always
+    stays after the positional ones, and ``**kwargs`` stays last.
+
+    >>> def bar(a, b=1, *, c=2, d, **kwargs):
+    ...     ...
+    >>> str(Sig(move_params_to_the_end(bar, ['b', 'c'])))
+    '(a, b=1, *, d, c=2, **kwargs)'
     """
     if callable(names_to_move):
         names_to_move = names_to_move(func)
@@ -2463,8 +2471,13 @@ def move_params_to_the_end(func: Callable, names_to_move: Callable | Iterable[st
         f"or a callable producing one from a function. Was {names_to_move}"
     )
 
-    names = Sig(func).names
-    reordered = move_names_to_the_end(names, names_to_move)
+    sig = Sig(func)
+    reordered = move_names_to_the_end(sig.names, names_to_move)
+    # Moving names to the end can put them after params of a later kind (e.g. a
+    # keyword-only param after ``**kwargs``), which is not a valid signature. A stable
+    # sort by kind only changes such invalid orders, keeping the order within each kind
+    # (see i2mint/i2#17).
+    reordered = sorted(reordered, key=lambda name: sig.kinds[name])
     wrapped_func = include_exclude(func, include=reordered)
     return wrapped_func
 
