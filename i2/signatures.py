@@ -3762,6 +3762,15 @@ def all_pk_signature(callable_or_signature: Callable | Signature):
     >>> all_pk_signature(signature(bar))
     <Signature (*args, **kwargs)>
 
+    Only what Python's parameter order rules allow is made positional-or-keyword: a
+    required keyword-only parameter that comes after a parameter with a default has
+    to stay keyword-only, and so do all the parameters after it (see i2mint/i2#93):
+
+    >>> all_pk_signature(Sig(lambda a=1, *, b, c=2: None))
+    <Sig (a=1, *, b, c=2)>
+    >>> all_pk_signature(Sig(lambda a, *args, b, c=2: None))
+    <Sig (a, *args, b, c=2)>
+
     It works with `Sig` too (since Sig is a Signature), and maintains it's other
     attributes (like name).
 
@@ -3779,11 +3788,21 @@ def all_pk_signature(callable_or_signature: Callable | Signature):
         sig = callable_or_signature
 
         def changed_params():
+            seen_default = False
+            keep_keyword_only = False
             for p in sig.parameters.values():
-                if p.kind not in var_param_kinds:
-                    yield p.replace(kind=PK)
-                else:
+                if p.kind in var_param_kinds:
+                    # Nothing after a ``*args`` can be positional-or-keyword
+                    keep_keyword_only = keep_keyword_only or p.kind == VP
                     yield p
+                    continue
+                if p.kind == KO and p.default is empty and seen_default:
+                    # A required param can't follow one with a default unless it's
+                    # keyword-only, and once one param stays keyword-only, so must
+                    # all the following ones
+                    keep_keyword_only = True
+                yield p if keep_keyword_only else p.replace(kind=PK)
+                seen_default = seen_default or p.default is not empty
 
         new_sig = type(sig)(
             list(changed_params()), return_annotation=sig.return_annotation
@@ -3925,6 +3944,18 @@ def ch_variadics_to_non_variadic_kind(func, *, ch_variadic_keyword_to_keyword=Tr
     <Sig (a, args=(), *, bar=None, **kwargs)>
     >>> foo(1, (2, 3), bar=4, hello="world")
     "a=1, args=(2, 3), bar=4, kwargs={'hello': 'world'}"
+
+    The new function accepts whatever its signature says it does: the tupled
+    parameter can be given by keyword, and the defaults of any positional parameters
+    skipped before it are filled in (see i2mint/i2#93):
+
+    >>> def g(a, b=1, *args):
+    ...     return a, b, args
+    >>> tupled_g = tuple_the_args(g)
+    >>> tupled_g(1, args=(2, 3))
+    (1, 1, (2, 3))
+    >>> tupled_g(1)
+    (1, 1, ())
     """
     if func is None:
         return partial(
@@ -3935,81 +3966,48 @@ def ch_variadics_to_non_variadic_kind(func, *, ch_variadic_keyword_to_keyword=Tr
     idx_of_vp = sig.index_of_var_positional
     var_keyword_argname = sig.var_keyword_name
 
-    if idx_of_vp is not None or var_keyword_argname is not None:
-        # If the function has any variadic (position or keyword)...
+    if idx_of_vp is None and var_keyword_argname is None:
+        return func  # no variadics, nothing to do
 
-        @wraps(func)
-        def variadic_less_func(*args, **kwargs):
-            # extract from kwargs those inputs that need to be expressed positionally
-            if ch_variadic_keyword_to_keyword:
-                arguments = kwargs
-            else:
-                arguments = {k: v for k, v in kwargs.items() if k in sig}
-                if sig.has_var_keyword:
-                    arguments[sig.var_keyword_name] = {
-                        k: v for k, v in kwargs.items() if k not in sig
-                    }
-            _args, _kwargs = sig.mk_args_and_kwargs(arguments, allow_partial=True)
-            # print('COUCOU', kwargs, arguments)
-            # add these to the existing args
-            args = args + _args
+    # The new signature: the variadic positional becomes a positional-or-keyword
+    # param with a ``()`` default (always a valid position, since everything after a
+    # ``*args`` is keyword-only), and the variadic keyword, if asked, a keyword-only
+    # param with a ``{}`` default.
+    params = sig.params
+    if idx_of_vp is not None:
+        params[idx_of_vp] = params[idx_of_vp].replace(kind=PK, default=())
+    if var_keyword_argname is not None and ch_variadic_keyword_to_keyword:
+        i = sig.index_of_var_keyword
+        # TODO: Reflect on pros/cons of having mutable {} default here:
+        params[i] = params[i].replace(kind=KO, default={})
+    new_sig = Sig(params, return_annotation=sig.return_annotation)
 
-            if idx_of_vp is not None:
-                # separate the args that are positional, variadic, and after variadic
-                a, _vp_args_, args_after_vp = (
-                    args[:idx_of_vp],
-                    args[idx_of_vp],
-                    args[idx_of_vp + 1 :],
-                )
-                if args_after_vp:
-                    raise FuncCallNotMatchingSignature(
-                        "There should be only keyword arguments after the Variadic "
-                        "args. "
-                        f"Function was called with (positional={args}, keywords="
-                        f"{_kwargs})"
-                    )
-            else:
-                a, _vp_args_ = args, ()
+    var_keyword_stays_variadic = (
+        var_keyword_argname is not None and not ch_variadic_keyword_to_keyword
+    )
 
-            # extract from the remaining _kwargs, the dict corresponding to the
-            # variadic keywords, if any, since these need to be **-ed later
-            _var_keyword_kwargs = _kwargs.pop(var_keyword_argname, {})
+    @wraps(func)
+    def variadic_less_func(*args, **kwargs):
+        if var_keyword_stays_variadic and isinstance(
+            kwargs.get(var_keyword_argname), Mapping
+        ):
+            # The variadic keyword given by name, as a dict (the convention of
+            # ``Sig.mk_args_and_kwargs``): spread it into the keyword arguments
+            kwargs = dict(kwargs)
+            kwargs = {**kwargs.pop(var_keyword_argname), **kwargs}
+        # Bind to the signature we advertise, then rebuild the call to ``func``
+        try:
+            arguments = new_sig.map_arguments(args, kwargs, ignore_kind=False)
+        except TypeError as e:
+            raise FuncCallNotMatchingSignature(
+                f"{e}. Function {getattr(func, '__name__', func)}{new_sig} was "
+                f"called with (positional={args}, keywords={kwargs})"
+            ) from e
+        _args, _kwargs = _args_and_kwargs_from_all_pk_arguments(sig, arguments)
+        return func(*_args, **_kwargs)
 
-            if ch_variadic_keyword_to_keyword:
-                # an extra level of extraction is needed in this case
-                # _var_keyword_kwargs = _var_keyword_kwargs.pop(var_keyword_argname, {})
-                return func(*a, *_vp_args_, **_kwargs, **_var_keyword_kwargs)
-            else:
-                # call the original function with the unravelled args
-                return func(*a, *_vp_args_, **_kwargs, **_var_keyword_kwargs)
-
-        params = sig.params
-
-        if var_keyword_argname:  # if there's a VAR_KEYWORD argument
-            if ch_variadic_keyword_to_keyword:
-                i = sig.index_of_var_keyword
-                # TODO: Reflect on pros/cons of having mutable {} default here:
-                params[i] = params[i].replace(kind=Parameter.KEYWORD_ONLY, default={})
-
-        try:  # TODO: Avoid this try catch. Look in advance for default ordering?
-            if idx_of_vp is not None:
-                params[idx_of_vp] = params[idx_of_vp].replace(kind=PK, default=())
-            variadic_less_func.__signature__ = Sig(
-                # Note: Changed signature(func) to Sig(func) but don't know if the first
-                #  was on purpose.
-                params,
-                return_annotation=Sig(func).return_annotation,
-            )
-        except ValueError:
-            if idx_of_vp is not None:
-                params[idx_of_vp] = params[idx_of_vp].replace(kind=PK)
-            variadic_less_func.__signature__ = Sig(
-                params, return_annotation=Sig(func).return_annotation
-            )
-
-        return variadic_less_func
-    else:
-        return func
+    variadic_less_func.__signature__ = new_sig
+    return variadic_less_func
 
 
 tuple_the_args = partial(
@@ -4059,9 +4057,19 @@ def ch_func_to_all_pk(func):
     >>> hh(1, (2, 3), z=4, extra=5)
     "x=1, y=(2, 3), z=4, kwargs={'extra': 5}"
     >>> assert hh(1, (2, 3), z=4, extra=5) == h(1, 2, 3, z=4, extra=5)
+
+    A required keyword-only param after the variadic positional has to stay
+    keyword-only, since ``(x, y=(), z)`` isn't a valid signature (see
+    ``all_pk_signature`` and i2mint/i2#93):
+
+    >>> def h(x, *y, z):
+    ...     return f"{x=}, {y=}, {z=}"
+    >>> hh = ch_func_to_all_pk(h)
+    >>> print(Sig(hh))
+    (x, y=(), *, z)
+    >>> hh(1, (2, 3), z=4)
+    'x=1, y=(2, 3), z=4'
     """
-    # Not yet handled: a required keyword-only param after the variadic positional,
-    # e.g. ``def h(x, *y, z)``, since ``(x, y=(), z)`` isn't a valid signature.
     func_sig = Sig(func)
     _func = tuple_the_args(func)
     all_pk_sig = all_pk_signature(Sig(_func))  # a Sig, keeping the name of func
@@ -4426,6 +4434,20 @@ def replace_kwargs_using(sig: SignatureAble):
     ...     return b * c + apple(a, **sauce_kwargs)
     >>> Sig(sauce)
     <Sig (a=1, b=2, c=3, *, x: int, y=2, z=3, **extra_apple_options)>
+
+    A variadic positional (``*args``) of the source is not injected: the target can
+    only forward keyword arguments through its ``**kwargs``, so there is no way for
+    a caller of the target to fill it (see i2mint/i2#78).
+
+    >>> def pear(a, *args, z=3, **extra_pear_options):
+    ...     return a + sum(args) + z
+    >>> @replace_kwargs_using(pear)
+    ... def compote(a, b, **compote_kwargs):
+    ...     return b + pear(a, **compote_kwargs)
+    >>> Sig(compote)
+    <Sig (a, b, *, z=3, **extra_pear_options)>
+    >>> compote(1, 2, z=4)
+    7
     """
 
     def decorator(targ_func):
@@ -4446,6 +4468,12 @@ def replace_kwargs_using(sig: SignatureAble):
         # target arguments, so there's no conflict: the target kind, default,
         # and annotation should be used not the source ones.
         src_sig -= targ_func_sig
+
+        # Remove a variadic positional of src_sig: it can't be forwarded through the
+        # target's variadic keyword, so injecting it would advertise a param that
+        # can't be given (i2mint/i2#78).
+        if src_sig.has_var_positional:
+            src_sig -= [src_sig.var_positional_name]
 
         # make all parameters of src_sig keyword-only
         # (they're replacing variadic keywords after all!)

@@ -2542,3 +2542,161 @@ def test_ch_func_to_all_pk_with_var_positional_accepts_kwargs_by_name():
 def test_ch_func_to_all_pk_signature_keeps_function_name():
     assert ch_func_to_all_pk(_a_b_kw).__signature__.name == "_a_b_kw"
     assert ch_func_to_all_pk(_pos_and_kws).__signature__.name == "_pos_and_kws"
+
+
+# --------------------------------------------------------------------------------------
+# tuple_the_args / ch_variadics_to_non_variadic_kind: the tupled param given by
+# keyword, and skipped defaults before it (i2mint/i2#93, part 1)
+
+
+def _a_b_args(a, b=1, *args):
+    return a, b, args
+
+
+def _a_args_k_kw(a, *args, k=0, **kw):
+    return a, args, k, kw
+
+
+def _a_b_kw_only(a, b=2, **kw):
+    return a, b, kw
+
+
+@pytest.mark.parametrize(
+    "func, args, kwargs, expected",
+    [
+        # The exact repro of i2#93: the tupled param given by keyword
+        (_pos_and_kws, (), dict(pos=(1, 2), a=3), _pos_and_kws(1, 2, a=3)),
+        (_pos_and_kws, ((1, 2),), dict(a=3), _pos_and_kws(1, 2, a=3)),
+        # Fewer positionals than the index of the tupled param (IndexError on 0.1.74)
+        (_a_b_args, (1,), {}, _a_b_args(1)),
+        # A skipped default before the tupled param is filled in
+        (_a_b_args, (1,), dict(args=(2, 3)), _a_b_args(1, 1, 2, 3)),
+        (_a_b_args, (), dict(a=1, b=5, args=(2, 3)), _a_b_args(1, 5, 2, 3)),
+        (_a_b_args, (1, 5, (2, 3)), {}, _a_b_args(1, 5, 2, 3)),
+        # Any iterable is accepted for the tupled param
+        (_a_b_args, (1, 5, [2, 3]), {}, _a_b_args(1, 5, 2, 3)),
+        # With keyword-only and variadic keyword params
+        (_a_args_k_kw, (1, (2,)), dict(k=3, x=4), _a_args_k_kw(1, 2, k=3, x=4)),
+        (_a_args_k_kw, (), dict(a=1, args=(2,), k=3, x=4), _a_args_k_kw(1, 2, k=3, x=4)),
+        (_a_args_k_kw, (1,), dict(x=4), _a_args_k_kw(1, x=4)),
+        # The variadic keyword can also be given by name, as a dict (the convention of
+        # ``Sig.mk_args_and_kwargs``); it was silently dropped on 0.1.74
+        (_a_args_k_kw, (1, (2,)), dict(kw={"x": 4}), _a_args_k_kw(1, 2, x=4)),
+        (_a_args_k_kw, (1,), dict(kw={"x": 4}, y=5), _a_args_k_kw(1, x=4, y=5)),
+        (_a_b_kw_only, (1,), dict(kw={"c": 3}), _a_b_kw_only(1, c=3)),
+    ],
+)
+def test_tuple_the_args_binds_to_its_own_signature(func, args, kwargs, expected):
+    assert tuple_the_args(func)(*args, **kwargs) == expected
+
+
+def test_tuple_the_args_signatures_unchanged():
+    assert str(Sig(tuple_the_args(_pos_and_kws))) == "(pos=(), **kws)"
+    assert str(Sig(tuple_the_args(_a_b_args))) == "(a, b=1, args=())"
+    assert str(Sig(tuple_the_args(_a_args_k_kw))) == "(a, args=(), *, k=0, **kw)"
+    assert str(Sig(tuple_the_args(_a_b_kw_only))) == "(a, b=2, **kw)"
+
+
+def test_tuple_the_args_rejects_what_its_signature_rejects():
+    # A positional after the tupled param, and an unknown keyword for a function
+    # without a variadic keyword, are errors (the latter was silently dropped on 0.1.74)
+    with pytest.raises(TypeError):
+        tuple_the_args(_a_b_args)(1, 2, (3,), 4)
+    with pytest.raises(TypeError):
+        tuple_the_args(_a_b_args)(1, junk=2)
+    with pytest.raises(TypeError):
+        tuple_the_args(_a_b_args)(args=(2,))  # a is required
+
+
+def test_ch_variadics_to_non_variadic_kind_binds_to_its_own_signature():
+    f = ch_variadics_to_non_variadic_kind(_a_args_k_kw)
+    assert str(Sig(f)) == "(a, args=(), *, k=0, kw={})"
+    assert f(a=1, args=(2,), k=3, kw={"x": 4}) == _a_args_k_kw(1, 2, k=3, x=4)
+    assert f(1, (2,), k=3, kw={"x": 4}) == _a_args_k_kw(1, 2, k=3, x=4)
+    assert f(1) == _a_args_k_kw(1)
+    with pytest.raises(TypeError):
+        f(1, (2,), x=4)  # the variadic keyword is now a keyword-only param, ``kw``
+
+
+# --------------------------------------------------------------------------------------
+# all_pk_signature / ch_func_to_all_pk: a required keyword-only param after a param
+# with a default stays keyword-only (i2mint/i2#93, part 2)
+
+
+def _x_vp_required_z(x, *y, z):
+    return x, y, z
+
+
+def _x_vp_required_z_w(x, *y, z, w=1, **kw):
+    return x, y, z, w, kw
+
+
+def test_all_pk_signature_keeps_a_required_keyword_only_after_a_default():
+    # Only what Python's parameter order rules allow is made positional-or-keyword;
+    # from the first param that has to stay keyword-only, all the following do too
+    assert str(all_pk_signature(Sig(lambda a=1, *, b: 0))) == "(a=1, *, b)"
+    assert str(all_pk_signature(Sig(lambda a=1, *, b, c=2: 0))) == "(a=1, *, b, c=2)"
+    assert str(all_pk_signature(Sig(lambda a, *, b, c=2: 0))) == "(a, b, c=2)"
+    assert str(all_pk_signature(Sig(lambda a, /, *, b=1, c: 0))) == "(a, b=1, *, c)"
+    assert str(all_pk_signature(Sig(lambda *, a=1, b: 0))) == "(a=1, *, b)"
+    assert str(all_pk_signature(Sig(lambda a=1, *, b, **kw: 0))) == "(a=1, *, b, **kw)"
+    # Nothing after an (untupled) *args can be made positional-or-keyword either
+    assert str(all_pk_signature(Sig(lambda a, *args, b, c=2: 0))) == "(a, *args, b, c=2)"
+    assert str(all_pk_signature(Sig(lambda a, /, *args, b=1: 0))) == "(a, *args, b=1)"
+
+
+def test_ch_func_to_all_pk_with_required_keyword_only_after_var_positional():
+    hh = ch_func_to_all_pk(_x_vp_required_z)
+    assert str(Sig(hh)) == "(x, y=(), *, z)"
+    assert hh(1, (2, 3), z=4) == _x_vp_required_z(1, 2, 3, z=4)
+    assert hh(x=1, y=(2, 3), z=4) == _x_vp_required_z(1, 2, 3, z=4)
+    assert hh(1, z=4) == _x_vp_required_z(1, z=4)
+    with pytest.raises(TypeError):
+        hh(1, (2, 3), 4)  # z is keyword-only
+    with pytest.raises(TypeError):
+        hh(1, (2, 3))  # z is required
+
+    hh = ch_func_to_all_pk(_x_vp_required_z_w)
+    assert str(Sig(hh)) == "(x, y=(), *, z, w=1, **kw)"
+    assert hh(1, (2,), z=3, w=4, v=5) == _x_vp_required_z_w(1, 2, z=3, w=4, v=5)
+
+
+# --------------------------------------------------------------------------------------
+# replace_kwargs_using: a source ``*args`` can't be forwarded through the target's
+# ``**kwargs``, so it isn't injected (i2mint/i2#78)
+
+
+def _source_with_var_positional(a, *args, z=3, **extra):
+    return a, args, z, extra
+
+
+def test_replace_kwargs_using_drops_a_source_var_positional():
+    @replace_kwargs_using(_source_with_var_positional)
+    def sauce(a, **kw):
+        return _source_with_var_positional(a, **kw)
+
+    assert str(Sig(sauce)) == "(a, *, z=3, **extra)"
+    assert sauce(1, z=4) == _source_with_var_positional(1, z=4)
+    assert sauce(1, z=4, q=5) == _source_with_var_positional(1, z=4, q=5)
+
+    def _source_without_var_keyword(a, *args, z=3):
+        return a, args, z
+
+    @replace_kwargs_using(_source_without_var_keyword)
+    def sauce2(a, **kw):
+        return _source_without_var_keyword(a, **kw)
+
+    assert str(Sig(sauce2)) == "(a, *, z=3)"
+    assert sauce2(1, z=4) == (1, (), 4)
+
+
+def test_replace_kwargs_using_keyword_only_injection_unchanged():
+    def apple(a, x: int, y=2, *, z=3, **extra):
+        return a, x, y, z, extra
+
+    @replace_kwargs_using(apple)
+    def sauce(a, b, c, **kw):
+        return apple(a, **kw)
+
+    assert str(Sig(sauce)) == "(a, b, c, *, x: int, y=2, z=3, **extra)"
+    assert sauce(1, 2, 3, x=4, z=5) == apple(1, x=4, z=5)
