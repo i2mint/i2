@@ -581,9 +581,9 @@
 </span><span id="line-384">            <span class="sa">f</span><span class="s2">"First argument of the decorator function needs to default to None. "</span>
 </span><span id="line-385">            <span class="sa">f</span><span class="s2">"Was </span><span class="si">{</span><span class="n">first_param</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s2">"</span>
 </span><span id="line-386">        <span class="p">)</span>
-</span><span id="line-387">        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
-</span><span id="line-388">            <span class="n">p</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">}</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">other_params</span>
-</span><span id="line-389">        <span class="p">),</span> <span class="sa">f</span><span class="s2">"All arguments (besides the first) need to be keyword-only"</span>
+</span><span id="line-387">        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">}</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">other_params</span><span class="p">),</span> <span class="p">(</span>
+</span><span id="line-388">            <span class="sa">f</span><span class="s2">"All arguments (besides the first) need to be keyword-only"</span>
+</span><span id="line-389">        <span class="p">)</span>
 </span><span id="line-390">        <span class="k">return</span> <span class="n">first_param</span><span class="o">.</span><span class="n">name</span>
 </span><span id="line-391">
 </span><span id="line-392">    <span class="k">return</span> <span class="n">wraps</span><span class="p">(</span><span class="n">decorator_func</span><span class="p">)(</span>
@@ -1150,9 +1150,9 @@
 </span><span id="line-920">        <span class="p">):</span>  <span class="c1"># if no transformations were specified...</span>
 </span><span id="line-921">            <span class="k">return</span> <span class="n">func</span>  <span class="c1"># just return the function itself</span>
 </span><span id="line-922">        <span class="k">elif</span> <span class="n">dflt_trans_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-923">            <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span>
-</span><span id="line-924">                <span class="n">dflt_trans_func</span>
-</span><span id="line-925">            <span class="p">),</span> <span class="s2">"The dflt_trans_func needs to be a callable"</span>
+</span><span id="line-923">            <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">dflt_trans_func</span><span class="p">),</span> <span class="p">(</span>
+</span><span id="line-924">                <span class="s2">"The dflt_trans_func needs to be a callable"</span>
+</span><span id="line-925">            <span class="p">)</span>
 </span><span id="line-926">
 </span><span id="line-927">            <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </span><span id="line-928">            <span class="k">def</span><span class="w"> </span><span class="nf">transform_args_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1854,9 +1854,9 @@
 </span><span id="line-1591"><span class="w">    </span><span class="sd">"""Will return the input itself if it's a callable with at least one argument.</span>
 </span><span id="line-1592"><span class="sd">    If not, it will consider it to be a factory, call it to get the actual</span>
 </span><span id="line-1593"><span class="sd">    callable object that the user presumably is seeking to get"""</span>
-</span><span id="line-1594">    <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span>
-</span><span id="line-1595">        <span class="n">func_or_factory_thereof</span>
-</span><span id="line-1596">    <span class="p">),</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">func_or_factory_thereof</span><span class="si">}</span><span class="s2"> needs to be callable"</span>
+</span><span id="line-1594">    <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func_or_factory_thereof</span><span class="p">),</span> <span class="p">(</span>
+</span><span id="line-1595">        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">func_or_factory_thereof</span><span class="si">}</span><span class="s2"> needs to be callable"</span>
+</span><span id="line-1596">    <span class="p">)</span>
 </span><span id="line-1597">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">func_or_factory_thereof</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 </span><span id="line-1598">        <span class="c1"># if func_or_factory_thereof has no arguments, assume it's a factory</span>
 </span><span id="line-1599">        <span class="n">func</span> <span class="o">=</span> <span class="n">func_or_factory_thereof</span><span class="p">()</span>
@@ -1915,7 +1915,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=c75a234e"></script>
+    <script src="../../_static/documentation_options.js?v=6322a757"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

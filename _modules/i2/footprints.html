@@ -674,671 +674,670 @@
 </span><span id="line-470">                <span class="k">try</span><span class="p">:</span>
 </span><span id="line-471">                    <span class="k">return</span> <span class="n">getsource</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
 </span><span id="line-472">                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="line-473">
-</span><span id="line-474">                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="line-475">                        <span class="sa">f</span><span class="s2">"Could not get source code for object </span><span class="si">{</span><span class="n">o</span><span class="si">}</span><span class="s2">. "</span>
-</span><span id="line-476">                        <span class="s2">"(This can happen if your object was defined in jupyter notebooks, "</span>
-</span><span id="line-477">                        <span class="s2">"for example.)"</span>
-</span><span id="line-478">                        <span class="s2">"Please provide the source code explicitly via the "</span>
-</span><span id="line-479">                        <span class="s2">"src_code argument. "</span>
-</span><span id="line-480">                        <span class="s2">"For example, if you are in a jupyter notebook or ipython, "</span>
-</span><span id="line-481">                        <span class="s2">"you can specify `src_code=In[cell_index]` where `cell_index` "</span>
-</span><span id="line-482">                        <span class="s2">"is the index of the cell where the object was defined."</span>
-</span><span id="line-483">                    <span class="p">)</span>
-</span><span id="line-484">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-485">        <span class="c1"># The reason for this case is that the source code of an object is not always</span>
-</span><span id="line-486">        <span class="c1"># accessible via normal means (for example, in jupyter notebooks) so we need to pass it in.</span>
-</span><span id="line-487">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-488">            <span class="n">object_name</span> <span class="o">=</span> <span class="n">o</span>
-</span><span id="line-489">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-490">            <span class="n">object_name</span> <span class="o">=</span> <span class="n">qualname_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
-</span><span id="line-491">        <span class="n">source_str</span> <span class="o">=</span> <span class="n">_get_definition_source</span><span class="p">(</span><span class="n">object_name</span><span class="p">,</span> <span class="n">src_code</span><span class="p">)</span>
-</span><span id="line-492">        <span class="k">return</span> <span class="n">source_str</span>
+</span><span id="line-473">                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="line-474">                        <span class="sa">f</span><span class="s2">"Could not get source code for object </span><span class="si">{</span><span class="n">o</span><span class="si">}</span><span class="s2">. "</span>
+</span><span id="line-475">                        <span class="s2">"(This can happen if your object was defined in jupyter notebooks, "</span>
+</span><span id="line-476">                        <span class="s2">"for example.)"</span>
+</span><span id="line-477">                        <span class="s2">"Please provide the source code explicitly via the "</span>
+</span><span id="line-478">                        <span class="s2">"src_code argument. "</span>
+</span><span id="line-479">                        <span class="s2">"For example, if you are in a jupyter notebook or ipython, "</span>
+</span><span id="line-480">                        <span class="s2">"you can specify `src_code=In[cell_index]` where `cell_index` "</span>
+</span><span id="line-481">                        <span class="s2">"is the index of the cell where the object was defined."</span>
+</span><span id="line-482">                    <span class="p">)</span>
+</span><span id="line-483">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-484">        <span class="c1"># The reason for this case is that the source code of an object is not always</span>
+</span><span id="line-485">        <span class="c1"># accessible via normal means (for example, in jupyter notebooks) so we need to pass it in.</span>
+</span><span id="line-486">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-487">            <span class="n">object_name</span> <span class="o">=</span> <span class="n">o</span>
+</span><span id="line-488">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-489">            <span class="n">object_name</span> <span class="o">=</span> <span class="n">qualname_of_obj</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+</span><span id="line-490">        <span class="n">source_str</span> <span class="o">=</span> <span class="n">_get_definition_source</span><span class="p">(</span><span class="n">object_name</span><span class="p">,</span> <span class="n">src_code</span><span class="p">)</span>
+</span><span id="line-491">        <span class="k">return</span> <span class="n">source_str</span>
+</span><span id="line-492">
 </span><span id="line-493">
-</span><span id="line-494">
 <div class="viewcode-block" id="ensure_ast">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.ensure_ast">[docs]</a>
-</span><span id="line-495"><span class="k">def</span><span class="w"> </span><span class="nf">ensure_ast</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">src_code</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">:</span>
-</span><span id="line-496"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-497"><span class="sd">    Casts input object `o` to a AST node.</span>
-</span><span id="line-498">
-</span><span id="line-499"><span class="sd">    If the input is an AST node, it is returned as is.</span>
-</span><span id="line-500"><span class="sd">    If the input is a filepath, the file is read and parsed as source code.</span>
-</span><span id="line-501"><span class="sd">    If the input is a string, it is parsed as source code.</span>
-</span><span id="line-502"><span class="sd">    If the input is an object, the source code is extracted and parsed.</span>
-</span><span id="line-503">
-</span><span id="line-504"><span class="sd">    Let's get an AST for the ensure_ast function itself:</span>
-</span><span id="line-505">
-</span><span id="line-506"><span class="sd">    &gt;&gt;&gt; assert isinstance(ensure_ast(ensure_ast), ast.AST)</span>
-</span><span id="line-507">
-</span><span id="line-508"><span class="sd">    Note that sometimes the source code of an object cannot be accessed via normal</span>
-</span><span id="line-509"><span class="sd">    means (for example, in REPLs like jupyter notebooks) so we need to pass it in.</span>
-</span><span id="line-510">
-</span><span id="line-511"><span class="sd">    &gt;&gt;&gt; src_code = '''</span>
-</span><span id="line-512"><span class="sd">    ... class MyClass:</span>
-</span><span id="line-513"><span class="sd">    ...     x = 1</span>
-</span><span id="line-514"><span class="sd">    ...     def my_method(self):</span>
-</span><span id="line-515"><span class="sd">    ...         return self.x + 1</span>
-</span><span id="line-516"><span class="sd">    ... a = 10</span>
-</span><span id="line-517"><span class="sd">    ... '''</span>
-</span><span id="line-518"><span class="sd">    &gt;&gt;&gt; assert isinstance(ensure_ast('MyClass', src_code), ast.AST)</span>
-</span><span id="line-519"><span class="sd">    """</span>
-</span><span id="line-520">
-</span><span id="line-521">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
-</span><span id="line-522">        <span class="k">return</span> <span class="n">o</span>
-</span><span id="line-523">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-524">        <span class="n">source_str</span> <span class="o">=</span> <span class="n">_get_source</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">src_code</span><span class="p">)</span>
-</span><span id="line-525">        <span class="k">return</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">dedent</span><span class="p">(</span><span class="n">source_str</span><span class="p">))</span></div>
+</span><span id="line-494"><span class="k">def</span><span class="w"> </span><span class="nf">ensure_ast</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">src_code</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">:</span>
+</span><span id="line-495"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-496"><span class="sd">    Casts input object `o` to a AST node.</span>
+</span><span id="line-497">
+</span><span id="line-498"><span class="sd">    If the input is an AST node, it is returned as is.</span>
+</span><span id="line-499"><span class="sd">    If the input is a filepath, the file is read and parsed as source code.</span>
+</span><span id="line-500"><span class="sd">    If the input is a string, it is parsed as source code.</span>
+</span><span id="line-501"><span class="sd">    If the input is an object, the source code is extracted and parsed.</span>
+</span><span id="line-502">
+</span><span id="line-503"><span class="sd">    Let's get an AST for the ensure_ast function itself:</span>
+</span><span id="line-504">
+</span><span id="line-505"><span class="sd">    &gt;&gt;&gt; assert isinstance(ensure_ast(ensure_ast), ast.AST)</span>
+</span><span id="line-506">
+</span><span id="line-507"><span class="sd">    Note that sometimes the source code of an object cannot be accessed via normal</span>
+</span><span id="line-508"><span class="sd">    means (for example, in REPLs like jupyter notebooks) so we need to pass it in.</span>
+</span><span id="line-509">
+</span><span id="line-510"><span class="sd">    &gt;&gt;&gt; src_code = '''</span>
+</span><span id="line-511"><span class="sd">    ... class MyClass:</span>
+</span><span id="line-512"><span class="sd">    ...     x = 1</span>
+</span><span id="line-513"><span class="sd">    ...     def my_method(self):</span>
+</span><span id="line-514"><span class="sd">    ...         return self.x + 1</span>
+</span><span id="line-515"><span class="sd">    ... a = 10</span>
+</span><span id="line-516"><span class="sd">    ... '''</span>
+</span><span id="line-517"><span class="sd">    &gt;&gt;&gt; assert isinstance(ensure_ast('MyClass', src_code), ast.AST)</span>
+</span><span id="line-518"><span class="sd">    """</span>
+</span><span id="line-519">
+</span><span id="line-520">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
+</span><span id="line-521">        <span class="k">return</span> <span class="n">o</span>
+</span><span id="line-522">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-523">        <span class="n">source_str</span> <span class="o">=</span> <span class="n">_get_source</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">src_code</span><span class="p">)</span>
+</span><span id="line-524">        <span class="k">return</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">dedent</span><span class="p">(</span><span class="n">source_str</span><span class="p">))</span></div>
 
+</span><span id="line-525">
 </span><span id="line-526">
-</span><span id="line-527">
 <div class="viewcode-block" id="AttributeVisitor">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.AttributeVisitor">[docs]</a>
-</span><span id="line-528"><span class="k">class</span><span class="w"> </span><span class="nc">AttributeVisitor</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">NodeVisitor</span><span class="p">):</span>
-</span><span id="line-529"><span class="w">    </span><span class="sd">"""Collect, in ``.attributes``, the attribute names accessed on ``object_name`` in an AST."""</span>
-</span><span id="line-530">
-</span><span id="line-531">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name</span><span class="p">):</span>
-</span><span id="line-532">        <span class="bp">self</span><span class="o">.</span><span class="n">object_name</span> <span class="o">=</span> <span class="n">object_name</span>
-</span><span id="line-533">        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-</span><span id="line-534">
-</span><span id="line-535">    <span class="k">def</span><span class="w"> </span><span class="nf">visit_Attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-</span><span id="line-536">        <span class="c1"># Check if the attribute access is for the target object</span>
-</span><span id="line-537">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_name</span><span class="p">:</span>
-</span><span id="line-538">            <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="line-539">        <span class="c1"># Continue traversing to find more attributes</span>
-</span><span id="line-540">        <span class="bp">self</span><span class="o">.</span><span class="n">generic_visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
+</span><span id="line-527"><span class="k">class</span><span class="w"> </span><span class="nc">AttributeVisitor</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">NodeVisitor</span><span class="p">):</span>
+</span><span id="line-528"><span class="w">    </span><span class="sd">"""Collect, in ``.attributes``, the attribute names accessed on ``object_name`` in an AST."""</span>
+</span><span id="line-529">
+</span><span id="line-530">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name</span><span class="p">):</span>
+</span><span id="line-531">        <span class="bp">self</span><span class="o">.</span><span class="n">object_name</span> <span class="o">=</span> <span class="n">object_name</span>
+</span><span id="line-532">        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="line-533">
+</span><span id="line-534">    <span class="k">def</span><span class="w"> </span><span class="nf">visit_Attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+</span><span id="line-535">        <span class="c1"># Check if the attribute access is for the target object</span>
+</span><span id="line-536">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_name</span><span class="p">:</span>
+</span><span id="line-537">            <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
+</span><span id="line-538">        <span class="c1"># Continue traversing to find more attributes</span>
+</span><span id="line-539">        <span class="bp">self</span><span class="o">.</span><span class="n">generic_visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
 
+</span><span id="line-540">
 </span><span id="line-541">
-</span><span id="line-542">
-</span><span id="line-543"><span class="c1"># TODO: Clean this all up, it's horrible!</span>
-</span><span id="line-544"><span class="c1"># TODO: Write teests for accessed_attributes using i2.tests.footprints_test -&gt; A, B</span>
+</span><span id="line-542"><span class="c1"># TODO: Clean this all up, it's horrible!</span>
+</span><span id="line-543"><span class="c1"># TODO: Write teests for accessed_attributes using i2.tests.footprints_test -&gt; A, B</span>
 <div class="viewcode-block" id="accessed_attributes">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.accessed_attributes">[docs]</a>
-</span><span id="line-545"><span class="k">def</span><span class="w"> </span><span class="nf">accessed_attributes</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">object_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="line-546"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-547"><span class="sd">    Extracts the attributes accessed by a function or method.</span>
-</span><span id="line-548">
-</span><span id="line-549"><span class="sd">    (This is a simpler, but narrow, version of `attrs_used_by_method`).</span>
-</span><span id="line-550">
-</span><span id="line-551"><span class="sd">    &gt;&gt;&gt; def func(a, b, c):</span>
-</span><span id="line-552"><span class="sd">    ...     return a + b.bar + c</span>
-</span><span id="line-553"><span class="sd">    ...</span>
-</span><span id="line-554"><span class="sd">    &gt;&gt;&gt; # Commenting out the testing code, as execution is not performed in the PCI</span>
-</span><span id="line-555"><span class="sd">    &gt;&gt;&gt; def foo(self):</span>
-</span><span id="line-556"><span class="sd">    ...     a = 2</span>
-</span><span id="line-557"><span class="sd">    ...     self.method(x)</span>
-</span><span id="line-558"><span class="sd">    ...     y = self.prop</span>
-</span><span id="line-559"><span class="sd">    ...     return a + func(x, self, y)</span>
-</span><span id="line-560"><span class="sd">    ...</span>
-</span><span id="line-561"><span class="sd">    &gt;&gt;&gt; assert accessed_attributes(foo, 'self') == {'method', 'prop'}</span>
-</span><span id="line-562"><span class="sd">    """</span>
-</span><span id="line-563">    <span class="k">if</span> <span class="n">object_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-564">        <span class="n">object_name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="line-565">        <span class="k">if</span> <span class="n">object_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-566">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="line-567">                <span class="s2">"Could not determine the object name. Please provide it explicitly."</span>
-</span><span id="line-568">            <span class="p">)</span>
-</span><span id="line-569">
-</span><span id="line-570">    <span class="c1"># Convert the function source to an AST</span>
-</span><span id="line-571">    <span class="n">func_name</span> <span class="o">=</span> <span class="n">qualname_of_obj</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span id="line-572">    <span class="n">src</span> <span class="o">=</span> <span class="n">_get_definition_source</span><span class="p">(</span><span class="n">func_name</span><span class="p">,</span> <span class="n">_get_source</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
-</span><span id="line-573">    <span class="n">node</span> <span class="o">=</span> <span class="n">ensure_ast</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
-</span><span id="line-574">    <span class="c1"># func_src = ast.parse(inspect.getsource(func))</span>
-</span><span id="line-575">    <span class="c1"># Initialize the visitor with the target object name</span>
-</span><span id="line-576">    <span class="n">visitor</span> <span class="o">=</span> <span class="n">AttributeVisitor</span><span class="p">(</span><span class="n">object_name</span><span class="p">)</span>
-</span><span id="line-577">    <span class="c1"># Visit the AST to find accessed attributes</span>
-</span><span id="line-578">    <span class="n">visitor</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-</span><span id="line-579">    <span class="c1"># Return the set of accessed attributes</span>
-</span><span id="line-580">    <span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="n">attributes</span></div>
+</span><span id="line-544"><span class="k">def</span><span class="w"> </span><span class="nf">accessed_attributes</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">object_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="line-545"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-546"><span class="sd">    Extracts the attributes accessed by a function or method.</span>
+</span><span id="line-547">
+</span><span id="line-548"><span class="sd">    (This is a simpler, but narrow, version of `attrs_used_by_method`).</span>
+</span><span id="line-549">
+</span><span id="line-550"><span class="sd">    &gt;&gt;&gt; def func(a, b, c):</span>
+</span><span id="line-551"><span class="sd">    ...     return a + b.bar + c</span>
+</span><span id="line-552"><span class="sd">    ...</span>
+</span><span id="line-553"><span class="sd">    &gt;&gt;&gt; # Commenting out the testing code, as execution is not performed in the PCI</span>
+</span><span id="line-554"><span class="sd">    &gt;&gt;&gt; def foo(self):</span>
+</span><span id="line-555"><span class="sd">    ...     a = 2</span>
+</span><span id="line-556"><span class="sd">    ...     self.method(x)</span>
+</span><span id="line-557"><span class="sd">    ...     y = self.prop</span>
+</span><span id="line-558"><span class="sd">    ...     return a + func(x, self, y)</span>
+</span><span id="line-559"><span class="sd">    ...</span>
+</span><span id="line-560"><span class="sd">    &gt;&gt;&gt; assert accessed_attributes(foo, 'self') == {'method', 'prop'}</span>
+</span><span id="line-561"><span class="sd">    """</span>
+</span><span id="line-562">    <span class="k">if</span> <span class="n">object_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-563">        <span class="n">object_name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="line-564">        <span class="k">if</span> <span class="n">object_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-565">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="line-566">                <span class="s2">"Could not determine the object name. Please provide it explicitly."</span>
+</span><span id="line-567">            <span class="p">)</span>
+</span><span id="line-568">
+</span><span id="line-569">    <span class="c1"># Convert the function source to an AST</span>
+</span><span id="line-570">    <span class="n">func_name</span> <span class="o">=</span> <span class="n">qualname_of_obj</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="line-571">    <span class="n">src</span> <span class="o">=</span> <span class="n">_get_definition_source</span><span class="p">(</span><span class="n">func_name</span><span class="p">,</span> <span class="n">_get_source</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+</span><span id="line-572">    <span class="n">node</span> <span class="o">=</span> <span class="n">ensure_ast</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+</span><span id="line-573">    <span class="c1"># func_src = ast.parse(inspect.getsource(func))</span>
+</span><span id="line-574">    <span class="c1"># Initialize the visitor with the target object name</span>
+</span><span id="line-575">    <span class="n">visitor</span> <span class="o">=</span> <span class="n">AttributeVisitor</span><span class="p">(</span><span class="n">object_name</span><span class="p">)</span>
+</span><span id="line-576">    <span class="c1"># Visit the AST to find accessed attributes</span>
+</span><span id="line-577">    <span class="n">visitor</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+</span><span id="line-578">    <span class="c1"># Return the set of accessed attributes</span>
+</span><span id="line-579">    <span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="n">attributes</span></div>
 
+</span><span id="line-580">
 </span><span id="line-581">
-</span><span id="line-582">
-</span><span id="line-583"><span class="k">def</span><span class="w"> </span><span class="nf">_is_method_like</span><span class="p">(</span>
-</span><span id="line-584">    <span class="n">name</span><span class="p">,</span>
-</span><span id="line-585">    <span class="n">obj</span><span class="p">,</span>
-</span><span id="line-586">    <span class="o">*</span><span class="p">,</span>
-</span><span id="line-587">    <span class="n">no_dunders</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="line-588">    <span class="n">include</span><span class="o">=</span><span class="p">(</span><span class="s2">"__post_init__"</span><span class="p">,),</span>
-</span><span id="line-589">    <span class="n">include_types</span><span class="o">=</span><span class="p">(</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">property</span><span class="p">,</span> <span class="n">cached_property</span><span class="p">),</span>
-</span><span id="line-590">    <span class="n">exclude_types</span><span class="o">=</span><span class="p">(</span><span class="nb">staticmethod</span><span class="p">,),</span>
-</span><span id="line-591"><span class="p">):</span>
-</span><span id="line-592">    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">include</span><span class="p">:</span>
-</span><span id="line-593">        <span class="k">return</span> <span class="kc">True</span>
-</span><span id="line-594">    <span class="k">elif</span> <span class="n">no_dunders</span> <span class="ow">and</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"__"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"__"</span><span class="p">):</span>
-</span><span id="line-595">        <span class="k">return</span> <span class="kc">False</span>
-</span><span id="line-596">    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">include_types</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">exclude_types</span><span class="p">)</span>
+</span><span id="line-582"><span class="k">def</span><span class="w"> </span><span class="nf">_is_method_like</span><span class="p">(</span>
+</span><span id="line-583">    <span class="n">name</span><span class="p">,</span>
+</span><span id="line-584">    <span class="n">obj</span><span class="p">,</span>
+</span><span id="line-585">    <span class="o">*</span><span class="p">,</span>
+</span><span id="line-586">    <span class="n">no_dunders</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="line-587">    <span class="n">include</span><span class="o">=</span><span class="p">(</span><span class="s2">"__post_init__"</span><span class="p">,),</span>
+</span><span id="line-588">    <span class="n">include_types</span><span class="o">=</span><span class="p">(</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">property</span><span class="p">,</span> <span class="n">cached_property</span><span class="p">),</span>
+</span><span id="line-589">    <span class="n">exclude_types</span><span class="o">=</span><span class="p">(</span><span class="nb">staticmethod</span><span class="p">,),</span>
+</span><span id="line-590"><span class="p">):</span>
+</span><span id="line-591">    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">include</span><span class="p">:</span>
+</span><span id="line-592">        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="line-593">    <span class="k">elif</span> <span class="n">no_dunders</span> <span class="ow">and</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"__"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"__"</span><span class="p">):</span>
+</span><span id="line-594">        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="line-595">    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">include_types</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">exclude_types</span><span class="p">)</span>
+</span><span id="line-596">
 </span><span id="line-597">
-</span><span id="line-598">
 <div class="viewcode-block" id="init_argument_names">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.init_argument_names">[docs]</a>
-</span><span id="line-599"><span class="k">def</span><span class="w"> </span><span class="nf">init_argument_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">no_error_action</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-600"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-601"><span class="sd">    Get the list of argument names</span>
-</span><span id="line-602">
-</span><span id="line-603"><span class="sd">    &gt;&gt;&gt; from dataclasses import dataclass</span>
-</span><span id="line-604"><span class="sd">    &gt;&gt;&gt; @dataclass</span>
-</span><span id="line-605"><span class="sd">    ... class DataClass:</span>
-</span><span id="line-606"><span class="sd">    ...     x: str</span>
-</span><span id="line-607"><span class="sd">    ...     y: float = 2</span>
-</span><span id="line-608"><span class="sd">    ...     z = 3</span>
-</span><span id="line-609"><span class="sd">    ...</span>
-</span><span id="line-610"><span class="sd">    &gt;&gt;&gt; init_argument_names(DataClass)</span>
-</span><span id="line-611"><span class="sd">    ['x', 'y']</span>
-</span><span id="line-612">
-</span><span id="line-613"><span class="sd">    Note:</span>
-</span><span id="line-614"><span class="sd">        Some builtin types don't have signatures, so we get:</span>
-</span><span id="line-615">
-</span><span id="line-616"><span class="sd">    .. code-block:: text</span>
-</span><span id="line-617">
-</span><span id="line-618"><span class="sd">        ValueError: no signature found for builtin type ...</span>
+</span><span id="line-598"><span class="k">def</span><span class="w"> </span><span class="nf">init_argument_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">no_error_action</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-599"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-600"><span class="sd">    Get the list of argument names</span>
+</span><span id="line-601">
+</span><span id="line-602"><span class="sd">    &gt;&gt;&gt; from dataclasses import dataclass</span>
+</span><span id="line-603"><span class="sd">    &gt;&gt;&gt; @dataclass</span>
+</span><span id="line-604"><span class="sd">    ... class DataClass:</span>
+</span><span id="line-605"><span class="sd">    ...     x: str</span>
+</span><span id="line-606"><span class="sd">    ...     y: float = 2</span>
+</span><span id="line-607"><span class="sd">    ...     z = 3</span>
+</span><span id="line-608"><span class="sd">    ...</span>
+</span><span id="line-609"><span class="sd">    &gt;&gt;&gt; init_argument_names(DataClass)</span>
+</span><span id="line-610"><span class="sd">    ['x', 'y']</span>
+</span><span id="line-611">
+</span><span id="line-612"><span class="sd">    Note:</span>
+</span><span id="line-613"><span class="sd">        Some builtin types don't have signatures, so we get:</span>
+</span><span id="line-614">
+</span><span id="line-615"><span class="sd">    .. code-block:: text</span>
+</span><span id="line-616">
+</span><span id="line-617"><span class="sd">        ValueError: no signature found for builtin type ...</span>
+</span><span id="line-618">
 </span><span id="line-619">
-</span><span id="line-620">
-</span><span id="line-621"><span class="sd">    By default, we handle this by returning an empty list, but a callable</span>
-</span><span id="line-622"><span class="sd">    no_error_action will call that function and return its result.</span>
-</span><span id="line-623"><span class="sd">    Anything else will result in raising the error.</span>
-</span><span id="line-624"><span class="sd">    """</span>
-</span><span id="line-625">    <span class="k">try</span><span class="p">:</span>
-</span><span id="line-626">        <span class="k">return</span> <span class="n">Sig</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">names</span>
-</span><span id="line-627">    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="line-628">        <span class="c1"># Some builtin types don't have signatures, so we get:</span>
-</span><span id="line-629">        <span class="c1">#   ValueError: no signature found for builtin type ...</span>
-</span><span id="line-630">        <span class="c1"># By default, we handle this by returning an empty list.</span>
-</span><span id="line-631">        <span class="k">if</span> <span class="n">no_error_action</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-632">            <span class="k">return</span> <span class="p">[]</span>
-</span><span id="line-633">        <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">no_error_action</span><span class="p">):</span>
-</span><span id="line-634">            <span class="k">return</span> <span class="n">no_error_action</span><span class="p">()</span>
-</span><span id="line-635">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-636">            <span class="k">raise</span> <span class="n">e</span></div>
+</span><span id="line-620"><span class="sd">    By default, we handle this by returning an empty list, but a callable</span>
+</span><span id="line-621"><span class="sd">    no_error_action will call that function and return its result.</span>
+</span><span id="line-622"><span class="sd">    Anything else will result in raising the error.</span>
+</span><span id="line-623"><span class="sd">    """</span>
+</span><span id="line-624">    <span class="k">try</span><span class="p">:</span>
+</span><span id="line-625">        <span class="k">return</span> <span class="n">Sig</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">names</span>
+</span><span id="line-626">    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="line-627">        <span class="c1"># Some builtin types don't have signatures, so we get:</span>
+</span><span id="line-628">        <span class="c1">#   ValueError: no signature found for builtin type ...</span>
+</span><span id="line-629">        <span class="c1"># By default, we handle this by returning an empty list.</span>
+</span><span id="line-630">        <span class="k">if</span> <span class="n">no_error_action</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-631">            <span class="k">return</span> <span class="p">[]</span>
+</span><span id="line-632">        <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">no_error_action</span><span class="p">):</span>
+</span><span id="line-633">            <span class="k">return</span> <span class="n">no_error_action</span><span class="p">()</span>
+</span><span id="line-634">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-635">            <span class="k">raise</span> <span class="n">e</span></div>
 
+</span><span id="line-636">
 </span><span id="line-637">
-</span><span id="line-638">
-</span><span id="line-639"><span class="n">ExcludeNames</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Container</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span>
+</span><span id="line-638"><span class="n">ExcludeNames</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Container</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span>
+</span><span id="line-639">
 </span><span id="line-640">
-</span><span id="line-641">
-</span><span id="line-642"><span class="k">def</span><span class="w"> </span><span class="nf">_get_class_attributes</span><span class="p">(</span>
-</span><span id="line-643">    <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
-</span><span id="line-644">    <span class="n">filt</span><span class="o">=</span><span class="n">_is_method_like</span><span class="p">,</span>
-</span><span id="line-645">    <span class="o">*</span><span class="p">,</span>
-</span><span id="line-646">    <span class="n">exclude_names</span><span class="p">:</span> <span class="n">ExcludeNames</span> <span class="o">=</span> <span class="n">init_argument_names</span><span class="p">,</span>
-</span><span id="line-647"><span class="p">):</span>
-</span><span id="line-648">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_names</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
-</span><span id="line-649">        <span class="n">exclude_names</span> <span class="o">=</span> <span class="n">exclude_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-</span><span id="line-650">
-</span><span id="line-651">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-652">        <span class="k">if</span> <span class="n">filt</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_names</span><span class="p">:</span>
-</span><span id="line-653">            <span class="k">yield</span> <span class="n">obj</span>
+</span><span id="line-641"><span class="k">def</span><span class="w"> </span><span class="nf">_get_class_attributes</span><span class="p">(</span>
+</span><span id="line-642">    <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
+</span><span id="line-643">    <span class="n">filt</span><span class="o">=</span><span class="n">_is_method_like</span><span class="p">,</span>
+</span><span id="line-644">    <span class="o">*</span><span class="p">,</span>
+</span><span id="line-645">    <span class="n">exclude_names</span><span class="p">:</span> <span class="n">ExcludeNames</span> <span class="o">=</span> <span class="n">init_argument_names</span><span class="p">,</span>
+</span><span id="line-646"><span class="p">):</span>
+</span><span id="line-647">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_names</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+</span><span id="line-648">        <span class="n">exclude_names</span> <span class="o">=</span> <span class="n">exclude_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+</span><span id="line-649">
+</span><span id="line-650">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-651">        <span class="k">if</span> <span class="n">filt</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_names</span><span class="p">:</span>
+</span><span id="line-652">            <span class="k">yield</span> <span class="n">obj</span>
+</span><span id="line-653">
 </span><span id="line-654">
-</span><span id="line-655">
-</span><span id="line-656"><span class="n">skip_signature_errors</span> <span class="o">=</span> <span class="n">ConditionalExceptionCatcher</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">is_signature_error</span><span class="p">)</span>
+</span><span id="line-655"><span class="n">skip_signature_errors</span> <span class="o">=</span> <span class="n">ConditionalExceptionCatcher</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">is_signature_error</span><span class="p">)</span>
+</span><span id="line-656">
 </span><span id="line-657">
-</span><span id="line-658">
 <div class="viewcode-block" id="attribute_dependencies">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.attribute_dependencies">[docs]</a>
-</span><span id="line-659"><span class="k">def</span><span class="w"> </span><span class="nf">attribute_dependencies</span><span class="p">(</span>
-</span><span id="line-660">    <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
-</span><span id="line-661">    <span class="n">filt</span><span class="o">=</span><span class="n">_is_method_like</span><span class="p">,</span>
-</span><span id="line-662">    <span class="o">*</span><span class="p">,</span>
-</span><span id="line-663">    <span class="n">name_of_obj</span><span class="o">=</span><span class="n">name_of_obj</span><span class="p">,</span>
-</span><span id="line-664">    <span class="n">exclude_names</span><span class="p">:</span> <span class="n">ExcludeNames</span> <span class="o">=</span> <span class="n">init_argument_names</span><span class="p">,</span>
-</span><span id="line-665"><span class="p">):</span>
-</span><span id="line-666"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-667"><span class="sd">    Extracts (method_name, accessed_attributes) pairs for a class or instance thereof.</span>
-</span><span id="line-668">
-</span><span id="line-669"><span class="sd">    :param cls: The class or instance to analyze</span>
-</span><span id="line-670"><span class="sd">    :param filt: A function that filters the attributes to consider</span>
-</span><span id="line-671"><span class="sd">    :param name_of_obj: A function that returns the name of an object</span>
-</span><span id="line-672"><span class="sd">    :param exclude_names: A list of names to exclude from the analysis or a function that</span>
-</span><span id="line-673"><span class="sd">        returns such a list given the class</span>
-</span><span id="line-674"><span class="sd">    :return: A generator of (method_name, accessed_attributes) pairs</span>
-</span><span id="line-675"><span class="sd">    """</span>
-</span><span id="line-676">    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">_get_class_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="n">filt</span><span class="p">,</span> <span class="n">exclude_names</span><span class="o">=</span><span class="n">exclude_names</span><span class="p">):</span>
-</span><span id="line-677">        <span class="k">with</span> <span class="n">skip_signature_errors</span><span class="p">:</span>
-</span><span id="line-678">            <span class="k">yield</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">func</span><span class="p">),</span> <span class="n">accessed_attributes</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></div>
+</span><span id="line-658"><span class="k">def</span><span class="w"> </span><span class="nf">attribute_dependencies</span><span class="p">(</span>
+</span><span id="line-659">    <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
+</span><span id="line-660">    <span class="n">filt</span><span class="o">=</span><span class="n">_is_method_like</span><span class="p">,</span>
+</span><span id="line-661">    <span class="o">*</span><span class="p">,</span>
+</span><span id="line-662">    <span class="n">name_of_obj</span><span class="o">=</span><span class="n">name_of_obj</span><span class="p">,</span>
+</span><span id="line-663">    <span class="n">exclude_names</span><span class="p">:</span> <span class="n">ExcludeNames</span> <span class="o">=</span> <span class="n">init_argument_names</span><span class="p">,</span>
+</span><span id="line-664"><span class="p">):</span>
+</span><span id="line-665"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-666"><span class="sd">    Extracts (method_name, accessed_attributes) pairs for a class or instance thereof.</span>
+</span><span id="line-667">
+</span><span id="line-668"><span class="sd">    :param cls: The class or instance to analyze</span>
+</span><span id="line-669"><span class="sd">    :param filt: A function that filters the attributes to consider</span>
+</span><span id="line-670"><span class="sd">    :param name_of_obj: A function that returns the name of an object</span>
+</span><span id="line-671"><span class="sd">    :param exclude_names: A list of names to exclude from the analysis or a function that</span>
+</span><span id="line-672"><span class="sd">        returns such a list given the class</span>
+</span><span id="line-673"><span class="sd">    :return: A generator of (method_name, accessed_attributes) pairs</span>
+</span><span id="line-674"><span class="sd">    """</span>
+</span><span id="line-675">    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">_get_class_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="n">filt</span><span class="p">,</span> <span class="n">exclude_names</span><span class="o">=</span><span class="n">exclude_names</span><span class="p">):</span>
+</span><span id="line-676">        <span class="k">with</span> <span class="n">skip_signature_errors</span><span class="p">:</span>
+</span><span id="line-677">            <span class="k">yield</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">func</span><span class="p">),</span> <span class="n">accessed_attributes</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></div>
 
+</span><span id="line-678">
 </span><span id="line-679">
-</span><span id="line-680">
-</span><span id="line-681"><span class="k">def</span><span class="w"> </span><span class="nf">_attrs_used_by_method</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">src_code</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="line-682"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-683"><span class="sd">    Util for attrs_used_by_method. Same output as attrs_used_by_method, but intput is (cls, method_name)</span>
-</span><span id="line-684"><span class="sd">    """</span>
-</span><span id="line-685">    <span class="n">root</span> <span class="o">=</span> <span class="n">ensure_ast</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">src_code</span><span class="p">)</span>
-</span><span id="line-686">    <span class="n">funcs</span> <span class="o">=</span> <span class="n">list_func_calls</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">))</span>
-</span><span id="line-687">    <span class="n">attrs</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-688">    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span><span class="p">:</span>
-</span><span id="line-689">        <span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span> <span class="o">+</span> <span class="n">attr_list</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
-</span><span id="line-690">
-</span><span id="line-691">    <span class="k">return</span> <span class="n">_process_duplicates</span><span class="p">(</span>
-</span><span id="line-692">        <span class="n">attrs</span> <span class="o">+</span> <span class="n">attr_list</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">method_name</span><span class="p">),</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span>
-</span><span id="line-693">    <span class="p">)</span>
+</span><span id="line-680"><span class="k">def</span><span class="w"> </span><span class="nf">_attrs_used_by_method</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">src_code</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="line-681"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-682"><span class="sd">    Util for attrs_used_by_method. Same output as attrs_used_by_method, but intput is (cls, method_name)</span>
+</span><span id="line-683"><span class="sd">    """</span>
+</span><span id="line-684">    <span class="n">root</span> <span class="o">=</span> <span class="n">ensure_ast</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">src_code</span><span class="p">)</span>
+</span><span id="line-685">    <span class="n">funcs</span> <span class="o">=</span> <span class="n">list_func_calls</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">))</span>
+</span><span id="line-686">    <span class="n">attrs</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-687">    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funcs</span><span class="p">:</span>
+</span><span id="line-688">        <span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span> <span class="o">+</span> <span class="n">attr_list</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+</span><span id="line-689">
+</span><span id="line-690">    <span class="k">return</span> <span class="n">_process_duplicates</span><span class="p">(</span>
+</span><span id="line-691">        <span class="n">attrs</span> <span class="o">+</span> <span class="n">attr_list</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">method_name</span><span class="p">),</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span>
+</span><span id="line-692">    <span class="p">)</span>
+</span><span id="line-693">
 </span><span id="line-694">
-</span><span id="line-695">
 <div class="viewcode-block" id="attrs_used_by_method">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.attrs_used_by_method">[docs]</a>
-</span><span id="line-696"><span class="k">def</span><span class="w"> </span><span class="nf">attrs_used_by_method</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">src_code</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="line-697"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-698"><span class="sd">    Extracts a list of cls attributes which are used by a method or method_name function</span>
-</span><span id="line-699">
-</span><span id="line-700"><span class="sd">    Note: The function tries to analyzed the source code deeply, gathering indirect</span>
-</span><span id="line-701"><span class="sd">    references to the instance attributes. As a result, it is not very robust.</span>
-</span><span id="line-702"><span class="sd">    You may want to check out the simpler (but narrow) function: `accessed_attributes`.</span>
-</span><span id="line-703">
-</span><span id="line-704"><span class="sd">    Args:</span>
-</span><span id="line-705"><span class="sd">        method: The method (object) to analyze</span>
-</span><span id="line-706"><span class="sd">        src_code: The source code in which the method's class is defined, when</span>
-</span><span id="line-707"><span class="sd">            ``inspect`` cannot retrieve it (for example in a notebook).</span>
-</span><span id="line-708">
-</span><span id="line-709"><span class="sd">    Returns:</span>
-</span><span id="line-710"><span class="sd">        A list of attribute names (of the class or instance thereof) that are accessed in the code of the said method.</span>
-</span><span id="line-711">
-</span><span id="line-712"><span class="sd">    Consider the method ``A.target_method`` coming from the following code in</span>
-</span><span id="line-713"><span class="sd">    ``i2.tests.footprints_test``::</span>
-</span><span id="line-714">
-</span><span id="line-715"><span class="sd">        def func(obj):</span>
-</span><span id="line-716"><span class="sd">            \"\"\"Accesses attributes 'a' and 'b' of obj\"\"\"</span>
-</span><span id="line-717"><span class="sd">            return obj.a + obj.b</span>
-</span><span id="line-718">
-</span><span id="line-719"><span class="sd">        class A:</span>
-</span><span id="line-720"><span class="sd">            e = 2</span>
-</span><span id="line-721">
-</span><span id="line-722"><span class="sd">            def __init__(self, a=1, b=0, c=1, d=10):</span>
-</span><span id="line-723"><span class="sd">                self.a = a</span>
-</span><span id="line-724"><span class="sd">                self.b = b</span>
-</span><span id="line-725"><span class="sd">                self.c = c</span>
-</span><span id="line-726"><span class="sd">                self.d = d</span>
-</span><span id="line-727">
-</span><span id="line-728"><span class="sd">            def target_method(self, x):</span>
-</span><span id="line-729"><span class="sd">                \"\"\"Accesses ['a', 'b', 'c', 'e']\"\"\"</span>
-</span><span id="line-730"><span class="sd">                t = func(self)  # and this function will access some attributes!</span>
-</span><span id="line-731"><span class="sd">                tt = self.other_method(t)</span>
-</span><span id="line-732"><span class="sd">                return x * tt / self.e</span>
-</span><span id="line-733">
-</span><span id="line-734"><span class="sd">            def other_method(self, x=1):</span>
-</span><span id="line-735"><span class="sd">                \"\"\"Accesses ['c', 'e']\"\"\"</span>
-</span><span id="line-736"><span class="sd">                w = self.c * 2  # c is accessed first</span>
-</span><span id="line-737"><span class="sd">                return self.e + self.c * x - w  # and c is accessed again</span>
-</span><span id="line-738">
-</span><span id="line-739"><span class="sd">            @classmethod</span>
-</span><span id="line-740"><span class="sd">            def a_class_method(cls, y):</span>
-</span><span id="line-741"><span class="sd">                \"\"\"Accesses ['e']\"\"\"</span>
-</span><span id="line-742"><span class="sd">                return cls.e + y</span>
-</span><span id="line-743"><span class="sd">    """</span>
-</span><span id="line-744">    <span class="c1"># TODO: Stopped working in 3.12 (worked in 3.10). See why</span>
-</span><span id="line-745">    <span class="c1"># &gt;&gt;&gt; from i2.tests.footprints_test import A</span>
-</span><span id="line-746">    <span class="c1"># &gt;&gt;&gt; assert attrs_used_by_method(A.target_method) == {'a', 'b', 'c', 'e'}</span>
-</span><span id="line-747">    <span class="c1">#</span>
-</span><span id="line-748">    <span class="k">return</span> <span class="n">_attrs_used_by_method</span><span class="p">(</span>
-</span><span id="line-749">        <span class="o">*</span><span class="n">cls_and_method_name_of_method</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">src_code</span><span class="o">=</span><span class="n">src_code</span>
-</span><span id="line-750">    <span class="p">)</span></div>
+</span><span id="line-695"><span class="k">def</span><span class="w"> </span><span class="nf">attrs_used_by_method</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">src_code</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="line-696"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-697"><span class="sd">    Extracts a list of cls attributes which are used by a method or method_name function</span>
+</span><span id="line-698">
+</span><span id="line-699"><span class="sd">    Note: The function tries to analyzed the source code deeply, gathering indirect</span>
+</span><span id="line-700"><span class="sd">    references to the instance attributes. As a result, it is not very robust.</span>
+</span><span id="line-701"><span class="sd">    You may want to check out the simpler (but narrow) function: `accessed_attributes`.</span>
+</span><span id="line-702">
+</span><span id="line-703"><span class="sd">    Args:</span>
+</span><span id="line-704"><span class="sd">        method: The method (object) to analyze</span>
+</span><span id="line-705"><span class="sd">        src_code: The source code in which the method's class is defined, when</span>
+</span><span id="line-706"><span class="sd">            ``inspect`` cannot retrieve it (for example in a notebook).</span>
+</span><span id="line-707">
+</span><span id="line-708"><span class="sd">    Returns:</span>
+</span><span id="line-709"><span class="sd">        A list of attribute names (of the class or instance thereof) that are accessed in the code of the said method.</span>
+</span><span id="line-710">
+</span><span id="line-711"><span class="sd">    Consider the method ``A.target_method`` coming from the following code in</span>
+</span><span id="line-712"><span class="sd">    ``i2.tests.footprints_test``::</span>
+</span><span id="line-713">
+</span><span id="line-714"><span class="sd">        def func(obj):</span>
+</span><span id="line-715"><span class="sd">            \"\"\"Accesses attributes 'a' and 'b' of obj\"\"\"</span>
+</span><span id="line-716"><span class="sd">            return obj.a + obj.b</span>
+</span><span id="line-717">
+</span><span id="line-718"><span class="sd">        class A:</span>
+</span><span id="line-719"><span class="sd">            e = 2</span>
+</span><span id="line-720">
+</span><span id="line-721"><span class="sd">            def __init__(self, a=1, b=0, c=1, d=10):</span>
+</span><span id="line-722"><span class="sd">                self.a = a</span>
+</span><span id="line-723"><span class="sd">                self.b = b</span>
+</span><span id="line-724"><span class="sd">                self.c = c</span>
+</span><span id="line-725"><span class="sd">                self.d = d</span>
+</span><span id="line-726">
+</span><span id="line-727"><span class="sd">            def target_method(self, x):</span>
+</span><span id="line-728"><span class="sd">                \"\"\"Accesses ['a', 'b', 'c', 'e']\"\"\"</span>
+</span><span id="line-729"><span class="sd">                t = func(self)  # and this function will access some attributes!</span>
+</span><span id="line-730"><span class="sd">                tt = self.other_method(t)</span>
+</span><span id="line-731"><span class="sd">                return x * tt / self.e</span>
+</span><span id="line-732">
+</span><span id="line-733"><span class="sd">            def other_method(self, x=1):</span>
+</span><span id="line-734"><span class="sd">                \"\"\"Accesses ['c', 'e']\"\"\"</span>
+</span><span id="line-735"><span class="sd">                w = self.c * 2  # c is accessed first</span>
+</span><span id="line-736"><span class="sd">                return self.e + self.c * x - w  # and c is accessed again</span>
+</span><span id="line-737">
+</span><span id="line-738"><span class="sd">            @classmethod</span>
+</span><span id="line-739"><span class="sd">            def a_class_method(cls, y):</span>
+</span><span id="line-740"><span class="sd">                \"\"\"Accesses ['e']\"\"\"</span>
+</span><span id="line-741"><span class="sd">                return cls.e + y</span>
+</span><span id="line-742"><span class="sd">    """</span>
+</span><span id="line-743">    <span class="c1"># TODO: Stopped working in 3.12 (worked in 3.10). See why</span>
+</span><span id="line-744">    <span class="c1"># &gt;&gt;&gt; from i2.tests.footprints_test import A</span>
+</span><span id="line-745">    <span class="c1"># &gt;&gt;&gt; assert attrs_used_by_method(A.target_method) == {'a', 'b', 'c', 'e'}</span>
+</span><span id="line-746">    <span class="c1">#</span>
+</span><span id="line-747">    <span class="k">return</span> <span class="n">_attrs_used_by_method</span><span class="p">(</span>
+</span><span id="line-748">        <span class="o">*</span><span class="n">cls_and_method_name_of_method</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">src_code</span><span class="o">=</span><span class="n">src_code</span>
+</span><span id="line-749">    <span class="p">)</span></div>
 
+</span><span id="line-750">
 </span><span id="line-751">
-</span><span id="line-752">
-</span><span id="line-753"><span class="c1"># --------------------------------------------------------------------------------------</span>
-</span><span id="line-754"><span class="c1"># Newer static footprints</span>
-</span><span id="line-755"><span class="c1"># TODO: Merge with older attrs_used_by_method one above</span>
-</span><span id="line-756">
-</span><span id="line-757"><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
-</span><span id="line-758"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">resolve_function</span>
+</span><span id="line-752"><span class="c1"># --------------------------------------------------------------------------------------</span>
+</span><span id="line-753"><span class="c1"># Newer static footprints</span>
+</span><span id="line-754"><span class="c1"># TODO: Merge with older attrs_used_by_method one above</span>
+</span><span id="line-755">
+</span><span id="line-756"><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+</span><span id="line-757"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span><span class="p">,</span> <span class="n">resolve_function</span>
+</span><span id="line-758">
 </span><span id="line-759">
-</span><span id="line-760">
 <div class="viewcode-block" id="get_source">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.get_source">[docs]</a>
-</span><span id="line-761"><span class="k">def</span><span class="w"> </span><span class="nf">get_source</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-762"><span class="w">    </span><span class="sd">"""Get source string of a python object"""</span>
-</span><span id="line-763">    <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">resolve_function</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span></div>
+</span><span id="line-760"><span class="k">def</span><span class="w"> </span><span class="nf">get_source</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-761"><span class="w">    </span><span class="sd">"""Get source string of a python object"""</span>
+</span><span id="line-762">    <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">resolve_function</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span></div>
 
+</span><span id="line-763">
 </span><span id="line-764">
-</span><span id="line-765">
-</span><span id="line-766"><span class="c1"># TODO: Break into two functions (one doing the work of the loop for a single method)</span>
-</span><span id="line-767"><span class="c1"># TODO: Routing pattern. Extract conditional logic to make it parametrizable</span>
+</span><span id="line-765"><span class="c1"># TODO: Break into two functions (one doing the work of the loop for a single method)</span>
+</span><span id="line-766"><span class="c1"># TODO: Routing pattern. Extract conditional logic to make it parametrizable</span>
 <div class="viewcode-block" id="object_dependencies">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.object_dependencies">[docs]</a>
-</span><span id="line-768"><span class="k">def</span><span class="w"> </span><span class="nf">object_dependencies</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">get_source</span><span class="o">=</span><span class="n">get_source</span><span class="p">):</span>
-</span><span id="line-769"><span class="w">    </span><span class="sd">"""Map each method of a class (or of an instance's class) to the attributes it reads.</span>
-</span><span id="line-770">
-</span><span id="line-771"><span class="sd">    Attributes accessed through the method's first argument (usually ``self``) count;</span>
-</span><span id="line-772"><span class="sd">    attributes that are only assigned to do not. Members for which ``get_source`` raises</span>
-</span><span id="line-773"><span class="sd">    ``TypeError`` (builtins, descriptors) are skipped.</span>
-</span><span id="line-774">
-</span><span id="line-775"><span class="sd">    &gt;&gt;&gt; class C:</span>
-</span><span id="line-776"><span class="sd">    ...     def __init__(self):</span>
-</span><span id="line-777"><span class="sd">    ...         self.a = 1</span>
-</span><span id="line-778"><span class="sd">    ...     def m(self):</span>
-</span><span id="line-779"><span class="sd">    ...         return self.a + self.helper()</span>
-</span><span id="line-780"><span class="sd">    ...     def helper(self):</span>
-</span><span id="line-781"><span class="sd">    ...         return 2</span>
-</span><span id="line-782"><span class="sd">    &gt;&gt;&gt; object_dependencies(C)["m"] == {"a", "helper"}</span>
-</span><span id="line-783"><span class="sd">    True</span>
-</span><span id="line-784"><span class="sd">    """</span>
-</span><span id="line-785">    <span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
-</span><span id="line-786">    <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
-</span><span id="line-787">    <span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
-</span><span id="line-788">    <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
-</span><span id="line-789">
-</span><span id="line-790">    <span class="n">dependency_dict</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-791">
-</span><span id="line-792">    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-</span><span id="line-793">        <span class="n">members</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-</span><span id="line-794">    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"__class__"</span><span class="p">):</span>
-</span><span id="line-795">        <span class="n">members</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
-</span><span id="line-796">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-797">        <span class="k">return</span> <span class="s2">"Invalid input. Please provide a class or an instance."</span>
-</span><span id="line-798">
-</span><span id="line-799">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">members</span><span class="p">:</span>
-</span><span id="line-800">        <span class="k">try</span><span class="p">:</span>
-</span><span id="line-801">            <span class="n">source_code</span> <span class="o">=</span> <span class="n">get_source</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
-</span><span id="line-802">            <span class="n">first_arg</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">resolve_function</span><span class="p">(</span><span class="n">method</span><span class="p">))</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="line-803">        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-</span><span id="line-804">            <span class="k">continue</span>
-</span><span id="line-805">
-</span><span id="line-806">        <span class="n">source_code</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">source_code</span><span class="p">)</span>
-</span><span id="line-807">        <span class="n">tree</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">source_code</span><span class="p">)</span>
-</span><span id="line-808">
-</span><span id="line-809">        <span class="n">called_methods</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-810">        <span class="n">assigned_attributes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-</span><span id="line-811">
-</span><span id="line-812">        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
-</span><span id="line-813">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Assign</span><span class="p">):</span>
-</span><span id="line-814">                <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
-</span><span id="line-815">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
-</span><span id="line-816">                        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">first_arg</span><span class="p">:</span>
-</span><span id="line-817">                            <span class="n">assigned_attributes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="line-818">
-</span><span id="line-819">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Call</span><span class="p">):</span>
-</span><span id="line-820">                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
-</span><span id="line-821">                    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">first_arg</span><span class="p">:</span>
-</span><span id="line-822">                        <span class="n">called_methods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="line-823">
-</span><span id="line-824">            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
-</span><span id="line-825">                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
-</span><span id="line-826">                    <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">first_arg</span><span class="p">:</span>
-</span><span id="line-827">                        <span class="n">called_methods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="line-828">
-</span><span id="line-829">        <span class="c1"># Remove attributes that are only assigned to</span>
-</span><span id="line-830">        <span class="n">called_methods</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">called_methods</span><span class="p">)</span> <span class="o">-</span> <span class="n">assigned_attributes</span>
-</span><span id="line-831">
-</span><span id="line-832">        <span class="n">dependency_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">called_methods</span>
-</span><span id="line-833">
-</span><span id="line-834">    <span class="k">return</span> <span class="n">dependency_dict</span></div>
+</span><span id="line-767"><span class="k">def</span><span class="w"> </span><span class="nf">object_dependencies</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">get_source</span><span class="o">=</span><span class="n">get_source</span><span class="p">):</span>
+</span><span id="line-768"><span class="w">    </span><span class="sd">"""Map each method of a class (or of an instance's class) to the attributes it reads.</span>
+</span><span id="line-769">
+</span><span id="line-770"><span class="sd">    Attributes accessed through the method's first argument (usually ``self``) count;</span>
+</span><span id="line-771"><span class="sd">    attributes that are only assigned to do not. Members for which ``get_source`` raises</span>
+</span><span id="line-772"><span class="sd">    ``TypeError`` (builtins, descriptors) are skipped.</span>
+</span><span id="line-773">
+</span><span id="line-774"><span class="sd">    &gt;&gt;&gt; class C:</span>
+</span><span id="line-775"><span class="sd">    ...     def __init__(self):</span>
+</span><span id="line-776"><span class="sd">    ...         self.a = 1</span>
+</span><span id="line-777"><span class="sd">    ...     def m(self):</span>
+</span><span id="line-778"><span class="sd">    ...         return self.a + self.helper()</span>
+</span><span id="line-779"><span class="sd">    ...     def helper(self):</span>
+</span><span id="line-780"><span class="sd">    ...         return 2</span>
+</span><span id="line-781"><span class="sd">    &gt;&gt;&gt; object_dependencies(C)["m"] == {"a", "helper"}</span>
+</span><span id="line-782"><span class="sd">    True</span>
+</span><span id="line-783"><span class="sd">    """</span>
+</span><span id="line-784">    <span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
+</span><span id="line-785">    <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+</span><span id="line-786">    <span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
+</span><span id="line-787">    <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+</span><span id="line-788">
+</span><span id="line-789">    <span class="n">dependency_dict</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-790">
+</span><span id="line-791">    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span id="line-792">        <span class="n">members</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</span><span id="line-793">    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"__class__"</span><span class="p">):</span>
+</span><span id="line-794">        <span class="n">members</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+</span><span id="line-795">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-796">        <span class="k">return</span> <span class="s2">"Invalid input. Please provide a class or an instance."</span>
+</span><span id="line-797">
+</span><span id="line-798">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">members</span><span class="p">:</span>
+</span><span id="line-799">        <span class="k">try</span><span class="p">:</span>
+</span><span id="line-800">            <span class="n">source_code</span> <span class="o">=</span> <span class="n">get_source</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+</span><span id="line-801">            <span class="n">first_arg</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">resolve_function</span><span class="p">(</span><span class="n">method</span><span class="p">))</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="line-802">        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+</span><span id="line-803">            <span class="k">continue</span>
+</span><span id="line-804">
+</span><span id="line-805">        <span class="n">source_code</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">source_code</span><span class="p">)</span>
+</span><span id="line-806">        <span class="n">tree</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">source_code</span><span class="p">)</span>
+</span><span id="line-807">
+</span><span id="line-808">        <span class="n">called_methods</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-809">        <span class="n">assigned_attributes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="line-810">
+</span><span id="line-811">        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+</span><span id="line-812">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Assign</span><span class="p">):</span>
+</span><span id="line-813">                <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+</span><span id="line-814">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
+</span><span id="line-815">                        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">first_arg</span><span class="p">:</span>
+</span><span id="line-816">                            <span class="n">assigned_attributes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
+</span><span id="line-817">
+</span><span id="line-818">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Call</span><span class="p">):</span>
+</span><span id="line-819">                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
+</span><span id="line-820">                    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">first_arg</span><span class="p">:</span>
+</span><span id="line-821">                        <span class="n">called_methods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
+</span><span id="line-822">
+</span><span id="line-823">            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
+</span><span id="line-824">                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
+</span><span id="line-825">                    <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">first_arg</span><span class="p">:</span>
+</span><span id="line-826">                        <span class="n">called_methods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
+</span><span id="line-827">
+</span><span id="line-828">        <span class="c1"># Remove attributes that are only assigned to</span>
+</span><span id="line-829">        <span class="n">called_methods</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">called_methods</span><span class="p">)</span> <span class="o">-</span> <span class="n">assigned_attributes</span>
+</span><span id="line-830">
+</span><span id="line-831">        <span class="n">dependency_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">called_methods</span>
+</span><span id="line-832">
+</span><span id="line-833">    <span class="k">return</span> <span class="n">dependency_dict</span></div>
 
+</span><span id="line-834">
 </span><span id="line-835">
-</span><span id="line-836">
-</span><span id="line-837"><span class="k">def</span><span class="w"> </span><span class="nf">_dict_to_graph</span><span class="p">(</span>
-</span><span id="line-838">    <span class="n">graph</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-</span><span id="line-839">    <span class="o">*</span><span class="p">,</span>
-</span><span id="line-840">    <span class="n">edge_connector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="line-841">    <span class="n">graph_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="line-842">    <span class="n">display</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-843">    <span class="n">indent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"    "</span><span class="p">,</span>
-</span><span id="line-844">    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
-</span><span id="line-845">    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
-</span><span id="line-846"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-847"><span class="w">    </span><span class="sd">"""Helper for dict_to_graph"""</span>
-</span><span id="line-848">    <span class="k">if</span> <span class="ow">not</span> <span class="n">display</span><span class="p">:</span>
-</span><span id="line-849">        <span class="n">display</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
-</span><span id="line-850">    <span class="k">elif</span> <span class="n">display</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-</span><span id="line-851">        <span class="n">display</span> <span class="o">=</span> <span class="nb">print</span>
-</span><span id="line-852">    <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">display</span><span class="p">),</span> <span class="sa">f</span><span class="s2">"display should be callable, boolean or None: </span><span class="si">{</span><span class="n">display</span><span class="si">=}</span><span class="s2">"</span>
-</span><span id="line-853">    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-854">    <span class="k">for</span> <span class="n">from_node</span><span class="p">,</span> <span class="n">to_nodes</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-855">        <span class="k">for</span> <span class="n">to_node</span> <span class="ow">in</span> <span class="n">to_nodes</span><span class="p">:</span>
-</span><span id="line-856">            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">from_node</span><span class="si">}{</span><span class="n">edge_connector</span><span class="si">}{</span><span class="n">to_node</span><span class="si">}</span><span class="s2">;"</span><span class="p">)</span>
-</span><span id="line-857">    <span class="n">graph_code</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
-</span><span id="line-858">    <span class="k">return</span> <span class="n">display</span><span class="p">(</span><span class="n">graph_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">graph_code</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
+</span><span id="line-836"><span class="k">def</span><span class="w"> </span><span class="nf">_dict_to_graph</span><span class="p">(</span>
+</span><span id="line-837">    <span class="n">graph</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+</span><span id="line-838">    <span class="o">*</span><span class="p">,</span>
+</span><span id="line-839">    <span class="n">edge_connector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="line-840">    <span class="n">graph_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="line-841">    <span class="n">display</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="line-842">    <span class="n">indent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"    "</span><span class="p">,</span>
+</span><span id="line-843">    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+</span><span id="line-844">    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+</span><span id="line-845"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-846"><span class="w">    </span><span class="sd">"""Helper for dict_to_graph"""</span>
+</span><span id="line-847">    <span class="k">if</span> <span class="ow">not</span> <span class="n">display</span><span class="p">:</span>
+</span><span id="line-848">        <span class="n">display</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+</span><span id="line-849">    <span class="k">elif</span> <span class="n">display</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="line-850">        <span class="n">display</span> <span class="o">=</span> <span class="nb">print</span>
+</span><span id="line-851">    <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">display</span><span class="p">),</span> <span class="sa">f</span><span class="s2">"display should be callable, boolean or None: </span><span class="si">{</span><span class="n">display</span><span class="si">=}</span><span class="s2">"</span>
+</span><span id="line-852">    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-853">    <span class="k">for</span> <span class="n">from_node</span><span class="p">,</span> <span class="n">to_nodes</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-854">        <span class="k">for</span> <span class="n">to_node</span> <span class="ow">in</span> <span class="n">to_nodes</span><span class="p">:</span>
+</span><span id="line-855">            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">from_node</span><span class="si">}{</span><span class="n">edge_connector</span><span class="si">}{</span><span class="n">to_node</span><span class="si">}</span><span class="s2">;"</span><span class="p">)</span>
+</span><span id="line-856">    <span class="n">graph_code</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+</span><span id="line-857">    <span class="k">return</span> <span class="n">display</span><span class="p">(</span><span class="n">graph_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">graph_code</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
+</span><span id="line-858">
 </span><span id="line-859">
-</span><span id="line-860">
 <div class="viewcode-block" id="dict_to_graph">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.dict_to_graph">[docs]</a>
-</span><span id="line-861"><span class="k">def</span><span class="w"> </span><span class="nf">dict_to_graph</span><span class="p">(</span>
-</span><span id="line-862">    <span class="n">graph</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-</span><span id="line-863">    <span class="n">from_key_to_values</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="line-864">    <span class="o">*</span><span class="p">,</span>
-</span><span id="line-865">    <span class="n">kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"graphviz"</span><span class="p">,</span> <span class="s2">"mermaid"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"graphviz"</span><span class="p">,</span>
-</span><span id="line-866">    <span class="n">indent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"    "</span><span class="p">,</span>
-</span><span id="line-867">    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
-</span><span id="line-868">    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
-</span><span id="line-869">    <span class="n">display</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="line-870"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-871"><span class="w">    </span><span class="sd">"""Convert a ``{node: neighbours}`` dictionary to a graphviz (or mermaid) graph string.</span>
-</span><span id="line-872">
-</span><span id="line-873"><span class="sd">    You provide a graph in the form of a ``{from_node: to_nodes, ...}`` or</span>
-</span><span id="line-874"><span class="sd">    ``{to_node: from_nodes, ...}`` dictionary, and will get a graphviz string.</span>
-</span><span id="line-875"><span class="sd">    You can use this to visualize a graph (e.g. a dependency graph) in a jupyter notebook.</span>
-</span><span id="line-876">
-</span><span id="line-877"><span class="sd">    :param graph: The graph, in the form of a to convert to graphviz.</span>
-</span><span id="line-878"><span class="sd">    :param from_key_to_values: Whether the keys of the graph are from nodes or to nodes.</span>
-</span><span id="line-879"><span class="sd">    :param kind: The kind of graphviz string to return. Either "graphviz" or "mermaid".</span>
-</span><span id="line-880"><span class="sd">    :param indent: The indent to use for the graphviz string.</span>
-</span><span id="line-881"><span class="sd">    :param graphviz_template: The template to use for the graphviz string.</span>
-</span><span id="line-882"><span class="sd">    :param display: Whether to display the graphviz string as a graph in a jupyter notebook. Requires graphviz.</span>
-</span><span id="line-883"><span class="sd">    :return: The graphviz string.</span>
-</span><span id="line-884">
-</span><span id="line-885"><span class="sd">    Example (but bear in mind the order of the nodes in graphviz_str may be different):</span>
-</span><span id="line-886">
-</span><span id="line-887"><span class="sd">    &gt;&gt;&gt; graph_dict = {</span>
-</span><span id="line-888"><span class="sd">    ...     "A": ["B", "C"],</span>
-</span><span id="line-889"><span class="sd">    ...     "B": ["D"],  # note that "D" is not mentioned as a key</span>
-</span><span id="line-890"><span class="sd">    ...     "C": ["D", "E", "F"],</span>
-</span><span id="line-891"><span class="sd">    ...     "E": [],</span>
-</span><span id="line-892"><span class="sd">    ... }</span>
-</span><span id="line-893"><span class="sd">    &gt;&gt;&gt; # Keys are from nodes</span>
-</span><span id="line-894"><span class="sd">    &gt;&gt;&gt; graphviz_str = dict_to_graph(graph_dict)</span>
-</span><span id="line-895"><span class="sd">    &gt;&gt;&gt; print(graphviz_str)  # doctest: +SKIP</span>
-</span><span id="line-896"><span class="sd">    digraph G {</span>
-</span><span id="line-897"><span class="sd">        "A" -&gt; "B";</span>
-</span><span id="line-898"><span class="sd">        "A" -&gt; "C";</span>
-</span><span id="line-899"><span class="sd">        "B" -&gt; "D";</span>
-</span><span id="line-900"><span class="sd">        "C" -&gt; "D";</span>
-</span><span id="line-901"><span class="sd">        "C" -&gt; "E";</span>
-</span><span id="line-902"><span class="sd">        "C" -&gt; "F";</span>
-</span><span id="line-903"><span class="sd">    }</span>
-</span><span id="line-904">
-</span><span id="line-905"><span class="sd">    &gt;&gt;&gt; # Keys are to nodes</span>
-</span><span id="line-906"><span class="sd">    &gt;&gt;&gt; graphviz_str = dict_to_graph(graph_dict, from_key_to_values=False)</span>
-</span><span id="line-907"><span class="sd">    &gt;&gt;&gt; print(graphviz_str)  # doctest: +SKIP</span>
-</span><span id="line-908"><span class="sd">    digraph G {</span>
-</span><span id="line-909"><span class="sd">        "B" -&gt; "A";</span>
-</span><span id="line-910"><span class="sd">        "C" -&gt; "A";</span>
-</span><span id="line-911"><span class="sd">        "D" -&gt; "B";</span>
-</span><span id="line-912"><span class="sd">        "D" -&gt; "C";</span>
-</span><span id="line-913"><span class="sd">        "E" -&gt; "C";</span>
-</span><span id="line-914"><span class="sd">    }</span>
-</span><span id="line-915">
-</span><span id="line-916"><span class="sd">    The default ``kind`` is graphviz, but you can also use mermaid:</span>
-</span><span id="line-917">
-</span><span id="line-918"><span class="sd">    &gt;&gt;&gt; graphviz_str = dict_to_graph(graph_dict, kind="mermaid")</span>
-</span><span id="line-919"><span class="sd">    &gt;&gt;&gt; print(graphviz_str)  # doctest: +SKIP</span>
-</span><span id="line-920"><span class="sd">    graph TD</span>
-</span><span id="line-921"><span class="sd">        A --&gt; B;</span>
-</span><span id="line-922"><span class="sd">        A --&gt; C;</span>
-</span><span id="line-923"><span class="sd">        B --&gt; D;</span>
-</span><span id="line-924"><span class="sd">        C --&gt; D;</span>
-</span><span id="line-925"><span class="sd">        C --&gt; E;</span>
-</span><span id="line-926"><span class="sd">        C --&gt; F;</span>
-</span><span id="line-927"><span class="sd">    """</span>
-</span><span id="line-928">    <span class="c1"># TODO: Could make these specs open-closed (routing pattern)</span>
-</span><span id="line-929">    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"graphviz"</span><span class="p">:</span>
-</span><span id="line-930">        <span class="n">graph_template</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"digraph G </span><span class="se">{{{{\n{{</span><span class="s2">code</span><span class="se">}}\n}}}}</span><span class="s2">"</span>
-</span><span id="line-931">        <span class="n">edge_connector</span> <span class="o">=</span> <span class="s2">" -&gt; "</span>
-</span><span id="line-932">        <span class="k">if</span> <span class="n">display</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-</span><span id="line-933">            <span class="k">try</span><span class="p">:</span>
-</span><span id="line-934">                <span class="kn">from</span><span class="w"> </span><span class="nn">graphviz</span><span class="w"> </span><span class="kn">import</span> <span class="n">Source</span>
-</span><span id="line-935">
-</span><span id="line-936">                <span class="n">display</span> <span class="o">=</span> <span class="n">Source</span>
-</span><span id="line-937">            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-</span><span id="line-938">                <span class="ne">ImportError</span><span class="p">(</span><span class="s2">"You need to `pip install graphviz` to display the graph"</span><span class="p">)</span>
-</span><span id="line-939">
-</span><span id="line-940">    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"mermaid"</span><span class="p">:</span>
-</span><span id="line-941">        <span class="n">graph_template</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"graph TD</span><span class="se">\n{{</span><span class="s2">code</span><span class="se">}}\n</span><span class="s2">"</span>
-</span><span id="line-942">        <span class="n">edge_connector</span> <span class="o">=</span> <span class="s2">" --&gt; "</span>
-</span><span id="line-943">        <span class="k">if</span> <span class="n">display</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-</span><span id="line-944">            <span class="k">try</span><span class="p">:</span>
-</span><span id="line-945">                <span class="kn">from</span><span class="w"> </span><span class="nn">kroki</span><span class="w"> </span><span class="kn">import</span> <span class="n">diagram_image</span>  <span class="c1"># pip install kroki</span>
-</span><span id="line-946">
-</span><span id="line-947">                <span class="n">display</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">diagram_image</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">diagram_type</span><span class="o">=</span><span class="s2">"mermaid"</span><span class="p">)</span>
-</span><span id="line-948">            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-</span><span id="line-949">                <span class="ne">ImportError</span><span class="p">(</span><span class="s2">"You need to `pip install kroki` to display the graph"</span><span class="p">)</span>
-</span><span id="line-950">
-</span><span id="line-951">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-952">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid kind specified: </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="line-953">
-</span><span id="line-954">    <span class="k">if</span> <span class="ow">not</span> <span class="n">from_key_to_values</span><span class="p">:</span>
-</span><span id="line-955">        <span class="n">graph</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-956">            <span class="n">to_node</span><span class="p">:</span> <span class="p">[</span><span class="n">from_node</span> <span class="k">for</span> <span class="n">from_node</span> <span class="ow">in</span> <span class="n">graph</span> <span class="k">if</span> <span class="n">to_node</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">from_node</span><span class="p">]]</span>
-</span><span id="line-957">            <span class="k">for</span> <span class="n">to_node</span> <span class="ow">in</span> <span class="p">{</span><span class="n">val</span> <span class="k">for</span> <span class="n">vals</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">}</span>
-</span><span id="line-958">        <span class="p">}</span>
-</span><span id="line-959">
-</span><span id="line-960">    <span class="k">return</span> <span class="n">_dict_to_graph</span><span class="p">(</span>
-</span><span id="line-961">        <span class="n">graph</span><span class="p">,</span>
-</span><span id="line-962">        <span class="n">edge_connector</span><span class="o">=</span><span class="n">edge_connector</span><span class="p">,</span>
-</span><span id="line-963">        <span class="n">graph_template</span><span class="o">=</span><span class="n">graph_template</span><span class="p">,</span>
-</span><span id="line-964">        <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span>
-</span><span id="line-965">        <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-</span><span id="line-966">        <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
-</span><span id="line-967">        <span class="n">display</span><span class="o">=</span><span class="n">display</span><span class="p">,</span>
-</span><span id="line-968">    <span class="p">)</span></div>
+</span><span id="line-860"><span class="k">def</span><span class="w"> </span><span class="nf">dict_to_graph</span><span class="p">(</span>
+</span><span id="line-861">    <span class="n">graph</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+</span><span id="line-862">    <span class="n">from_key_to_values</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="line-863">    <span class="o">*</span><span class="p">,</span>
+</span><span id="line-864">    <span class="n">kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"graphviz"</span><span class="p">,</span> <span class="s2">"mermaid"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"graphviz"</span><span class="p">,</span>
+</span><span id="line-865">    <span class="n">indent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"    "</span><span class="p">,</span>
+</span><span id="line-866">    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+</span><span id="line-867">    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+</span><span id="line-868">    <span class="n">display</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="line-869"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-870"><span class="w">    </span><span class="sd">"""Convert a ``{node: neighbours}`` dictionary to a graphviz (or mermaid) graph string.</span>
+</span><span id="line-871">
+</span><span id="line-872"><span class="sd">    You provide a graph in the form of a ``{from_node: to_nodes, ...}`` or</span>
+</span><span id="line-873"><span class="sd">    ``{to_node: from_nodes, ...}`` dictionary, and will get a graphviz string.</span>
+</span><span id="line-874"><span class="sd">    You can use this to visualize a graph (e.g. a dependency graph) in a jupyter notebook.</span>
+</span><span id="line-875">
+</span><span id="line-876"><span class="sd">    :param graph: The graph, in the form of a to convert to graphviz.</span>
+</span><span id="line-877"><span class="sd">    :param from_key_to_values: Whether the keys of the graph are from nodes or to nodes.</span>
+</span><span id="line-878"><span class="sd">    :param kind: The kind of graphviz string to return. Either "graphviz" or "mermaid".</span>
+</span><span id="line-879"><span class="sd">    :param indent: The indent to use for the graphviz string.</span>
+</span><span id="line-880"><span class="sd">    :param graphviz_template: The template to use for the graphviz string.</span>
+</span><span id="line-881"><span class="sd">    :param display: Whether to display the graphviz string as a graph in a jupyter notebook. Requires graphviz.</span>
+</span><span id="line-882"><span class="sd">    :return: The graphviz string.</span>
+</span><span id="line-883">
+</span><span id="line-884"><span class="sd">    Example (but bear in mind the order of the nodes in graphviz_str may be different):</span>
+</span><span id="line-885">
+</span><span id="line-886"><span class="sd">    &gt;&gt;&gt; graph_dict = {</span>
+</span><span id="line-887"><span class="sd">    ...     "A": ["B", "C"],</span>
+</span><span id="line-888"><span class="sd">    ...     "B": ["D"],  # note that "D" is not mentioned as a key</span>
+</span><span id="line-889"><span class="sd">    ...     "C": ["D", "E", "F"],</span>
+</span><span id="line-890"><span class="sd">    ...     "E": [],</span>
+</span><span id="line-891"><span class="sd">    ... }</span>
+</span><span id="line-892"><span class="sd">    &gt;&gt;&gt; # Keys are from nodes</span>
+</span><span id="line-893"><span class="sd">    &gt;&gt;&gt; graphviz_str = dict_to_graph(graph_dict)</span>
+</span><span id="line-894"><span class="sd">    &gt;&gt;&gt; print(graphviz_str)  # doctest: +SKIP</span>
+</span><span id="line-895"><span class="sd">    digraph G {</span>
+</span><span id="line-896"><span class="sd">        "A" -&gt; "B";</span>
+</span><span id="line-897"><span class="sd">        "A" -&gt; "C";</span>
+</span><span id="line-898"><span class="sd">        "B" -&gt; "D";</span>
+</span><span id="line-899"><span class="sd">        "C" -&gt; "D";</span>
+</span><span id="line-900"><span class="sd">        "C" -&gt; "E";</span>
+</span><span id="line-901"><span class="sd">        "C" -&gt; "F";</span>
+</span><span id="line-902"><span class="sd">    }</span>
+</span><span id="line-903">
+</span><span id="line-904"><span class="sd">    &gt;&gt;&gt; # Keys are to nodes</span>
+</span><span id="line-905"><span class="sd">    &gt;&gt;&gt; graphviz_str = dict_to_graph(graph_dict, from_key_to_values=False)</span>
+</span><span id="line-906"><span class="sd">    &gt;&gt;&gt; print(graphviz_str)  # doctest: +SKIP</span>
+</span><span id="line-907"><span class="sd">    digraph G {</span>
+</span><span id="line-908"><span class="sd">        "B" -&gt; "A";</span>
+</span><span id="line-909"><span class="sd">        "C" -&gt; "A";</span>
+</span><span id="line-910"><span class="sd">        "D" -&gt; "B";</span>
+</span><span id="line-911"><span class="sd">        "D" -&gt; "C";</span>
+</span><span id="line-912"><span class="sd">        "E" -&gt; "C";</span>
+</span><span id="line-913"><span class="sd">    }</span>
+</span><span id="line-914">
+</span><span id="line-915"><span class="sd">    The default ``kind`` is graphviz, but you can also use mermaid:</span>
+</span><span id="line-916">
+</span><span id="line-917"><span class="sd">    &gt;&gt;&gt; graphviz_str = dict_to_graph(graph_dict, kind="mermaid")</span>
+</span><span id="line-918"><span class="sd">    &gt;&gt;&gt; print(graphviz_str)  # doctest: +SKIP</span>
+</span><span id="line-919"><span class="sd">    graph TD</span>
+</span><span id="line-920"><span class="sd">        A --&gt; B;</span>
+</span><span id="line-921"><span class="sd">        A --&gt; C;</span>
+</span><span id="line-922"><span class="sd">        B --&gt; D;</span>
+</span><span id="line-923"><span class="sd">        C --&gt; D;</span>
+</span><span id="line-924"><span class="sd">        C --&gt; E;</span>
+</span><span id="line-925"><span class="sd">        C --&gt; F;</span>
+</span><span id="line-926"><span class="sd">    """</span>
+</span><span id="line-927">    <span class="c1"># TODO: Could make these specs open-closed (routing pattern)</span>
+</span><span id="line-928">    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"graphviz"</span><span class="p">:</span>
+</span><span id="line-929">        <span class="n">graph_template</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"digraph G </span><span class="se">{{{{\n{{</span><span class="s2">code</span><span class="se">}}\n}}}}</span><span class="s2">"</span>
+</span><span id="line-930">        <span class="n">edge_connector</span> <span class="o">=</span> <span class="s2">" -&gt; "</span>
+</span><span id="line-931">        <span class="k">if</span> <span class="n">display</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="line-932">            <span class="k">try</span><span class="p">:</span>
+</span><span id="line-933">                <span class="kn">from</span><span class="w"> </span><span class="nn">graphviz</span><span class="w"> </span><span class="kn">import</span> <span class="n">Source</span>
+</span><span id="line-934">
+</span><span id="line-935">                <span class="n">display</span> <span class="o">=</span> <span class="n">Source</span>
+</span><span id="line-936">            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+</span><span id="line-937">                <span class="ne">ImportError</span><span class="p">(</span><span class="s2">"You need to `pip install graphviz` to display the graph"</span><span class="p">)</span>
+</span><span id="line-938">
+</span><span id="line-939">    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"mermaid"</span><span class="p">:</span>
+</span><span id="line-940">        <span class="n">graph_template</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"graph TD</span><span class="se">\n{{</span><span class="s2">code</span><span class="se">}}\n</span><span class="s2">"</span>
+</span><span id="line-941">        <span class="n">edge_connector</span> <span class="o">=</span> <span class="s2">" --&gt; "</span>
+</span><span id="line-942">        <span class="k">if</span> <span class="n">display</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="line-943">            <span class="k">try</span><span class="p">:</span>
+</span><span id="line-944">                <span class="kn">from</span><span class="w"> </span><span class="nn">kroki</span><span class="w"> </span><span class="kn">import</span> <span class="n">diagram_image</span>  <span class="c1"># pip install kroki</span>
+</span><span id="line-945">
+</span><span id="line-946">                <span class="n">display</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">diagram_image</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">diagram_type</span><span class="o">=</span><span class="s2">"mermaid"</span><span class="p">)</span>
+</span><span id="line-947">            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+</span><span id="line-948">                <span class="ne">ImportError</span><span class="p">(</span><span class="s2">"You need to `pip install kroki` to display the graph"</span><span class="p">)</span>
+</span><span id="line-949">
+</span><span id="line-950">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-951">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid kind specified: </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="line-952">
+</span><span id="line-953">    <span class="k">if</span> <span class="ow">not</span> <span class="n">from_key_to_values</span><span class="p">:</span>
+</span><span id="line-954">        <span class="n">graph</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-955">            <span class="n">to_node</span><span class="p">:</span> <span class="p">[</span><span class="n">from_node</span> <span class="k">for</span> <span class="n">from_node</span> <span class="ow">in</span> <span class="n">graph</span> <span class="k">if</span> <span class="n">to_node</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">from_node</span><span class="p">]]</span>
+</span><span id="line-956">            <span class="k">for</span> <span class="n">to_node</span> <span class="ow">in</span> <span class="p">{</span><span class="n">val</span> <span class="k">for</span> <span class="n">vals</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">}</span>
+</span><span id="line-957">        <span class="p">}</span>
+</span><span id="line-958">
+</span><span id="line-959">    <span class="k">return</span> <span class="n">_dict_to_graph</span><span class="p">(</span>
+</span><span id="line-960">        <span class="n">graph</span><span class="p">,</span>
+</span><span id="line-961">        <span class="n">edge_connector</span><span class="o">=</span><span class="n">edge_connector</span><span class="p">,</span>
+</span><span id="line-962">        <span class="n">graph_template</span><span class="o">=</span><span class="n">graph_template</span><span class="p">,</span>
+</span><span id="line-963">        <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span>
+</span><span id="line-964">        <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+</span><span id="line-965">        <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+</span><span id="line-966">        <span class="n">display</span><span class="o">=</span><span class="n">display</span><span class="p">,</span>
+</span><span id="line-967">    <span class="p">)</span></div>
 
+</span><span id="line-968">
 </span><span id="line-969">
-</span><span id="line-970">
-</span><span id="line-971"><span class="c1"># --------------------------------------------------------------------------------------</span>
-</span><span id="line-972"><span class="c1"># Dynamic footprints</span>
-</span><span id="line-973">
-</span><span id="line-974"><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+</span><span id="line-970"><span class="c1"># --------------------------------------------------------------------------------------</span>
+</span><span id="line-971"><span class="c1"># Dynamic footprints</span>
+</span><span id="line-972">
+</span><span id="line-973"><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+</span><span id="line-974">
 </span><span id="line-975">
-</span><span id="line-976">
 <div class="viewcode-block" id="Tracker">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.Tracker">[docs]</a>
-</span><span id="line-977"><span class="k">class</span><span class="w"> </span><span class="nc">Tracker</span><span class="p">:</span>
-</span><span id="line-978"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-979"><span class="sd">    Tracks the attribute access right after `start_track` is set to True.</span>
-</span><span id="line-980">
-</span><span id="line-981"><span class="sd">    Add this to __metaclass__ for any class that you need to track attributes for given a</span>
-</span><span id="line-982"><span class="sd">    target method.</span>
-</span><span id="line-983"><span class="sd">    """</span>
-</span><span id="line-984">
-</span><span id="line-985">    <span class="n">start_track</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="line-986">
-</span><span id="line-987">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="line-988">        <span class="bp">self</span><span class="o">.</span><span class="n">attr_used</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-989">        <span class="bp">self</span><span class="o">.</span><span class="n">attrs_to_ignore</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-990">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span id="line-991">
-</span><span id="line-992">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-</span><span id="line-993"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-994"><span class="sd">        Inspect getter for tracking the attributes accessed.</span>
-</span><span id="line-995"><span class="sd">        """</span>
-</span><span id="line-996">        <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"on_access"</span><span class="p">]:</span>
-</span><span id="line-997">            <span class="bp">self</span><span class="o">.</span><span class="n">on_access</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-</span><span id="line-998">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-</span><span id="line-999">
-</span><span id="line-1000">    <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-</span><span id="line-1001"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-1002"><span class="sd">        Inspect setter for tracking the attributes accessed.</span>
-</span><span id="line-1003"><span class="sd">        """</span>
-</span><span id="line-1004">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_track</span><span class="p">:</span>
-</span><span id="line-1005">            <span class="bp">self</span><span class="o">.</span><span class="n">on_access</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-</span><span id="line-1006">
-</span><span id="line-1007">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="line-1008">
+</span><span id="line-976"><span class="k">class</span><span class="w"> </span><span class="nc">Tracker</span><span class="p">:</span>
+</span><span id="line-977"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-978"><span class="sd">    Tracks the attribute access right after `start_track` is set to True.</span>
+</span><span id="line-979">
+</span><span id="line-980"><span class="sd">    Add this to __metaclass__ for any class that you need to track attributes for given a</span>
+</span><span id="line-981"><span class="sd">    target method.</span>
+</span><span id="line-982"><span class="sd">    """</span>
+</span><span id="line-983">
+</span><span id="line-984">    <span class="n">start_track</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="line-985">
+</span><span id="line-986">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-987">        <span class="bp">self</span><span class="o">.</span><span class="n">attr_used</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-988">        <span class="bp">self</span><span class="o">.</span><span class="n">attrs_to_ignore</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-989">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="line-990">
+</span><span id="line-991">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+</span><span id="line-992"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-993"><span class="sd">        Inspect getter for tracking the attributes accessed.</span>
+</span><span id="line-994"><span class="sd">        """</span>
+</span><span id="line-995">        <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"on_access"</span><span class="p">]:</span>
+</span><span id="line-996">            <span class="bp">self</span><span class="o">.</span><span class="n">on_access</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span><span id="line-997">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span><span id="line-998">
+</span><span id="line-999">    <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span id="line-1000"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-1001"><span class="sd">        Inspect setter for tracking the attributes accessed.</span>
+</span><span id="line-1002"><span class="sd">        """</span>
+</span><span id="line-1003">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_track</span><span class="p">:</span>
+</span><span id="line-1004">            <span class="bp">self</span><span class="o">.</span><span class="n">on_access</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span><span id="line-1005">
+</span><span id="line-1006">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="line-1007">
 <div class="viewcode-block" id="Tracker.on_access">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.Tracker.on_access">[docs]</a>
-</span><span id="line-1009">    <span class="k">def</span><span class="w"> </span><span class="nf">on_access</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="line-1010"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-1011"><span class="sd">        on attribute access, record attribute if and only if its not from</span>
-</span><span id="line-1012"><span class="sd">        core attribute or `attrs_to_ignore` set to class.</span>
-</span><span id="line-1013"><span class="sd">        """</span>
-</span><span id="line-1014">        <span class="k">if</span> <span class="p">(</span>
-</span><span id="line-1015">            <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"start_track"</span><span class="p">,</span> <span class="s2">"attr_used"</span><span class="p">,</span> <span class="s2">"on_access"</span><span class="p">,</span> <span class="s2">"attrs_to_ignore"</span><span class="p">]</span>
-</span><span id="line-1016">            <span class="ow">or</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs_to_ignore</span>
-</span><span id="line-1017">        <span class="p">):</span>
-</span><span id="line-1018">            <span class="k">return</span>
-</span><span id="line-1019">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_track</span><span class="p">:</span>
-</span><span id="line-1020">            <span class="bp">self</span><span class="o">.</span><span class="n">attr_used</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+</span><span id="line-1008">    <span class="k">def</span><span class="w"> </span><span class="nf">on_access</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</span><span id="line-1009"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-1010"><span class="sd">        on attribute access, record attribute if and only if its not from</span>
+</span><span id="line-1011"><span class="sd">        core attribute or `attrs_to_ignore` set to class.</span>
+</span><span id="line-1012"><span class="sd">        """</span>
+</span><span id="line-1013">        <span class="k">if</span> <span class="p">(</span>
+</span><span id="line-1014">            <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"start_track"</span><span class="p">,</span> <span class="s2">"attr_used"</span><span class="p">,</span> <span class="s2">"on_access"</span><span class="p">,</span> <span class="s2">"attrs_to_ignore"</span><span class="p">]</span>
+</span><span id="line-1015">            <span class="ow">or</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs_to_ignore</span>
+</span><span id="line-1016">        <span class="p">):</span>
+</span><span id="line-1017">            <span class="k">return</span>
+</span><span id="line-1018">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_track</span><span class="p">:</span>
+</span><span id="line-1019">            <span class="bp">self</span><span class="o">.</span><span class="n">attr_used</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
 </div>
 
+</span><span id="line-1020">
 </span><span id="line-1021">
-</span><span id="line-1022">
 <div class="viewcode-block" id="start_tracking">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.start_tracking">[docs]</a>
-</span><span id="line-1023"><span class="nd">@contextmanager</span>
-</span><span id="line-1024"><span class="k">def</span><span class="w"> </span><span class="nf">start_tracking</span><span class="p">(</span><span class="n">tracker_instance</span><span class="p">):</span>
-</span><span id="line-1025"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-1026"><span class="sd">    Ctx manager to gracefully start/stop tracking.</span>
-</span><span id="line-1027"><span class="sd">    """</span>
-</span><span id="line-1028">    <span class="n">tracker_instance</span><span class="o">.</span><span class="n">start_track</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="line-1029">    <span class="k">yield</span> <span class="n">tracker_instance</span>
-</span><span id="line-1030">    <span class="n">tracker_instance</span><span class="o">.</span><span class="n">start_track</span> <span class="o">=</span> <span class="kc">False</span></div>
+</span><span id="line-1022"><span class="nd">@contextmanager</span>
+</span><span id="line-1023"><span class="k">def</span><span class="w"> </span><span class="nf">start_tracking</span><span class="p">(</span><span class="n">tracker_instance</span><span class="p">):</span>
+</span><span id="line-1024"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-1025"><span class="sd">    Ctx manager to gracefully start/stop tracking.</span>
+</span><span id="line-1026"><span class="sd">    """</span>
+</span><span id="line-1027">    <span class="n">tracker_instance</span><span class="o">.</span><span class="n">start_track</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="line-1028">    <span class="k">yield</span> <span class="n">tracker_instance</span>
+</span><span id="line-1029">    <span class="n">tracker_instance</span><span class="o">.</span><span class="n">start_track</span> <span class="o">=</span> <span class="kc">False</span></div>
 
+</span><span id="line-1030">
 </span><span id="line-1031">
-</span><span id="line-1032">
 <div class="viewcode-block" id="attrs_used_by_method_computation">
 <a class="viewcode-back" href="../../_autosummary/i2.footprints.html#i2.footprints.attrs_used_by_method_computation">[docs]</a>
-</span><span id="line-1033"><span class="k">def</span><span class="w"> </span><span class="nf">attrs_used_by_method_computation</span><span class="p">(</span>
-</span><span id="line-1034">    <span class="n">cls_method</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span>
-</span><span id="line-1035"><span class="p">):</span>
-</span><span id="line-1036"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-1037"><span class="sd">    Tracks the access to attributes within an execution.</span>
-</span><span id="line-1038"><span class="sd">    """</span>
-</span><span id="line-1039">    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-1040">        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-1041">    <span class="k">if</span> <span class="n">method_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-1042">        <span class="n">method_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-1043">
-</span><span id="line-1044">    <span class="n">method_class</span><span class="p">,</span> <span class="n">method_name</span> <span class="o">=</span> <span class="n">cls_and_method_name_of_method</span><span class="p">(</span><span class="n">cls_method</span><span class="p">)</span>
-</span><span id="line-1045">    <span class="n">tracker</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span>
-</span><span id="line-1046">        <span class="s2">"Tracker"</span><span class="p">,</span>
-</span><span id="line-1047">        <span class="p">(</span><span class="n">Tracker</span><span class="p">,</span> <span class="n">method_class</span><span class="p">),</span>
-</span><span id="line-1048">        <span class="nb">dict</span><span class="p">(</span><span class="n">method_class</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="o">**</span><span class="n">Tracker</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">),</span>
-</span><span id="line-1049">    <span class="p">)(</span><span class="o">**</span><span class="n">init_kwargs</span><span class="p">)</span>
-</span><span id="line-1050">    <span class="n">tracker</span><span class="o">.</span><span class="n">attrs_to_ignore</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="line-1051">        <span class="n">func</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">tracker</span><span class="p">)</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">func</span><span class="p">))</span>
-</span><span id="line-1052">    <span class="p">]</span>
-</span><span id="line-1053">
-</span><span id="line-1054">    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
-</span><span id="line-1055">        <span class="c1"># Now, we want to track attributes.</span>
-</span><span id="line-1056">        <span class="k">with</span> <span class="n">start_tracking</span><span class="p">(</span><span class="n">tracker</span><span class="p">):</span>
-</span><span id="line-1057">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cls_method</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
-</span><span id="line-1058">                <span class="n">candidate_method</span> <span class="o">=</span> <span class="n">cls_method</span><span class="o">.</span><span class="n">fget</span>
-</span><span id="line-1059">                <span class="n">candidate_method</span><span class="p">(</span><span class="n">tracker</span><span class="p">)</span>
-</span><span id="line-1060">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-1061">                <span class="n">candidate_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
-</span><span id="line-1062">                <span class="n">candidate_method</span><span class="p">(</span><span class="o">**</span><span class="n">method_kwargs</span><span class="p">)</span>
-</span><span id="line-1063">
-</span><span id="line-1064">        <span class="k">return</span> <span class="n">_process_duplicates</span><span class="p">(</span>
-</span><span id="line-1065">            <span class="n">tracker</span><span class="o">.</span><span class="n">attr_used</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="n">remove_duplicates</span>
-</span><span id="line-1066">        <span class="p">)</span>
-</span><span id="line-1067">
-</span><span id="line-1068">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-1069">        <span class="c1"># Error class/obj do not have that method.</span>
-</span><span id="line-1070">        <span class="k">return</span> <span class="mi">1</span></div>
+</span><span id="line-1032"><span class="k">def</span><span class="w"> </span><span class="nf">attrs_used_by_method_computation</span><span class="p">(</span>
+</span><span id="line-1033">    <span class="n">cls_method</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span>
+</span><span id="line-1034"><span class="p">):</span>
+</span><span id="line-1035"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-1036"><span class="sd">    Tracks the access to attributes within an execution.</span>
+</span><span id="line-1037"><span class="sd">    """</span>
+</span><span id="line-1038">    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-1039">        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-1040">    <span class="k">if</span> <span class="n">method_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-1041">        <span class="n">method_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-1042">
+</span><span id="line-1043">    <span class="n">method_class</span><span class="p">,</span> <span class="n">method_name</span> <span class="o">=</span> <span class="n">cls_and_method_name_of_method</span><span class="p">(</span><span class="n">cls_method</span><span class="p">)</span>
+</span><span id="line-1044">    <span class="n">tracker</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span>
+</span><span id="line-1045">        <span class="s2">"Tracker"</span><span class="p">,</span>
+</span><span id="line-1046">        <span class="p">(</span><span class="n">Tracker</span><span class="p">,</span> <span class="n">method_class</span><span class="p">),</span>
+</span><span id="line-1047">        <span class="nb">dict</span><span class="p">(</span><span class="n">method_class</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="o">**</span><span class="n">Tracker</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">),</span>
+</span><span id="line-1048">    <span class="p">)(</span><span class="o">**</span><span class="n">init_kwargs</span><span class="p">)</span>
+</span><span id="line-1049">    <span class="n">tracker</span><span class="o">.</span><span class="n">attrs_to_ignore</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="line-1050">        <span class="n">func</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">tracker</span><span class="p">)</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">func</span><span class="p">))</span>
+</span><span id="line-1051">    <span class="p">]</span>
+</span><span id="line-1052">
+</span><span id="line-1053">    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
+</span><span id="line-1054">        <span class="c1"># Now, we want to track attributes.</span>
+</span><span id="line-1055">        <span class="k">with</span> <span class="n">start_tracking</span><span class="p">(</span><span class="n">tracker</span><span class="p">):</span>
+</span><span id="line-1056">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cls_method</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
+</span><span id="line-1057">                <span class="n">candidate_method</span> <span class="o">=</span> <span class="n">cls_method</span><span class="o">.</span><span class="n">fget</span>
+</span><span id="line-1058">                <span class="n">candidate_method</span><span class="p">(</span><span class="n">tracker</span><span class="p">)</span>
+</span><span id="line-1059">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-1060">                <span class="n">candidate_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
+</span><span id="line-1061">                <span class="n">candidate_method</span><span class="p">(</span><span class="o">**</span><span class="n">method_kwargs</span><span class="p">)</span>
+</span><span id="line-1062">
+</span><span id="line-1063">        <span class="k">return</span> <span class="n">_process_duplicates</span><span class="p">(</span>
+</span><span id="line-1064">            <span class="n">tracker</span><span class="o">.</span><span class="n">attr_used</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="n">remove_duplicates</span>
+</span><span id="line-1065">        <span class="p">)</span>
+</span><span id="line-1066">
+</span><span id="line-1067">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-1068">        <span class="c1"># Error class/obj do not have that method.</span>
+</span><span id="line-1069">        <span class="k">return</span> <span class="mi">1</span></div>
 
+</span><span id="line-1070">
 </span><span id="line-1071">
-</span><span id="line-1072">
-</span><span id="line-1073"><span class="c1"># def test_attrs_used_by_method():</span>
-</span><span id="line-1074"><span class="c1">#     def func(obj):</span>
-</span><span id="line-1075"><span class="c1">#         return obj.a + obj.b</span>
-</span><span id="line-1076"><span class="c1">#</span>
-</span><span id="line-1077"><span class="c1">#     class A:</span>
-</span><span id="line-1078"><span class="c1">#         e = 2</span>
-</span><span id="line-1079"><span class="c1">#</span>
-</span><span id="line-1080"><span class="c1">#         def __init__(self, a=0, b=0, c=1, d=10):</span>
-</span><span id="line-1081"><span class="c1">#             self.a = a</span>
-</span><span id="line-1082"><span class="c1">#             self.b = b</span>
-</span><span id="line-1083"><span class="c1">#             self.c = c</span>
-</span><span id="line-1084"><span class="c1">#             self.d = d</span>
-</span><span id="line-1085"><span class="c1">#</span>
-</span><span id="line-1086"><span class="c1">#         def target_func(self, x=3):</span>
-</span><span id="line-1087"><span class="c1">#             t = func(self)</span>
-</span><span id="line-1088"><span class="c1">#             tt = self.other_method(t)</span>
-</span><span id="line-1089"><span class="c1">#             return x * tt / self.e</span>
-</span><span id="line-1090"><span class="c1">#</span>
-</span><span id="line-1091"><span class="c1">#         target_method = target_func</span>
-</span><span id="line-1092"><span class="c1">#</span>
-</span><span id="line-1093"><span class="c1">#         def other_method(self, x=1):</span>
-</span><span id="line-1094"><span class="c1">#             return self.c * x</span>
-</span><span id="line-1095"><span class="c1">#</span>
-</span><span id="line-1096"><span class="c1">#     from i2.footprints import attrs_used_by_method</span>
-</span><span id="line-1097"><span class="c1">#</span>
-</span><span id="line-1098"><span class="c1">#     print(attrs_used_by_method(A.target_func))</span>
+</span><span id="line-1072"><span class="c1"># def test_attrs_used_by_method():</span>
+</span><span id="line-1073"><span class="c1">#     def func(obj):</span>
+</span><span id="line-1074"><span class="c1">#         return obj.a + obj.b</span>
+</span><span id="line-1075"><span class="c1">#</span>
+</span><span id="line-1076"><span class="c1">#     class A:</span>
+</span><span id="line-1077"><span class="c1">#         e = 2</span>
+</span><span id="line-1078"><span class="c1">#</span>
+</span><span id="line-1079"><span class="c1">#         def __init__(self, a=0, b=0, c=1, d=10):</span>
+</span><span id="line-1080"><span class="c1">#             self.a = a</span>
+</span><span id="line-1081"><span class="c1">#             self.b = b</span>
+</span><span id="line-1082"><span class="c1">#             self.c = c</span>
+</span><span id="line-1083"><span class="c1">#             self.d = d</span>
+</span><span id="line-1084"><span class="c1">#</span>
+</span><span id="line-1085"><span class="c1">#         def target_func(self, x=3):</span>
+</span><span id="line-1086"><span class="c1">#             t = func(self)</span>
+</span><span id="line-1087"><span class="c1">#             tt = self.other_method(t)</span>
+</span><span id="line-1088"><span class="c1">#             return x * tt / self.e</span>
+</span><span id="line-1089"><span class="c1">#</span>
+</span><span id="line-1090"><span class="c1">#         target_method = target_func</span>
+</span><span id="line-1091"><span class="c1">#</span>
+</span><span id="line-1092"><span class="c1">#         def other_method(self, x=1):</span>
+</span><span id="line-1093"><span class="c1">#             return self.c * x</span>
+</span><span id="line-1094"><span class="c1">#</span>
+</span><span id="line-1095"><span class="c1">#     from i2.footprints import attrs_used_by_method</span>
+</span><span id="line-1096"><span class="c1">#</span>
+</span><span id="line-1097"><span class="c1">#     print(attrs_used_by_method(A.target_func))</span>
 </span></code></pre></div>
     </div></div>
           </main>
@@ -1352,7 +1351,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=c75a234e"></script>
+    <script src="../../_static/documentation_options.js?v=6322a757"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

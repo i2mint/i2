@@ -340,9 +340,9 @@
 </span><span id="line-155">    <span class="k">if</span> <span class="n">aka</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-156">        <span class="nb">setattr</span><span class="p">(</span><span class="n">new_tp</span><span class="p">,</span> <span class="s2">"_aka"</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">aka</span><span class="p">))</span>
 </span><span id="line-157">    <span class="k">if</span> <span class="n">assign_to_globals</span><span class="p">:</span>
-</span><span id="line-158">        <span class="nb">globals</span><span class="p">()[</span>
-</span><span id="line-159">            <span class="n">name</span>
-</span><span id="line-160">        <span class="p">]</span> <span class="o">=</span> <span class="n">new_tp</span>  <span class="c1"># not sure how kosher this is... Should only use at top level of module, for sure!</span>
+</span><span id="line-158">        <span class="nb">globals</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-159">            <span class="n">new_tp</span>  <span class="c1"># not sure how kosher this is... Should only use at top level of module, for sure!</span>
+</span><span id="line-160">        <span class="p">)</span>
 </span><span id="line-161">    <span class="k">return</span> <span class="n">new_tp</span></div>
 
 </span><span id="line-162">
@@ -668,7 +668,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=c75a234e"></script>
+    <script src="../../_static/documentation_options.js?v=6322a757"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

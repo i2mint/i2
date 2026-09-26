@@ -1868,6 +1868,20 @@ See examples below:</p>
 </span><span id="line-5"><span class="go">&lt;Sig (a=1, b=2, c=3, *, x: int, y=2, z=3, **extra_apple_options)&gt;</span>
 </span></code></pre></div>
 </div>
+<p>A variadic positional (<code class="docutils literal notranslate"><span class="pre">*args</span></code>) of the source is not injected: the target can
+only forward keyword arguments through its <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>, so there is no way for
+a caller of the target to fill it (see i2mint/i2#78).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">pear</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_pear_options</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="n">z</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@replace_kwargs_using</span><span class="p">(</span><span class="n">pear</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">compote</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">compote_kwargs</span><span class="p">):</span>
+</span><span id="line-5"><span class="gp">... </span>    <span class="k">return</span> <span class="n">b</span> <span class="o">+</span> <span class="n">pear</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">compote_kwargs</span><span class="p">)</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">(</span><span class="n">compote</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">&lt;Sig (a, b, *, z=3, **extra_pear_options)&gt;</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="n">compote</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</span><span id="line-9"><span class="go">7</span>
+</span></code></pre></div>
+</div>
 <dl class="field-list simple">
 </dl>
 </dd></dl>
@@ -2535,6 +2549,15 @@ implementation though!</p>
 </span><span id="line-2"><span class="go">&lt;Signature (*args, **kwargs)&gt;</span>
 </span></code></pre></div>
 </div>
+<p>Only what Python’s parameter order rules allow is made positional-or-keyword: a
+required keyword-only parameter that comes after a parameter with a default has
+to stay keyword-only, and so do all the parameters after it (see i2mint/i2#93):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">all_pk_signature</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">:</span> <span class="kc">None</span><span class="p">))</span>
+</span><span id="line-2"><span class="go">&lt;Sig (a=1, *, b, c=2)&gt;</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">all_pk_signature</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">:</span> <span class="kc">None</span><span class="p">))</span>
+</span><span id="line-4"><span class="go">&lt;Sig (a, *args, b, c=2)&gt;</span>
+</span></code></pre></div>
+</div>
 <p>It works with <code class="code docutils literal notranslate"><span class="pre">Sig</span></code> too (since Sig is a Signature), and maintains it’s other
 attributes (like name).</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">sig</span> <span class="o">=</span> <span class="n">all_pk_signature</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">bar</span><span class="p">))</span>
@@ -2770,6 +2793,18 @@ given as extra keyword arguments:</p>
 </span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">hh</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">z</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="n">h</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
+<p>A required keyword-only param after the variadic positional has to stay
+keyword-only, since <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y=(),</span> <span class="pre">z)</span></code> isn’t a valid signature (see
+<code class="docutils literal notranslate"><span class="pre">all_pk_signature</span></code> and i2mint/i2#93):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">x</span><span class="si">=}</span><span class="s2">, </span><span class="si">{</span><span class="n">y</span><span class="si">=}</span><span class="s2">, </span><span class="si">{</span><span class="n">z</span><span class="si">=}</span><span class="s2">"</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">hh</span> <span class="o">=</span> <span class="n">ch_func_to_all_pk</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">hh</span><span class="p">))</span>
+</span><span id="line-5"><span class="go">(x, y=(), *, z)</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">hh</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">z</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">'x=1, y=(2, 3), z=4'</span>
+</span></code></pre></div>
+</div>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.signatures.ch_signature_to_all_pk">
@@ -2796,6 +2831,15 @@ implementation though!</p>
 <p>But note that the variadic arguments <code class="docutils literal notranslate"><span class="pre">*args</span></code> and <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> remain variadic:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">all_pk_signature</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">bar</span><span class="p">))</span>
 </span><span id="line-2"><span class="go">&lt;Signature (*args, **kwargs)&gt;</span>
+</span></code></pre></div>
+</div>
+<p>Only what Python’s parameter order rules allow is made positional-or-keyword: a
+required keyword-only parameter that comes after a parameter with a default has
+to stay keyword-only, and so do all the parameters after it (see i2mint/i2#93):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">all_pk_signature</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">:</span> <span class="kc">None</span><span class="p">))</span>
+</span><span id="line-2"><span class="go">&lt;Sig (a=1, *, b, c=2)&gt;</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">all_pk_signature</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">:</span> <span class="kc">None</span><span class="p">))</span>
+</span><span id="line-4"><span class="go">&lt;Sig (a, *args, b, c=2)&gt;</span>
 </span></code></pre></div>
 </div>
 <p>It works with <code class="code docutils literal notranslate"><span class="pre">Sig</span></code> too (since Sig is a Signature), and maintains it’s other
@@ -2889,6 +2933,18 @@ configuration repeatedly.</p>
 </span><span id="line-9"><span class="go">&lt;Sig (a, args=(), *, bar=None, **kwargs)&gt;</span>
 </span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">bar</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">hello</span><span class="o">=</span><span class="s2">"world"</span><span class="p">)</span>
 </span><span id="line-11"><span class="go">"a=1, args=(2, 3), bar=4, kwargs={'hello': 'world'}"</span>
+</span></code></pre></div>
+</div>
+<p>The new function accepts whatever its signature says it does: the tupled
+parameter can be given by keyword, and the defaults of any positional parameters
+skipped before it are filled in (see i2mint/i2#93):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">args</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">tupled_g</span> <span class="o">=</span> <span class="n">tuple_the_args</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">tupled_g</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</span><span id="line-5"><span class="go">(1, 1, (2, 3))</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">tupled_g</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">(1, 1, ())</span>
 </span></code></pre></div>
 </div>
 </dd></dl>
@@ -4158,6 +4214,20 @@ See examples below:</p>
 </span><span id="line-5"><span class="go">&lt;Sig (a=1, b=2, c=3, *, x: int, y=2, z=3, **extra_apple_options)&gt;</span>
 </span></code></pre></div>
 </div>
+<p>A variadic positional (<code class="docutils literal notranslate"><span class="pre">*args</span></code>) of the source is not injected: the target can
+only forward keyword arguments through its <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>, so there is no way for
+a caller of the target to fill it (see i2mint/i2#78).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">pear</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_pear_options</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="n">z</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@replace_kwargs_using</span><span class="p">(</span><span class="n">pear</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">compote</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">compote_kwargs</span><span class="p">):</span>
+</span><span id="line-5"><span class="gp">... </span>    <span class="k">return</span> <span class="n">b</span> <span class="o">+</span> <span class="n">pear</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">compote_kwargs</span><span class="p">)</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span><span class="p">(</span><span class="n">compote</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">&lt;Sig (a, b, *, z=3, **extra_pear_options)&gt;</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="n">compote</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</span><span id="line-9"><span class="go">7</span>
+</span></code></pre></div>
+</div>
 <dl class="field-list simple">
 </dl>
 </dd></dl>
@@ -4568,7 +4638,7 @@ or any keyword arguments that <code class="code docutils literal notranslate"><s
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=c75a234e"></script>
+<script src="../_static/documentation_options.js?v=6322a757"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

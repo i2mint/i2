@@ -401,116 +401,114 @@
 </span><span id="line-207"><span class="k">class</span><span class="w"> </span><span class="nc">TypedBasedOutIoTrans</span><span class="p">(</span><span class="n">IoTrans</span><span class="p">):</span>
 </span><span id="line-208"><span class="w">    </span><span class="sd">"""Transform output according to it's type."""</span>
 </span><span id="line-209">
-</span><span id="line-210">    <span class="n">trans_func_for_type</span><span class="p">:</span> <span class="p">(</span>
-</span><span id="line-211">        <span class="n">Mapping</span>
-</span><span id="line-212">    <span class="p">)</span> <span class="o">=</span> <span class="p">()</span>  <span class="c1"># Todo: Want empty mapping as default (use frozendict or __post_init__?)</span>
-</span><span id="line-213">    <span class="n">dflt_trans_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-214">
-</span><span id="line-215">    <span class="k">def</span><span class="w"> </span><span class="nf">out_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-</span><span id="line-216">        <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans_func_for_type</span><span class="p">:</span>
-</span><span id="line-217">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
-</span><span id="line-218">                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans_func_for_type</span><span class="p">[</span><span class="n">typ</span><span class="p">](</span><span class="n">argval</span><span class="p">)</span>
-</span><span id="line-219">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
-</span><span id="line-220">            <span class="bp">self</span><span class="o">.</span><span class="n">dflt_trans_func</span><span class="p">,</span> <span class="n">Callable</span>
-</span><span id="line-221">        <span class="p">):</span>  <span class="c1"># Question: use callable() instead? What's the difference?</span>
-</span><span id="line-222">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dflt_trans_func</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span></div>
+</span><span id="line-210">    <span class="n">trans_func_for_type</span><span class="p">:</span> <span class="n">Mapping</span> <span class="o">=</span> <span class="p">()</span>  <span class="c1"># Todo: Want empty mapping as default (use frozendict or __post_init__?)</span>
+</span><span id="line-211">    <span class="n">dflt_trans_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-212">
+</span><span id="line-213">    <span class="k">def</span><span class="w"> </span><span class="nf">out_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+</span><span id="line-214">        <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans_func_for_type</span><span class="p">:</span>
+</span><span id="line-215">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
+</span><span id="line-216">                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans_func_for_type</span><span class="p">[</span><span class="n">typ</span><span class="p">](</span><span class="n">argval</span><span class="p">)</span>
+</span><span id="line-217">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+</span><span id="line-218">            <span class="bp">self</span><span class="o">.</span><span class="n">dflt_trans_func</span><span class="p">,</span> <span class="n">Callable</span>
+</span><span id="line-219">        <span class="p">):</span>  <span class="c1"># Question: use callable() instead? What's the difference?</span>
+</span><span id="line-220">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dflt_trans_func</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span></div>
 
-</span><span id="line-223">
-</span><span id="line-224">
+</span><span id="line-221">
+</span><span id="line-222">
 <div class="viewcode-block" id="pickle_out_trans">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.pickle_out_trans">[docs]</a>
-</span><span id="line-225"><span class="k">def</span><span class="w"> </span><span class="nf">pickle_out_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-</span><span id="line-226"><span class="w">    </span><span class="sd">"""Output transformer that pickles the value (``pickle.dumps``)."""</span>
-</span><span id="line-227">    <span class="k">return</span> <span class="n">dumps</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span></div>
+</span><span id="line-223"><span class="k">def</span><span class="w"> </span><span class="nf">pickle_out_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+</span><span id="line-224"><span class="w">    </span><span class="sd">"""Output transformer that pickles the value (``pickle.dumps``)."""</span>
+</span><span id="line-225">    <span class="k">return</span> <span class="n">dumps</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span></div>
 
-</span><span id="line-228">
-</span><span id="line-229">
-</span><span id="line-230"><span class="n">PickleFallbackTypedBasedOutIoTrans</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
-</span><span id="line-231">    <span class="n">TypedBasedOutIoTrans</span><span class="p">,</span> <span class="n">dflt_trans_func</span><span class="o">=</span><span class="n">dumps</span>
-</span><span id="line-232"><span class="p">)</span>
-</span><span id="line-233">
-</span><span id="line-234"><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-</span><span id="line-235"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span id="line-236">
-</span><span id="line-237">
+</span><span id="line-226">
+</span><span id="line-227">
+</span><span id="line-228"><span class="n">PickleFallbackTypedBasedOutIoTrans</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+</span><span id="line-229">    <span class="n">TypedBasedOutIoTrans</span><span class="p">,</span> <span class="n">dflt_trans_func</span><span class="o">=</span><span class="n">dumps</span>
+</span><span id="line-230"><span class="p">)</span>
+</span><span id="line-231">
+</span><span id="line-232"><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="line-233"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="line-234">
+</span><span id="line-235">
 <div class="viewcode-block" id="cast_to_jdict">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.cast_to_jdict">[docs]</a>
-</span><span id="line-238"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-</span><span id="line-239"><span class="w">    </span><span class="sd">"""Tries to cast to a json-friendly dictionary.</span>
-</span><span id="line-240">
-</span><span id="line-241"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('3')</span>
+</span><span id="line-236"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span id="line-237"><span class="w">    </span><span class="sd">"""Tries to cast to a json-friendly dictionary.</span>
+</span><span id="line-238">
+</span><span id="line-239"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('3')</span>
+</span><span id="line-240"><span class="sd">    [3]</span>
+</span><span id="line-241"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[3]")</span>
 </span><span id="line-242"><span class="sd">    [3]</span>
-</span><span id="line-243"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[3]")</span>
-</span><span id="line-244"><span class="sd">    [3]</span>
-</span><span id="line-245"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[4,2]")</span>
-</span><span id="line-246"><span class="sd">    [4, 2]</span>
-</span><span id="line-247"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
-</span><span id="line-248"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
-</span><span id="line-249"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('{"here": "is", "a": {"nested": "json"}, "with": [null, true, false, 1, 2.3]}')</span>
-</span><span id="line-250"><span class="sd">    {'here': 'is', 'a': {'nested': 'json'}, 'with': [None, True, False, 1, 2.3]}</span>
+</span><span id="line-243"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[4,2]")</span>
+</span><span id="line-244"><span class="sd">    [4, 2]</span>
+</span><span id="line-245"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
+</span><span id="line-246"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
+</span><span id="line-247"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('{"here": "is", "a": {"nested": "json"}, "with": [null, true, false, 1, 2.3]}')</span>
+</span><span id="line-248"><span class="sd">    {'here': 'is', 'a': {'nested': 'json'}, 'with': [None, True, False, 1, 2.3]}</span>
+</span><span id="line-249">
+</span><span id="line-250"><span class="sd">    And csvs too:</span>
 </span><span id="line-251">
-</span><span id="line-252"><span class="sd">    And csvs too:</span>
-</span><span id="line-253">
-</span><span id="line-254"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
-</span><span id="line-255"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
-</span><span id="line-256"><span class="sd">    """</span>
-</span><span id="line-257">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-258">        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-259">        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="line-260">            <span class="n">first_char</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="line-261">            <span class="k">if</span> <span class="n">first_char</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"["</span><span class="p">,</span> <span class="s2">"{"</span><span class="p">}:</span>
+</span><span id="line-252"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
+</span><span id="line-253"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
+</span><span id="line-254"><span class="sd">    """</span>
+</span><span id="line-255">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-256">        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-257">        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+</span><span id="line-258">            <span class="n">first_char</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="line-259">            <span class="k">if</span> <span class="n">first_char</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"["</span><span class="p">,</span> <span class="s2">"{"</span><span class="p">}:</span>
+</span><span id="line-260">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-261">            <span class="k">elif</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"true"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">,</span> <span class="s2">"null"</span><span class="p">]:</span>
 </span><span id="line-262">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-263">            <span class="k">elif</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"true"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">,</span> <span class="s2">"null"</span><span class="p">]:</span>
-</span><span id="line-264">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-265">            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-</span><span id="line-266">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-267">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-268">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
-</span><span id="line-269">                    <span class="s2">"["</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s2">"]"</span>
-</span><span id="line-270">                <span class="p">)</span>  <span class="c1"># wrap in brackets and call json.loads</span>
-</span><span id="line-271">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-272">            <span class="k">return</span> <span class="s2">""</span>
-</span><span id="line-273">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-274">        <span class="k">return</span> <span class="n">value</span></div>
+</span><span id="line-263">            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span id="line-264">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-265">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-266">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+</span><span id="line-267">                    <span class="s2">"["</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s2">"]"</span>
+</span><span id="line-268">                <span class="p">)</span>  <span class="c1"># wrap in brackets and call json.loads</span>
+</span><span id="line-269">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-270">            <span class="k">return</span> <span class="s2">""</span>
+</span><span id="line-271">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-272">        <span class="k">return</span> <span class="n">value</span></div>
 
-</span><span id="line-275">
-</span><span id="line-276">
+</span><span id="line-273">
+</span><span id="line-274">
 <div class="viewcode-block" id="cast_to_list">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.cast_to_list">[docs]</a>
-</span><span id="line-277"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-</span><span id="line-278"><span class="w">    </span><span class="sd">"""Tries to case to a list (with json friendly elements)</span>
-</span><span id="line-279">
-</span><span id="line-280"><span class="sd">    &gt;&gt;&gt; cast_to_list('3')</span>
+</span><span id="line-275"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span id="line-276"><span class="w">    </span><span class="sd">"""Tries to case to a list (with json friendly elements)</span>
+</span><span id="line-277">
+</span><span id="line-278"><span class="sd">    &gt;&gt;&gt; cast_to_list('3')</span>
+</span><span id="line-279"><span class="sd">    [3]</span>
+</span><span id="line-280"><span class="sd">    &gt;&gt;&gt; cast_to_list("[3]")</span>
 </span><span id="line-281"><span class="sd">    [3]</span>
-</span><span id="line-282"><span class="sd">    &gt;&gt;&gt; cast_to_list("[3]")</span>
-</span><span id="line-283"><span class="sd">    [3]</span>
-</span><span id="line-284"><span class="sd">    &gt;&gt;&gt; cast_to_list("[4,2]")</span>
-</span><span id="line-285"><span class="sd">    [4, 2]</span>
-</span><span id="line-286"><span class="sd">    &gt;&gt;&gt; cast_to_list('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
-</span><span id="line-287"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
+</span><span id="line-282"><span class="sd">    &gt;&gt;&gt; cast_to_list("[4,2]")</span>
+</span><span id="line-283"><span class="sd">    [4, 2]</span>
+</span><span id="line-284"><span class="sd">    &gt;&gt;&gt; cast_to_list('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
+</span><span id="line-285"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
+</span><span id="line-286">
+</span><span id="line-287"><span class="sd">    And csvs too:</span>
 </span><span id="line-288">
-</span><span id="line-289"><span class="sd">    And csvs too:</span>
-</span><span id="line-290">
-</span><span id="line-291"><span class="sd">    &gt;&gt;&gt; cast_to_list('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
-</span><span id="line-292"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
-</span><span id="line-293"><span class="sd">    """</span>
-</span><span id="line-294">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-295">        <span class="n">value</span> <span class="o">=</span> <span class="n">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-296">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-</span><span id="line-297">        <span class="k">return</span> <span class="n">value</span>
-</span><span id="line-298">    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"tolist"</span><span class="p">):</span>  <span class="c1"># meant for numpy arrays</span>
-</span><span id="line-299">        <span class="c1"># what other potential attributes to check for?</span>
-</span><span id="line-300">        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-</span><span id="line-301">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-302">        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
-</span><span id="line-303">            <span class="n">value</span>
-</span><span id="line-304">        <span class="p">)</span>  <span class="c1"># will work with set, tuple, and other iterables (not recursively though: just level 0)</span></div>
+</span><span id="line-289"><span class="sd">    &gt;&gt;&gt; cast_to_list('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
+</span><span id="line-290"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
+</span><span id="line-291"><span class="sd">    """</span>
+</span><span id="line-292">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-293">        <span class="n">value</span> <span class="o">=</span> <span class="n">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-294">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+</span><span id="line-295">        <span class="k">return</span> <span class="n">value</span>
+</span><span id="line-296">    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"tolist"</span><span class="p">):</span>  <span class="c1"># meant for numpy arrays</span>
+</span><span id="line-297">        <span class="c1"># what other potential attributes to check for?</span>
+</span><span id="line-298">        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</span><span id="line-299">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-300">        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+</span><span id="line-301">            <span class="n">value</span>
+</span><span id="line-302">        <span class="p">)</span>  <span class="c1"># will work with set, tuple, and other iterables (not recursively though: just level 0)</span></div>
 
-</span><span id="line-305">
-</span><span id="line-306">
-</span><span id="line-307"><span class="c1"># @dataclass</span>
-</span><span id="line-308"><span class="c1"># class PickleFallbackTypedBasedOutIoTrans(TypedBasedOutIoTrans):</span>
-</span><span id="line-309"><span class="c1">#     dflt_trans_func = pickle_out_trans</span>
+</span><span id="line-303">
+</span><span id="line-304">
+</span><span id="line-305"><span class="c1"># @dataclass</span>
+</span><span id="line-306"><span class="c1"># class PickleFallbackTypedBasedOutIoTrans(TypedBasedOutIoTrans):</span>
+</span><span id="line-307"><span class="c1">#     dflt_trans_func = pickle_out_trans</span>
 </span></code></pre></div>
     </div></div>
           </main>
@@ -524,7 +522,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=c75a234e"></script>
+    <script src="../../_static/documentation_options.js?v=6322a757"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

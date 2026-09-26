@@ -1193,9 +1193,9 @@
 </span><span id="line-991"><span class="sd">        '(w:=1) + (x:=2) * (y:=3) ** (z:=4) == 163'</span>
 </span><span id="line-992"><span class="sd">        """</span>
 </span><span id="line-993">        <span class="n">new_to_old_name</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">old_to_new_name</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="line-994">        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_to_old_name</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-</span><span id="line-995">            <span class="n">old_to_new_name</span>
-</span><span id="line-996">        <span class="p">),</span> <span class="sa">f</span><span class="s2">"Inversion is not possible since </span><span class="si">{</span><span class="n">old_to_new_name</span><span class="si">=}</span><span class="s2"> has duplicate values."</span>
+</span><span id="line-994">        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_to_old_name</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">old_to_new_name</span><span class="p">),</span> <span class="p">(</span>
+</span><span id="line-995">            <span class="sa">f</span><span class="s2">"Inversion is not possible since </span><span class="si">{</span><span class="n">old_to_new_name</span><span class="si">=}</span><span class="s2"> has duplicate values."</span>
+</span><span id="line-996">        <span class="p">)</span>
 </span><span id="line-997">        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
 </span><span id="line-998">            <span class="n">wrapped</span><span class="p">,</span>
 </span><span id="line-999">            <span class="n">partial</span><span class="p">(</span><span class="n">Pipe</span><span class="p">(</span><span class="n">items_with_mapped_keys</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="n">key_mapper</span><span class="o">=</span><span class="n">new_to_old_name</span><span class="p">),</span>
@@ -2954,9 +2954,9 @@
 </span><span id="line-2642"><span class="sd">    &lt;i2.Wrap xyz_sum(x, y=SmartDefault(times_two), z=SmartDefault(just_z, 'c'))&gt;</span>
 </span><span id="line-2643"><span class="sd">    """</span>
 </span><span id="line-2644">    <span class="n">names_not_in_func_arguments</span> <span class="o">=</span> <span class="n">smart_defaults</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">names</span>
-</span><span id="line-2645">    <span class="k">assert</span> <span class="p">(</span>
-</span><span id="line-2646">        <span class="ow">not</span> <span class="n">names_not_in_func_arguments</span>
-</span><span id="line-2647">    <span class="p">),</span> <span class="sa">f</span><span class="s2">"These weren't argument names of the </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2"> function: </span><span class="si">{</span><span class="n">names_not_in_func_arguments</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-2645">    <span class="k">assert</span> <span class="ow">not</span> <span class="n">names_not_in_func_arguments</span><span class="p">,</span> <span class="p">(</span>
+</span><span id="line-2646">        <span class="sa">f</span><span class="s2">"These weren't argument names of the </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2"> function: </span><span class="si">{</span><span class="n">names_not_in_func_arguments</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-2647">    <span class="p">)</span>
 </span><span id="line-2648">    <span class="n">kwargs_trans</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
 </span><span id="line-2649">        <span class="n">complete_dict_applying_functions</span><span class="p">,</span>
 </span><span id="line-2650">        <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="n">_only_if_name_missing</span><span class="p">,</span>
@@ -2984,7 +2984,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=c75a234e"></script>
+    <script src="../../_static/documentation_options.js?v=6322a757"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

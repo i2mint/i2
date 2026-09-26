@@ -405,9 +405,9 @@
 </span><span id="line-217">        <span class="c1"># name = f'lambda_{i}'</span>
 </span><span id="line-218">        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">()</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_exclude_names</span><span class="p">:</span>
 </span><span id="line-219">            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-220">            <span class="k">assert</span> <span class="p">(</span>
-</span><span id="line-221">                <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_exclude_names</span>
-</span><span id="line-222">            <span class="p">),</span> <span class="s2">"</span><span class="si">{name}</span><span class="s2"> already used in </span><span class="si">{_exclude_names}</span><span class="s2">!"</span>
+</span><span id="line-220">            <span class="k">assert</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_exclude_names</span><span class="p">,</span> <span class="p">(</span>
+</span><span id="line-221">                <span class="s2">"</span><span class="si">{name}</span><span class="s2"> already used in </span><span class="si">{_exclude_names}</span><span class="s2">!"</span>
+</span><span id="line-222">            <span class="p">)</span>
 </span><span id="line-223">        <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span>
 </span><span id="line-224">        <span class="n">_exclude_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
@@ -1240,7 +1240,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=c75a234e"></script>
+    <script src="../../_static/documentation_options.js?v=6322a757"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

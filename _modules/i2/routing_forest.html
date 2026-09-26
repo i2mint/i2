@@ -484,9 +484,9 @@
 </span><span id="line-296">    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
 </span><span id="line-297"><span class="w">        </span><span class="sd">"""Make a copy of the KeyFuncMapping instance with other as default_factory"""</span>
 </span><span id="line-298">        <span class="n">self_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span id="line-299">        <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span>
-</span><span id="line-300">            <span class="n">other</span>
-</span><span id="line-301">        <span class="p">),</span> <span class="sa">f</span><span class="s2">"Can only add a callable (usually a </span><span class="si">{</span><span class="n">self_type</span><span class="si">}</span><span class="s2"> itself) to a </span><span class="si">{</span><span class="n">self_type</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-299">        <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">other</span><span class="p">),</span> <span class="p">(</span>
+</span><span id="line-300">            <span class="sa">f</span><span class="s2">"Can only add a callable (usually a </span><span class="si">{</span><span class="n">self_type</span><span class="si">}</span><span class="s2"> itself) to a </span><span class="si">{</span><span class="n">self_type</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-301">        <span class="p">)</span>
 </span><span id="line-302">        <span class="k">return</span> <span class="n">self_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">other</span><span class="p">)</span></div>
 
 </span><span id="line-303">
@@ -992,7 +992,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=c75a234e"></script>
+    <script src="../../_static/documentation_options.js?v=6322a757"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
