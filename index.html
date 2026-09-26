@@ -152,6 +152,7 @@
 <p><strong>The documentation, machine-readable</strong>: <a class="reference external" href="https://i2mint.github.io/i2/llms.txt" rel="nofollow noopener"><code class="docutils literal notranslate"><span class="pre">llms.txt</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> indexes every page; <a class="reference external" href="https://i2mint.github.io/i2/i2.md" rel="nofollow noopener"><code class="docutils literal notranslate"><span class="pre">i2.md</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> is the whole documentation in one file; every page has a <code class="docutils literal notranslate"><span class="pre">.md</span></code> twin; <a class="reference external" href="https://i2mint.github.io/i2/objects.inv" rel="nofollow noopener"><code class="docutils literal notranslate"><span class="pre">objects.inv</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> maps symbols to URLs. The full list, with install lines, is on the site’s <a class="reference external" href="https://i2mint.github.io/i2/ai-agents.html" rel="nofollow noopener">For AI agents<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> page.</p>
 <p>If you identify as a dinosaur, the rest of this README is written for you, starting at <a class="reference internal" href="#key-modules-overview">Key Modules Overview</a>.</p>
 
+<p><strong>Working on this repo as an agent?</strong> Read <a class="reference internal" href="#.claude/CLAUDE.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">.claude/CLAUDE.md</span></code></span></a> first: module map, test command, and the rule that any change to a public signature, default or return type needs the dependents’ tests, not just these. The skills above live in <a class="reference internal" href="#.claude/skills"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">.claude/skills/</span></code></span></a>, so Claude Code picks them up in this repo automatically. To install one elsewhere, use <code class="docutils literal notranslate"><span class="pre">gh</span> <span class="pre">skill</span> <span class="pre">install</span> <span class="pre">i2mint/i2</span> <span class="pre">i2-signatures</span> <span class="pre">--allow-hidden-dirs</span> <span class="pre">--agent</span> <span class="pre">claude-code</span></code> (swap in any skill name). Contributors who still type every character themselves: see <a class="reference internal" href="#for-carbon-based-contributors">For carbon-based contributors</a>.</p>
 </section>
 <section id="install">
 <h2>Install<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#install" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#install'">¶</a></h2>
@@ -291,7 +292,7 @@ Read me in the <a class="reference external" href="https://github.com/i2mint/i2/
 </span><span id="line-6"><span class="c1"># Transform inputs before function, outputs after</span>
 </span><span id="line-7"><span class="n">wrapped</span> <span class="o">=</span> <span class="n">Wrap</span><span class="p">(</span>
 </span><span id="line-8">    <span class="n">add</span><span class="p">,</span>
-</span><span id="line-9">    <span class="n">ingress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>  <span class="c1"># Double inputs</span>
+</span><span id="line-9">    <span class="n">ingress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{}),</span>  <span class="c1"># Double inputs; returns (args, kwargs)</span>
 </span><span id="line-10">    <span class="n">egress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">result</span><span class="p">:</span> <span class="n">result</span> <span class="o">/</span> <span class="mi">2</span>       <span class="c1"># Halve output</span>
 </span><span id="line-11"><span class="p">)</span>
 </span><span id="line-12">
@@ -300,19 +301,19 @@ Read me in the <a class="reference external" href="https://github.com/i2mint/i2/
 </span></code></pre></div>
 </div>
 <p><strong>Signature Transformation:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.wrapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ingress</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.wrapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ingress</span><span class="p">,</span> <span class="n">wrap</span>
 </span><span id="line-2">
 </span><span id="line-3"><span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 </span><span id="line-4">    <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s1">'value'</span><span class="p">]</span>
 </span><span id="line-5">
 </span><span id="line-6"><span class="c1"># Change signature: accept 'x' instead of 'data'</span>
 </span><span id="line-7"><span class="n">ingress</span> <span class="o">=</span> <span class="n">Ingress</span><span class="p">(</span>
-</span><span id="line-8">    <span class="n">outer_sig</span><span class="o">=</span><span class="s1">'x'</span><span class="p">,</span>
-</span><span id="line-9">    <span class="n">inner_sig</span><span class="o">=</span><span class="s1">'data'</span><span class="p">,</span>
-</span><span id="line-10">    <span class="n">kwargs_trans</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span><span class="s1">'data'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'value'</span><span class="p">:</span> <span class="n">x</span><span class="p">}}</span>
+</span><span id="line-8">    <span class="n">inner_sig</span><span class="o">=</span><span class="n">process</span><span class="p">,</span>
+</span><span id="line-9">    <span class="n">outer_sig</span><span class="o">=</span><span class="s1">'x'</span><span class="p">,</span>
+</span><span id="line-10">    <span class="n">kwargs_trans</span><span class="o">=</span><span class="k">lambda</span> <span class="n">outer_kwargs</span><span class="p">:</span> <span class="p">{</span><span class="s1">'data'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'value'</span><span class="p">:</span> <span class="n">outer_kwargs</span><span class="p">[</span><span class="s1">'x'</span><span class="p">]}},</span>
 </span><span id="line-11"><span class="p">)</span>
 </span><span id="line-12">
-</span><span id="line-13"><span class="n">new_func</span> <span class="o">=</span> <span class="n">ingress</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+</span><span id="line-13"><span class="n">new_func</span> <span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="n">ingress</span><span class="p">)</span>
 </span><span id="line-14"><span class="n">result</span> <span class="o">=</span> <span class="n">new_func</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># Calls process({'value': 42})</span>
 </span><span id="line-15"><span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">42</span>
 </span></code></pre></div>
@@ -385,7 +386,7 @@ Read me in the <a class="reference external" href="https://github.com/i2mint/i2/
 </span><span id="line-17">
 </span><span id="line-18"><span class="c1"># Can get all matches or just first</span>
 </span><span id="line-19"><span class="nb">list</span><span class="p">(</span><span class="n">router</span><span class="p">(</span><span class="mi">15</span><span class="p">))</span>   <span class="c1"># ['≥ 10', 'Odd number']</span>
-</span><span id="line-20"><span class="nb">next</span><span class="p">(</span><span class="n">router</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>    <span class="c1"># None (no matches)</span>
+</span><span id="line-20"><span class="nb">next</span><span class="p">(</span><span class="n">router</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>    <span class="c1"># None (no matches)</span>
 </span></code></pre></div>
 </div>
 <p><strong>Pattern Matching Example:</strong></p>
@@ -432,7 +433,7 @@ Read me in the <a class="reference external" href="https://github.com/i2mint/i2/
 </span><span id="line-5"><span class="k">assert</span> <span class="n">asis</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
 </span><span id="line-6">
 </span><span id="line-7"><span class="c1"># Constant functions (useful as defaults)</span>
-</span><span id="line-8"><span class="k">assert</span> <span class="n">return_true</span><span class="p">(</span><span class="n">anything</span><span class="p">,</span> <span class="n">goes</span><span class="o">=</span><span class="s2">"here"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+</span><span id="line-8"><span class="k">assert</span> <span class="n">return_true</span><span class="p">(</span><span class="s2">"anything"</span><span class="p">,</span> <span class="n">goes</span><span class="o">=</span><span class="s2">"here"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
 </span><span id="line-9"><span class="k">assert</span> <span class="n">return_false</span><span class="p">(</span><span class="s2">"doesn't"</span><span class="p">,</span> <span class="s2">"matter"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
 </span><span id="line-10"><span class="k">assert</span> <span class="n">return_none</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
 </span></code></pre></div>
@@ -449,13 +450,17 @@ Read me in the <a class="reference external" href="https://github.com/i2mint/i2/
 </span><span id="line-9"><span class="k">assert</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="nb">print</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">","</span><span class="p">))</span> <span class="o">==</span> <span class="s1">'print'</span>
 </span></code></pre></div>
 </div>
-<p><strong>Attribute/Item Access:</strong></p>
+<p><strong>Immutable dict:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">imdict</span>
 </span><span id="line-2">
-</span><span id="line-3"><span class="c1"># Flexible dict-like access</span>
+</span><span id="line-3"><span class="c1"># An immutable dict: reads work, mutations raise TypeError</span>
 </span><span id="line-4"><span class="n">data</span> <span class="o">=</span> <span class="n">imdict</span><span class="p">({</span><span class="s1">'a'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">:</span> <span class="mi">2</span><span class="p">})</span>
-</span><span id="line-5"><span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">a</span> <span class="o">==</span> <span class="mi">1</span>  <span class="c1"># Attribute access</span>
-</span><span id="line-6"><span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">'b'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>  <span class="c1"># Item access</span>
+</span><span id="line-5"><span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">'b'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+</span><span id="line-6"><span class="k">try</span><span class="p">:</span>
+</span><span id="line-7">    <span class="n">data</span><span class="p">[</span><span class="s1">'c'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span id="line-8">    <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">"imdict should not be mutable"</span><span class="p">)</span>
+</span><span id="line-9"><span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+</span><span id="line-10">    <span class="k">pass</span>
 </span></code></pre></div>
 </div>
 <p><strong>Laziness Utilities:</strong></p>
@@ -531,8 +536,8 @@ Read me in the <a class="reference external" href="https://github.com/i2mint/i2/
 </span><span id="line-10"><span class="k">def</span><span class="w"> </span><span class="nf">typed_process</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span id="line-11">    <span class="k">return</span> <span class="n">process</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span id="line-12">
-</span><span id="line-13"><span class="c1"># Now can call with clear parameters</span>
-</span><span id="line-14"><span class="n">result</span> <span class="o">=</span> <span class="n">typed_process</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span><span id="line-13"><span class="c1"># Now can call with clear (keyword) parameters</span>
+</span><span id="line-14"><span class="n">result</span> <span class="o">=</span> <span class="n">typed_process</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </span><span id="line-15"><span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">6</span>
 </span></code></pre></div>
 </div>
@@ -554,18 +559,32 @@ Read me in the <a class="reference external" href="https://github.com/i2mint/i2/
 </span><span id="line-13">        <span class="p">),</span>
 </span><span id="line-14">        <span class="n">CondNode</span><span class="p">(</span>
 </span><span id="line-15">            <span class="n">cond</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
-</span><span id="line-16">            <span class="n">then</span><span class="o">=</span><span class="n">FinalNode</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
-</span><span id="line-17">        <span class="p">)</span>
-</span><span id="line-18">    <span class="p">])</span>
-</span><span id="line-19">    <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">router</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span>
-</span><span id="line-20">
-</span><span id="line-21"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="s2">"hello"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
-</span><span id="line-22"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
-</span><span id="line-23"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
-</span><span id="line-24"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
+</span><span id="line-16">            <span class="n">then</span><span class="o">=</span><span class="n">RoutingForest</span><span class="p">([</span>
+</span><span id="line-17">                <span class="n">CondNode</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">FinalNode</span><span class="p">(</span><span class="kc">True</span><span class="p">)),</span>
+</span><span id="line-18">                <span class="n">CondNode</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">FinalNode</span><span class="p">(</span><span class="kc">False</span><span class="p">))</span>
+</span><span id="line-19">            <span class="p">])</span>
+</span><span id="line-20">        <span class="p">)</span>
+</span><span id="line-21">    <span class="p">])</span>
+</span><span id="line-22">    <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">router</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span>
+</span><span id="line-23">
+</span><span id="line-24"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="s2">"hello"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+</span><span id="line-25"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
+</span><span id="line-26"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+</span><span id="line-27"><span class="k">assert</span> <span class="n">validate_input</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
 </span></code></pre></div>
 </div>
 </section>
+</section>
+<section id="for-carbon-based-contributors">
+<h2>For carbon-based contributors<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#for-carbon-based-contributors" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#for-carbon-based-contributors'">¶</a></h2>
+<p>Development setup and the full test run (doctests are most of the suite):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">uv<span class="w"> </span>venv<span class="w"> </span>.venv<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[dev]"</span>
+</span><span id="line-2">.venv/bin/python<span class="w"> </span>-m<span class="w"> </span>pytest
+</span></code></pre></div>
+</div>
+<p>Packaging lives in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>. CI is the wads uv workflow in <code class="docutils literal notranslate"><span class="pre">.github/workflows/ci.yml</span></code>, configured by <code class="docutils literal notranslate"><span class="pre">[tool.wads.ci]</span></code>. A merge to <code class="docutils literal notranslate"><span class="pre">master</span></code> publishes to PyPI and bumps the version, so don’t edit the version by hand.</p>
+<p>About 50 packages depend on <code class="docutils literal notranslate"><span class="pre">i2</span></code> (<code class="docutils literal notranslate"><span class="pre">dol</span></code>, <code class="docutils literal notranslate"><span class="pre">meshed</span></code>, <code class="docutils literal notranslate"><span class="pre">config2py</span></code>, <code class="docutils literal notranslate"><span class="pre">front</span></code>, <code class="docutils literal notranslate"><span class="pre">py2http</span></code> and more). Before changing a public signature, default or return type in <code class="docutils literal notranslate"><span class="pre">signatures.py</span></code>, <code class="docutils literal notranslate"><span class="pre">deco.py</span></code> or <code class="docutils literal notranslate"><span class="pre">wrapper.py</span></code>, run the tests of the heaviest dependents against your branch. i2’s own suite has missed breakages there before.</p>
+<p>Questions and design discussion go to <a class="reference external" href="https://github.com/i2mint/i2/issues" rel="nofollow noopener">GitHub issues<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> and <a class="reference external" href="https://github.com/i2mint/i2/discussions" rel="nofollow noopener">discussions<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>.</p>
 </section>
 <section id="what-s-mint">
 <h2>What’s mint?<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#what-s-mint" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#what-s-mint'">¶</a></h2>
@@ -598,7 +617,7 @@ leaves are base types, which can in turn be represented by a C struct.</p>
 
 </section>
 </section>
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-09-22 15:20 UTC from <a href="https://github.com/i2mint/i2/commit/14bd29dcc277dcb205c8903a80c8973d208b8b48">14bd29d</a> (master) · i2 0.1.74 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-09-26 15:15 UTC from <a href="https://github.com/i2mint/i2/commit/225b2ae6c4d0015c23b9633283d0a5369ab5787d">225b2ae</a> (master) · i2 0.1.74 · <a href="about-this-build.html">about this build</a></p>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
@@ -618,6 +637,7 @@ leaves are base types, which can in turn be represented by a C struct.</p>
 <li><a :data-current="activeSection === '#routing-with-validation'" class="reference internal" href="#routing-with-validation">Routing with Validation</a></li>
 </ul>
 </li>
+<li><a :data-current="activeSection === '#for-carbon-based-contributors'" class="reference internal" href="#for-carbon-based-contributors">For carbon-based contributors</a></li>
 <li><a :data-current="activeSection === '#what-s-mint'" class="reference internal" href="#what-s-mint">What’s mint?</a></li>
 </ul>
 </div>

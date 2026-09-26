@@ -2757,207 +2757,220 @@
 </span><span id="line-2455"><span class="sd">    &gt;&gt;&gt; h = move_params_to_the_end(g, Sig(g).defaults)</span>
 </span><span id="line-2456"><span class="sd">    &gt;&gt;&gt; assert str(Sig(g)) == '(a, *, b=4, c)'</span>
 </span><span id="line-2457"><span class="sd">    &gt;&gt;&gt; assert str(Sig(h)) == '(a, *, c, b=4)'</span>
-</span><span id="line-2458"><span class="sd">    """</span>
-</span><span id="line-2459">    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">names_to_move</span><span class="p">):</span>
-</span><span id="line-2460">        <span class="n">names_to_move</span> <span class="o">=</span> <span class="n">names_to_move</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span id="line-2461">    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names_to_move</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">),</span> <span class="p">(</span>
-</span><span id="line-2462">        <span class="sa">f</span><span class="s2">"names_to_move must be an iterable of names "</span>
-</span><span id="line-2463">        <span class="sa">f</span><span class="s2">"or a callable producing one from a function. Was </span><span class="si">{</span><span class="n">names_to_move</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-2464">    <span class="p">)</span>
-</span><span id="line-2465">
-</span><span id="line-2466">    <span class="n">names</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">names</span>
-</span><span id="line-2467">    <span class="n">reordered</span> <span class="o">=</span> <span class="n">move_names_to_the_end</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">names_to_move</span><span class="p">)</span>
-</span><span id="line-2468">    <span class="n">wrapped_func</span> <span class="o">=</span> <span class="n">include_exclude</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="n">reordered</span><span class="p">)</span>
-</span><span id="line-2469">    <span class="k">return</span> <span class="n">wrapped_func</span></div>
+</span><span id="line-2458">
+</span><span id="line-2459"><span class="sd">    Names are only moved to the end of their own kind: a keyword-only param always</span>
+</span><span id="line-2460"><span class="sd">    stays after the positional ones, and ``**kwargs`` stays last.</span>
+</span><span id="line-2461">
+</span><span id="line-2462"><span class="sd">    &gt;&gt;&gt; def bar(a, b=1, *, c=2, d, **kwargs):</span>
+</span><span id="line-2463"><span class="sd">    ...     ...</span>
+</span><span id="line-2464"><span class="sd">    &gt;&gt;&gt; str(Sig(move_params_to_the_end(bar, ['b', 'c'])))</span>
+</span><span id="line-2465"><span class="sd">    '(a, b=1, *, d, c=2, **kwargs)'</span>
+</span><span id="line-2466"><span class="sd">    """</span>
+</span><span id="line-2467">    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">names_to_move</span><span class="p">):</span>
+</span><span id="line-2468">        <span class="n">names_to_move</span> <span class="o">=</span> <span class="n">names_to_move</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="line-2469">    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names_to_move</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">),</span> <span class="p">(</span>
+</span><span id="line-2470">        <span class="sa">f</span><span class="s2">"names_to_move must be an iterable of names "</span>
+</span><span id="line-2471">        <span class="sa">f</span><span class="s2">"or a callable producing one from a function. Was </span><span class="si">{</span><span class="n">names_to_move</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-2472">    <span class="p">)</span>
+</span><span id="line-2473">
+</span><span id="line-2474">    <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="line-2475">    <span class="n">reordered</span> <span class="o">=</span> <span class="n">move_names_to_the_end</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">names_to_move</span><span class="p">)</span>
+</span><span id="line-2476">    <span class="c1"># Moving names to the end can put them after params of a later kind (e.g. a</span>
+</span><span id="line-2477">    <span class="c1"># keyword-only param after ``**kwargs``), which is not a valid signature. A stable</span>
+</span><span id="line-2478">    <span class="c1"># sort by kind only changes such invalid orders, keeping the order within each kind</span>
+</span><span id="line-2479">    <span class="c1"># (see i2mint/i2#17).</span>
+</span><span id="line-2480">    <span class="n">reordered</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reordered</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="n">sig</span><span class="o">.</span><span class="n">kinds</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+</span><span id="line-2481">    <span class="n">wrapped_func</span> <span class="o">=</span> <span class="n">include_exclude</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="n">reordered</span><span class="p">)</span>
+</span><span id="line-2482">    <span class="k">return</span> <span class="n">wrapped_func</span></div>
 
-</span><span id="line-2470">
-</span><span id="line-2471">
+</span><span id="line-2483">
+</span><span id="line-2484">
 <div class="viewcode-block" id="move_names_to_the_end">
 <a class="viewcode-back" href="../../_autosummary/i2.wrapper.html#i2.wrapper.move_names_to_the_end">[docs]</a>
-</span><span id="line-2472"><span class="k">def</span><span class="w"> </span><span class="nf">move_names_to_the_end</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">names_to_move_to_the_end</span><span class="p">):</span>
-</span><span id="line-2473"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-2474"><span class="sd">    Remove the items of ``names_to_move_to_the_end`` from ``names``</span>
-</span><span id="line-2475"><span class="sd">    and append to the right of names</span>
-</span><span id="line-2476">
-</span><span id="line-2477"><span class="sd">    &gt;&gt;&gt; names = ['a','c','d','e']</span>
-</span><span id="line-2478"><span class="sd">    &gt;&gt;&gt; names_to_move_to_the_end = ['c','e']</span>
-</span><span id="line-2479"><span class="sd">    &gt;&gt;&gt; move_names_to_the_end(names, names_to_move_to_the_end)</span>
-</span><span id="line-2480"><span class="sd">    ['a', 'd', 'c', 'e']</span>
-</span><span id="line-2481"><span class="sd">    &gt;&gt;&gt; names_to_move_to_the_end = 'c e'</span>
-</span><span id="line-2482"><span class="sd">    &gt;&gt;&gt; move_names_to_the_end(names, names_to_move_to_the_end)</span>
-</span><span id="line-2483"><span class="sd">    ['a', 'd', 'c', 'e']</span>
-</span><span id="line-2484"><span class="sd">    """</span>
-</span><span id="line-2485">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names_to_move_to_the_end</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-2486">        <span class="n">names_to_move_to_the_end</span> <span class="o">=</span> <span class="n">names_to_move_to_the_end</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-</span><span id="line-2487">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-2488">        <span class="n">names_to_move_to_the_end</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">names_to_move_to_the_end</span><span class="p">)</span>
-</span><span id="line-2489">    <span class="n">removed</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names_to_move_to_the_end</span><span class="p">]</span>
-</span><span id="line-2490">    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">removed</span><span class="p">)</span> <span class="o">+</span> <span class="n">names_to_move_to_the_end</span></div>
+</span><span id="line-2485"><span class="k">def</span><span class="w"> </span><span class="nf">move_names_to_the_end</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">names_to_move_to_the_end</span><span class="p">):</span>
+</span><span id="line-2486"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-2487"><span class="sd">    Remove the items of ``names_to_move_to_the_end`` from ``names``</span>
+</span><span id="line-2488"><span class="sd">    and append to the right of names</span>
+</span><span id="line-2489">
+</span><span id="line-2490"><span class="sd">    &gt;&gt;&gt; names = ['a','c','d','e']</span>
+</span><span id="line-2491"><span class="sd">    &gt;&gt;&gt; names_to_move_to_the_end = ['c','e']</span>
+</span><span id="line-2492"><span class="sd">    &gt;&gt;&gt; move_names_to_the_end(names, names_to_move_to_the_end)</span>
+</span><span id="line-2493"><span class="sd">    ['a', 'd', 'c', 'e']</span>
+</span><span id="line-2494"><span class="sd">    &gt;&gt;&gt; names_to_move_to_the_end = 'c e'</span>
+</span><span id="line-2495"><span class="sd">    &gt;&gt;&gt; move_names_to_the_end(names, names_to_move_to_the_end)</span>
+</span><span id="line-2496"><span class="sd">    ['a', 'd', 'c', 'e']</span>
+</span><span id="line-2497"><span class="sd">    """</span>
+</span><span id="line-2498">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names_to_move_to_the_end</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-2499">        <span class="n">names_to_move_to_the_end</span> <span class="o">=</span> <span class="n">names_to_move_to_the_end</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+</span><span id="line-2500">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-2501">        <span class="n">names_to_move_to_the_end</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">names_to_move_to_the_end</span><span class="p">)</span>
+</span><span id="line-2502">    <span class="n">removed</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names_to_move_to_the_end</span><span class="p">]</span>
+</span><span id="line-2503">    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">removed</span><span class="p">)</span> <span class="o">+</span> <span class="n">names_to_move_to_the_end</span></div>
 
-</span><span id="line-2491">
-</span><span id="line-2492">
-</span><span id="line-2493"><span class="c1"># --------------------------------------------------------------------------------------</span>
-</span><span id="line-2494"><span class="c1"># smart defaults</span>
-</span><span id="line-2495">
-</span><span id="line-2496">
-</span><span id="line-2497"><span class="c1"># IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode</span>
+</span><span id="line-2504">
+</span><span id="line-2505">
+</span><span id="line-2506"><span class="c1"># --------------------------------------------------------------------------------------</span>
+</span><span id="line-2507"><span class="c1"># smart defaults</span>
+</span><span id="line-2508">
+</span><span id="line-2509">
+</span><span id="line-2510"><span class="c1"># IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode</span>
 <div class="viewcode-block" id="SmartDefault">
 <a class="viewcode-back" href="../../_autosummary/i2.wrapper.html#i2.wrapper.SmartDefault">[docs]</a>
-</span><span id="line-2498"><span class="nd">@dataclass</span>
-</span><span id="line-2499"><span class="k">class</span><span class="w"> </span><span class="nc">SmartDefault</span><span class="p">:</span>
-</span><span id="line-2500"><span class="w">    </span><span class="sd">"""Placeholder default for a parameter whose value ``add_smart_defaults`` computes from the other arguments.</span>
-</span><span id="line-2501">
-</span><span id="line-2502"><span class="sd">    Holds the function that computes the value and, if the parameter had one, its</span>
-</span><span id="line-2503"><span class="sd">    original default (shown in the repr).</span>
-</span><span id="line-2504"><span class="sd">    """</span>
-</span><span id="line-2505">
-</span><span id="line-2506">    <span class="n">func_computing_default</span><span class="p">:</span> <span class="n">Callable</span>
-</span><span id="line-2507">    <span class="n">original_default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">empty</span>
-</span><span id="line-2508">
-</span><span id="line-2509">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-2510">        <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_computing_default</span>
-</span><span id="line-2511">        <span class="n">func_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
-</span><span id="line-2512">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_default</span> <span class="ow">is</span> <span class="n">empty</span><span class="p">:</span>
-</span><span id="line-2513">            <span class="k">return</span> <span class="sa">f</span><span class="s2">"SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">)"</span>
-</span><span id="line-2514">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-2515">            <span class="n">dflt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_default</span>
-</span><span id="line-2516">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dflt</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-2517">                <span class="k">return</span> <span class="sa">f</span><span class="s2">"SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">, '</span><span class="si">{</span><span class="n">dflt</span><span class="si">}</span><span class="s2">')"</span>
-</span><span id="line-2518">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-2519">                <span class="k">return</span> <span class="sa">f</span><span class="s2">"SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">dflt</span><span class="si">}</span><span class="s2">)"</span></div>
-
-</span><span id="line-2520">
+</span><span id="line-2511"><span class="nd">@dataclass</span>
+</span><span id="line-2512"><span class="k">class</span><span class="w"> </span><span class="nc">SmartDefault</span><span class="p">:</span>
+</span><span id="line-2513"><span class="w">    </span><span class="sd">"""Placeholder default for a parameter whose value ``add_smart_defaults`` computes from the other arguments.</span>
+</span><span id="line-2514">
+</span><span id="line-2515"><span class="sd">    Holds the function that computes the value and, if the parameter had one, its</span>
+</span><span id="line-2516"><span class="sd">    original default (shown in the repr).</span>
+</span><span id="line-2517"><span class="sd">    """</span>
+</span><span id="line-2518">
+</span><span id="line-2519">    <span class="n">func_computing_default</span><span class="p">:</span> <span class="n">Callable</span>
+</span><span id="line-2520">    <span class="n">original_default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">empty</span>
 </span><span id="line-2521">
-</span><span id="line-2522"><span class="c1"># PATTERN: Yet another "meshed dict completion"</span>
-</span><span id="line-2523"><span class="c1"># IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode</span>
+</span><span id="line-2522">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-2523">        <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_computing_default</span>
+</span><span id="line-2524">        <span class="n">func_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+</span><span id="line-2525">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_default</span> <span class="ow">is</span> <span class="n">empty</span><span class="p">:</span>
+</span><span id="line-2526">            <span class="k">return</span> <span class="sa">f</span><span class="s2">"SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">)"</span>
+</span><span id="line-2527">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-2528">            <span class="n">dflt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_default</span>
+</span><span id="line-2529">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dflt</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-2530">                <span class="k">return</span> <span class="sa">f</span><span class="s2">"SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">, '</span><span class="si">{</span><span class="n">dflt</span><span class="si">}</span><span class="s2">')"</span>
+</span><span id="line-2531">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-2532">                <span class="k">return</span> <span class="sa">f</span><span class="s2">"SmartDefault(</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">dflt</span><span class="si">}</span><span class="s2">)"</span></div>
+
+</span><span id="line-2533">
+</span><span id="line-2534">
+</span><span id="line-2535"><span class="c1"># PATTERN: Yet another "meshed dict completion"</span>
+</span><span id="line-2536"><span class="c1"># IDEA: Could make SmartDefault have an out and __call__, working like a meshed.FuncNode</span>
 <div class="viewcode-block" id="complete_dict_applying_functions">
 <a class="viewcode-back" href="../../_autosummary/i2.wrapper.html#i2.wrapper.complete_dict_applying_functions">[docs]</a>
-</span><span id="line-2524"><span class="k">def</span><span class="w"> </span><span class="nf">complete_dict_applying_functions</span><span class="p">(</span>
-</span><span id="line-2525">    <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">func_for_name</span>
-</span><span id="line-2526"><span class="p">):</span>
-</span><span id="line-2527"><span class="w">    </span><span class="sd">"""Complete dict ``d`` by applying function to variables in ``d``, sequentially.</span>
-</span><span id="line-2528">
-</span><span id="line-2529"><span class="sd">    That is, doing ``d[name] = func(**d)`` for all ``name, func in d.items()``.</span>
-</span><span id="line-2530">
-</span><span id="line-2531"><span class="sd">    Set ``_allow_overwrites=True`` to allow overwrites.</span>
-</span><span id="line-2532">
-</span><span id="line-2533"><span class="sd">    Set ``_only_if_name_missing=False`` to apply all functions of ``func_for_name``</span>
-</span><span id="line-2534"><span class="sd">    regardless if the ``name`` already exists in ``d`` or not.</span>
-</span><span id="line-2535">
-</span><span id="line-2536"><span class="sd">    &gt;&gt;&gt; func_for_name = dict(</span>
-</span><span id="line-2537"><span class="sd">    ...     b=lambda a: a * 10, c=lambda a, b: a + b, d=lambda c: c * 2</span>
-</span><span id="line-2538"><span class="sd">    ... )</span>
-</span><span id="line-2539"><span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(dict(a=1), **func_for_name)</span>
-</span><span id="line-2540"><span class="sd">    {'a': 1, 'b': 10, 'c': 11, 'd': 22}</span>
+</span><span id="line-2537"><span class="k">def</span><span class="w"> </span><span class="nf">complete_dict_applying_functions</span><span class="p">(</span>
+</span><span id="line-2538">    <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">func_for_name</span>
+</span><span id="line-2539"><span class="p">):</span>
+</span><span id="line-2540"><span class="w">    </span><span class="sd">"""Complete dict ``d`` by applying function to variables in ``d``, sequentially.</span>
 </span><span id="line-2541">
-</span><span id="line-2542"><span class="sd">    Notice that when ``b`` is present in input ``dict``, it's value is conserved.</span>
-</span><span id="line-2543"><span class="sd">    That is, the ``b`` of ``func_for_name`` isn't applied to compute it.</span>
-</span><span id="line-2544">
-</span><span id="line-2545"><span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(dict(a=1, b=2), **func_for_name)</span>
-</span><span id="line-2546"><span class="sd">    {'a': 1, 'b': 2, 'c': 3, 'd': 6}</span>
-</span><span id="line-2547">
-</span><span id="line-2548"><span class="sd">    If you specify ``_only_if_name_missing=False``,</span>
-</span><span id="line-2549"><span class="sd">    ``complete_dict_applying_functions`` will try to compute everything</span>
-</span><span id="line-2550"><span class="sd">    ``func_for_name`` tells it too, regardless if the input dictionary contains the</span>
-</span><span id="line-2551"><span class="sd">    key or not, resulting in an error:</span>
-</span><span id="line-2552">
-</span><span id="line-2553"><span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(</span>
-</span><span id="line-2554"><span class="sd">    ...     dict(a=1, b=2), **func_for_name, _only_if_name_missing=False</span>
-</span><span id="line-2555"><span class="sd">    ... )</span>
-</span><span id="line-2556"><span class="sd">    Traceback (most recent call last):</span>
-</span><span id="line-2557"><span class="sd">      ...</span>
-</span><span id="line-2558"><span class="sd">    i2.errors.OverwritesNotAllowed: You're not allowed to overwrite to the values of b</span>
-</span><span id="line-2559">
-</span><span id="line-2560"><span class="sd">    If you want, on the other hand, to allow overwrites, you can do so specifying</span>
-</span><span id="line-2561"><span class="sd">    ``_allow_overwrites=True``:</span>
-</span><span id="line-2562">
-</span><span id="line-2563"><span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(</span>
-</span><span id="line-2564"><span class="sd">    ...     dict(a=1, b=2), **func_for_name,</span>
-</span><span id="line-2565"><span class="sd">    ...     _only_if_name_missing=False, _allow_overwrites=True</span>
-</span><span id="line-2566"><span class="sd">    ... )</span>
-</span><span id="line-2567"><span class="sd">    {'a': 1, 'b': 10, 'c': 11, 'd': 22}</span>
-</span><span id="line-2568"><span class="sd">    """</span>
-</span><span id="line-2569">
-</span><span id="line-2570">    <span class="k">if</span> <span class="n">_only_if_name_missing</span><span class="p">:</span>
-</span><span id="line-2571">        <span class="n">func_for_name</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-2572">            <span class="n">name</span><span class="p">:</span> <span class="n">func</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_for_name</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span>
-</span><span id="line-2573">        <span class="p">}</span>
-</span><span id="line-2574">    <span class="k">elif</span> <span class="ow">not</span> <span class="n">_allow_overwrites</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">func_for_name</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-</span><span id="line-2575">        <span class="k">raise</span> <span class="n">OverwritesNotAllowed</span><span class="o">.</span><span class="n">for_keys</span><span class="p">(</span><span class="n">func_for_name</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">d</span><span class="p">)</span>
-</span><span id="line-2576">
-</span><span id="line-2577">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_for_name</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-2578">        <span class="c1"># TODO: Can optimize using under-the-hood of call_forgivingly</span>
-</span><span id="line-2579">        <span class="c1">#  (extracting from _kwargs directly)</span>
-</span><span id="line-2580">        <span class="c1"># complete the keyword arguments with defaults computed from existing arguments</span>
-</span><span id="line-2581">        <span class="n">d</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">call_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">d</span><span class="p">)</span>
+</span><span id="line-2542"><span class="sd">    That is, doing ``d[name] = func(**d)`` for all ``name, func in d.items()``.</span>
+</span><span id="line-2543">
+</span><span id="line-2544"><span class="sd">    Set ``_allow_overwrites=True`` to allow overwrites.</span>
+</span><span id="line-2545">
+</span><span id="line-2546"><span class="sd">    Set ``_only_if_name_missing=False`` to apply all functions of ``func_for_name``</span>
+</span><span id="line-2547"><span class="sd">    regardless if the ``name`` already exists in ``d`` or not.</span>
+</span><span id="line-2548">
+</span><span id="line-2549"><span class="sd">    &gt;&gt;&gt; func_for_name = dict(</span>
+</span><span id="line-2550"><span class="sd">    ...     b=lambda a: a * 10, c=lambda a, b: a + b, d=lambda c: c * 2</span>
+</span><span id="line-2551"><span class="sd">    ... )</span>
+</span><span id="line-2552"><span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(dict(a=1), **func_for_name)</span>
+</span><span id="line-2553"><span class="sd">    {'a': 1, 'b': 10, 'c': 11, 'd': 22}</span>
+</span><span id="line-2554">
+</span><span id="line-2555"><span class="sd">    Notice that when ``b`` is present in input ``dict``, it's value is conserved.</span>
+</span><span id="line-2556"><span class="sd">    That is, the ``b`` of ``func_for_name`` isn't applied to compute it.</span>
+</span><span id="line-2557">
+</span><span id="line-2558"><span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(dict(a=1, b=2), **func_for_name)</span>
+</span><span id="line-2559"><span class="sd">    {'a': 1, 'b': 2, 'c': 3, 'd': 6}</span>
+</span><span id="line-2560">
+</span><span id="line-2561"><span class="sd">    If you specify ``_only_if_name_missing=False``,</span>
+</span><span id="line-2562"><span class="sd">    ``complete_dict_applying_functions`` will try to compute everything</span>
+</span><span id="line-2563"><span class="sd">    ``func_for_name`` tells it too, regardless if the input dictionary contains the</span>
+</span><span id="line-2564"><span class="sd">    key or not, resulting in an error:</span>
+</span><span id="line-2565">
+</span><span id="line-2566"><span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(</span>
+</span><span id="line-2567"><span class="sd">    ...     dict(a=1, b=2), **func_for_name, _only_if_name_missing=False</span>
+</span><span id="line-2568"><span class="sd">    ... )</span>
+</span><span id="line-2569"><span class="sd">    Traceback (most recent call last):</span>
+</span><span id="line-2570"><span class="sd">      ...</span>
+</span><span id="line-2571"><span class="sd">    i2.errors.OverwritesNotAllowed: You're not allowed to overwrite to the values of b</span>
+</span><span id="line-2572">
+</span><span id="line-2573"><span class="sd">    If you want, on the other hand, to allow overwrites, you can do so specifying</span>
+</span><span id="line-2574"><span class="sd">    ``_allow_overwrites=True``:</span>
+</span><span id="line-2575">
+</span><span id="line-2576"><span class="sd">    &gt;&gt;&gt; complete_dict_applying_functions(</span>
+</span><span id="line-2577"><span class="sd">    ...     dict(a=1, b=2), **func_for_name,</span>
+</span><span id="line-2578"><span class="sd">    ...     _only_if_name_missing=False, _allow_overwrites=True</span>
+</span><span id="line-2579"><span class="sd">    ... )</span>
+</span><span id="line-2580"><span class="sd">    {'a': 1, 'b': 10, 'c': 11, 'd': 22}</span>
+</span><span id="line-2581"><span class="sd">    """</span>
 </span><span id="line-2582">
-</span><span id="line-2583">    <span class="k">return</span> <span class="n">d</span></div>
+</span><span id="line-2583">    <span class="k">if</span> <span class="n">_only_if_name_missing</span><span class="p">:</span>
+</span><span id="line-2584">        <span class="n">func_for_name</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-2585">            <span class="n">name</span><span class="p">:</span> <span class="n">func</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_for_name</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span>
+</span><span id="line-2586">        <span class="p">}</span>
+</span><span id="line-2587">    <span class="k">elif</span> <span class="ow">not</span> <span class="n">_allow_overwrites</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">func_for_name</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+</span><span id="line-2588">        <span class="k">raise</span> <span class="n">OverwritesNotAllowed</span><span class="o">.</span><span class="n">for_keys</span><span class="p">(</span><span class="n">func_for_name</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">d</span><span class="p">)</span>
+</span><span id="line-2589">
+</span><span id="line-2590">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_for_name</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-2591">        <span class="c1"># TODO: Can optimize using under-the-hood of call_forgivingly</span>
+</span><span id="line-2592">        <span class="c1">#  (extracting from _kwargs directly)</span>
+</span><span id="line-2593">        <span class="c1"># complete the keyword arguments with defaults computed from existing arguments</span>
+</span><span id="line-2594">        <span class="n">d</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">call_forgivingly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">d</span><span class="p">)</span>
+</span><span id="line-2595">
+</span><span id="line-2596">    <span class="k">return</span> <span class="n">d</span></div>
 
-</span><span id="line-2584">
-</span><span id="line-2585">
-</span><span id="line-2586"><span class="k">def</span><span class="w"> </span><span class="nf">_compute_new_sigs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">smart_defaults</span><span class="p">):</span>
-</span><span id="line-2587">    <span class="n">original_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span id="line-2588">    <span class="k">return</span> <span class="n">original_sig</span><span class="o">.</span><span class="n">ch_defaults</span><span class="p">(</span>
-</span><span id="line-2589">        <span class="o">**</span><span class="p">{</span>
-</span><span id="line-2590">            <span class="n">name</span><span class="p">:</span> <span class="n">SmartDefault</span><span class="p">(</span>
-</span><span id="line-2591">                <span class="n">func_computing_default</span><span class="o">=</span><span class="n">func</span><span class="p">,</span>
-</span><span id="line-2592">                <span class="n">original_default</span><span class="o">=</span><span class="n">original_sig</span><span class="o">.</span><span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">empty</span><span class="p">),</span>
-</span><span id="line-2593">            <span class="p">)</span>
-</span><span id="line-2594">            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">smart_defaults</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-</span><span id="line-2595">        <span class="p">}</span>
-</span><span id="line-2596">    <span class="p">)</span>
 </span><span id="line-2597">
 </span><span id="line-2598">
-</span><span id="line-2599"><span class="nd">@double_up_as_factory</span>
-</span><span id="line-2600"><span class="k">def</span><span class="w"> </span><span class="nf">add_smart_defaults</span><span class="p">(</span>
-</span><span id="line-2601">    <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="line-2602">    <span class="o">*</span><span class="p">,</span>
-</span><span id="line-2603">    <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="line-2604">    <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="line-2605">    <span class="o">**</span><span class="n">smart_defaults</span><span class="p">,</span>
-</span><span id="line-2606"><span class="p">):</span>
-</span><span id="line-2607"><span class="w">    </span><span class="sd">"""Add smart defaults to function.</span>
-</span><span id="line-2608">
-</span><span id="line-2609"><span class="sd">    Smart defaults compute defaults of inputs based on the other given inputs.</span>
+</span><span id="line-2599"><span class="k">def</span><span class="w"> </span><span class="nf">_compute_new_sigs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">smart_defaults</span><span class="p">):</span>
+</span><span id="line-2600">    <span class="n">original_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="line-2601">    <span class="k">return</span> <span class="n">original_sig</span><span class="o">.</span><span class="n">ch_defaults</span><span class="p">(</span>
+</span><span id="line-2602">        <span class="o">**</span><span class="p">{</span>
+</span><span id="line-2603">            <span class="n">name</span><span class="p">:</span> <span class="n">SmartDefault</span><span class="p">(</span>
+</span><span id="line-2604">                <span class="n">func_computing_default</span><span class="o">=</span><span class="n">func</span><span class="p">,</span>
+</span><span id="line-2605">                <span class="n">original_default</span><span class="o">=</span><span class="n">original_sig</span><span class="o">.</span><span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">empty</span><span class="p">),</span>
+</span><span id="line-2606">            <span class="p">)</span>
+</span><span id="line-2607">            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">smart_defaults</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="line-2608">        <span class="p">}</span>
+</span><span id="line-2609">    <span class="p">)</span>
 </span><span id="line-2610">
-</span><span id="line-2611"><span class="sd">    :param func: The function to wrap.</span>
-</span><span id="line-2612"><span class="sd">    :param smart_defaults: ``input_arg=function_to_compute_it_from_other_args`` where</span>
-</span><span id="line-2613"><span class="sd">        the function's argument names must match the argument names of ``func``, the</span>
-</span><span id="line-2614"><span class="sd">        wrapped function.</span>
-</span><span id="line-2615"><span class="sd">    :return:</span>
-</span><span id="line-2616">
-</span><span id="line-2617"><span class="sd">    &gt;&gt;&gt; def xyz_sum(x, y, z='c'):  return x + y + z</span>
-</span><span id="line-2618"><span class="sd">    &gt;&gt;&gt; def times_two(x):  return x * 2</span>
-</span><span id="line-2619"><span class="sd">    &gt;&gt;&gt; def just_z():  return 'Z'</span>
-</span><span id="line-2620"><span class="sd">    &gt;&gt;&gt; f = add_smart_defaults(xyz_sum, y=times_two, z=just_z)</span>
-</span><span id="line-2621"><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="line-2622"><span class="sd">    &gt;&gt;&gt; f('a', 'b', 'c')</span>
-</span><span id="line-2623"><span class="sd">    'abc'</span>
-</span><span id="line-2624"><span class="sd">    &gt;&gt;&gt; f('a', 'b')</span>
-</span><span id="line-2625"><span class="sd">    'abZ'</span>
-</span><span id="line-2626"><span class="sd">    &gt;&gt;&gt; f('a')</span>
-</span><span id="line-2627"><span class="sd">    'aaaZ'</span>
-</span><span id="line-2628"><span class="sd">    &gt;&gt;&gt; f</span>
-</span><span id="line-2629"><span class="sd">    &lt;i2.Wrap xyz_sum(x, y=SmartDefault(times_two), z=SmartDefault(just_z, 'c'))&gt;</span>
-</span><span id="line-2630"><span class="sd">    """</span>
-</span><span id="line-2631">    <span class="n">names_not_in_func_arguments</span> <span class="o">=</span> <span class="n">smart_defaults</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">names</span>
-</span><span id="line-2632">    <span class="k">assert</span> <span class="p">(</span>
-</span><span id="line-2633">        <span class="ow">not</span> <span class="n">names_not_in_func_arguments</span>
-</span><span id="line-2634">    <span class="p">),</span> <span class="sa">f</span><span class="s2">"These weren't argument names of the </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2"> function: </span><span class="si">{</span><span class="n">names_not_in_func_arguments</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-2635">    <span class="n">kwargs_trans</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-</span><span id="line-2636">        <span class="n">complete_dict_applying_functions</span><span class="p">,</span>
-</span><span id="line-2637">        <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="n">_only_if_name_missing</span><span class="p">,</span>
-</span><span id="line-2638">        <span class="n">_allow_overwrites</span><span class="o">=</span><span class="n">_allow_overwrites</span><span class="p">,</span>
-</span><span id="line-2639">        <span class="o">**</span><span class="n">smart_defaults</span><span class="p">,</span>
-</span><span id="line-2640">    <span class="p">)</span>
-</span><span id="line-2641">    <span class="n">smart_defaults_ingress</span> <span class="o">=</span> <span class="n">Ingress</span><span class="p">(</span>
-</span><span id="line-2642">        <span class="n">inner_sig</span><span class="o">=</span><span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">),</span>
-</span><span id="line-2643">        <span class="n">kwargs_trans</span><span class="o">=</span><span class="n">kwargs_trans</span><span class="p">,</span>
-</span><span id="line-2644">        <span class="n">outer_sig</span><span class="o">=</span><span class="n">_compute_new_sigs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">smart_defaults</span><span class="p">),</span>
-</span><span id="line-2645">        <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="line-2646">    <span class="p">)</span>
-</span><span id="line-2647">
-</span><span id="line-2648">    <span class="k">return</span> <span class="n">smart_defaults_ingress</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="line-2611">
+</span><span id="line-2612"><span class="nd">@double_up_as_factory</span>
+</span><span id="line-2613"><span class="k">def</span><span class="w"> </span><span class="nf">add_smart_defaults</span><span class="p">(</span>
+</span><span id="line-2614">    <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="line-2615">    <span class="o">*</span><span class="p">,</span>
+</span><span id="line-2616">    <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="line-2617">    <span class="n">_allow_overwrites</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="line-2618">    <span class="o">**</span><span class="n">smart_defaults</span><span class="p">,</span>
+</span><span id="line-2619"><span class="p">):</span>
+</span><span id="line-2620"><span class="w">    </span><span class="sd">"""Add smart defaults to function.</span>
+</span><span id="line-2621">
+</span><span id="line-2622"><span class="sd">    Smart defaults compute defaults of inputs based on the other given inputs.</span>
+</span><span id="line-2623">
+</span><span id="line-2624"><span class="sd">    :param func: The function to wrap.</span>
+</span><span id="line-2625"><span class="sd">    :param smart_defaults: ``input_arg=function_to_compute_it_from_other_args`` where</span>
+</span><span id="line-2626"><span class="sd">        the function's argument names must match the argument names of ``func``, the</span>
+</span><span id="line-2627"><span class="sd">        wrapped function.</span>
+</span><span id="line-2628"><span class="sd">    :return:</span>
+</span><span id="line-2629">
+</span><span id="line-2630"><span class="sd">    &gt;&gt;&gt; def xyz_sum(x, y, z='c'):  return x + y + z</span>
+</span><span id="line-2631"><span class="sd">    &gt;&gt;&gt; def times_two(x):  return x * 2</span>
+</span><span id="line-2632"><span class="sd">    &gt;&gt;&gt; def just_z():  return 'Z'</span>
+</span><span id="line-2633"><span class="sd">    &gt;&gt;&gt; f = add_smart_defaults(xyz_sum, y=times_two, z=just_z)</span>
+</span><span id="line-2634"><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="line-2635"><span class="sd">    &gt;&gt;&gt; f('a', 'b', 'c')</span>
+</span><span id="line-2636"><span class="sd">    'abc'</span>
+</span><span id="line-2637"><span class="sd">    &gt;&gt;&gt; f('a', 'b')</span>
+</span><span id="line-2638"><span class="sd">    'abZ'</span>
+</span><span id="line-2639"><span class="sd">    &gt;&gt;&gt; f('a')</span>
+</span><span id="line-2640"><span class="sd">    'aaaZ'</span>
+</span><span id="line-2641"><span class="sd">    &gt;&gt;&gt; f</span>
+</span><span id="line-2642"><span class="sd">    &lt;i2.Wrap xyz_sum(x, y=SmartDefault(times_two), z=SmartDefault(just_z, 'c'))&gt;</span>
+</span><span id="line-2643"><span class="sd">    """</span>
+</span><span id="line-2644">    <span class="n">names_not_in_func_arguments</span> <span class="o">=</span> <span class="n">smart_defaults</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">names</span>
+</span><span id="line-2645">    <span class="k">assert</span> <span class="p">(</span>
+</span><span id="line-2646">        <span class="ow">not</span> <span class="n">names_not_in_func_arguments</span>
+</span><span id="line-2647">    <span class="p">),</span> <span class="sa">f</span><span class="s2">"These weren't argument names of the </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2"> function: </span><span class="si">{</span><span class="n">names_not_in_func_arguments</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-2648">    <span class="n">kwargs_trans</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+</span><span id="line-2649">        <span class="n">complete_dict_applying_functions</span><span class="p">,</span>
+</span><span id="line-2650">        <span class="n">_only_if_name_missing</span><span class="o">=</span><span class="n">_only_if_name_missing</span><span class="p">,</span>
+</span><span id="line-2651">        <span class="n">_allow_overwrites</span><span class="o">=</span><span class="n">_allow_overwrites</span><span class="p">,</span>
+</span><span id="line-2652">        <span class="o">**</span><span class="n">smart_defaults</span><span class="p">,</span>
+</span><span id="line-2653">    <span class="p">)</span>
+</span><span id="line-2654">    <span class="n">smart_defaults_ingress</span> <span class="o">=</span> <span class="n">Ingress</span><span class="p">(</span>
+</span><span id="line-2655">        <span class="n">inner_sig</span><span class="o">=</span><span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">),</span>
+</span><span id="line-2656">        <span class="n">kwargs_trans</span><span class="o">=</span><span class="n">kwargs_trans</span><span class="p">,</span>
+</span><span id="line-2657">        <span class="n">outer_sig</span><span class="o">=</span><span class="n">_compute_new_sigs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">smart_defaults</span><span class="p">),</span>
+</span><span id="line-2658">        <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="line-2659">    <span class="p">)</span>
+</span><span id="line-2660">
+</span><span id="line-2661">    <span class="k">return</span> <span class="n">smart_defaults_ingress</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </span></code></pre></div>
     </div></div>
           </main>

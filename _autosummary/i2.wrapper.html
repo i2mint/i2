@@ -1572,6 +1572,14 @@ to the right</p>
 </span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">h</span><span class="p">))</span> <span class="o">==</span> <span class="s1">'(a, *, c, b=4)'</span>
 </span></code></pre></div>
 </div>
+<p>Names are only moved to the end of their own kind: a keyword-only param always
+stays after the positional ones, and <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> stays last.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">bar</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="o">...</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">move_params_to_the_end</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span> <span class="p">[</span><span class="s1">'b'</span><span class="p">,</span> <span class="s1">'c'</span><span class="p">])))</span>
+</span><span id="line-4"><span class="go">'(a, b=1, *, d, c=2, **kwargs)'</span>
+</span></code></pre></div>
+</div>
 <dl class="field-list simple">
 </dl>
 </dd></dl>
