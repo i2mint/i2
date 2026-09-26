@@ -598,3 +598,52 @@ def test_wrap_signature_is_order_independent():
 
     assert str(Sig(wrapped_g)) == "(x: str, y: str) -> str"
     assert str(Sig(wrapped_f)) == "(a: int) -> int"
+
+
+# --------------------------------------------------------------------------------------
+# partialx / move_params_to_the_end reordering (i2mint/i2#17)
+
+
+def test_partialx_of_partialx_with_reordering():
+    """The exact repro of i2#17: reordering must keep keyword-only params before
+    ``**kwargs`` instead of raising ``ValueError: wrong parameter order``."""
+    from i2.wrapper import partialx
+
+    @partialx(partialx, x=2, _allow_reordering=True)
+    def foo(x, y, z=0):
+        return x + y * z
+
+    # The outer partialx's `_allow_reordering` applies to partialx's own params, so
+    # `foo` itself is just partialized (no reordering), as with `partialx(foo, x=2)`
+    assert str(Sig(foo)) == "(*, x=2, y, z=0)"
+    assert foo(y=3, z=4) == 14
+    assert foo(y=3) == 2
+
+
+def test_move_params_to_the_end_keeps_variadic_keyword_last():
+    from i2.wrapper import move_params_to_the_end
+
+    def g(a, b=1, *args, c=2, **kwargs):
+        return a, b, args, c, kwargs
+
+    h = move_params_to_the_end(g, ["b", "c"])
+    assert str(Sig(h)) == "(a, b=1, *args, c=2, **kwargs)"
+    assert h(0, 1, 2, c=3, d=4) == g(0, 1, 2, c=3, d=4)
+
+    # Moving keyword-only params behind others of their kind still works
+    def k(*, a=1, b, c=3, **kwargs):
+        return a, b, c, kwargs
+
+    kk = move_params_to_the_end(k, ["a"])
+    assert str(Sig(kk)) == "(*, b, c=3, a=1, **kwargs)"
+    assert kk(b=2, d=4) == (1, 2, 3, {"d": 4})
+
+
+def test_move_params_to_the_end_keeps_keyword_only_after_positional():
+    from i2.wrapper import move_params_to_the_end
+
+    def f(a=1, *, b, c=3):
+        return a, b, c
+
+    h = move_params_to_the_end(f, Sig(f).defaults)
+    assert str(Sig(h)) == "(a=1, *, b, c=3)"
