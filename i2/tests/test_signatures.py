@@ -2446,3 +2446,99 @@ def test_sigless_builtins_still_get_their_curated_signatures():
     from operator import itemgetter
 
     assert str(_robust_signature_of_callable(itemgetter(1))) != "(*args, **kwargs)"
+
+
+# --------------------------------------------------------------------------------------
+# ch_func_to_all_pk (i2mint/i2#12)
+
+
+def _pos_and_kws(*pos, **kws):
+    return {"pos": pos, "kws": kws}
+
+
+def _x_y_args_kwargs(x, y=1, *args, **kwargs):
+    return x, y, args, kwargs
+
+
+def _x_vp_z(x, *y, z=0):
+    return x, y, z
+
+
+def _po_pk_ko(a, /, b, *, c=None):
+    return a, b, c
+
+
+@pytest.mark.parametrize(
+    "func, args, kwargs, expected",
+    [
+        # The exact repro of i2#12: variadic keywords must not be nested or dropped
+        (_pos_and_kws, ((1, 2),), dict(a=3, b=4), _pos_and_kws(1, 2, a=3, b=4)),
+        (_pos_and_kws, (), dict(pos=(1, 2), a=3), _pos_and_kws(1, 2, a=3)),
+        (_pos_and_kws, (), dict(a=3), _pos_and_kws(a=3)),
+        (_pos_and_kws, (), {}, _pos_and_kws()),
+        # The case left as "not yet handled" in ch_func_to_all_pk's docstring (with a
+    # default for ``z``: a required keyword-only param after ``*y`` can't be made PK)
+        (_x_vp_z, (1, (2, 3)), dict(z=4), _x_vp_z(1, 2, 3, z=4)),
+        (_x_vp_z, (1,), dict(y=(2, 3), z=4), _x_vp_z(1, 2, 3, z=4)),
+        (_x_vp_z, (1, (2, 3), 4), {}, _x_vp_z(1, 2, 3, z=4)),
+        (_x_vp_z, (1,), {}, _x_vp_z(1)),
+        # Positional params before a non-empty *args, some left at their default
+        (_x_y_args_kwargs, (1,), {}, _x_y_args_kwargs(1)),
+        (_x_y_args_kwargs, (1, 2, (3, 4)), {}, _x_y_args_kwargs(1, 2, 3, 4)),
+        (_x_y_args_kwargs, (1,), dict(args=(3, 4)), _x_y_args_kwargs(1, 1, 3, 4)),
+        (_x_y_args_kwargs, (1, 2, (3,)), dict(k=5), _x_y_args_kwargs(1, 2, 3, k=5)),
+        (_x_y_args_kwargs, (), dict(x=1, k=5), _x_y_args_kwargs(1, k=5)),
+        # Functions without variadics keep working, including being forgiving of
+        # excess arguments (as they were before the fix)
+        (_po_pk_ko, (1, 2, 3), {}, (1, 2, 3)),
+        (_po_pk_ko, (), dict(a=1, b=2, c=3), (1, 2, 3)),
+        (_po_pk_ko, (1, 2, 3, 4), {}, (1, 2, 3)),
+        (_po_pk_ko, (1, 2), dict(d=5), (1, 2, None)),
+    ],
+)
+def test_ch_func_to_all_pk_calls(func, args, kwargs, expected):
+    assert ch_func_to_all_pk(func)(*args, **kwargs) == expected
+
+
+def test_ch_func_to_all_pk_signature_unchanged():
+    assert str(Sig(ch_func_to_all_pk(_pos_and_kws))) == "(pos=(), **kws)"
+    assert str(Sig(ch_func_to_all_pk(_x_vp_z))) == "(x, y=(), z=0)"
+    assert str(Sig(ch_func_to_all_pk(_x_y_args_kwargs))) == (
+        "(x, y=1, args=(), **kwargs)"
+    )
+    assert str(Sig(ch_func_to_all_pk(_po_pk_ko))) == "(a, b, c=None)"
+
+
+def test_ch_func_to_all_pk_missing_required_argument_raises():
+    with pytest.raises(TypeError):
+        ch_func_to_all_pk(_po_pk_ko)(1)
+    with pytest.raises(TypeError):
+        ch_func_to_all_pk(_x_y_args_kwargs)(y=2)  # x is required
+
+
+def _a_b_kw(a, b=2, **kw):
+    return a, b, kw
+
+
+def test_ch_func_to_all_pk_without_var_positional_keeps_legacy_kwargs_semantics():
+    """Without ``*args``, the behavior dependents rely on (meshed's ``hook_up``,
+    ``FlexFuncFanout``) is kept: the variadic keywords are given by name, as a dict,
+    and other excess keyword arguments are ignored."""
+    ff = ch_func_to_all_pk(_a_b_kw)
+    assert str(Sig(ff)) == "(a, b=2, **kw)"
+    assert ff(1, kw={"c": 3}) == (1, 2, {"c": 3})
+    assert ff(1, c=3) == (1, 2, {})
+    assert ff(1, 5) == (1, 5, {})
+
+
+def test_ch_func_to_all_pk_with_var_positional_accepts_kwargs_by_name():
+    """With ``*args``, the variadic keywords can be given as extra keyword arguments
+    (i2#12) or, consistently with the case without ``*args``, by name as a dict."""
+    ff = ch_func_to_all_pk(_pos_and_kws)
+    assert ff((1, 2), kws={"a": 3}) == _pos_and_kws(1, 2, a=3)
+    assert ff((1, 2), kws={"a": 3}, b=4) == _pos_and_kws(1, 2, a=3, b=4)
+
+
+def test_ch_func_to_all_pk_signature_keeps_function_name():
+    assert ch_func_to_all_pk(_a_b_kw).__signature__.name == "_a_b_kw"
+    assert ch_func_to_all_pk(_pos_and_kws).__signature__.name == "_pos_and_kws"
