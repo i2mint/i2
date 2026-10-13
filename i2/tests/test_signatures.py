@@ -2700,3 +2700,63 @@ def test_replace_kwargs_using_keyword_only_injection_unchanged():
 
     assert str(Sig(sauce)) == "(a, b, c, *, x: int, y=2, z=3, **extra)"
     assert sauce(1, 2, 3, x=4, z=5) == apple(1, x=4, z=5)
+
+
+# ch_func_to_all_pk: excess_keywords policy (i2mint/i2#95)
+
+
+def _a_b_kwargs(a, b=2, **kwargs):
+    return a, b, kwargs
+
+
+def _a_args_kwargs(a, *args, **kwargs):
+    return a, args, kwargs
+
+
+@pytest.mark.parametrize(
+    "func, policy, args, kwargs, expected",
+    [
+        # default: the historical rule (drop without *args, forward with *args)
+        (_a_b_kwargs, None, (1,), dict(x=3, q=4), (1, 2, {})),
+        (_a_args_kwargs, None, (1, (2,)), dict(x=3, q=4), (1, (2,), dict(x=3, q=4))),
+        # one rule, said explicitly
+        (_a_b_kwargs, "drop", (1,), dict(x=3, q=4), (1, 2, {})),
+        (_a_args_kwargs, "drop", (1, (2,)), dict(x=3, q=4), (1, (2,), {})),
+        (_a_b_kwargs, "forward", (1,), dict(x=3, q=4), (1, 2, dict(x=3, q=4))),
+        (_a_args_kwargs, "forward", (1, (2,)), dict(x=3), (1, (2,), dict(x=3))),
+        # the variadic keywords given by name are kept under every policy
+        (_a_b_kwargs, "drop", (1,), dict(kwargs=dict(x=3), q=4), (1, 2, dict(x=3))),
+        (_a_args_kwargs, "drop", (1,), dict(kwargs=dict(x=3), q=4), (1, (), dict(x=3))),
+        (_a_b_kwargs, "forward", (1,), dict(kwargs=dict(x=3), q=4), (1, 2, dict(x=3, q=4))),
+        # functions without **kwargs have nowhere to forward to
+        (_po_pk_ko, "forward", (1, 2), dict(d=5), (1, 2, None)),
+        (_x_vp_z, "drop", (1, (2, 3)), dict(z=4, d=5), _x_vp_z(1, 2, 3, z=4)),
+    ],
+)
+def test_ch_func_to_all_pk_excess_keywords(func, policy, args, kwargs, expected):
+    assert ch_func_to_all_pk(func, excess_keywords=policy)(*args, **kwargs) == expected
+
+
+def test_ch_func_to_all_pk_excess_keywords_validated():
+    with pytest.raises(ValueError, match="excess_keywords"):
+        ch_func_to_all_pk(_po_pk_ko, excess_keywords="keep")
+
+
+def test_ch_func_to_all_pk_extra_positional_on_variadic_keywords_slot():
+    """A non-mapping third positional used to fail with 'dict() argument after **'."""
+    with pytest.raises(TypeError, match="takes at most 2 positional"):
+        ch_func_to_all_pk(_a_b_kwargs)(1, 2, 3)
+    assert ch_func_to_all_pk(_a_b_kwargs)(1, 2, dict(x=3)) == (1, 2, dict(x=3))
+
+
+def test_ch_func_to_all_pk_variadic_keywords_slot_accepts_any_keys_object():
+    """Like ``**``, the slot takes anything with ``keys()`` (not only a ``Mapping``)."""
+
+    class KeysOnly:
+        def keys(self):
+            return ["x"]
+
+        def __getitem__(self, k):
+            return 7
+
+    assert ch_func_to_all_pk(_a_b_kwargs)(0, 1, KeysOnly()) == (0, 1, dict(x=7))
