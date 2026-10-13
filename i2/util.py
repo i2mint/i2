@@ -1625,7 +1625,10 @@ def get_app_folder(folder_kind: AppFolderKind = DFLT_APP_FOLDER_KIND):
             **TL;DR**: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.
 
     Returns:
-        str: The full path of the app data folder.
+        str: The full path of the app data folder. The platform's environment variable
+        (e.g. ``XDG_CONFIG_HOME``) is used if set to a non-empty absolute path (after
+        ``~`` expansion); otherwise (unset, empty or relative, per the XDG spec) the
+        default is used.
 
     See https://github.com/i2mint/i2mint/issues/1.
     """
