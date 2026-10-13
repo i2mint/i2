@@ -1936,17 +1936,26 @@
 </span><span id="line-1625"><span class="sd">            **TL;DR**: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.</span>
 </span><span id="line-1626">
 </span><span id="line-1627"><span class="sd">    Returns:</span>
-</span><span id="line-1628"><span class="sd">        str: The full path of the app data folder.</span>
-</span><span id="line-1629">
-</span><span id="line-1630"><span class="sd">    See https://github.com/i2mint/i2mint/issues/1.</span>
-</span><span id="line-1631"><span class="sd">    """</span>
-</span><span id="line-1632">    <span class="n">env_var</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">APP_FOLDER_STANDARDS</span><span class="p">[</span><span class="n">folder_kind</span><span class="p">]</span>
-</span><span id="line-1633">    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">env_var</span><span class="p">,</span> <span class="n">default</span><span class="p">))</span></div>
+</span><span id="line-1628"><span class="sd">        str: The full path of the app data folder. The platform's environment variable</span>
+</span><span id="line-1629"><span class="sd">        (e.g. ``XDG_CONFIG_HOME``) is used if set to a non-empty absolute path (after</span>
+</span><span id="line-1630"><span class="sd">        ``~`` expansion); otherwise (unset, empty or relative, per the XDG spec) the</span>
+</span><span id="line-1631"><span class="sd">        default is used.</span>
+</span><span id="line-1632">
+</span><span id="line-1633"><span class="sd">    See https://github.com/i2mint/i2mint/issues/1.</span>
+</span><span id="line-1634"><span class="sd">    """</span>
+</span><span id="line-1635">    <span class="n">env_var</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">APP_FOLDER_STANDARDS</span><span class="p">[</span><span class="n">folder_kind</span><span class="p">]</span>
+</span><span id="line-1636">    <span class="c1"># Per the XDG spec, an empty or relative value must be ignored (``os.getenv(env_var,</span>
+</span><span id="line-1637">    <span class="c1"># default)`` would return "" for an empty variable and root the folder at the cwd).</span>
+</span><span id="line-1638">    <span class="c1"># ``~`` is still expanded, as it always was.</span>
+</span><span id="line-1639">    <span class="n">env_value</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">env_var</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span>
+</span><span id="line-1640">    <span class="k">if</span> <span class="n">env_value</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">env_value</span><span class="p">):</span>
+</span><span id="line-1641">        <span class="k">return</span> <span class="n">env_value</span>
+</span><span id="line-1642">    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">default</span><span class="p">)</span></div>
 
-</span><span id="line-1634">
-</span><span id="line-1635">
-</span><span id="line-1636"><span class="n">get_app_config_folder</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">get_app_folder</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s2">"config"</span><span class="p">)</span>
-</span><span id="line-1637"><span class="n">get_app_data_folder</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">get_app_folder</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s2">"data"</span><span class="p">)</span>
+</span><span id="line-1643">
+</span><span id="line-1644">
+</span><span id="line-1645"><span class="n">get_app_config_folder</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">get_app_folder</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s2">"config"</span><span class="p">)</span>
+</span><span id="line-1646"><span class="n">get_app_data_folder</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">get_app_folder</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s2">"data"</span><span class="p">)</span>
 </span></code></pre></div>
     </div></div>
           </main>
@@ -1960,7 +1969,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=54da2d3d"></script>
+    <script src="../../_static/documentation_options.js?v=f0a2a924"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
