@@ -4019,11 +4019,21 @@ argument of the same name.
 """
 
 
-def ch_func_to_all_pk(func):
+#: Values ``ch_func_to_all_pk`` accepts for ``excess_keywords`` (``None``: historical rule)
+_EXCESS_KEYWORDS_POLICIES = (None, "drop", "forward")
+
+
+def ch_func_to_all_pk(func, *, excess_keywords=None):
     """Returns a decorated function where all arguments are of the PK kind.
     (PK: Positional_or_keyword)
 
     :param func: A callable
+    :param excess_keywords: What to do with keyword arguments that ``func`` has no
+        parameter for. ``"drop"`` ignores them (what ``hook_up``-style callers rely on:
+        they pass a whole scope dict), ``"forward"`` hands them to ``func``'s
+        ``**kwargs`` (and still ignores them if ``func`` has none). The default,
+        ``None``, keeps the historical rule: ``"forward"`` if ``func`` has a ``*args``,
+        else ``"drop"``. See i2mint/i2#95.
 
     >>> def f(a, /, b, *, c=None, **kwargs):
     ...     return a + b * c
@@ -4068,17 +4078,63 @@ def ch_func_to_all_pk(func):
     (x, y=(), *, z)
     >>> hh(1, (2, 3), z=4)
     'x=1, y=(2, 3), z=4'
+
+    What happens to keyword arguments that ``func`` has no parameter for is
+    ``excess_keywords``. By default, they are dropped unless ``func`` has a ``*args``
+    (then they are forwarded to its ``**kwargs``), which is how this function has
+    behaved since ``*args`` were supported. Say it explicitly to get one rule:
+
+    >>> def f4(a, b=2, **kwargs):
+    ...     return a, b, kwargs
+    >>> ch_func_to_all_pk(f4)(1, x=3)
+    (1, 2, {})
+    >>> ch_func_to_all_pk(f4, excess_keywords="forward")(1, x=3)
+    (1, 2, {'x': 3})
+    >>> def g(a, *args, **kwargs):
+    ...     return a, args, kwargs
+    >>> ch_func_to_all_pk(g)(1, (2,), x=3)
+    (1, (2,), {'x': 3})
+    >>> ch_func_to_all_pk(g, excess_keywords="drop")(1, (2,), x=3)
+    (1, (2,), {})
+
+    In both cases the variadic keywords can still be given by name, as a dict:
+
+    >>> ch_func_to_all_pk(f4)(1, kwargs={'x': 3}, q=4)
+    (1, 2, {'x': 3})
     """
+    if excess_keywords not in _EXCESS_KEYWORDS_POLICIES:
+        raise ValueError(
+            f"excess_keywords must be one of {_EXCESS_KEYWORDS_POLICIES[1:]} "
+            f"(or None for the default), not {excess_keywords!r}"
+        )
     func_sig = Sig(func)
     _func = tuple_the_args(func)
     all_pk_sig = all_pk_signature(Sig(_func))  # a Sig, keeping the name of func
 
-    if not func_sig.has_var_positional:
+    if excess_keywords is None:
+        excess_keywords = "forward" if func_sig.has_var_positional else "drop"
+
+    if not func_sig.has_var_positional and excess_keywords == "drop":
         # Unchanged behavior (dependents rely on it): the variadic keyword is given
         # by name, as a dict (``kwargs={...}``), and other excess arguments are
         # ignored.
+        var_keyword_name = func_sig.var_keyword_name
+        # (keyword-only params are filled from excess positionals too: ignore_kind)
+        n_positional = len(func_sig.params) - bool(var_keyword_name)
+
         @wraps(func)
         def __func(*args, **kwargs):
+            if (
+                var_keyword_name
+                and len(args) > n_positional
+                and not isinstance(args[n_positional], Mapping)
+            ):
+                raise TypeError(
+                    f"{getattr(func, '__name__', 'function')}() takes at most "
+                    f"{n_positional} positional arguments (the variadic keywords "
+                    f"'{var_keyword_name}' are given by name, as a dict), "
+                    f"got {len(args)}"
+                )
             args, kwargs = Sig(_func).extract_args_and_kwargs(*args, **kwargs)
             return _func(*args, **kwargs)
 
@@ -4087,6 +4143,7 @@ def ch_func_to_all_pk(func):
         # tupled ``*args`` value and drops the variadic keywords (#12). So we bind
         # to the all-PK signature and rebuild the call to ``func`` ourselves.
         var_keyword_name = func_sig.var_keyword_name
+        known_names = set(all_pk_sig.names)
 
         @wraps(func)
         def __func(*args, **kwargs):
@@ -4094,7 +4151,12 @@ def ch_func_to_all_pk(func):
                 # As in the no-variadic-positional case, accept the variadic keywords
                 # given by name, as a dict (and merge any other extras with them)
                 kwargs = dict(kwargs)
-                kwargs = {**kwargs.pop(var_keyword_name), **kwargs}
+                variadic_keywords = kwargs.pop(var_keyword_name)
+                if excess_keywords == "drop":
+                    kwargs = {k: v for k, v in kwargs.items() if k in known_names}
+                kwargs = {**variadic_keywords, **kwargs}
+            elif excess_keywords == "drop":
+                kwargs = {k: v for k, v in kwargs.items() if k in known_names}
             arguments = all_pk_sig.map_arguments(
                 args, kwargs, allow_excess=True, ignore_kind=False
             )
