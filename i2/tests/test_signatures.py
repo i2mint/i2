@@ -2747,3 +2747,16 @@ def test_ch_func_to_all_pk_extra_positional_on_variadic_keywords_slot():
     with pytest.raises(TypeError, match="takes at most 2 positional"):
         ch_func_to_all_pk(_a_b_kwargs)(1, 2, 3)
     assert ch_func_to_all_pk(_a_b_kwargs)(1, 2, dict(x=3)) == (1, 2, dict(x=3))
+
+
+def test_ch_func_to_all_pk_variadic_keywords_slot_accepts_any_keys_object():
+    """Like ``**``, the slot takes anything with ``keys()`` (not only a ``Mapping``)."""
+
+    class KeysOnly:
+        def keys(self):
+            return ["x"]
+
+        def __getitem__(self, k):
+            return 7
+
+    assert ch_func_to_all_pk(_a_b_kwargs)(0, 1, KeysOnly()) == (0, 1, dict(x=7))

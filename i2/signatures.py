@@ -4127,7 +4127,7 @@ def ch_func_to_all_pk(func, *, excess_keywords=None):
             if (
                 var_keyword_name
                 and len(args) > n_positional
-                and not isinstance(args[n_positional], Mapping)
+                and not hasattr(args[n_positional], "keys")  # what ``**`` needs
             ):
                 raise TypeError(
                     f"{getattr(func, '__name__', 'function')}() takes at most "
