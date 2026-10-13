@@ -54,3 +54,26 @@ def unpickled_func_still_works(func, *args, **kwargs):
     unpickled_func = pickle.loads(pickle.dumps(func))
     result = unpickled_func(*args, **kwargs)
     return expected == result
+
+
+def test_get_app_folder_ignores_empty_and_relative_env_var(monkeypatch, tmp_path):
+    """XDG spec: an empty or relative value is ignored (i2mint/i2#98)."""
+    import os
+    import pytest
+    from i2.util import get_app_folder, APP_FOLDER_STANDARDS
+
+    env_var, default = APP_FOLDER_STANDARDS["config"]
+    if os.name == "nt":
+        pytest.skip("XDG semantics are for POSIX")
+    expected_default = os.path.expanduser(default)
+
+    monkeypatch.delenv(env_var, raising=False)
+    assert get_app_folder("config") == expected_default
+    for bad in ("", "relative/dir", "."):
+        monkeypatch.setenv(env_var, bad)
+        assert get_app_folder("config") == expected_default
+    monkeypatch.setenv(env_var, str(tmp_path))
+    assert get_app_folder("config") == str(tmp_path)
+    # ``~`` is still expanded (backward compatible)
+    monkeypatch.setenv(env_var, "~/somewhere")
+    assert get_app_folder("config") == os.path.expanduser("~/somewhere")
