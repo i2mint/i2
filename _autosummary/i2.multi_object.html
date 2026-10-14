@@ -460,6 +460,15 @@ you access to the names/keys of your objects via attributes.
 </span><span id="line-3"><span class="go">{'this': [1], 'that': [1, 2]}</span>
 </span></code></pre></div>
 </div>
+<p>(That is the same as <code class="docutils literal notranslate"><span class="pre">MultiObj(**{'this':</span> <span class="pre">[1],</span> <span class="pre">'that':</span> <span class="pre">[1,</span> <span class="pre">2]})</span></code>.) The catch is
+that a lone mapping can’t then be an <em>object</em>. A subclass that needs that sets
+<code class="docutils literal notranslate"><span class="pre">single_mapping_is_objects</span> <span class="pre">=</span> <span class="pre">False</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">Objs</span><span class="p">(</span><span class="n">MultiObj</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="n">single_mapping_is_objects</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">Objs</span><span class="p">({</span><span class="s1">'this'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]})</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</span><span id="line-4"><span class="go">[{'this': [1]}]</span>
+</span></code></pre></div>
+</div>
 <p>You can specify an instance name and/or doc with the special (reserved) argument
 names <code class="docutils literal notranslate"><span class="pre">__name__</span></code> and <code class="docutils literal notranslate"><span class="pre">__doc__</span></code> (which therefore can’t be used as object names:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">mo</span> <span class="o">=</span> <span class="n">MultiObj</span><span class="p">(</span>
@@ -930,7 +939,7 @@ it through <code class="docutils literal notranslate"><span class="pre">exclude_
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=f0a2a924"></script>
+<script src="../_static/documentation_options.js?v=18b80ae6"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
