@@ -308,6 +308,15 @@ class MultiObj(Mapping):
     >>> dict(mo)
     {'this': [1], 'that': [1, 2]}
 
+    (That is the same as ``MultiObj(**{'this': [1], 'that': [1, 2]})``.) The catch is
+    that a lone mapping can't then be an *object*. A subclass that needs that sets
+    ``single_mapping_is_objects = False``:
+
+    >>> class Objs(MultiObj):
+    ...     single_mapping_is_objects = False
+    >>> list(Objs({'this': [1]}).values())
+    [{'this': [1]}]
+
     You can specify an instance name and/or doc with the special (reserved) argument
     names ``__name__`` and ``__doc__`` (which therefore can't be used as object names:
 
@@ -325,10 +334,22 @@ class MultiObj(Mapping):
     # Placing as staticmethod so that subclasses can overwrite if necessary
     auto_namer = staticmethod(uniquely_named_objects)
 
+    # Whether a single unnamed ``Mapping`` (and nothing else) is read as the
+    # ``{name: obj}`` mapping of the objects (the ``dict(mapping)`` look-alike, and the
+    # historical behavior), rather than as one unnamed object. Subclasses that need to
+    # hold a mapping *as an object* (e.g. a store that is also a context manager)
+    # can set this to ``False``. See i2#46.
+    single_mapping_is_objects = True
+
     def __init__(self, *unnamed, **named):
         named = self._process_reserved_names(named)
 
-        if len(unnamed) == 1 and isinstance(unnamed[0], Mapping) and len(named) == 0:
+        if (
+            self.single_mapping_is_objects
+            and len(unnamed) == 1
+            and isinstance(unnamed[0], Mapping)
+            and len(named) == 0
+        ):
             # Special case where a single input is given: a mapping between names and obj
             self.objects = unnamed[0]
         else:
