@@ -632,9 +632,9 @@
 </span><span id="line-427">
 </span><span id="line-428"><span class="n">DocStyle</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"numpy"</span><span class="p">,</span> <span class="s2">"google"</span><span class="p">,</span> <span class="s2">"rest"</span><span class="p">]</span>
 </span><span id="line-429">
-</span><span id="line-430"><span class="c1"># Each style's tell-tale marker, checked in this order (most specific first): a numpy</span>
-</span><span id="line-431"><span class="c1"># section header underlined with dashes, a reST field (``:param x:``), a google</span>
-</span><span id="line-432"><span class="c1"># section header ending with a colon.</span>
+</span><span id="line-430"><span class="c1"># Each style's tell-tale marker: a numpy section header underlined with dashes, a reST</span>
+</span><span id="line-431"><span class="c1"># field (``:param x:``), a google section header ending with a colon. The style whose</span>
+</span><span id="line-432"><span class="c1"># marker comes first in the docstring wins (ties go to the earlier style here).</span>
 </span><span id="line-433"><span class="n">_doc_style_markers</span> <span class="o">=</span> <span class="p">(</span>
 </span><span id="line-434">    <span class="p">(</span>
 </span><span id="line-435">        <span class="s2">"numpy"</span><span class="p">,</span>
@@ -688,350 +688,382 @@
 </span><span id="line-481"><span class="sd">    ... :type x: int</span>
 </span><span id="line-482"><span class="sd">    ... ''')</span>
 </span><span id="line-483"><span class="sd">    'rest'</span>
-</span><span id="line-484"><span class="sd">    &gt;&gt;&gt; detect_doc_style('Just a summary line.') is None</span>
-</span><span id="line-485"><span class="sd">    True</span>
-</span><span id="line-486"><span class="sd">    &gt;&gt;&gt; detect_doc_style(None) is None</span>
-</span><span id="line-487"><span class="sd">    True</span>
-</span><span id="line-488">
-</span><span id="line-489"><span class="sd">    It reads the markers of the docstring as written, so it works on the indented</span>
-</span><span id="line-490"><span class="sd">    ``__doc__`` of a function too:</span>
-</span><span id="line-491">
-</span><span id="line-492"><span class="sd">    &gt;&gt;&gt; def f(x):</span>
-</span><span id="line-493"><span class="sd">    ...     '''Do it.</span>
-</span><span id="line-494"><span class="sd">    ...</span>
-</span><span id="line-495"><span class="sd">    ...     :param x: An integer.</span>
-</span><span id="line-496"><span class="sd">    ...     '''</span>
-</span><span id="line-497"><span class="sd">    &gt;&gt;&gt; detect_doc_style(f)</span>
-</span><span id="line-498"><span class="sd">    'rest'</span>
-</span><span id="line-499"><span class="sd">    """</span>
-</span><span id="line-500">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">docstring</span><span class="p">):</span>
-</span><span id="line-501">        <span class="n">docstring</span> <span class="o">=</span> <span class="n">docstring</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">""</span>
-</span><span id="line-502">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-503">        <span class="k">return</span> <span class="kc">None</span>
-</span><span id="line-504">    <span class="k">for</span> <span class="n">style</span><span class="p">,</span> <span class="n">marker</span> <span class="ow">in</span> <span class="n">_doc_style_markers</span><span class="p">:</span>
-</span><span id="line-505">        <span class="k">if</span> <span class="n">marker</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">docstring</span><span class="p">):</span>
-</span><span id="line-506">            <span class="k">return</span> <span class="n">style</span>
-</span><span id="line-507">    <span class="k">return</span> <span class="kc">None</span></div>
+</span><span id="line-484">
+</span><span id="line-485"><span class="sd">    When several styles' markers appear (e.g. a google docstring whose example</span>
+</span><span id="line-486"><span class="sd">    shows reST fields), the one that comes first wins:</span>
+</span><span id="line-487">
+</span><span id="line-488"><span class="sd">    &gt;&gt;&gt; detect_doc_style('''</span>
+</span><span id="line-489"><span class="sd">    ... Args:</span>
+</span><span id="line-490"><span class="sd">    ...     x (int): An integer.</span>
+</span><span id="line-491"><span class="sd">    ...</span>
+</span><span id="line-492"><span class="sd">    ... Example:</span>
+</span><span id="line-493"><span class="sd">    ...     :param y: shown as text, not a field.</span>
+</span><span id="line-494"><span class="sd">    ... ''')</span>
+</span><span id="line-495"><span class="sd">    'google'</span>
+</span><span id="line-496"><span class="sd">    &gt;&gt;&gt; detect_doc_style('Just a summary line.') is None</span>
+</span><span id="line-497"><span class="sd">    True</span>
+</span><span id="line-498"><span class="sd">    &gt;&gt;&gt; detect_doc_style(None) is None</span>
+</span><span id="line-499"><span class="sd">    True</span>
+</span><span id="line-500">
+</span><span id="line-501"><span class="sd">    It reads the markers of the docstring as written, so it works on the indented</span>
+</span><span id="line-502"><span class="sd">    ``__doc__`` of a function too:</span>
+</span><span id="line-503">
+</span><span id="line-504"><span class="sd">    &gt;&gt;&gt; def f(x):</span>
+</span><span id="line-505"><span class="sd">    ...     '''Do it.</span>
+</span><span id="line-506"><span class="sd">    ...</span>
+</span><span id="line-507"><span class="sd">    ...     :param x: An integer.</span>
+</span><span id="line-508"><span class="sd">    ...     '''</span>
+</span><span id="line-509"><span class="sd">    &gt;&gt;&gt; detect_doc_style(f)</span>
+</span><span id="line-510"><span class="sd">    'rest'</span>
+</span><span id="line-511"><span class="sd">    """</span>
+</span><span id="line-512">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">docstring</span><span class="p">):</span>
+</span><span id="line-513">        <span class="n">docstring</span> <span class="o">=</span> <span class="n">docstring</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">""</span>
+</span><span id="line-514">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-515">        <span class="k">return</span> <span class="kc">None</span>
+</span><span id="line-516">    <span class="n">docstring</span> <span class="o">=</span> <span class="n">_normalize_newlines</span><span class="p">(</span><span class="n">docstring</span><span class="p">)</span>
+</span><span id="line-517">    <span class="n">first_match_positions</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-518">    <span class="k">for</span> <span class="n">style</span><span class="p">,</span> <span class="n">marker</span> <span class="ow">in</span> <span class="n">_doc_style_markers</span><span class="p">:</span>
+</span><span id="line-519">        <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">marker</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">docstring</span><span class="p">):</span>
+</span><span id="line-520">            <span class="n">first_match_positions</span><span class="p">[</span><span class="n">style</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span id="line-521">    <span class="k">if</span> <span class="ow">not</span> <span class="n">first_match_positions</span><span class="p">:</span>
+</span><span id="line-522">        <span class="k">return</span> <span class="kc">None</span>
+</span><span id="line-523">    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">first_match_positions</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">first_match_positions</span><span class="o">.</span><span class="n">get</span><span class="p">)</span></div>
 
-</span><span id="line-508">
-</span><span id="line-509">
+</span><span id="line-524">
+</span><span id="line-525">
+</span><span id="line-526"><span class="k">def</span><span class="w"> </span><span class="nf">_normalize_newlines</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-527"><span class="w">    </span><span class="sa">r</span><span class="sd">'''Turn CRLF (and lone CR) line endings into LF.</span>
+</span><span id="line-528">
+</span><span id="line-529"><span class="sd">    &gt;&gt;&gt; _normalize_newlines('a\r\nb\rc')</span>
+</span><span id="line-530"><span class="sd">    'a\nb\nc'</span>
+</span><span id="line-531"><span class="sd">    '''</span>
+</span><span id="line-532">    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\r</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="line-533">
+</span><span id="line-534">
 <div class="viewcode-block" id="docstring_to_params">
 <a class="viewcode-back" href="../../_autosummary/i2.doc_mint.html#i2.doc_mint.docstring_to_params">[docs]</a>
-</span><span id="line-510"><span class="k">def</span><span class="w"> </span><span class="nf">docstring_to_params</span><span class="p">(</span>
-</span><span id="line-511">    <span class="n">docstring</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="line-512">    <span class="o">*</span><span class="p">,</span>
-</span><span id="line-513">    <span class="n">doc_style</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"numpy"</span><span class="p">,</span> <span class="s2">"google"</span><span class="p">,</span> <span class="s2">"rest"</span><span class="p">,</span> <span class="s2">"auto"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"numpy"</span><span class="p">,</span>
-</span><span id="line-514">    <span class="n">converters</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">dflt_str_to_obj_converters</span><span class="p">,</span>
-</span><span id="line-515"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-</span><span id="line-516"><span class="w">    </span><span class="sd">"""</span>
-</span><span id="line-517"><span class="sd">    Parse a docstring and extract parameter specifications.</span>
-</span><span id="line-518">
-</span><span id="line-519"><span class="sd">    :param docstring: The docstring to parse.</span>
-</span><span id="line-520"><span class="sd">    :param doc_style: The style of the docstring to parse. One of 'numpy', 'google',</span>
-</span><span id="line-521"><span class="sd">        or 'rest', or 'auto' to use the style ``detect_doc_style`` finds (falling back</span>
-</span><span id="line-522"><span class="sd">        to 'numpy').</span>
-</span><span id="line-523">
-</span><span id="line-524"><span class="sd">    :return: A list of parameter specifications, where each specification is a dictionary containing:</span>
-</span><span id="line-525">
-</span><span id="line-526"><span class="sd">        - name: The name of the parameter (str).</span>
-</span><span id="line-527"><span class="sd">        - default: The default value of the parameter (str, optional).</span>
-</span><span id="line-528"><span class="sd">        - annotation: The type annotation for the parameter (str, optional).</span>
-</span><span id="line-529"><span class="sd">        - description: A description of the parameter (str).</span>
-</span><span id="line-530">
-</span><span id="line-531"><span class="sd">    **Examples**</span>
-</span><span id="line-532">
-</span><span id="line-533"><span class="sd">    &gt;&gt;&gt; docstring = '''</span>
-</span><span id="line-534"><span class="sd">    ... Parameters</span>
-</span><span id="line-535"><span class="sd">    ... ----------</span>
-</span><span id="line-536"><span class="sd">    ... x : int, default=1</span>
-</span><span id="line-537"><span class="sd">    ...     An integer value.</span>
-</span><span id="line-538"><span class="sd">    ... y : str, default=None</span>
-</span><span id="line-539"><span class="sd">    ...     An optional string.</span>
-</span><span id="line-540"><span class="sd">    ... '''</span>
-</span><span id="line-541"><span class="sd">    &gt;&gt;&gt; params = docstring_to_params(docstring)</span>
-</span><span id="line-542"><span class="sd">    &gt;&gt;&gt; params  == [</span>
-</span><span id="line-543"><span class="sd">    ...     {'name': 'x', 'default': 1, 'annotation': int, 'description': 'An integer value.'},</span>
-</span><span id="line-544"><span class="sd">    ...     {'name': 'y', 'default': None, 'annotation': str, 'description': 'An optional string.'}</span>
-</span><span id="line-545"><span class="sd">    ... ]</span>
-</span><span id="line-546"><span class="sd">    True</span>
-</span><span id="line-547">
+</span><span id="line-535"><span class="k">def</span><span class="w"> </span><span class="nf">docstring_to_params</span><span class="p">(</span>
+</span><span id="line-536">    <span class="n">docstring</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="line-537">    <span class="o">*</span><span class="p">,</span>
+</span><span id="line-538">    <span class="n">doc_style</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"numpy"</span><span class="p">,</span> <span class="s2">"google"</span><span class="p">,</span> <span class="s2">"rest"</span><span class="p">,</span> <span class="s2">"auto"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"numpy"</span><span class="p">,</span>
+</span><span id="line-539">    <span class="n">converters</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">dflt_str_to_obj_converters</span><span class="p">,</span>
+</span><span id="line-540"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+</span><span id="line-541"><span class="w">    </span><span class="sd">"""</span>
+</span><span id="line-542"><span class="sd">    Parse a docstring and extract parameter specifications.</span>
+</span><span id="line-543">
+</span><span id="line-544"><span class="sd">    :param docstring: The docstring to parse.</span>
+</span><span id="line-545"><span class="sd">    :param doc_style: The style of the docstring to parse. One of 'numpy', 'google',</span>
+</span><span id="line-546"><span class="sd">        or 'rest', or 'auto' to use the style ``detect_doc_style`` finds (falling back</span>
+</span><span id="line-547"><span class="sd">        to 'numpy').</span>
 </span><span id="line-548">
-</span><span id="line-549"><span class="sd">    &gt;&gt;&gt; docstring = '''</span>
-</span><span id="line-550"><span class="sd">    ... Args:</span>
-</span><span id="line-551"><span class="sd">    ...     x (int, optional): An integer value. Defaults to 1.</span>
-</span><span id="line-552"><span class="sd">    ...     y (str, optional): An optional string. Defaults to None.</span>
-</span><span id="line-553"><span class="sd">    ... '''</span>
-</span><span id="line-554"><span class="sd">    &gt;&gt;&gt; params = docstring_to_params(docstring, doc_style='google')</span>
-</span><span id="line-555"><span class="sd">    &gt;&gt;&gt; params == [</span>
-</span><span id="line-556"><span class="sd">    ...     {"name": "x", "default": 1, "annotation": int, "description": "An integer value."},</span>
-</span><span id="line-557"><span class="sd">    ...     {"name": "y", "default": None, "annotation": str, "description": "An optional string."},</span>
-</span><span id="line-558"><span class="sd">    ... ]</span>
-</span><span id="line-559"><span class="sd">    True</span>
-</span><span id="line-560">
-</span><span id="line-561"><span class="sd">    &gt;&gt;&gt; docstring = '''</span>
-</span><span id="line-562"><span class="sd">    ... :param x: An integer value. (Default: 1)</span>
-</span><span id="line-563"><span class="sd">    ... :type x: int</span>
-</span><span id="line-564"><span class="sd">    ... :param y: An optional string. (Default: None)</span>
-</span><span id="line-565"><span class="sd">    ... :type y: str</span>
-</span><span id="line-566"><span class="sd">    ... '''</span>
-</span><span id="line-567"><span class="sd">    &gt;&gt;&gt; params = docstring_to_params(docstring, doc_style='rest')</span>
-</span><span id="line-568"><span class="sd">    &gt;&gt;&gt; params == [</span>
-</span><span id="line-569"><span class="sd">    ...     {"name": "x", "default": 1, "annotation": int, "description": "An integer value."},</span>
-</span><span id="line-570"><span class="sd">    ...     {"name": "y", "default": None, "annotation": str, "description": "An optional string."},</span>
-</span><span id="line-571"><span class="sd">    ... ]</span>
-</span><span id="line-572"><span class="sd">    True</span>
+</span><span id="line-549"><span class="sd">    :return: A list of parameter specifications, where each specification is a dictionary containing:</span>
+</span><span id="line-550">
+</span><span id="line-551"><span class="sd">        - name: The name of the parameter (str).</span>
+</span><span id="line-552"><span class="sd">        - default: The default value of the parameter (str, optional).</span>
+</span><span id="line-553"><span class="sd">        - annotation: The type annotation for the parameter (str, optional).</span>
+</span><span id="line-554"><span class="sd">        - description: A description of the parameter (str).</span>
+</span><span id="line-555">
+</span><span id="line-556"><span class="sd">    **Examples**</span>
+</span><span id="line-557">
+</span><span id="line-558"><span class="sd">    &gt;&gt;&gt; docstring = '''</span>
+</span><span id="line-559"><span class="sd">    ... Parameters</span>
+</span><span id="line-560"><span class="sd">    ... ----------</span>
+</span><span id="line-561"><span class="sd">    ... x : int, default=1</span>
+</span><span id="line-562"><span class="sd">    ...     An integer value.</span>
+</span><span id="line-563"><span class="sd">    ... y : str, default=None</span>
+</span><span id="line-564"><span class="sd">    ...     An optional string.</span>
+</span><span id="line-565"><span class="sd">    ... '''</span>
+</span><span id="line-566"><span class="sd">    &gt;&gt;&gt; params = docstring_to_params(docstring)</span>
+</span><span id="line-567"><span class="sd">    &gt;&gt;&gt; params  == [</span>
+</span><span id="line-568"><span class="sd">    ...     {'name': 'x', 'default': 1, 'annotation': int, 'description': 'An integer value.'},</span>
+</span><span id="line-569"><span class="sd">    ...     {'name': 'y', 'default': None, 'annotation': str, 'description': 'An optional string.'}</span>
+</span><span id="line-570"><span class="sd">    ... ]</span>
+</span><span id="line-571"><span class="sd">    True</span>
+</span><span id="line-572">
 </span><span id="line-573">
-</span><span id="line-574"><span class="sd">    With ``doc_style='auto'``, the style is detected (see ``detect_doc_style``).</span>
-</span><span id="line-575"><span class="sd">    A function's (indented) ``__doc__`` works too:</span>
-</span><span id="line-576">
-</span><span id="line-577"><span class="sd">    &gt;&gt;&gt; docstring_to_params(docstring, doc_style='auto') == params</span>
-</span><span id="line-578"><span class="sd">    True</span>
-</span><span id="line-579"><span class="sd">    &gt;&gt;&gt; def f(x=1):</span>
-</span><span id="line-580"><span class="sd">    ...     '''Do it.</span>
-</span><span id="line-581"><span class="sd">    ...</span>
-</span><span id="line-582"><span class="sd">    ...     Args:</span>
-</span><span id="line-583"><span class="sd">    ...         x (int, optional): An integer value. Defaults to 1.</span>
-</span><span id="line-584"><span class="sd">    ...     '''</span>
-</span><span id="line-585"><span class="sd">    &gt;&gt;&gt; [p['name'] for p in docstring_to_params(f, doc_style='auto')]</span>
-</span><span id="line-586"><span class="sd">    ['x']</span>
-</span><span id="line-587"><span class="sd">    """</span>
-</span><span id="line-588">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">docstring</span><span class="p">):</span>
-</span><span id="line-589">        <span class="n">docstring</span> <span class="o">=</span> <span class="n">docstring</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">""</span>
-</span><span id="line-590">    <span class="c1"># dedent, so the section headers of an indented ``__doc__`` are found</span>
-</span><span id="line-591">    <span class="n">docstring</span> <span class="o">=</span> <span class="n">cleandoc</span><span class="p">(</span><span class="n">docstring</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span>
-</span><span id="line-592">    <span class="k">if</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"auto"</span><span class="p">:</span>
-</span><span id="line-593">        <span class="n">doc_style</span> <span class="o">=</span> <span class="n">detect_doc_style</span><span class="p">(</span><span class="n">docstring</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"numpy"</span>
-</span><span id="line-594">
-</span><span id="line-595">    <span class="c1"># Extract parameter lines</span>
-</span><span id="line-596">    <span class="n">param_lines</span> <span class="o">=</span> <span class="n">_extract_params_section</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="n">doc_style</span><span class="p">)</span>
-</span><span id="line-597">
-</span><span id="line-598">    <span class="c1"># Parse parameter lines</span>
-</span><span id="line-599">    <span class="k">if</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"numpy"</span><span class="p">:</span>
-</span><span id="line-600">        <span class="n">params</span> <span class="o">=</span> <span class="n">_parse_numpy_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">)</span>
-</span><span id="line-601">    <span class="k">elif</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"google"</span><span class="p">:</span>
-</span><span id="line-602">        <span class="n">params</span> <span class="o">=</span> <span class="n">_parse_google_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">)</span>
-</span><span id="line-603">    <span class="k">elif</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"rest"</span><span class="p">:</span>
-</span><span id="line-604">        <span class="n">params</span> <span class="o">=</span> <span class="n">_parse_rest_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">)</span>
-</span><span id="line-605">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-606">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported doc_style: </span><span class="si">{</span><span class="n">doc_style</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="line-607">
-</span><span id="line-608">    <span class="k">def</span><span class="w"> </span><span class="nf">convert_param</span><span class="p">(</span><span class="n">param</span><span class="p">):</span>
-</span><span id="line-609">        <span class="n">param</span><span class="p">[</span><span class="s2">"default"</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_string</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="s2">"default"</span><span class="p">],</span> <span class="n">converters</span><span class="p">)</span>
-</span><span id="line-610">        <span class="n">param</span><span class="p">[</span><span class="s2">"annotation"</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_string</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="s2">"annotation"</span><span class="p">],</span> <span class="n">converters</span><span class="p">)</span>
-</span><span id="line-611">        <span class="k">return</span> <span class="n">param</span>
+</span><span id="line-574"><span class="sd">    &gt;&gt;&gt; docstring = '''</span>
+</span><span id="line-575"><span class="sd">    ... Args:</span>
+</span><span id="line-576"><span class="sd">    ...     x (int, optional): An integer value. Defaults to 1.</span>
+</span><span id="line-577"><span class="sd">    ...     y (str, optional): An optional string. Defaults to None.</span>
+</span><span id="line-578"><span class="sd">    ... '''</span>
+</span><span id="line-579"><span class="sd">    &gt;&gt;&gt; params = docstring_to_params(docstring, doc_style='google')</span>
+</span><span id="line-580"><span class="sd">    &gt;&gt;&gt; params == [</span>
+</span><span id="line-581"><span class="sd">    ...     {"name": "x", "default": 1, "annotation": int, "description": "An integer value."},</span>
+</span><span id="line-582"><span class="sd">    ...     {"name": "y", "default": None, "annotation": str, "description": "An optional string."},</span>
+</span><span id="line-583"><span class="sd">    ... ]</span>
+</span><span id="line-584"><span class="sd">    True</span>
+</span><span id="line-585">
+</span><span id="line-586"><span class="sd">    &gt;&gt;&gt; docstring = '''</span>
+</span><span id="line-587"><span class="sd">    ... :param x: An integer value. (Default: 1)</span>
+</span><span id="line-588"><span class="sd">    ... :type x: int</span>
+</span><span id="line-589"><span class="sd">    ... :param y: An optional string. (Default: None)</span>
+</span><span id="line-590"><span class="sd">    ... :type y: str</span>
+</span><span id="line-591"><span class="sd">    ... '''</span>
+</span><span id="line-592"><span class="sd">    &gt;&gt;&gt; params = docstring_to_params(docstring, doc_style='rest')</span>
+</span><span id="line-593"><span class="sd">    &gt;&gt;&gt; params == [</span>
+</span><span id="line-594"><span class="sd">    ...     {"name": "x", "default": 1, "annotation": int, "description": "An integer value."},</span>
+</span><span id="line-595"><span class="sd">    ...     {"name": "y", "default": None, "annotation": str, "description": "An optional string."},</span>
+</span><span id="line-596"><span class="sd">    ... ]</span>
+</span><span id="line-597"><span class="sd">    True</span>
+</span><span id="line-598">
+</span><span id="line-599"><span class="sd">    With ``doc_style='auto'``, the style is detected (see ``detect_doc_style``).</span>
+</span><span id="line-600"><span class="sd">    A function's (indented) ``__doc__`` works too:</span>
+</span><span id="line-601">
+</span><span id="line-602"><span class="sd">    &gt;&gt;&gt; docstring_to_params(docstring, doc_style='auto') == params</span>
+</span><span id="line-603"><span class="sd">    True</span>
+</span><span id="line-604"><span class="sd">    &gt;&gt;&gt; def f(x=1):</span>
+</span><span id="line-605"><span class="sd">    ...     '''Do it.</span>
+</span><span id="line-606"><span class="sd">    ...</span>
+</span><span id="line-607"><span class="sd">    ...     Args:</span>
+</span><span id="line-608"><span class="sd">    ...         x (int, optional): An integer value. Defaults to 1.</span>
+</span><span id="line-609"><span class="sd">    ...     '''</span>
+</span><span id="line-610"><span class="sd">    &gt;&gt;&gt; [p['name'] for p in docstring_to_params(f, doc_style='auto')]</span>
+</span><span id="line-611"><span class="sd">    ['x']</span>
 </span><span id="line-612">
-</span><span id="line-613">    <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">convert_param</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+</span><span id="line-613"><span class="sd">    The Sphinx typed-field form (``:param int x:``) and CRLF line endings are handled:</span>
 </span><span id="line-614">
-</span><span id="line-615">    <span class="k">return</span> <span class="n">params</span></div>
+</span><span id="line-615"><span class="sd">    &gt;&gt;&gt; docstring_to_params(':param int x: X.\\r\\n:param y: Note: Y.', doc_style='auto') == [</span>
+</span><span id="line-616"><span class="sd">    ...     {"name": "x", "default": None, "annotation": int, "description": "X."},</span>
+</span><span id="line-617"><span class="sd">    ...     {"name": "y", "default": None, "annotation": None, "description": "Note: Y."},</span>
+</span><span id="line-618"><span class="sd">    ... ]</span>
+</span><span id="line-619"><span class="sd">    True</span>
+</span><span id="line-620"><span class="sd">    """</span>
+</span><span id="line-621">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">docstring</span><span class="p">):</span>
+</span><span id="line-622">        <span class="n">docstring</span> <span class="o">=</span> <span class="n">docstring</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">""</span>
+</span><span id="line-623">    <span class="c1"># dedent, so the section headers of an indented ``__doc__`` are found</span>
+</span><span id="line-624">    <span class="n">docstring</span> <span class="o">=</span> <span class="n">cleandoc</span><span class="p">(</span><span class="n">_normalize_newlines</span><span class="p">(</span><span class="n">docstring</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">))</span>
+</span><span id="line-625">    <span class="k">if</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"auto"</span><span class="p">:</span>
+</span><span id="line-626">        <span class="n">doc_style</span> <span class="o">=</span> <span class="n">detect_doc_style</span><span class="p">(</span><span class="n">docstring</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"numpy"</span>
+</span><span id="line-627">
+</span><span id="line-628">    <span class="c1"># Extract parameter lines</span>
+</span><span id="line-629">    <span class="n">param_lines</span> <span class="o">=</span> <span class="n">_extract_params_section</span><span class="p">(</span><span class="n">docstring</span><span class="p">,</span> <span class="n">doc_style</span><span class="p">)</span>
+</span><span id="line-630">
+</span><span id="line-631">    <span class="c1"># Parse parameter lines</span>
+</span><span id="line-632">    <span class="k">if</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"numpy"</span><span class="p">:</span>
+</span><span id="line-633">        <span class="n">params</span> <span class="o">=</span> <span class="n">_parse_numpy_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">)</span>
+</span><span id="line-634">    <span class="k">elif</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"google"</span><span class="p">:</span>
+</span><span id="line-635">        <span class="n">params</span> <span class="o">=</span> <span class="n">_parse_google_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">)</span>
+</span><span id="line-636">    <span class="k">elif</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"rest"</span><span class="p">:</span>
+</span><span id="line-637">        <span class="n">params</span> <span class="o">=</span> <span class="n">_parse_rest_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">)</span>
+</span><span id="line-638">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-639">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported doc_style: </span><span class="si">{</span><span class="n">doc_style</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="line-640">
+</span><span id="line-641">    <span class="k">def</span><span class="w"> </span><span class="nf">convert_param</span><span class="p">(</span><span class="n">param</span><span class="p">):</span>
+</span><span id="line-642">        <span class="n">param</span><span class="p">[</span><span class="s2">"default"</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_string</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="s2">"default"</span><span class="p">],</span> <span class="n">converters</span><span class="p">)</span>
+</span><span id="line-643">        <span class="n">param</span><span class="p">[</span><span class="s2">"annotation"</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_string</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="s2">"annotation"</span><span class="p">],</span> <span class="n">converters</span><span class="p">)</span>
+</span><span id="line-644">        <span class="k">return</span> <span class="n">param</span>
+</span><span id="line-645">
+</span><span id="line-646">    <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">convert_param</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+</span><span id="line-647">
+</span><span id="line-648">    <span class="k">return</span> <span class="n">params</span></div>
 
-</span><span id="line-616">
-</span><span id="line-617">
-</span><span id="line-618"><span class="n">_google_args_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Args:"</span><span class="p">,</span> <span class="s2">"Arguments:"</span><span class="p">,</span> <span class="s2">"Parameters:"</span><span class="p">}</span>
-</span><span id="line-619">
-</span><span id="line-620">
-</span><span id="line-621"><span class="k">def</span><span class="w"> </span><span class="nf">_extract_params_section</span><span class="p">(</span><span class="n">docstring</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">doc_style</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-622">    <span class="n">lines</span> <span class="o">=</span> <span class="n">docstring</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="line-623">    <span class="k">if</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"numpy"</span><span class="p">:</span>
-</span><span id="line-624">        <span class="c1"># Find "Parameters" section</span>
-</span><span id="line-625">        <span class="k">try</span><span class="p">:</span>
-</span><span id="line-626">            <span class="n">param_index</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"Parameters"</span><span class="p">)</span>
-</span><span id="line-627">            <span class="c1"># Next line should be a separator like '----------'</span>
-</span><span id="line-628">            <span class="n">separator_line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">param_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-</span><span id="line-629">            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"-{3,}"</span><span class="p">,</span> <span class="n">separator_line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
-</span><span id="line-630">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="line-631">                    <span class="s2">"Expected a separator after 'Parameters' in Numpy docstring"</span>
-</span><span id="line-632">                <span class="p">)</span>
-</span><span id="line-633">            <span class="n">param_lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">param_index</span> <span class="o">+</span> <span class="mi">2</span> <span class="p">:]</span>
-</span><span id="line-634">        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-</span><span id="line-635">            <span class="c1"># "Parameters" section not found</span>
-</span><span id="line-636">            <span class="k">return</span> <span class="p">[]</span>
-</span><span id="line-637">    <span class="k">elif</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"google"</span><span class="p">:</span>
-</span><span id="line-638">        <span class="c1"># Find the "Args:" (or "Arguments:", "Parameters:") section</span>
-</span><span id="line-639">        <span class="n">param_index</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
-</span><span id="line-640">            <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">_google_args_headers</span><span class="p">),</span>
-</span><span id="line-641">            <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-642">        <span class="p">)</span>
-</span><span id="line-643">        <span class="k">if</span> <span class="n">param_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-644">            <span class="k">return</span> <span class="p">[]</span>
-</span><span id="line-645">        <span class="n">param_lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">param_index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
-</span><span id="line-646">    <span class="k">elif</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"rest"</span><span class="p">:</span>
-</span><span id="line-647">        <span class="n">param_lines</span> <span class="o">=</span> <span class="n">lines</span>
-</span><span id="line-648">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-649">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported doc_style: </span><span class="si">{</span><span class="n">doc_style</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="line-650">    <span class="k">return</span> <span class="n">param_lines</span>
-</span><span id="line-651">
+</span><span id="line-649">
+</span><span id="line-650">
+</span><span id="line-651"><span class="n">_google_args_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Args:"</span><span class="p">,</span> <span class="s2">"Arguments:"</span><span class="p">,</span> <span class="s2">"Parameters:"</span><span class="p">}</span>
 </span><span id="line-652">
-</span><span id="line-653"><span class="k">def</span><span class="w"> </span><span class="nf">_collect_indented_lines</span><span class="p">(</span>
-</span><span id="line-654">    <span class="n">param_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">indent_level</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="line-655"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-</span><span id="line-656">    <span class="n">description_lines</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-657">    <span class="n">i</span> <span class="o">=</span> <span class="n">start_index</span>
-</span><span id="line-658">    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_lines</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
-</span><span id="line-659">        <span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">" "</span> <span class="o">*</span> <span class="n">indent_level</span><span class="p">)</span> <span class="ow">or</span> <span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">""</span>
-</span><span id="line-660">    <span class="p">):</span>
-</span><span id="line-661">        <span class="n">description_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-</span><span id="line-662">        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-663">    <span class="n">description</span> <span class="o">=</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">description_lines</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-664">    <span class="k">return</span> <span class="n">description</span><span class="p">,</span> <span class="n">i</span>
-</span><span id="line-665">
-</span><span id="line-666">
-</span><span id="line-667"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_numpy_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-</span><span id="line-668">    <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-669">    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="line-670">    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_lines</span><span class="p">):</span>
-</span><span id="line-671">        <span class="n">line</span> <span class="o">=</span> <span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-</span><span id="line-672">        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-</span><span id="line-673">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-674">            <span class="k">continue</span>
-</span><span id="line-675">        <span class="c1"># Match parameter line: name : type, default=value</span>
-</span><span id="line-676">        <span class="n">param_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
-</span><span id="line-677">            <span class="sa">r</span><span class="s2">"^(\w+)\s*:\s*([^,]+)(?:,\s*default=(.+))?"</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-678">        <span class="p">)</span>
-</span><span id="line-679">        <span class="k">if</span> <span class="n">param_match</span><span class="p">:</span>
-</span><span id="line-680">            <span class="n">name</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="line-681">            <span class="n">annotation</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-682">            <span class="n">default</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
-</span><span id="line-683">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-684">            <span class="c1"># Collect description lines</span>
-</span><span id="line-685">            <span class="n">description</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">_collect_indented_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">indent_level</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-</span><span id="line-686">            <span class="n">param</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-687">                <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-</span><span id="line-688">                <span class="s2">"default"</span><span class="p">:</span> <span class="n">default</span><span class="p">,</span>
-</span><span id="line-689">                <span class="s2">"annotation"</span><span class="p">:</span> <span class="n">annotation</span><span class="p">,</span>
-</span><span id="line-690">                <span class="s2">"description"</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
-</span><span id="line-691">            <span class="p">}</span>
-</span><span id="line-692">            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
-</span><span id="line-693">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-694">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-695">    <span class="k">return</span> <span class="n">params</span>
-</span><span id="line-696">
-</span><span id="line-697">
-</span><span id="line-698"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_google_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-</span><span id="line-699">    <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-700">    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="line-701">    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_lines</span><span class="p">):</span>
-</span><span id="line-702">        <span class="n">line</span> <span class="o">=</span> <span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-</span><span id="line-703">        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-</span><span id="line-704">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-705">            <span class="k">continue</span>
-</span><span id="line-706">        <span class="c1"># Match parameter line: name (type, optional): description</span>
-</span><span id="line-707">        <span class="n">param_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^ </span><span class="si">{4}</span><span class="s2">(\w+)\s*(?:\(([^)]+)\))?:\s*(.+)"</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
-</span><span id="line-708">        <span class="k">if</span> <span class="n">param_match</span><span class="p">:</span>
-</span><span id="line-709">            <span class="n">name</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="line-710">            <span class="n">type_default</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</span><span id="line-711">            <span class="n">description</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-</span><span id="line-712">            <span class="n">annotation</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-713">            <span class="n">default</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-714">            <span class="k">if</span> <span class="n">type_default</span><span class="p">:</span>
-</span><span id="line-715">                <span class="c1"># Parse type and optional</span>
-</span><span id="line-716">                <span class="n">type_parts</span> <span class="o">=</span> <span class="n">type_default</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
-</span><span id="line-717">                <span class="n">annotation</span> <span class="o">=</span> <span class="n">type_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-718">                <span class="k">if</span> <span class="s2">"optional"</span> <span class="ow">in</span> <span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">type_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]:</span>
-</span><span id="line-719">                    <span class="c1"># Extract default from description if present</span>
-</span><span id="line-720">                    <span class="n">default_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"Defaults to (.+)\."</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
-</span><span id="line-721">                    <span class="k">if</span> <span class="n">default_match</span><span class="p">:</span>
-</span><span id="line-722">                        <span class="n">default</span> <span class="o">=</span> <span class="n">default_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-723">                        <span class="n">description</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
-</span><span id="line-724">                            <span class="sa">r</span><span class="s2">"Defaults to .+\."</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">description</span>
-</span><span id="line-725">                        <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-726">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-727">            <span class="c1"># Collect additional description lines</span>
-</span><span id="line-728">            <span class="n">extra_description</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">_collect_indented_lines</span><span class="p">(</span>
-</span><span id="line-729">                <span class="n">param_lines</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">indent_level</span><span class="o">=</span><span class="mi">8</span>
-</span><span id="line-730">            <span class="p">)</span>
-</span><span id="line-731">            <span class="k">if</span> <span class="n">extra_description</span><span class="p">:</span>
-</span><span id="line-732">                <span class="n">description</span> <span class="o">+=</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">extra_description</span>
-</span><span id="line-733">            <span class="n">param</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-734">                <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-</span><span id="line-735">                <span class="s2">"default"</span><span class="p">:</span> <span class="n">default</span><span class="p">,</span>
-</span><span id="line-736">                <span class="s2">"annotation"</span><span class="p">:</span> <span class="n">annotation</span><span class="p">,</span>
-</span><span id="line-737">                <span class="s2">"description"</span><span class="p">:</span> <span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-</span><span id="line-738">            <span class="p">}</span>
-</span><span id="line-739">            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
-</span><span id="line-740">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-741">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-742">    <span class="k">return</span> <span class="n">params</span>
-</span><span id="line-743">
-</span><span id="line-744">
-</span><span id="line-745"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_rest_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-</span><span id="line-746">    <span class="n">params_dict</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-747">    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="line-748">    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_lines</span><span class="p">):</span>
-</span><span id="line-749">        <span class="n">line</span> <span class="o">=</span> <span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-750">        <span class="c1"># Match ':param name: description'</span>
-</span><span id="line-751">        <span class="n">param_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^:param (\w+):\s*(.+)"</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
-</span><span id="line-752">        <span class="k">if</span> <span class="n">param_match</span><span class="p">:</span>
-</span><span id="line-753">            <span class="n">name</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="line-754">            <span class="n">description</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</span><span id="line-755">            <span class="c1"># Check for default value in description</span>
-</span><span id="line-756">            <span class="n">default_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\(Default:\s*(.+)\)"</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
-</span><span id="line-757">            <span class="n">default</span> <span class="o">=</span> <span class="n">default_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">default_match</span> <span class="k">else</span> <span class="kc">None</span>
-</span><span id="line-758">            <span class="k">if</span> <span class="n">default</span><span class="p">:</span>
-</span><span id="line-759">                <span class="n">description</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\(Default:\s*.+\)"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-760">            <span class="c1"># Initialize parameter entry</span>
-</span><span id="line-761">            <span class="n">params_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-762">                <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-</span><span id="line-763">                <span class="s2">"default"</span><span class="p">:</span> <span class="n">default</span><span class="p">,</span>
-</span><span id="line-764">                <span class="s2">"annotation"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-765">                <span class="s2">"description"</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
-</span><span id="line-766">            <span class="p">}</span>
-</span><span id="line-767">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-768">        <span class="c1"># Match ':type name: type'</span>
-</span><span id="line-769">        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">":type"</span><span class="p">):</span>
-</span><span id="line-770">            <span class="n">type_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^:type (\w+):\s*(.+)"</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
-</span><span id="line-771">            <span class="k">if</span> <span class="n">type_match</span><span class="p">:</span>
-</span><span id="line-772">                <span class="n">name</span> <span class="o">=</span> <span class="n">type_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="line-773">                <span class="n">annotation</span> <span class="o">=</span> <span class="n">type_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-774">                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params_dict</span><span class="p">:</span>
-</span><span id="line-775">                    <span class="n">params_dict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">"annotation"</span><span class="p">]</span> <span class="o">=</span> <span class="n">annotation</span>
-</span><span id="line-776">                <span class="k">else</span><span class="p">:</span>
-</span><span id="line-777">                    <span class="c1"># Type without param, create entry</span>
-</span><span id="line-778">                    <span class="n">params_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-779">                        <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-</span><span id="line-780">                        <span class="s2">"default"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-781">                        <span class="s2">"annotation"</span><span class="p">:</span> <span class="n">annotation</span><span class="p">,</span>
-</span><span id="line-782">                        <span class="s2">"description"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
-</span><span id="line-783">                    <span class="p">}</span>
-</span><span id="line-784">                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-785">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-786">                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-787">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-788">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-789">    <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">params_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-</span><span id="line-790">    <span class="k">return</span> <span class="n">params</span>
-</span><span id="line-791">
-</span><span id="line-792">
-</span><span id="line-793"><span class="c1"># The doctest tools moved to i2.doctests; re-exported so existing imports keep working,</span>
-</span><span id="line-794"><span class="c1"># along with the modules and helpers this module used to import for them.</span>
-</span><span id="line-795"><span class="kn">import</span><span class="w"> </span><span class="nn">doctest</span>  <span class="c1"># noqa: E402, F401</span>
-</span><span id="line-796"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>  <span class="c1"># noqa: E402, F401</span>
-</span><span id="line-797"><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">getdoc</span>  <span class="c1"># noqa: E402, F401</span>
-</span><span id="line-798"><span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">groupby</span>  <span class="c1"># noqa: E402, F401</span>
-</span><span id="line-799">
-</span><span id="line-800"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.doctests</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa: E402, F401</span>
-</span><span id="line-801">    <span class="n">MAX_LINE_LENGTH</span><span class="p">,</span>
-</span><span id="line-802">    <span class="n">_prefix_lines</span><span class="p">,</span>
-</span><span id="line-803">    <span class="n">ExampleX</span><span class="p">,</span>
-</span><span id="line-804">    <span class="n">DoctestBlock</span><span class="p">,</span>
-</span><span id="line-805">    <span class="n">parse_doctest</span><span class="p">,</span>
-</span><span id="line-806">    <span class="n">split_text_and_doctests</span><span class="p">,</span>
-</span><span id="line-807">    <span class="n">comment_strip_p</span><span class="p">,</span>
-</span><span id="line-808">    <span class="n">doctest_line_p</span><span class="p">,</span>
-</span><span id="line-809">    <span class="n">empty_line</span><span class="p">,</span>
-</span><span id="line-810">    <span class="n">non_doctest_lines</span><span class="p">,</span>
-</span><span id="line-811">    <span class="n">strip_comments</span><span class="p">,</span>
-</span><span id="line-812">    <span class="n">mk_example_wants_callback</span><span class="p">,</span>
-</span><span id="line-813">    <span class="n">split_line_comments</span><span class="p">,</span>
-</span><span id="line-814">    <span class="n">_assert_wants</span><span class="p">,</span>
-</span><span id="line-815">    <span class="n">_output_prefix</span><span class="p">,</span>
-</span><span id="line-816">    <span class="n">output_prefix</span><span class="p">,</span>
-</span><span id="line-817">    <span class="n">assert_wants</span><span class="p">,</span>
-</span><span id="line-818">    <span class="n">doctest_string_trans_lines</span><span class="p">,</span>
-</span><span id="line-819">    <span class="n">_doctest_string_gen</span><span class="p">,</span>
-</span><span id="line-820">    <span class="n">doctest_string</span><span class="p">,</span>
-</span><span id="line-821">    <span class="n">doctest_string_print</span><span class="p">,</span>
-</span><span id="line-822">    <span class="n">old_doctest_string</span><span class="p">,</span>
-</span><span id="line-823"><span class="p">)</span>
+</span><span id="line-653">
+</span><span id="line-654"><span class="k">def</span><span class="w"> </span><span class="nf">_extract_params_section</span><span class="p">(</span><span class="n">docstring</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">doc_style</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-655">    <span class="n">lines</span> <span class="o">=</span> <span class="n">docstring</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="line-656">    <span class="k">if</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"numpy"</span><span class="p">:</span>
+</span><span id="line-657">        <span class="c1"># Find "Parameters" section</span>
+</span><span id="line-658">        <span class="k">try</span><span class="p">:</span>
+</span><span id="line-659">            <span class="n">param_index</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"Parameters"</span><span class="p">)</span>
+</span><span id="line-660">            <span class="c1"># Next line should be a separator like '----------'</span>
+</span><span id="line-661">            <span class="n">separator_line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">param_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+</span><span id="line-662">            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"-{3,}"</span><span class="p">,</span> <span class="n">separator_line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
+</span><span id="line-663">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="line-664">                    <span class="s2">"Expected a separator after 'Parameters' in Numpy docstring"</span>
+</span><span id="line-665">                <span class="p">)</span>
+</span><span id="line-666">            <span class="n">param_lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">param_index</span> <span class="o">+</span> <span class="mi">2</span> <span class="p">:]</span>
+</span><span id="line-667">        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span id="line-668">            <span class="c1"># "Parameters" section not found</span>
+</span><span id="line-669">            <span class="k">return</span> <span class="p">[]</span>
+</span><span id="line-670">    <span class="k">elif</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"google"</span><span class="p">:</span>
+</span><span id="line-671">        <span class="c1"># Find the "Args:" (or "Arguments:", "Parameters:") section</span>
+</span><span id="line-672">        <span class="n">param_index</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+</span><span id="line-673">            <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">_google_args_headers</span><span class="p">),</span>
+</span><span id="line-674">            <span class="kc">None</span><span class="p">,</span>
+</span><span id="line-675">        <span class="p">)</span>
+</span><span id="line-676">        <span class="k">if</span> <span class="n">param_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-677">            <span class="k">return</span> <span class="p">[]</span>
+</span><span id="line-678">        <span class="n">param_lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">param_index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
+</span><span id="line-679">    <span class="k">elif</span> <span class="n">doc_style</span> <span class="o">==</span> <span class="s2">"rest"</span><span class="p">:</span>
+</span><span id="line-680">        <span class="n">param_lines</span> <span class="o">=</span> <span class="n">lines</span>
+</span><span id="line-681">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-682">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported doc_style: </span><span class="si">{</span><span class="n">doc_style</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="line-683">    <span class="k">return</span> <span class="n">param_lines</span>
+</span><span id="line-684">
+</span><span id="line-685">
+</span><span id="line-686"><span class="k">def</span><span class="w"> </span><span class="nf">_collect_indented_lines</span><span class="p">(</span>
+</span><span id="line-687">    <span class="n">param_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">indent_level</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="line-688"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+</span><span id="line-689">    <span class="n">description_lines</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-690">    <span class="n">i</span> <span class="o">=</span> <span class="n">start_index</span>
+</span><span id="line-691">    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_lines</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+</span><span id="line-692">        <span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">" "</span> <span class="o">*</span> <span class="n">indent_level</span><span class="p">)</span> <span class="ow">or</span> <span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">""</span>
+</span><span id="line-693">    <span class="p">):</span>
+</span><span id="line-694">        <span class="n">description_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</span><span id="line-695">        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-696">    <span class="n">description</span> <span class="o">=</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">description_lines</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-697">    <span class="k">return</span> <span class="n">description</span><span class="p">,</span> <span class="n">i</span>
+</span><span id="line-698">
+</span><span id="line-699">
+</span><span id="line-700"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_numpy_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+</span><span id="line-701">    <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-702">    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="line-703">    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_lines</span><span class="p">):</span>
+</span><span id="line-704">        <span class="n">line</span> <span class="o">=</span> <span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span id="line-705">        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+</span><span id="line-706">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-707">            <span class="k">continue</span>
+</span><span id="line-708">        <span class="c1"># Match parameter line: name : type, default=value</span>
+</span><span id="line-709">        <span class="n">param_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
+</span><span id="line-710">            <span class="sa">r</span><span class="s2">"^(\w+)\s*:\s*([^,]+)(?:,\s*default=(.+))?"</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-711">        <span class="p">)</span>
+</span><span id="line-712">        <span class="k">if</span> <span class="n">param_match</span><span class="p">:</span>
+</span><span id="line-713">            <span class="n">name</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="line-714">            <span class="n">annotation</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-715">            <span class="n">default</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span id="line-716">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-717">            <span class="c1"># Collect description lines</span>
+</span><span id="line-718">            <span class="n">description</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">_collect_indented_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">indent_level</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</span><span id="line-719">            <span class="n">param</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-720">                <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+</span><span id="line-721">                <span class="s2">"default"</span><span class="p">:</span> <span class="n">default</span><span class="p">,</span>
+</span><span id="line-722">                <span class="s2">"annotation"</span><span class="p">:</span> <span class="n">annotation</span><span class="p">,</span>
+</span><span id="line-723">                <span class="s2">"description"</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+</span><span id="line-724">            <span class="p">}</span>
+</span><span id="line-725">            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+</span><span id="line-726">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-727">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-728">    <span class="k">return</span> <span class="n">params</span>
+</span><span id="line-729">
+</span><span id="line-730">
+</span><span id="line-731"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_google_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+</span><span id="line-732">    <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-733">    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="line-734">    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_lines</span><span class="p">):</span>
+</span><span id="line-735">        <span class="n">line</span> <span class="o">=</span> <span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span id="line-736">        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+</span><span id="line-737">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-738">            <span class="k">continue</span>
+</span><span id="line-739">        <span class="c1"># Match parameter line: name (type, optional): description</span>
+</span><span id="line-740">        <span class="n">param_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^ </span><span class="si">{4}</span><span class="s2">(\w+)\s*(?:\(([^)]+)\))?:\s*(.+)"</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+</span><span id="line-741">        <span class="k">if</span> <span class="n">param_match</span><span class="p">:</span>
+</span><span id="line-742">            <span class="n">name</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="line-743">            <span class="n">type_default</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-744">            <span class="n">description</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-745">            <span class="n">annotation</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-746">            <span class="n">default</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-747">            <span class="k">if</span> <span class="n">type_default</span><span class="p">:</span>
+</span><span id="line-748">                <span class="c1"># Parse type and optional</span>
+</span><span id="line-749">                <span class="n">type_parts</span> <span class="o">=</span> <span class="n">type_default</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
+</span><span id="line-750">                <span class="n">annotation</span> <span class="o">=</span> <span class="n">type_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-751">                <span class="k">if</span> <span class="s2">"optional"</span> <span class="ow">in</span> <span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">type_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]:</span>
+</span><span id="line-752">                    <span class="c1"># Extract default from description if present</span>
+</span><span id="line-753">                    <span class="n">default_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"Defaults to (.+)\."</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+</span><span id="line-754">                    <span class="k">if</span> <span class="n">default_match</span><span class="p">:</span>
+</span><span id="line-755">                        <span class="n">default</span> <span class="o">=</span> <span class="n">default_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-756">                        <span class="n">description</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
+</span><span id="line-757">                            <span class="sa">r</span><span class="s2">"Defaults to .+\."</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">description</span>
+</span><span id="line-758">                        <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-759">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-760">            <span class="c1"># Collect additional description lines</span>
+</span><span id="line-761">            <span class="n">extra_description</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">_collect_indented_lines</span><span class="p">(</span>
+</span><span id="line-762">                <span class="n">param_lines</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">indent_level</span><span class="o">=</span><span class="mi">8</span>
+</span><span id="line-763">            <span class="p">)</span>
+</span><span id="line-764">            <span class="k">if</span> <span class="n">extra_description</span><span class="p">:</span>
+</span><span id="line-765">                <span class="n">description</span> <span class="o">+=</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">extra_description</span>
+</span><span id="line-766">            <span class="n">param</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-767">                <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+</span><span id="line-768">                <span class="s2">"default"</span><span class="p">:</span> <span class="n">default</span><span class="p">,</span>
+</span><span id="line-769">                <span class="s2">"annotation"</span><span class="p">:</span> <span class="n">annotation</span><span class="p">,</span>
+</span><span id="line-770">                <span class="s2">"description"</span><span class="p">:</span> <span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+</span><span id="line-771">            <span class="p">}</span>
+</span><span id="line-772">            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+</span><span id="line-773">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-774">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-775">    <span class="k">return</span> <span class="n">params</span>
+</span><span id="line-776">
+</span><span id="line-777">
+</span><span id="line-778"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_rest_param_lines</span><span class="p">(</span><span class="n">param_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+</span><span id="line-779">    <span class="n">params_dict</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-780">    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="line-781">    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_lines</span><span class="p">):</span>
+</span><span id="line-782">        <span class="n">line</span> <span class="o">=</span> <span class="n">param_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-783">        <span class="c1"># Match ':param name: description' or ':param type name: description'</span>
+</span><span id="line-784">        <span class="n">param_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^:param\s+(?:([^:]+?)\s+)?(\w+):\s*(.*)"</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+</span><span id="line-785">        <span class="k">if</span> <span class="n">param_match</span><span class="p">:</span>
+</span><span id="line-786">            <span class="n">annotation</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="n">param_match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+</span><span id="line-787">            <span class="c1"># Check for default value in description</span>
+</span><span id="line-788">            <span class="n">default_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\(Default:\s*(.+)\)"</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+</span><span id="line-789">            <span class="n">default</span> <span class="o">=</span> <span class="n">default_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">default_match</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span id="line-790">            <span class="k">if</span> <span class="n">default</span><span class="p">:</span>
+</span><span id="line-791">                <span class="n">description</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\(Default:\s*.+\)"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-792">            <span class="c1"># Initialize parameter entry</span>
+</span><span id="line-793">            <span class="n">params_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-794">                <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+</span><span id="line-795">                <span class="s2">"default"</span><span class="p">:</span> <span class="n">default</span><span class="p">,</span>
+</span><span id="line-796">                <span class="s2">"annotation"</span><span class="p">:</span> <span class="n">annotation</span><span class="p">,</span>
+</span><span id="line-797">                <span class="s2">"description"</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+</span><span id="line-798">            <span class="p">}</span>
+</span><span id="line-799">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-800">        <span class="c1"># Match ':type name: type'</span>
+</span><span id="line-801">        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">":type"</span><span class="p">):</span>
+</span><span id="line-802">            <span class="n">type_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^:type (\w+):\s*(.+)"</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+</span><span id="line-803">            <span class="k">if</span> <span class="n">type_match</span><span class="p">:</span>
+</span><span id="line-804">                <span class="n">name</span> <span class="o">=</span> <span class="n">type_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="line-805">                <span class="n">annotation</span> <span class="o">=</span> <span class="n">type_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-806">                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params_dict</span><span class="p">:</span>
+</span><span id="line-807">                    <span class="n">params_dict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">"annotation"</span><span class="p">]</span> <span class="o">=</span> <span class="n">annotation</span>
+</span><span id="line-808">                <span class="k">else</span><span class="p">:</span>
+</span><span id="line-809">                    <span class="c1"># Type without param, create entry</span>
+</span><span id="line-810">                    <span class="n">params_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-811">                        <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+</span><span id="line-812">                        <span class="s2">"default"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="line-813">                        <span class="s2">"annotation"</span><span class="p">:</span> <span class="n">annotation</span><span class="p">,</span>
+</span><span id="line-814">                        <span class="s2">"description"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
+</span><span id="line-815">                    <span class="p">}</span>
+</span><span id="line-816">                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-817">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-818">                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-819">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-820">            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-821">    <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">params_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</span><span id="line-822">    <span class="k">return</span> <span class="n">params</span>
+</span><span id="line-823">
+</span><span id="line-824">
+</span><span id="line-825"><span class="c1"># The doctest tools moved to i2.doctests; re-exported so existing imports keep working,</span>
+</span><span id="line-826"><span class="c1"># along with the modules and helpers this module used to import for them.</span>
+</span><span id="line-827"><span class="kn">import</span><span class="w"> </span><span class="nn">doctest</span>  <span class="c1"># noqa: E402, F401</span>
+</span><span id="line-828"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>  <span class="c1"># noqa: E402, F401</span>
+</span><span id="line-829"><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">getdoc</span>  <span class="c1"># noqa: E402, F401</span>
+</span><span id="line-830"><span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">groupby</span>  <span class="c1"># noqa: E402, F401</span>
+</span><span id="line-831">
+</span><span id="line-832"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.doctests</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa: E402, F401</span>
+</span><span id="line-833">    <span class="n">MAX_LINE_LENGTH</span><span class="p">,</span>
+</span><span id="line-834">    <span class="n">_prefix_lines</span><span class="p">,</span>
+</span><span id="line-835">    <span class="n">ExampleX</span><span class="p">,</span>
+</span><span id="line-836">    <span class="n">DoctestBlock</span><span class="p">,</span>
+</span><span id="line-837">    <span class="n">parse_doctest</span><span class="p">,</span>
+</span><span id="line-838">    <span class="n">split_text_and_doctests</span><span class="p">,</span>
+</span><span id="line-839">    <span class="n">comment_strip_p</span><span class="p">,</span>
+</span><span id="line-840">    <span class="n">doctest_line_p</span><span class="p">,</span>
+</span><span id="line-841">    <span class="n">empty_line</span><span class="p">,</span>
+</span><span id="line-842">    <span class="n">non_doctest_lines</span><span class="p">,</span>
+</span><span id="line-843">    <span class="n">strip_comments</span><span class="p">,</span>
+</span><span id="line-844">    <span class="n">mk_example_wants_callback</span><span class="p">,</span>
+</span><span id="line-845">    <span class="n">split_line_comments</span><span class="p">,</span>
+</span><span id="line-846">    <span class="n">_assert_wants</span><span class="p">,</span>
+</span><span id="line-847">    <span class="n">_output_prefix</span><span class="p">,</span>
+</span><span id="line-848">    <span class="n">output_prefix</span><span class="p">,</span>
+</span><span id="line-849">    <span class="n">assert_wants</span><span class="p">,</span>
+</span><span id="line-850">    <span class="n">doctest_string_trans_lines</span><span class="p">,</span>
+</span><span id="line-851">    <span class="n">_doctest_string_gen</span><span class="p">,</span>
+</span><span id="line-852">    <span class="n">doctest_string</span><span class="p">,</span>
+</span><span id="line-853">    <span class="n">doctest_string_print</span><span class="p">,</span>
+</span><span id="line-854">    <span class="n">old_doctest_string</span><span class="p">,</span>
+</span><span id="line-855"><span class="p">)</span>
 </span></code></pre></div>
     </div></div>
           </main>
@@ -1045,7 +1077,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=21589402"></script>
+    <script src="../../_static/documentation_options.js?v=6d3ab3d9"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

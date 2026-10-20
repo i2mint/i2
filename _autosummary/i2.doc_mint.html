@@ -210,10 +210,22 @@ callable’s <code class="docutils literal notranslate"><span class="pre">__doc_
 </span><span id="line-15"><span class="gp">... </span><span class="s1">:type x: int</span>
 </span><span id="line-16"><span class="gp">... </span><span class="s1">'''</span><span class="p">)</span>
 </span><span id="line-17"><span class="go">'rest'</span>
-</span><span id="line-18"><span class="gp">&gt;&gt;&gt; </span><span class="n">detect_doc_style</span><span class="p">(</span><span class="s1">'Just a summary line.'</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
-</span><span id="line-19"><span class="go">True</span>
-</span><span id="line-20"><span class="gp">&gt;&gt;&gt; </span><span class="n">detect_doc_style</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
-</span><span id="line-21"><span class="go">True</span>
+</span></code></pre></div>
+</div>
+<p>When several styles’ markers appear (e.g. a google docstring whose example
+shows reST fields), the one that comes first wins:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">detect_doc_style</span><span class="p">(</span><span class="s1">'''</span>
+</span><span id="line-2"><span class="gp">... </span><span class="s1">Args:</span>
+</span><span id="line-3"><span class="gp">... </span><span class="s1">    x (int): An integer.</span>
+</span><span id="line-4"><span class="gp">...</span>
+</span><span id="line-5"><span class="gp">... </span><span class="s1">Example:</span>
+</span><span id="line-6"><span class="gp">... </span><span class="s1">    :param y: shown as text, not a field.</span>
+</span><span id="line-7"><span class="gp">... </span><span class="s1">'''</span><span class="p">)</span>
+</span><span id="line-8"><span class="go">'google'</span>
+</span><span id="line-9"><span class="gp">&gt;&gt;&gt; </span><span class="n">detect_doc_style</span><span class="p">(</span><span class="s1">'Just a summary line.'</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+</span><span id="line-10"><span class="go">True</span>
+</span><span id="line-11"><span class="gp">&gt;&gt;&gt; </span><span class="n">detect_doc_style</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+</span><span id="line-12"><span class="go">True</span>
 </span></code></pre></div>
 </div>
 <p>It reads the markers of the docstring as written, so it works on the indented
@@ -316,6 +328,14 @@ A function’s (indented) <code class="docutils literal notranslate"><span class
 </span><span id="line-8"><span class="gp">... </span><span class="sd">    '''</span>
 </span><span id="line-9"><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">docstring_to_params</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">doc_style</span><span class="o">=</span><span class="s1">'auto'</span><span class="p">)]</span>
 </span><span id="line-10"><span class="go">['x']</span>
+</span></code></pre></div>
+</div>
+<p>The Sphinx typed-field form (<code class="docutils literal notranslate"><span class="pre">:param</span> <span class="pre">int</span> <span class="pre">x:</span></code>) and CRLF line endings are handled:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">docstring_to_params</span><span class="p">(</span><span class="s1">':param int x: X.</span><span class="se">\r\n</span><span class="s1">:param y: Note: Y.'</span><span class="p">,</span> <span class="n">doc_style</span><span class="o">=</span><span class="s1">'auto'</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"x"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"annotation"</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"X."</span><span class="p">},</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"annotation"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Note: Y."</span><span class="p">},</span>
+</span><span id="line-4"><span class="gp">... </span><span class="p">]</span>
+</span><span id="line-5"><span class="go">True</span>
 </span></code></pre></div>
 </div>
 </dd></dl>
@@ -611,7 +631,7 @@ This is a helper function to do that conversion.</p>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=21589402"></script>
+<script src="../_static/documentation_options.js?v=6d3ab3d9"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

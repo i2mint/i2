@@ -237,79 +237,82 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.convert_dict_values" title="i2.wrapper.convert_dict_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_dict_values</span></code></a>(to_convert, ...)</p></td>
 <td><p>Yield <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> pairs of <code class="docutils literal notranslate"><span class="pre">to_convert</span></code>, converting the values whose key has a function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.func_to_method_func" title="i2.wrapper.func_to_method_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">func_to_method_func</span></code></a>(func[, instance_params, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.curried" title="i2.wrapper.curried"><code class="xref py py-obj docutils literal notranslate"><span class="pre">curried</span></code></a>(func)</p></td>
+<td><p>Make <code class="docutils literal notranslate"><span class="pre">func</span></code> callable with only some of its required arguments.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.func_to_method_func" title="i2.wrapper.func_to_method_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">func_to_method_func</span></code></a>(func[, instance_params, ...])</p></td>
 <td><p>Get a 'method function' from a 'normal function'.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.identity" title="i2.wrapper.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(x)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.identity" title="i2.wrapper.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(x)</p></td>
 <td><p>Return the input unchanged.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.ignore_extra_args" title="i2.wrapper.ignore_extra_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ignore_extra_args</span></code></a>(func, target, /, *[, select])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.ignore_extra_args" title="i2.wrapper.ignore_extra_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ignore_extra_args</span></code></a>(func, target, /, *[, select])</p></td>
 <td><p>Wrap <code class="docutils literal notranslate"><span class="pre">func</span></code> so it accepts the arguments of <code class="docutils literal notranslate"><span class="pre">target</span></code> and uses only those it needs.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">include_exclude</span></code>([func, include, exclude])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">include_exclude</span></code>([func, include, exclude])</p></td>
 <td><p>Reorder and/or remove parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.include_exclude_ingress_factory" title="i2.wrapper.include_exclude_ingress_factory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">include_exclude_ingress_factory</span></code></a>(func[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.include_exclude_ingress_factory" title="i2.wrapper.include_exclude_ingress_factory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">include_exclude_ingress_factory</span></code></a>(func[, ...])</p></td>
 <td><p>A pattern underlying any ingress that takes a subset of parameters (possibly reordering them).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.invert_map" title="i2.wrapper.invert_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert_map</span></code></a>(d)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.invert_map" title="i2.wrapper.invert_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert_map</span></code></a>(d)</p></td>
 <td><p>Swap keys and values of a mapping, raising <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if values are not unique.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.items_with_mapped_keys" title="i2.wrapper.items_with_mapped_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items_with_mapped_keys</span></code></a>(d, key_mapper)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.items_with_mapped_keys" title="i2.wrapper.items_with_mapped_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items_with_mapped_keys</span></code></a>(d, key_mapper)</p></td>
 <td><p>Transform dict keys.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.kwargs_trans" title="i2.wrapper.kwargs_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs_trans</span></code></a>([kwargs, _recursive, _inplace])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.kwargs_trans" title="i2.wrapper.kwargs_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs_trans</span></code></a>([kwargs, _recursive, _inplace])</p></td>
 <td><p>Transform a kwargs dict or build a transformer.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.kwargs_trans_to_extract_args_from_attrs" title="i2.wrapper.kwargs_trans_to_extract_args_from_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs_trans_to_extract_args_from_attrs</span></code></a>(...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.kwargs_trans_to_extract_args_from_attrs" title="i2.wrapper.kwargs_trans_to_extract_args_from_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs_trans_to_extract_args_from_attrs</span></code></a>(...)</p></td>
 <td><p>Pop the <code class="docutils literal notranslate"><span class="pre">obj_param</span></code> object out of <code class="docutils literal notranslate"><span class="pre">outer_kwargs</span></code> and source <code class="docutils literal notranslate"><span class="pre">attr_names</span></code> from its attributes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_names</span></code>([func])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_names</span></code>([func])</p></td>
 <td><p>Change the argument names of a function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.methodize" title="i2.wrapper.methodize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">methodize</span></code></a>(func[, bind, method_name, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.methodize" title="i2.wrapper.methodize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">methodize</span></code></a>(func[, bind, method_name, ...])</p></td>
 <td><p>Make a method from <code class="docutils literal notranslate"><span class="pre">func</span></code>, sourcing the <code class="docutils literal notranslate"><span class="pre">bind</span></code> params from instance attributes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.mk_ingress_from_name_mapper" title="i2.wrapper.mk_ingress_from_name_mapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_ingress_from_name_mapper</span></code></a>(func, name_mapper, *)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.mk_ingress_from_name_mapper" title="i2.wrapper.mk_ingress_from_name_mapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_ingress_from_name_mapper</span></code></a>(func, name_mapper, *)</p></td>
 <td><p>Make an ingress that renames <code class="docutils literal notranslate"><span class="pre">func</span></code>'s parameters (<code class="docutils literal notranslate"><span class="pre">{inner_name:</span> <span class="pre">outer_name}</span></code>).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.modify_dict_on_cond" title="i2.wrapper.modify_dict_on_cond"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modify_dict_on_cond</span></code></a>(d, cond, func)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.modify_dict_on_cond" title="i2.wrapper.modify_dict_on_cond"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modify_dict_on_cond</span></code></a>(d, cond, func)</p></td>
 <td><p>Copy <code class="docutils literal notranslate"><span class="pre">d</span></code>, applying <code class="docutils literal notranslate"><span class="pre">func</span></code> to the values whose <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> satisfy <code class="docutils literal notranslate"><span class="pre">cond</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.move_names_to_the_end" title="i2.wrapper.move_names_to_the_end"><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_names_to_the_end</span></code></a>(names, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.move_names_to_the_end" title="i2.wrapper.move_names_to_the_end"><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_names_to_the_end</span></code></a>(names, ...)</p></td>
 <td><p>Remove the items of <code class="docutils literal notranslate"><span class="pre">names_to_move_to_the_end</span></code> from <code class="docutils literal notranslate"><span class="pre">names</span></code> and append to the right of names</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.move_params_to_the_end" title="i2.wrapper.move_params_to_the_end"><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_params_to_the_end</span></code></a>(func, names_to_move)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.move_params_to_the_end" title="i2.wrapper.move_params_to_the_end"><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_params_to_the_end</span></code></a>(func, names_to_move)</p></td>
 <td><p>Choose args from func, according to choice_args_func and move them to the right</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.param_to_dataclass_field_tuple" title="i2.wrapper.param_to_dataclass_field_tuple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">param_to_dataclass_field_tuple</span></code></a>(param)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.param_to_dataclass_field_tuple" title="i2.wrapper.param_to_dataclass_field_tuple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">param_to_dataclass_field_tuple</span></code></a>(param)</p></td>
 <td><p>The <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">annotation,</span> <span class="pre">default)</span></code> tuple <code class="docutils literal notranslate"><span class="pre">dataclasses.make_dataclass</span></code> expects for a field.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.parameters_to_dict" title="i2.wrapper.parameters_to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters_to_dict</span></code></a>(parameters)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.parameters_to_dict" title="i2.wrapper.parameters_to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters_to_dict</span></code></a>(parameters)</p></td>
 <td><p>Map each parameter name to its <code class="docutils literal notranslate"><span class="pre">parameter_to_dict</span></code> (name, kind, default, annotation) dict.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.params_used_in_funcs" title="i2.wrapper.params_used_in_funcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params_used_in_funcs</span></code></a>(funcs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.params_used_in_funcs" title="i2.wrapper.params_used_in_funcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params_used_in_funcs</span></code></a>(funcs)</p></td>
 <td><p>The set of parameter names of all the given functions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.partialx" title="i2.wrapper.partialx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partialx</span></code></a>(func, *args[, __name__, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.partialx" title="i2.wrapper.partialx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partialx</span></code></a>(func, *args[, __name__, ...])</p></td>
 <td><p>Extends the functionality of builtin <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code> with the ability to</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.required_params_used_in_funcs" title="i2.wrapper.required_params_used_in_funcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">required_params_used_in_funcs</span></code></a>(funcs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.required_params_used_in_funcs" title="i2.wrapper.required_params_used_in_funcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">required_params_used_in_funcs</span></code></a>(funcs)</p></td>
 <td><p>The set of names that are required (no default) in at least one of the given functions.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rm_params</span></code>([func, params_to_remove, ...])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rm_params</span></code>([func, params_to_remove, ...])</p></td>
 <td><p>Get a function with some parameters removed.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.transparent_egress" title="i2.wrapper.transparent_egress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transparent_egress</span></code></a>(output)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.transparent_egress" title="i2.wrapper.transparent_egress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transparent_egress</span></code></a>(output)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.transparent_ingress" title="i2.wrapper.transparent_ingress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transparent_ingress</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.transparent_ingress" title="i2.wrapper.transparent_ingress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transparent_ingress</span></code></a>(*args, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap</span></code>([func, ingress, egress, caller, name, ...])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap</span></code>([func, ingress, egress, caller, name, ...])</p></td>
 <td><p>Wrap a function, optionally transforming interface, input and output.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.wrap_from_sig" title="i2.wrapper.wrap_from_sig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_from_sig</span></code></a>(func, new_sig)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.wrap_from_sig" title="i2.wrapper.wrap_from_sig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_from_sig</span></code></a>(func, new_sig)</p></td>
 <td><p>Give <code class="docutils literal notranslate"><span class="pre">func</span></code> the signature <code class="docutils literal notranslate"><span class="pre">new_sig</span></code>, calling it with only the arguments it takes.</p></td>
 </tr>
 </tbody>
@@ -329,19 +332,22 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.InnerMapIngress" title="i2.wrapper.InnerMapIngress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InnerMapIngress</span></code></a>(inner_sig[, kwargs_trans, ...])</p></td>
 <td><p>Build an ingress from the wrapped function's signature and a spec of changes to it.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.MakeFromFunc" title="i2.wrapper.MakeFromFunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MakeFromFunc</span></code></a>(func_to_obj)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.InstanceAttrDefault" title="i2.wrapper.InstanceAttrDefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InstanceAttrDefault</span></code></a>(attr, *[, instance_arg_name])</p></td>
+<td><p>The default of a method param that is sourced from an instance attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.MakeFromFunc" title="i2.wrapper.MakeFromFunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MakeFromFunc</span></code></a>(func_to_obj)</p></td>
 <td><p>Used to indicate that an object should be made as a function of an input func</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.PickleHelperMixin" title="i2.wrapper.PickleHelperMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PickleHelperMixin</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.PickleHelperMixin" title="i2.wrapper.PickleHelperMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PickleHelperMixin</span></code></a>()</p></td>
 <td><p>Mixin whose <code class="docutils literal notranslate"><span class="pre">__reduce__</span></code> pickles an instance by its <code class="docutils literal notranslate"><span class="pre">__name__</span></code> (a global reference).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.SmartDefault" title="i2.wrapper.SmartDefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SmartDefault</span></code></a>(func_computing_default, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.SmartDefault" title="i2.wrapper.SmartDefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SmartDefault</span></code></a>(func_computing_default, ...)</p></td>
 <td><p>Placeholder default for a parameter whose value <code class="docutils literal notranslate"><span class="pre">add_smart_defaults</span></code> computes from the other arguments.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.Wrap" title="i2.wrapper.Wrap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Wrap</span></code></a>(func[, ingress, egress, name, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.Wrap" title="i2.wrapper.Wrap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Wrap</span></code></a>(func[, ingress, egress, name, ...])</p></td>
 <td><p>A function wrapper with interface modifiers.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.wrapper.Wrapx" title="i2.wrapper.Wrapx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Wrapx</span></code></a>(func[, ingress, egress, caller, name])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.wrapper.Wrapx" title="i2.wrapper.Wrapx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Wrapx</span></code></a>(func[, ingress, egress, caller, name])</p></td>
 <td><p>An extended wrapping object that allows more complex wrapping mechanisms.</p></td>
 </tr>
 </tbody>
@@ -706,6 +712,20 @@ can doesn’t have the position only restriction on <code class="docutils litera
 </span></code></pre></div>
 </div>
 </dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.wrapper.InstanceAttrDefault">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">InstanceAttrDefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_arg_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'self'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#InstanceAttrDefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.InstanceAttrDefault" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.InstanceAttrDefault'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>The default of a method param that is sourced from an instance attribute.</p>
+<p>Shown in the method’s signature as <code class="docutils literal notranslate"><span class="pre">self.&lt;attr&gt;</span></code> (see <code class="docutils literal notranslate"><span class="pre">methodize</span></code>’s
+<code class="docutils literal notranslate"><span class="pre">default_from</span></code>).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">InstanceAttrDefault</span><span class="p">(</span><span class="s1">'zoo'</span><span class="p">)</span>
+</span><span id="line-2"><span class="go">self.zoo</span>
+</span></code></pre></div>
+</div>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.wrapper.MakeFromFunc">
@@ -1326,8 +1346,49 @@ key or not, resulting in an error:</p>
 </dl>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="i2.wrapper.curried">
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">curried</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#curried"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.curried" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.curried'">¶</a></dt>
+<dd><p>Make <code class="docutils literal notranslate"><span class="pre">func</span></code> callable with only some of its required arguments.</p>
+<p>A call that leaves required parameters unspecified returns a new curried
+function with the given arguments bound (and removed from its signature,
+see <code class="docutils literal notranslate"><span class="pre">partialx(...,</span> <span class="pre">_rm_partialize=True)</span></code>); a call that specifies them all
+calls <code class="docutils literal notranslate"><span class="pre">func</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">c</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">curried</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+</span><span id="line-5"><span class="go">'(a, b, c=3)'</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">7</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-9"><span class="go">7</span>
+</span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="n">c</span><span class="o">=</span><span class="mi">10</span><span class="p">)(</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-11"><span class="go">21</span>
+</span><span id="line-12"><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-13"><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+</span><span id="line-14"><span class="go">'(a, *, c=3)'</span>
+</span><span id="line-15"><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</span><span id="line-16"><span class="go">21</span>
+</span></code></pre></div>
+</div>
+<p>A curried function is never a coroutine function, even when <code class="docutils literal notranslate"><span class="pre">func</span></code> is: only
+the call that specifies every required argument returns <code class="docutils literal notranslate"><span class="pre">func</span></code>’s awaitable.</p>
+<p>Invalid arguments fail at the call that gives them, as they would for <code class="docutils literal notranslate"><span class="pre">func</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</span><span id="line-2"><span class="gt">Traceback (most recent call last):</span>
+</span><span id="line-3"><span class="w">  </span><span class="c">...</span>
+</span><span id="line-4"><span class="gr">TypeError</span>: <span class="n">too many positional arguments</span>
+</span></code></pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.func_to_method_func">
-<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">func_to_method_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_arg_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'self'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#func_to_method_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.func_to_method_func" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.func_to_method_func'">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">func_to_method_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_arg_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'self'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#func_to_method_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.func_to_method_func" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.func_to_method_func'">¶</a></dt>
 <dd><p>Get a ‘method function’ from a ‘normal function’. Also known as “methodize”.</p>
 <p>That is, get a function that gives the same outputs as the ‘normal function’,
 except that some of the arguments are sourced from the attributes of the first
@@ -1411,6 +1472,9 @@ to attributes of the instance):</p>
 </span><span id="line-7"><span class="go">'hello: 9'</span>
 </span></code></pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">default_from</span></code> (same spec as <code class="docutils literal notranslate"><span class="pre">instance_params</span></code>) keeps params in the method’s
+signature, sourcing only their <em>default</em> from an instance attribute: see
+<code class="docutils literal notranslate"><span class="pre">methodize</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span></p>
@@ -1588,7 +1652,7 @@ therein to use for the corresponding inputs of that <code class="docutils litera
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.kwargs_trans_to_extract_args_from_attrs">
-<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">kwargs_trans_to_extract_args_from_attrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outer_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'self'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#kwargs_trans_to_extract_args_from_attrs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.kwargs_trans_to_extract_args_from_attrs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.kwargs_trans_to_extract_args_from_attrs'">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">kwargs_trans_to_extract_args_from_attrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outer_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'self'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#kwargs_trans_to_extract_args_from_attrs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.kwargs_trans_to_extract_args_from_attrs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.kwargs_trans_to_extract_args_from_attrs'">¶</a></dt>
 <dd><p>Pop the <code class="docutils literal notranslate"><span class="pre">obj_param</span></code> object out of <code class="docutils literal notranslate"><span class="pre">outer_kwargs</span></code> and source <code class="docutils literal notranslate"><span class="pre">attr_names</span></code> from its attributes.</p>
 <p>Mutates <code class="docutils literal notranslate"><span class="pre">outer_kwargs</span></code> (the object is popped). Explicit kwargs win over attributes.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">O</span><span class="p">:</span> <span class="k">pass</span>
@@ -1603,12 +1667,19 @@ attribute of another name:</p>
 </span><span id="line-2"><span class="go">{'x': 1}</span>
 </span></code></pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">default_from</span></code> params are sourced from attributes only when they are missing
+from <code class="docutils literal notranslate"><span class="pre">outer_kwargs</span></code> or hold an <code class="docutils literal notranslate"><span class="pre">InstanceAttrDefault</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">kwargs_trans_to_extract_args_from_attrs</span><span class="p">(</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="p">{</span><span class="s1">'self'</span><span class="p">:</span> <span class="n">o</span><span class="p">,</span> <span class="s1">'x'</span><span class="p">:</span> <span class="n">InstanceAttrDefault</span><span class="p">(</span><span class="s1">'a'</span><span class="p">),</span> <span class="s1">'y'</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span> <span class="n">default_from</span><span class="o">=</span><span class="p">[(</span><span class="s1">'x'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">),</span> <span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">),</span> <span class="p">(</span><span class="s1">'z'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">)])</span>
+</span><span id="line-3"><span class="go">{'x': 1, 'z': 2, 'y': 5}</span>
+</span></code></pre></div>
+</div>
 <dl class="field-list simple">
 </dl>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.wrapper.methodize">
-<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">methodize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_arg_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'self'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#methodize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.methodize" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.methodize'">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">methodize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_arg_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'self'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#methodize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.methodize" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.methodize'">¶</a></dt>
 <dd><p>Make a method from <code class="docutils literal notranslate"><span class="pre">func</span></code>, sourcing the <code class="docutils literal notranslate"><span class="pre">bind</span></code> params from instance attributes.</p>
 <p><code class="docutils literal notranslate"><span class="pre">bind</span></code> is a space-separated string or an iterable of param names (each bound
 to the attribute of the same name), <code class="docutils literal notranslate"><span class="pre">(param,</span> <span class="pre">attr)</span></code> pairs, or a
@@ -1631,6 +1702,26 @@ argument of i2mint/i2#20.</p>
 </span><span id="line-14"><span class="go">'(y)'</span>
 </span></code></pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">default_from</span></code> (same spec as <code class="docutils literal notranslate"><span class="pre">bind</span></code>) keeps params in the method’s signature,
+sourcing only their <em>default</em> from an instance attribute (i2mint/i2#112):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nd">@dataclass</span>
+</span><span id="line-2"><span class="gp">... </span><span class="k">class</span><span class="w"> </span><span class="nc">Klass</span><span class="p">:</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="n">x</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="line-4"><span class="gp">... </span>    <span class="n">zoo</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span id="line-5"><span class="gp">... </span>    <span class="n">bar</span> <span class="o">=</span> <span class="n">methodize</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="s1">'x'</span><span class="p">,</span> <span class="n">default_from</span><span class="o">=</span><span class="p">[(</span><span class="s1">'z'</span><span class="p">,</span> <span class="s1">'zoo'</span><span class="p">)])</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">Klass</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">zoo</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="line-7"><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">bar</span><span class="p">))</span>
+</span><span id="line-8"><span class="go">'(y, z=self.zoo)'</span>
+</span><span id="line-9"><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">c</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">c</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</span><span id="line-10"><span class="go">(7, 31, 31)</span>
+</span><span id="line-11"><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">zoo</span> <span class="o">=</span> <span class="mi">5</span>
+</span><span id="line-12"><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-13"><span class="go">16</span>
+</span></code></pre></div>
+</div>
+<p>The signature default is an <code class="docutils literal notranslate"><span class="pre">InstanceAttrDefault</span></code> marker (shown <code class="docutils literal notranslate"><span class="pre">self.zoo</span></code>),
+not a value: code that serializes signature defaults (e.g. to JSON) should not
+expect a JSON-able one there.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span></p>
@@ -1771,9 +1862,26 @@ positional-or-keyword in the result, which still calls <code class="docutils lit
 </span><span id="line-9"><span class="go">(1, 20, 3, 4, 5)</span>
 </span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">partialx</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">_rm_partialize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="line-11"><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
-</span><span id="line-12"><span class="go">'(a, c, d, e=5)'</span>
+</span><span id="line-12"><span class="go">'(a, *, c, d, e=5)'</span>
 </span><span id="line-13"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </span><span id="line-14"><span class="go">(1, 2, 3, 4, 5)</span>
+</span></code></pre></div>
+</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">_rm_partialize=True</span></code>, the params after a keyword-bound one become
+keyword-only (as in <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code>, which only takes them by keyword),
+positional bindings are applied once, and the result is still a <code class="docutils literal notranslate"><span class="pre">partial</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+</span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">partialx</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">_rm_partialize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+</span><span id="line-5"><span class="go">'(a, *, c=3)'</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">(1, 2, 5)</span>
+</span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">h</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+</span><span id="line-9"><span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kw</span>
+</span><span id="line-10"><span class="gp">&gt;&gt;&gt; </span><span class="n">hh</span> <span class="o">=</span> <span class="n">partialx</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">_rm_partialize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-11"><span class="gp">&gt;&gt;&gt; </span><span class="n">hh</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hh</span><span class="p">,</span> <span class="n">partial</span><span class="p">)</span>
+</span><span id="line-12"><span class="go">((1, (2, 3), {}), True)</span>
 </span></code></pre></div>
 </div>
 <p>If <code class="docutils literal notranslate"><span class="pre">func</span></code> has a <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>, a keyword named like a position-only param goes
@@ -1839,6 +1947,7 @@ to that <code class="docutils literal notranslate"><span class="pre">**kwargs</s
 <li><a :data-current="activeSection === '#i2.wrapper.InnerMapIngress.from_signature'" class="reference internal" href="#i2.wrapper.InnerMapIngress.from_signature"><code class="docutils literal notranslate"><span class="pre">InnerMapIngress.from_signature()</span></code></a></li>
 </ul>
 </li>
+<li><a :data-current="activeSection === '#i2.wrapper.InstanceAttrDefault'" class="reference internal" href="#i2.wrapper.InstanceAttrDefault"><code class="docutils literal notranslate"><span class="pre">InstanceAttrDefault</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.MakeFromFunc'" class="reference internal" href="#i2.wrapper.MakeFromFunc"><code class="docutils literal notranslate"><span class="pre">MakeFromFunc</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.PickleHelperMixin'" class="reference internal" href="#i2.wrapper.PickleHelperMixin"><code class="docutils literal notranslate"><span class="pre">PickleHelperMixin</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.SmartDefault'" class="reference internal" href="#i2.wrapper.SmartDefault"><code class="docutils literal notranslate"><span class="pre">SmartDefault</span></code></a><ul>
@@ -1859,6 +1968,7 @@ to that <code class="docutils literal notranslate"><span class="pre">**kwargs</s
 <li><a :data-current="activeSection === '#i2.wrapper.complete_dict_applying_functions'" class="reference internal" href="#i2.wrapper.complete_dict_applying_functions"><code class="docutils literal notranslate"><span class="pre">complete_dict_applying_functions()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.convert_VK_to_KO'" class="reference internal" href="#i2.wrapper.convert_VK_to_KO"><code class="docutils literal notranslate"><span class="pre">convert_VK_to_KO()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.convert_dict_values'" class="reference internal" href="#i2.wrapper.convert_dict_values"><code class="docutils literal notranslate"><span class="pre">convert_dict_values()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.wrapper.curried'" class="reference internal" href="#i2.wrapper.curried"><code class="docutils literal notranslate"><span class="pre">curried()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.func_to_method_func'" class="reference internal" href="#i2.wrapper.func_to_method_func"><code class="docutils literal notranslate"><span class="pre">func_to_method_func()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.identity'" class="reference internal" href="#i2.wrapper.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.wrapper.ignore_extra_args'" class="reference internal" href="#i2.wrapper.ignore_extra_args"><code class="docutils literal notranslate"><span class="pre">ignore_extra_args()</span></code></a></li>
@@ -1893,7 +2003,7 @@ to that <code class="docutils literal notranslate"><span class="pre">**kwargs</s
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=21589402"></script>
+<script src="../_static/documentation_options.js?v=6d3ab3d9"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
