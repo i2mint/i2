@@ -2531,22 +2531,29 @@ def partialx(
     >>> g = partialx(func, b=2, _rm_partialize=True)
     >>> str(Sig(g))
     '(a, c, d, e=5)'
-    >>> g(1, 3, 4)
+    >>> g(1, c=3, d=4)
     (1, 2, 3, 4, 5)
+
+    If ``func`` has a ``**kwargs``, a keyword named like a position-only param goes
+    to that ``**kwargs``, as in Python (and ``functools.partial``):
+
+    >>> def k(a, /, **kw):
+    ...     return a, kw
+    >>> partialx(k, a=1)(5)
+    (5, {'a': 1})
     """
-    if any(Sig(func).kinds.get(name) == PO for name in kwargs):
-        func_ = _accept_position_only_by_keyword(func)
-    else:
-        func_ = func
+    func_ = func
+    if kwargs:
+        sig = Sig(func)
+        binds_position_only = any(sig.kinds.get(name) == PO for name in kwargs)
+        if binds_position_only and sig.var_keyword_name is None:
+            func_ = _accept_position_only_by_keyword(func)
     f = partial(func_, *args, **kwargs)
     if _rm_partialize:
         sig = Sig(func_)
         partialized = list(sig.map_arguments(args, kwargs, allow_partial=True))
         sig = sig - partialized
-        # An ingress (rather than just giving the partial the reduced signature) so
-        # the remaining params can be given positionally even when a param before
-        # them was bound by keyword.
-        f = wrap(f, ingress=Ingress(inner_sig=Sig(f), outer_sig=sig))
+        f = sig(partial(f, *args, **kwargs))
     if _allow_reordering:
         # TODO: Instead of Sig(f).defaults, move only params that need to move
         # TODO: + Change signature so that the number of params that become keyword-only
