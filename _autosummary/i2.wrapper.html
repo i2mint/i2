@@ -716,12 +716,17 @@ can doesn’t have the position only restriction on <code class="docutils litera
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.wrapper.InstanceAttrDefault">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.wrapper.</span></span><span class="sig-name descname"><span class="pre">InstanceAttrDefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance_arg_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'self'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/wrapper.html#InstanceAttrDefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.wrapper.InstanceAttrDefault" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.wrapper.InstanceAttrDefault'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<dd><p>Bases: <a class="reference internal" href="i2.deco.html#i2.deco.DefaultPlaceholder" title="i2.deco.DefaultPlaceholder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultPlaceholder</span></code></a></p>
 <p>The default of a method param that is sourced from an instance attribute.</p>
 <p>Shown in the method’s signature as <code class="docutils literal notranslate"><span class="pre">self.&lt;attr&gt;</span></code> (see <code class="docutils literal notranslate"><span class="pre">methodize</span></code>’s
-<code class="docutils literal notranslate"><span class="pre">default_from</span></code>).</p>
+<code class="docutils literal notranslate"><span class="pre">default_from</span></code>). It is a <code class="docutils literal notranslate"><span class="pre">DefaultPlaceholder</span></code>, not a value: its value depends
+on the instance, which a schema or form generator does not have, so such code
+should treat it as “no default” (<code class="docutils literal notranslate"><span class="pre">i2.is_placeholder_default</span></code>).</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">InstanceAttrDefault</span><span class="p">(</span><span class="s1">'zoo'</span><span class="p">)</span>
 </span><span id="line-2"><span class="go">self.zoo</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">i2</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_placeholder_default</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">is_placeholder_default</span><span class="p">(</span><span class="n">InstanceAttrDefault</span><span class="p">(</span><span class="s1">'zoo'</span><span class="p">))</span>
+</span><span id="line-5"><span class="go">True</span>
 </span></code></pre></div>
 </div>
 <dl class="field-list simple">
@@ -1720,8 +1725,8 @@ sourcing only their <em>default</em> from an instance attribute (i2mint/i2#112):
 </span></code></pre></div>
 </div>
 <p>The signature default is an <code class="docutils literal notranslate"><span class="pre">InstanceAttrDefault</span></code> marker (shown <code class="docutils literal notranslate"><span class="pre">self.zoo</span></code>),
-not a value: code that serializes signature defaults (e.g. to JSON) should not
-expect a JSON-able one there.</p>
+not a value: code that serializes signature defaults (e.g. to JSON) should skip
+it, as it skips <code class="docutils literal notranslate"><span class="pre">NotSet</span></code>, by testing <code class="docutils literal notranslate"><span class="pre">i2.is_placeholder_default</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span></p>
@@ -2003,7 +2008,7 @@ to that <code class="docutils literal notranslate"><span class="pre">**kwargs</s
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=c94237c0"></script>
+<script src="../_static/documentation_options.js?v=2a665092"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

@@ -158,55 +158,58 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.is_not_set" title="i2.deco.is_not_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_not_set</span></code></a>(x)</p></td>
 <td><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">x</span></code> is the <code class="docutils literal notranslate"><span class="pre">NotSet</span></code> sentinel, and <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.kwargs_for_func" title="i2.deco.kwargs_for_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs_for_func</span></code></a>(*funcs, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.is_placeholder_default" title="i2.deco.is_placeholder_default"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_placeholder_default</span></code></a>(x)</p></td>
+<td><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">x</span></code> is a signature default that is not a concrete value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.kwargs_for_func" title="i2.deco.kwargs_for_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs_for_func</span></code></a>(*funcs, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.mk_args_kwargs_merger" title="i2.deco.mk_args_kwargs_merger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_args_kwargs_merger</span></code></a>(func)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.mk_args_kwargs_merger" title="i2.deco.mk_args_kwargs_merger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_args_kwargs_merger</span></code></a>(func)</p></td>
 <td><p>Make a function that will return a dict containing all {argname: argval} pairs from a function's call.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.mk_call_logger" title="i2.deco.mk_call_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_call_logger</span></code></a>([logger, what_to_log, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.mk_call_logger" title="i2.deco.mk_call_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_call_logger</span></code></a>([logger, what_to_log, ...])</p></td>
 <td><p>Makes a decorator that logs each call to the wrapped function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.mk_input_and_output_method_wrapper" title="i2.deco.mk_input_and_output_method_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_input_and_output_method_wrapper</span></code></a>([...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.mk_input_and_output_method_wrapper" title="i2.deco.mk_input_and_output_method_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_input_and_output_method_wrapper</span></code></a>([...])</p></td>
 <td><p>Make a method decorator transforming named arguments (<code class="docutils literal notranslate"><span class="pre">arg_trans</span></code>) and, if given, the output (<code class="docutils literal notranslate"><span class="pre">method_output_trans</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.mk_method_trans_spec_from_methods_specs_dict" title="i2.deco.mk_method_trans_spec_from_methods_specs_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_method_trans_spec_from_methods_specs_dict</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.mk_method_trans_spec_from_methods_specs_dict" title="i2.deco.mk_method_trans_spec_from_methods_specs_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_method_trans_spec_from_methods_specs_dict</span></code></a>(...)</p></td>
 <td><p>Utility to make inputs for wrap_class_methods_input_and_output more easily.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.postprocess" title="i2.deco.postprocess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess</span></code></a>(post[, caught_post_errors, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.postprocess" title="i2.deco.postprocess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess</span></code></a>(post[, caught_post_errors, ...])</p></td>
 <td><p>Add some post-processing after a function</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.preprocess" title="i2.deco.preprocess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess</span></code></a>(pre)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.preprocess" title="i2.deco.preprocess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess</span></code></a>(pre)</p></td>
 <td><p>Make a decorator that feeds the wrapped function the output of <code class="docutils literal notranslate"><span class="pre">pre</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.preprocess_arguments" title="i2.deco.preprocess_arguments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess_arguments</span></code></a>(pre)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.preprocess_arguments" title="i2.deco.preprocess_arguments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess_arguments</span></code></a>(pre)</p></td>
 <td><p>Make a decorator that lets <code class="docutils literal notranslate"><span class="pre">pre</span></code> rewrite the <code class="docutils literal notranslate"><span class="pre">(args,</span> <span class="pre">kwargs)</span></code> of every call.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.transform_args" title="i2.deco.transform_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_args</span></code></a>([dflt_trans_func])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.transform_args" title="i2.deco.transform_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_args</span></code></a>([dflt_trans_func])</p></td>
 <td><p>Make a decorator that transforms function arguments before calling the function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.transform_class_method_input_and_output" title="i2.deco.transform_class_method_input_and_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_class_method_input_and_output</span></code></a>(cls, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.transform_class_method_input_and_output" title="i2.deco.transform_class_method_input_and_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_class_method_input_and_output</span></code></a>(cls, ...)</p></td>
 <td><p>Replace <code class="docutils literal notranslate"><span class="pre">cls.method</span></code> in place with a version whose named arguments are transformed by <code class="docutils literal notranslate"><span class="pre">arg_trans</span></code> and whose output by <code class="docutils literal notranslate"><span class="pre">method_output_trans</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.transform_instance_method_input_and_output" title="i2.deco.transform_instance_method_input_and_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_instance_method_input_and_output</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.transform_instance_method_input_and_output" title="i2.deco.transform_instance_method_input_and_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_instance_method_input_and_output</span></code></a>(...)</p></td>
 <td><p>Instance-level counterpart of <code class="docutils literal notranslate"><span class="pre">transform_class_method_input_and_output</span></code>; experimental (it emits a warning saying so).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.transparently_wrapped" title="i2.deco.transparently_wrapped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transparently_wrapped</span></code></a>(func)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.transparently_wrapped" title="i2.deco.transparently_wrapped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transparently_wrapped</span></code></a>(func)</p></td>
 <td><p>Wrap <code class="docutils literal notranslate"><span class="pre">func</span></code> so it is called with its positional arguments packed in one tuple.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.wrap_class_methods" title="i2.deco.wrap_class_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_class_methods</span></code></a>([...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.wrap_class_methods" title="i2.deco.wrap_class_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_class_methods</span></code></a>([...])</p></td>
 <td><p>Make a decorator that wraps specific methods.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.wrap_class_methods_input_and_output" title="i2.deco.wrap_class_methods_input_and_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_class_methods_input_and_output</span></code></a>([...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.wrap_class_methods_input_and_output" title="i2.deco.wrap_class_methods_input_and_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_class_methods_input_and_output</span></code></a>([...])</p></td>
 <td><p>Make a decorator that wraps specific methods, transforming specific argument values a nd output values.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.wrap_instance_methods" title="i2.deco.wrap_instance_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_instance_methods</span></code></a>([...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.wrap_instance_methods" title="i2.deco.wrap_instance_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_instance_methods</span></code></a>([...])</p></td>
 <td><p>Make a function that wraps the named methods of an instance, as <code class="docutils literal notranslate"><span class="pre">wrap_class_methods_input_and_output</span></code> does for a class (experimental).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.wrap_method_output" title="i2.deco.wrap_method_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_method_output</span></code></a>(wrapper_func)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.wrap_method_output" title="i2.deco.wrap_method_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_method_output</span></code></a>(wrapper_func)</p></td>
 <td><p>Make a method decorator that applies <code class="docutils literal notranslate"><span class="pre">wrapper_func</span></code> to the method's output.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.wraps" title="i2.deco.wraps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wraps</span></code></a>(wrapped[, assigned, updated])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.wraps" title="i2.deco.wraps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wraps</span></code></a>(wrapped[, assigned, updated])</p></td>
 <td><p>Copy of <code class="docutils literal notranslate"><span class="pre">functools.wraps</span></code> (kept local: it avoids a Jupyter tab-completion issue).</p></td>
 </tr>
 </tbody>
@@ -214,7 +217,10 @@
 <p class="rubric">Classes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.FuncFactory" title="i2.deco.FuncFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FuncFactory</span></code></a>(func, *[, include, exclude])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.deco.DefaultPlaceholder" title="i2.deco.DefaultPlaceholder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DefaultPlaceholder</span></code></a>()</p></td>
+<td><p>Base class for signature defaults that stand for a value rather than being one.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.deco.FuncFactory" title="i2.deco.FuncFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FuncFactory</span></code></a>(func, *[, include, exclude])</p></td>
 <td><p>Make a function factory.</p></td>
 </tr>
 </tbody>
@@ -227,6 +233,17 @@
 </tr>
 </tbody>
 </table>
+<dl class="py class">
+<dt class="sig sig-object py" id="i2.deco.DefaultPlaceholder">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">DefaultPlaceholder</span></span><a class="reference internal" href="../_modules/i2/deco.html#DefaultPlaceholder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.DefaultPlaceholder" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.DefaultPlaceholder'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Base class for signature defaults that stand for a value rather than being one.</p>
+<p>A default whose value is only known at call time (e.g. <code class="docutils literal notranslate"><span class="pre">methodize</span></code>’s
+<code class="docutils literal notranslate"><span class="pre">default_from</span></code>, whose default is read from the instance) is shown in the
+signature as an instance of a subclass. It is not a concrete value, so code that
+serializes signature defaults (form generators, OpenAPI/JSON schemas) should treat
+it as “no default”: see <a class="reference internal" href="#i2.deco.is_placeholder_default" title="i2.deco.is_placeholder_default"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_placeholder_default()</span></code></a>.</p>
+</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="i2.deco.FuncFactory">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">FuncFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#FuncFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.FuncFactory" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.FuncFactory'">¶</a></dt>
@@ -641,6 +658,29 @@ to transform the returned value before returning it.</p>
 </span><span id="line-8"><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">NotSet</span><span class="p">)</span>
 </span><span id="line-9"><span class="gp">&gt;&gt;&gt; </span><span class="n">default_or_empty</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
 </span><span id="line-10"><span class="go">True</span>
+</span></code></pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.deco.is_placeholder_default">
+<span class="sig-prename descclassname"><span class="pre">i2.deco.</span></span><span class="sig-name descname"><span class="pre">is_placeholder_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/deco.html#is_placeholder_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.deco.is_placeholder_default" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.deco.is_placeholder_default'">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">x</span></code> is a signature default that is not a concrete value.</p>
+<p>That is, the <code class="docutils literal notranslate"><span class="pre">NotSet</span></code> sentinel or a <a class="reference internal" href="#i2.deco.DefaultPlaceholder" title="i2.deco.DefaultPlaceholder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultPlaceholder</span></code></a> (such as
+<code class="docutils literal notranslate"><span class="pre">i2.wrapper.InstanceAttrDefault</span></code>). Signature consumers that need a concrete,
+serializable default (UI or schema generators) can treat these like
+<code class="docutils literal notranslate"><span class="pre">inspect.Parameter.empty</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parameter</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">Later</span><span class="p">(</span><span class="n">DefaultPlaceholder</span><span class="p">):</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="k">pass</span>
+</span><span id="line-4"><span class="gp">&gt;&gt;&gt; </span><span class="n">is_placeholder_default</span><span class="p">(</span><span class="n">NotSet</span><span class="p">),</span> <span class="n">is_placeholder_default</span><span class="p">(</span><span class="n">Later</span><span class="p">())</span>
+</span><span id="line-5"><span class="go">(True, True)</span>
+</span><span id="line-6"><span class="gp">&gt;&gt;&gt; </span><span class="n">is_placeholder_default</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="n">is_placeholder_default</span><span class="p">(</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">)</span>
+</span><span id="line-7"><span class="go">(False, False)</span>
 </span></code></pre></div>
 </div>
 <dl class="field-list simple">
@@ -1286,6 +1326,7 @@ Of course, this is just pretend. Don’t use this with real waveforms. It won’
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
+<li><a :data-current="activeSection === '#i2.deco.DefaultPlaceholder'" class="reference internal" href="#i2.deco.DefaultPlaceholder"><code class="docutils literal notranslate"><span class="pre">DefaultPlaceholder</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.FuncFactory'" class="reference internal" href="#i2.deco.FuncFactory"><code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code></a><ul>
 <li><a :data-current="activeSection === '#i2.deco.FuncFactory.to_jdict'" class="reference internal" href="#i2.deco.FuncFactory.to_jdict"><code class="docutils literal notranslate"><span class="pre">FuncFactory.to_jdict()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.FuncFactory.wrap'" class="reference internal" href="#i2.deco.FuncFactory.wrap"><code class="docutils literal notranslate"><span class="pre">FuncFactory.wrap()</span></code></a></li>
@@ -1300,6 +1341,7 @@ Of course, this is just pretend. Don’t use this with real waveforms. It won’
 <li><a :data-current="activeSection === '#i2.deco.identity'" class="reference internal" href="#i2.deco.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.input_output_decorator'" class="reference internal" href="#i2.deco.input_output_decorator"><code class="docutils literal notranslate"><span class="pre">input_output_decorator()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.is_not_set'" class="reference internal" href="#i2.deco.is_not_set"><code class="docutils literal notranslate"><span class="pre">is_not_set()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.deco.is_placeholder_default'" class="reference internal" href="#i2.deco.is_placeholder_default"><code class="docutils literal notranslate"><span class="pre">is_placeholder_default()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.kwargs_for_func'" class="reference internal" href="#i2.deco.kwargs_for_func"><code class="docutils literal notranslate"><span class="pre">kwargs_for_func()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.mk_args_kwargs_merger'" class="reference internal" href="#i2.deco.mk_args_kwargs_merger"><code class="docutils literal notranslate"><span class="pre">mk_args_kwargs_merger()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.deco.mk_call_logger'" class="reference internal" href="#i2.deco.mk_call_logger"><code class="docutils literal notranslate"><span class="pre">mk_call_logger()</span></code></a></li>
@@ -1330,7 +1372,7 @@ Of course, this is just pretend. Don’t use this with real waveforms. It won’
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=c94237c0"></script>
+<script src="../_static/documentation_options.js?v=2a665092"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
