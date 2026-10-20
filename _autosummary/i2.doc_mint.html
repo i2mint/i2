@@ -134,23 +134,11 @@
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.assert_wants" title="i2.doc_mint.assert_wants"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assert_wants</span></code></a>(example, *args, **kwargs)</p></td>
-<td><p>Render a <code class="docutils literal notranslate"><span class="pre">doctest.Example</span></code> as an <code class="docutils literal notranslate"><span class="pre">assert</span></code> comparing its source to its want.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.doc_mint.convert_string" title="i2.doc_mint.convert_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_string</span></code></a>(s, converters)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.convert_string" title="i2.doc_mint.convert_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_string</span></code></a>(s, converters)</p></td>
 <td><p>Convert <code class="docutils literal notranslate"><span class="pre">s</span></code> with the first converter that matches (a dict containing <code class="docutils literal notranslate"><span class="pre">s</span></code> as a key, or a callable returning something other than None); return <code class="docutils literal notranslate"><span class="pre">s</span></code> if none does.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.docstring_to_params" title="i2.doc_mint.docstring_to_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">docstring_to_params</span></code></a>(docstring, *[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#i2.doc_mint.docstring_to_params" title="i2.doc_mint.docstring_to_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">docstring_to_params</span></code></a>(docstring, *[, ...])</p></td>
 <td><p>Parse a docstring and extract parameter specifications.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.doc_mint.doctest_string" title="i2.doc_mint.doctest_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">doctest_string</span></code></a>(obj[, example_callback, recurse])</p></td>
-<td><p>Extract the doctests found in given object.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.doctest_string_print" title="i2.doc_mint.doctest_string_print"><code class="xref py py-obj docutils literal notranslate"><span class="pre">doctest_string_print</span></code></a>(obj[, ...])</p></td>
-<td><p>Extract the doctests found in given object.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.doc_mint.doctest_string_trans_lines" title="i2.doc_mint.doctest_string_trans_lines"><code class="xref py py-obj docutils literal notranslate"><span class="pre">doctest_string_trans_lines</span></code></a>(doctest_obj[, ...])</p></td>
-<td><p>Yield <code class="docutils literal notranslate"><span class="pre">example_callback(example)</span></code> for each example of a <code class="docutils literal notranslate"><span class="pre">doctest.DocTest</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.find_in_params" title="i2.doc_mint.find_in_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_in_params</span></code></a>(query, params, *[, search_in])</p></td>
 <td><p>Find parameters in a list of parameter specifications.</p></td>
@@ -164,20 +152,8 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.doc_mint.literal_eval_converter" title="i2.doc_mint.literal_eval_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">literal_eval_converter</span></code></a>(s[, max_length])</p></td>
 <td><p>Evaluate <code class="docutils literal notranslate"><span class="pre">s</span></code> as a Python literal, or return None when it is not one (or is longer than <code class="docutils literal notranslate"><span class="pre">max_length</span></code>, or contains a newline or <code class="docutils literal notranslate"><span class="pre">;</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.mk_example_wants_callback" title="i2.doc_mint.mk_example_wants_callback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mk_example_wants_callback</span></code></a>(source_want_func)</p></td>
-<td><p>Make a <code class="docutils literal notranslate"><span class="pre">doctest.Example</span></code> callback from a <code class="docutils literal notranslate"><span class="pre">(source,</span> <span class="pre">want)</span> <span class="pre">-&gt;</span> <span class="pre">str</span></code> function.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.doc_mint.most_common_indent" title="i2.doc_mint.most_common_indent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">most_common_indent</span></code></a>(string[, ignore_first_line])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.most_common_indent" title="i2.doc_mint.most_common_indent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">most_common_indent</span></code></a>(string[, ignore_first_line])</p></td>
 <td><p>Find the most common indentation in a string.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.non_doctest_lines" title="i2.doc_mint.non_doctest_lines"><code class="xref py py-obj docutils literal notranslate"><span class="pre">non_doctest_lines</span></code></a>(doc)</p></td>
-<td><p>Generator of lines of the doc string that are not in a doctest scope.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.doc_mint.old_doctest_string" title="i2.doc_mint.old_doctest_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">old_doctest_string</span></code></a>(obj[, output_prefix, ...])</p></td>
-<td><p>Extract the doctests found in given object.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.output_prefix" title="i2.doc_mint.output_prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_prefix</span></code></a>(example, *args, **kwargs)</p></td>
-<td><p>Render a <code class="docutils literal notranslate"><span class="pre">doctest.Example</span></code> as its source followed by a <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">OUTPUT:</span></code> line.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.doc_mint.params_to_docstring" title="i2.doc_mint.params_to_docstring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params_to_docstring</span></code></a>(params, *[, doc_style, ...])</p></td>
 <td><p>Generate a docstring from a list of parameter specifications.</p></td>
@@ -185,53 +161,11 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.register_converter" title="i2.doc_mint.register_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_converter</span></code></a>(converter)</p></td>
 <td><p>Register a new converter.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.doc_mint.split_line_comments" title="i2.doc_mint.split_line_comments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_line_comments</span></code></a>(s)</p></td>
-<td><p>Split a single line into its code and its <code class="docutils literal notranslate"><span class="pre">#</span></code> comment (empty if none).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.split_text_and_doctests" title="i2.doc_mint.split_text_and_doctests"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_text_and_doctests</span></code></a>(doc_string)</p></td>
-<td><p>Generates alternating blocks of "text" (string) and "doctest blocks" (<code class="docutils literal notranslate"><span class="pre">DoctestBlock</span></code> instances, which are essentially a list of <code class="docutils literal notranslate"><span class="pre">ExampleX</span></code> instances).</p></td>
-</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.doc_mint.string_param_to_obj" title="i2.doc_mint.string_param_to_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">string_param_to_obj</span></code></a>(string_to_object_mapping)</p></td>
 <td><p>Convert a string representation of a parameter to an object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.strip_comments" title="i2.doc_mint.strip_comments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strip_comments</span></code></a>(code)</p></td>
-<td><p>Remove whole-line <code class="docutils literal notranslate"><span class="pre">#</span></code> comments from <code class="docutils literal notranslate"><span class="pre">code</span></code> (inline comments are kept).</p></td>
-</tr>
 </tbody>
 </table>
-<p class="rubric">Classes</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#i2.doc_mint.DoctestBlock" title="i2.doc_mint.DoctestBlock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DoctestBlock</span></code></a>([seq])</p></td>
-<td><p>A list that (should) contain doctest Example instances</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#i2.doc_mint.ExampleX" title="i2.doc_mint.ExampleX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExampleX</span></code></a>(source[, want, exc_msg, lineno, ...])</p></td>
-<td><p>doctest.Example eXtended to have more convenient methods</p></td>
-</tr>
-</tbody>
-</table>
-<dl class="py class">
-<dt class="sig sig-object py" id="i2.doc_mint.DoctestBlock">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">DoctestBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#DoctestBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.DoctestBlock" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.DoctestBlock'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
-<p>A list that (should) contain doctest Example instances</p>
-</dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="i2.doc_mint.ExampleX">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">ExampleX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">want</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lineno</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#ExampleX"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.ExampleX" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.ExampleX'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/doctest.html#doctest.Example" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Example</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
-<p>doctest.Example eXtended to have more convenient methods</p>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="i2.doc_mint.assert_wants">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">assert_wants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.assert_wants" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.assert_wants'">¶</a></dt>
-<dd><p>Render a <code class="docutils literal notranslate"><span class="pre">doctest.Example</span></code> as an <code class="docutils literal notranslate"><span class="pre">assert</span></code> comparing its source to its want.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">doctest</span>
-</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">assert_wants</span><span class="p">(</span><span class="n">doctest</span><span class="o">.</span><span class="n">Example</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">'1 + 1</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="n">want</span><span class="o">=</span><span class="s1">'2</span><span class="se">\n</span><span class="s1">'</span><span class="p">))</span>
-</span><span id="line-3"><span class="go">'assert (1 + 1) == 2 #'</span>
-</span></code></pre></div>
-</div>
-</dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.doc_mint.convert_string">
 <span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">convert_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">converters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#convert_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.convert_string" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.convert_string'">¶</a></dt>
@@ -318,47 +252,6 @@ key, or a callable returning something other than None); return <code class="doc
 </span><span id="line-12"><span class="go">True</span>
 </span></code></pre></div>
 </div>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="i2.doc_mint.doctest_string">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">doctest_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">mk_example_wants_callback.&lt;locals&gt;.example_wants_callback&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#doctest_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.doctest_string" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.doctest_string'">¶</a></dt>
-<dd><p>Extract the doctests found in given object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> – Object (module, class, function, etc.) you want to extract doctests from.</p></li>
-<li><p><strong>recurse</strong> – Whether the process should find doctests in the attributes of the object, recursively.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Params output_prefix<span class="colon">:</span></dt>
-<dd class="field-even"><p></p></dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A string containing the doctests, with output lines prefixed by ‘# Output:’</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="i2.doc_mint.doctest_string_print">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">doctest_string_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">mk_example_wants_callback.&lt;locals&gt;.example_wants_callback&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#doctest_string_print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.doctest_string_print" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.doctest_string_print'">¶</a></dt>
-<dd><p>Extract the doctests found in given object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> – Object (module, class, function, etc.) you want to extract doctests from.</p></li>
-<li><p><strong>recurse</strong> – Whether the process should find doctests in the attributes of the object, recursively.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A string containing the doctests, with output lines prefixed by ‘# Output:’</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="i2.doc_mint.doctest_string_trans_lines">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">doctest_string_trans_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doctest_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">mk_example_wants_callback.&lt;locals&gt;.example_wants_callback&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#doctest_string_trans_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.doctest_string_trans_lines" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.doctest_string_trans_lines'">¶</a></dt>
-<dd><p>Yield <code class="docutils literal notranslate"><span class="pre">example_callback(example)</span></code> for each example of a <code class="docutils literal notranslate"><span class="pre">doctest.DocTest</span></code>.</p>
-<dl class="field-list simple">
-</dl>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="i2.doc_mint.find_in_params">
@@ -488,15 +381,6 @@ longer than <code class="docutils literal notranslate"><span class="pre">max_len
 </dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="i2.doc_mint.mk_example_wants_callback">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">mk_example_wants_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_want_func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#mk_example_wants_callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.mk_example_wants_callback" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.mk_example_wants_callback'">¶</a></dt>
-<dd><p>Make a <code class="docutils literal notranslate"><span class="pre">doctest.Example</span></code> callback from a <code class="docutils literal notranslate"><span class="pre">(source,</span> <span class="pre">want)</span> <span class="pre">-&gt;</span> <span class="pre">str</span></code> function.</p>
-<p>The callback returns the example’s source untouched when the example expects no
-output.</p>
-<dl class="field-list simple">
-</dl>
-</dd></dl>
-<dl class="py function">
 <dt class="sig sig-object py" id="i2.doc_mint.most_common_indent">
 <span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">most_common_indent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_first_line</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#most_common_indent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.most_common_indent" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.most_common_indent'">¶</a></dt>
 <dd><p>Find the most common indentation in a string.</p>
@@ -519,64 +403,6 @@ because of the way python strings appear in code.</p></li>
 <p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">most_common_indent</span><span class="p">(</span><span class="s1">'    This is a test.</span><span class="se">\n</span><span class="s1">    Another line.'</span><span class="p">)</span>
 </span><span id="line-2"><span class="go">'    '</span>
-</span></code></pre></div>
-</div>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="i2.doc_mint.non_doctest_lines">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">non_doctest_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#non_doctest_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.non_doctest_lines" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.non_doctest_lines'">¶</a></dt>
-<dd><p>Generator of lines of the doc string that are not in a doctest scope.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">_test_func</span><span class="p">():</span>
-</span><span id="line-2"><span class="gp">... </span><span class="w">    </span><span class="sd">'''Line 1</span>
-</span><span id="line-3"><span class="gp">... </span><span class="sd">    Another</span>
-</span><span id="line-4"><span class="gp">... </span><span class="sd">    &gt;&gt;&gt; doctest_1</span>
-</span><span id="line-5"><span class="gp">... </span><span class="sd">    &gt;&gt;&gt; doctest_2</span>
-</span><span id="line-6"><span class="gp">... </span><span class="sd">    line_after_a_doc_test</span>
-</span><span id="line-7"><span class="gp">... </span><span class="sd">    another_line_that_is_in_the_doc_test scope</span>
-</span><span id="line-8"><span class="gp">...</span>
-</span><span id="line-9"><span class="gp">... </span><span class="sd">    But now we're out of a doctest's scope</span>
-</span><span id="line-10"><span class="gp">...</span>
-</span><span id="line-11"><span class="gp">... </span><span class="sd">    &gt;&gt;&gt; Oh no, another doctest!</span>
-</span><span id="line-12"><span class="gp">... </span><span class="sd">    '''</span>
-</span><span id="line-13"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">getdoc</span>
-</span><span id="line-14"><span class="gp">&gt;&gt;&gt;</span>
-</span><span id="line-15"><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">non_doctest_lines</span><span class="p">(</span><span class="n">getdoc</span><span class="p">(</span><span class="n">_test_func</span><span class="p">)))</span>
-</span><span id="line-16"><span class="go">['Line 1', 'Another', "But now we're out of a doctest's scope", '']</span>
-</span></code></pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>doc</strong></p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="i2.doc_mint.old_doctest_string">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">old_doctest_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#</span> <span class="pre">OUTPUT:</span> <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_attr_without_doctests</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#old_doctest_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.old_doctest_string" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.old_doctest_string'">¶</a></dt>
-<dd><p>Extract the doctests found in given object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> – Object (module, class, function, etc.) you want to extract doctests from.</p></li>
-<li><p><strong>output_prefix</strong></p></li>
-<li><p><strong>recurse</strong> – Whether the process should find doctests in the attributes of the object, recursively.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A string containing the doctests, with output lines prefixed by ‘# Output:’</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="i2.doc_mint.output_prefix">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">output_prefix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.output_prefix" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.output_prefix'">¶</a></dt>
-<dd><p>Render a <code class="docutils literal notranslate"><span class="pre">doctest.Example</span></code> as its source followed by a <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">OUTPUT:</span></code> line.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">doctest</span>
-</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="n">output_prefix</span><span class="p">(</span><span class="n">doctest</span><span class="o">.</span><span class="n">Example</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">'1 + 1</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="n">want</span><span class="o">=</span><span class="s1">'2</span><span class="se">\n</span><span class="s1">'</span><span class="p">))</span>
-</span><span id="line-3"><span class="go">'1 + 1\n# OUTPUT: 2\n'</span>
 </span></code></pre></div>
 </div>
 </dd></dl>
@@ -656,77 +482,6 @@ Each dictionary should contain:</p>
 </div></blockquote>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="i2.doc_mint.split_line_comments">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">split_line_comments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#split_line_comments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.split_line_comments" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.split_line_comments'">¶</a></dt>
-<dd><p>Split a single line into its code and its <code class="docutils literal notranslate"><span class="pre">#</span></code> comment (empty if none).</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">split_line_comments</span><span class="p">(</span><span class="s2">"f(1)  # a comment"</span><span class="p">)</span>
-</span><span id="line-2"><span class="go">('f(1)  ', ' a comment')</span>
-</span></code></pre></div>
-</div>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="i2.doc_mint.split_text_and_doctests">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">split_text_and_doctests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#split_text_and_doctests"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.split_text_and_doctests" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.split_text_and_doctests'">¶</a></dt>
-<dd><p>Generates alternating blocks of “text” (string) and “doctest blocks”
-(<code class="docutils literal notranslate"><span class="pre">DoctestBlock</span></code> instances, which are essentially a list of <code class="docutils literal notranslate"><span class="pre">ExampleX</span></code> instances).</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">example</span> <span class="o">=</span> <span class="s1">'''</span>
-</span><span id="line-2"><span class="gp">... </span><span class="s1">    This is to test the doctest splitter.</span>
-</span><span id="line-3"><span class="gp">... </span><span class="s1">    Until now, we're in a text block.</span>
-</span><span id="line-4"><span class="gp">... </span><span class="s1">    The following is a doctest block:</span>
-</span><span id="line-5"><span class="gp">...</span>
-</span><span id="line-6"><span class="gp">... </span><span class="s1">    &gt;&gt;&gt; 2 + 3</span>
-</span><span id="line-7"><span class="gp">... </span><span class="s1">    5</span>
-</span><span id="line-8"><span class="gp">... </span><span class="s1">    &gt;&gt;&gt; t = 5</span>
-</span><span id="line-9"><span class="gp">... </span><span class="s1">    &gt;&gt;&gt; tt = 10</span>
-</span><span id="line-10"><span class="gp">...</span>
-</span><span id="line-11"><span class="gp">... </span><span class="s1">    This is another text block, followed with another doctest block:</span>
-</span><span id="line-12"><span class="gp">...</span>
-</span><span id="line-13"><span class="gp">... </span><span class="s1">    &gt;&gt;&gt; def foo():</span>
-</span><span id="line-14"><span class="gp">... </span><span class="s1">    ...     return 42</span>
-</span><span id="line-15"><span class="gp">... </span><span class="s1">    &gt;&gt;&gt; foo()</span>
-</span><span id="line-16"><span class="gp">... </span><span class="s1">    42</span>
-</span><span id="line-17"><span class="gp">...</span>
-</span><span id="line-18"><span class="gp">... </span><span class="s1">'''</span>
-</span><span id="line-19"><span class="gp">&gt;&gt;&gt;</span>
-</span><span id="line-20"><span class="gp">&gt;&gt;&gt; </span><span class="n">blocks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">split_text_and_doctests</span><span class="p">(</span><span class="n">example</span><span class="p">))</span>
-</span></code></pre></div>
-</div>
-<p>There are 5 blocks:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
-</span><span id="line-2"><span class="go">5</span>
-</span></code></pre></div>
-</div>
-<p>The first block is a string, corresponding to explanatory text of the doc string:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
-</span><span id="line-2"><span class="go">True</span>
-</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-</span><span id="line-4">
-</span><span id="line-5"><span class="go">This is to test the doctest splitter.</span>
-</span><span id="line-6"><span class="go">Until now, we're in a text block.</span>
-</span><span id="line-7"><span class="go">The following is a doctest block:</span>
-</span><span id="line-8">
-</span></code></pre></div>
-</div>
-<p>The next block is a <code class="docutils literal notranslate"><span class="pre">DoctestBlock</span></code> instance.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">block</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">DoctestBlock</span><span class="p">)</span>
-</span><span id="line-3"><span class="go">True</span>
-</span></code></pre></div>
-</div>
-<p>This block has 3 elements (<code class="docutils literal notranslate"><span class="pre">ExampleX</span></code> instances)</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
-</span><span id="line-2"><span class="go">3</span>
-</span></code></pre></div>
-</div>
-<p>If you ask for the string representation of this block, you’ll get a doctest string:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
-</span><span id="line-2"><span class="go">'    &gt;&gt;&gt; 2 + 3\n    5\n    &gt;&gt;&gt; t = 5\n    &gt;&gt;&gt; tt = 10\n'</span>
-</span></code></pre></div>
-</div>
-<dl class="field-list simple">
-</dl>
-</dd></dl>
-<dl class="py function">
 <dt class="sig sig-object py" id="i2.doc_mint.string_param_to_obj">
 <span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">string_param_to_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string_to_object_mapping</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#string_param_to_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.string_param_to_obj" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.string_param_to_obj'">¶</a></dt>
 <dd><p>Convert a string representation of a parameter to an object.</p>
@@ -762,42 +517,20 @@ This is a helper function to do that conversion.</p>
 </span></code></pre></div>
 </div>
 </dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="i2.doc_mint.strip_comments">
-<span class="sig-prename descclassname"><span class="pre">i2.doc_mint.</span></span><span class="sig-name descname"><span class="pre">strip_comments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/doc_mint.html#strip_comments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.doc_mint.strip_comments" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.doc_mint.strip_comments'">¶</a></dt>
-<dd><p>Remove whole-line <code class="docutils literal notranslate"><span class="pre">#</span></code> comments from <code class="docutils literal notranslate"><span class="pre">code</span></code> (inline comments are kept).</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">strip_comments</span><span class="p">(</span><span class="s2">"# header</span><span class="se">\n</span><span class="s2">x = 1  # set x</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="line-2"><span class="go">'x = 1  # set x\n'</span>
-</span></code></pre></div>
-</div>
-</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#i2.doc_mint.DoctestBlock'" class="reference internal" href="#i2.doc_mint.DoctestBlock"><code class="docutils literal notranslate"><span class="pre">DoctestBlock</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.ExampleX'" class="reference internal" href="#i2.doc_mint.ExampleX"><code class="docutils literal notranslate"><span class="pre">ExampleX</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.assert_wants'" class="reference internal" href="#i2.doc_mint.assert_wants"><code class="docutils literal notranslate"><span class="pre">assert_wants()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.doc_mint.convert_string'" class="reference internal" href="#i2.doc_mint.convert_string"><code class="docutils literal notranslate"><span class="pre">convert_string()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.doc_mint.docstring_to_params'" class="reference internal" href="#i2.doc_mint.docstring_to_params"><code class="docutils literal notranslate"><span class="pre">docstring_to_params()</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.doctest_string'" class="reference internal" href="#i2.doc_mint.doctest_string"><code class="docutils literal notranslate"><span class="pre">doctest_string()</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.doctest_string_print'" class="reference internal" href="#i2.doc_mint.doctest_string_print"><code class="docutils literal notranslate"><span class="pre">doctest_string_print()</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.doctest_string_trans_lines'" class="reference internal" href="#i2.doc_mint.doctest_string_trans_lines"><code class="docutils literal notranslate"><span class="pre">doctest_string_trans_lines()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.doc_mint.find_in_params'" class="reference internal" href="#i2.doc_mint.find_in_params"><code class="docutils literal notranslate"><span class="pre">find_in_params()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.doc_mint.indent_lines'" class="reference internal" href="#i2.doc_mint.indent_lines"><code class="docutils literal notranslate"><span class="pre">indent_lines()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.doc_mint.inject_docstring_content'" class="reference internal" href="#i2.doc_mint.inject_docstring_content"><code class="docutils literal notranslate"><span class="pre">inject_docstring_content()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.doc_mint.literal_eval_converter'" class="reference internal" href="#i2.doc_mint.literal_eval_converter"><code class="docutils literal notranslate"><span class="pre">literal_eval_converter()</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.mk_example_wants_callback'" class="reference internal" href="#i2.doc_mint.mk_example_wants_callback"><code class="docutils literal notranslate"><span class="pre">mk_example_wants_callback()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.doc_mint.most_common_indent'" class="reference internal" href="#i2.doc_mint.most_common_indent"><code class="docutils literal notranslate"><span class="pre">most_common_indent()</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.non_doctest_lines'" class="reference internal" href="#i2.doc_mint.non_doctest_lines"><code class="docutils literal notranslate"><span class="pre">non_doctest_lines()</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.old_doctest_string'" class="reference internal" href="#i2.doc_mint.old_doctest_string"><code class="docutils literal notranslate"><span class="pre">old_doctest_string()</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.output_prefix'" class="reference internal" href="#i2.doc_mint.output_prefix"><code class="docutils literal notranslate"><span class="pre">output_prefix()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.doc_mint.params_to_docstring'" class="reference internal" href="#i2.doc_mint.params_to_docstring"><code class="docutils literal notranslate"><span class="pre">params_to_docstring()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.doc_mint.register_converter'" class="reference internal" href="#i2.doc_mint.register_converter"><code class="docutils literal notranslate"><span class="pre">register_converter()</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.split_line_comments'" class="reference internal" href="#i2.doc_mint.split_line_comments"><code class="docutils literal notranslate"><span class="pre">split_line_comments()</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.split_text_and_doctests'" class="reference internal" href="#i2.doc_mint.split_text_and_doctests"><code class="docutils literal notranslate"><span class="pre">split_text_and_doctests()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.doc_mint.string_param_to_obj'" class="reference internal" href="#i2.doc_mint.string_param_to_obj"><code class="docutils literal notranslate"><span class="pre">string_param_to_obj()</span></code></a></li>
-<li><a :data-current="activeSection === '#i2.doc_mint.strip_comments'" class="reference internal" href="#i2.doc_mint.strip_comments"><code class="docutils literal notranslate"><span class="pre">strip_comments()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -811,7 +544,7 @@ This is a helper function to do that conversion.</p>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=ead104cf"></script>
+<script src="../_static/documentation_options.js?v=dd298ea5"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
