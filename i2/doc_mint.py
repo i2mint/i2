@@ -524,11 +524,11 @@ def detect_doc_style(docstring: str | Callable) -> DocStyle | None:
 
 
 def _normalize_newlines(text: str) -> str:
-    r'''Turn CRLF (and lone CR) line endings into LF.
+    r"""Turn CRLF (and lone CR) line endings into LF.
 
     >>> _normalize_newlines('a\r\nb\rc')
     'a\nb\nc'
-    '''
+    """
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 

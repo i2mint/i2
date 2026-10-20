@@ -2077,9 +2077,13 @@ def _with_instance_attr_defaults(
     <Sig (x, y, z=self.zz, w=1)>
     """
     if missing := set(default_from) - set(sig.names):
-        raise ValueError(f"default_from params not in the method's signature: {missing}")
+        raise ValueError(
+            f"default_from params not in the method's signature: {missing}"
+        )
     if variadic := {name for name in default_from if sig.kinds[name] in (VP, VK)}:
-        raise ValueError(f"default_from can't give a default to *args/**kwargs: {variadic}")
+        raise ValueError(
+            f"default_from can't give a default to *args/**kwargs: {variadic}"
+        )
     names = sig.names
     required_positional = {
         name
