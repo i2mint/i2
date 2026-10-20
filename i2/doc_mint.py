@@ -683,7 +683,13 @@ def _parse_rest_param_lines(param_lines: list[str]) -> list[dict]:
     return params
 
 
-# The doctest tools moved to i2.doctests; re-exported so existing imports keep working.
+# The doctest tools moved to i2.doctests; re-exported so existing imports keep working,
+# along with the modules and helpers this module used to import for them.
+import doctest  # noqa: E402, F401
+from collections.abc import Sequence  # noqa: E402, F401
+from inspect import getdoc  # noqa: E402, F401
+from itertools import groupby  # noqa: E402, F401
+
 from i2.doctests import (  # noqa: E402, F401
     MAX_LINE_LENGTH,
     _prefix_lines,
