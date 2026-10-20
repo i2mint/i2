@@ -83,6 +83,7 @@ from i2.signatures import (
     name_of_obj,
     KO,
     PK,
+    mk_sig_from_args,
     VK,
     parameter_to_dict,
     call_forgivingly,
@@ -1531,6 +1532,83 @@ def arg_val_converter(func, **conversion_for_arg):
     5
     """
     return Wrap(func, ingress=ArgValConverterIngress(func, **conversion_for_arg))
+
+
+def ignore_extra_args(func, target, /, *, select=None):
+    """Wrap ``func`` so it accepts the arguments of ``target`` and uses only those it needs.
+
+    ``target`` gives the signature of the result: a callable, a ``Sig``, or a sequence of
+    argument names. By default ``func`` receives the target arguments that carry one of
+    its own parameter names; ``select`` (names or indices of target arguments) instead
+    says which target arguments are passed to ``func``, positionally and in that order.
+
+    >>> def f(current):
+    ...     return current * 2
+    >>> g = ignore_extra_args(f, ('current', 'previous', 'stats'))
+    >>> g(3, 2, None)
+    6
+    >>> g(previous=1, current=5, stats=0)
+    10
+    >>> from i2 import Sig
+    >>> Sig(g).names
+    ['current', 'previous', 'stats']
+
+    When ``func`` expects the target's arguments in another order, or under other names,
+    say which ones, in order:
+
+    >>> def sub(first, second):
+    ...     return first - second
+    >>> h = ignore_extra_args(sub, ('current', 'previous', 'stats'), select=['previous', 'current'])
+    >>> h(10, 4, None)
+    -6
+    >>> ignore_extra_args(sub, ('current', 'previous', 'stats'), select=[1, 0])(10, 4, None)
+    -6
+
+    A required parameter of ``func`` that the target does not provide is an error at
+    wrapping time:
+
+    >>> ignore_extra_args(sub, ('first',))
+    Traceback (most recent call last):
+      ...
+    ValueError: func has required parameters that the target arguments do not provide: ['second']
+    """
+    if isinstance(target, Sig) or callable(target):
+        target_sig = Sig(target)
+    else:
+        target_sig = Sig(mk_sig_from_args(*target))
+    func_sig = Sig(func)
+    target_names = list(target_sig.names)
+
+    if select is None:
+        missing = [n for n in func_sig.required_names if n not in target_names]
+        if missing:
+            raise ValueError(
+                "func has required parameters that the target arguments do not "
+                f"provide: {missing}"
+            )
+        keep = [n for n in target_names if n in func_sig.names]
+
+        def inner_args_and_kwargs(arguments):
+            return func_sig.mk_args_and_kwargs({n: arguments[n] for n in keep})
+
+    else:
+        picked = [target_names[k] if isinstance(k, int) else k for k in select]
+        unknown = [n for n in picked if n not in target_names]
+        if unknown:
+            raise ValueError(f"select refers to unknown target arguments: {unknown}")
+
+        def inner_args_and_kwargs(arguments):
+            return tuple(arguments[n] for n in picked), {}
+
+    @target_sig
+    def wrapped(*args, **kwargs):
+        arguments = target_sig.map_arguments(args, kwargs, apply_defaults=True)
+        inner_args, inner_kwargs = inner_args_and_kwargs(arguments)
+        return func(*inner_args, **inner_kwargs)
+
+    wrapped.__name__ = getattr(func, "__name__", "wrapped")
+    wrapped.__doc__ = getattr(func, "__doc__", None)
+    return wrapped
 
 
 def arg_val_converter_ingress(func, __strict=True, **conversion_for_arg):

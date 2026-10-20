@@ -647,3 +647,30 @@ def test_move_params_to_the_end_keeps_keyword_only_after_positional():
 
     h = move_params_to_the_end(f, Sig(f).defaults)
     assert str(Sig(h)) == "(a=1, *, b, c=3)"
+
+
+def test_ignore_extra_args():
+    from i2 import Sig, ignore_extra_args
+
+    def f(current):
+        return current * 2
+
+    g = ignore_extra_args(f, ("current", "previous", "stats"))
+    assert g(3, 2, None) == 6
+    assert g(previous=1, current=5, stats=0) == 10
+    assert Sig(g).names == ["current", "previous", "stats"]
+
+    def sub(first, second):
+        return first - second
+
+    target = ("current", "previous", "stats")
+    assert ignore_extra_args(sub, target, select=["previous", "current"])(10, 4, None) == -6
+    assert ignore_extra_args(sub, target, select=[1, 0])(10, 4, None) == -6
+
+    def target_func(current, previous, stats=None): ...
+
+    assert ignore_extra_args(f, target_func)(7, 1) == 14
+    with pytest.raises(ValueError):
+        ignore_extra_args(sub, ("first",))
+    with pytest.raises(ValueError):
+        ignore_extra_args(sub, target, select=["nope"])
