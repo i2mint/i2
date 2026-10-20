@@ -82,6 +82,28 @@ def test_methodize_default_from():
     assert (k.bar(3), k.bar(3, 10), k.bar(3, z=0)) == (7, 31, 1)
 
 
+def test_methodize_default_from_json_dump_of_signature_defaults():
+    """A default_from default is a placeholder: JSON consumers skip it, like NotSet."""
+    import json
+
+    from i2 import NotSet, is_placeholder_default
+
+    def foo(x, y, z, w=NotSet, v=1):
+        return x + y * z
+
+    @dataclass
+    class K:
+        x: int
+        zoo: int = 2
+        bar = methodize(foo, bind="x", default_from=[("z", "zoo")])
+
+    defaults = Sig(K(1).bar).defaults
+    with pytest.raises(TypeError):
+        json.dumps(defaults)  # what a naive consumer would meet
+    concrete = {k: v for k, v in defaults.items() if not is_placeholder_default(v)}
+    assert json.loads(json.dumps(concrete)) == {"v": 1}
+
+
 def test_methodize_keeps_self_before_position_only_params():
     """i2mint/i2#118: ``self`` used to land after the ``/``."""
 

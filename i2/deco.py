@@ -86,6 +86,36 @@ def is_not_set(x) -> bool:
     return x is NotSet
 
 
+class DefaultPlaceholder:
+    """Base class for signature defaults that stand for a value rather than being one.
+
+    A default whose value is only known at call time (e.g. ``methodize``'s
+    ``default_from``, whose default is read from the instance) is shown in the
+    signature as an instance of a subclass. It is not a concrete value, so code that
+    serializes signature defaults (form generators, OpenAPI/JSON schemas) should treat
+    it as "no default": see :func:`is_placeholder_default`.
+    """
+
+
+def is_placeholder_default(x) -> bool:
+    """Return ``True`` if ``x`` is a signature default that is not a concrete value.
+
+    That is, the ``NotSet`` sentinel or a :class:`DefaultPlaceholder` (such as
+    ``i2.wrapper.InstanceAttrDefault``). Signature consumers that need a concrete,
+    serializable default (UI or schema generators) can treat these like
+    ``inspect.Parameter.empty``:
+
+    >>> from inspect import Parameter
+    >>> class Later(DefaultPlaceholder):
+    ...     pass
+    >>> is_placeholder_default(NotSet), is_placeholder_default(Later())
+    (True, True)
+    >>> is_placeholder_default(None), is_placeholder_default(Parameter.empty)
+    (False, False)
+    """
+    return is_not_set(x) or isinstance(x, DefaultPlaceholder)
+
+
 # ---------------------------------------------------------------------------------------
 # TODO: https://github.com/i2mint/i2/issues/48
 class FuncFactory:

@@ -10,6 +10,8 @@ from i2.deco import (
     double_up_as_factory,
     NotSet,  # Sentinel for "no value given" (distinct from None and Parameter.empty)
     is_not_set,  # Test whether a value (e.g. a signature default) is NotSet
+    DefaultPlaceholder,  # Base for signature defaults that stand for a value
+    is_placeholder_default,  # NotSet or a DefaultPlaceholder: "no concrete default"
 )
 
 from i2.signatures import (
