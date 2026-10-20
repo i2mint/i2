@@ -1,5 +1,5 @@
 """Tests for partialx(_rm_partialize), curried, methodize(default_from) and the
-docstring parser fixes of i2mint/i2#111, #112, #113 and #116."""
+docstring parser fixes of i2mint/i2#111, #112, #113, #116 and #118."""
 
 import asyncio
 import inspect
@@ -80,6 +80,27 @@ def test_methodize_default_from():
     k = K(1)
     assert str(Sig(k.bar)) == "(y, z=self.zoo)"
     assert (k.bar(3), k.bar(3, 10), k.bar(3, z=0)) == (7, 31, 1)
+
+
+def test_methodize_keeps_self_before_position_only_params():
+    """i2mint/i2#118: ``self`` used to land after the ``/``."""
+
+    def foo(a, /, b, *, c=3):
+        return (a, b, c)
+
+    @dataclass
+    class K:
+        a: int = 1
+        b: int = 7
+        bound = methodize(foo, bind="b")
+        defaulted = methodize(foo, default_from="b")
+
+    assert str(inspect.signature(K.bound)) == "(self, a, /, *, c=3)"
+    assert str(inspect.signature(K.defaulted)) == "(self, a, /, b=self.b, *, c=3)"
+    k = K()
+    assert k.bound(5) == (5, 7, 3)
+    assert (k.defaulted(5), k.defaulted(5, 0)) == ((5, 7, 3), (5, 0, 3))
+    assert methodize(foo, bind="a")(k, 2) == (1, 2, 3)
 
 
 def test_methodize_default_from_rejects_variadic_and_unknown_params():
