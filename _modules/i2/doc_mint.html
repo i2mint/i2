@@ -891,31 +891,37 @@
 </span><span id="line-683">    <span class="k">return</span> <span class="n">params</span>
 </span><span id="line-684">
 </span><span id="line-685">
-</span><span id="line-686"><span class="c1"># The doctest tools moved to i2.doctests; re-exported so existing imports keep working.</span>
-</span><span id="line-687"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.doctests</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa: E402, F401</span>
-</span><span id="line-688">    <span class="n">MAX_LINE_LENGTH</span><span class="p">,</span>
-</span><span id="line-689">    <span class="n">_prefix_lines</span><span class="p">,</span>
-</span><span id="line-690">    <span class="n">ExampleX</span><span class="p">,</span>
-</span><span id="line-691">    <span class="n">DoctestBlock</span><span class="p">,</span>
-</span><span id="line-692">    <span class="n">parse_doctest</span><span class="p">,</span>
-</span><span id="line-693">    <span class="n">split_text_and_doctests</span><span class="p">,</span>
-</span><span id="line-694">    <span class="n">comment_strip_p</span><span class="p">,</span>
-</span><span id="line-695">    <span class="n">doctest_line_p</span><span class="p">,</span>
-</span><span id="line-696">    <span class="n">empty_line</span><span class="p">,</span>
-</span><span id="line-697">    <span class="n">non_doctest_lines</span><span class="p">,</span>
-</span><span id="line-698">    <span class="n">strip_comments</span><span class="p">,</span>
-</span><span id="line-699">    <span class="n">mk_example_wants_callback</span><span class="p">,</span>
-</span><span id="line-700">    <span class="n">split_line_comments</span><span class="p">,</span>
-</span><span id="line-701">    <span class="n">_assert_wants</span><span class="p">,</span>
-</span><span id="line-702">    <span class="n">_output_prefix</span><span class="p">,</span>
-</span><span id="line-703">    <span class="n">output_prefix</span><span class="p">,</span>
-</span><span id="line-704">    <span class="n">assert_wants</span><span class="p">,</span>
-</span><span id="line-705">    <span class="n">doctest_string_trans_lines</span><span class="p">,</span>
-</span><span id="line-706">    <span class="n">_doctest_string_gen</span><span class="p">,</span>
-</span><span id="line-707">    <span class="n">doctest_string</span><span class="p">,</span>
-</span><span id="line-708">    <span class="n">doctest_string_print</span><span class="p">,</span>
-</span><span id="line-709">    <span class="n">old_doctest_string</span><span class="p">,</span>
-</span><span id="line-710"><span class="p">)</span>
+</span><span id="line-686"><span class="c1"># The doctest tools moved to i2.doctests; re-exported so existing imports keep working,</span>
+</span><span id="line-687"><span class="c1"># along with the modules and helpers this module used to import for them.</span>
+</span><span id="line-688"><span class="kn">import</span><span class="w"> </span><span class="nn">doctest</span>  <span class="c1"># noqa: E402, F401</span>
+</span><span id="line-689"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>  <span class="c1"># noqa: E402, F401</span>
+</span><span id="line-690"><span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">getdoc</span>  <span class="c1"># noqa: E402, F401</span>
+</span><span id="line-691"><span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">groupby</span>  <span class="c1"># noqa: E402, F401</span>
+</span><span id="line-692">
+</span><span id="line-693"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.doctests</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa: E402, F401</span>
+</span><span id="line-694">    <span class="n">MAX_LINE_LENGTH</span><span class="p">,</span>
+</span><span id="line-695">    <span class="n">_prefix_lines</span><span class="p">,</span>
+</span><span id="line-696">    <span class="n">ExampleX</span><span class="p">,</span>
+</span><span id="line-697">    <span class="n">DoctestBlock</span><span class="p">,</span>
+</span><span id="line-698">    <span class="n">parse_doctest</span><span class="p">,</span>
+</span><span id="line-699">    <span class="n">split_text_and_doctests</span><span class="p">,</span>
+</span><span id="line-700">    <span class="n">comment_strip_p</span><span class="p">,</span>
+</span><span id="line-701">    <span class="n">doctest_line_p</span><span class="p">,</span>
+</span><span id="line-702">    <span class="n">empty_line</span><span class="p">,</span>
+</span><span id="line-703">    <span class="n">non_doctest_lines</span><span class="p">,</span>
+</span><span id="line-704">    <span class="n">strip_comments</span><span class="p">,</span>
+</span><span id="line-705">    <span class="n">mk_example_wants_callback</span><span class="p">,</span>
+</span><span id="line-706">    <span class="n">split_line_comments</span><span class="p">,</span>
+</span><span id="line-707">    <span class="n">_assert_wants</span><span class="p">,</span>
+</span><span id="line-708">    <span class="n">_output_prefix</span><span class="p">,</span>
+</span><span id="line-709">    <span class="n">output_prefix</span><span class="p">,</span>
+</span><span id="line-710">    <span class="n">assert_wants</span><span class="p">,</span>
+</span><span id="line-711">    <span class="n">doctest_string_trans_lines</span><span class="p">,</span>
+</span><span id="line-712">    <span class="n">_doctest_string_gen</span><span class="p">,</span>
+</span><span id="line-713">    <span class="n">doctest_string</span><span class="p">,</span>
+</span><span id="line-714">    <span class="n">doctest_string_print</span><span class="p">,</span>
+</span><span id="line-715">    <span class="n">old_doctest_string</span><span class="p">,</span>
+</span><span id="line-716"><span class="p">)</span>
 </span></code></pre></div>
     </div></div>
           </main>
@@ -929,7 +935,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=dd298ea5"></script>
+    <script src="../../_static/documentation_options.js?v=79510abc"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
