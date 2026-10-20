@@ -644,10 +644,7 @@ class AssignedAttributeVisitor(ast.NodeVisitor):
         # The reads inside the targets are their subscript indices (and, for an
         # augmented assignment, the targets themselves); a plain target is a write.
         index_nodes = [
-            n
-            for t in targets
-            for n in ast.walk(t)
-            if isinstance(n, ast.Subscript)
+            n for t in targets for n in ast.walk(t) if isinstance(n, ast.Subscript)
         ]
         read_nodes = [value, *(n.slice for n in index_nodes)]
         if also_read_targets:
