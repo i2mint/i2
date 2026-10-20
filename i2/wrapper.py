@@ -83,6 +83,7 @@ from i2.signatures import (
     name_of_obj,
     KO,
     PK,
+    PO,
     mk_sig_from_args,
     VK,
     parameter_to_dict,
@@ -2513,10 +2514,43 @@ def partialx(
     >>> g = partialx(f, a=1, _allow_reordering=True)
     >>> str(Sig(g))
     '(*, b, a=1, c=3)'
+
+    Unlike ``functools.partial``, a position-only parameter can be bound by keyword
+    (see i2mint/i2#7). Position-only parameters of ``func`` then become
+    positional-or-keyword in the result, which still calls ``func`` positionally:
+
+    >>> def func(a, b, /, c, d, e=5):
+    ...     return (a, b, c, d, e)
+    >>> f = partialx(func, b=2, d=4, _allow_reordering=True)
+    >>> str(Sig(f))
+    '(a, *, c, b=2, d=4, e=5)'
+    >>> f(1, c=3)
+    (1, 2, 3, 4, 5)
+    >>> f(1, c=3, b=20)
+    (1, 20, 3, 4, 5)
+    >>> g = partialx(func, b=2, _rm_partialize=True)
+    >>> str(Sig(g))
+    '(a, c, d, e=5)'
+    >>> g(1, c=3, d=4)
+    (1, 2, 3, 4, 5)
+
+    If ``func`` has a ``**kwargs``, a keyword named like a position-only param goes
+    to that ``**kwargs``, as in Python (and ``functools.partial``):
+
+    >>> def k(a, /, **kw):
+    ...     return a, kw
+    >>> partialx(k, a=1)(5)
+    (5, {'a': 1})
     """
-    f = partial(func, *args, **kwargs)
-    if _rm_partialize:
+    func_ = func
+    if kwargs:
         sig = Sig(func)
+        binds_position_only = any(sig.kinds.get(name) == PO for name in kwargs)
+        if binds_position_only and sig.var_keyword_name is None:
+            func_ = _accept_position_only_by_keyword(func)
+    f = partial(func_, *args, **kwargs)
+    if _rm_partialize:
+        sig = Sig(func_)
         partialized = list(sig.map_arguments(args, kwargs, allow_partial=True))
         sig = sig - partialized
         f = sig(partial(f, *args, **kwargs))
@@ -2527,6 +2561,26 @@ def partialx(
         f = move_params_to_the_end(f, Sig(f).defaults)
     f.__name__ = __name__ or name_of_obj(func)
     return f
+
+
+def _accept_position_only_by_keyword(func: Callable) -> Callable:
+    """Wrap ``func`` so its position-only parameters can also be given by keyword.
+
+    The wrapper's signature has those parameters as positional-or-keyword, and it
+    still calls ``func`` with them positionally.
+
+    >>> def func(a, b, /, c):
+    ...     return a, b, c
+    >>> g = _accept_position_only_by_keyword(func)
+    >>> str(Sig(g))
+    '(a, b, c)'
+    >>> g(1, b=2, c=3)
+    (1, 2, 3)
+    """
+    sig = Sig(func)
+    position_only = {name: PK for name, kind in sig.kinds.items() if kind == PO}
+    outer_sig = sig.ch_kinds(_allow_reordering=False, **position_only)
+    return wrap(func, ingress=Ingress(inner_sig=sig, outer_sig=outer_sig))
 
 
 def move_params_to_the_end(func: Callable, names_to_move: Callable | Iterable[str]):
