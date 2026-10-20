@@ -1833,11 +1833,22 @@ def bind_spec_to_dict(bind: BindSpec) -> dict:
         for item in bind:
             if isinstance(item, str):
                 yield item, item
+            elif isinstance(item, tuple) and len(item) == 2:
+                yield item
             else:
-                param, attr = item
-                yield param, attr
+                raise ValueError(
+                    "A bind spec item must be a name or a (param, attr) pair, "
+                    f"not {item!r} (in {bind!r})"
+                )
 
-    return dict(pairs())
+    if not isinstance(bind, Iterable):
+        raise TypeError(f"Not a bind spec (names, pairs or a mapping): {bind!r}")
+    param_to_attr = {}
+    for param, attr in pairs():
+        if param in param_to_attr:
+            raise ValueError(f"Param {param!r} is bound twice in {bind!r}")
+        param_to_attr[param] = attr
+    return param_to_attr
 
 
 def kwargs_trans_to_extract_args_from_attrs(
@@ -2097,6 +2108,14 @@ def bind_funcs_object_attrs(
     if isinstance(init_params, str):
         init_params = init_params.split()
 
+    if not isinstance(init_params, (str, Mapping)):
+        init_params = list(init_params)  # it is iterated more than once below
+    if any(param != attr for param, attr in bind_spec_to_dict(init_params).items()):
+        raise TypeError(
+            "bind_funcs_object_attrs binds params to attributes of the same name, so "
+            "init_params must be names; to bind to attributes of other names, use "
+            f"methodize (or ch_names) on the functions first. Got {init_params!r}"
+        )
     dflt_cls_name = "FuncsUnion"
     if callable(funcs) and not isinstance(funcs, Iterable):
         single_func = funcs
@@ -2220,6 +2239,14 @@ def bind_funcs_object_attrs_old(
     if isinstance(init_params, str):
         init_params = init_params.split()
 
+    if not isinstance(init_params, (str, Mapping)):
+        init_params = list(init_params)  # it is iterated more than once below
+    if any(param != attr for param, attr in bind_spec_to_dict(init_params).items()):
+        raise TypeError(
+            "bind_funcs_object_attrs binds params to attributes of the same name, so "
+            "init_params must be names; to bind to attributes of other names, use "
+            f"methodize (or ch_names) on the functions first. Got {init_params!r}"
+        )
     dflt_cls_name = "FuncsUnion"
     if callable(funcs) and not isinstance(funcs, Iterable):
         single_func = funcs
