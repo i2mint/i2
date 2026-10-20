@@ -97,8 +97,6 @@ class ExampleX(doctest.Example):
         return str(self)
 
 
-
-
 class DoctestBlock(list):
     """A list that (should) contain doctest Example instances"""
 
@@ -354,7 +352,6 @@ def doctest_string(obj, example_callback=assert_wants, recurse=True):
     :return: A string containing the doctests, with output lines prefixed by '# Output:'
     """
     return "\n".join(_doctest_string_gen(obj, example_callback, recurse=recurse))
-
 
 
 doctest_string.for_output_prefix = partial(
