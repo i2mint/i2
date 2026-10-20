@@ -2760,3 +2760,29 @@ def test_ch_func_to_all_pk_variadic_keywords_slot_accepts_any_keys_object():
             return 7
 
     assert ch_func_to_all_pk(_a_b_kwargs)(0, 1, KeysOnly()) == (0, 1, dict(x=7))
+
+
+def test_wrap_strict_rejects_incompatible_names_and_kinds():
+    """`ignore_incompatible_signatures=False` complains on different names/kinds."""
+    import pytest
+    from i2 import Sig
+    from i2.signatures import IncompatibleSignatures
+
+    def foo(x=1, y=2):
+        return 10 * (x + y)
+
+    def bar(x=1, *, y=2):
+        return 10 * (x + y)
+
+    sig3 = Sig(lambda a, b, c: None)
+    with pytest.raises(IncompatibleSignatures):
+        sig3.wrap(foo, ignore_incompatible_signatures=False)
+    with pytest.raises(IncompatibleSignatures):
+        Sig(lambda x, y: None).wrap(bar, ignore_incompatible_signatures=False)
+    # default stays permissive
+    Sig(lambda a, b, c: None).wrap(foo, copy_function=True)
+    # same names and kinds (only defaults differ) is fine when strict
+    Sig(lambda x=5, y=6: None).wrap(foo, ignore_incompatible_signatures=False)
+    # reordering is also incompatible
+    with pytest.raises(IncompatibleSignatures):
+        Sig(lambda y, x: None).wrap(foo, ignore_incompatible_signatures=False)
