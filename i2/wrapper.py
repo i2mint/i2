@@ -2042,7 +2042,7 @@ def func_to_method_func(
         method_sig = _with_instance_attr_defaults(
             method_sig, default_from, instance_arg_name=instance_arg_name
         )
-    method_sig = instance_arg_name + method_sig
+    method_sig = _prepend_instance_param(method_sig, instance_arg_name)
     # make the ingress function that will map method_sig's interface to sig's.
     ingress = Ingress(
         inner_sig=sig,
@@ -2060,6 +2060,26 @@ def func_to_method_func(
     method_func = wrap(func, ingress=ingress)
     method_func.__name__ = method_name
     return method_func
+
+
+def _prepend_instance_param(sig: Sig, instance_arg_name: str = "self") -> Sig:
+    """Put the instance param first in ``sig``.
+
+    If ``sig`` has position-only params, the instance param is position-only too, so
+    it stays before the ``/`` (i2mint/i2#118).
+
+    >>> def f(a, /, b): ...
+    >>> _prepend_instance_param(Sig(f))
+    <Sig (self, a, /, b)>
+    >>> _prepend_instance_param(Sig(lambda b, *, c: 0))
+    <Sig (self, b, *, c)>
+    """
+    if PO not in sig.kinds.values():
+        return instance_arg_name + sig
+    return Sig(
+        [Parameter(instance_arg_name, PO), *sig.params],
+        return_annotation=sig.return_annotation,
+    )
 
 
 def _with_instance_attr_defaults(
