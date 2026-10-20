@@ -2,18 +2,16 @@
 
 # About this build
 
-This documentation was built on **2026-10-20 05:30 UTC** from commit <a href="https://github.com/i2mint/i2/commit/a81a0239c831cb867f21a30955cde5505804bfc1"><code>a81a023</code></a> on branch <code>master</code>, for **i2 0.1.80** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-20 07:02 UTC** from commit <a href="https://github.com/i2mint/i2/commit/b5f18c775d359a2d35ba9a9e0d322f5f7a45c915"><code>b5f18c7</code></a> on branch <code>master</code>, for **i2 0.1.81** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.80) is behind the latest release on PyPI (0.1.81): `pip install i2` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/i2/commit/a81a0239c831cb867f21a30955cde5505804bfc1"><code>a81a0239c831cb867f21a30955cde5505804bfc1</code></a> |
+| Commit              | <a href="https://github.com/i2mint/i2/commit/b5f18c775d359a2d35ba9a9e0d322f5f7a45c915"><code>b5f18c775d359a2d35ba9a9e0d322f5f7a45c915</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -24,9 +22,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/i2</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/i2/actions/runs/39375181261">39375181261</a>            |
+| Run          | <a href="https://github.com/i2mint/i2/actions/runs/39383884967">39383884967</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>a81a0239c831cb867f21a30955cde5505804bfc1</code> (in the history of the built commit) |
+| Event commit | <code>b5f18c775d359a2d35ba9a9e0d322f5f7a45c915</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -51,13 +49,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/i2/0.1.81/">0.1.81</a>, newer than the documented version (0.1.80).
+Latest release: <a href="https://pypi.org/project/i2/0.1.81/">0.1.81</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/i2 && cd i2
-git checkout a81a0239c831cb867f21a30955cde5505804bfc1
+git checkout b5f18c775d359a2d35ba9a9e0d322f5f7a45c915
 pip install "epythet==0.2.18"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
