@@ -63,6 +63,7 @@ How the ``Ingress`` class (ingress templated function maker) works:
 """
 
 from functools import wraps, partial
+import inspect
 from inspect import Parameter, signature
 from typing import (
     Any,
@@ -86,6 +87,7 @@ from i2.signatures import (
     PO,
     mk_sig_from_args,
     VK,
+    VP,
     parameter_to_dict,
     call_forgivingly,
     _call_forgivingly,
@@ -1852,8 +1854,26 @@ def bind_spec_to_dict(bind: BindSpec) -> dict:
     return param_to_attr
 
 
+class InstanceAttrDefault:
+    """The default of a method param that is sourced from an instance attribute.
+
+    Shown in the method's signature as ``self.<attr>`` (see ``methodize``'s
+    ``default_from``).
+
+    >>> InstanceAttrDefault('zoo')
+    self.zoo
+    """
+
+    def __init__(self, attr: str, *, instance_arg_name: str = "self"):
+        self.attr = attr
+        self.instance_arg_name = instance_arg_name
+
+    def __repr__(self):
+        return f"{self.instance_arg_name}.{self.attr}"
+
+
 def kwargs_trans_to_extract_args_from_attrs(
-    outer_kwargs: dict, attr_names=(), obj_param="self"
+    outer_kwargs: dict, attr_names=(), obj_param="self", *, default_from=()
 ):
     """Pop the ``obj_param`` object out of ``outer_kwargs`` and source ``attr_names`` from its attributes.
 
@@ -1869,9 +1889,22 @@ def kwargs_trans_to_extract_args_from_attrs(
 
     >>> kwargs_trans_to_extract_args_from_attrs({'self': o}, attr_names={'x': 'a'})
     {'x': 1}
+
+    ``default_from`` params are sourced from attributes only when they are missing
+    from ``outer_kwargs`` or hold an ``InstanceAttrDefault``:
+
+    >>> kwargs_trans_to_extract_args_from_attrs(
+    ...     {'self': o, 'x': InstanceAttrDefault('a'), 'y': 5}, default_from=[('x', 'a'), ('y', 'a'), ('z', 'b')])
+    {'x': 1, 'z': 2, 'y': 5}
     """
     self = outer_kwargs.pop(obj_param)
     param_to_attr = bind_spec_to_dict(attr_names)
+    for param, attr in bind_spec_to_dict(default_from).items():
+        if param not in outer_kwargs or isinstance(
+            outer_kwargs[param], InstanceAttrDefault
+        ):
+            outer_kwargs.pop(param, None)
+            param_to_attr[param] = attr
     arguments_extracted_from_obj = {
         param: getattr(self, attr) for param, attr in param_to_attr.items()
     }
@@ -1896,6 +1929,7 @@ def func_to_method_func(
     method_name=None,
     method_params=None,
     instance_arg_name="self",
+    default_from: BindSpec = (),
 ) -> MethodFunc:
     """Get a 'method function' from a 'normal function'. Also known as "methodize".
 
@@ -1984,6 +2018,10 @@ def func_to_method_func(
     ...     method_func = func_to_method_func(func, [('x', 'a'), ('z', 'c')])
     >>> Klass(1, 3).method_func(2, d='hello')
     'hello: 9'
+
+    ``default_from`` (same spec as ``instance_params``) keeps params in the method's
+    signature, sourcing only their *default* from an instance attribute: see
+    ``methodize``.
     """
     # get a signature object for func
     sig = Sig(func)
@@ -1998,7 +2036,13 @@ def func_to_method_func(
         name for name in sig.names if name not in instance_params
     )
     # the Sig object of the method: instance name followed with method_params
-    method_sig = instance_arg_name + Sig(func)[method_params]
+    method_sig = Sig(func)[method_params]
+    default_from = bind_spec_to_dict(default_from)
+    if default_from:
+        method_sig = _with_instance_attr_defaults(
+            method_sig, default_from, instance_arg_name=instance_arg_name
+        )
+    method_sig = instance_arg_name + method_sig
     # make the ingress function that will map method_sig's interface to sig's.
     ingress = Ingress(
         inner_sig=sig,
@@ -2008,6 +2052,7 @@ def func_to_method_func(
             kwargs_trans_to_extract_args_from_attrs,
             attr_names=instance_params,
             obj_param=instance_arg_name,
+            default_from=default_from,
         ),
         outer_sig=method_sig,  # this is the signature we want at the interface
     )
@@ -2017,8 +2062,51 @@ def func_to_method_func(
     return method_func
 
 
+def _with_instance_attr_defaults(
+    sig: Sig, default_from: dict, *, instance_arg_name: str = "self"
+) -> Sig:
+    """Give the ``default_from`` params of ``sig`` an ``InstanceAttrDefault`` default.
+
+    A param followed by a required positional param can't have a default where it is,
+    so it becomes keyword-only.
+
+    >>> def f(x, y, z, w=1): ...
+    >>> _with_instance_attr_defaults(Sig(f), {'y': 'yy', 'w': 'ww'})
+    <Sig (x, z, w=self.ww, *, y=self.yy)>
+    >>> _with_instance_attr_defaults(Sig(f), {'z': 'zz'})
+    <Sig (x, y, z=self.zz, w=1)>
+    """
+    if missing := set(default_from) - set(sig.names):
+        raise ValueError(f"default_from params not in the method's signature: {missing}")
+    names = sig.names
+    required_positional = {
+        name
+        for name, kind in sig.kinds.items()
+        if kind in (PO, PK) and name not in default_from and name not in sig.defaults
+    }
+    to_keyword_only = {
+        name: KO
+        for name in default_from
+        if sig.kinds[name] in (PO, PK)
+        and required_positional & set(names[names.index(name) + 1 :])
+    }
+    if to_keyword_only:
+        sig = sig.ch_kinds(**to_keyword_only)
+    return sig.ch_defaults(
+        **{
+            param: InstanceAttrDefault(attr, instance_arg_name=instance_arg_name)
+            for param, attr in default_from.items()
+        }
+    )
+
+
 def methodize(
-    func, bind: BindSpec = (), *, method_name=None, instance_arg_name="self"
+    func,
+    bind: BindSpec = (),
+    *,
+    method_name=None,
+    instance_arg_name="self",
+    default_from: BindSpec = (),
 ) -> MethodFunc:
     """Make a method from ``func``, sourcing the ``bind`` params from instance attributes.
 
@@ -2042,9 +2130,30 @@ def methodize(
     >>> from inspect import signature
     >>> str(signature(c.bar))
     '(y)'
+
+    ``default_from`` (same spec as ``bind``) keeps params in the method's signature,
+    sourcing only their *default* from an instance attribute (i2mint/i2#112):
+
+    >>> @dataclass
+    ... class Klass:
+    ...     x: int
+    ...     zoo: int = 2
+    ...     bar = methodize(foo, bind='x', default_from=[('z', 'zoo')])
+    >>> c = Klass(x=1, zoo=2)
+    >>> str(signature(c.bar))
+    '(y, z=self.zoo)'
+    >>> c.bar(3), c.bar(3, 10), c.bar(3, z=10)
+    (7, 31, 31)
+    >>> c.zoo = 5
+    >>> c.bar(3)
+    16
     """
     return func_to_method_func(
-        func, bind, method_name=method_name, instance_arg_name=instance_arg_name
+        func,
+        bind,
+        method_name=method_name,
+        instance_arg_name=instance_arg_name,
+        default_from=default_from,
     )
 
 
@@ -2590,9 +2699,26 @@ def partialx(
     (1, 20, 3, 4, 5)
     >>> g = partialx(func, b=2, _rm_partialize=True)
     >>> str(Sig(g))
-    '(a, c, d, e=5)'
+    '(a, *, c, d, e=5)'
     >>> g(1, c=3, d=4)
     (1, 2, 3, 4, 5)
+
+    With ``_rm_partialize=True``, the params after a keyword-bound one become
+    keyword-only (as in ``functools.partial``, which only takes them by keyword),
+    positional bindings are applied once, and the result is still a ``partial``:
+
+    >>> def f(a, b, c=3):
+    ...     return a, b, c
+    >>> g = partialx(f, b=2, _rm_partialize=True)
+    >>> str(Sig(g))
+    '(a, *, c=3)'
+    >>> g(1, c=5)
+    (1, 2, 5)
+    >>> def h(a, *args, **kw):
+    ...     return a, args, kw
+    >>> hh = partialx(h, 1, 2, _rm_partialize=True)
+    >>> hh(3), isinstance(hh, partial)
+    ((1, (2, 3), {}), True)
 
     If ``func`` has a ``**kwargs``, a keyword named like a position-only param goes
     to that ``**kwargs``, as in Python (and ``functools.partial``):
@@ -2610,10 +2736,11 @@ def partialx(
             func_ = _accept_position_only_by_keyword(func)
     f = partial(func_, *args, **kwargs)
     if _rm_partialize:
-        sig = Sig(func_)
-        partialized = list(sig.map_arguments(args, kwargs, allow_partial=True))
-        sig = sig - partialized
-        f = sig(partial(f, *args, **kwargs))
+        # The partial's own signature already drops the positional bindings and
+        # makes every param after a keyword-bound one keyword-only (see i2mint/i2#113);
+        # only the keyword-bound params remain to be removed.
+        sig = Sig(f)
+        f = (sig - [name for name in kwargs if name in sig.names])(f)
     if _allow_reordering:
         # TODO: Instead of Sig(f).defaults, move only params that need to move
         # TODO: + Change signature so that the number of params that become keyword-only
@@ -2622,6 +2749,56 @@ def partialx(
     f.__name__ = __name__ or name_of_obj(func)
     return f
 
+
+
+def curried(func: Callable) -> Callable:
+    """Make ``func`` callable with only some of its required arguments.
+
+    A call that leaves required parameters unspecified returns a new curried
+    function with the given arguments bound (and removed from its signature,
+    see ``partialx(..., _rm_partialize=True)``); a call that specifies them all
+    calls ``func``.
+
+    >>> def f(a, b, c=3):
+    ...     return a + b * c
+    >>> g = curried(f)
+    >>> str(Sig(g))
+    '(a, b, c=3)'
+    >>> g(1, 2)
+    7
+    >>> g(1)(2)
+    7
+    >>> g(1)(c=10)(2)
+    21
+    >>> h = g(b=2)
+    >>> str(Sig(h))
+    '(a, *, c=3)'
+    >>> h(1, c=10)
+    21
+
+    Invalid arguments fail at the call that gives them, as they would for ``func``:
+
+    >>> g(1, 2, 3, 4)
+    Traceback (most recent call last):
+      ...
+    TypeError: too many positional arguments
+    """
+    sig = Sig(func)
+    required = [
+        p.name for p in sig.params if p.default is p.empty and p.kind not in (VP, VK)
+    ]
+
+    @wraps(func)
+    def curried_func(*args, **kwargs):
+        bound = sig.bind_partial(*args, **kwargs)
+        if all(name in bound.arguments for name in required):
+            return func(*args, **kwargs)
+        return curried(partialx(func, *args, _rm_partialize=True, **kwargs))
+
+    curried_func.__signature__ = sig
+    if inspect.iscoroutinefunction(func) and hasattr(inspect, 'markcoroutinefunction'):
+        inspect.markcoroutinefunction(curried_func)  # Python >= 3.12
+    return curried_func
 
 def _accept_position_only_by_keyword(func: Callable) -> Callable:
     """Wrap ``func`` so its position-only parameters can also be given by keyword.

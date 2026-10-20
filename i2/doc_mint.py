@@ -427,9 +427,9 @@ def convert_string(s: str, converters: list[dict | Callable]) -> object:
 
 DocStyle = Literal["numpy", "google", "rest"]
 
-# Each style's tell-tale marker, checked in this order (most specific first): a numpy
-# section header underlined with dashes, a reST field (``:param x:``), a google
-# section header ending with a colon.
+# Each style's tell-tale marker: a numpy section header underlined with dashes, a reST
+# field (``:param x:``), a google section header ending with a colon. The style whose
+# marker comes first in the docstring wins (ties go to the earlier style here).
 _doc_style_markers = (
     (
         "numpy",
@@ -481,6 +481,18 @@ def detect_doc_style(docstring: str | Callable) -> DocStyle | None:
     ... :type x: int
     ... ''')
     'rest'
+
+    When several styles' markers appear (e.g. a google docstring whose example
+    shows reST fields), the one that comes first wins:
+
+    >>> detect_doc_style('''
+    ... Args:
+    ...     x (int): An integer.
+    ...
+    ... Example:
+    ...     :param y: shown as text, not a field.
+    ... ''')
+    'google'
     >>> detect_doc_style('Just a summary line.') is None
     True
     >>> detect_doc_style(None) is None
@@ -501,10 +513,23 @@ def detect_doc_style(docstring: str | Callable) -> DocStyle | None:
         docstring = docstring.__doc__ or ""
     if not isinstance(docstring, str):
         return None
+    docstring = _normalize_newlines(docstring)
+    first_match_positions = {}
     for style, marker in _doc_style_markers:
-        if marker.search(docstring):
-            return style
-    return None
+        if match := marker.search(docstring):
+            first_match_positions[style] = match.start()
+    if not first_match_positions:
+        return None
+    return min(first_match_positions, key=first_match_positions.get)
+
+
+def _normalize_newlines(text: str) -> str:
+    r'''Turn CRLF (and lone CR) line endings into LF.
+
+    >>> _normalize_newlines('a\r\nb\rc')
+    'a\nb\nc'
+    '''
+    return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
 def docstring_to_params(
@@ -584,11 +609,19 @@ def docstring_to_params(
     ...     '''
     >>> [p['name'] for p in docstring_to_params(f, doc_style='auto')]
     ['x']
+
+    The Sphinx typed-field form (``:param int x:``) and CRLF line endings are handled:
+
+    >>> docstring_to_params(':param int x: X.\\r\\n:param y: Y.', doc_style='auto') == [
+    ...     {"name": "x", "default": None, "annotation": int, "description": "X."},
+    ...     {"name": "y", "default": None, "annotation": None, "description": "Y."},
+    ... ]
+    True
     """
     if not isinstance(docstring, str) and callable(docstring):
         docstring = docstring.__doc__ or ""
     # dedent, so the section headers of an indented ``__doc__`` are found
-    docstring = cleandoc(docstring or "")
+    docstring = cleandoc(_normalize_newlines(docstring or ""))
     if doc_style == "auto":
         doc_style = detect_doc_style(docstring) or "numpy"
 
@@ -747,11 +780,10 @@ def _parse_rest_param_lines(param_lines: list[str]) -> list[dict]:
     i = 0
     while i < len(param_lines):
         line = param_lines[i].strip()
-        # Match ':param name: description'
-        param_match = re.match(r"^:param (\w+):\s*(.+)", line)
+        # Match ':param name: description' or ':param type name: description'
+        param_match = re.match(r"^:param\s+(?:(.+?)\s+)?(\w+):\s*(.*)", line)
         if param_match:
-            name = param_match.group(1)
-            description = param_match.group(2)
+            annotation, name, description = param_match.groups()
             # Check for default value in description
             default_match = re.search(r"\(Default:\s*(.+)\)", description)
             default = default_match.group(1).strip() if default_match else None
@@ -761,7 +793,7 @@ def _parse_rest_param_lines(param_lines: list[str]) -> list[dict]:
             params_dict[name] = {
                 "name": name,
                 "default": default,
-                "annotation": None,
+                "annotation": annotation,
                 "description": description,
             }
             i += 1
