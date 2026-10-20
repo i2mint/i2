@@ -21,7 +21,8 @@ across the fleet — see Dependents below.
 - `routing_forest.py` — specifying functions through trees/forests of conditions.
 - `castgraph.py` — a transformation service for the "stable role, unstable
   representation" problem. Skill: `i2-castgraph`.
-- `base.py` / `doc_mint.py` — "mints": `Mapping` views of an object's interface.
+- `base.py` / `doc_mint.py` — "mints": `Mapping` views of an object's interface; docstring params (`params_to_docstring`, `docstring_to_params`).
+- `doctests.py` — doctest tools: split a docstring into text and doctests, turn doctests into asserts or commented output (re-exported by `doc_mint`).
 - `footprints.py` — what attributes of an input object a function actually uses.
 - `key_path.py` — flattening maps and manipulating key paths.
 - `io_trans.py` — building input/output-transforming decorators.
