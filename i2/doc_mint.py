@@ -5,6 +5,7 @@ from collections.abc import Callable
 from functools import partial
 import re
 import ast
+from inspect import cleandoc
 
 nan = float("nan")
 
@@ -424,17 +425,101 @@ def convert_string(s: str, converters: list[dict | Callable]) -> object:
     return s
 
 
+DocStyle = Literal["numpy", "google", "rest"]
+
+# Each style's tell-tale marker, checked in this order (most specific first): a numpy
+# section header underlined with dashes, a reST field (``:param x:``), a google
+# section header ending with a colon.
+_doc_style_markers = (
+    (
+        "numpy",
+        re.compile(
+            r"^\s*(Parameters|Other Parameters|Returns|Yields|Raises|Attributes)"
+            r"\s*\n\s*-{3,}\s*$",
+            re.MULTILINE,
+        ),
+    ),
+    (
+        "rest",
+        re.compile(
+            r"^\s*:(param|parameter|arg|argument|key|keyword|type|returns?|rtype|raises?)\b",
+            re.MULTILINE,
+        ),
+    ),
+    (
+        "google",
+        re.compile(
+            r"^\s*(Args|Arguments|Parameters|Keyword Args|Keyword Arguments|Returns"
+            r"|Yields|Raises|Attributes):\s*$",
+            re.MULTILINE,
+        ),
+    ),
+)
+
+
+def detect_doc_style(docstring: str | Callable) -> DocStyle | None:
+    """Detect which parameter-description style a docstring uses, or ``None``.
+
+    Returns ``'numpy'``, ``'rest'`` or ``'google'`` (the styles ``docstring_to_params``
+    and ``params_to_docstring`` handle), based on each style's section markers. A
+    callable's ``__doc__`` is used.
+
+    >>> detect_doc_style('''
+    ... Parameters
+    ... ----------
+    ... x : int
+    ...     An integer.
+    ... ''')
+    'numpy'
+    >>> detect_doc_style('''
+    ... Args:
+    ...     x (int): An integer.
+    ... ''')
+    'google'
+    >>> detect_doc_style('''
+    ... :param x: An integer.
+    ... :type x: int
+    ... ''')
+    'rest'
+    >>> detect_doc_style('Just a summary line.') is None
+    True
+    >>> detect_doc_style(None) is None
+    True
+
+    It reads the markers of the docstring as written, so it works on the indented
+    ``__doc__`` of a function too:
+
+    >>> def f(x):
+    ...     '''Do it.
+    ...
+    ...     :param x: An integer.
+    ...     '''
+    >>> detect_doc_style(f)
+    'rest'
+    """
+    if not isinstance(docstring, str) and callable(docstring):
+        docstring = docstring.__doc__ or ""
+    if not isinstance(docstring, str):
+        return None
+    for style, marker in _doc_style_markers:
+        if marker.search(docstring):
+            return style
+    return None
+
+
 def docstring_to_params(
     docstring: str,
     *,
-    doc_style: Literal["numpy", "google", "rest"] = "numpy",
+    doc_style: Literal["numpy", "google", "rest", "auto"] = "numpy",
     converters: list = dflt_str_to_obj_converters,
 ) -> list[dict]:
     """
     Parse a docstring and extract parameter specifications.
 
     :param docstring: The docstring to parse.
-    :param doc_style: The style of the docstring to parse. One of 'numpy', 'google', or 'rest'.
+    :param doc_style: The style of the docstring to parse. One of 'numpy', 'google',
+        or 'rest', or 'auto' to use the style ``detect_doc_style`` finds (falling back
+        to 'numpy').
 
     :return: A list of parameter specifications, where each specification is a dictionary containing:
 
@@ -485,9 +570,27 @@ def docstring_to_params(
     ...     {"name": "y", "default": None, "annotation": str, "description": "An optional string."},
     ... ]
     True
+
+    With ``doc_style='auto'``, the style is detected (see ``detect_doc_style``).
+    A function's (indented) ``__doc__`` works too:
+
+    >>> docstring_to_params(docstring, doc_style='auto') == params
+    True
+    >>> def f(x=1):
+    ...     '''Do it.
+    ...
+    ...     Args:
+    ...         x (int, optional): An integer value. Defaults to 1.
+    ...     '''
+    >>> [p['name'] for p in docstring_to_params(f, doc_style='auto')]
+    ['x']
     """
     if not isinstance(docstring, str) and callable(docstring):
         docstring = docstring.__doc__ or ""
+    # dedent, so the section headers of an indented ``__doc__`` are found
+    docstring = cleandoc(docstring or "")
+    if doc_style == "auto":
+        doc_style = detect_doc_style(docstring) or "numpy"
 
     # Extract parameter lines
     param_lines = _extract_params_section(docstring, doc_style)
@@ -512,6 +615,9 @@ def docstring_to_params(
     return params
 
 
+_google_args_headers = {"Args:", "Arguments:", "Parameters:"}
+
+
 def _extract_params_section(docstring: str, doc_style: str) -> list[str]:
     lines = docstring.strip().split("\n")
     if doc_style == "numpy":
@@ -529,13 +635,14 @@ def _extract_params_section(docstring: str, doc_style: str) -> list[str]:
             # "Parameters" section not found
             return []
     elif doc_style == "google":
-        # Find "Args:" section
-        try:
-            param_index = lines.index("Args:")
-            param_lines = lines[param_index + 1 :]
-        except ValueError:
-            # "Args:" section not found
+        # Find the "Args:" (or "Arguments:", "Parameters:") section
+        param_index = next(
+            (i for i, line in enumerate(lines) if line.strip() in _google_args_headers),
+            None,
+        )
+        if param_index is None:
             return []
+        param_lines = lines[param_index + 1 :]
     elif doc_style == "rest":
         param_lines = lines
     else:
