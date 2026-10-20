@@ -49,6 +49,7 @@ from i2.wrapper import (
     arg_val_converter,
     ignore_extra_args,  # Wrap a function to accept (and ignore) extra arguments
     func_to_method_func,
+    methodize,
     bind_funcs_object_attrs,
     kwargs_trans,
 )

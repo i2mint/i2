@@ -1808,6 +1808,50 @@ def camelize(s):
     return "".join(ele.title() for ele in s.split("_"))
 
 
+BindSpec = Union[str, Mapping[str, str], Iterable[Union[str, tuple[str, str]]]]
+
+
+def bind_spec_to_dict(bind: BindSpec) -> dict:
+    """Normalize a ``{param: attr}`` binding spec to a dict.
+
+    A space-separated string or an iterable of names binds each param to the
+    attribute of the same name; a ``(param, attr)`` pair or a mapping binds a param
+    to an attribute of another name.
+
+    >>> bind_spec_to_dict('x y')
+    {'x': 'x', 'y': 'y'}
+    >>> bind_spec_to_dict(['x', ('z', 'zoo')])
+    {'x': 'x', 'z': 'zoo'}
+    >>> bind_spec_to_dict({'z': 'zoo'})
+    {'z': 'zoo'}
+    """
+    if isinstance(bind, str):
+        bind = bind.split()
+    if isinstance(bind, Mapping):
+        return dict(bind)
+
+    def pairs():
+        for item in bind:
+            if isinstance(item, str):
+                yield item, item
+            elif isinstance(item, tuple) and len(item) == 2:
+                yield item
+            else:
+                raise ValueError(
+                    "A bind spec item must be a name or a (param, attr) pair, "
+                    f"not {item!r} (in {bind!r})"
+                )
+
+    if not isinstance(bind, Iterable):
+        raise TypeError(f"Not a bind spec (names, pairs or a mapping): {bind!r}")
+    param_to_attr = {}
+    for param, attr in pairs():
+        if param in param_to_attr:
+            raise ValueError(f"Param {param!r} is bound twice in {bind!r}")
+        param_to_attr[param] = attr
+    return param_to_attr
+
+
 def kwargs_trans_to_extract_args_from_attrs(
     outer_kwargs: dict, attr_names=(), obj_param="self"
 ):
@@ -1819,9 +1863,18 @@ def kwargs_trans_to_extract_args_from_attrs(
     >>> o = O(); o.a = 1; o.b = 2
     >>> kwargs_trans_to_extract_args_from_attrs({'self': o, 'c': 3}, attr_names=('a', 'b'))
     {'a': 1, 'b': 2, 'c': 3}
+
+    ``attr_names`` can be any ``bind_spec_to_dict`` spec, to source a param from an
+    attribute of another name:
+
+    >>> kwargs_trans_to_extract_args_from_attrs({'self': o}, attr_names={'x': 'a'})
+    {'x': 1}
     """
     self = outer_kwargs.pop(obj_param)
-    arguments_extracted_from_obj = {name: getattr(self, name) for name in attr_names}
+    param_to_attr = bind_spec_to_dict(attr_names)
+    arguments_extracted_from_obj = {
+        param: getattr(self, attr) for param, attr in param_to_attr.items()
+    }
     # The kwargs we need are the union of the extracted arguments with the remaining outer_kwargs
     return dict(arguments_extracted_from_obj, **outer_kwargs)
 
@@ -1838,7 +1891,7 @@ MethodFunc = Callable
 
 def func_to_method_func(
     func,
-    instance_params=(),
+    instance_params: BindSpec = (),
     *,
     method_name=None,
     method_params=None,
@@ -1920,14 +1973,24 @@ def func_to_method_func(
     >>> instance = Klass(1, 3)
     >>> instance.method_func(2, d='hello')
     'hello: 9'
+
+    Or, more simply, bind the params to attributes of other names directly, with
+    ``(param, attr)`` pairs (or a ``{param: attr}`` mapping) in ``instance_params``:
+
+    >>> @dataclass
+    ... class Klass:
+    ...     a : int = 1
+    ...     c : int = 3
+    ...     method_func = func_to_method_func(func, [('x', 'a'), ('z', 'c')])
+    >>> Klass(1, 3).method_func(2, d='hello')
+    'hello: 9'
     """
     # get a signature object for func
     sig = Sig(func)
     # if method_name not give, use the function's name
     method_name = method_name or sig.name
-    # if params expressed as string, split it into a list of parameter (names)
-    if isinstance(instance_params, str):
-        instance_params = instance_params.split()
+    # normalize instance_params to a {param: attr} dict (names, pairs or mapping)
+    instance_params = bind_spec_to_dict(instance_params)
     if isinstance(method_params, str):
         method_params = method_params.split()
     # if method_params is not given, take those parameters that aren't in instance_params
@@ -1952,6 +2015,37 @@ def func_to_method_func(
     method_func = wrap(func, ingress=ingress)
     method_func.__name__ = method_name
     return method_func
+
+
+def methodize(
+    func, bind: BindSpec = (), *, method_name=None, instance_arg_name="self"
+) -> MethodFunc:
+    """Make a method from ``func``, sourcing the ``bind`` params from instance attributes.
+
+    ``bind`` is a space-separated string or an iterable of param names (each bound
+    to the attribute of the same name), ``(param, attr)`` pairs, or a
+    ``{param: attr}`` mapping (see ``bind_spec_to_dict``). The bound params are not
+    in the method's signature. This is ``func_to_method_func`` under the name and
+    argument of i2mint/i2#20.
+
+    >>> from dataclasses import dataclass
+    >>> def foo(x, y, z):
+    ...     return x + y * z
+    >>> @dataclass
+    ... class Klass:
+    ...     x: int
+    ...     zoo: int = 2
+    ...     bar = methodize(foo, bind=['x', ('z', 'zoo')])
+    >>> c = Klass(x=1, zoo=2)
+    >>> c.bar(y=3) == c.bar(3) == 7 == foo(x=1, y=3, z=2)
+    True
+    >>> from inspect import signature
+    >>> str(signature(c.bar))
+    '(y)'
+    """
+    return func_to_method_func(
+        func, bind, method_name=method_name, instance_arg_name=instance_arg_name
+    )
 
 
 # TODO: See bind_funcs_object_attrs_old and get rid of it if bind_funcs_object_attrs
@@ -2015,6 +2109,14 @@ def bind_funcs_object_attrs(
     if isinstance(init_params, str):
         init_params = init_params.split()
 
+    if not isinstance(init_params, (str, Mapping)):
+        init_params = list(init_params)  # it is iterated more than once below
+    if any(param != attr for param, attr in bind_spec_to_dict(init_params).items()):
+        raise TypeError(
+            "bind_funcs_object_attrs binds params to attributes of the same name, so "
+            "init_params must be names; to bind to attributes of other names, use "
+            f"methodize (or ch_names) on the functions first. Got {init_params!r}"
+        )
     dflt_cls_name = "FuncsUnion"
     if callable(funcs) and not isinstance(funcs, Iterable):
         single_func = funcs
@@ -2138,6 +2240,14 @@ def bind_funcs_object_attrs_old(
     if isinstance(init_params, str):
         init_params = init_params.split()
 
+    if not isinstance(init_params, (str, Mapping)):
+        init_params = list(init_params)  # it is iterated more than once below
+    if any(param != attr for param, attr in bind_spec_to_dict(init_params).items()):
+        raise TypeError(
+            "bind_funcs_object_attrs binds params to attributes of the same name, so "
+            "init_params must be names; to bind to attributes of other names, use "
+            f"methodize (or ch_names) on the functions first. Got {init_params!r}"
+        )
     dflt_cls_name = "FuncsUnion"
     if callable(funcs) and not isinstance(funcs, Iterable):
         single_func = funcs
@@ -2178,56 +2288,6 @@ def _mk_sig_from_params_and_funcs(params, funcs):
     def gen():
         for param in params:
             pass
-
-
-## An attempt to redo a func_to_method_func because I forgot func_to_method_func existed
-## Has some different ideas, so keeping around until I decide it's time to let go.
-# NoSuchKey = type('NoSuchKey', (), {})
-# _instance_extractor: KwargsTrans
-#
-# # TODO: Add more (possibly optional) bind validation to fail early.
-# def _instance_extractor(
-#     outer_kwargs, bind: IdentifierMapping = (), instance_param: Identifier = 'self'
-# ):
-#     """
-#
-#     :param outer_kwargs: The input/outer keyword arguments
-#     :param bind: The inner->outer param mapping that defines what we want to extract
-#     :param instance_param: The name of the outer_kwargs key that contains the 'instance'
-#         from which we'll extract the bound
-#     :return:
-#     """
-#     """A KwargsTrans that extracts need arguments from one of the 'instance'
-#     outer_kwargs values.
-#
-#
-#     """
-#     # Compute the inverse {outer:inner,...} of {inner:outer,...} bind
-#     inv_bind = invert_map(bind)
-#     outer_kwargs = outer_kwargs.copy()
-#     instance = outer_kwargs.pop(instance_param)  # TODO: Better error handing
-#
-#     def gen():
-#         for outer_param, outer_val in outer_kwargs.items():
-#             if inner_param := inv_bind.get(outer_param, NoSuchKey) is not NoSuchKey:
-#                 # if outer_param was bound, the bound inner_param should be tied to
-#                 # the instance's attribute
-#                 yield inner_param, getattr(instance, outer_val)
-#             else:
-#                 # take the arg name and val as is
-#                 yield outer_param, outer_val
-#
-#     return dict(gen())
-
-#
-# def methodize(func, bind: Bind = ()):
-#     bind = identifier_mapping(bind)
-#     ingress = Ingress(
-#         outer_sig=Sig(func),
-#         kwargs_trans=partial(_instance_extractor, bind=bind),
-#         inner_sig=Sig('self') + Sig(func) - Sig(list(bind)),  # TODO: solve type or lint
-#     )
-#     return wrap(func, ingress=ingress)
 
 
 # ---------------------------------------------------------------------------------------
