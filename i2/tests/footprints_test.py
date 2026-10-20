@@ -199,3 +199,52 @@ def test_object_dependencies():
 #     assert attrs_used_by_method_computation(B.with_f_string, init_kws) == ['greeting', 'x']
 #     assert attrs_used_by_method_computation(
 #         B.writing_to_an_attribute, init_kws, dict(x_val=0, y_val=1)) == ['x', 'a']
+
+
+class Mutating:
+    """Methods that assign attributes (the bad habit the dependency graph should expose)."""
+
+    x = 1
+
+    def __init__(self, k=0):
+        self.k = k
+        self.items = {}
+
+    def bump(self):
+        self.y = self.x + 1
+        self.total += self.y
+
+    def put(self, v):
+        self.items[self.k] = v
+        self.a, self.b = self.x, self.k
+
+    def pure(self):
+        return self.x + self.k
+
+    def annotated(self):
+        self.w: int = self.x
+        self.nested.child = self.k
+
+
+def test_assignment_dependencies():
+    from i2.footprints import assigned_attributes, assignment_dependencies
+
+    assert assignment_dependencies(Mutating.bump) == {"y": ["x"], "total": ["total", "y"]}
+    assert assignment_dependencies(Mutating.put) == {
+        "items": ["k"],
+        "a": ["x", "k"],
+        "b": ["x", "k"],
+    }
+    assert assignment_dependencies(Mutating.pure) == {}
+    assert assignment_dependencies(Mutating.annotated) == {"w": ["x"], "nested": ["k"]}
+    assert assigned_attributes(Mutating.put) == {"items", "a", "b"}
+
+
+def test_attribute_assignment_dependencies_by_class():
+    from i2.footprints import attribute_assignment_dependencies, attribute_dependencies
+
+    got = dict(attribute_assignment_dependencies(Mutating))
+    assert set(got) == {"bump", "put", "annotated"}  # __init__ excluded, pure has none
+    assert got["bump"]["y"] == ["x"]
+    # attribute_dependencies is unchanged: it still reports reads/accesses per method
+    assert dict(attribute_dependencies(Mutating))["pure"] == {"x", "k"}

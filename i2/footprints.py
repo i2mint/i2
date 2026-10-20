@@ -579,6 +579,173 @@ def accessed_attributes(func, object_name=None):
     return visitor.attributes
 
 
+class AssignedAttributeVisitor(ast.NodeVisitor):
+    """Collect, in ``.assigned_attributes``, ``(assigned, read)`` pairs of attribute names.
+
+    For each assignment to an attribute of ``object_name`` (``self.y = ...``, also
+    ``self.y += ...``, ``self.y: int = ...``, tuple targets, and mutation through the
+    attribute: ``self.y.z = ...`` or ``self.y[k] = ...``, which count as assigning ``y``),
+    ``assigned`` is the list of attributes assigned and ``read`` the list of attributes
+    of the same object the assignment reads (the value, plus the target's own subscripts;
+    for an augmented assignment, the target too). Both lists keep first-seen order.
+
+    >>> src_code = '''
+    ... class MyClass:
+    ...     x = 1
+    ...     z = 3
+    ...     def my_method(self):
+    ...         self.y = self.x + 1
+    ...         return self.z + self.y
+    ... '''
+    >>> visitor = AssignedAttributeVisitor('self')
+    >>> visitor.visit(ast.parse(dedent(src_code)))
+    >>> visitor.assigned_attributes
+    [(['y'], ['x'])]
+    """
+
+    def __init__(self, object_name):
+        self.object_name = object_name
+        self.assigned_attributes = list()
+
+    def _root_attribute(self, target):
+        """The attribute of the object a target assigns (or mutates), else None."""
+        while isinstance(target, (ast.Attribute, ast.Subscript)):
+            inner = target.value
+            if (
+                isinstance(target, ast.Attribute)
+                and isinstance(inner, ast.Name)
+                and inner.id == self.object_name
+            ):
+                return target.attr
+            target = inner
+        return None
+
+    def _assigned_in(self, target):
+        if isinstance(target, (ast.Tuple, ast.List)):
+            found = [a for elt in target.elts for a in self._assigned_in(elt)]
+        elif isinstance(target, ast.Starred):
+            found = self._assigned_in(target.value)
+        else:
+            root = self._root_attribute(target)
+            found = [root] if root is not None else []
+        return list(dict.fromkeys(found))
+
+    def _reads_in(self, *nodes):
+        reads = AttributeVisitor(self.object_name)
+        for node in nodes:
+            if node is not None:
+                reads.visit(node)
+        return reads.attributes
+
+    def _record(self, targets, value, *, also_read_targets=False):
+        assigned = list(dict.fromkeys(a for t in targets for a in self._assigned_in(t)))
+        if not assigned:
+            return
+        # The reads inside the targets are their subscript indices (and, for an
+        # augmented assignment, the targets themselves); a plain target is a write.
+        index_nodes = [
+            n
+            for t in targets
+            for n in ast.walk(t)
+            if isinstance(n, ast.Subscript)
+        ]
+        read_nodes = [value, *(n.slice for n in index_nodes)]
+        if also_read_targets:
+            read_nodes += list(targets)
+        read = self._reads_in(*read_nodes)
+        ordered = _in_source_order(read, value, *read_nodes)
+        self.assigned_attributes.append((assigned, ordered))
+
+    def visit_Assign(self, node: ast.Assign):
+        self._record(node.targets, node.value)
+        self.generic_visit(node)
+
+    def visit_AugAssign(self, node: ast.AugAssign):
+        self._record([node.target], node.value, also_read_targets=True)
+        self.generic_visit(node)
+
+    def visit_AnnAssign(self, node: ast.AnnAssign):
+        if node.value is not None:
+            self._record([node.target], node.value)
+        self.generic_visit(node)
+
+
+def _in_source_order(names, *nodes):
+    """``names`` as a list, in the order they first appear in ``nodes`` (rest sorted)."""
+    order = {}
+    for node in nodes:
+        for sub in ast.walk(node) if node is not None else ():
+            if isinstance(sub, ast.Attribute) and sub.attr in names:
+                order.setdefault(sub.attr, (sub.lineno, sub.col_offset))
+    return sorted(names, key=lambda n: (order.get(n, (10**9, 0)), n))
+
+
+def _function_node(func, object_name=None):
+    """``(ast node of func, object_name)``; the object defaults to the first parameter.
+
+    ``func`` may also be source code (``str``) or an ``ast.AST``, in which case
+    ``object_name`` is required.
+    """
+    if isinstance(func, (str, ast.AST)):
+        if object_name is None:
+            raise ValueError("Give object_name when passing source code or an AST.")
+        return ensure_ast(func), object_name
+    if object_name is None:
+        object_name = next(iter(Sig(func)), None)
+        if object_name is None:
+            raise ValueError(
+                "Could not determine the object name. Please provide it explicitly."
+            )
+    src = _get_definition_source(qualname_of_obj(func), _get_source(func))
+    return ensure_ast(src), object_name
+
+
+def assignment_dependencies(func, object_name=None):
+    """
+    The attribute-to-attribute dependencies created by assignments inside ``func``.
+
+    Returns ``{assigned_attribute: attributes_it_was_computed_from}``, merging
+    assignments to the same attribute. Mutating code is what makes these edges worth
+    seeing in a dependency graph: a method that sets ``self.y`` from ``self.x`` makes
+    ``y`` depend on ``x``.
+
+    ``func`` is a function or method, or its source code:
+
+    >>> src = '''
+    ... def foo(self):
+    ...     self.y = self.x + 1
+    ...     self.total += self.y
+    ...     return self.z
+    ... '''
+    >>> assignment_dependencies(src, 'self')
+    {'y': ['x'], 'total': ['total', 'y']}
+    """
+    node, object_name = _function_node(func, object_name)
+    visitor = AssignedAttributeVisitor(object_name)
+    visitor.visit(node)
+    merged: dict = {}
+    for assigned, read in visitor.assigned_attributes:
+        for name in assigned:
+            merged[name] = list(dict.fromkeys([*merged.get(name, []), *read]))
+    return merged
+
+
+def assigned_attributes(func, object_name=None):
+    """
+    The attributes of an object that ``func`` assigns to (or mutates through).
+
+    >>> src = '''
+    ... def foo(self):
+    ...     self.y = self.x + 1
+    ...     self.items[self.k] = 2
+    ...     return self.z
+    ... '''
+    >>> sorted(assigned_attributes(src, 'self'))
+    ['items', 'y']
+    """
+    return set(assignment_dependencies(func, object_name))
+
+
 def _is_method_like(
     name,
     obj,
@@ -675,6 +842,30 @@ def attribute_dependencies(
     for func in _get_class_attributes(cls, filt=filt, exclude_names=exclude_names):
         with skip_signature_errors:
             yield name_of_obj(func), accessed_attributes(func)
+
+
+def attribute_assignment_dependencies(
+    cls: type,
+    filt=_is_method_like,
+    *,
+    name_of_obj=name_of_obj,
+    exclude_names: ExcludeNames = init_argument_names,
+):
+    """
+    Extracts (method_name, {assigned_attribute: attributes_read}) pairs for a class.
+
+    The companion of :func:`attribute_dependencies`: where that one says which
+    attributes a method uses, this one says which attributes it *assigns* and what each
+    is computed from. Methods that assign nothing are left out.
+
+    (See ``i2/tests/footprints_test.py`` for an example; a doctest cannot define a
+    class whose source ``inspect`` can read.)
+    """
+    for func in _get_class_attributes(cls, filt=filt, exclude_names=exclude_names):
+        with skip_signature_errors:
+            deps = assignment_dependencies(func)
+            if deps:
+                yield name_of_obj(func), deps
 
 
 def _attrs_used_by_method(cls, method_name, *, src_code=None):
