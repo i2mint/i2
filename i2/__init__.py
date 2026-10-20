@@ -84,6 +84,7 @@ from i2.doc_mint import (
     params_to_docstring,  # make the params-info part of the docstring
     docstring_to_params,  # extract the params from a docstring
     find_in_params,  # find a substring in the params-info part of the docstring
+    detect_doc_style,  # which params-info style (numpy, google, rest) a docstring uses
 )
 
 
