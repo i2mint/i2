@@ -95,7 +95,7 @@ from i2.signatures import (
 )
 from i2.errors import OverwritesNotAllowed
 from i2.multi_object import Pipe
-from i2.deco import double_up_as_factory
+from i2.deco import double_up_as_factory, DefaultPlaceholder
 from i2.util import deprecation_of
 
 # ---------------------------------------------------------------------------------------
@@ -1854,14 +1854,19 @@ def bind_spec_to_dict(bind: BindSpec) -> dict:
     return param_to_attr
 
 
-class InstanceAttrDefault:
+class InstanceAttrDefault(DefaultPlaceholder):
     """The default of a method param that is sourced from an instance attribute.
 
     Shown in the method's signature as ``self.<attr>`` (see ``methodize``'s
-    ``default_from``).
+    ``default_from``). It is a ``DefaultPlaceholder``, not a value: its value depends
+    on the instance, which a schema or form generator does not have, so such code
+    should treat it as "no default" (``i2.is_placeholder_default``).
 
     >>> InstanceAttrDefault('zoo')
     self.zoo
+    >>> from i2 import is_placeholder_default
+    >>> is_placeholder_default(InstanceAttrDefault('zoo'))
+    True
     """
 
     def __init__(self, attr: str, *, instance_arg_name: str = "self"):
@@ -2175,8 +2180,8 @@ def methodize(
     16
 
     The signature default is an ``InstanceAttrDefault`` marker (shown ``self.zoo``),
-    not a value: code that serializes signature defaults (e.g. to JSON) should not
-    expect a JSON-able one there.
+    not a value: code that serializes signature defaults (e.g. to JSON) should skip
+    it, as it skips ``NotSet``, by testing ``i2.is_placeholder_default``.
     """
     return func_to_method_func(
         func,
