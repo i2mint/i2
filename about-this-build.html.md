@@ -7,7 +7,7 @@ This documentation was built on **2026-10-20 14:51 UTC** from commit <a href="ht
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.86) is behind the latest release on PyPI (0.1.87): `pip install i2` gives newer code than these docs describe.
+- The documented version (0.1.86) is behind the latest release on PyPI (0.1.88): `pip install i2` gives newer code than these docs describe.
 
 ## Source
 
@@ -24,9 +24,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/i2</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/i2/actions/runs/39442955259">39442955259</a>            |
+| Run          | <a href="https://github.com/i2mint/i2/actions/runs/39442941204">39442941204</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>661b43e2a50eb56b198b01cc7dfa0e81f95dd4c3</code> (in the history of the built commit) |
+| Event commit | <code>c406ee584cea23e7b4e840f1ffe75955207be7b9</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -51,7 +51,7 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/i2/0.1.87/">0.1.87</a>, newer than the documented version (0.1.86).
+Latest release: <a href="https://pypi.org/project/i2/0.1.88/">0.1.88</a>, newer than the documented version (0.1.86).
 
 ## Reproduce
 
