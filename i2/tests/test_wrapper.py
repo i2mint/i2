@@ -674,3 +674,14 @@ def test_ignore_extra_args():
         ignore_extra_args(sub, ("first",))
     with pytest.raises(ValueError):
         ignore_extra_args(sub, target, select=["nope"])
+
+
+def test_ignore_extra_args_validates_select():
+    from i2 import ignore_extra_args
+
+    def f(a):
+        return a
+
+    for bad in ("a", [-1], [True], [1.5]):
+        with pytest.raises(ValueError):
+            ignore_extra_args(f, ("a", "b"), select=bad)

@@ -1539,7 +1539,8 @@ def ignore_extra_args(func, target, /, *, select=None):
 
     ``target`` gives the signature of the result: a callable, a ``Sig``, or a sequence of
     argument names. By default ``func`` receives the target arguments that carry one of
-    its own parameter names; ``select`` (names or indices of target arguments) instead
+    its own parameter names (a target argument only reaches ``func``'s ``*args``/``**kwargs``
+    through ``select``); ``select`` (names or indices of target arguments) instead
     says which target arguments are passed to ``func``, positionally and in that order.
 
     >>> def f(current):
@@ -1592,6 +1593,14 @@ def ignore_extra_args(func, target, /, *, select=None):
             return func_sig.mk_args_and_kwargs({n: arguments[n] for n in keep})
 
     else:
+        if isinstance(select, str) or not all(
+            isinstance(k, str)
+            or (isinstance(k, int) and not isinstance(k, bool) and k >= 0)
+            for k in select
+        ):
+            raise ValueError(
+                "select must be a list of target argument names or non-negative indices"
+            )
         picked = [target_names[k] if isinstance(k, int) else k for k in select]
         unknown = [n for n in picked if n not in target_names]
         if unknown:
