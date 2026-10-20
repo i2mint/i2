@@ -5,6 +5,7 @@ from collections.abc import Callable
 from functools import partial
 import re
 import ast
+from inspect import cleandoc
 
 nan = float("nan")
 
@@ -482,6 +483,8 @@ def detect_doc_style(docstring: str | Callable) -> DocStyle | None:
     'rest'
     >>> detect_doc_style('Just a summary line.') is None
     True
+    >>> detect_doc_style(None) is None
+    True
 
     It reads the markers of the docstring as written, so it works on the indented
     ``__doc__`` of a function too:
@@ -496,6 +499,8 @@ def detect_doc_style(docstring: str | Callable) -> DocStyle | None:
     """
     if not isinstance(docstring, str) and callable(docstring):
         docstring = docstring.__doc__ or ""
+    if not isinstance(docstring, str):
+        return None
     for style, marker in _doc_style_markers:
         if marker.search(docstring):
             return style
@@ -566,13 +571,24 @@ def docstring_to_params(
     ... ]
     True
 
-    With ``doc_style='auto'``, the style is detected (see ``detect_doc_style``):
+    With ``doc_style='auto'``, the style is detected (see ``detect_doc_style``).
+    A function's (indented) ``__doc__`` works too:
 
     >>> docstring_to_params(docstring, doc_style='auto') == params
     True
+    >>> def f(x=1):
+    ...     '''Do it.
+    ...
+    ...     Args:
+    ...         x (int, optional): An integer value. Defaults to 1.
+    ...     '''
+    >>> [p['name'] for p in docstring_to_params(f, doc_style='auto')]
+    ['x']
     """
     if not isinstance(docstring, str) and callable(docstring):
         docstring = docstring.__doc__ or ""
+    # dedent, so the section headers of an indented ``__doc__`` are found
+    docstring = cleandoc(docstring or "")
     if doc_style == "auto":
         doc_style = detect_doc_style(docstring) or "numpy"
 
@@ -599,6 +615,9 @@ def docstring_to_params(
     return params
 
 
+_google_args_headers = {"Args:", "Arguments:", "Parameters:"}
+
+
 def _extract_params_section(docstring: str, doc_style: str) -> list[str]:
     lines = docstring.strip().split("\n")
     if doc_style == "numpy":
@@ -616,13 +635,14 @@ def _extract_params_section(docstring: str, doc_style: str) -> list[str]:
             # "Parameters" section not found
             return []
     elif doc_style == "google":
-        # Find "Args:" section
-        try:
-            param_index = lines.index("Args:")
-            param_lines = lines[param_index + 1 :]
-        except ValueError:
-            # "Args:" section not found
+        # Find the "Args:" (or "Arguments:", "Parameters:") section
+        param_index = next(
+            (i for i, line in enumerate(lines) if line.strip() in _google_args_headers),
+            None,
+        )
+        if param_index is None:
             return []
+        param_lines = lines[param_index + 1 :]
     elif doc_style == "rest":
         param_lines = lines
     else:
