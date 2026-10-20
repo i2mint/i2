@@ -2783,3 +2783,6 @@ def test_wrap_strict_rejects_incompatible_names_and_kinds():
     Sig(lambda a, b, c: None).wrap(foo, copy_function=True)
     # same names and kinds (only defaults differ) is fine when strict
     Sig(lambda x=5, y=6: None).wrap(foo, ignore_incompatible_signatures=False)
+    # reordering is also incompatible
+    with pytest.raises(IncompatibleSignatures):
+        Sig(lambda y, x: None).wrap(foo, ignore_incompatible_signatures=False)

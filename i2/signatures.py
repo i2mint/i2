@@ -1239,6 +1239,10 @@ class Sig(Signature, Mapping):
           (because again, we're basinig the injecton on a signature, not a function,
           so we have no name, doc, etc...)
 
+        With ``ignore_incompatible_signatures=False``, an ``IncompatibleSignatures``
+        error is raised if the parameter names (or their order) or kinds differ, or if
+        a param changes both kind and default.
+
         WARNING:
             The fact that you've modified the signature of your function doesn't
             mean that the decorated function will work as expected (or even work at all).
@@ -3345,7 +3349,7 @@ def _validate_sanity_of_signature_change(
 
     func_params = Sig(func).parameters
     new_params = new_sig.parameters
-    names_differ = set(func_params) != set(new_params)
+    names_differ = list(func_params) != list(new_params)  # also catches reordering
     kinds_differ = any(
         func_params[name].kind != new_params[name].kind
         for name in set(func_params) & set(new_params)
