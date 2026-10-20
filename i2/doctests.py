@@ -235,6 +235,7 @@ def non_doctest_lines(doc):
     parser's own pattern, the one :func:`split_text_and_doctests` uses, and the text
     lines are returned as they are, indentation included.
     """
+    doc = doc.replace("\r\n", "\n").replace("\r", "\n")  # the pattern's newline
     lines = doc.splitlines(keepends=True)
     starts = list(accumulate((len(line) for line in lines), initial=0))
     in_scope = set()
@@ -447,6 +448,9 @@ def docstring_to_code(
     comments and each example an ``assert`` (:func:`assert_wants`), which is a test;
     ``example_callback=output_prefix`` writes each output as a comment under its
     source instead, for a markdown page. ``text_callback=None`` drops the prose.
+    With :func:`assert_wants`, an example expecting an exception becomes a check that
+    it raises one; an example whose output is printed, not returned, gives an assert
+    that fails, as a doctest's want cannot tell the two apart.
 
     >>> doc = '''
     ...     Add two numbers.
@@ -474,6 +478,28 @@ def docstring_to_code(
                     yield text_callback(block)
             else:
                 for example in block:
-                    yield example_callback(example).rstrip("\n")
+                    if example.exc_msg is not None and example_callback is assert_wants:
+                        yield _assert_raises(example)
+                    else:
+                        yield example_callback(example).rstrip("\n")
 
     return "\n".join(parts())
+
+
+def _assert_raises(example: doctest.Example) -> str:
+    r"""Code checking that ``example`` raises, for an example expecting an exception.
+
+    >>> print(_assert_raises(doctest.Example('int("x")\n', '', exc_msg='ValueError: x\n')))
+    try:
+        int("x")
+    except Exception:
+        pass
+    else:
+        raise AssertionError('expected an exception from: int("x")')
+    """
+    source = example.source.strip()
+    body = "\n".join("    " + line for line in source.splitlines())
+    return (
+        f"try:\n{body}\nexcept Exception:\n    pass\n"
+        f"else:\n    raise AssertionError({'expected an exception from: ' + source!r})"
+    )
