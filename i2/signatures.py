@@ -1741,7 +1741,6 @@ class Sig(Signature, Mapping):
         warn("Deprecated", DeprecationWarning)
         return self.names_of_kind[kind]
 
-    # TODO: Consider using names_of_kind in other methods/properties
 
     @property
     def has_var_kinds(self):
@@ -1770,19 +1769,27 @@ class Sig(Signature, Mapping):
 
     @property
     def var_positional_name(self):
-        """The name of the VAR_POSITIONAL parameter, or ``None`` if there is none."""
-        idx = self.index_of_var_positional
-        if idx is not None:
-            return self.names[idx]
-        # else returns None
+        """The name of the VAR_POSITIONAL parameter, or ``None`` if there is none.
+
+        >>> Sig(lambda x, *args, y: 0).var_positional_name
+        'args'
+        >>> Sig(lambda x, **kwargs: 0).var_positional_name is None
+        True
+        """
+        return maybe_first(self.names_of_kind[VP])
 
     @property
     def has_var_positional(self):
         """
         Use index_of_var_positional or var_keyword_name directly when needing that
         information as well. This will avoid having to check the kinds list twice.
+
+        >>> Sig(lambda x, *args: 0).has_var_positional
+        True
+        >>> Sig(lambda x, **kwargs: 0).has_var_positional
+        False
         """
-        return any(p.kind == VP for p in self.values())
+        return bool(self.names_of_kind[VP])
 
     @property
     def index_of_var_keyword(self):
@@ -1805,19 +1812,27 @@ class Sig(Signature, Mapping):
 
     @property
     def var_keyword_name(self):
-        """The name of the VAR_KEYWORD parameter, or ``None`` if there is none."""
-        idx = self.index_of_var_keyword
-        if idx is not None:
-            return self.names[idx]
-        # else returns None
+        """The name of the VAR_KEYWORD parameter, or ``None`` if there is none.
+
+        >>> Sig(lambda x, *args, **kwargs: 0).var_keyword_name
+        'kwargs'
+        >>> Sig(lambda x, *args: 0).var_keyword_name is None
+        True
+        """
+        return maybe_first(self.names_of_kind[VK])
 
     @property
     def has_var_keyword(self):
         """
         Use index_of_var_keyword or var_keyword_name directly when needing that
         information as well. This will avoid having to check the kinds list twice.
+
+        >>> Sig(lambda x, **kwargs: 0).has_var_keyword
+        True
+        >>> Sig(lambda x, *args: 0).has_var_keyword
+        False
         """
-        return any(p.kind == VK for p in self.values())
+        return bool(self.names_of_kind[VK])
 
     @property
     def required_names(self):
