@@ -1741,7 +1741,6 @@ class Sig(Signature, Mapping):
         warn("Deprecated", DeprecationWarning)
         return self.names_of_kind[kind]
 
-
     @property
     def has_var_kinds(self):
         """Whether the signature has a VAR_POSITIONAL or VAR_KEYWORD parameter.
