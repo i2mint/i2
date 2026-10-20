@@ -45,6 +45,7 @@ from i2.wrapper import (
     include_exclude,
     rm_params,
     partialx,
+    curried,
     ch_names,
     arg_val_converter,
     ignore_extra_args,  # Wrap a function to accept (and ignore) extra arguments
