@@ -612,9 +612,9 @@ def docstring_to_params(
 
     The Sphinx typed-field form (``:param int x:``) and CRLF line endings are handled:
 
-    >>> docstring_to_params(':param int x: X.\\r\\n:param y: Y.', doc_style='auto') == [
+    >>> docstring_to_params(':param int x: X.\\r\\n:param y: Note: Y.', doc_style='auto') == [
     ...     {"name": "x", "default": None, "annotation": int, "description": "X."},
-    ...     {"name": "y", "default": None, "annotation": None, "description": "Y."},
+    ...     {"name": "y", "default": None, "annotation": None, "description": "Note: Y."},
     ... ]
     True
     """
@@ -781,7 +781,7 @@ def _parse_rest_param_lines(param_lines: list[str]) -> list[dict]:
     while i < len(param_lines):
         line = param_lines[i].strip()
         # Match ':param name: description' or ':param type name: description'
-        param_match = re.match(r"^:param\s+(?:(.+?)\s+)?(\w+):\s*(.*)", line)
+        param_match = re.match(r"^:param\s+(?:([^:]+?)\s+)?(\w+):\s*(.*)", line)
         if param_match:
             annotation, name, description = param_match.groups()
             # Check for default value in description

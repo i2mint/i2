@@ -2078,6 +2078,8 @@ def _with_instance_attr_defaults(
     """
     if missing := set(default_from) - set(sig.names):
         raise ValueError(f"default_from params not in the method's signature: {missing}")
+    if variadic := {name for name in default_from if sig.kinds[name] in (VP, VK)}:
+        raise ValueError(f"default_from can't give a default to *args/**kwargs: {variadic}")
     names = sig.names
     required_positional = {
         name
@@ -2147,6 +2149,10 @@ def methodize(
     >>> c.zoo = 5
     >>> c.bar(3)
     16
+
+    The signature default is an ``InstanceAttrDefault`` marker (shown ``self.zoo``),
+    not a value: code that serializes signature defaults (e.g. to JSON) should not
+    expect a JSON-able one there.
     """
     return func_to_method_func(
         func,
@@ -2740,7 +2746,9 @@ def partialx(
         # makes every param after a keyword-bound one keyword-only (see i2mint/i2#113);
         # only the keyword-bound params remain to be removed.
         sig = Sig(f)
-        f = (sig - [name for name in kwargs if name in sig.names])(f)
+        # Only named params are removed: a keyword going to ``**kwargs`` stays there.
+        bound = [name for name in kwargs if sig.kinds.get(name) in (PK, KO)]
+        f = (sig - bound)(f)
     if _allow_reordering:
         # TODO: Instead of Sig(f).defaults, move only params that need to move
         # TODO: + Change signature so that the number of params that become keyword-only
@@ -2748,7 +2756,6 @@ def partialx(
         f = move_params_to_the_end(f, Sig(f).defaults)
     f.__name__ = __name__ or name_of_obj(func)
     return f
-
 
 
 def curried(func: Callable) -> Callable:
@@ -2776,6 +2783,9 @@ def curried(func: Callable) -> Callable:
     >>> h(1, c=10)
     21
 
+    A curried function is never a coroutine function, even when ``func`` is: only
+    the call that specifies every required argument returns ``func``'s awaitable.
+
     Invalid arguments fail at the call that gives them, as they would for ``func``:
 
     >>> g(1, 2, 3, 4)
@@ -2796,9 +2806,8 @@ def curried(func: Callable) -> Callable:
         return curried(partialx(func, *args, _rm_partialize=True, **kwargs))
 
     curried_func.__signature__ = sig
-    if inspect.iscoroutinefunction(func) and hasattr(inspect, 'markcoroutinefunction'):
-        inspect.markcoroutinefunction(curried_func)  # Python >= 3.12
     return curried_func
+
 
 def _accept_position_only_by_keyword(func: Callable) -> Callable:
     """Wrap ``func`` so its position-only parameters can also be given by keyword.
