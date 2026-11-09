@@ -34,6 +34,7 @@ from i2.multi_object import (
     ContextFanout,
 )
 
+from i2.optional import optional_import
 from i2.errors import (
     InterruptWithBlock,
     HandleExceptions,
