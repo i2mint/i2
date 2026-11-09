@@ -15,11 +15,11 @@ Bind the package's own name and its module-to-extra map once:
 >>> my_import("torch_nope")                      # doctest: +ELLIPSIS
 Traceback (most recent call last):
   ...
-ImportError: This needs torch_nope: pip install torch_nope
+ModuleNotFoundError: This needs torch_nope: pip install torch_nope
 >>> optional_import("torch_nope", package="mypkg", extra="local")  # doctest: +ELLIPSIS
 Traceback (most recent call last):
   ...
-ImportError: This needs torch_nope: pip install 'mypkg[local]'
+ModuleNotFoundError: This needs torch_nope: pip install 'mypkg[local]'
 
 Absent and broken are different failures. A module that is installed but fails on
 one of *its own* imports raises that error unchanged: telling the user to install
@@ -32,7 +32,8 @@ from collections.abc import Mapping
 from types import ModuleType
 
 
-def _is_or_has_parent(missing: str, module: str) -> bool:
+def _is_module_or_parent(missing: str, module: str) -> bool:
+    """Whether the missing name is ``module`` itself or a package containing it."""
     return module == missing or module.startswith(missing + ".")
 
 
@@ -55,8 +56,12 @@ def install_command(
     >>> install_command("PIL")
     'pip install PIL'
     """
+    if extra and not package:
+        raise ValueError(f"extra={extra!r} needs package= (the one that has it)")
     extras = extras or {}
-    extra = extra or extras.get(module) or extras.get(module.split(".")[0])
+    parts = module.split(".")
+    for i in range(len(parts), 0, -1):  # longest prefix first
+        extra = extra or extras.get(".".join(parts[:i]))
     if package and extra:
         return f"pip install '{package}[{extra}]'"
     return f"pip install {module.split('.')[0]}"
@@ -69,7 +74,7 @@ def optional_import(
     extra: str | None = None,
     extras: Mapping[str, str] | None = None,
 ) -> ModuleType:
-    """Import ``module``, or raise an ``ImportError`` saying how to install it.
+    """Import ``module``, or raise a ``ModuleNotFoundError`` saying how to install it.
 
     Args:
         module: The (dotted) module to import.
@@ -83,8 +88,8 @@ def optional_import(
     """
     try:
         return importlib.import_module(module)
-    except ImportError as e:
-        if e.name and not _is_or_has_parent(e.name, module):
+    except ModuleNotFoundError as e:  # a plain ImportError is never "absent"
+        if not (e.name and _is_module_or_parent(e.name, module)):
             raise
         hint = install_command(module, package=package, extra=extra, extras=extras)
-        raise ImportError(f"This needs {module}: {hint}", name=module) from e
+        raise ModuleNotFoundError(f"This needs {module}: {hint}", name=module) from e

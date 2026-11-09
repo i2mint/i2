@@ -45,3 +45,31 @@ def test_installed_module_failing_on_its_own_import_is_not_called_missing(
         optional_import("broken_pkg_xyz", package="p", extra="e")
     assert err.value.name == "its_missing_dep_xyz"
     assert "pip install" not in str(err.value)
+
+
+@pytest.mark.parametrize(
+    "body",
+    ["raise ImportError('C extension failed')", "from . import missing_child_xyz"],
+)
+def test_other_import_failures_are_not_called_missing(tmp_path, monkeypatch, body):
+    (tmp_path / "flaky_mod_xyz.py").write_text(body + "\n")
+    monkeypatch.syspath_prepend(str(tmp_path))
+    sys.modules.pop("flaky_mod_xyz", None)
+    with pytest.raises(ImportError) as err:
+        optional_import("flaky_mod_xyz", package="p", extra="e")
+    assert "pip install" not in str(err.value)
+
+
+def test_missing_is_a_module_not_found_error():
+    with pytest.raises(ModuleNotFoundError):
+        optional_import("no_such_mod_xyz")
+
+
+def test_extra_without_package_is_refused():
+    with pytest.raises(ValueError, match="needs package"):
+        install_command("m", extra="e")
+
+
+def test_longest_dotted_prefix_wins():
+    extras = {"a": "x", "a.b": "y"}
+    assert install_command("a.b.c", package="p", extras=extras) == "pip install 'p[y]'"
