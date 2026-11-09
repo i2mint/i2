@@ -38,6 +38,7 @@ from i2.errors import (
     InterruptWithBlock,
     HandleExceptions,
 )
+from i2.optional import optional_import
 
 from i2.wrapper import (
     wrap,
