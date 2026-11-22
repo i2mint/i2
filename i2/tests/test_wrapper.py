@@ -664,7 +664,10 @@ def test_ignore_extra_args():
         return first - second
 
     target = ("current", "previous", "stats")
-    assert ignore_extra_args(sub, target, select=["previous", "current"])(10, 4, None) == -6
+    assert (
+        ignore_extra_args(sub, target, select=["previous", "current"])(10, 4, None)
+        == -6
+    )
     assert ignore_extra_args(sub, target, select=[1, 0])(10, 4, None) == -6
 
     def target_func(current, previous, stats=None): ...
