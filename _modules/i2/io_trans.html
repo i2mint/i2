@@ -239,278 +239,284 @@
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.IoTrans">[docs]</a>
 </span><span id="line-56"><span class="nd">@dataclass</span>
 </span><span id="line-57"><span class="k">class</span><span class="w"> </span><span class="nc">IoTrans</span><span class="p">:</span>
-</span><span id="line-58">    <span class="k">def</span><span class="w"> </span><span class="nf">in_val_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-</span><span id="line-59">        <span class="k">return</span> <span class="n">argval</span>  <span class="c1"># default is the value as is</span>
+</span><span id="line-58"><span class="w">    </span><span class="sd">"""Base class of input/output transformers: a callable that wraps a function,</span>
+</span><span id="line-59"><span class="sd">    applying ``in_val_trans`` to each input argument and ``out_trans`` to the output.</span>
 </span><span id="line-60">
-</span><span id="line-61">    <span class="k">def</span><span class="w"> </span><span class="nf">out_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-</span><span id="line-62">        <span class="k">return</span> <span class="n">argval</span>  <span class="c1"># default is the value as is</span>
+</span><span id="line-61"><span class="sd">    Subclass and override either method (both default to the identity).</span>
+</span><span id="line-62"><span class="sd">    """</span>
 </span><span id="line-63">
-</span><span id="line-64">    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-</span><span id="line-65">        <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="line-64">    <span class="k">def</span><span class="w"> </span><span class="nf">in_val_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+</span><span id="line-65">        <span class="k">return</span> <span class="n">argval</span>  <span class="c1"># default is the value as is</span>
 </span><span id="line-66">
-</span><span id="line-67">        <span class="nd">@wraps</span><span class="p">(</span>
-</span><span id="line-68">            <span class="n">func</span>
-</span><span id="line-69">        <span class="p">)</span>  <span class="c1"># Todo: Want empty mapping as default (use frozendict or __post_init__?)</span>
-</span><span id="line-70">        <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="line-71">            <span class="n">original_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">map_arguments_from_variadics</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span id="line-72">            <span class="n">new_kwargs</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-73">                <span class="n">argname</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_val_trans</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
-</span><span id="line-74">                <span class="k">for</span> <span class="n">argname</span><span class="p">,</span> <span class="n">argval</span> <span class="ow">in</span> <span class="n">original_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-</span><span id="line-75">            <span class="p">}</span>
-</span><span id="line-76">            <span class="n">new_args</span><span class="p">,</span> <span class="n">new_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">mk_args_and_kwargs</span><span class="p">(</span><span class="n">new_kwargs</span><span class="p">)</span>
-</span><span id="line-77">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_trans</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">new_kwargs</span><span class="p">),</span> <span class="n">func</span><span class="p">)</span>
-</span><span id="line-78">
-</span><span id="line-79">        <span class="k">return</span> <span class="n">wrapped_func</span></div>
+</span><span id="line-67">    <span class="k">def</span><span class="w"> </span><span class="nf">out_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+</span><span id="line-68">        <span class="k">return</span> <span class="n">argval</span>  <span class="c1"># default is the value as is</span>
+</span><span id="line-69">
+</span><span id="line-70">    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+</span><span id="line-71">        <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span id="line-72">
+</span><span id="line-73">        <span class="nd">@wraps</span><span class="p">(</span>
+</span><span id="line-74">            <span class="n">func</span>
+</span><span id="line-75">        <span class="p">)</span>  <span class="c1"># Todo: Want empty mapping as default (use frozendict or __post_init__?)</span>
+</span><span id="line-76">        <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-77">            <span class="n">original_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">map_arguments_from_variadics</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="line-78">            <span class="n">new_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-79">                <span class="n">argname</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_val_trans</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+</span><span id="line-80">                <span class="k">for</span> <span class="n">argname</span><span class="p">,</span> <span class="n">argval</span> <span class="ow">in</span> <span class="n">original_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="line-81">            <span class="p">}</span>
+</span><span id="line-82">            <span class="n">new_args</span><span class="p">,</span> <span class="n">new_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">mk_args_and_kwargs</span><span class="p">(</span><span class="n">new_kwargs</span><span class="p">)</span>
+</span><span id="line-83">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_trans</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">new_kwargs</span><span class="p">),</span> <span class="n">func</span><span class="p">)</span>
+</span><span id="line-84">
+</span><span id="line-85">        <span class="k">return</span> <span class="n">wrapped_func</span></div>
 
-</span><span id="line-80">
-</span><span id="line-81">
+</span><span id="line-86">
+</span><span id="line-87">
 <div class="viewcode-block" id="ArgnameIoTrans">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.ArgnameIoTrans">[docs]</a>
-</span><span id="line-82"><span class="nd">@dataclass</span>
-</span><span id="line-83"><span class="k">class</span><span class="w"> </span><span class="nc">ArgnameIoTrans</span><span class="p">(</span><span class="n">IoTrans</span><span class="p">):</span>
-</span><span id="line-84"><span class="w">    </span><span class="sd">"""Transforms argument values according to their names</span>
-</span><span id="line-85">
-</span><span id="line-86"><span class="sd">    &gt;&gt;&gt; def foo(a, b=1.0):</span>
-</span><span id="line-87"><span class="sd">    ...     return a + b</span>
-</span><span id="line-88"><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="line-89"><span class="sd">    &gt;&gt;&gt; input_trans = ArgnameIoTrans({'a': int, 'b': float})</span>
-</span><span id="line-90"><span class="sd">    &gt;&gt;&gt; foo2 = input_trans(foo)</span>
-</span><span id="line-91"><span class="sd">    &gt;&gt;&gt; assert foo2(3) == 4.0</span>
-</span><span id="line-92"><span class="sd">    &gt;&gt;&gt; assert foo2(-2, 2) == 0.0</span>
-</span><span id="line-93"><span class="sd">    &gt;&gt;&gt; assert foo2("3") == 4.0</span>
-</span><span id="line-94"><span class="sd">    &gt;&gt;&gt; assert foo2("-2", "2") == 0.0</span>
-</span><span id="line-95"><span class="sd">    &gt;&gt;&gt; assert signature(foo) == signature(foo2)</span>
-</span><span id="line-96"><span class="sd">    """</span>
-</span><span id="line-97">
-</span><span id="line-98">    <span class="n">argname_2_trans_func</span><span class="p">:</span> <span class="n">Mapping</span>
-</span><span id="line-99">
-</span><span id="line-100">    <span class="k">def</span><span class="w"> </span><span class="nf">in_val_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-</span><span id="line-101">        <span class="n">trans_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argname_2_trans_func</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">argname</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="line-102">        <span class="k">if</span> <span class="n">trans_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-103">            <span class="k">return</span> <span class="n">trans_func</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span>
-</span><span id="line-104">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-105">            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">in_val_trans</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span></div>
+</span><span id="line-88"><span class="nd">@dataclass</span>
+</span><span id="line-89"><span class="k">class</span><span class="w"> </span><span class="nc">ArgnameIoTrans</span><span class="p">(</span><span class="n">IoTrans</span><span class="p">):</span>
+</span><span id="line-90"><span class="w">    </span><span class="sd">"""Transforms argument values according to their names</span>
+</span><span id="line-91">
+</span><span id="line-92"><span class="sd">    &gt;&gt;&gt; def foo(a, b=1.0):</span>
+</span><span id="line-93"><span class="sd">    ...     return a + b</span>
+</span><span id="line-94"><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="line-95"><span class="sd">    &gt;&gt;&gt; input_trans = ArgnameIoTrans({'a': int, 'b': float})</span>
+</span><span id="line-96"><span class="sd">    &gt;&gt;&gt; foo2 = input_trans(foo)</span>
+</span><span id="line-97"><span class="sd">    &gt;&gt;&gt; assert foo2(3) == 4.0</span>
+</span><span id="line-98"><span class="sd">    &gt;&gt;&gt; assert foo2(-2, 2) == 0.0</span>
+</span><span id="line-99"><span class="sd">    &gt;&gt;&gt; assert foo2("3") == 4.0</span>
+</span><span id="line-100"><span class="sd">    &gt;&gt;&gt; assert foo2("-2", "2") == 0.0</span>
+</span><span id="line-101"><span class="sd">    &gt;&gt;&gt; assert signature(foo) == signature(foo2)</span>
+</span><span id="line-102"><span class="sd">    """</span>
+</span><span id="line-103">
+</span><span id="line-104">    <span class="n">argname_2_trans_func</span><span class="p">:</span> <span class="n">Mapping</span>
+</span><span id="line-105">
+</span><span id="line-106">    <span class="k">def</span><span class="w"> </span><span class="nf">in_val_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+</span><span id="line-107">        <span class="n">trans_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argname_2_trans_func</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">argname</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="line-108">        <span class="k">if</span> <span class="n">trans_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-109">            <span class="k">return</span> <span class="n">trans_func</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span>
+</span><span id="line-110">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-111">            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">in_val_trans</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span></div>
 
-</span><span id="line-106">
-</span><span id="line-107">
-</span><span id="line-108"><span class="n">empty</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
-</span><span id="line-109">
-</span><span id="line-110">
+</span><span id="line-112">
+</span><span id="line-113">
+</span><span id="line-114"><span class="n">empty</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span>
+</span><span id="line-115">
+</span><span id="line-116">
 <div class="viewcode-block" id="AnnotAndDfltIoTrans">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.AnnotAndDfltIoTrans">[docs]</a>
-</span><span id="line-111"><span class="nd">@dataclass</span>
-</span><span id="line-112"><span class="k">class</span><span class="w"> </span><span class="nc">AnnotAndDfltIoTrans</span><span class="p">(</span><span class="n">IoTrans</span><span class="p">):</span>
-</span><span id="line-113"><span class="w">    </span><span class="sd">"""Transforms argument values using annotations and default type</span>
-</span><span id="line-114">
-</span><span id="line-115"><span class="sd">    &gt;&gt;&gt; def foo(a: int, b=1.0):</span>
-</span><span id="line-116"><span class="sd">    ...     return a + b</span>
-</span><span id="line-117"><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="line-118"><span class="sd">    &gt;&gt;&gt; input_trans = AnnotAndDfltIoTrans()</span>
-</span><span id="line-119"><span class="sd">    &gt;&gt;&gt; foo3 = input_trans(foo)</span>
-</span><span id="line-120"><span class="sd">    &gt;&gt;&gt; assert foo3(3) == 4.0</span>
-</span><span id="line-121"><span class="sd">    &gt;&gt;&gt; assert foo3(-2, 2) == 0.0</span>
-</span><span id="line-122"><span class="sd">    &gt;&gt;&gt; assert foo3("3") == 4.0</span>
-</span><span id="line-123"><span class="sd">    &gt;&gt;&gt; assert foo3("-2", "2") == 0.0</span>
-</span><span id="line-124"><span class="sd">    &gt;&gt;&gt; assert signature(foo) == signature(foo3)</span>
-</span><span id="line-125"><span class="sd">    """</span>
-</span><span id="line-126">
-</span><span id="line-127">    <span class="n">annotations_handled</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
-</span><span id="line-128">    <span class="n">dflt_types_handled</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
-</span><span id="line-129">
-</span><span id="line-130">    <span class="k">def</span><span class="w"> </span><span class="nf">in_val_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-</span><span id="line-131">        <span class="n">param</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span>
-</span><span id="line-132">        <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations_handled</span><span class="p">:</span>
-</span><span id="line-133">            <span class="k">return</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span>
-</span><span id="line-134">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-135">            <span class="n">dflt_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
-</span><span id="line-136">            <span class="k">if</span> <span class="n">dflt_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dflt_types_handled</span><span class="p">:</span>
-</span><span id="line-137">                <span class="k">return</span> <span class="n">dflt_type</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span>
-</span><span id="line-138">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">in_val_trans</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span></div>
+</span><span id="line-117"><span class="nd">@dataclass</span>
+</span><span id="line-118"><span class="k">class</span><span class="w"> </span><span class="nc">AnnotAndDfltIoTrans</span><span class="p">(</span><span class="n">IoTrans</span><span class="p">):</span>
+</span><span id="line-119"><span class="w">    </span><span class="sd">"""Transforms argument values using annotations and default type</span>
+</span><span id="line-120">
+</span><span id="line-121"><span class="sd">    &gt;&gt;&gt; def foo(a: int, b=1.0):</span>
+</span><span id="line-122"><span class="sd">    ...     return a + b</span>
+</span><span id="line-123"><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="line-124"><span class="sd">    &gt;&gt;&gt; input_trans = AnnotAndDfltIoTrans()</span>
+</span><span id="line-125"><span class="sd">    &gt;&gt;&gt; foo3 = input_trans(foo)</span>
+</span><span id="line-126"><span class="sd">    &gt;&gt;&gt; assert foo3(3) == 4.0</span>
+</span><span id="line-127"><span class="sd">    &gt;&gt;&gt; assert foo3(-2, 2) == 0.0</span>
+</span><span id="line-128"><span class="sd">    &gt;&gt;&gt; assert foo3("3") == 4.0</span>
+</span><span id="line-129"><span class="sd">    &gt;&gt;&gt; assert foo3("-2", "2") == 0.0</span>
+</span><span id="line-130"><span class="sd">    &gt;&gt;&gt; assert signature(foo) == signature(foo3)</span>
+</span><span id="line-131"><span class="sd">    """</span>
+</span><span id="line-132">
+</span><span id="line-133">    <span class="n">annotations_handled</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
+</span><span id="line-134">    <span class="n">dflt_types_handled</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
+</span><span id="line-135">
+</span><span id="line-136">    <span class="k">def</span><span class="w"> </span><span class="nf">in_val_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+</span><span id="line-137">        <span class="n">param</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span>
+</span><span id="line-138">        <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations_handled</span><span class="p">:</span>
+</span><span id="line-139">            <span class="k">return</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span>
+</span><span id="line-140">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-141">            <span class="n">dflt_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+</span><span id="line-142">            <span class="k">if</span> <span class="n">dflt_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dflt_types_handled</span><span class="p">:</span>
+</span><span id="line-143">                <span class="k">return</span> <span class="n">dflt_type</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span>
+</span><span id="line-144">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">in_val_trans</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span></div>
 
-</span><span id="line-139">
-</span><span id="line-140">
+</span><span id="line-145">
+</span><span id="line-146">
 <div class="viewcode-block" id="JSONAnnotAndDfltIoTrans">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.JSONAnnotAndDfltIoTrans">[docs]</a>
-</span><span id="line-141"><span class="nd">@dataclass</span>
-</span><span id="line-142"><span class="k">class</span><span class="w"> </span><span class="nc">JSONAnnotAndDfltIoTrans</span><span class="p">(</span><span class="n">AnnotAndDfltIoTrans</span><span class="p">):</span>
-</span><span id="line-143"><span class="w">    </span><span class="sd">"""Transforms argument values using annotations and default type,</span>
-</span><span id="line-144"><span class="sd">    including lists, iterables, dicts, and booleans</span>
-</span><span id="line-145">
-</span><span id="line-146"><span class="sd">    &gt;&gt;&gt; def foo(a: dict, b=['dflt'], c=False):</span>
-</span><span id="line-147"><span class="sd">    ...     return dict({}, a=a, b=b, c=c)</span>
-</span><span id="line-148"><span class="sd">    &gt;&gt;&gt;</span>
-</span><span id="line-149"><span class="sd">    &gt;&gt;&gt; input_trans = JSONAnnotAndDfltIoTrans()</span>
-</span><span id="line-150"><span class="sd">    &gt;&gt;&gt; foo4 = input_trans(foo)</span>
-</span><span id="line-151"><span class="sd">    &gt;&gt;&gt; assert foo4('{}') == {'a': {}, 'b': ['dflt'], 'c': False}</span>
-</span><span id="line-152"><span class="sd">    &gt;&gt;&gt; assert foo4({'d': 'e'}, '["some_value"]', 'true') == {'a': {'d': 'e'}, 'b': ['some_value'], 'c': True}</span>
-</span><span id="line-153"><span class="sd">    &gt;&gt;&gt; complex_types_result = foo4('{"None": null, "True": true, "False": false}', '[null, true, false]', 'false')</span>
-</span><span id="line-154"><span class="sd">    &gt;&gt;&gt; assert complex_types_result == {'a': {'None': None, 'True': True, 'False': False}, 'b': [None, True, False], 'c': False}</span>
-</span><span id="line-155"><span class="sd">    &gt;&gt;&gt; assert signature(foo) == signature(foo4)</span>
-</span><span id="line-156"><span class="sd">    """</span>
-</span><span id="line-157">
-</span><span id="line-158">    <span class="k">def</span><span class="w"> </span><span class="nf">in_val_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-</span><span id="line-159">        <span class="n">param</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span>
-</span><span id="line-160">        <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span> <span class="o">!=</span> <span class="nb">str</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-161">            <span class="k">if</span> <span class="p">(</span>
-</span><span id="line-162">                <span class="n">param</span><span class="o">.</span><span class="n">annotation</span> <span class="o">==</span> <span class="nb">dict</span>
-</span><span id="line-163">                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="n">_TypedDictMeta</span><span class="p">)</span>
-</span><span id="line-164">                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-</span><span id="line-165">                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">),</span> <span class="n">_TypedDictMeta</span><span class="p">)</span>
-</span><span id="line-166">                <span class="ow">or</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span> <span class="o">==</span> <span class="nb">bool</span>
-</span><span id="line-167">                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
-</span><span id="line-168">            <span class="p">):</span>
-</span><span id="line-169">                <span class="k">return</span> <span class="n">cast_to_jdict</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span>
-</span><span id="line-170">            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="s2">"__iter__"</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span>
-</span><span id="line-171">                <span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="s2">"__iter__"</span>
-</span><span id="line-172">            <span class="p">):</span>
-</span><span id="line-173">                <span class="k">return</span> <span class="n">cast_to_list</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span>
-</span><span id="line-174">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">in_val_trans</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span></div>
+</span><span id="line-147"><span class="nd">@dataclass</span>
+</span><span id="line-148"><span class="k">class</span><span class="w"> </span><span class="nc">JSONAnnotAndDfltIoTrans</span><span class="p">(</span><span class="n">AnnotAndDfltIoTrans</span><span class="p">):</span>
+</span><span id="line-149"><span class="w">    </span><span class="sd">"""Transforms argument values using annotations and default type,</span>
+</span><span id="line-150"><span class="sd">    including lists, iterables, dicts, and booleans</span>
+</span><span id="line-151">
+</span><span id="line-152"><span class="sd">    &gt;&gt;&gt; def foo(a: dict, b=['dflt'], c=False):</span>
+</span><span id="line-153"><span class="sd">    ...     return dict({}, a=a, b=b, c=c)</span>
+</span><span id="line-154"><span class="sd">    &gt;&gt;&gt;</span>
+</span><span id="line-155"><span class="sd">    &gt;&gt;&gt; input_trans = JSONAnnotAndDfltIoTrans()</span>
+</span><span id="line-156"><span class="sd">    &gt;&gt;&gt; foo4 = input_trans(foo)</span>
+</span><span id="line-157"><span class="sd">    &gt;&gt;&gt; assert foo4('{}') == {'a': {}, 'b': ['dflt'], 'c': False}</span>
+</span><span id="line-158"><span class="sd">    &gt;&gt;&gt; assert foo4({'d': 'e'}, '["some_value"]', 'true') == {'a': {'d': 'e'}, 'b': ['some_value'], 'c': True}</span>
+</span><span id="line-159"><span class="sd">    &gt;&gt;&gt; complex_types_result = foo4('{"None": null, "True": true, "False": false}', '[null, true, false]', 'false')</span>
+</span><span id="line-160"><span class="sd">    &gt;&gt;&gt; assert complex_types_result == {'a': {'None': None, 'True': True, 'False': False}, 'b': [None, True, False], 'c': False}</span>
+</span><span id="line-161"><span class="sd">    &gt;&gt;&gt; assert signature(foo) == signature(foo4)</span>
+</span><span id="line-162"><span class="sd">    """</span>
+</span><span id="line-163">
+</span><span id="line-164">    <span class="k">def</span><span class="w"> </span><span class="nf">in_val_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+</span><span id="line-165">        <span class="n">param</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span>
+</span><span id="line-166">        <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span> <span class="o">!=</span> <span class="nb">str</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-167">            <span class="k">if</span> <span class="p">(</span>
+</span><span id="line-168">                <span class="n">param</span><span class="o">.</span><span class="n">annotation</span> <span class="o">==</span> <span class="nb">dict</span>
+</span><span id="line-169">                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="n">_TypedDictMeta</span><span class="p">)</span>
+</span><span id="line-170">                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-171">                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">),</span> <span class="n">_TypedDictMeta</span><span class="p">)</span>
+</span><span id="line-172">                <span class="ow">or</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span> <span class="o">==</span> <span class="nb">bool</span>
+</span><span id="line-173">                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+</span><span id="line-174">            <span class="p">):</span>
+</span><span id="line-175">                <span class="k">return</span> <span class="n">cast_to_jdict</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span>
+</span><span id="line-176">            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="s2">"__iter__"</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span>
+</span><span id="line-177">                <span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="s2">"__iter__"</span>
+</span><span id="line-178">            <span class="p">):</span>
+</span><span id="line-179">                <span class="k">return</span> <span class="n">cast_to_list</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span>
+</span><span id="line-180">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">in_val_trans</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span></div>
 
-</span><span id="line-175">
-</span><span id="line-176">
-</span><span id="line-177"><span class="c1"># TODO: Move this doctest to tests suite that ignores the test if pandas not there!</span>
-</span><span id="line-178"><span class="c1"># &gt;&gt;&gt; import pandas as pd</span>
-</span><span id="line-179"><span class="c1"># &gt;&gt;&gt; out_trans = TypedBasedOutIoTrans({</span>
-</span><span id="line-180"><span class="c1"># ...     (list, tuple, set): ', '.join,</span>
-</span><span id="line-181"><span class="c1"># ...     pd.DataFrame: pd.DataFrame.to_csv</span>
-</span><span id="line-182"><span class="c1"># ... })</span>
-</span><span id="line-183"><span class="c1"># &gt;&gt;&gt;</span>
-</span><span id="line-184"><span class="c1"># &gt;&gt;&gt;</span>
-</span><span id="line-185"><span class="c1"># &gt;&gt;&gt; @out_trans</span>
-</span><span id="line-186"><span class="c1"># ... def repeat(a: int, b: list):</span>
-</span><span id="line-187"><span class="c1"># ...     return a * b</span>
-</span><span id="line-188"><span class="c1"># ...</span>
-</span><span id="line-189"><span class="c1"># &gt;&gt;&gt; assert repeat(2, ['repeat', 'it']) == 'repeat, it, repeat, it'</span>
+</span><span id="line-181">
+</span><span id="line-182">
+</span><span id="line-183"><span class="c1"># TODO: Move this doctest to tests suite that ignores the test if pandas not there!</span>
+</span><span id="line-184"><span class="c1"># &gt;&gt;&gt; import pandas as pd</span>
+</span><span id="line-185"><span class="c1"># &gt;&gt;&gt; out_trans = TypedBasedOutIoTrans({</span>
+</span><span id="line-186"><span class="c1"># ...     (list, tuple, set): ', '.join,</span>
+</span><span id="line-187"><span class="c1"># ...     pd.DataFrame: pd.DataFrame.to_csv</span>
+</span><span id="line-188"><span class="c1"># ... })</span>
+</span><span id="line-189"><span class="c1"># &gt;&gt;&gt;</span>
 </span><span id="line-190"><span class="c1"># &gt;&gt;&gt;</span>
 </span><span id="line-191"><span class="c1"># &gt;&gt;&gt; @out_trans</span>
-</span><span id="line-192"><span class="c1"># ... def transpose(df):</span>
-</span><span id="line-193"><span class="c1"># ...     return df.T</span>
+</span><span id="line-192"><span class="c1"># ... def repeat(a: int, b: list):</span>
+</span><span id="line-193"><span class="c1"># ...     return a * b</span>
 </span><span id="line-194"><span class="c1"># ...</span>
-</span><span id="line-195"><span class="c1"># &gt;&gt;&gt; df = pd.DataFrame({'a': [1,2,3], 'b': [10, 20, 30]})</span>
-</span><span id="line-196"><span class="c1"># &gt;&gt;&gt; print(df.to_csv())  # doctest: +NORMALIZE_WHITESPACE</span>
-</span><span id="line-197"><span class="c1"># ,a,b</span>
-</span><span id="line-198"><span class="c1"># 0,1,10</span>
-</span><span id="line-199"><span class="c1"># 1,2,20</span>
-</span><span id="line-200"><span class="c1"># 2,3,30</span>
-</span><span id="line-201"><span class="c1"># &gt;&gt;&gt; print(transpose(df))  # doctest: +NORMALIZE_WHITESPACE</span>
-</span><span id="line-202"><span class="c1"># ,0,1,2</span>
-</span><span id="line-203"><span class="c1"># a,1,2,3</span>
-</span><span id="line-204"><span class="c1"># b,10,20,30</span>
-</span><span id="line-205"><span class="c1"># TODO: Write doctest (that only needs builtins)</span>
+</span><span id="line-195"><span class="c1"># &gt;&gt;&gt; assert repeat(2, ['repeat', 'it']) == 'repeat, it, repeat, it'</span>
+</span><span id="line-196"><span class="c1"># &gt;&gt;&gt;</span>
+</span><span id="line-197"><span class="c1"># &gt;&gt;&gt; @out_trans</span>
+</span><span id="line-198"><span class="c1"># ... def transpose(df):</span>
+</span><span id="line-199"><span class="c1"># ...     return df.T</span>
+</span><span id="line-200"><span class="c1"># ...</span>
+</span><span id="line-201"><span class="c1"># &gt;&gt;&gt; df = pd.DataFrame({'a': [1,2,3], 'b': [10, 20, 30]})</span>
+</span><span id="line-202"><span class="c1"># &gt;&gt;&gt; print(df.to_csv())  # doctest: +NORMALIZE_WHITESPACE</span>
+</span><span id="line-203"><span class="c1"># ,a,b</span>
+</span><span id="line-204"><span class="c1"># 0,1,10</span>
+</span><span id="line-205"><span class="c1"># 1,2,20</span>
+</span><span id="line-206"><span class="c1"># 2,3,30</span>
+</span><span id="line-207"><span class="c1"># &gt;&gt;&gt; print(transpose(df))  # doctest: +NORMALIZE_WHITESPACE</span>
+</span><span id="line-208"><span class="c1"># ,0,1,2</span>
+</span><span id="line-209"><span class="c1"># a,1,2,3</span>
+</span><span id="line-210"><span class="c1"># b,10,20,30</span>
+</span><span id="line-211"><span class="c1"># TODO: Write doctest (that only needs builtins)</span>
 <div class="viewcode-block" id="TypedBasedOutIoTrans">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.TypedBasedOutIoTrans">[docs]</a>
-</span><span id="line-206"><span class="nd">@dataclass</span>
-</span><span id="line-207"><span class="k">class</span><span class="w"> </span><span class="nc">TypedBasedOutIoTrans</span><span class="p">(</span><span class="n">IoTrans</span><span class="p">):</span>
-</span><span id="line-208"><span class="w">    </span><span class="sd">"""Transform output according to it's type."""</span>
-</span><span id="line-209">
-</span><span id="line-210">    <span class="n">trans_func_for_type</span><span class="p">:</span> <span class="n">Mapping</span> <span class="o">=</span> <span class="p">()</span>  <span class="c1"># Todo: Want empty mapping as default (use frozendict or __post_init__?)</span>
-</span><span id="line-211">    <span class="n">dflt_trans_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-212">
-</span><span id="line-213">    <span class="k">def</span><span class="w"> </span><span class="nf">out_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-</span><span id="line-214">        <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans_func_for_type</span><span class="p">:</span>
-</span><span id="line-215">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
-</span><span id="line-216">                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans_func_for_type</span><span class="p">[</span><span class="n">typ</span><span class="p">](</span><span class="n">argval</span><span class="p">)</span>
-</span><span id="line-217">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
-</span><span id="line-218">            <span class="bp">self</span><span class="o">.</span><span class="n">dflt_trans_func</span><span class="p">,</span> <span class="n">Callable</span>
-</span><span id="line-219">        <span class="p">):</span>  <span class="c1"># Question: use callable() instead? What's the difference?</span>
-</span><span id="line-220">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dflt_trans_func</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span></div>
+</span><span id="line-212"><span class="nd">@dataclass</span>
+</span><span id="line-213"><span class="k">class</span><span class="w"> </span><span class="nc">TypedBasedOutIoTrans</span><span class="p">(</span><span class="n">IoTrans</span><span class="p">):</span>
+</span><span id="line-214"><span class="w">    </span><span class="sd">"""Transform output according to it's type."""</span>
+</span><span id="line-215">
+</span><span id="line-216">    <span class="n">trans_func_for_type</span><span class="p">:</span> <span class="n">Mapping</span> <span class="o">=</span> <span class="p">()</span>  <span class="c1"># Todo: Want empty mapping as default (use frozendict or __post_init__?)</span>
+</span><span id="line-217">    <span class="n">dflt_trans_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-218">
+</span><span id="line-219">    <span class="k">def</span><span class="w"> </span><span class="nf">out_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+</span><span id="line-220">        <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans_func_for_type</span><span class="p">:</span>
+</span><span id="line-221">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">argval</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
+</span><span id="line-222">                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans_func_for_type</span><span class="p">[</span><span class="n">typ</span><span class="p">](</span><span class="n">argval</span><span class="p">)</span>
+</span><span id="line-223">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+</span><span id="line-224">            <span class="bp">self</span><span class="o">.</span><span class="n">dflt_trans_func</span><span class="p">,</span> <span class="n">Callable</span>
+</span><span id="line-225">        <span class="p">):</span>  <span class="c1"># Question: use callable() instead? What's the difference?</span>
+</span><span id="line-226">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dflt_trans_func</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span></div>
 
-</span><span id="line-221">
-</span><span id="line-222">
+</span><span id="line-227">
+</span><span id="line-228">
 <div class="viewcode-block" id="pickle_out_trans">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.pickle_out_trans">[docs]</a>
-</span><span id="line-223"><span class="k">def</span><span class="w"> </span><span class="nf">pickle_out_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-</span><span id="line-224"><span class="w">    </span><span class="sd">"""Output transformer that pickles the value (``pickle.dumps``)."""</span>
-</span><span id="line-225">    <span class="k">return</span> <span class="n">dumps</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span></div>
+</span><span id="line-229"><span class="k">def</span><span class="w"> </span><span class="nf">pickle_out_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argval</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+</span><span id="line-230"><span class="w">    </span><span class="sd">"""Output transformer that pickles the value (``pickle.dumps``)."""</span>
+</span><span id="line-231">    <span class="k">return</span> <span class="n">dumps</span><span class="p">(</span><span class="n">argval</span><span class="p">)</span></div>
 
-</span><span id="line-226">
-</span><span id="line-227">
-</span><span id="line-228"><span class="n">PickleFallbackTypedBasedOutIoTrans</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
-</span><span id="line-229">    <span class="n">TypedBasedOutIoTrans</span><span class="p">,</span> <span class="n">dflt_trans_func</span><span class="o">=</span><span class="n">dumps</span>
-</span><span id="line-230"><span class="p">)</span>
-</span><span id="line-231">
-</span><span id="line-232"><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-</span><span id="line-233"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span id="line-234">
-</span><span id="line-235">
+</span><span id="line-232">
+</span><span id="line-233">
+</span><span id="line-234"><span class="n">PickleFallbackTypedBasedOutIoTrans</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+</span><span id="line-235">    <span class="n">TypedBasedOutIoTrans</span><span class="p">,</span> <span class="n">dflt_trans_func</span><span class="o">=</span><span class="n">dumps</span>
+</span><span id="line-236"><span class="p">)</span>
+</span><span id="line-237">
+</span><span id="line-238"><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="line-239"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="line-240">
+</span><span id="line-241">
 <div class="viewcode-block" id="cast_to_jdict">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.cast_to_jdict">[docs]</a>
-</span><span id="line-236"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-</span><span id="line-237"><span class="w">    </span><span class="sd">"""Tries to cast to a json-friendly dictionary.</span>
-</span><span id="line-238">
-</span><span id="line-239"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('3')</span>
-</span><span id="line-240"><span class="sd">    [3]</span>
-</span><span id="line-241"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[3]")</span>
-</span><span id="line-242"><span class="sd">    [3]</span>
-</span><span id="line-243"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[4,2]")</span>
-</span><span id="line-244"><span class="sd">    [4, 2]</span>
-</span><span id="line-245"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
-</span><span id="line-246"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
-</span><span id="line-247"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('{"here": "is", "a": {"nested": "json"}, "with": [null, true, false, 1, 2.3]}')</span>
-</span><span id="line-248"><span class="sd">    {'here': 'is', 'a': {'nested': 'json'}, 'with': [None, True, False, 1, 2.3]}</span>
-</span><span id="line-249">
-</span><span id="line-250"><span class="sd">    And csvs too:</span>
-</span><span id="line-251">
-</span><span id="line-252"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
-</span><span id="line-253"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
-</span><span id="line-254"><span class="sd">    """</span>
-</span><span id="line-255">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-256">        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</span><span id="line-257">        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="line-258">            <span class="n">first_char</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="line-259">            <span class="k">if</span> <span class="n">first_char</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"["</span><span class="p">,</span> <span class="s2">"{"</span><span class="p">}:</span>
-</span><span id="line-260">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-261">            <span class="k">elif</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"true"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">,</span> <span class="s2">"null"</span><span class="p">]:</span>
-</span><span id="line-262">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-263">            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-</span><span id="line-264">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-265">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-266">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
-</span><span id="line-267">                    <span class="s2">"["</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s2">"]"</span>
-</span><span id="line-268">                <span class="p">)</span>  <span class="c1"># wrap in brackets and call json.loads</span>
-</span><span id="line-269">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-270">            <span class="k">return</span> <span class="s2">""</span>
-</span><span id="line-271">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-272">        <span class="k">return</span> <span class="n">value</span></div>
+</span><span id="line-242"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span id="line-243"><span class="w">    </span><span class="sd">"""Tries to cast to a json-friendly dictionary.</span>
+</span><span id="line-244">
+</span><span id="line-245"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('3')</span>
+</span><span id="line-246"><span class="sd">    [3]</span>
+</span><span id="line-247"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[3]")</span>
+</span><span id="line-248"><span class="sd">    [3]</span>
+</span><span id="line-249"><span class="sd">    &gt;&gt;&gt; cast_to_jdict("[4,2]")</span>
+</span><span id="line-250"><span class="sd">    [4, 2]</span>
+</span><span id="line-251"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
+</span><span id="line-252"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
+</span><span id="line-253"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('{"here": "is", "a": {"nested": "json"}, "with": [null, true, false, 1, 2.3]}')</span>
+</span><span id="line-254"><span class="sd">    {'here': 'is', 'a': {'nested': 'json'}, 'with': [None, True, False, 1, 2.3]}</span>
+</span><span id="line-255">
+</span><span id="line-256"><span class="sd">    And csvs too:</span>
+</span><span id="line-257">
+</span><span id="line-258"><span class="sd">    &gt;&gt;&gt; cast_to_jdict('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
+</span><span id="line-259"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
+</span><span id="line-260"><span class="sd">    """</span>
+</span><span id="line-261">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-262">        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-263">        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+</span><span id="line-264">            <span class="n">first_char</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="line-265">            <span class="k">if</span> <span class="n">first_char</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"["</span><span class="p">,</span> <span class="s2">"{"</span><span class="p">}:</span>
+</span><span id="line-266">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-267">            <span class="k">elif</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"true"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">,</span> <span class="s2">"null"</span><span class="p">]:</span>
+</span><span id="line-268">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-269">            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span id="line-270">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-271">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-272">                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+</span><span id="line-273">                    <span class="s2">"["</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s2">"]"</span>
+</span><span id="line-274">                <span class="p">)</span>  <span class="c1"># wrap in brackets and call json.loads</span>
+</span><span id="line-275">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-276">            <span class="k">return</span> <span class="s2">""</span>
+</span><span id="line-277">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-278">        <span class="k">return</span> <span class="n">value</span></div>
 
-</span><span id="line-273">
-</span><span id="line-274">
+</span><span id="line-279">
+</span><span id="line-280">
 <div class="viewcode-block" id="cast_to_list">
 <a class="viewcode-back" href="../../_autosummary/i2.io_trans.html#i2.io_trans.cast_to_list">[docs]</a>
-</span><span id="line-275"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-</span><span id="line-276"><span class="w">    </span><span class="sd">"""Tries to case to a list (with json friendly elements)</span>
-</span><span id="line-277">
-</span><span id="line-278"><span class="sd">    &gt;&gt;&gt; cast_to_list('3')</span>
-</span><span id="line-279"><span class="sd">    [3]</span>
-</span><span id="line-280"><span class="sd">    &gt;&gt;&gt; cast_to_list("[3]")</span>
-</span><span id="line-281"><span class="sd">    [3]</span>
-</span><span id="line-282"><span class="sd">    &gt;&gt;&gt; cast_to_list("[4,2]")</span>
-</span><span id="line-283"><span class="sd">    [4, 2]</span>
-</span><span id="line-284"><span class="sd">    &gt;&gt;&gt; cast_to_list('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
-</span><span id="line-285"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
-</span><span id="line-286">
-</span><span id="line-287"><span class="sd">    And csvs too:</span>
-</span><span id="line-288">
-</span><span id="line-289"><span class="sd">    &gt;&gt;&gt; cast_to_list('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
-</span><span id="line-290"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
-</span><span id="line-291"><span class="sd">    """</span>
-</span><span id="line-292">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-293">        <span class="n">value</span> <span class="o">=</span> <span class="n">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-294">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-</span><span id="line-295">        <span class="k">return</span> <span class="n">value</span>
-</span><span id="line-296">    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"tolist"</span><span class="p">):</span>  <span class="c1"># meant for numpy arrays</span>
-</span><span id="line-297">        <span class="c1"># what other potential attributes to check for?</span>
-</span><span id="line-298">        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-</span><span id="line-299">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-300">        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
-</span><span id="line-301">            <span class="n">value</span>
-</span><span id="line-302">        <span class="p">)</span>  <span class="c1"># will work with set, tuple, and other iterables (not recursively though: just level 0)</span></div>
+</span><span id="line-281"><span class="k">def</span><span class="w"> </span><span class="nf">cast_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span id="line-282"><span class="w">    </span><span class="sd">"""Tries to case to a list (with json friendly elements)</span>
+</span><span id="line-283">
+</span><span id="line-284"><span class="sd">    &gt;&gt;&gt; cast_to_list('3')</span>
+</span><span id="line-285"><span class="sd">    [3]</span>
+</span><span id="line-286"><span class="sd">    &gt;&gt;&gt; cast_to_list("[3]")</span>
+</span><span id="line-287"><span class="sd">    [3]</span>
+</span><span id="line-288"><span class="sd">    &gt;&gt;&gt; cast_to_list("[4,2]")</span>
+</span><span id="line-289"><span class="sd">    [4, 2]</span>
+</span><span id="line-290"><span class="sd">    &gt;&gt;&gt; cast_to_list('[4, "string", ["another", "list"], {"nested": 10.2}]')</span>
+</span><span id="line-291"><span class="sd">    [4, 'string', ['another', 'list'], {'nested': 10.2}]</span>
+</span><span id="line-292">
+</span><span id="line-293"><span class="sd">    And csvs too:</span>
+</span><span id="line-294">
+</span><span id="line-295"><span class="sd">    &gt;&gt;&gt; cast_to_list('1,2,3.4, "string" ,  null, true, false, ["a", "list"]')</span>
+</span><span id="line-296"><span class="sd">    [1, 2, 3.4, 'string', None, True, False, ['a', 'list']]</span>
+</span><span id="line-297"><span class="sd">    """</span>
+</span><span id="line-298">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-299">        <span class="n">value</span> <span class="o">=</span> <span class="n">cast_to_jdict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-300">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+</span><span id="line-301">        <span class="k">return</span> <span class="n">value</span>
+</span><span id="line-302">    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"tolist"</span><span class="p">):</span>  <span class="c1"># meant for numpy arrays</span>
+</span><span id="line-303">        <span class="c1"># what other potential attributes to check for?</span>
+</span><span id="line-304">        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</span><span id="line-305">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-306">        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+</span><span id="line-307">            <span class="n">value</span>
+</span><span id="line-308">        <span class="p">)</span>  <span class="c1"># will work with set, tuple, and other iterables (not recursively though: just level 0)</span></div>
 
-</span><span id="line-303">
-</span><span id="line-304">
-</span><span id="line-305"><span class="c1"># @dataclass</span>
-</span><span id="line-306"><span class="c1"># class PickleFallbackTypedBasedOutIoTrans(TypedBasedOutIoTrans):</span>
-</span><span id="line-307"><span class="c1">#     dflt_trans_func = pickle_out_trans</span>
+</span><span id="line-309">
+</span><span id="line-310">
+</span><span id="line-311"><span class="c1"># @dataclass</span>
+</span><span id="line-312"><span class="c1"># class PickleFallbackTypedBasedOutIoTrans(TypedBasedOutIoTrans):</span>
+</span><span id="line-313"><span class="c1">#     dflt_trans_func = pickle_out_trans</span>
 </span></code></pre></div>
     </div></div>
           </main>
@@ -524,7 +530,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=1d9edaf8"></script>
+    <script src="../../_static/documentation_options.js?v=d6174a35"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
