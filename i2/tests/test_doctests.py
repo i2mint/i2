@@ -79,9 +79,9 @@ def test_docstring_to_code_runs_as_a_test():
 
 def test_docstring_to_code_for_markdown_and_without_text():
     doc = "Text.\n\n>>> 1 + 1\n2\n"
-    assert docstring_to_code(doc, example_callback=output_prefix, text_callback=None) == (
-        "1 + 1\n# OUTPUT: 2"
-    )
+    assert docstring_to_code(
+        doc, example_callback=output_prefix, text_callback=None
+    ) == ("1 + 1\n# OUTPUT: 2")
     assert docstring_to_code(doc, example_callback=assert_wants) == (
         "# Text.\nassert (1 + 1) == 2 #"
     )
@@ -93,18 +93,33 @@ def test_split_blocks_alternate_text_and_doctests():
 
 
 def test_doc_mint_still_exports_the_moved_names():
-    for name in ("doctest_string", "doctest_string_print", "non_doctest_lines",
-                 "split_text_and_doctests", "DoctestBlock", "ExampleX", "assert_wants"):
-        assert getattr(doc_mint, name) is getattr(importlib.import_module("i2.doctests"), name)
+    for name in (
+        "doctest_string",
+        "doctest_string_print",
+        "non_doctest_lines",
+        "split_text_and_doctests",
+        "DoctestBlock",
+        "ExampleX",
+        "assert_wants",
+    ):
+        assert getattr(doc_mint, name) is getattr(
+            importlib.import_module("i2.doctests"), name
+        )
 
 
 def test_non_doctest_lines_on_crlf_matches_lf():
     doc = "a\n>>> x\n1\n\nb\n"
-    assert list(non_doctest_lines(doc.replace("\n", "\r\n"))) == list(non_doctest_lines(doc)) == ["a", "b"]
+    assert (
+        list(non_doctest_lines(doc.replace("\n", "\r\n")))
+        == list(non_doctest_lines(doc))
+        == ["a", "b"]
+    )
 
 
 def test_an_example_expecting_an_exception_becomes_a_raises_check():
-    code = docstring_to_code(">>> int('x')\nTraceback (most recent call last):\n...\nValueError: x\n")
+    code = docstring_to_code(
+        ">>> int('x')\nTraceback (most recent call last):\n...\nValueError: x\n"
+    )
     exec(code)  # int('x') raises, so the check passes
     with pytest.raises(AssertionError):
         exec(code.replace("int('x')", "int('1')"))

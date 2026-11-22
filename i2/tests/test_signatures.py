@@ -121,14 +121,14 @@ def test_signature_equality_and_hashing():
         pickle.loads(pickle.dumps(ref_sig)),  # un-pickled signature
     ]
 
-    assert all(
-        sig == ref_sig for sig in sigs
-    ), "sigs should be equal from a == point of view"
+    assert all(sig == ref_sig for sig in sigs), (
+        "sigs should be equal from a == point of view"
+    )
 
     # Let's see that
-    assert all(
-        hash(sig) == hash(ref_sig) for sig in sigs
-    ), "sigs should have the same hash"
+    assert all(hash(sig) == hash(ref_sig) for sig in sigs), (
+        "sigs should have the same hash"
+    )
 
     # ... and if that wasn't convincing, let's see how the sigs behave as dict keys:
     # If sigs were different, the following would add key-value pairs to the base dict.
@@ -416,9 +416,9 @@ def mk_sig(
     if not annotations:
         return Signature(params.values(), return_annotation=return_annotations)
     else:
-        assert set(annotations) <= set(
-            params
-        ), f"These argument names weren't found in the signature: {set(annotations) - set(params)}"
+        assert set(annotations) <= set(params), (
+            f"These argument names weren't found in the signature: {set(annotations) - set(params)}"
+        )
         for name, annotation in annotations.items():
             p = params[name]
             params[name] = Parameter(
@@ -763,9 +763,9 @@ def test_call_compatibility(sig_spec1, sig_spec2):
                 raise
             else:
                 return
-    assert (
-        is_compatible
-    ), f"sig1 is not compatible with sig2, when it should: {sig1} and {sig2}"
+    assert is_compatible, (
+        f"sig1 is not compatible with sig2, when it should: {sig1} and {sig2}"
+    )
 
 
 def test_bool():
@@ -2477,7 +2477,7 @@ def _po_pk_ko(a, /, b, *, c=None):
         (_pos_and_kws, (), dict(a=3), _pos_and_kws(a=3)),
         (_pos_and_kws, (), {}, _pos_and_kws()),
         # The case left as "not yet handled" in ch_func_to_all_pk's docstring (with a
-    # default for ``z``: a required keyword-only param after ``*y`` can't be made PK)
+        # default for ``z``: a required keyword-only param after ``*y`` can't be made PK)
         (_x_vp_z, (1, (2, 3)), dict(z=4), _x_vp_z(1, 2, 3, z=4)),
         (_x_vp_z, (1,), dict(y=(2, 3), z=4), _x_vp_z(1, 2, 3, z=4)),
         (_x_vp_z, (1, (2, 3), 4), {}, _x_vp_z(1, 2, 3, z=4)),
@@ -2577,7 +2577,12 @@ def _a_b_kw_only(a, b=2, **kw):
         (_a_b_args, (1, 5, [2, 3]), {}, _a_b_args(1, 5, 2, 3)),
         # With keyword-only and variadic keyword params
         (_a_args_k_kw, (1, (2,)), dict(k=3, x=4), _a_args_k_kw(1, 2, k=3, x=4)),
-        (_a_args_k_kw, (), dict(a=1, args=(2,), k=3, x=4), _a_args_k_kw(1, 2, k=3, x=4)),
+        (
+            _a_args_k_kw,
+            (),
+            dict(a=1, args=(2,), k=3, x=4),
+            _a_args_k_kw(1, 2, k=3, x=4),
+        ),
         (_a_args_k_kw, (1,), dict(x=4), _a_args_k_kw(1, x=4)),
         # The variadic keyword can also be given by name, as a dict (the convention of
         # ``Sig.mk_args_and_kwargs``); it was silently dropped on 0.1.74
@@ -2641,7 +2646,9 @@ def test_all_pk_signature_keeps_a_required_keyword_only_after_a_default():
     assert str(all_pk_signature(Sig(lambda *, a=1, b: 0))) == "(a=1, *, b)"
     assert str(all_pk_signature(Sig(lambda a=1, *, b, **kw: 0))) == "(a=1, *, b, **kw)"
     # Nothing after an (untupled) *args can be made positional-or-keyword either
-    assert str(all_pk_signature(Sig(lambda a, *args, b, c=2: 0))) == "(a, *args, b, c=2)"
+    assert (
+        str(all_pk_signature(Sig(lambda a, *args, b, c=2: 0))) == "(a, *args, b, c=2)"
+    )
     assert str(all_pk_signature(Sig(lambda a, /, *args, b=1: 0))) == "(a, *args, b=1)"
 
 
@@ -2727,7 +2734,13 @@ def _a_args_kwargs(a, *args, **kwargs):
         # the variadic keywords given by name are kept under every policy
         (_a_b_kwargs, "drop", (1,), dict(kwargs=dict(x=3), q=4), (1, 2, dict(x=3))),
         (_a_args_kwargs, "drop", (1,), dict(kwargs=dict(x=3), q=4), (1, (), dict(x=3))),
-        (_a_b_kwargs, "forward", (1,), dict(kwargs=dict(x=3), q=4), (1, 2, dict(x=3, q=4))),
+        (
+            _a_b_kwargs,
+            "forward",
+            (1,),
+            dict(kwargs=dict(x=3), q=4),
+            (1, 2, dict(x=3, q=4)),
+        ),
         # functions without **kwargs have nowhere to forward to
         (_po_pk_ko, "forward", (1, 2), dict(d=5), (1, 2, None)),
         (_x_vp_z, "drop", (1, (2, 3)), dict(z=4, d=5), _x_vp_z(1, 2, 3, z=4)),
