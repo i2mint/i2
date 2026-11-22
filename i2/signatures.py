@@ -165,11 +165,11 @@ class FuncCallNotMatchingSignature(TypeError):
 
 
 class IncompatibleSignatures(ValueError):
-    from pprint import pformat
-
     """Raise when two signatures are not compatible.
     (see https://github.com/i2mint/i2/discussions/76 for more information on signature
     compatibility)"""
+
+    from pprint import pformat
 
     def __init__(self, *args, sig1=None, sig2=None, **kwargs):
         args = list(args or ("",))
