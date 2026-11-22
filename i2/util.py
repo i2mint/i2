@@ -21,6 +21,7 @@ from typing import (
 from collections.abc import Mapping, Callable, MutableMapping, Iterable, Iterator
 from collections import namedtuple
 import contextlib
+import warnings
 import io
 
 T = TypeVar("T")
@@ -1644,3 +1645,50 @@ def get_app_folder(folder_kind: AppFolderKind = DFLT_APP_FOLDER_KIND):
 
 get_app_config_folder = partial(get_app_folder, folder_kind="config")
 get_app_data_folder = partial(get_app_folder, folder_kind="data")
+
+
+def _package_dir(module_name: str, filename: str) -> str:
+    """Directory of the top-level package of *module_name* (else of *filename*)."""
+    top = sys.modules.get(module_name.partition(".")[0])
+    path = getattr(top, "__file__", None) or filename
+    return os.path.dirname(os.path.abspath(path))
+
+
+def warn_at_caller(
+    message,
+    category=UserWarning,
+    *,
+    plumbing: Iterable[str] | None = None,
+) -> None:
+    """Warn, attributing the warning to the first frame outside the *plumbing*.
+
+    A fixed ``stacklevel`` breaks as soon as the call path gains a frame (a
+    helper, a ``@contextmanager``, a cache); this walks the stack instead, so the
+    warning names the line of the user's code that called into your package.
+
+    ``plumbing`` is an iterable of file path prefixes to skip. The default is the
+    directory of the package that calls this function, plus :mod:`contextlib`.
+    Works on every supported Python (``warnings.warn(skip_file_prefixes=...)``
+    needs 3.12).
+
+    >>> import warnings
+    >>> with warnings.catch_warnings(record=True) as w:
+    ...     warnings.simplefilter("always")
+    ...     warn_at_caller("careful", plumbing=[])
+    >>> w[0].message.args
+    ('careful',)
+    """
+    frame = sys._getframe(1)
+    if plumbing is None:
+        plumbing = (
+            _package_dir(frame.f_globals.get("__name__", ""), frame.f_code.co_filename),
+        )
+    prefixes = (*map(os.fspath, plumbing), contextlib.__file__)
+    stacklevel = 2  # 1 would be this function; 2 is its caller
+    while frame is not None and frame.f_code.co_filename.startswith(prefixes):
+        nxt = frame.f_back
+        if nxt is None:
+            break
+        frame = nxt
+        stacklevel += 1
+    warnings.warn(message, category, stacklevel=stacklevel)
