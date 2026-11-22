@@ -77,3 +77,34 @@ def test_get_app_folder_ignores_empty_and_relative_env_var(monkeypatch, tmp_path
     # ``~`` is still expanded (backward compatible)
     monkeypatch.setenv(env_var, "~/somewhere")
     assert get_app_folder("config") == os.path.expanduser("~/somewhere")
+
+
+def test_warn_at_caller_skips_plumbing_frames(tmp_path, monkeypatch):
+    import sys
+    import warnings
+
+    pkg = tmp_path / "wacpkg"
+    pkg.mkdir()
+    (pkg / "__init__.py").write_text(
+        "import contextlib\n"
+        "from i2.util import warn_at_caller\n"
+        "def _inner(): warn_at_caller('hey')\n"
+        "def helper(): _inner()\n"
+        "@contextlib.contextmanager\n"
+        "def cm():\n"
+        "    _inner()\n"
+        "    yield\n"
+    )
+    monkeypatch.syspath_prepend(str(tmp_path))
+    import wacpkg
+
+    try:
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            wacpkg.helper()  # one extra frame in the package
+            with wacpkg.cm():  # contextlib frames in between
+                pass
+        assert [x.filename for x in w] == [__file__, __file__]
+        assert w[0].lineno != w[1].lineno
+    finally:
+        sys.modules.pop("wacpkg", None)
