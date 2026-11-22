@@ -381,7 +381,7 @@ def literal_eval_converter(s: str, max_length=_MAX_LENGTH_FOR_LITERAL_EVAL):
         return None
 
 
-def register_converter(converter):
+def register_converter(converter) -> None:
     """
     Register a new converter. A converter can be:
 

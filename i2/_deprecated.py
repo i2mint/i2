@@ -62,7 +62,7 @@ class Command:
     Calling <built-in function print>(*('hello', 'world'), **{'sep': ', '}) with result: None
     """
 
-    def __init__(self, func, *args, **kwargs):
+    def __init__(self, func, *args, **kwargs) -> None:
         self.func = func
         self.args = args
         self.kwargs = kwargs
@@ -98,7 +98,7 @@ class Command:
         curried_command_cls = partial(Command, func)
         return sig(curried_command_cls)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         def to_str(x, quote="'"):
             if isinstance(x, str):
                 return quote + x + quote

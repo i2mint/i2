@@ -341,7 +341,7 @@ class MultiObj(Mapping):
     # can set this to ``False``. See i2#46.
     single_mapping_is_objects = True
 
-    def __init__(self, *unnamed, **named):
+    def __init__(self, *unnamed, **named) -> None:
         named = self._process_reserved_names(named)
 
         if (
@@ -379,10 +379,10 @@ class MultiObj(Mapping):
     def __getitem__(self, k):
         return self.objects[k]
 
-    def __contains__(self, k):
+    def __contains__(self, k) -> bool:
         return k in self.objects
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.objects)
 
     def __getattr__(self, item):
@@ -392,7 +392,7 @@ class MultiObj(Mapping):
         else:
             raise AttributeError(f"Not an attribute: {item}")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<{type(self).__name__} containing: {', '.join(self)}>"
 
     def __getstate__(self):
@@ -403,7 +403,7 @@ class MultiObj(Mapping):
             setattr(self, k, v)
 
 
-def iterable_of_callables_validation(funcs: Iterable[Callable]):
+def iterable_of_callables_validation(funcs: Iterable[Callable]) -> None:
     """Raise ``TypeError`` unless ``funcs`` is an iterable whose elements are all callable."""
     if not isinstance(funcs, Iterable):
         raise TypeError(f"Not an iterable: {funcs}")
@@ -426,7 +426,7 @@ class MultiFunc(MultiObj):
     TypeError: These were not callable: [3]
     """
 
-    def __init__(self, *unnamed_funcs, **named_funcs):
+    def __init__(self, *unnamed_funcs, **named_funcs) -> None:
         # The basic MultiObj initialization
         super().__init__(*unnamed_funcs, **named_funcs)
         # The extra stuff we want to do with functions
@@ -502,7 +502,7 @@ class Pipe(MultiFunc):
     'Apply func and add'
     """
 
-    def __init__(self, *unnamed_funcs, **named_funcs):
+    def __init__(self, *unnamed_funcs, **named_funcs) -> None:
         # The basic MultiFunc initialization
         super().__init__(*unnamed_funcs, **named_funcs)
 
@@ -563,7 +563,7 @@ class Pipe(MultiFunc):
         func_name = name_of_obj(func, default=f"")
         return f"(name={func_name}, key={key}, index={i})"
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.funcs)
 
     def __eq__(self, other):
@@ -601,7 +601,7 @@ def flatten_pipe(pipe):
     return Pipe(*_flatten_pipe(pipe))
 
 
-def pipes_are_equal(p1, p2, *, func_equality=eq, verbose=False):
+def pipes_are_equal(p1, p2, *, func_equality=eq, verbose=False) -> bool:
     """Determine if two pipelines are equal.
 
     Pipelines are equal if their flattened versions have equal functions.
@@ -801,7 +801,7 @@ class FlexFuncFanout(MultiFunc):
     def normalize_func(self, func):
         return ch_func_to_all_pk(tuple_the_args(func))
 
-    def __init__(self, *unnamed_funcs, **named_funcs):
+    def __init__(self, *unnamed_funcs, **named_funcs) -> None:
         # The basic MultiFunc initialization
         super().__init__(*unnamed_funcs, **named_funcs)
 

@@ -202,7 +202,7 @@ class FuncFactory:
     'hello'
     """
 
-    def __init__(self, func, *, include=(), exclude=()):
+    def __init__(self, func, *, include=(), exclude=()) -> None:
         self.func = func
         func_sig = Sig(func)
         include, exclude = map(func_sig.get_names, (include, exclude))
@@ -258,7 +258,7 @@ class FuncFactory:
         args, kwargs = self._process_args_and_kwargs(args, kwargs)
         return partial(self.func, *args, **kwargs)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<FuncFactory({name_of_obj(self.func)})>{self.__signature__}"
 
     @classmethod
@@ -1103,7 +1103,7 @@ def mk_input_and_output_method_wrapper(method_output_trans=None, **arg_trans):
 
 def transform_class_method_input_and_output(
     cls, method, method_output_trans=None, **arg_trans
-):
+) -> None:
     """Replace ``cls.method`` in place with a version whose named arguments are
     transformed by ``arg_trans`` and whose output by ``method_output_trans``."""
     wrapped_method = transform_args(**arg_trans)(getattr(cls, method))

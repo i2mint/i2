@@ -171,7 +171,7 @@ class IncompatibleSignatures(ValueError):
 
     from pprint import pformat
 
-    def __init__(self, *args, sig1=None, sig2=None, **kwargs):
+    def __init__(self, *args, sig1=None, sig2=None, **kwargs) -> None:
         args = list(args or ("",))
         sig_pairs = None
         if sig1 and sig2:
@@ -581,11 +581,11 @@ class MissingArgValFor:
     MissingArgValFor("argname")
     """
 
-    def __init__(self, argname: str):
+    def __init__(self, argname: str) -> None:
         assert isinstance(argname, str)
         self.argname = argname
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'MissingArgValFor("{self.argname}")'
 
 
@@ -855,7 +855,7 @@ class Param(Parameter):
     VP = Parameter.VAR_POSITIONAL
     VK = Parameter.VAR_KEYWORD
 
-    def __init__(self, name, kind=PK, *, default=empty, annotation=empty):
+    def __init__(self, name, kind=PK, *, default=empty, annotation=empty) -> None:
         super().__init__(name, kind, default=default, annotation=annotation)
 
     def __lt__(self, other) -> bool:
@@ -1122,7 +1122,7 @@ class Sig(Signature, Mapping):
         name=None,
         return_annotation=empty,
         __validate_parameters__=True,
-    ):
+    ) -> None:
         """Initialize a Sig instance.
 
         See Also:
@@ -1417,7 +1417,7 @@ class Sig(Signature, Mapping):
         """
         return cls.sig_or_default(obj, default_signature=None)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return True
 
     def _positional_and_keyword_defaults(self):
@@ -1710,7 +1710,7 @@ class Sig(Signature, Mapping):
     def __iter__(self):
         return iter(self.parameters)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.parameters)
 
     # TODO: Return type inconsistent. When k is a string, returns Parameter,
@@ -4368,7 +4368,7 @@ arg_order_for_param_tuple = ("name", "default", "annotation", "kind")
 
 def set_signature_of_func(
     func, parameters, *, return_annotation=empty, __validate_parameters__=True
-):
+) -> None:
     """Set the signature of a function, with sugar.
 
     Args:
@@ -4780,35 +4780,35 @@ class sigs_for_builtins:
     def __import__(name, globals=None, locals=None, fromlist=(), level=0):
         """__import__(name, globals=None, locals=None, fromlist=(), level=0) -> module"""
 
-    def filter(function, iterable, /):
+    def filter(function, iterable, /) -> None:
         """filter(function or None, iterable) --> filter object"""
 
-    def map(func, iterable, /, *iterables):
+    def map(func, iterable, /, *iterables) -> None:
         """``map(func, *iterables) --> map object``"""
 
-    def print(*value, sep=" ", end="\n", file=sys.stdout, flush=False):
+    def print(*value, sep=" ", end="\n", file=sys.stdout, flush=False) -> None:
         r"""``print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)``"""
 
-    def zip(*iterables):
+    def zip(*iterables) -> None:
         """``zip(*iterables) --> A zip object yielding tuples until an input is exhausted.``"""
 
     def bool(x: Any, /) -> bool: ...
 
-    def bytearray(iterable_of_ints: Iterable[int], /): ...
+    def bytearray(iterable_of_ints: Iterable[int], /) -> None: ...
 
-    def classmethod(function: Callable, /): ...
+    def classmethod(function: Callable, /) -> None: ...
 
-    def int(x, base=10, /): ...
+    def int(x, base=10, /) -> None: ...
 
-    def iter(callable: Callable, sentinel=None, /): ...
+    def iter(callable: Callable, sentinel=None, /) -> None: ...
 
-    def next(iterator: Iterator, default=None, /): ...
+    def next(iterator: Iterator, default=None, /) -> None: ...
 
-    def staticmethod(function: Callable, /): ...
+    def staticmethod(function: Callable, /) -> None: ...
 
-    def str(bytes_or_buffer, encoding=None, errors=None, /): ...
+    def str(bytes_or_buffer, encoding=None, errors=None, /) -> None: ...
 
-    def super(type_, obj=None, /): ...
+    def super(type_, obj=None, /) -> None: ...
 
     # def type(name, bases=None, dict=None, /):
     #     ...
@@ -5202,7 +5202,7 @@ def dflt1_is_empty_or_dflt2_is_not(dflt1, dflt2):
 
 
 # TODO: Implement annotation compatibility
-def ignore_any_differences(x, y):
+def ignore_any_differences(x, y) -> bool:
     """A comparator that always returns ``True`` (used to ignore a parameter attribute)."""
     return True
 

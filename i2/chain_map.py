@@ -141,7 +141,7 @@ class ChainMapTree(Mapping):
         7  # Not used (anymore) at this point. Was to control __repr__ output length
     )
 
-    def __init__(self, *maps):
+    def __init__(self, *maps) -> None:
         _maps = list(maps)
 
         # All keys of kids that are mappings
@@ -175,7 +175,7 @@ class ChainMapTree(Mapping):
     def __iter__(self):
         return unique_iter(chain(*(_map.__iter__() for _map in self._maps)))
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(list(self.__iter__()))
 
     def _mk_keys_str(self, keys):
@@ -220,7 +220,7 @@ class ChainMapTree(Mapping):
                 d[k] = v.to_dict()
         return d
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.__class__.__name__}({', '.join(_map.__repr__() for _map in self._maps)})"
         #         map_keys_strs = self._mk_keys_str(self.keys())
         #         map_keys_strs = []

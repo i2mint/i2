@@ -69,7 +69,7 @@ class ExampleX(doctest.Example):
         lineno=0,
         indent=0,
         options=None,
-    ):
+    ) -> None:
         # if source is already a doctest.Example instance, use its properties as args
         if isinstance(source, doctest.Example):
             o = source
@@ -96,26 +96,26 @@ class ExampleX(doctest.Example):
             t = t[: -len(indented_continuation)]
         return t
 
-    def __str__(self):
+    def __str__(self) -> str:
         want = self.want
         if self.want:
             want = self.indent_str + want
         return self.indent_str + self.source_prefix + self._source_str + want
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
 
 class DoctestBlock(list):
     """A list that (should) contain doctest Example instances"""
 
-    def __init__(self, seq=()):
+    def __init__(self, seq=()) -> None:
         super().__init__(map(ExampleX, seq))
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "".join(map(str, self))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<DoctestBlock with {len(self)} examples>\n" + str(self)
 
 

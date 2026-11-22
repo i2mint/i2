@@ -217,7 +217,7 @@ class KeyPathMap(MutableMapping):
         key_type: type = None,
         node_type: type = None,
         auto_node_writes=False,
-    ):
+    ) -> None:
         """
         Initialize a KeyPathMap.
 
@@ -259,7 +259,7 @@ class KeyPathMap(MutableMapping):
         else:
             return self.store.__getitem__(k)
 
-    def __setitem__(self, k, v):
+    def __setitem__(self, k, v) -> None:
         if self.auto_node_writes:
             self._recursive_setitem(k, v)
         else:
@@ -271,7 +271,7 @@ class KeyPathMap(MutableMapping):
             else:
                 self.store.__setitem__(k, v)
 
-    def __delitem__(self, k):
+    def __delitem__(self, k) -> None:
         if not self.is_key(k):
             if len(k) == 1:
                 self.store.__delitem__(k[0])
@@ -289,7 +289,7 @@ class KeyPathMap(MutableMapping):
     def __iter__(self):
         return map(lambda x: x[0], self.items())
 
-    def __contains__(self, k):
+    def __contains__(self, k) -> bool:
         if self.is_key(k):
             return self.store.__contains__(k)
         else:
@@ -301,7 +301,7 @@ class KeyPathMap(MutableMapping):
                     d = d[kk]
             return True  # if you got so far, you have all the keys in the path
 
-    def __len__(self):
+    def __len__(self) -> int:
         c = 0
         for _ in self.items():
             c += 1
@@ -340,7 +340,7 @@ class KeyPathMap(MutableMapping):
                     for kk, vv in self._items(v, k):
                         yield key_path_prefix + list(kk), vv
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.store.__repr__()
 
     def flat_dict(self):
@@ -441,7 +441,7 @@ class StrKeyPath(KeyPathMap):
         auto_node_writes=False,
         sep: str = ".",
         prefix: str = "",
-    ):
+    ) -> None:
         prefix_length = len(prefix)
         self.sep = sep
         self.prefix = prefix
@@ -457,13 +457,13 @@ class StrKeyPath(KeyPathMap):
     def __getitem__(self, k):
         return super().__getitem__(self._id_of_key(k))
 
-    def __setitem__(self, k, v):
+    def __setitem__(self, k, v) -> None:
         return super().__setitem__(self._id_of_key(k), v)
 
-    def __delitem__(self, k):
+    def __delitem__(self, k) -> None:
         return super().__delitem__(self._id_of_key(k))
 
-    def __contains__(self, k):
+    def __contains__(self, k) -> bool:
         return super().__contains__(self._id_of_key(k))
 
     def items(self):
@@ -483,7 +483,7 @@ class KeyPathTrans:
     given to the method as input.
     """
 
-    def __init__(self, sep: str = ".", node_type: type = dict, mk_new_node=None):
+    def __init__(self, sep: str = ".", node_type: type = dict, mk_new_node=None) -> None:
         """
 
         :param sep:
@@ -559,7 +559,7 @@ class KeyPathTrans:
         except (TypeError, KeyError):
             return default_val
 
-    def setitem(self, d, key_path, val):
+    def setitem(self, d, key_path, val) -> None:
         """
         setting with a key list or "."-separated string
 
@@ -572,7 +572,7 @@ class KeyPathTrans:
             key_path = key_path.split(self.sep)
         self.getitem(d, key_path[:-1])[key_path[-1]] = val
 
-    def setitem_recursive(self, d, key_path, val):
+    def setitem_recursive(self, d, key_path, val) -> None:
         """
 
         :param d:

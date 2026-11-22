@@ -23,10 +23,10 @@ inspect_empty = Parameter.empty
 class NotFoundType:
     """Type of the ``not_found`` sentinel: falsy, repr ``NotFound``."""
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "NotFound"
 
 
@@ -37,7 +37,7 @@ no_name = type("NoName", (NotFoundType,), {})()
 inspect_is_empty = inspect._empty
 
 
-def is_not_empty(obj):
+def is_not_empty(obj) -> bool:
     """False for ``inspect.Parameter.empty`` and ``NotFoundType`` instances, True otherwise."""
     if obj is inspect_is_empty or isinstance(obj, NotFoundType):
         return False
@@ -78,7 +78,7 @@ def name_of_obj(o):
 class AttrFromKey:
     """Expose the keys of a mapping as attributes (``obj.k`` reads ``d[k]``)."""
 
-    def __init__(self, d):
+    def __init__(self, d) -> None:
         self._d = d
 
     def __getattr__(self, k):
@@ -90,7 +90,7 @@ class AttrFromKey:
 class KeyFromAttr:
     """Expose the attributes of an object as mapping keys (``obj[k]`` reads ``getattr(d, k)``)."""
 
-    def __init__(self, d):
+    def __init__(self, d) -> None:
         self._d = d
 
     def __getitem__(self, k):
@@ -104,7 +104,7 @@ class _ParameterMintLazy:  # Note: Experimental
 
     #     find = DelegatedAttribute('_params', '__getattribute__')
     #     __getattribute__ = DelegatedAttribute('_params', '__getattribute__')
-    def __init__(self, param, _attrs=None):
+    def __init__(self, param, _attrs=None) -> None:
         self._param = param
         if _attrs is not None:
             # usually used to get full attrs: ['name', 'kind', 'default', 'annotation']
@@ -119,7 +119,7 @@ class _ParameterMintLazy:  # Note: Experimental
     def __getitem__(self, k):
         return getattr(self._param, k)
 
-    def __contains__(self, k):
+    def __contains__(self, k) -> bool:
         try:
             _ = self[k]
             return True
@@ -142,7 +142,7 @@ class ParameterMint:
 
     _attrs = ["name", "kind", "default", "annotation"]
 
-    def __init__(self, param, position=None):
+    def __init__(self, param, position=None) -> None:
         if hasattr(param, "__getitem__"):
             param = AttrFromKey(param)
 
@@ -158,7 +158,7 @@ class ParameterMint:
     def __getitem__(self, k):
         return getattr(self, k)
 
-    def __contains__(self, k):
+    def __contains__(self, k) -> bool:
         try:
             _ = self[k]
             return True
@@ -176,7 +176,7 @@ class ParameterMint:
     def __getstate__(self):
         return {k: v for k, v in self.items()}
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         d = dict()
         for k, v in self.items():
             if k == "kind":
@@ -241,7 +241,7 @@ class ParametersMint(Mapping):
      'kwds': {'name': 'kwds', 'kind': 'VAR_KEYWORD', 'position': 2}}
     """
 
-    def __init__(self, params=dflt_params):
+    def __init__(self, params=dflt_params) -> None:
         self._param_names = list()
         for i, (k, v) in enumerate(params.items()):
             self._param_names.append(k)
@@ -257,7 +257,7 @@ class ParametersMint(Mapping):
         for k in self._param_names:
             yield k, getattr(self, k)
 
-    def __len__(self):
+    def __len__(self) -> int:
         c = 0
         for k in self.__iter__():
             c += 1
@@ -272,7 +272,7 @@ class ParametersMint(Mapping):
     def to_dict(self):
         return self.__getstate__()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         arg_repr = str({k: v.__repr__() for k, v in self.items()})
         return f"{self.__class__.__name__}({arg_repr})"
 
@@ -303,7 +303,7 @@ class Mint(Mapping):
     >>> assert set(list(mint)) == {'type_name'}  # see that there's only one non-null attr!
     """
 
-    def __init__(self, obj, attrs=None):
+    def __init__(self, obj, attrs=None) -> None:
         self._obj = obj
         if attrs is None:
             attrs = frozenset(_property_names_of(type(self)))
@@ -316,7 +316,7 @@ class Mint(Mapping):
                     )
         self._attrs = attrs
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self._length
 
     def __iter__(self):
