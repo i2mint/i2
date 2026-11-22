@@ -367,13 +367,13 @@
 </span><span id="line-180">    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="line-181">        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span>
 </span><span id="line-182">
-</span><span id="line-183">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-183">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="line-184">        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">)</span>
 </span><span id="line-185">
-</span><span id="line-186">    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-186">    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-187">        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 </span><span id="line-188">
-</span><span id="line-189">    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+</span><span id="line-189">    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-190">        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span></div>
 
 </span><span id="line-191">
@@ -842,7 +842,7 @@
 </span><span id="line-624">
 <div class="viewcode-block" id="test_routing_forest">
 <a class="viewcode-back" href="../../_autosummary/i2.routing_forest.html#i2.routing_forest.test_routing_forest">[docs]</a>
-</span><span id="line-625"><span class="k">def</span><span class="w"> </span><span class="nf">test_routing_forest</span><span class="p">():</span>
+</span><span id="line-625"><span class="k">def</span><span class="w"> </span><span class="nf">test_routing_forest</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-626"><span class="w">    </span><span class="sd">"""Exercise the routing nodes end to end (kept here as a runnable example)."""</span>
 </span><span id="line-627">
 </span><span id="line-628">    <span class="k">def</span><span class="w"> </span><span class="nf">could_be_int</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -994,7 +994,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=d6174a35"></script>
+    <script src="../../_static/documentation_options.js?v=726fce2c"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

@@ -220,7 +220,7 @@
 </span><span id="line-38">
 <div class="viewcode-block" id="return_false">
 <a class="viewcode-back" href="../../_autosummary/i2.util.html#i2.util.return_false">[docs]</a>
-</span><span id="line-39"><span class="k">def</span><span class="w"> </span><span class="nf">return_false</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-39"><span class="k">def</span><span class="w"> </span><span class="nf">return_false</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="line-40"><span class="w">    </span><span class="sd">"""Return False, whatever the arguments.</span>
 </span><span id="line-41">
 </span><span id="line-42"><span class="sd">    &gt;&gt;&gt; return_false(1, x=2)</span>
@@ -232,7 +232,7 @@
 </span><span id="line-47">
 <div class="viewcode-block" id="return_true">
 <a class="viewcode-back" href="../../_autosummary/i2.util.html#i2.util.return_true">[docs]</a>
-</span><span id="line-48"><span class="k">def</span><span class="w"> </span><span class="nf">return_true</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-48"><span class="k">def</span><span class="w"> </span><span class="nf">return_true</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="line-49"><span class="w">    </span><span class="sd">"""Return True, whatever the arguments.</span>
 </span><span id="line-50">
 </span><span id="line-51"><span class="sd">    &gt;&gt;&gt; return_true(1, x=2)</span>
@@ -444,7 +444,7 @@
 </span><span id="line-245">        <span class="n">handlers</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="ne">BaseException</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">ignore_exception</span><span class="p">,</span>
 </span><span id="line-246">        <span class="o">*</span><span class="p">,</span>
 </span><span id="line-247">        <span class="n">prevent_propagation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="line-248">    <span class="p">):</span>
+</span><span id="line-248">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-249">        <span class="bp">self</span><span class="o">.</span><span class="n">exception_types</span> <span class="o">=</span> <span class="n">exception_types</span>
 </span><span id="line-250">        <span class="bp">self</span><span class="o">.</span><span class="n">exception_condition</span> <span class="o">=</span> <span class="n">exception_condition</span>
 </span><span id="line-251">        <span class="bp">self</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="n">handlers</span>
@@ -727,7 +727,7 @@
 </span><span id="line-501"><span class="sd">    https://stackoverflow.com/questions/73980648/how-to-transform-a-lambda-function-into-a-pickle-able-function</span>
 </span><span id="line-502"><span class="sd">    """</span>
 </span><span id="line-503">
-</span><span id="line-504">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="line-504">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-505">        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 </span><span id="line-506">        <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
 </span><span id="line-507">        <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
@@ -743,7 +743,7 @@
 </span><span id="line-517">    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span id="line-518">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span id="line-519">
-</span><span id="line-520">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-520">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-521">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)&gt;"</span></div>
 
 </span><span id="line-522">
@@ -804,7 +804,7 @@
 </span><span id="line-572">    <span class="n">factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
 </span><span id="line-573">    <span class="n">scope</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">,</span>
 </span><span id="line-574">    <span class="n">allow_overwrites</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="line-575"><span class="p">):</span>
+</span><span id="line-575"><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-576"><span class="w">    </span><span class="sd">"""</span>
 </span><span id="line-577"><span class="sd">    Make several string-parametrized objects and insert them in a scope (e.g. locals()).</span>
 </span><span id="line-578">
@@ -876,7 +876,7 @@
 </span><span id="line-641"><span class="sd">    42</span>
 </span><span id="line-642"><span class="sd">    """</span>
 </span><span id="line-643">
-</span><span id="line-644">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span id="line-644">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-645">        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
 </span><span id="line-646">
 <div class="viewcode-block" id="LiteralVal.get_val">
@@ -1051,7 +1051,7 @@
 </span><span id="line-801"><span class="sd">    3</span>
 </span><span id="line-802"><span class="sd">    """</span>
 </span><span id="line-803">
-</span><span id="line-804">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+</span><span id="line-804">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-805">        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 </span><span id="line-806">
 </span><span id="line-807">    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
@@ -1108,7 +1108,7 @@
 </span><span id="line-847">        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span></div>
 
 </span><span id="line-848">
-</span><span id="line-849">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-849">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-850">        <span class="n">cn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 </span><span id="line-851">        <span class="k">return</span> <span class="s2">"</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 </span><span id="line-852">
@@ -1159,7 +1159,7 @@
 </span><span id="line-894"><span class="k">class</span><span class="w"> </span><span class="nc">NoDefault</span><span class="p">:</span>
 </span><span id="line-895"><span class="w">    </span><span class="sd">"""Type of the ``no_default`` sentinel, marking the absence of a default value."""</span>
 </span><span id="line-896">
-</span><span id="line-897">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-897">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-898">        <span class="k">return</span> <span class="s2">"no_default"</span></div>
 
 </span><span id="line-899">
@@ -1413,20 +1413,20 @@
 </span><span id="line-1130"><span class="sd">    """</span>
 </span><span id="line-1131">
 </span><span id="line-1132">    <span class="k">class</span><span class="w"> </span><span class="nc">Sentinel</span><span class="p">:</span>
-</span><span id="line-1133">        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-1133">        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1134">            <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
 </span><span id="line-1135">
 </span><span id="line-1136">        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">repr_</span><span class="p">):</span>
 </span><span id="line-1137">            <span class="fm">__repr__</span> <span class="o">=</span> <span class="n">repr_</span>
 </span><span id="line-1138">        <span class="k">else</span><span class="p">:</span>
 </span><span id="line-1139">
-</span><span id="line-1140">            <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-1140">            <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-1141">                <span class="k">return</span> <span class="n">repr_</span>
 </span><span id="line-1142">
 </span><span id="line-1143">        <span class="k">def</span><span class="w"> </span><span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="line-1144">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span>
 </span><span id="line-1145">
-</span><span id="line-1146">        <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-1146">        <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="line-1147">            <span class="k">return</span> <span class="n">boolean_value</span>
 </span><span id="line-1148">
 </span><span id="line-1149">    <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1618,7 +1618,7 @@
 </span><span id="line-1329">
 </span><span id="line-1330">    <span class="n">_compile_count</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 </span><span id="line-1331">
-</span><span id="line-1332">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+</span><span id="line-1332">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1333">        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 </span><span id="line-1334">        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">default_factory</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 </span><span id="line-1335">            <span class="n">val</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -1791,7 +1791,7 @@
 </span><span id="line-1490">
 <div class="viewcode-block" id="FunctionBuilder.add_arg">
 <a class="viewcode-back" href="../../_autosummary/i2.util.html#i2.util.FunctionBuilder.add_arg">[docs]</a>
-</span><span id="line-1491">    <span class="k">def</span><span class="w"> </span><span class="nf">add_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">NO_DEFAULT</span><span class="p">,</span> <span class="n">kwonly</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="line-1491">    <span class="k">def</span><span class="w"> </span><span class="nf">add_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">NO_DEFAULT</span><span class="p">,</span> <span class="n">kwonly</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1492"><span class="w">        </span><span class="sd">"""Add an argument with optional *default* (defaults to</span>
 </span><span id="line-1493"><span class="sd">        ``funcutils.NO_DEFAULT``). Pass *kwonly=True* to add a</span>
 </span><span id="line-1494"><span class="sd">        keyword-only argument</span>
@@ -1819,7 +1819,7 @@
 </span><span id="line-1515">
 <div class="viewcode-block" id="FunctionBuilder.remove_arg">
 <a class="viewcode-back" href="../../_autosummary/i2.util.html#i2.util.FunctionBuilder.remove_arg">[docs]</a>
-</span><span id="line-1516">    <span class="k">def</span><span class="w"> </span><span class="nf">remove_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">):</span>
+</span><span id="line-1516">    <span class="k">def</span><span class="w"> </span><span class="nf">remove_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1517"><span class="w">        </span><span class="sd">"""Remove an argument from this FunctionBuilder's argument list. The</span>
 </span><span id="line-1518"><span class="sd">        resulting function will have one less argument per call to</span>
 </span><span id="line-1519"><span class="sd">        this function.</span>
@@ -2022,7 +2022,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=d6174a35"></script>
+    <script src="../../_static/documentation_options.js?v=726fce2c"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

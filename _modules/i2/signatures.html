@@ -361,7 +361,7 @@
 </span><span id="line-171">
 </span><span id="line-172">    <span class="kn">from</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="kn">import</span> <span class="n">pformat</span>
 </span><span id="line-173">
-</span><span id="line-174">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sig1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sig2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-174">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sig1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sig2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-175">        <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">""</span><span class="p">,))</span>
 </span><span id="line-176">        <span class="n">sig_pairs</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="line-177">        <span class="k">if</span> <span class="n">sig1</span> <span class="ow">and</span> <span class="n">sig2</span><span class="p">:</span>
@@ -798,11 +798,11 @@
 </span><span id="line-581"><span class="sd">    MissingArgValFor("argname")</span>
 </span><span id="line-582"><span class="sd">    """</span>
 </span><span id="line-583">
-</span><span id="line-584">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argname</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-584">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-585">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">argname</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 </span><span id="line-586">        <span class="bp">self</span><span class="o">.</span><span class="n">argname</span> <span class="o">=</span> <span class="n">argname</span>
 </span><span id="line-587">
-</span><span id="line-588">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-588">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-589">        <span class="k">return</span> <span class="sa">f</span><span class="s1">'MissingArgValFor("</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">argname</span><span class="si">}</span><span class="s1">")'</span></div>
 
 </span><span id="line-590">
@@ -1081,7 +1081,7 @@
 </span><span id="line-855">    <span class="n">VP</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_POSITIONAL</span>
 </span><span id="line-856">    <span class="n">VK</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span>
 </span><span id="line-857">
-</span><span id="line-858">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">empty</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">empty</span><span class="p">):</span>
+</span><span id="line-858">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">PK</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">empty</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">empty</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-859">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">)</span>
 </span><span id="line-860">
 </span><span id="line-861">    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -1369,7 +1369,7 @@
 </span><span id="line-1122">        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="line-1123">        <span class="n">return_annotation</span><span class="o">=</span><span class="n">empty</span><span class="p">,</span>
 </span><span id="line-1124">        <span class="n">__validate_parameters__</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="line-1125">    <span class="p">):</span>
+</span><span id="line-1125">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1126"><span class="w">        </span><span class="sd">"""Initialize a Sig instance.</span>
 </span><span id="line-1127">
 </span><span id="line-1128"><span class="sd">        See Also:</span>
@@ -1673,7 +1673,7 @@
 </span><span id="line-1418">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">sig_or_default</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">default_signature</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
 
 </span><span id="line-1419">
-</span><span id="line-1420">    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-1420">    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="line-1421">        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="line-1422">
 </span><span id="line-1423">    <span class="k">def</span><span class="w"> </span><span class="nf">_positional_and_keyword_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1990,7 +1990,7 @@
 </span><span id="line-1710">    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="line-1711">        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
 </span><span id="line-1712">
-</span><span id="line-1713">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-1713">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="line-1714">        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
 </span><span id="line-1715">
 </span><span id="line-1716">    <span class="c1"># TODO: Return type inconsistent. When k is a string, returns Parameter,</span>
@@ -4756,7 +4756,7 @@
 <a class="viewcode-back" href="../../_autosummary/i2.signatures.html#i2.signatures.set_signature_of_func">[docs]</a>
 </span><span id="line-4369"><span class="k">def</span><span class="w"> </span><span class="nf">set_signature_of_func</span><span class="p">(</span>
 </span><span id="line-4370">    <span class="n">func</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">empty</span><span class="p">,</span> <span class="n">__validate_parameters__</span><span class="o">=</span><span class="kc">True</span>
-</span><span id="line-4371"><span class="p">):</span>
+</span><span id="line-4371"><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-4372"><span class="w">    </span><span class="sd">"""Set the signature of a function, with sugar.</span>
 </span><span id="line-4373">
 </span><span id="line-4374"><span class="sd">    Args:</span>
@@ -5181,35 +5181,35 @@
 </span><span id="line-4780">    <span class="k">def</span><span class="w"> </span><span class="nf">__import__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">globals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">locals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">(),</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 </span><span id="line-4781"><span class="w">        </span><span class="sd">"""__import__(name, globals=None, locals=None, fromlist=(), level=0) -&gt; module"""</span>
 </span><span id="line-4782">
-</span><span id="line-4783">    <span class="k">def</span><span class="w"> </span><span class="nf">filter</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span>
+</span><span id="line-4783">    <span class="k">def</span><span class="w"> </span><span class="nf">filter</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-4784"><span class="w">        </span><span class="sd">"""filter(function or None, iterable) --&gt; filter object"""</span>
 </span><span id="line-4785">
-</span><span id="line-4786">    <span class="k">def</span><span class="w"> </span><span class="nf">map</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">iterables</span><span class="p">):</span>
+</span><span id="line-4786">    <span class="k">def</span><span class="w"> </span><span class="nf">map</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">iterables</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-4787"><span class="w">        </span><span class="sd">"""``map(func, *iterables) --&gt; map object``"""</span>
 </span><span id="line-4788">
-</span><span id="line-4789">    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">" "</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="line-4789">    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">" "</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-4790"><span class="w">        </span><span class="sa">r</span><span class="sd">"""``print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)``"""</span>
 </span><span id="line-4791">
-</span><span id="line-4792">    <span class="k">def</span><span class="w"> </span><span class="nf">zip</span><span class="p">(</span><span class="o">*</span><span class="n">iterables</span><span class="p">):</span>
+</span><span id="line-4792">    <span class="k">def</span><span class="w"> </span><span class="nf">zip</span><span class="p">(</span><span class="o">*</span><span class="n">iterables</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-4793"><span class="w">        </span><span class="sd">"""``zip(*iterables) --&gt; A zip object yielding tuples until an input is exhausted.``"""</span>
 </span><span id="line-4794">
 </span><span id="line-4795">    <span class="k">def</span><span class="w"> </span><span class="nf">bool</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
 </span><span id="line-4796">
-</span><span id="line-4797">    <span class="k">def</span><span class="w"> </span><span class="nf">bytearray</span><span class="p">(</span><span class="n">iterable_of_ints</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="o">/</span><span class="p">):</span> <span class="o">...</span>
+</span><span id="line-4797">    <span class="k">def</span><span class="w"> </span><span class="nf">bytearray</span><span class="p">(</span><span class="n">iterable_of_ints</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </span><span id="line-4798">
-</span><span id="line-4799">    <span class="k">def</span><span class="w"> </span><span class="nf">classmethod</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span> <span class="o">...</span>
+</span><span id="line-4799">    <span class="k">def</span><span class="w"> </span><span class="nf">classmethod</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </span><span id="line-4800">
-</span><span id="line-4801">    <span class="k">def</span><span class="w"> </span><span class="nf">int</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span> <span class="o">...</span>
+</span><span id="line-4801">    <span class="k">def</span><span class="w"> </span><span class="nf">int</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </span><span id="line-4802">
-</span><span id="line-4803">    <span class="k">def</span><span class="w"> </span><span class="nf">iter</span><span class="p">(</span><span class="nb">callable</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="nb">sentinel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span> <span class="o">...</span>
+</span><span id="line-4803">    <span class="k">def</span><span class="w"> </span><span class="nf">iter</span><span class="p">(</span><span class="nb">callable</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="nb">sentinel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </span><span id="line-4804">
-</span><span id="line-4805">    <span class="k">def</span><span class="w"> </span><span class="nf">next</span><span class="p">(</span><span class="n">iterator</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span> <span class="o">...</span>
+</span><span id="line-4805">    <span class="k">def</span><span class="w"> </span><span class="nf">next</span><span class="p">(</span><span class="n">iterator</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </span><span id="line-4806">
-</span><span id="line-4807">    <span class="k">def</span><span class="w"> </span><span class="nf">staticmethod</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span> <span class="o">...</span>
+</span><span id="line-4807">    <span class="k">def</span><span class="w"> </span><span class="nf">staticmethod</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </span><span id="line-4808">
-</span><span id="line-4809">    <span class="k">def</span><span class="w"> </span><span class="nf">str</span><span class="p">(</span><span class="n">bytes_or_buffer</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span> <span class="o">...</span>
+</span><span id="line-4809">    <span class="k">def</span><span class="w"> </span><span class="nf">str</span><span class="p">(</span><span class="n">bytes_or_buffer</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </span><span id="line-4810">
-</span><span id="line-4811">    <span class="k">def</span><span class="w"> </span><span class="nf">super</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span> <span class="o">...</span>
+</span><span id="line-4811">    <span class="k">def</span><span class="w"> </span><span class="nf">super</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </span><span id="line-4812">
 </span><span id="line-4813">    <span class="c1"># def type(name, bases=None, dict=None, /):</span>
 </span><span id="line-4814">    <span class="c1">#     ...</span>
@@ -5623,7 +5623,7 @@
 </span><span id="line-5204"><span class="c1"># TODO: Implement annotation compatibility</span>
 <div class="viewcode-block" id="ignore_any_differences">
 <a class="viewcode-back" href="../../_autosummary/i2.signatures.html#i2.signatures.ignore_any_differences">[docs]</a>
-</span><span id="line-5205"><span class="k">def</span><span class="w"> </span><span class="nf">ignore_any_differences</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span id="line-5205"><span class="k">def</span><span class="w"> </span><span class="nf">ignore_any_differences</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="line-5206"><span class="w">    </span><span class="sd">"""A comparator that always returns ``True`` (used to ignore a parameter attribute)."""</span>
 </span><span id="line-5207">    <span class="k">return</span> <span class="kc">True</span></div>
 
@@ -6217,7 +6217,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=d6174a35"></script>
+    <script src="../../_static/documentation_options.js?v=726fce2c"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

@@ -537,7 +537,7 @@
 </span><span id="line-341">    <span class="c1"># can set this to ``False``. See i2#46.</span>
 </span><span id="line-342">    <span class="n">single_mapping_is_objects</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="line-343">
-</span><span id="line-344">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unnamed</span><span class="p">,</span> <span class="o">**</span><span class="n">named</span><span class="p">):</span>
+</span><span id="line-344">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unnamed</span><span class="p">,</span> <span class="o">**</span><span class="n">named</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-345">        <span class="n">named</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_reserved_names</span><span class="p">(</span><span class="n">named</span><span class="p">)</span>
 </span><span id="line-346">
 </span><span id="line-347">        <span class="k">if</span> <span class="p">(</span>
@@ -575,10 +575,10 @@
 </span><span id="line-379">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
 </span><span id="line-380">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 </span><span id="line-381">
-</span><span id="line-382">    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-382">    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="line-383">        <span class="k">return</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span>
 </span><span id="line-384">
-</span><span id="line-385">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-385">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="line-386">        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">)</span>
 </span><span id="line-387">
 </span><span id="line-388">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
@@ -588,7 +588,7 @@
 </span><span id="line-392">        <span class="k">else</span><span class="p">:</span>
 </span><span id="line-393">            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Not an attribute: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span><span id="line-394">
-</span><span id="line-395">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-395">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-396">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> containing: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;"</span>
 </span><span id="line-397">
 </span><span id="line-398">    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -602,7 +602,7 @@
 </span><span id="line-405">
 <div class="viewcode-block" id="iterable_of_callables_validation">
 <a class="viewcode-back" href="../../_autosummary/i2.multi_object.html#i2.multi_object.iterable_of_callables_validation">[docs]</a>
-</span><span id="line-406"><span class="k">def</span><span class="w"> </span><span class="nf">iterable_of_callables_validation</span><span class="p">(</span><span class="n">funcs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">]):</span>
+</span><span id="line-406"><span class="k">def</span><span class="w"> </span><span class="nf">iterable_of_callables_validation</span><span class="p">(</span><span class="n">funcs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Callable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-407"><span class="w">    </span><span class="sd">"""Raise ``TypeError`` unless ``funcs`` is an iterable whose elements are all callable."""</span>
 </span><span id="line-408">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">funcs</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
 </span><span id="line-409">        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Not an iterable: </span><span class="si">{</span><span class="n">funcs</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -628,7 +628,7 @@
 </span><span id="line-426"><span class="sd">    TypeError: These were not callable: [3]</span>
 </span><span id="line-427"><span class="sd">    """</span>
 </span><span id="line-428">
-</span><span id="line-429">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unnamed_funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">):</span>
+</span><span id="line-429">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unnamed_funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-430">        <span class="c1"># The basic MultiObj initialization</span>
 </span><span id="line-431">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">unnamed_funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">)</span>
 </span><span id="line-432">        <span class="c1"># The extra stuff we want to do with functions</span>
@@ -707,7 +707,7 @@
 </span><span id="line-502"><span class="sd">    'Apply func and add'</span>
 </span><span id="line-503"><span class="sd">    """</span>
 </span><span id="line-504">
-</span><span id="line-505">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unnamed_funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">):</span>
+</span><span id="line-505">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unnamed_funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-506">        <span class="c1"># The basic MultiFunc initialization</span>
 </span><span id="line-507">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">unnamed_funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">)</span>
 </span><span id="line-508">
@@ -768,7 +768,7 @@
 </span><span id="line-563">        <span class="n">func_name</span> <span class="o">=</span> <span class="n">name_of_obj</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="sa">f</span><span class="s2">""</span><span class="p">)</span>
 </span><span id="line-564">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"(name=</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">, key=</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">, index=</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">)"</span>
 </span><span id="line-565">
-</span><span id="line-566">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-566">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="line-567">        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">funcs</span><span class="p">)</span>
 </span><span id="line-568">
 </span><span id="line-569">    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -812,7 +812,7 @@
 </span><span id="line-603">
 <div class="viewcode-block" id="pipes_are_equal">
 <a class="viewcode-back" href="../../_autosummary/i2.multi_object.html#i2.multi_object.pipes_are_equal">[docs]</a>
-</span><span id="line-604"><span class="k">def</span><span class="w"> </span><span class="nf">pipes_are_equal</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">func_equality</span><span class="o">=</span><span class="n">eq</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="line-604"><span class="k">def</span><span class="w"> </span><span class="nf">pipes_are_equal</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">func_equality</span><span class="o">=</span><span class="n">eq</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="line-605"><span class="w">    </span><span class="sd">"""Determine if two pipelines are equal.</span>
 </span><span id="line-606">
 </span><span id="line-607"><span class="sd">    Pipelines are equal if their flattened versions have equal functions.</span>
@@ -1018,7 +1018,7 @@
 </span><span id="line-801">    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
 </span><span id="line-802">        <span class="k">return</span> <span class="n">ch_func_to_all_pk</span><span class="p">(</span><span class="n">tuple_the_args</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
 </span><span id="line-803">
-</span><span id="line-804">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unnamed_funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">):</span>
+</span><span id="line-804">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unnamed_funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-805">        <span class="c1"># The basic MultiFunc initialization</span>
 </span><span id="line-806">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">unnamed_funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">)</span>
 </span><span id="line-807">
@@ -1263,7 +1263,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=d6174a35"></script>
+    <script src="../../_static/documentation_options.js?v=726fce2c"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

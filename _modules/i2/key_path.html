@@ -416,7 +416,7 @@
 </span><span id="line-217">        <span class="n">key_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="line-218">        <span class="n">node_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="line-219">        <span class="n">auto_node_writes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="line-220">    <span class="p">):</span>
+</span><span id="line-220">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-221"><span class="w">        </span><span class="sd">"""</span>
 </span><span id="line-222"><span class="sd">        Initialize a KeyPathMap.</span>
 </span><span id="line-223">
@@ -458,7 +458,7 @@
 </span><span id="line-259">        <span class="k">else</span><span class="p">:</span>
 </span><span id="line-260">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 </span><span id="line-261">
-</span><span id="line-262">    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+</span><span id="line-262">    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-263">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_node_writes</span><span class="p">:</span>
 </span><span id="line-264">            <span class="bp">self</span><span class="o">.</span><span class="n">_recursive_setitem</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 </span><span id="line-265">        <span class="k">else</span><span class="p">:</span>
@@ -470,7 +470,7 @@
 </span><span id="line-271">            <span class="k">else</span><span class="p">:</span>
 </span><span id="line-272">                <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 </span><span id="line-273">
-</span><span id="line-274">    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-274">    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-275">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_key</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
 </span><span id="line-276">            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 </span><span id="line-277">                <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -491,7 +491,7 @@
 </span><span id="line-289">    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="line-290">        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 </span><span id="line-291">
-</span><span id="line-292">    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-292">    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="line-293">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_key</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
 </span><span id="line-294">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 </span><span id="line-295">        <span class="k">else</span><span class="p">:</span>
@@ -503,7 +503,7 @@
 </span><span id="line-301">                    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span>
 </span><span id="line-302">            <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># if you got so far, you have all the keys in the path</span>
 </span><span id="line-303">
-</span><span id="line-304">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-304">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="line-305">        <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="line-306">        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 </span><span id="line-307">            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -542,7 +542,7 @@
 </span><span id="line-340">                    <span class="k">for</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
 </span><span id="line-341">                        <span class="k">yield</span> <span class="n">key_path_prefix</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">kk</span><span class="p">),</span> <span class="n">vv</span>
 </span><span id="line-342">
-</span><span id="line-343">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-343">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-344">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </span><span id="line-345">
 </span><span id="line-346">    <span class="k">def</span><span class="w"> </span><span class="nf">flat_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -646,7 +646,7 @@
 </span><span id="line-441">        <span class="n">auto_node_writes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 </span><span id="line-442">        <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"."</span><span class="p">,</span>
 </span><span id="line-443">        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
-</span><span id="line-444">    <span class="p">):</span>
+</span><span id="line-444">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-445">        <span class="n">prefix_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
 </span><span id="line-446">        <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span>
 </span><span id="line-447">        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
@@ -662,13 +662,13 @@
 </span><span id="line-457">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
 </span><span id="line-458">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
 </span><span id="line-459">
-</span><span id="line-460">    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+</span><span id="line-460">    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-461">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span>
 </span><span id="line-462">
-</span><span id="line-463">    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-463">    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-464">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
 </span><span id="line-465">
-</span><span id="line-466">    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-466">    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="line-467">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
 </span><span id="line-468">
 <div class="viewcode-block" id="StrKeyPath.items">
@@ -694,7 +694,7 @@
 </span><span id="line-483"><span class="sd">    given to the method as input.</span>
 </span><span id="line-484"><span class="sd">    """</span>
 </span><span id="line-485">
-</span><span id="line-486">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"."</span><span class="p">,</span> <span class="n">node_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">mk_new_node</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="line-486">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"."</span><span class="p">,</span> <span class="n">node_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">mk_new_node</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-487"><span class="w">        </span><span class="sd">"""</span>
 </span><span id="line-488">
 </span><span id="line-489"><span class="sd">        :param sep:</span>
@@ -778,7 +778,7 @@
 </span><span id="line-561">
 <div class="viewcode-block" id="KeyPathTrans.setitem">
 <a class="viewcode-back" href="../../_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.setitem">[docs]</a>
-</span><span id="line-562">    <span class="k">def</span><span class="w"> </span><span class="nf">setitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span id="line-562">    <span class="k">def</span><span class="w"> </span><span class="nf">setitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-563"><span class="w">        </span><span class="sd">"""</span>
 </span><span id="line-564"><span class="sd">        setting with a key list or "."-separated string</span>
 </span><span id="line-565">
@@ -794,7 +794,7 @@
 </span><span id="line-574">
 <div class="viewcode-block" id="KeyPathTrans.setitem_recursive">
 <a class="viewcode-back" href="../../_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.setitem_recursive">[docs]</a>
-</span><span id="line-575">    <span class="k">def</span><span class="w"> </span><span class="nf">setitem_recursive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span id="line-575">    <span class="k">def</span><span class="w"> </span><span class="nf">setitem_recursive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-576"><span class="w">        </span><span class="sd">"""</span>
 </span><span id="line-577">
 </span><span id="line-578"><span class="sd">        :param d:</span>
@@ -973,7 +973,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=d6174a35"></script>
+    <script src="../../_static/documentation_options.js?v=726fce2c"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

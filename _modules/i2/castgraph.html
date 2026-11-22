@@ -383,13 +383,13 @@
 </span><span id="line-202"><span class="sd">    {'encoding': 'utf-8', 'analyzed': True}</span>
 </span><span id="line-203"><span class="sd">    """</span>
 </span><span id="line-204">
-</span><span id="line-205">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="line-205">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-206">        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span> <span class="ow">or</span> <span class="p">{}</span>
 </span><span id="line-207">
-</span><span id="line-208">    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-208">    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="line-209">        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="line-210">
-</span><span id="line-211">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-211">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-212">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"KindMatch(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">)"</span></div>
 
 </span><span id="line-213">
@@ -414,7 +414,7 @@
 </span><span id="line-230">        <span class="bp">self</span><span class="p">,</span>
 </span><span id="line-231">        <span class="n">identifier</span><span class="p">:</span> <span class="n">Hashable</span><span class="p">,</span>
 </span><span id="line-232">        <span class="n">isa</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">KindMatch</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-233">    <span class="p">):</span>
+</span><span id="line-233">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-234">        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">identifier</span>
 </span><span id="line-235">        <span class="bp">self</span><span class="o">.</span><span class="n">_isa</span> <span class="o">=</span> <span class="n">isa</span>
 </span><span id="line-236">
@@ -438,7 +438,7 @@
 </span><span id="line-251">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">identifier</span>
 </span><span id="line-252">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">==</span> <span class="n">other</span>  <span class="c1"># Allow comparison with raw identifiers</span>
 </span><span id="line-253">
-</span><span id="line-254">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-254">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-255">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"Kind(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="si">!r}</span><span class="s2">)"</span></div>
 
 </span><span id="line-256">
@@ -1976,7 +1976,7 @@
 </span><span id="line-1728"><span class="sd">    by dynamically looking up kinds and creating decorators.</span>
 </span><span id="line-1729"><span class="sd">    """</span>
 </span><span id="line-1730">
-</span><span id="line-1731">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">TransformationGraph</span><span class="p">):</span>
+</span><span id="line-1731">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">TransformationGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1732">        <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span> <span class="o">=</span> <span class="n">graph</span>
 </span><span id="line-1733">
 </span><span id="line-1734">    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
@@ -2018,7 +2018,7 @@
 </span><span id="line-1770"><span class="k">class</span><span class="w"> </span><span class="nc">_KindIngressFactory</span><span class="p">:</span>
 </span><span id="line-1771"><span class="w">    </span><span class="sd">"""Factory to handle @graph.ingress.kind and @graph.ingress.kind(arg_name) syntax."""</span>
 </span><span id="line-1772">
-</span><span id="line-1773">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">TransformationGraph</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">Hashable</span><span class="p">):</span>
+</span><span id="line-1773">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">TransformationGraph</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">Hashable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1774">        <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span> <span class="o">=</span> <span class="n">graph</span>
 </span><span id="line-1775">        <span class="bp">self</span><span class="o">.</span><span class="n">_kind</span> <span class="o">=</span> <span class="n">kind</span>
 </span><span id="line-1776">
@@ -2072,7 +2072,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=d6174a35"></script>
+    <script src="../../_static/documentation_options.js?v=726fce2c"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

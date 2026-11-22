@@ -332,7 +332,7 @@
 </span><span id="line-142"><span class="k">class</span><span class="w"> </span><span class="nc">MakeFromFunc</span><span class="p">:</span>
 </span><span id="line-143"><span class="w">    </span><span class="sd">"""Used to indicate that an object should be made as a function of an input func"""</span>
 </span><span id="line-144">
-</span><span id="line-145">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_to_obj</span><span class="p">):</span>
+</span><span id="line-145">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_to_obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-146">        <span class="bp">self</span><span class="o">.</span><span class="n">func_to_obj</span> <span class="o">=</span> <span class="n">func_to_obj</span>
 </span><span id="line-147">
 </span><span id="line-148">    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
@@ -347,7 +347,7 @@
 </span><span id="line-156">    <span class="n">_init_args</span> <span class="o">=</span> <span class="p">()</span>
 </span><span id="line-157">    <span class="n">_init_kwargs</span> <span class="o">=</span> <span class="p">()</span>
 </span><span id="line-158">
-</span><span id="line-159">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-159">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-160">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
 </span><span id="line-161">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 </span><span id="line-162">        <span class="c1"># wraps(func)(self) is there to copy over to self anything that func may</span>
@@ -375,7 +375,7 @@
 </span><span id="line-184">            <span class="k">return</span> <span class="bp">self</span>
 </span><span id="line-185">        <span class="k">return</span> <span class="n">MethodType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span>
 </span><span id="line-186">
-</span><span id="line-187">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-187">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-188">        <span class="c1"># TODO: Replace i2.Wrap with dynamic (Wrap or Wrapx)</span>
 </span><span id="line-189">        <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"Wrap"</span>
 </span><span id="line-190">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;i2.Wrap </span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;"</span>
@@ -387,7 +387,7 @@
 </span><span id="line-196">        <span class="c1"># TODO: Look into sanity of mutating the name and other ways to achieve same</span>
 </span><span id="line-197">        <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
 </span><span id="line-198">
-</span><span id="line-199">    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span id="line-199">    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-200">        <span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 </span><span id="line-201">
 </span><span id="line-202">    <span class="c1"># To get help(instance.method) to work!</span>
@@ -780,7 +780,7 @@
 </span><span id="line-587">        <span class="o">*</span><span class="p">,</span>
 </span><span id="line-588">        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="line-589">        <span class="n">preserve_signature</span><span class="o">=</span><span class="n">AUTO_PRESERVE_SIGNATURE</span><span class="p">,</span>
-</span><span id="line-590">    <span class="p">):</span>
+</span><span id="line-590">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-591">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 </span><span id="line-592">        <span class="n">ingress_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </span><span id="line-593">
@@ -1104,7 +1104,7 @@
 </span><span id="line-905">        <span class="n">allow_excess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="line-906">        <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="line-907">        <span class="n">allow_partial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="line-908">    <span class="p">):</span>
+</span><span id="line-908">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-909"><span class="w">        </span><span class="sd">"""Init of an Ingress instance.</span>
 </span><span id="line-910">
 </span><span id="line-911"><span class="sd">        :param inner_sig: Signature of the inner function the ingress is for.</span>
@@ -1171,7 +1171,7 @@
 </span><span id="line-972">            <span class="n">allow_partial</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">allow_partial</span><span class="p">,</span>
 </span><span id="line-973">        <span class="p">)</span>
 </span><span id="line-974">
-</span><span id="line-975">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-975">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-976">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"Ingress signature: </span><span class="si">{</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
 </span><span id="line-977">
 <div class="viewcode-block" id="Ingress.wrap">
@@ -1412,7 +1412,7 @@
 </span><span id="line-1195">        <span class="o">*</span><span class="p">,</span>
 </span><span id="line-1196">        <span class="n">_allow_reordering</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 </span><span id="line-1197">        <span class="o">**</span><span class="n">changes_for_name</span><span class="p">,</span>
-</span><span id="line-1198">    <span class="p">):</span>
+</span><span id="line-1198">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1199">        <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">inner_sig</span><span class="p">)</span>
 </span><span id="line-1200">
 </span><span id="line-1201">        <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">modified</span><span class="p">(</span>
@@ -1519,7 +1519,7 @@
 </span><span id="line-1296"><span class="sd">    POSITIONAL_OR_KEYWORD. ``mk_ingress_from_name_mapper`` is the function form.</span>
 </span><span id="line-1297"><span class="sd">    """</span>
 </span><span id="line-1298">
-</span><span id="line-1299">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">outer_name_for_inner_name</span><span class="p">):</span>
+</span><span id="line-1299">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inner_sig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">conserve_kind</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">outer_name_for_inner_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1300">        <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">inner_sig</span><span class="p">)</span>
 </span><span id="line-1301">        <span class="bp">self</span><span class="o">.</span><span class="n">outer_sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_sig</span><span class="o">.</span><span class="n">ch_names</span><span class="p">(</span><span class="o">**</span><span class="n">outer_name_for_inner_name</span><span class="p">)</span>
 </span><span id="line-1302">        <span class="k">if</span> <span class="n">conserve_kind</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
@@ -1907,7 +1907,7 @@
 </span><span id="line-1654"><span class="sd">    off).</span>
 </span><span id="line-1655"><span class="sd">    """</span>
 </span><span id="line-1656">
-</span><span id="line-1657">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">__strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_for_arg</span><span class="p">):</span>
+</span><span id="line-1657">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">__strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_for_arg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1658">        <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </span><span id="line-1659">        <span class="k">if</span> <span class="n">__strict</span><span class="p">:</span>
 </span><span id="line-1660">            <span class="n">conversion_names_that_are_not_func_args</span> <span class="o">=</span> <span class="p">(</span>
@@ -2143,11 +2143,11 @@
 </span><span id="line-1869"><span class="sd">    True</span>
 </span><span id="line-1870"><span class="sd">    """</span>
 </span><span id="line-1871">
-</span><span id="line-1872">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">instance_arg_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"self"</span><span class="p">):</span>
+</span><span id="line-1872">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">instance_arg_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"self"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1873">        <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span>
 </span><span id="line-1874">        <span class="bp">self</span><span class="o">.</span><span class="n">instance_arg_name</span> <span class="o">=</span> <span class="n">instance_arg_name</span>
 </span><span id="line-1875">
-</span><span id="line-1876">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-1876">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-1877">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance_arg_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="si">}</span><span class="s2">"</span></div>
 
 </span><span id="line-1878">
@@ -2871,7 +2871,7 @@
 </span><span id="line-2561"><span class="sd">    [11, 12, 13, 14]</span>
 </span><span id="line-2562"><span class="sd">    """</span>
 </span><span id="line-2563">
-</span><span id="line-2564">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">caller</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="line-2564">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">caller</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-2565">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="p">,</span> <span class="n">caller</span><span class="o">=</span><span class="n">caller</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 </span><span id="line-2566">        <span class="bp">self</span><span class="o">.</span><span class="n">ingress</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">egress</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">caller</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sig</span> <span class="o">=</span> <span class="n">_process_wrapx_params</span><span class="p">(</span>
 </span><span id="line-2567">            <span class="n">func</span><span class="p">,</span> <span class="n">ingress</span><span class="p">,</span> <span class="n">egress</span><span class="p">,</span> <span class="n">caller</span>
@@ -3260,7 +3260,7 @@
 </span><span id="line-2935">    <span class="n">func_computing_default</span><span class="p">:</span> <span class="n">Callable</span>
 </span><span id="line-2936">    <span class="n">original_default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">empty</span>
 </span><span id="line-2937">
-</span><span id="line-2938">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-2938">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-2939">        <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_computing_default</span>
 </span><span id="line-2940">        <span class="n">func_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
 </span><span id="line-2941">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_default</span> <span class="ow">is</span> <span class="n">empty</span><span class="p">:</span>
@@ -3417,7 +3417,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=d6174a35"></script>
+    <script src="../../_static/documentation_options.js?v=726fce2c"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

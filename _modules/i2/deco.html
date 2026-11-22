@@ -398,7 +398,7 @@
 </span><span id="line-202"><span class="sd">    'hello'</span>
 </span><span id="line-203"><span class="sd">    """</span>
 </span><span id="line-204">
-</span><span id="line-205">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="p">(),</span> <span class="n">exclude</span><span class="o">=</span><span class="p">()):</span>
+</span><span id="line-205">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="p">(),</span> <span class="n">exclude</span><span class="o">=</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-206">        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 </span><span id="line-207">        <span class="n">func_sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 </span><span id="line-208">        <span class="n">include</span><span class="p">,</span> <span class="n">exclude</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">func_sig</span><span class="o">.</span><span class="n">get_names</span><span class="p">,</span> <span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="p">))</span>
@@ -457,7 +457,7 @@
 </span><span id="line-258">        <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_args_and_kwargs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
 </span><span id="line-259">        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span id="line-260">
-</span><span id="line-261">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-261">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-262">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;FuncFactory(</span><span class="si">{</span><span class="n">name_of_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span><span class="si">}</span><span class="s2">)&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="si">}</span><span class="s2">"</span>
 </span><span id="line-263">
 </span><span id="line-264">    <span class="nd">@classmethod</span>
@@ -1353,7 +1353,7 @@
 <a class="viewcode-back" href="../../_autosummary/i2.deco.html#i2.deco.transform_class_method_input_and_output">[docs]</a>
 </span><span id="line-1104"><span class="k">def</span><span class="w"> </span><span class="nf">transform_class_method_input_and_output</span><span class="p">(</span>
 </span><span id="line-1105">    <span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">method_output_trans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">arg_trans</span>
-</span><span id="line-1106"><span class="p">):</span>
+</span><span id="line-1106"><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-1107"><span class="w">    </span><span class="sd">"""Replace ``cls.method`` in place with a version whose named arguments are</span>
 </span><span id="line-1108"><span class="sd">    transformed by ``arg_trans`` and whose output by ``method_output_trans``."""</span>
 </span><span id="line-1109">    <span class="n">wrapped_method</span> <span class="o">=</span> <span class="n">transform_args</span><span class="p">(</span><span class="o">**</span><span class="n">arg_trans</span><span class="p">)(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">))</span>
@@ -1953,7 +1953,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=d6174a35"></script>
+    <script src="../../_static/documentation_options.js?v=726fce2c"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
