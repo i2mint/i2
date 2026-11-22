@@ -2,9 +2,13 @@
 
 # i2
 
-Core tools for minting code.
+Function signatures as data you can read, edit and combine, plus the wrappers, decorators and pipelines built on them. Where the standard library gives you a read-only `inspect.Signature` and `functools.wraps`, `i2` gives you signatures you can rename, merge and apply as decorators, and wrappers that keep the input and output transformations in separate layers instead of a hand-written closure. It is the layer under `dol`, `meshed` and `front`: when they adapt one function’s interface to another’s, `i2` does the work.
 
-For human readers: [Documentation here.](https://i2mint.github.io/i2/)
+```default
+pip install i2
+```
+
+Pure Python, no required dependencies. [Documentation](https://i2mint.github.io/i2/).
 
 <!-- epythet:agentic-readme:start -->
 
@@ -28,15 +32,9 @@ If you identify as a dinosaur, the rest of this README is written for you, start
 
 <!-- epythet:agentic-readme:end -->
 
-**Working on this repo as an agent?** Read [`.claude/CLAUDE.md`]() first: module map, test command, and the rule that any change to a public signature, default or return type needs the dependents’ tests, not just these. The skills above live in [`.claude/skills/`](), so Claude Code picks them up in this repo automatically. To install one elsewhere, use `gh skill install i2mint/i2 i2-signatures --allow-hidden-dirs --agent claude-code` (swap in any skill name). Contributors who still type every character themselves: see [For carbon-based contributors]().
+## Quick start
 
-## Install
-
-```default
-pip install i2
-```
-
-The smallest useful thing: read, edit and re-apply a function’s signature with `Sig`.
+The smallest useful thing: read, edit and re-apply a function’s signature with `Sig`. Note that applying a `Sig` rewrites the function’s signature in place and returns the same function; use `i2.wrap` when you want a new one.
 
 ```python
 from i2 import Sig
@@ -51,7 +49,34 @@ Sig(g)               # <Sig (x, b=2, *, c=3)>
 g(1)                 # 7
 ```
 
-The flat, single-file view of the whole documentation is [i2.md](https://i2mint.github.io/i2/i2.md).
+Change what goes in and what comes out of a function without touching it, or chain functions into one:
+
+```python
+from i2 import Wrap, Pipe
+
+add = lambda x, y: x + y
+add_as_text = Wrap(add, egress=str)
+add_as_text(1, 2)    # '3'
+
+clean = Pipe(str.strip, str.upper)
+clean("  hello ")    # 'HELLO'
+```
+
+## What is in the box
+
+`i2` is a toolbox, and most people need one or two of its modules:
+
+| Module              | What it gives you                                                                                                               |
+|---------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `i2.signatures`     | `Sig`: a signature you can introspect, add, subtract, rename and apply as a decorator. The core of the package.                 |
+| `i2.wrapper`        | `Wrap`, `wrap`, `Ingress`: change a function’s inputs, outputs and signature in separate, composable layers.                    |
+| `i2.deco`           | ready-made decorators: `preprocess`, `postprocess`, `double_up_as_factory`, `FuncFactory`.                                      |
+| `i2.multi_object`   | work with a fixed set of functions as one: `Pipe`, `FuncFanout`, `MultiFunc`, `ParallelFuncs`.                                  |
+| `i2.castgraph`      | route a value through a graph of conversions (a path to a loaded object, text to a dict) with the cheapest path picked for you. |
+| `i2.routing_forest` | nested if/then logic as a data structure you can compose and reuse.                                                             |
+| `i2.util`           | small helpers: `name_of_obj`, `lazyprop`, `imdict`, sentinels, identity and constant functions.                                 |
+
+The sections below cover the main ones with examples. The flat, single-file view of the whole documentation is [i2.md](https://i2mint.github.io/i2/i2.md).
 
 ## Key Modules Overview
 
@@ -419,7 +444,8 @@ def parse_csv(text, ctx):
 
 @graph.register_edge('rows', 'records')
 def rows_to_records(rows, ctx):
-    return [dict(zip(headers, row)) for row in rows[1:]]
+    headers, *data = rows
+    return [dict(zip(headers, row)) for row in data]
 
 # Use with wrapper for clean API
 def process_csv(csv_text: str) -> list:
@@ -428,16 +454,16 @@ def process_csv(csv_text: str) -> list:
 # Wrap to add validation
 validated = Wrap(
     process_csv,
-    ingress=lambda text: (text.strip(),),
-    egress=lambda records: [r for r in records if r]  # Filter empties
+    ingress=lambda csv_text: ((csv_text.strip(),), {}),
+    egress=lambda records: [r for r in records if any(r.values())]  # drop empty records
 )
+assert validated("  name,age\nann,3\n,\n") == [{'name': 'ann', 'age': '3'}]
 ```
 
 ### Dynamic Signature Manipulation
 
 ```python
 from i2.signatures import Sig
-from i2.wrapper import Ingress
 
 # Start with a general function
 def process(**kwargs):
@@ -498,37 +524,28 @@ Packaging lives in `pyproject.toml`. CI is the wads uv workflow in `.github/work
 
 About 50 packages depend on `i2` (`dol`, `meshed`, `config2py`, `front`, `py2http` and more). Before changing a public signature, default or return type in `signatures.py`, `deco.py` or `wrapper.py`, run the tests of the heaviest dependents against your branch. i2’s own suite has missed breakages there before.
 
+**Working on this repo as an agent?** Read [`.claude/CLAUDE.md`](https://github.com/i2mint/i2/blob/master/.claude/CLAUDE.md) first: module map, test command, and the rule that any change to a public signature, default or return type needs the dependents’ tests, not just these. The skills above live in [`.claude/skills/`](https://github.com/i2mint/i2/tree/master/.claude/skills), so Claude Code picks them up in this repo automatically. To install one elsewhere, use `gh skill install i2mint/i2 i2-signatures --allow-hidden-dirs --agent claude-code` (swap in any skill name).
+
 Questions and design discussion go to [GitHub issues](https://github.com/i2mint/i2/issues) and [discussions](https://github.com/i2mint/i2/discussions).
 
 ## What’s mint?
 
 Mint stands for “Meta-INTerface”.
 
-Minting is core technique of i2i: It can be seen as the encapsulation of a construct’s interface into a (data)
-structure that contains everything one needs to know about the construct to perform a specific action
-with or on the construct.
+Minting is a core technique of i2i: It can be seen as the encapsulation of a construct’s interface into a (data) structure that contains everything one needs to know about the construct to perform a specific action with or on the construct.
 
-A little note on the use of “encapsulation”. The term is widely used in computer science,
-and is typically tied to object oriented programming. Wikipedia provides two definitions:
+A little note on the use of “encapsulation”. The term is widely used in computer science, and is typically tied to object oriented programming. Wikipedia provides two definitions:
 
 * A language mechanism for restricting direct access to some of the object’s components.
-* A language construct that facilitates the bundling of data with the methods (or other functions)
-  operating on that data.
+* A language construct that facilitates the bundling of data with the methods (or other functions) operating on that data.
 
-Though both these definitions apply to minting,
-the original sense of the word “encapsulate” is even more relevant (from google definitions):
+Though both these definitions apply to minting, the original sense of the word “encapsulate” is even more relevant (from google definitions):
 
 * express the essential features of (something) succinctly
 * enclose (something) in or as if in a capsule
 
-Indeed, minting is the process of enclosing a construct into a “mint” (for “Meta INTerface”)
-that will express the features of the construct that are essential to the task at hand.
-The mint provides a declarative layer of the construct that allows one to write code that operates with this layer,
-which is designed to be (as) consistent (as possible) from one system/language to another.
+Indeed, minting is the process of enclosing a construct into a “mint” (for “Meta INTerface”) that will express the features of the construct that are essential to the task at hand. The mint provides a declarative layer of the construct that allows one to write code that operates with this layer, which is designed to be (as) consistent (as possible) from one system/language to another.
 
-For example, whether a (non-anonymous) function was written in C, Python, or JavaScript,
-it will at least have a name, and it’s arguments will (most often) have names, and may have types.
-Similarly with “data objects”: The data of both JavaScript and Python objects can be represented by a tree whose
-leaves are base types, which can in turn be represented by a C struct.
+For example, whether a (non-anonymous) function was written in C, Python, or JavaScript, it will at least have a name, and its arguments will (most often) have names, and may have types. Similarly with “data objects”: The data of both JavaScript and Python objects can be represented by a tree whose leaves are base types, which can in turn be represented by a C struct.
 
 <p class="epythet-aggregates">This documentation as a single file: <a href="i2.md">i2.md</a> (Markdown, for agents).</p>

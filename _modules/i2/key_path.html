@@ -694,272 +694,274 @@
 </span><span id="line-483"><span class="sd">    given to the method as input.</span>
 </span><span id="line-484"><span class="sd">    """</span>
 </span><span id="line-485">
-</span><span id="line-486">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"."</span><span class="p">,</span> <span class="n">node_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">mk_new_node</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-487"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-488">
-</span><span id="line-489"><span class="sd">        :param sep:</span>
-</span><span id="line-490"><span class="sd">        :param node_type:</span>
-</span><span id="line-491"><span class="sd">        """</span>
-</span><span id="line-492">        <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span>
-</span><span id="line-493">        <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span> <span class="o">=</span> <span class="n">node_type</span>
-</span><span id="line-494">        <span class="k">if</span> <span class="n">mk_new_node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-495">            <span class="n">mk_new_node</span> <span class="o">=</span> <span class="n">node_type</span>
-</span><span id="line-496">        <span class="bp">self</span><span class="o">.</span><span class="n">mk_new_node</span> <span class="o">=</span> <span class="n">mk_new_node</span>
-</span><span id="line-497">
+</span><span id="line-486">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="line-487">        <span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"."</span><span class="p">,</span> <span class="n">node_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">mk_new_node</span><span class="o">=</span><span class="kc">None</span>
+</span><span id="line-488">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-489"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-490">
+</span><span id="line-491"><span class="sd">        :param sep:</span>
+</span><span id="line-492"><span class="sd">        :param node_type:</span>
+</span><span id="line-493"><span class="sd">        """</span>
+</span><span id="line-494">        <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span>
+</span><span id="line-495">        <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span> <span class="o">=</span> <span class="n">node_type</span>
+</span><span id="line-496">        <span class="k">if</span> <span class="n">mk_new_node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-497">            <span class="n">mk_new_node</span> <span class="o">=</span> <span class="n">node_type</span>
+</span><span id="line-498">        <span class="bp">self</span><span class="o">.</span><span class="n">mk_new_node</span> <span class="o">=</span> <span class="n">mk_new_node</span>
+</span><span id="line-499">
 <div class="viewcode-block" id="KeyPathTrans.items">
 <a class="viewcode-back" href="../../_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.items">[docs]</a>
-</span><span id="line-498">    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path_prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="line-499"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-500"><span class="sd">        iterate through items of store recursively, yielding (key_path, val) pairs for all nested values that are not</span>
-</span><span id="line-501"><span class="sd">        store types.</span>
-</span><span id="line-502"><span class="sd">        That is, if a value is a store_type, it won't generate a yield, but rather, will be iterated through</span>
-</span><span id="line-503"><span class="sd">        recursively.</span>
-</span><span id="line-504">
-</span><span id="line-505"><span class="sd">        :param d: input store</span>
-</span><span id="line-506"><span class="sd">        :param key_path_so_far: string to be prepended to all key paths (for use in recursion, not meant for direct use)</span>
-</span><span id="line-507"><span class="sd">        :return: a (key_path, val) iterator</span>
-</span><span id="line-508">
-</span><span id="line-509"><span class="sd">        &gt;&gt;&gt; kp = KeyPathTrans()</span>
-</span><span id="line-510"><span class="sd">        &gt;&gt;&gt; input_dict = {</span>
-</span><span id="line-511"><span class="sd">        ...     'a': {</span>
-</span><span id="line-512"><span class="sd">        ...         'a': 'a.a',</span>
-</span><span id="line-513"><span class="sd">        ...         'b': 'a.b',</span>
-</span><span id="line-514"><span class="sd">        ...         'c': {</span>
-</span><span id="line-515"><span class="sd">        ...             'a': 'a.c.a'</span>
-</span><span id="line-516"><span class="sd">        ...         }</span>
-</span><span id="line-517"><span class="sd">        ...     },</span>
-</span><span id="line-518"><span class="sd">        ...     'b': 'b',</span>
-</span><span id="line-519"><span class="sd">        ...     'c': 3</span>
-</span><span id="line-520"><span class="sd">        ... }</span>
-</span><span id="line-521"><span class="sd">        &gt;&gt;&gt; list(kp.items(input_dict))</span>
-</span><span id="line-522"><span class="sd">        [('a.a', 'a.a'), ('a.b', 'a.b'), ('a.c.a', 'a.c.a'), ('b', 'b'), ('c', 3)]</span>
-</span><span id="line-523"><span class="sd">        """</span>
-</span><span id="line-524">        <span class="k">if</span> <span class="n">key_path_prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-525">            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-526">                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span><span class="p">):</span>
-</span><span id="line-527">                    <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
-</span><span id="line-528">                <span class="k">else</span><span class="p">:</span>
-</span><span id="line-529">                    <span class="k">for</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span id="line-530">                        <span class="k">yield</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span>
-</span><span id="line-531">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-532">            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-533">                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span><span class="p">):</span>
-</span><span id="line-534">                    <span class="k">yield</span> <span class="n">key_path_prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
-</span><span id="line-535">                <span class="k">else</span><span class="p">:</span>
-</span><span id="line-536">                    <span class="k">for</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span id="line-537">                        <span class="k">yield</span> <span class="n">key_path_prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span></div>
+</span><span id="line-500">    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path_prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="line-501"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-502"><span class="sd">        iterate through items of store recursively, yielding (key_path, val) pairs for all nested values that are not</span>
+</span><span id="line-503"><span class="sd">        store types.</span>
+</span><span id="line-504"><span class="sd">        That is, if a value is a store_type, it won't generate a yield, but rather, will be iterated through</span>
+</span><span id="line-505"><span class="sd">        recursively.</span>
+</span><span id="line-506">
+</span><span id="line-507"><span class="sd">        :param d: input store</span>
+</span><span id="line-508"><span class="sd">        :param key_path_so_far: string to be prepended to all key paths (for use in recursion, not meant for direct use)</span>
+</span><span id="line-509"><span class="sd">        :return: a (key_path, val) iterator</span>
+</span><span id="line-510">
+</span><span id="line-511"><span class="sd">        &gt;&gt;&gt; kp = KeyPathTrans()</span>
+</span><span id="line-512"><span class="sd">        &gt;&gt;&gt; input_dict = {</span>
+</span><span id="line-513"><span class="sd">        ...     'a': {</span>
+</span><span id="line-514"><span class="sd">        ...         'a': 'a.a',</span>
+</span><span id="line-515"><span class="sd">        ...         'b': 'a.b',</span>
+</span><span id="line-516"><span class="sd">        ...         'c': {</span>
+</span><span id="line-517"><span class="sd">        ...             'a': 'a.c.a'</span>
+</span><span id="line-518"><span class="sd">        ...         }</span>
+</span><span id="line-519"><span class="sd">        ...     },</span>
+</span><span id="line-520"><span class="sd">        ...     'b': 'b',</span>
+</span><span id="line-521"><span class="sd">        ...     'c': 3</span>
+</span><span id="line-522"><span class="sd">        ... }</span>
+</span><span id="line-523"><span class="sd">        &gt;&gt;&gt; list(kp.items(input_dict))</span>
+</span><span id="line-524"><span class="sd">        [('a.a', 'a.a'), ('a.b', 'a.b'), ('a.c.a', 'a.c.a'), ('b', 'b'), ('c', 3)]</span>
+</span><span id="line-525"><span class="sd">        """</span>
+</span><span id="line-526">        <span class="k">if</span> <span class="n">key_path_prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-527">            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-528">                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span><span class="p">):</span>
+</span><span id="line-529">                    <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+</span><span id="line-530">                <span class="k">else</span><span class="p">:</span>
+</span><span id="line-531">                    <span class="k">for</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-532">                        <span class="k">yield</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span>
+</span><span id="line-533">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-534">            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-535">                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span><span class="p">):</span>
+</span><span id="line-536">                    <span class="k">yield</span> <span class="n">key_path_prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+</span><span id="line-537">                <span class="k">else</span><span class="p">:</span>
+</span><span id="line-538">                    <span class="k">for</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="line-539">                        <span class="k">yield</span> <span class="n">key_path_prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span></div>
 
-</span><span id="line-538">
-</span><span id="line-539">    <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-</span><span id="line-540">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-541">            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span><span class="p">):</span>
-</span><span id="line-542">                <span class="k">yield</span> <span class="n">k</span>
-</span><span id="line-543">                <span class="c1"># key_path_list.append(k)</span>
-</span><span id="line-544">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-545">                <span class="k">yield from</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
-</span><span id="line-546">
+</span><span id="line-540">
+</span><span id="line-541">    <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+</span><span id="line-542">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-543">            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span><span class="p">):</span>
+</span><span id="line-544">                <span class="k">yield</span> <span class="n">k</span>
+</span><span id="line-545">                <span class="c1"># key_path_list.append(k)</span>
+</span><span id="line-546">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-547">                <span class="k">yield from</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+</span><span id="line-548">
 <div class="viewcode-block" id="KeyPathTrans.getitem">
 <a class="viewcode-back" href="../../_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.getitem">[docs]</a>
-</span><span id="line-547">    <span class="k">def</span><span class="w"> </span><span class="nf">getitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">default_val</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="line-548"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-549"><span class="sd">        getting with a key list or "."-separated string</span>
-</span><span id="line-550">
-</span><span id="line-551"><span class="sd">        :param d: dict-like</span>
-</span><span id="line-552"><span class="sd">        :param key_path: list or "."-separated string of keys</span>
-</span><span id="line-553"><span class="sd">        :return:</span>
-</span><span id="line-554"><span class="sd">        """</span>
-</span><span id="line-555">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-556">            <span class="n">key_path</span> <span class="o">=</span> <span class="n">key_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
-</span><span id="line-557">        <span class="k">try</span><span class="p">:</span>
-</span><span id="line-558">            <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">getitem</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
-</span><span id="line-559">        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
-</span><span id="line-560">            <span class="k">return</span> <span class="n">default_val</span></div>
+</span><span id="line-549">    <span class="k">def</span><span class="w"> </span><span class="nf">getitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">default_val</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="line-550"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-551"><span class="sd">        getting with a key list or "."-separated string</span>
+</span><span id="line-552">
+</span><span id="line-553"><span class="sd">        :param d: dict-like</span>
+</span><span id="line-554"><span class="sd">        :param key_path: list or "."-separated string of keys</span>
+</span><span id="line-555"><span class="sd">        :return:</span>
+</span><span id="line-556"><span class="sd">        """</span>
+</span><span id="line-557">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-558">            <span class="n">key_path</span> <span class="o">=</span> <span class="n">key_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+</span><span id="line-559">        <span class="k">try</span><span class="p">:</span>
+</span><span id="line-560">            <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">getitem</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+</span><span id="line-561">        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="line-562">            <span class="k">return</span> <span class="n">default_val</span></div>
 
-</span><span id="line-561">
+</span><span id="line-563">
 <div class="viewcode-block" id="KeyPathTrans.setitem">
 <a class="viewcode-back" href="../../_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.setitem">[docs]</a>
-</span><span id="line-562">    <span class="k">def</span><span class="w"> </span><span class="nf">setitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-563"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-564"><span class="sd">        setting with a key list or "."-separated string</span>
-</span><span id="line-565">
-</span><span id="line-566"><span class="sd">        :param d: dict</span>
-</span><span id="line-567"><span class="sd">        :param key_path: list or "."-separated string of keys</span>
-</span><span id="line-568"><span class="sd">        :param val: value to assign</span>
-</span><span id="line-569"><span class="sd">        :return:</span>
-</span><span id="line-570"><span class="sd">        """</span>
-</span><span id="line-571">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-572">            <span class="n">key_path</span> <span class="o">=</span> <span class="n">key_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
-</span><span id="line-573">        <span class="bp">self</span><span class="o">.</span><span class="n">getitem</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="n">key_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">val</span></div>
+</span><span id="line-564">    <span class="k">def</span><span class="w"> </span><span class="nf">setitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-565"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-566"><span class="sd">        setting with a key list or "."-separated string</span>
+</span><span id="line-567">
+</span><span id="line-568"><span class="sd">        :param d: dict</span>
+</span><span id="line-569"><span class="sd">        :param key_path: list or "."-separated string of keys</span>
+</span><span id="line-570"><span class="sd">        :param val: value to assign</span>
+</span><span id="line-571"><span class="sd">        :return:</span>
+</span><span id="line-572"><span class="sd">        """</span>
+</span><span id="line-573">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-574">            <span class="n">key_path</span> <span class="o">=</span> <span class="n">key_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+</span><span id="line-575">        <span class="bp">self</span><span class="o">.</span><span class="n">getitem</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="n">key_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">val</span></div>
 
-</span><span id="line-574">
+</span><span id="line-576">
 <div class="viewcode-block" id="KeyPathTrans.setitem_recursive">
 <a class="viewcode-back" href="../../_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.setitem_recursive">[docs]</a>
-</span><span id="line-575">    <span class="k">def</span><span class="w"> </span><span class="nf">setitem_recursive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-576"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-577">
-</span><span id="line-578"><span class="sd">        :param d:</span>
-</span><span id="line-579"><span class="sd">        :param key_path:</span>
-</span><span id="line-580"><span class="sd">        :param val:</span>
-</span><span id="line-581"><span class="sd">        :return:</span>
-</span><span id="line-582">
-</span><span id="line-583"><span class="sd">        &gt;&gt;&gt; kp = KeyPathTrans()</span>
-</span><span id="line-584"><span class="sd">        &gt;&gt;&gt; input_dict = {</span>
-</span><span id="line-585"><span class="sd">        ...   "a": {</span>
-</span><span id="line-586"><span class="sd">        ...     "c": "val of a.c",</span>
-</span><span id="line-587"><span class="sd">        ...     "b": 1,</span>
-</span><span id="line-588"><span class="sd">        ...   },</span>
-</span><span id="line-589"><span class="sd">        ...   "10": 10,</span>
-</span><span id="line-590"><span class="sd">        ...   "b": {</span>
-</span><span id="line-591"><span class="sd">        ...     "B": {</span>
-</span><span id="line-592"><span class="sd">        ...       "AA": 3</span>
-</span><span id="line-593"><span class="sd">        ...     }</span>
-</span><span id="line-594"><span class="sd">        ...   }</span>
-</span><span id="line-595"><span class="sd">        ... }</span>
-</span><span id="line-596"><span class="sd">        &gt;&gt;&gt;</span>
-</span><span id="line-597"><span class="sd">        &gt;&gt;&gt; kp.setitem_recursive(input_dict, 'new.key.path', 7)</span>
-</span><span id="line-598"><span class="sd">        &gt;&gt;&gt; input_dict</span>
-</span><span id="line-599"><span class="sd">        {'a': {'c': 'val of a.c', 'b': 1}, '10': 10, 'b': {'B': {'AA': 3}}, 'new': {'key': {'path': 7}}}</span>
-</span><span id="line-600"><span class="sd">        &gt;&gt;&gt; kp.setitem_recursive(input_dict, 'new.key.old.path', 8)</span>
-</span><span id="line-601"><span class="sd">        &gt;&gt;&gt; input_dict</span>
-</span><span id="line-602"><span class="sd">        {'a': {'c': 'val of a.c', 'b': 1}, '10': 10, 'b': {'B': {'AA': 3}}, 'new': {'key': {'path': 7, 'old': {'path': 8}}}}</span>
-</span><span id="line-603"><span class="sd">        &gt;&gt;&gt; kp.setitem_recursive(input_dict, 'new.key', 'new val')</span>
-</span><span id="line-604"><span class="sd">        &gt;&gt;&gt; input_dict</span>
-</span><span id="line-605"><span class="sd">        {'a': {'c': 'val of a.c', 'b': 1}, '10': 10, 'b': {'B': {'AA': 3}}, 'new': {'key': 'new val'}}</span>
-</span><span id="line-606"><span class="sd">        """</span>
-</span><span id="line-607">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-608">            <span class="n">key_path</span> <span class="o">=</span> <span class="n">key_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
-</span><span id="line-609">        <span class="n">first_key</span> <span class="o">=</span> <span class="n">key_path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="line-610">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="line-611">            <span class="n">d</span><span class="p">[</span><span class="n">first_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-</span><span id="line-612">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-613">            <span class="k">if</span> <span class="n">first_key</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
-</span><span id="line-614">                <span class="bp">self</span><span class="o">.</span><span class="n">setitem_recursive</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">first_key</span><span class="p">],</span> <span class="n">key_path</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">val</span><span class="p">)</span>
-</span><span id="line-615">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-616">                <span class="n">d</span><span class="p">[</span><span class="n">first_key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span><span class="p">()</span>
-</span><span id="line-617">                <span class="bp">self</span><span class="o">.</span><span class="n">setitem_recursive</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">first_key</span><span class="p">],</span> <span class="n">key_path</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">val</span><span class="p">)</span></div>
+</span><span id="line-577">    <span class="k">def</span><span class="w"> </span><span class="nf">setitem_recursive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-578"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-579">
+</span><span id="line-580"><span class="sd">        :param d:</span>
+</span><span id="line-581"><span class="sd">        :param key_path:</span>
+</span><span id="line-582"><span class="sd">        :param val:</span>
+</span><span id="line-583"><span class="sd">        :return:</span>
+</span><span id="line-584">
+</span><span id="line-585"><span class="sd">        &gt;&gt;&gt; kp = KeyPathTrans()</span>
+</span><span id="line-586"><span class="sd">        &gt;&gt;&gt; input_dict = {</span>
+</span><span id="line-587"><span class="sd">        ...   "a": {</span>
+</span><span id="line-588"><span class="sd">        ...     "c": "val of a.c",</span>
+</span><span id="line-589"><span class="sd">        ...     "b": 1,</span>
+</span><span id="line-590"><span class="sd">        ...   },</span>
+</span><span id="line-591"><span class="sd">        ...   "10": 10,</span>
+</span><span id="line-592"><span class="sd">        ...   "b": {</span>
+</span><span id="line-593"><span class="sd">        ...     "B": {</span>
+</span><span id="line-594"><span class="sd">        ...       "AA": 3</span>
+</span><span id="line-595"><span class="sd">        ...     }</span>
+</span><span id="line-596"><span class="sd">        ...   }</span>
+</span><span id="line-597"><span class="sd">        ... }</span>
+</span><span id="line-598"><span class="sd">        &gt;&gt;&gt;</span>
+</span><span id="line-599"><span class="sd">        &gt;&gt;&gt; kp.setitem_recursive(input_dict, 'new.key.path', 7)</span>
+</span><span id="line-600"><span class="sd">        &gt;&gt;&gt; input_dict</span>
+</span><span id="line-601"><span class="sd">        {'a': {'c': 'val of a.c', 'b': 1}, '10': 10, 'b': {'B': {'AA': 3}}, 'new': {'key': {'path': 7}}}</span>
+</span><span id="line-602"><span class="sd">        &gt;&gt;&gt; kp.setitem_recursive(input_dict, 'new.key.old.path', 8)</span>
+</span><span id="line-603"><span class="sd">        &gt;&gt;&gt; input_dict</span>
+</span><span id="line-604"><span class="sd">        {'a': {'c': 'val of a.c', 'b': 1}, '10': 10, 'b': {'B': {'AA': 3}}, 'new': {'key': {'path': 7, 'old': {'path': 8}}}}</span>
+</span><span id="line-605"><span class="sd">        &gt;&gt;&gt; kp.setitem_recursive(input_dict, 'new.key', 'new val')</span>
+</span><span id="line-606"><span class="sd">        &gt;&gt;&gt; input_dict</span>
+</span><span id="line-607"><span class="sd">        {'a': {'c': 'val of a.c', 'b': 1}, '10': 10, 'b': {'B': {'AA': 3}}, 'new': {'key': 'new val'}}</span>
+</span><span id="line-608"><span class="sd">        """</span>
+</span><span id="line-609">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-610">            <span class="n">key_path</span> <span class="o">=</span> <span class="n">key_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+</span><span id="line-611">        <span class="n">first_key</span> <span class="o">=</span> <span class="n">key_path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="line-612">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="line-613">            <span class="n">d</span><span class="p">[</span><span class="n">first_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+</span><span id="line-614">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-615">            <span class="k">if</span> <span class="n">first_key</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+</span><span id="line-616">                <span class="bp">self</span><span class="o">.</span><span class="n">setitem_recursive</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">first_key</span><span class="p">],</span> <span class="n">key_path</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">val</span><span class="p">)</span>
+</span><span id="line-617">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-618">                <span class="n">d</span><span class="p">[</span><span class="n">first_key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span><span class="p">()</span>
+</span><span id="line-619">                <span class="bp">self</span><span class="o">.</span><span class="n">setitem_recursive</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">first_key</span><span class="p">],</span> <span class="n">key_path</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">val</span><span class="p">)</span></div>
 
-</span><span id="line-618">
+</span><span id="line-620">
 <div class="viewcode-block" id="KeyPathTrans.extract_key_paths">
 <a class="viewcode-back" href="../../_autosummary/i2.key_path.html#i2.key_path.KeyPathTrans.extract_key_paths">[docs]</a>
-</span><span id="line-619">    <span class="k">def</span><span class="w"> </span><span class="nf">extract_key_paths</span><span class="p">(</span>
-</span><span id="line-620">        <span class="bp">self</span><span class="p">,</span>
-</span><span id="line-621">        <span class="n">d</span><span class="p">,</span>
-</span><span id="line-622">        <span class="n">key_paths</span><span class="p">,</span>
-</span><span id="line-623">        <span class="n">field_naming</span><span class="o">=</span><span class="s2">"full"</span><span class="p">,</span>
-</span><span id="line-624">        <span class="n">use_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="line-625">        <span class="n">default_val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="line-626">    <span class="p">):</span>
-</span><span id="line-627"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-628"><span class="sd">        getting with a key list or "."-separated string</span>
-</span><span id="line-629">
-</span><span id="line-630"><span class="sd">        :param d: dict-like</span>
-</span><span id="line-631"><span class="sd">        :param key_path: list or "."-separated string of keys</span>
-</span><span id="line-632"><span class="sd">        :param field_naming: 'full' (default) will use key_path strings as is, leaf will only use the last dot item</span>
-</span><span id="line-633"><span class="sd">            (i.e. this.is.a.key.path will result in "path" being used)</span>
-</span><span id="line-634"><span class="sd">        :return:</span>
-</span><span id="line-635">
-</span><span id="line-636"><span class="sd">        &gt;&gt;&gt; kp = KeyPathTrans()</span>
-</span><span id="line-637"><span class="sd">        &gt;&gt;&gt; d = {</span>
-</span><span id="line-638"><span class="sd">        ...     'a': {</span>
-</span><span id="line-639"><span class="sd">        ...         'a': 'a.a',</span>
-</span><span id="line-640"><span class="sd">        ...         'b': 'a.b',</span>
-</span><span id="line-641"><span class="sd">        ...         'c': {</span>
-</span><span id="line-642"><span class="sd">        ...             'a': 'a.c.a'</span>
-</span><span id="line-643"><span class="sd">        ...         }</span>
-</span><span id="line-644"><span class="sd">        ...     },</span>
-</span><span id="line-645"><span class="sd">        ...     'b': 'b',</span>
-</span><span id="line-646"><span class="sd">        ...     'c': 3</span>
-</span><span id="line-647"><span class="sd">        ... }</span>
-</span><span id="line-648"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, 'a')</span>
-</span><span id="line-649"><span class="sd">        {'a': {'a': 'a.a', 'b': 'a.b', 'c': {'a': 'a.c.a'}}}</span>
-</span><span id="line-650"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, 'a.a')</span>
-</span><span id="line-651"><span class="sd">        {'a.a': 'a.a'}</span>
-</span><span id="line-652"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, 'a.c')</span>
-</span><span id="line-653"><span class="sd">        {'a.c': {'a': 'a.c.a'}}</span>
-</span><span id="line-654"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, ['a.a', 'a.c'])</span>
-</span><span id="line-655"><span class="sd">        {'a.a': 'a.a', 'a.c': {'a': 'a.c.a'}}</span>
-</span><span id="line-656"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, ['a.a', 'something.thats.not.there'])  # missing key just won't be included</span>
-</span><span id="line-657"><span class="sd">        {'a.a': 'a.a'}</span>
-</span><span id="line-658"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, ['a.a', 'something.thats.not.there'], use_default=True, default_val=42)</span>
-</span><span id="line-659"><span class="sd">        {'a.a': 'a.a', 'something.thats.not.there': 42}</span>
-</span><span id="line-660"><span class="sd">        """</span>
-</span><span id="line-661">        <span class="n">dd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mk_new_node</span><span class="p">()</span>
-</span><span id="line-662">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_paths</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-663">            <span class="n">key_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">key_paths</span><span class="p">]</span>
-</span><span id="line-664">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_paths</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span><span class="p">):</span>
-</span><span id="line-665">            <span class="n">key_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">key_paths</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="p">]</span>
-</span><span id="line-666">
-</span><span id="line-667">        <span class="k">for</span> <span class="n">key_path</span> <span class="ow">in</span> <span class="n">key_paths</span><span class="p">:</span>
-</span><span id="line-668">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-669">                <span class="n">field</span> <span class="o">=</span> <span class="n">key_path</span>
-</span><span id="line-670">                <span class="n">key_path</span> <span class="o">=</span> <span class="n">key_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
-</span><span id="line-671">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-672">                <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key_path</span><span class="p">)</span>
-</span><span id="line-673">
-</span><span id="line-674">            <span class="k">if</span> <span class="n">field_naming</span> <span class="o">==</span> <span class="s2">"leaf"</span><span class="p">:</span>
-</span><span id="line-675">                <span class="n">field</span> <span class="o">=</span> <span class="n">key_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-</span><span id="line-676">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-677">                <span class="n">field</span> <span class="o">=</span> <span class="n">field</span>
-</span><span id="line-678">
-</span><span id="line-679">            <span class="k">try</span><span class="p">:</span>
-</span><span id="line-680">                <span class="n">dd</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">field</span><span class="p">:</span> <span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">getitem</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">d</span><span class="p">)})</span>
-</span><span id="line-681">            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
-</span><span id="line-682">                <span class="k">if</span> <span class="n">use_default</span><span class="p">:</span>
-</span><span id="line-683">                    <span class="n">dd</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">field</span><span class="p">:</span> <span class="n">default_val</span><span class="p">})</span>
-</span><span id="line-684">
-</span><span id="line-685">        <span class="k">return</span> <span class="n">dd</span></div>
+</span><span id="line-621">    <span class="k">def</span><span class="w"> </span><span class="nf">extract_key_paths</span><span class="p">(</span>
+</span><span id="line-622">        <span class="bp">self</span><span class="p">,</span>
+</span><span id="line-623">        <span class="n">d</span><span class="p">,</span>
+</span><span id="line-624">        <span class="n">key_paths</span><span class="p">,</span>
+</span><span id="line-625">        <span class="n">field_naming</span><span class="o">=</span><span class="s2">"full"</span><span class="p">,</span>
+</span><span id="line-626">        <span class="n">use_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="line-627">        <span class="n">default_val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="line-628">    <span class="p">):</span>
+</span><span id="line-629"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-630"><span class="sd">        getting with a key list or "."-separated string</span>
+</span><span id="line-631">
+</span><span id="line-632"><span class="sd">        :param d: dict-like</span>
+</span><span id="line-633"><span class="sd">        :param key_path: list or "."-separated string of keys</span>
+</span><span id="line-634"><span class="sd">        :param field_naming: 'full' (default) will use key_path strings as is, leaf will only use the last dot item</span>
+</span><span id="line-635"><span class="sd">            (i.e. this.is.a.key.path will result in "path" being used)</span>
+</span><span id="line-636"><span class="sd">        :return:</span>
+</span><span id="line-637">
+</span><span id="line-638"><span class="sd">        &gt;&gt;&gt; kp = KeyPathTrans()</span>
+</span><span id="line-639"><span class="sd">        &gt;&gt;&gt; d = {</span>
+</span><span id="line-640"><span class="sd">        ...     'a': {</span>
+</span><span id="line-641"><span class="sd">        ...         'a': 'a.a',</span>
+</span><span id="line-642"><span class="sd">        ...         'b': 'a.b',</span>
+</span><span id="line-643"><span class="sd">        ...         'c': {</span>
+</span><span id="line-644"><span class="sd">        ...             'a': 'a.c.a'</span>
+</span><span id="line-645"><span class="sd">        ...         }</span>
+</span><span id="line-646"><span class="sd">        ...     },</span>
+</span><span id="line-647"><span class="sd">        ...     'b': 'b',</span>
+</span><span id="line-648"><span class="sd">        ...     'c': 3</span>
+</span><span id="line-649"><span class="sd">        ... }</span>
+</span><span id="line-650"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, 'a')</span>
+</span><span id="line-651"><span class="sd">        {'a': {'a': 'a.a', 'b': 'a.b', 'c': {'a': 'a.c.a'}}}</span>
+</span><span id="line-652"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, 'a.a')</span>
+</span><span id="line-653"><span class="sd">        {'a.a': 'a.a'}</span>
+</span><span id="line-654"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, 'a.c')</span>
+</span><span id="line-655"><span class="sd">        {'a.c': {'a': 'a.c.a'}}</span>
+</span><span id="line-656"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, ['a.a', 'a.c'])</span>
+</span><span id="line-657"><span class="sd">        {'a.a': 'a.a', 'a.c': {'a': 'a.c.a'}}</span>
+</span><span id="line-658"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, ['a.a', 'something.thats.not.there'])  # missing key just won't be included</span>
+</span><span id="line-659"><span class="sd">        {'a.a': 'a.a'}</span>
+</span><span id="line-660"><span class="sd">        &gt;&gt;&gt; kp.extract_key_paths(d, ['a.a', 'something.thats.not.there'], use_default=True, default_val=42)</span>
+</span><span id="line-661"><span class="sd">        {'a.a': 'a.a', 'something.thats.not.there': 42}</span>
+</span><span id="line-662"><span class="sd">        """</span>
+</span><span id="line-663">        <span class="n">dd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mk_new_node</span><span class="p">()</span>
+</span><span id="line-664">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_paths</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-665">            <span class="n">key_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">key_paths</span><span class="p">]</span>
+</span><span id="line-666">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_paths</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span><span class="p">):</span>
+</span><span id="line-667">            <span class="n">key_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">key_paths</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="p">]</span>
+</span><span id="line-668">
+</span><span id="line-669">        <span class="k">for</span> <span class="n">key_path</span> <span class="ow">in</span> <span class="n">key_paths</span><span class="p">:</span>
+</span><span id="line-670">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-671">                <span class="n">field</span> <span class="o">=</span> <span class="n">key_path</span>
+</span><span id="line-672">                <span class="n">key_path</span> <span class="o">=</span> <span class="n">key_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+</span><span id="line-673">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-674">                <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key_path</span><span class="p">)</span>
+</span><span id="line-675">
+</span><span id="line-676">            <span class="k">if</span> <span class="n">field_naming</span> <span class="o">==</span> <span class="s2">"leaf"</span><span class="p">:</span>
+</span><span id="line-677">                <span class="n">field</span> <span class="o">=</span> <span class="n">key_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="line-678">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-679">                <span class="n">field</span> <span class="o">=</span> <span class="n">field</span>
+</span><span id="line-680">
+</span><span id="line-681">            <span class="k">try</span><span class="p">:</span>
+</span><span id="line-682">                <span class="n">dd</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">field</span><span class="p">:</span> <span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">getitem</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">d</span><span class="p">)})</span>
+</span><span id="line-683">            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="line-684">                <span class="k">if</span> <span class="n">use_default</span><span class="p">:</span>
+</span><span id="line-685">                    <span class="n">dd</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">field</span><span class="p">:</span> <span class="n">default_val</span><span class="p">})</span>
+</span><span id="line-686">
+</span><span id="line-687">        <span class="k">return</span> <span class="n">dd</span></div>
 </div>
 
-</span><span id="line-686">
-</span><span id="line-687">
-</span><span id="line-688"><span class="c1"># from collections.abc import MutableMapping</span>
-</span><span id="line-689"><span class="c1">#</span>
-</span><span id="line-690"><span class="c1">#</span>
-</span><span id="line-691"><span class="c1"># class AttrStore(MutableMapping):</span>
-</span><span id="line-692"><span class="c1">#     def __getitem__(self, k):</span>
-</span><span id="line-693"><span class="c1">#         if not hasattr(self, k):</span>
-</span><span id="line-694"><span class="c1">#             setattr(self, k, AttrStore())</span>
-</span><span id="line-695"><span class="c1">#         return getattr(self, k)</span>
-</span><span id="line-696"><span class="c1">#</span>
-</span><span id="line-697"><span class="c1">#     def __setitem__(self, k, v):</span>
-</span><span id="line-698"><span class="c1">#         return setattr(self, k, v)</span>
-</span><span id="line-699"><span class="c1">#</span>
-</span><span id="line-700"><span class="c1">#     def __delitem__(self, k):</span>
-</span><span id="line-701"><span class="c1">#         return delattr(self, k)</span>
-</span><span id="line-702"><span class="c1">#</span>
-</span><span id="line-703"><span class="c1">#     def __iter__(self):</span>
-</span><span id="line-704"><span class="c1">#         return iter(self.__dict__)</span>
-</span><span id="line-705"><span class="c1">#</span>
-</span><span id="line-706"><span class="c1">#     def keys(self):</span>
-</span><span id="line-707"><span class="c1">#         return self.__dict__.keys()</span>
-</span><span id="line-708"><span class="c1">#</span>
-</span><span id="line-709"><span class="c1">#     def __contains__(self, k):</span>
-</span><span id="line-710"><span class="c1">#         return hasattr(self, k)</span>
-</span><span id="line-711"><span class="c1">#</span>
-</span><span id="line-712"><span class="c1">#     def __len__(self):</span>
-</span><span id="line-713"><span class="c1">#         return len(list(self))</span>
-</span><span id="line-714"><span class="c1">#</span>
-</span><span id="line-715"><span class="c1">#</span>
-</span><span id="line-716"><span class="c1"># d = AttrStore()</span>
-</span><span id="line-717"><span class="c1"># kp = KeyPathMap(d)</span>
-</span><span id="line-718"><span class="c1"># kp['a'] = '2a'</span>
-</span><span id="line-719"><span class="c1"># print(kp.store.a)</span>
-</span><span id="line-720"><span class="c1"># print(list(kp))</span>
-</span><span id="line-721"><span class="c1"># kp['c']['d'] = 3</span>
+</span><span id="line-688">
+</span><span id="line-689">
+</span><span id="line-690"><span class="c1"># from collections.abc import MutableMapping</span>
+</span><span id="line-691"><span class="c1">#</span>
+</span><span id="line-692"><span class="c1">#</span>
+</span><span id="line-693"><span class="c1"># class AttrStore(MutableMapping):</span>
+</span><span id="line-694"><span class="c1">#     def __getitem__(self, k):</span>
+</span><span id="line-695"><span class="c1">#         if not hasattr(self, k):</span>
+</span><span id="line-696"><span class="c1">#             setattr(self, k, AttrStore())</span>
+</span><span id="line-697"><span class="c1">#         return getattr(self, k)</span>
+</span><span id="line-698"><span class="c1">#</span>
+</span><span id="line-699"><span class="c1">#     def __setitem__(self, k, v):</span>
+</span><span id="line-700"><span class="c1">#         return setattr(self, k, v)</span>
+</span><span id="line-701"><span class="c1">#</span>
+</span><span id="line-702"><span class="c1">#     def __delitem__(self, k):</span>
+</span><span id="line-703"><span class="c1">#         return delattr(self, k)</span>
+</span><span id="line-704"><span class="c1">#</span>
+</span><span id="line-705"><span class="c1">#     def __iter__(self):</span>
+</span><span id="line-706"><span class="c1">#         return iter(self.__dict__)</span>
+</span><span id="line-707"><span class="c1">#</span>
+</span><span id="line-708"><span class="c1">#     def keys(self):</span>
+</span><span id="line-709"><span class="c1">#         return self.__dict__.keys()</span>
+</span><span id="line-710"><span class="c1">#</span>
+</span><span id="line-711"><span class="c1">#     def __contains__(self, k):</span>
+</span><span id="line-712"><span class="c1">#         return hasattr(self, k)</span>
+</span><span id="line-713"><span class="c1">#</span>
+</span><span id="line-714"><span class="c1">#     def __len__(self):</span>
+</span><span id="line-715"><span class="c1">#         return len(list(self))</span>
+</span><span id="line-716"><span class="c1">#</span>
+</span><span id="line-717"><span class="c1">#</span>
+</span><span id="line-718"><span class="c1"># d = AttrStore()</span>
+</span><span id="line-719"><span class="c1"># kp = KeyPathMap(d)</span>
+</span><span id="line-720"><span class="c1"># kp['a'] = '2a'</span>
+</span><span id="line-721"><span class="c1"># print(kp.store.a)</span>
 </span><span id="line-722"><span class="c1"># print(list(kp))</span>
-</span><span id="line-723"><span class="c1"># kp['c', 'z'] = 'hi world'</span>
-</span><span id="line-724"><span class="c1"># print(list(kp.items()))</span>
-</span><span id="line-725">
-</span><span id="line-726"><span class="c1">## Not working yet:</span>
-</span><span id="line-727"><span class="c1"># d = AttrStore()</span>
-</span><span id="line-728"><span class="c1"># kp = StrKeyPath(d, sep='.')</span>
-</span><span id="line-729"><span class="c1"># kp['a'] = '2a'</span>
-</span><span id="line-730"><span class="c1"># print(kp.store.a)</span>
-</span><span id="line-731"><span class="c1"># print(list(kp))</span>
-</span><span id="line-732"><span class="c1"># kp['c']['d'] = 3</span>
+</span><span id="line-723"><span class="c1"># kp['c']['d'] = 3</span>
+</span><span id="line-724"><span class="c1"># print(list(kp))</span>
+</span><span id="line-725"><span class="c1"># kp['c', 'z'] = 'hi world'</span>
+</span><span id="line-726"><span class="c1"># print(list(kp.items()))</span>
+</span><span id="line-727">
+</span><span id="line-728"><span class="c1">## Not working yet:</span>
+</span><span id="line-729"><span class="c1"># d = AttrStore()</span>
+</span><span id="line-730"><span class="c1"># kp = StrKeyPath(d, sep='.')</span>
+</span><span id="line-731"><span class="c1"># kp['a'] = '2a'</span>
+</span><span id="line-732"><span class="c1"># print(kp.store.a)</span>
 </span><span id="line-733"><span class="c1"># print(list(kp))</span>
-</span><span id="line-734"><span class="c1"># kp['c.z'] = 'hi world'</span>
-</span><span id="line-735"><span class="c1"># list(kp.items())</span>
+</span><span id="line-734"><span class="c1"># kp['c']['d'] = 3</span>
+</span><span id="line-735"><span class="c1"># print(list(kp))</span>
+</span><span id="line-736"><span class="c1"># kp['c.z'] = 'hi world'</span>
+</span><span id="line-737"><span class="c1"># list(kp.items())</span>
 </span></code></pre></div>
     </div></div>
           </main>
@@ -973,7 +975,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=726fce2c"></script>
+    <script src="../../_static/documentation_options.js?v=45974446"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

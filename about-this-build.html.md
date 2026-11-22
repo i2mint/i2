@@ -2,7 +2,7 @@
 
 # About this build
 
-This documentation was built on **2026-11-22 22:13 UTC** from commit <a href="https://github.com/i2mint/i2/commit/89469a1006bf3d2f0b3e7a7deaeb7518915afa5f"><code>89469a1</code></a> on branch <code>master</code>, for **i2 0.1.95** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 22:32 UTC** from commit <a href="https://github.com/i2mint/i2/commit/ebf99ef850c309673aaae4f6e707022fcd505bcc"><code>ebf99ef</code></a> on branch <code>master</code>, for **i2 0.1.96** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -11,7 +11,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/i2/commit/89469a1006bf3d2f0b3e7a7deaeb7518915afa5f"><code>89469a1006bf3d2f0b3e7a7deaeb7518915afa5f</code></a> |
+| Commit              | <a href="https://github.com/i2mint/i2/commit/ebf99ef850c309673aaae4f6e707022fcd505bcc"><code>ebf99ef850c309673aaae4f6e707022fcd505bcc</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -22,9 +22,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/i2</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/i2/actions/runs/45076381245">45076381245</a>            |
+| Run          | <a href="https://github.com/i2mint/i2/actions/runs/45078238044">45078238044</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>89469a1006bf3d2f0b3e7a7deaeb7518915afa5f</code> (in the history of the built commit) |
+| Event commit | <code>ebf99ef850c309673aaae4f6e707022fcd505bcc</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -49,13 +49,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/i2/0.1.95/">0.1.95</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/i2/0.1.96/">0.1.96</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/i2 && cd i2
-git checkout 89469a1006bf3d2f0b3e7a7deaeb7518915afa5f
+git checkout ebf99ef850c309673aaae4f6e707022fcd505bcc
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

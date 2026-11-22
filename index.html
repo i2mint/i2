@@ -120,8 +120,11 @@
 
 <section id="i2">
 <h1>i2<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2">¶</a></h1>
-<p>Core tools for minting code.</p>
-<p>For human readers: <a class="reference external" href="https://i2mint.github.io/i2/" rel="nofollow noopener">Documentation here.<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p>
+<p>Function signatures as data you can read, edit and combine, plus the wrappers, decorators and pipelines built on them. Where the standard library gives you a read-only <code class="docutils literal notranslate"><span class="pre">inspect.Signature</span></code> and <code class="docutils literal notranslate"><span class="pre">functools.wraps</span></code>, <code class="docutils literal notranslate"><span class="pre">i2</span></code> gives you signatures you can rename, merge and apply as decorators, and wrappers that keep the input and output transformations in separate layers instead of a hand-written closure. It is the layer under <code class="docutils literal notranslate"><span class="pre">dol</span></code>, <code class="docutils literal notranslate"><span class="pre">meshed</span></code> and <code class="docutils literal notranslate"><span class="pre">front</span></code>: when they adapt one function’s interface to another’s, <code class="docutils literal notranslate"><span class="pre">i2</span></code> does the work.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">pip</span> <span class="n">install</span> <span class="n">i2</span>
+</span></code></pre></div>
+</div>
+<p>Pure Python, no required dependencies. <a class="reference external" href="https://i2mint.github.io/i2/" rel="nofollow noopener">Documentation<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>.</p>
 
 <section id="for-ai-agents">
 <h2>For AI agents<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#for-ai-agents" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#for-ai-agents'">¶</a></h2>
@@ -154,14 +157,10 @@
 <p><strong>The documentation, machine-readable</strong>: <a class="reference external" href="https://i2mint.github.io/i2/llms.txt" rel="nofollow noopener"><code class="docutils literal notranslate"><span class="pre">llms.txt</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> indexes every page; <a class="reference external" href="https://i2mint.github.io/i2/i2.md" rel="nofollow noopener"><code class="docutils literal notranslate"><span class="pre">i2.md</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> is the whole documentation in one file; every page has a <code class="docutils literal notranslate"><span class="pre">.md</span></code> twin; <a class="reference external" href="https://i2mint.github.io/i2/objects.inv" rel="nofollow noopener"><code class="docutils literal notranslate"><span class="pre">objects.inv</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> maps symbols to URLs. The full list, with install lines, is on the site’s <a class="reference external" href="https://i2mint.github.io/i2/ai-agents.html" rel="nofollow noopener">For AI agents<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> page.</p>
 <p>If you identify as a dinosaur, the rest of this README is written for you, starting at <a class="reference internal" href="#key-modules-overview">Key Modules Overview</a>.</p>
 
-<p><strong>Working on this repo as an agent?</strong> Read <a class="reference internal" href="#.claude/CLAUDE.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">.claude/CLAUDE.md</span></code></span></a> first: module map, test command, and the rule that any change to a public signature, default or return type needs the dependents’ tests, not just these. The skills above live in <a class="reference internal" href="#.claude/skills"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">.claude/skills/</span></code></span></a>, so Claude Code picks them up in this repo automatically. To install one elsewhere, use <code class="docutils literal notranslate"><span class="pre">gh</span> <span class="pre">skill</span> <span class="pre">install</span> <span class="pre">i2mint/i2</span> <span class="pre">i2-signatures</span> <span class="pre">--allow-hidden-dirs</span> <span class="pre">--agent</span> <span class="pre">claude-code</span></code> (swap in any skill name). Contributors who still type every character themselves: see <a class="reference internal" href="#for-carbon-based-contributors">For carbon-based contributors</a>.</p>
 </section>
-<section id="install">
-<h2>Install<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#install" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#install'">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">pip</span> <span class="n">install</span> <span class="n">i2</span>
-</span></code></pre></div>
-</div>
-<p>The smallest useful thing: read, edit and re-apply a function’s signature with <code class="docutils literal notranslate"><span class="pre">Sig</span></code>.</p>
+<section id="quick-start">
+<h2>Quick start<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#quick-start" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#quick-start'">¶</a></h2>
+<p>The smallest useful thing: read, edit and re-apply a function’s signature with <code class="docutils literal notranslate"><span class="pre">Sig</span></code>. Note that applying a <code class="docutils literal notranslate"><span class="pre">Sig</span></code> rewrites the function’s signature in place and returns the same function; use <code class="docutils literal notranslate"><span class="pre">i2.wrap</span></code> when you want a new one.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span>
 </span><span id="line-2">
 </span><span id="line-3"><span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
@@ -174,7 +173,52 @@
 </span><span id="line-10"><span class="n">g</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>                 <span class="c1"># 7</span>
 </span></code></pre></div>
 </div>
-<p>The flat, single-file view of the whole documentation is <a class="reference external" href="https://i2mint.github.io/i2/i2.md" rel="nofollow noopener">i2.md<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>.</p>
+<p>Change what goes in and what comes out of a function without touching it, or chain functions into one:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Wrap</span><span class="p">,</span> <span class="n">Pipe</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="n">add</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</span><span id="line-4"><span class="n">add_as_text</span> <span class="o">=</span> <span class="n">Wrap</span><span class="p">(</span><span class="n">add</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+</span><span id="line-5"><span class="n">add_as_text</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>    <span class="c1"># '3'</span>
+</span><span id="line-6">
+</span><span id="line-7"><span class="n">clean</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">strip</span><span class="p">,</span> <span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+</span><span id="line-8"><span class="n">clean</span><span class="p">(</span><span class="s2">"  hello "</span><span class="p">)</span>    <span class="c1"># 'HELLO'</span>
+</span></code></pre></div>
+</div>
+</section>
+<section id="what-is-in-the-box">
+<h2>What is in the box<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#what-is-in-the-box" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#what-is-in-the-box'">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">i2</span></code> is a toolbox, and most people need one or two of its modules:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Module</p></th>
+<th class="head"><p>What it gives you</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i2.signatures</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Sig</span></code>: a signature you can introspect, add, subtract, rename and apply as a decorator. The core of the package.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">i2.wrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Wrap</span></code>, <code class="docutils literal notranslate"><span class="pre">wrap</span></code>, <code class="docutils literal notranslate"><span class="pre">Ingress</span></code>: change a function’s inputs, outputs and signature in separate, composable layers.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i2.deco</span></code></p></td>
+<td><p>ready-made decorators: <code class="docutils literal notranslate"><span class="pre">preprocess</span></code>, <code class="docutils literal notranslate"><span class="pre">postprocess</span></code>, <code class="docutils literal notranslate"><span class="pre">double_up_as_factory</span></code>, <code class="docutils literal notranslate"><span class="pre">FuncFactory</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">i2.multi_object</span></code></p></td>
+<td><p>work with a fixed set of functions as one: <code class="docutils literal notranslate"><span class="pre">Pipe</span></code>, <code class="docutils literal notranslate"><span class="pre">FuncFanout</span></code>, <code class="docutils literal notranslate"><span class="pre">MultiFunc</span></code>, <code class="docutils literal notranslate"><span class="pre">ParallelFuncs</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i2.castgraph</span></code></p></td>
+<td><p>route a value through a graph of conversions (a path to a loaded object, text to a dict) with the cheapest path picked for you.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">i2.routing_forest</span></code></p></td>
+<td><p>nested if/then logic as a data structure you can compose and reuse.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i2.util</span></code></p></td>
+<td><p>small helpers: <code class="docutils literal notranslate"><span class="pre">name_of_obj</span></code>, <code class="docutils literal notranslate"><span class="pre">lazyprop</span></code>, <code class="docutils literal notranslate"><span class="pre">imdict</span></code>, sentinels, identity and constant functions.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The sections below cover the main ones with examples. The flat, single-file view of the whole documentation is <a class="reference external" href="https://i2mint.github.io/i2/i2.md" rel="nofollow noopener">i2.md<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>.</p>
 </section>
 <section id="key-modules-overview">
 <h2>Key Modules Overview<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#key-modules-overview" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#key-modules-overview'">¶</a></h2>
@@ -509,38 +553,39 @@ Read me in the <a class="reference external" href="https://github.com/i2mint/i2/
 </span><span id="line-10">
 </span><span id="line-11"><span class="nd">@graph</span><span class="o">.</span><span class="n">register_edge</span><span class="p">(</span><span class="s1">'rows'</span><span class="p">,</span> <span class="s1">'records'</span><span class="p">)</span>
 </span><span id="line-12"><span class="k">def</span><span class="w"> </span><span class="nf">rows_to_records</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
-</span><span id="line-13">    <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
-</span><span id="line-14">
-</span><span id="line-15"><span class="c1"># Use with wrapper for clean API</span>
-</span><span id="line-16"><span class="k">def</span><span class="w"> </span><span class="nf">process_csv</span><span class="p">(</span><span class="n">csv_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="line-17">    <span class="k">return</span> <span class="n">graph</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">csv_text</span><span class="p">,</span> <span class="s1">'records'</span><span class="p">,</span> <span class="n">from_kind</span><span class="o">=</span><span class="s1">'csv'</span><span class="p">)</span>
-</span><span id="line-18">
-</span><span id="line-19"><span class="c1"># Wrap to add validation</span>
-</span><span id="line-20"><span class="n">validated</span> <span class="o">=</span> <span class="n">Wrap</span><span class="p">(</span>
-</span><span id="line-21">    <span class="n">process_csv</span><span class="p">,</span>
-</span><span id="line-22">    <span class="n">ingress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),),</span>
-</span><span id="line-23">    <span class="n">egress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">records</span><span class="p">:</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">records</span> <span class="k">if</span> <span class="n">r</span><span class="p">]</span>  <span class="c1"># Filter empties</span>
-</span><span id="line-24"><span class="p">)</span>
+</span><span id="line-13">    <span class="n">headers</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">rows</span>
+</span><span id="line-14">    <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+</span><span id="line-15">
+</span><span id="line-16"><span class="c1"># Use with wrapper for clean API</span>
+</span><span id="line-17"><span class="k">def</span><span class="w"> </span><span class="nf">process_csv</span><span class="p">(</span><span class="n">csv_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="line-18">    <span class="k">return</span> <span class="n">graph</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">csv_text</span><span class="p">,</span> <span class="s1">'records'</span><span class="p">,</span> <span class="n">from_kind</span><span class="o">=</span><span class="s1">'csv'</span><span class="p">)</span>
+</span><span id="line-19">
+</span><span id="line-20"><span class="c1"># Wrap to add validation</span>
+</span><span id="line-21"><span class="n">validated</span> <span class="o">=</span> <span class="n">Wrap</span><span class="p">(</span>
+</span><span id="line-22">    <span class="n">process_csv</span><span class="p">,</span>
+</span><span id="line-23">    <span class="n">ingress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">csv_text</span><span class="p">:</span> <span class="p">((</span><span class="n">csv_text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),),</span> <span class="p">{}),</span>
+</span><span id="line-24">    <span class="n">egress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">records</span><span class="p">:</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">records</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">values</span><span class="p">())]</span>  <span class="c1"># drop empty records</span>
+</span><span id="line-25"><span class="p">)</span>
+</span><span id="line-26"><span class="k">assert</span> <span class="n">validated</span><span class="p">(</span><span class="s2">"  name,age</span><span class="se">\n</span><span class="s2">ann,3</span><span class="se">\n</span><span class="s2">,</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span> <span class="o">==</span> <span class="p">[{</span><span class="s1">'name'</span><span class="p">:</span> <span class="s1">'ann'</span><span class="p">,</span> <span class="s1">'age'</span><span class="p">:</span> <span class="s1">'3'</span><span class="p">}]</span>
 </span></code></pre></div>
 </div>
 </section>
 <section id="dynamic-signature-manipulation">
 <h3>Dynamic Signature Manipulation<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#dynamic-signature-manipulation" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#dynamic-signature-manipulation'">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.signatures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span>
-</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">i2.wrapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ingress</span>
-</span><span id="line-3">
-</span><span id="line-4"><span class="c1"># Start with a general function</span>
-</span><span id="line-5"><span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="line-6">    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-</span><span id="line-7">
-</span><span id="line-8"><span class="c1"># Give it a specific signature</span>
-</span><span id="line-9"><span class="nd">@Sig</span><span class="p">(</span><span class="s1">'a b c'</span><span class="p">)</span>
-</span><span id="line-10"><span class="k">def</span><span class="w"> </span><span class="nf">typed_process</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="line-11">    <span class="k">return</span> <span class="n">process</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span id="line-12">
-</span><span id="line-13"><span class="c1"># Now can call with clear (keyword) parameters</span>
-</span><span id="line-14"><span class="n">result</span> <span class="o">=</span> <span class="n">typed_process</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-</span><span id="line-15"><span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">6</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="c1"># Start with a general function</span>
+</span><span id="line-4"><span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-5">    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</span><span id="line-6">
+</span><span id="line-7"><span class="c1"># Give it a specific signature</span>
+</span><span id="line-8"><span class="nd">@Sig</span><span class="p">(</span><span class="s1">'a b c'</span><span class="p">)</span>
+</span><span id="line-9"><span class="k">def</span><span class="w"> </span><span class="nf">typed_process</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="line-10">    <span class="k">return</span> <span class="n">process</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="line-11">
+</span><span id="line-12"><span class="c1"># Now can call with clear (keyword) parameters</span>
+</span><span id="line-13"><span class="n">result</span> <span class="o">=</span> <span class="n">typed_process</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-14"><span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">6</span>
 </span></code></pre></div>
 </div>
 </section>
@@ -586,45 +631,36 @@ Read me in the <a class="reference external" href="https://github.com/i2mint/i2/
 </div>
 <p>Packaging lives in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>. CI is the wads uv workflow in <code class="docutils literal notranslate"><span class="pre">.github/workflows/ci.yml</span></code>, configured by <code class="docutils literal notranslate"><span class="pre">[tool.wads.ci]</span></code>. A merge to <code class="docutils literal notranslate"><span class="pre">master</span></code> publishes to PyPI and bumps the version, so don’t edit the version by hand.</p>
 <p>About 50 packages depend on <code class="docutils literal notranslate"><span class="pre">i2</span></code> (<code class="docutils literal notranslate"><span class="pre">dol</span></code>, <code class="docutils literal notranslate"><span class="pre">meshed</span></code>, <code class="docutils literal notranslate"><span class="pre">config2py</span></code>, <code class="docutils literal notranslate"><span class="pre">front</span></code>, <code class="docutils literal notranslate"><span class="pre">py2http</span></code> and more). Before changing a public signature, default or return type in <code class="docutils literal notranslate"><span class="pre">signatures.py</span></code>, <code class="docutils literal notranslate"><span class="pre">deco.py</span></code> or <code class="docutils literal notranslate"><span class="pre">wrapper.py</span></code>, run the tests of the heaviest dependents against your branch. i2’s own suite has missed breakages there before.</p>
+<p><strong>Working on this repo as an agent?</strong> Read <a class="reference external" href="https://github.com/i2mint/i2/blob/master/.claude/CLAUDE.md" rel="nofollow noopener"><code class="docutils literal notranslate"><span class="pre">.claude/CLAUDE.md</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> first: module map, test command, and the rule that any change to a public signature, default or return type needs the dependents’ tests, not just these. The skills above live in <a class="reference external" href="https://github.com/i2mint/i2/tree/master/.claude/skills" rel="nofollow noopener"><code class="docutils literal notranslate"><span class="pre">.claude/skills/</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>, so Claude Code picks them up in this repo automatically. To install one elsewhere, use <code class="docutils literal notranslate"><span class="pre">gh</span> <span class="pre">skill</span> <span class="pre">install</span> <span class="pre">i2mint/i2</span> <span class="pre">i2-signatures</span> <span class="pre">--allow-hidden-dirs</span> <span class="pre">--agent</span> <span class="pre">claude-code</span></code> (swap in any skill name).</p>
 <p>Questions and design discussion go to <a class="reference external" href="https://github.com/i2mint/i2/issues" rel="nofollow noopener">GitHub issues<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a> and <a class="reference external" href="https://github.com/i2mint/i2/discussions" rel="nofollow noopener">discussions<svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>.</p>
 </section>
 <section id="what-s-mint">
 <span id="whats-mint"></span><h2>What’s mint?<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#what-s-mint" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#what-s-mint'">¶</a></h2>
 <p>Mint stands for “Meta-INTerface”.</p>
-<p>Minting is core technique of i2i: It can be seen as the encapsulation of a construct’s interface into a (data)
-structure that contains everything one needs to know about the construct to perform a specific action
-with or on the construct.</p>
-<p>A little note on the use of “encapsulation”. The term is widely used in computer science,
-and is typically tied to object oriented programming. Wikipedia provides two definitions:</p>
+<p>Minting is a core technique of i2i: It can be seen as the encapsulation of a construct’s interface into a (data) structure that contains everything one needs to know about the construct to perform a specific action with or on the construct.</p>
+<p>A little note on the use of “encapsulation”. The term is widely used in computer science, and is typically tied to object oriented programming. Wikipedia provides two definitions:</p>
 <ul class="simple">
 <li><p>A language mechanism for restricting direct access to some of the object’s components.</p></li>
-<li><p>A language construct that facilitates the bundling of data with the methods (or other functions)
-operating on that data.</p></li>
+<li><p>A language construct that facilitates the bundling of data with the methods (or other functions) operating on that data.</p></li>
 </ul>
-<p>Though both these definitions apply to minting,
-the original sense of the word “encapsulate” is even more relevant (from google definitions):</p>
+<p>Though both these definitions apply to minting, the original sense of the word “encapsulate” is even more relevant (from google definitions):</p>
 <ul class="simple">
 <li><p>express the essential features of (something) succinctly</p></li>
 <li><p>enclose (something) in or as if in a capsule</p></li>
 </ul>
-<p>Indeed, minting is the process of enclosing a construct into a “mint” (for “Meta INTerface”)
-that will express the features of the construct that are essential to the task at hand.
-The mint provides a declarative layer of the construct that allows one to write code that operates with this layer,
-which is designed to be (as) consistent (as possible) from one system/language to another.</p>
-<p>For example, whether a (non-anonymous) function was written in C, Python, or JavaScript,
-it will at least have a name, and it’s arguments will (most often) have names, and may have types.
-Similarly with “data objects”: The data of both JavaScript and Python objects can be represented by a tree whose
-leaves are base types, which can in turn be represented by a C struct.</p>
+<p>Indeed, minting is the process of enclosing a construct into a “mint” (for “Meta INTerface”) that will express the features of the construct that are essential to the task at hand. The mint provides a declarative layer of the construct that allows one to write code that operates with this layer, which is designed to be (as) consistent (as possible) from one system/language to another.</p>
+<p>For example, whether a (non-anonymous) function was written in C, Python, or JavaScript, it will at least have a name, and its arguments will (most often) have names, and may have types. Similarly with “data objects”: The data of both JavaScript and Python objects can be represented by a tree whose leaves are base types, which can in turn be represented by a C struct.</p>
 <p class="epythet-aggregates">This documentation as a single file: <a href="i2.md">i2.md</a> (Markdown, for agents).</p>
 
 </section>
 </section>
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 22:13 UTC from <a href="https://github.com/i2mint/i2/commit/89469a1006bf3d2f0b3e7a7deaeb7518915afa5f">89469a1</a> (master) · i2 0.1.95 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 22:32 UTC from <a href="https://github.com/i2mint/i2/commit/ebf99ef850c309673aaae4f6e707022fcd505bcc">ebf99ef</a> (master) · i2 0.1.96 · <a href="about-this-build.html">about this build</a></p>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
 <li><a :data-current="activeSection === '#for-ai-agents'" class="reference internal" href="#for-ai-agents">For AI agents</a></li>
-<li><a :data-current="activeSection === '#install'" class="reference internal" href="#install">Install</a></li>
+<li><a :data-current="activeSection === '#quick-start'" class="reference internal" href="#quick-start">Quick start</a></li>
+<li><a :data-current="activeSection === '#what-is-in-the-box'" class="reference internal" href="#what-is-in-the-box">What is in the box</a></li>
 <li><a :data-current="activeSection === '#key-modules-overview'" class="reference internal" href="#key-modules-overview">Key Modules Overview</a><ul>
 <li><a :data-current="activeSection === '#i2-castgraph-type-kind-based-transformation-graphs'" class="reference internal" href="#i2-castgraph-type-kind-based-transformation-graphs">i2.castgraph - Type/Kind-Based Transformation Graphs</a></li>
 <li><a :data-current="activeSection === '#i2-signatures-function-signature-manipulation'" class="reference internal" href="#i2-signatures-function-signature-manipulation">i2.signatures - Function Signature Manipulation</a></li>
@@ -654,7 +690,7 @@ leaves are base types, which can in turn be represented by a C struct.</p>
 </div>
 </footer>
 </div>
-<script src="_static/documentation_options.js?v=726fce2c"></script>
+<script src="_static/documentation_options.js?v=45974446"></script>
 <script src="_static/doctools.js?v=fd6eb6e6"></script>
 <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>
