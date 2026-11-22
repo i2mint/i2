@@ -202,13 +202,13 @@ class KindMatch:
     {'encoding': 'utf-8', 'analyzed': True}
     """
 
-    def __init__(self, metadata: dict | None = None):
+    def __init__(self, metadata: dict | None = None) -> None:
         self.metadata = metadata or {}
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return True
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"KindMatch({self.metadata})"
 
 
@@ -230,7 +230,7 @@ class Kind:
         self,
         identifier: Hashable,
         isa: Callable[[Any], bool | KindMatch] | None = None,
-    ):
+    ) -> None:
         self.identifier = identifier
         self._isa = isa
 
@@ -251,7 +251,7 @@ class Kind:
             return self.identifier == other.identifier
         return self.identifier == other  # Allow comparison with raw identifiers
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Kind({self.identifier!r})"
 
 
@@ -1728,7 +1728,7 @@ class _IngressProxy:
     by dynamically looking up kinds and creating decorators.
     """
 
-    def __init__(self, graph: TransformationGraph):
+    def __init__(self, graph: TransformationGraph) -> None:
         self._graph = graph
 
     def __call__(
@@ -1770,7 +1770,7 @@ class _IngressProxy:
 class _KindIngressFactory:
     """Factory to handle @graph.ingress.kind and @graph.ingress.kind(arg_name) syntax."""
 
-    def __init__(self, graph: TransformationGraph, kind: Hashable):
+    def __init__(self, graph: TransformationGraph, kind: Hashable) -> None:
         self._graph = graph
         self._kind = kind
 

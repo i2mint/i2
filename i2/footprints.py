@@ -68,7 +68,7 @@ _rops = {k: Sig(lambda self, other: None) for k in _rops}
 _dflt_methods = dict(_operator_dunders, **_dict_dunders, **_rops)
 
 
-def trace_class_decorator(cls):
+def trace_class_decorator(cls) -> None:
     def create_trace_method(name, signature=None):
         def method(self, *args):
             self.trace.append((name, *args))
@@ -141,10 +141,10 @@ class MethodTrace:
     >>>
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.trace = []
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         trace_str = ", ".join(map(lambda x: f"{x}", self.trace))
         return f"<{name_of_obj(type(self))} with .trace = {trace_str}>"
 
@@ -344,7 +344,7 @@ def attr_list(root, func_name):
 
 
 class _DefinitionFinder(ast.NodeVisitor):
-    def __init__(self, object_name):
+    def __init__(self, object_name) -> None:
         self.object_name = object_name
         self.definition_node = None
 
@@ -527,11 +527,11 @@ def ensure_ast(o, src_code=None) -> ast.AST:
 class AttributeVisitor(ast.NodeVisitor):
     """Collect, in ``.attributes``, the attribute names accessed on ``object_name`` in an AST."""
 
-    def __init__(self, object_name):
+    def __init__(self, object_name) -> None:
         self.object_name = object_name
         self.attributes = set()
 
-    def visit_Attribute(self, node):
+    def visit_Attribute(self, node) -> None:
         # Check if the attribute access is for the target object
         if isinstance(node.value, ast.Name) and node.value.id == self.object_name:
             self.attributes.add(node.attr)
@@ -603,7 +603,7 @@ class AssignedAttributeVisitor(ast.NodeVisitor):
     [(['y'], ['x'])]
     """
 
-    def __init__(self, object_name):
+    def __init__(self, object_name) -> None:
         self.object_name = object_name
         self.assigned_attributes = list()
 
@@ -653,15 +653,15 @@ class AssignedAttributeVisitor(ast.NodeVisitor):
         ordered = _in_source_order(read, value, *read_nodes)
         self.assigned_attributes.append((assigned, ordered))
 
-    def visit_Assign(self, node: ast.Assign):
+    def visit_Assign(self, node: ast.Assign) -> None:
         self._record(node.targets, node.value)
         self.generic_visit(node)
 
-    def visit_AugAssign(self, node: ast.AugAssign):
+    def visit_AugAssign(self, node: ast.AugAssign) -> None:
         self._record([node.target], node.value, also_read_targets=True)
         self.generic_visit(node)
 
-    def visit_AnnAssign(self, node: ast.AnnAssign):
+    def visit_AnnAssign(self, node: ast.AnnAssign) -> None:
         if node.value is not None:
             self._record([node.target], node.value)
         self.generic_visit(node)
@@ -1171,7 +1171,7 @@ class Tracker:
 
     start_track = False
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self.attr_used = []
         self.attrs_to_ignore = []
         super().__init__(*args, **kwargs)
@@ -1184,7 +1184,7 @@ class Tracker:
             self.on_access(item)
         return super().__getattribute__(item)
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key, value) -> None:
         """
         Inspect setter for tracking the attributes accessed.
         """
@@ -1193,7 +1193,7 @@ class Tracker:
 
         super().__setattr__(key, value)
 
-    def on_access(self, key):
+    def on_access(self, key) -> None:
         """
         on attribute access, record attribute if and only if its not from
         core attribute or `attrs_to_ignore` set to class.

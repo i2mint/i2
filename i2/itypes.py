@@ -374,7 +374,7 @@ class ObjectClassifier:
     'str'
     """
 
-    def __init__(self, verifiers: dict[KT, Callable[[ObjectType], bool]]):
+    def __init__(self, verifiers: dict[KT, Callable[[ObjectType], bool]]) -> None:
         """
         Initialize with a dictionary of verifiers. Each verifier is a function
         that returns True or False based on the object's classification.

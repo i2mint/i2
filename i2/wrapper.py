@@ -142,7 +142,7 @@ def transparent_egress(output):
 class MakeFromFunc:
     """Used to indicate that an object should be made as a function of an input func"""
 
-    def __init__(self, func_to_obj):
+    def __init__(self, func_to_obj) -> None:
         self.func_to_obj = func_to_obj
 
     def __call__(self, func):
@@ -156,7 +156,7 @@ class _Wrap:
     _init_args = ()
     _init_kwargs = ()
 
-    def __init__(self, func, *args, **kwargs):
+    def __init__(self, func, *args, **kwargs) -> None:
         self._init_args = (func, *args)
         self._init_kwargs = kwargs
         # wraps(func)(self) is there to copy over to self anything that func may
@@ -184,7 +184,7 @@ class _Wrap:
             return self
         return MethodType(self, instance)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         # TODO: Replace i2.Wrap with dynamic (Wrap or Wrapx)
         name = getattr(self, "__name__", None) or "Wrap"
         return f"<i2.Wrap {name}{signature(self)}>"
@@ -196,7 +196,7 @@ class _Wrap:
         # TODO: Look into sanity of mutating the name and other ways to achieve same
         self.__name__ = name
 
-    def __set__(self, instance, value):
+    def __set__(self, instance, value) -> None:
         instance.__dict__[self.__name__] = value
 
     # To get help(instance.method) to work!
@@ -587,7 +587,7 @@ class Wrap(_Wrap):
         *,
         name=None,
         preserve_signature=AUTO_PRESERVE_SIGNATURE,
-    ):
+    ) -> None:
         super().__init__(func, ingress, egress, name=name)
         ingress_sig = Sig(func)
 
@@ -905,7 +905,7 @@ class Ingress:
         allow_excess=True,
         apply_defaults=True,
         allow_partial=False,
-    ):
+    ) -> None:
         """Init of an Ingress instance.
 
         :param inner_sig: Signature of the inner function the ingress is for.
@@ -972,7 +972,7 @@ class Ingress:
             allow_partial=self.allow_partial,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Ingress signature: {signature(self)}"
 
     def wrap(self, func: Callable, egress=None, *, name=None) -> Wrap:
@@ -1195,7 +1195,7 @@ class InnerMapIngress:
         *,
         _allow_reordering=False,
         **changes_for_name,
-    ):
+    ) -> None:
         self.inner_sig = Sig(inner_sig)
 
         self.outer_sig = self.inner_sig.modified(
@@ -1296,7 +1296,7 @@ class ArgNameMappingIngress:
     POSITIONAL_OR_KEYWORD. ``mk_ingress_from_name_mapper`` is the function form.
     """
 
-    def __init__(self, inner_sig, *, conserve_kind=False, **outer_name_for_inner_name):
+    def __init__(self, inner_sig, *, conserve_kind=False, **outer_name_for_inner_name) -> None:
         self.inner_sig = Sig(inner_sig)
         self.outer_sig = self.inner_sig.ch_names(**outer_name_for_inner_name)
         if conserve_kind is not True:
@@ -1654,7 +1654,7 @@ class ArgValConverterIngress:
     off).
     """
 
-    def __init__(self, func, __strict=True, **conversion_for_arg):
+    def __init__(self, func, __strict=True, **conversion_for_arg) -> None:
         sig = Sig(func)
         if __strict:
             conversion_names_that_are_not_func_args = (
@@ -1869,11 +1869,11 @@ class InstanceAttrDefault(DefaultPlaceholder):
     True
     """
 
-    def __init__(self, attr: str, *, instance_arg_name: str = "self"):
+    def __init__(self, attr: str, *, instance_arg_name: str = "self") -> None:
         self.attr = attr
         self.instance_arg_name = instance_arg_name
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.instance_arg_name}.{self.attr}"
 
 
@@ -2561,7 +2561,7 @@ class Wrapx(_Wrap):
     [11, 12, 13, 14]
     """
 
-    def __init__(self, func, ingress=None, egress=None, *, caller=None, name=None):
+    def __init__(self, func, ingress=None, egress=None, *, caller=None, name=None) -> None:
         super().__init__(func, ingress, egress, caller=caller, name=name)
         self.ingress, self.egress, self.caller, self.sig = _process_wrapx_params(
             func, ingress, egress, caller
@@ -2935,7 +2935,7 @@ class SmartDefault:
     func_computing_default: Callable
     original_default: Any = empty
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         func = self.func_computing_default
         func_name = getattr(func, "__name__", str(func))
         if self.original_default is empty:

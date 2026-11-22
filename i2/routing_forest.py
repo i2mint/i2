@@ -180,13 +180,13 @@ class DelegateToMappingAttrMixin:
     def __iter__(self):
         yield from self.mapping
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.mapping)
 
-    def __delitem__(self, k):
+    def __delitem__(self, k) -> None:
         del self.mapping[k]
 
-    def __setitem__(self, k, v):
+    def __setitem__(self, k, v) -> None:
         self.mapping[k] = v
 
 
@@ -622,7 +622,7 @@ def wrap_leafs_with_final_node(x):
             yield FinalNode(xx)
 
 
-def test_routing_forest():
+def test_routing_forest() -> None:
     """Exercise the routing nodes end to end (kept here as a runnable example)."""
 
     def could_be_int(obj):

@@ -26,7 +26,7 @@ class AuthorizationError(Exception):
 class OverwritesNotAllowed(AuthorizationError):
     """To raise when writes are only allowed if the item doesn't already exist"""
 
-    def __init__(self, *args, forbidden_keys=None, **kwargs):
+    def __init__(self, *args, forbidden_keys=None, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.forbidden_keys = forbidden_keys
 
@@ -223,7 +223,7 @@ class HandleExceptions(AbstractContextManager):
         """Whether the last ``with`` block ended on an exception listed in ``on_error``."""
         return hasattr(self, "exit_value")
 
-    def initialize(self):
+    def initialize(self) -> None:
         """Forget the outcome of a previous ``with`` block (done on every ``__enter__``)."""
         if hasattr(self, "exit_value"):
             delattr(self, "exit_value")
