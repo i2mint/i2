@@ -201,6 +201,9 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#i2.util.return_true" title="i2.util.return_true"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_true</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Return True, whatever the arguments.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#i2.util.warn_at_caller" title="i2.util.warn_at_caller"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warn_at_caller</span></code></a>(message[, category, plumbing])</p></td>
+<td><p>Warn, attributing the warning to the first frame outside the <em>plumbing</em>.</p></td>
+</tr>
 </tbody>
 </table>
 <p class="rubric">Classes</p>
@@ -1387,6 +1390,31 @@ a filter function.</p>
 </span></code></pre></div>
 </div>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="i2.util.warn_at_caller">
+<span class="sig-prename descclassname"><span class="pre">i2.util.</span></span><span class="sig-name descname"><span class="pre">warn_at_caller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'UserWarning'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plumbing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/util.html#warn_at_caller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.util.warn_at_caller" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.util.warn_at_caller'">¶</a></dt>
+<dd><p>Warn, attributing the warning to the first frame outside the <em>plumbing</em>.</p>
+<p>A fixed <code class="docutils literal notranslate"><span class="pre">stacklevel</span></code> breaks as soon as the call path gains a frame (a
+helper, a <code class="docutils literal notranslate"><span class="pre">@contextmanager</span></code>, a cache); this walks the stack instead, so the
+warning names the line of the user’s code that called into your package.</p>
+<p><code class="docutils literal notranslate"><span class="pre">plumbing</span></code> is an iterable of file path prefixes to skip. The default is the
+directory of the package that calls this function, plus <a class="reference external" href="https://docs.python.org/3/library/contextlib.html#module-contextlib" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">contextlib</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>.
+Works on every supported Python (<code class="docutils literal notranslate"><span class="pre">warnings.warn(skip_file_prefixes=...)</span></code>
+needs 3.12).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+</span><span id="line-2"><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">(</span><span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">w</span><span class="p">:</span>
+</span><span id="line-3"><span class="gp">... </span>    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"always"</span><span class="p">)</span>
+</span><span id="line-4"><span class="gp">... </span>    <span class="n">warn_at_caller</span><span class="p">(</span><span class="s2">"careful"</span><span class="p">,</span> <span class="n">plumbing</span><span class="o">=</span><span class="p">[])</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">args</span>
+</span><span id="line-6"><span class="go">('careful',)</span>
+</span></code></pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span></span></p>
+</dd>
+</dl>
+</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
@@ -1465,6 +1493,7 @@ a filter function.</p>
 <li><a :data-current="activeSection === '#i2.util.return_false'" class="reference internal" href="#i2.util.return_false"><code class="docutils literal notranslate"><span class="pre">return_false()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.util.return_none'" class="reference internal" href="#i2.util.return_none"><code class="docutils literal notranslate"><span class="pre">return_none()</span></code></a></li>
 <li><a :data-current="activeSection === '#i2.util.return_true'" class="reference internal" href="#i2.util.return_true"><code class="docutils literal notranslate"><span class="pre">return_true()</span></code></a></li>
+<li><a :data-current="activeSection === '#i2.util.warn_at_caller'" class="reference internal" href="#i2.util.warn_at_caller"><code class="docutils literal notranslate"><span class="pre">warn_at_caller()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -1478,7 +1507,7 @@ a filter function.</p>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=8e1ed48b"></script>
+<script src="../_static/documentation_options.js?v=b9e65ee1"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
