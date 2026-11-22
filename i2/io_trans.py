@@ -55,6 +55,12 @@ def identity_func(x):
 
 @dataclass
 class IoTrans:
+    """Base class of input/output transformers: a callable that wraps a function,
+    applying ``in_val_trans`` to each input argument and ``out_trans`` to the output.
+
+    Subclass and override either method (both default to the identity).
+    """
+
     def in_val_trans(self, argval, argname, func):
         return argval  # default is the value as is
 

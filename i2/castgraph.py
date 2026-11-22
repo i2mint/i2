@@ -280,7 +280,7 @@ class Edge:
 
 
 class ConversionError(TypeError):
-    pass
+    """Raised when a value cannot be converted along the requested path of a ``CastGraph``."""
 
 
 # -----------------------------
