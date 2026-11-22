@@ -1296,7 +1296,9 @@ class ArgNameMappingIngress:
     POSITIONAL_OR_KEYWORD. ``mk_ingress_from_name_mapper`` is the function form.
     """
 
-    def __init__(self, inner_sig, *, conserve_kind=False, **outer_name_for_inner_name) -> None:
+    def __init__(
+        self, inner_sig, *, conserve_kind=False, **outer_name_for_inner_name
+    ) -> None:
         self.inner_sig = Sig(inner_sig)
         self.outer_sig = self.inner_sig.ch_names(**outer_name_for_inner_name)
         if conserve_kind is not True:
@@ -2561,7 +2563,9 @@ class Wrapx(_Wrap):
     [11, 12, 13, 14]
     """
 
-    def __init__(self, func, ingress=None, egress=None, *, caller=None, name=None) -> None:
+    def __init__(
+        self, func, ingress=None, egress=None, *, caller=None, name=None
+    ) -> None:
         super().__init__(func, ingress, egress, caller=caller, name=name)
         self.ingress, self.egress, self.caller, self.sig = _process_wrapx_params(
             func, ingress, egress, caller

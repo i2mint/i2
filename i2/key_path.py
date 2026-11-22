@@ -483,7 +483,9 @@ class KeyPathTrans:
     given to the method as input.
     """
 
-    def __init__(self, sep: str = ".", node_type: type = dict, mk_new_node=None) -> None:
+    def __init__(
+        self, sep: str = ".", node_type: type = dict, mk_new_node=None
+    ) -> None:
         """
 
         :param sep:
