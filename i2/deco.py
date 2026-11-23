@@ -855,8 +855,6 @@ def input_output_decorator(preprocess=None, postprocess=None):
     Hello 15.0!
     >>> print((ff.__doc__))
     This is not what you'd expect: The doc of the class, not the function
-
-    # >>>
     """
     # Not a doctest (kept as a note):
     # >>> f.static_method = input_output_decorator(preprocess=lambda x: '"' + x + '"',
