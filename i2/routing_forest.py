@@ -488,20 +488,21 @@ class FeatCondNode(RoutingNode):
         """
         A FeatCondNode where the conditions are equality checks on the feature value
 
-        # >>> fvn = FeatCondNode.from_feature_val_map(
-        # ...     feat=lambda x: x % 3,
-        # ...     feat_cond_thens={
-        # ...         0: lambda x: 'zero_mod_3',
-        # ...         1: lambda x: 'one_mod_3',
-        # ...         2: lambda x: 'two_mod_3',
-        # ...     }
-        # ... )
-        # >>> list(fvn(0))
-        #
-        # >>> assert list(fvn(0)) == ['zero_mod_3']
-        # >>> assert list(fvn(1)) == ['one_mod_3']
-        # >>> assert list(fvn(2)) == ['two_mod_3']
-        #
+        Example (not run as a doctest):
+
+        .. code-block:: python
+
+            fvn = FeatCondNode.from_feature_val_map(
+                feat=lambda x: x % 3,
+                feat_cond_thens={
+                    0: lambda x: 'zero_mod_3',
+                    1: lambda x: 'one_mod_3',
+                    2: lambda x: 'two_mod_3',
+                }
+            )
+            assert list(fvn(0)) == ['zero_mod_3']
+            assert list(fvn(1)) == ['one_mod_3']
+            assert list(fvn(2)) == ['two_mod_3']
         """
         feat_cond_map = dict(feat_cond_thens)
         feat_cond_thens = tuple(
