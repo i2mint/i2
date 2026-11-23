@@ -369,20 +369,20 @@ according to an iterable of conditions on the feature.</p>
 <dt class="sig sig-object py" id="i2.routing_forest.FeatCondNode.from_feature_val_map">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_feature_val_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feat_cond_thens</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/i2/routing_forest.html#FeatCondNode.from_feature_val_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#i2.routing_forest.FeatCondNode.from_feature_val_map" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#i2.routing_forest.FeatCondNode.from_feature_val_map'">¶</a></dt>
 <dd><p>A FeatCondNode where the conditions are equality checks on the feature value</p>
-<p># &gt;&gt;&gt; fvn = FeatCondNode.from_feature_val_map(
-# …     feat=lambda x: x % 3,
-# …     feat_cond_thens={
-# …         0: lambda x: ‘zero_mod_3’,
-# …         1: lambda x: ‘one_mod_3’,
-# …         2: lambda x: ‘two_mod_3’,
-# …     }
-# … )
-# &gt;&gt;&gt; list(fvn(0))
-#
-# &gt;&gt;&gt; assert list(fvn(0)) == [‘zero_mod_3’]
-# &gt;&gt;&gt; assert list(fvn(1)) == [‘one_mod_3’]
-# &gt;&gt;&gt; assert list(fvn(2)) == [‘two_mod_3’]
-#</p>
+<p>Example (not run as a doctest):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">fvn</span> <span class="o">=</span> <span class="n">FeatCondNode</span><span class="o">.</span><span class="n">from_feature_val_map</span><span class="p">(</span>
+</span><span id="line-2">    <span class="n">feat</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">3</span><span class="p">,</span>
+</span><span id="line-3">    <span class="n">feat_cond_thens</span><span class="o">=</span><span class="p">{</span>
+</span><span id="line-4">        <span class="mi">0</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">'zero_mod_3'</span><span class="p">,</span>
+</span><span id="line-5">        <span class="mi">1</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">'one_mod_3'</span><span class="p">,</span>
+</span><span id="line-6">        <span class="mi">2</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">'two_mod_3'</span><span class="p">,</span>
+</span><span id="line-7">    <span class="p">}</span>
+</span><span id="line-8"><span class="p">)</span>
+</span><span id="line-9"><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">fvn</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">'zero_mod_3'</span><span class="p">]</span>
+</span><span id="line-10"><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">fvn</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">'one_mod_3'</span><span class="p">]</span>
+</span><span id="line-11"><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">fvn</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="s1">'two_mod_3'</span><span class="p">]</span>
+</span></code></pre></div>
+</div>
 <dl class="field-list simple">
 </dl>
 </dd></dl>
@@ -628,7 +628,7 @@ feature. It is often a dict, but only requirement is that it implements the
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=45974446"></script>
+<script src="../_static/documentation_options.js?v=e1efc05f"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
