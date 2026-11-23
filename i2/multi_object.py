@@ -456,6 +456,11 @@ class Pipe(MultiFunc):
 
     input -> f_1 -> ... -> f_n -> output.
 
+    ``dol.Pipe`` is the plain-callable twin (dol has no i2 dependency, and i2 none on
+    dol). Use ``dol.Pipe`` for plain composition, and this one when you want named,
+    inspectable stages (it is a ``MultiFunc``, so a Mapping of its stages). The call
+    behaviour both share is pinned by ``i2/tests/test_pipe_conformance.py``.
+
     >>> def foo(a, b=2):
     ...     return a + b
     >>> f = Pipe(foo, lambda x: print(f"x: {x}"))
