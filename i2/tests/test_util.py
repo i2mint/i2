@@ -108,3 +108,64 @@ def test_warn_at_caller_skips_plumbing_frames(tmp_path, monkeypatch):
         assert w[0].lineno != w[1].lineno
     finally:
         sys.modules.pop("wacpkg", None)
+
+
+def _write(path, text):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text)
+
+
+def _caught(fn):
+    import warnings
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        fn()
+    return w
+
+
+def test_warn_at_caller_does_not_skip_a_sibling_package_with_the_same_prefix(
+    tmp_path, monkeypatch
+):
+    """``wacpkg2`` must not count as ``wacpkg``'s plumbing (issue #131)."""
+    import sys
+
+    _write(
+        tmp_path / "wacpkg2" / "__init__.py",
+        "from i2.util import warn_at_caller\ndef warn(): warn_at_caller('hey')\n",
+    )
+    _write(
+        tmp_path / "wacpkg2_user" / "__init__.py",
+        "import wacpkg2\ndef call(): wacpkg2.warn()\n",
+    )
+    monkeypatch.syspath_prepend(str(tmp_path))
+    try:
+        import wacpkg2_user
+
+        w = _caught(wacpkg2_user.call)
+        assert w[0].filename == wacpkg2_user.__file__
+    finally:
+        sys.modules.pop("wacpkg2", None)
+        sys.modules.pop("wacpkg2_user", None)
+
+
+def test_warn_at_caller_from_a_single_module_skips_only_that_file(
+    tmp_path, monkeypatch
+):
+    """A top-level module's plumbing is its own file, not its folder (issue #131)."""
+    import sys
+
+    _write(
+        tmp_path / "wacmod.py",
+        "from i2.util import warn_at_caller\ndef warn(): warn_at_caller('hey')\n",
+    )
+    _write(tmp_path / "wacmain.py", "import wacmod\ndef call(): wacmod.warn()\n")
+    monkeypatch.syspath_prepend(str(tmp_path))
+    try:
+        import wacmain
+
+        w = _caught(wacmain.call)
+        assert (w[0].filename, w[0].lineno) == (wacmain.__file__, 2)
+    finally:
+        sys.modules.pop("wacmod", None)
+        sys.modules.pop("wacmain", None)

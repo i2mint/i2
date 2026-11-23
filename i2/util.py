@@ -1647,11 +1647,19 @@ get_app_config_folder = partial(get_app_folder, folder_kind="config")
 get_app_data_folder = partial(get_app_folder, folder_kind="data")
 
 
-def _package_dir(module_name: str, filename: str) -> str:
-    """Directory of the top-level package of *module_name* (else of *filename*)."""
+def _package_prefixes(module_name: str, filename: str) -> tuple[str, ...]:
+    """Path prefixes covering the top-level package of *module_name*.
+
+    A package (regular or namespace) gives each of its ``__path__`` directories, with
+    a trailing separator so that a sibling ``pkg2`` is not mistaken for ``pkg``. A
+    single top-level module gives its own file only, never its folder (whose other
+    files are not its plumbing). Without a module, *filename* alone.
+    """
     top = sys.modules.get(module_name.partition(".")[0])
-    path = getattr(top, "__file__", None) or filename
-    return os.path.dirname(os.path.abspath(path))
+    package_path = getattr(top, "__path__", None)
+    if package_path:
+        return tuple(os.path.join(os.path.abspath(p), "") for p in package_path)
+    return (os.path.abspath(getattr(top, "__file__", None) or filename),)
 
 
 def warn_at_caller(
@@ -1666,8 +1674,10 @@ def warn_at_caller(
     helper, a ``@contextmanager``, a cache); this walks the stack instead, so the
     warning names the line of the user's code that called into your package.
 
-    ``plumbing`` is an iterable of file path prefixes to skip. The default is the
-    directory of the package that calls this function, plus :mod:`contextlib`.
+    ``plumbing`` is an iterable of file path prefixes to skip (end a directory with a
+    separator, or ``pkg`` also skips ``pkg2``). The default is the folder of the
+    package that calls this function (its own file, for a single top-level module),
+    plus :mod:`contextlib`.
     Works on every supported Python (``warnings.warn(skip_file_prefixes=...)``
     needs 3.12).
 
@@ -1680,8 +1690,8 @@ def warn_at_caller(
     """
     frame = sys._getframe(1)
     if plumbing is None:
-        plumbing = (
-            _package_dir(frame.f_globals.get("__name__", ""), frame.f_code.co_filename),
+        plumbing = _package_prefixes(
+            frame.f_globals.get("__name__", ""), frame.f_code.co_filename
         )
     prefixes = (*map(os.fspath, plumbing), contextlib.__file__)
     stacklevel = 2  # 1 would be this function; 2 is its caller
