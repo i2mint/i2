@@ -643,6 +643,10 @@ you can always use named_funcs_dict to express that!</p>
 <dd><p>Bases: <a class="reference internal" href="#i2.multi_object.MultiFunc" title="i2.multi_object.MultiFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiFunc</span></code></a></p>
 <p>Simple function composition. That is, gives you a callable that implements</p>
 <p>input -&gt; f_1 -&gt; … -&gt; f_n -&gt; output.</p>
+<p><code class="docutils literal notranslate"><span class="pre">dol.Pipe</span></code> is the plain-callable twin (dol has no i2 dependency, and i2 none on
+dol). Use <code class="docutils literal notranslate"><span class="pre">dol.Pipe</span></code> for plain composition, and this one when you want named,
+inspectable stages (it is a <code class="docutils literal notranslate"><span class="pre">MultiFunc</span></code>, so a Mapping of its stages). The call
+behaviour both share is pinned by <code class="docutils literal notranslate"><span class="pre">i2/tests/test_pipe_conformance.py</span></code>.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
 </span><span id="line-2"><span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 </span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"x: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
@@ -964,7 +968,7 @@ it through <code class="docutils literal notranslate"><span class="pre">exclude_
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=09f5639d"></script>
+<script src="../_static/documentation_options.js?v=ad8de784"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
