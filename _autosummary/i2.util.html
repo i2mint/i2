@@ -1424,8 +1424,10 @@ a filter function.</p>
 <p>A fixed <code class="docutils literal notranslate"><span class="pre">stacklevel</span></code> breaks as soon as the call path gains a frame (a
 helper, a <code class="docutils literal notranslate"><span class="pre">@contextmanager</span></code>, a cache); this walks the stack instead, so the
 warning names the line of the user’s code that called into your package.</p>
-<p><code class="docutils literal notranslate"><span class="pre">plumbing</span></code> is an iterable of file path prefixes to skip. The default is the
-directory of the package that calls this function, plus <a class="reference external" href="https://docs.python.org/3/library/contextlib.html#module-contextlib" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">contextlib</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>.
+<p><code class="docutils literal notranslate"><span class="pre">plumbing</span></code> is an iterable of file path prefixes to skip (end a directory with a
+separator, or <code class="docutils literal notranslate"><span class="pre">pkg</span></code> also skips <code class="docutils literal notranslate"><span class="pre">pkg2</span></code>). The default is the folder of the
+package that calls this function (its own file, for a single top-level module),
+plus <a class="reference external" href="https://docs.python.org/3/library/contextlib.html#module-contextlib" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">contextlib</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>.
 Works on every supported Python (<code class="docutils literal notranslate"><span class="pre">warnings.warn(skip_file_prefixes=...)</span></code>
 needs 3.12).</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
@@ -1534,7 +1536,7 @@ needs 3.12).</p>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=e1efc05f"></script>
+<script src="../_static/documentation_options.js?v=09f5639d"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

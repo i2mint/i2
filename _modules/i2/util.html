@@ -1961,53 +1961,63 @@
 </span><span id="line-1647"><span class="n">get_app_data_folder</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">get_app_folder</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s2">"data"</span><span class="p">)</span>
 </span><span id="line-1648">
 </span><span id="line-1649">
-</span><span id="line-1650"><span class="k">def</span><span class="w"> </span><span class="nf">_package_dir</span><span class="p">(</span><span class="n">module_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-1651"><span class="w">    </span><span class="sd">"""Directory of the top-level package of *module_name* (else of *filename*)."""</span>
-</span><span id="line-1652">    <span class="n">top</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">module_name</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-</span><span id="line-1653">    <span class="n">path</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">"__file__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">filename</span>
-</span><span id="line-1654">    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-</span><span id="line-1655">
-</span><span id="line-1656">
+</span><span id="line-1650"><span class="k">def</span><span class="w"> </span><span class="nf">_package_prefixes</span><span class="p">(</span><span class="n">module_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+</span><span id="line-1651"><span class="w">    </span><span class="sd">"""Path prefixes covering the top-level package of *module_name*.</span>
+</span><span id="line-1652">
+</span><span id="line-1653"><span class="sd">    A package (regular or namespace) gives each of its ``__path__`` directories, with</span>
+</span><span id="line-1654"><span class="sd">    a trailing separator so that a sibling ``pkg2`` is not mistaken for ``pkg``. A</span>
+</span><span id="line-1655"><span class="sd">    single top-level module gives its own file only, never its folder (whose other</span>
+</span><span id="line-1656"><span class="sd">    files are not its plumbing). Without a module, *filename* alone.</span>
+</span><span id="line-1657"><span class="sd">    """</span>
+</span><span id="line-1658">    <span class="n">top</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">module_name</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+</span><span id="line-1659">    <span class="n">package_path</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">"__path__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="line-1660">    <span class="k">if</span> <span class="n">package_path</span><span class="p">:</span>
+</span><span id="line-1661">        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="s2">""</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">package_path</span><span class="p">)</span>
+</span><span id="line-1662">    <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">"__file__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">filename</span><span class="p">),)</span>
+</span><span id="line-1663">
+</span><span id="line-1664">
 <div class="viewcode-block" id="warn_at_caller">
 <a class="viewcode-back" href="../../_autosummary/i2.util.html#i2.util.warn_at_caller">[docs]</a>
-</span><span id="line-1657"><span class="k">def</span><span class="w"> </span><span class="nf">warn_at_caller</span><span class="p">(</span>
-</span><span id="line-1658">    <span class="n">message</span><span class="p">,</span>
-</span><span id="line-1659">    <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span>
-</span><span id="line-1660">    <span class="o">*</span><span class="p">,</span>
-</span><span id="line-1661">    <span class="n">plumbing</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-1662"><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-1663"><span class="w">    </span><span class="sd">"""Warn, attributing the warning to the first frame outside the *plumbing*.</span>
-</span><span id="line-1664">
-</span><span id="line-1665"><span class="sd">    A fixed ``stacklevel`` breaks as soon as the call path gains a frame (a</span>
-</span><span id="line-1666"><span class="sd">    helper, a ``@contextmanager``, a cache); this walks the stack instead, so the</span>
-</span><span id="line-1667"><span class="sd">    warning names the line of the user's code that called into your package.</span>
-</span><span id="line-1668">
-</span><span id="line-1669"><span class="sd">    ``plumbing`` is an iterable of file path prefixes to skip. The default is the</span>
-</span><span id="line-1670"><span class="sd">    directory of the package that calls this function, plus :mod:`contextlib`.</span>
-</span><span id="line-1671"><span class="sd">    Works on every supported Python (``warnings.warn(skip_file_prefixes=...)``</span>
-</span><span id="line-1672"><span class="sd">    needs 3.12).</span>
-</span><span id="line-1673">
-</span><span id="line-1674"><span class="sd">    &gt;&gt;&gt; import warnings</span>
-</span><span id="line-1675"><span class="sd">    &gt;&gt;&gt; with warnings.catch_warnings(record=True) as w:</span>
-</span><span id="line-1676"><span class="sd">    ...     warnings.simplefilter("always")</span>
-</span><span id="line-1677"><span class="sd">    ...     warn_at_caller("careful", plumbing=[])</span>
-</span><span id="line-1678"><span class="sd">    &gt;&gt;&gt; w[0].message.args</span>
-</span><span id="line-1679"><span class="sd">    ('careful',)</span>
-</span><span id="line-1680"><span class="sd">    """</span>
-</span><span id="line-1681">    <span class="n">frame</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="line-1682">    <span class="k">if</span> <span class="n">plumbing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-1683">        <span class="n">plumbing</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="line-1684">            <span class="n">_package_dir</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">f_globals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"__name__"</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_filename</span><span class="p">),</span>
-</span><span id="line-1685">        <span class="p">)</span>
-</span><span id="line-1686">    <span class="n">prefixes</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">,</span> <span class="n">plumbing</span><span class="p">),</span> <span class="n">contextlib</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
-</span><span id="line-1687">    <span class="n">stacklevel</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># 1 would be this function; 2 is its caller</span>
-</span><span id="line-1688">    <span class="k">while</span> <span class="n">frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefixes</span><span class="p">):</span>
-</span><span id="line-1689">        <span class="n">nxt</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_back</span>
-</span><span id="line-1690">        <span class="k">if</span> <span class="n">nxt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-1691">            <span class="k">break</span>
-</span><span id="line-1692">        <span class="n">frame</span> <span class="o">=</span> <span class="n">nxt</span>
-</span><span id="line-1693">        <span class="n">stacklevel</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-1694">    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span><span class="p">)</span></div>
+</span><span id="line-1665"><span class="k">def</span><span class="w"> </span><span class="nf">warn_at_caller</span><span class="p">(</span>
+</span><span id="line-1666">    <span class="n">message</span><span class="p">,</span>
+</span><span id="line-1667">    <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span>
+</span><span id="line-1668">    <span class="o">*</span><span class="p">,</span>
+</span><span id="line-1669">    <span class="n">plumbing</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="line-1670"><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-1671"><span class="w">    </span><span class="sd">"""Warn, attributing the warning to the first frame outside the *plumbing*.</span>
+</span><span id="line-1672">
+</span><span id="line-1673"><span class="sd">    A fixed ``stacklevel`` breaks as soon as the call path gains a frame (a</span>
+</span><span id="line-1674"><span class="sd">    helper, a ``@contextmanager``, a cache); this walks the stack instead, so the</span>
+</span><span id="line-1675"><span class="sd">    warning names the line of the user's code that called into your package.</span>
+</span><span id="line-1676">
+</span><span id="line-1677"><span class="sd">    ``plumbing`` is an iterable of file path prefixes to skip (end a directory with a</span>
+</span><span id="line-1678"><span class="sd">    separator, or ``pkg`` also skips ``pkg2``). The default is the folder of the</span>
+</span><span id="line-1679"><span class="sd">    package that calls this function (its own file, for a single top-level module),</span>
+</span><span id="line-1680"><span class="sd">    plus :mod:`contextlib`.</span>
+</span><span id="line-1681"><span class="sd">    Works on every supported Python (``warnings.warn(skip_file_prefixes=...)``</span>
+</span><span id="line-1682"><span class="sd">    needs 3.12).</span>
+</span><span id="line-1683">
+</span><span id="line-1684"><span class="sd">    &gt;&gt;&gt; import warnings</span>
+</span><span id="line-1685"><span class="sd">    &gt;&gt;&gt; with warnings.catch_warnings(record=True) as w:</span>
+</span><span id="line-1686"><span class="sd">    ...     warnings.simplefilter("always")</span>
+</span><span id="line-1687"><span class="sd">    ...     warn_at_caller("careful", plumbing=[])</span>
+</span><span id="line-1688"><span class="sd">    &gt;&gt;&gt; w[0].message.args</span>
+</span><span id="line-1689"><span class="sd">    ('careful',)</span>
+</span><span id="line-1690"><span class="sd">    """</span>
+</span><span id="line-1691">    <span class="n">frame</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="line-1692">    <span class="k">if</span> <span class="n">plumbing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-1693">        <span class="n">plumbing</span> <span class="o">=</span> <span class="n">_package_prefixes</span><span class="p">(</span>
+</span><span id="line-1694">            <span class="n">frame</span><span class="o">.</span><span class="n">f_globals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"__name__"</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_filename</span>
+</span><span id="line-1695">        <span class="p">)</span>
+</span><span id="line-1696">    <span class="n">prefixes</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">,</span> <span class="n">plumbing</span><span class="p">),</span> <span class="n">contextlib</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+</span><span id="line-1697">    <span class="n">stacklevel</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># 1 would be this function; 2 is its caller</span>
+</span><span id="line-1698">    <span class="k">while</span> <span class="n">frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefixes</span><span class="p">):</span>
+</span><span id="line-1699">        <span class="n">nxt</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_back</span>
+</span><span id="line-1700">        <span class="k">if</span> <span class="n">nxt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-1701">            <span class="k">break</span>
+</span><span id="line-1702">        <span class="n">frame</span> <span class="o">=</span> <span class="n">nxt</span>
+</span><span id="line-1703">        <span class="n">stacklevel</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-1704">    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span><span class="p">)</span></div>
 
 </span></code></pre></div>
     </div></div>
@@ -2022,7 +2032,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=e1efc05f"></script>
+    <script src="../../_static/documentation_options.js?v=09f5639d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
